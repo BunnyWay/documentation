@@ -1,0 +1,35 @@
+---
+title: "Face detection"
+description: "Suggest Edits"
+---
+
+## Face crop
+
+***Parameter***: face\_crop ***Format 1***: Boolean ***Format 2***: width,height
+
+Automatically detect peoples faces and make faces the center of the crop.
+
+If set to **true** (format 1), the optimizer will find all the faces it can detect, make sure that they are in frame and add some padding around them.
+
+If you define *width,height* as parameters, the optimizer will find all faces it can and focus on the center point between them all (or at the center of one face, if only one is found). Then it will crop an image matching passed *width* and *height* with the faces as the center point.
+
+<Frame caption="original">
+  <img src="/images/docs/face_1.jpeg" />
+</Frame>
+
+<Frame caption="?face_crop=">
+  <img src="/images/docs/face_1.jpeg" />
+
+  **true**
+</Frame>
+
+<Frame caption="?face_crop=">
+  <img src="/images/docs/face_1.jpeg" />
+
+  **800,1000**
+</Frame>
+
+***
+
+* [Table of Contents](#)
+* * [Face crop](#face-crop)

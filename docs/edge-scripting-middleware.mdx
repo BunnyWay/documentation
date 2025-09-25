@@ -1,0 +1,113 @@
+---
+title: "Middleware scripts"
+description: "Suggest Edits"
+---
+
+Middleware script type allows you to transform and modify HTTP requests and responses as they flow through CDN. By using middleware functions, you can manipulate the request before it reaches your origin server and alter the response before it is sent back to the client.
+
+This provides powerful capabilities for customizing behavior, implementing access control, injecting headers, and more.
+
+# Workflow
+
+When a client makes a request to a Pull Zone in Bunny.net, the request can pass through middleware functions at different stages:
+
+* `onOriginRequest`: This function is called before the request is sent to the origin server. You can modify the request or even short-circuit the process by returning a response directly.
+* `onOriginResponse`: This function is called after the origin server responds but before the response is sent back to the client. You can modify the response here, such as altering headers or content.
+
+Below is a diagram illustrating the flow of a request and response through middleware in bunny.net:
+
+![](/images/docs/e5c6548c1d23722bbb1206f3a6bffe69d07db1541499995b13e3101b0011f91b-image.png)
+
+# Example Script
+
+Below is an example script demonstrating how to use middleware functions to implement access control based on custom headers:
+
+<CodeGroup>
+  ```typescript typescript
+  import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
+
+  // The url defined here is only effective with local scripts, when you deploy in
+  // production it'll be the `Origin` from your PullZone that is going to be used.
+  BunnySDK.net.http.servePullZone({ url: "https://echo.free.beeceptor.com/" })
+    .onOriginRequest(
+      (ctx: { request: Request }) => {
+        const optFT = ctx.request.headers.get("feature-flags");
+        const featureFlags = optFT ? optFT.split(",").map((v) => v.trimStart()) : [];
+
+        // Route-based matching and feature flag check
+        const path = new URL(ctx.request.url).pathname;
+        if (path === "/d") {
+          if (!featureFlags.includes("route-d-preview")) {
+            return Promise.resolve(new Response("You cannot use this route.", { status: 400 }));
+          }
+        }
+
+        return Promise.resolve(ctx.request);
+      },
+    ).onOriginResponse((ctx: { request: Request, response: Response }) => {
+      const response = ctx.response;
+      response.headers.append("X-Via", "MyMiddleware");
+
+      return Promise.resolve(response);
+    });
+  ```
+</CodeGroup>
+
+You can run this example locally using Deno `deno run -A script.ts` :
+
+<CodeGroup>
+  ```shell shell
+  # Disallowed
+  curl http://127.0.0.1:8080/d --header 'feature-flags: something-else'
+
+  # Allowed
+  curl http://127.0.0.1:8080/d --header 'feature-flags: route-d-preview, something-else'
+  ```
+</CodeGroup>
+
+In the example above, the script sets up a Pull Zone server using Bunny.net's Edge Script SDK. It defines two middleware functions: `onOriginRequest` and `onOriginResponse`.
+
+The `onOriginRequest` function checks if the incoming request to the /d route includes a specific feature flag in the `feature-flags` header. If the feature flag is missing, it returns a `400 Bad Request` response, effectively blocking access to that route. This function allows you to implement custom access control logic based on headers or other request properties.
+
+The `onOriginResponse` function appends a custom header `X-Via: MyMiddleware` to the response before it's sent back to the client. This can be useful for adding metadata or for debugging purposes.
+
+# Middleware Functions
+
+## onOriginRequest
+
+The `onOriginRequest` function adds a middleware function that intercepts every request going to the origin server. If the response is not cached or not served directly by the Pull Zone, this function will be called before the request is sent to the origin. You can use this function to modify the request, implement access control, or even short-circuit the request by returning a response directly.
+
+**Signature**:
+
+<CodeGroup>
+  ```typescript typescript
+  declare const onOriginRequest: (middleware: { request: Request }) => Promise<Request> | Promise<Response>
+  ```
+</CodeGroup>
+
+## onOriginResponse
+
+The `onOriginResponse` function adds a middleware function that intercepts the response from the origin server before it is sent back to the client. This function is called only when the response is not cached or served directly by the Pull Zone. You can use this function to modify the response, such as altering headers, status codes, or even the body content.
+
+Signature :
+
+<CodeGroup>
+  ```typescript typescript
+  declare const onOriginRequest: (middleware: { request: Request, response: Response }) => Promise<Response>
+  ```
+</CodeGroup>
+
+Both middleware functions can perform asynchronous operations as they return Promises. In `onOriginRequest`, returning a response directly allows you to short-circuit the request, preventing it from reaching the origin server. Modifications in `onOriginResponse` occur before the response is cached, allowing you to control what gets stored in the cache.
+
+***
+
+* [Table of Contents](#)
+
+* * [Workflow](#workflow)
+
+  * [Example Script](#example-script)
+
+  * [Middleware Functions](#middleware-functions)
+
+    * [onOriginRequest](#onoriginrequest)
+    * [onOriginResponse](#onoriginresponse)

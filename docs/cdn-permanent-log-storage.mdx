@@ -1,0 +1,38 @@
+---
+title: "Permanent Log Storage"
+description: "Suggest Edits"
+---
+
+Permanent Log Storage allows you to permanently store logs inside of an Edge Storage zone. The logs are uploaded at the end of each day for the previous day. These logs are not searchable through our web interface.
+
+The stored log files are compressed using **GZip** and must be decompressed before opening. The stored log files are split into multiple smaller chunks, each containing up to 10 million logs. These are appended as a , starting with index 1.
+
+The logs are stored in the selected Edge Storage zone under the following path format:
+
+<CodeGroup>
+  ```html html
+  /pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<part-index>.gzip
+  ```
+</CodeGroup>
+
+<Warning>
+  The Pull Zone logs are stored in the Edge Storage which might be exposed to the world through any connected Pull Zone. We strongly recommend using a separate Edge Storage zone to keep the log files to prevent any unauthorized access.
+</Warning>
+
+# How to configure Permanent Log Storage?
+
+To enable Permanent Log Storage you can follow the following steps:
+
+1. Visit your **Pull Zone** details page
+2. Open the **Security** panel in the left-side menu
+3. Open the **Logging** panel inside of the Security panel
+4. Make sure that the **Enable Logging** feature is enabled
+5. Enable the **Enable Permanent Storage** feature
+6. Select the desired Edge Storage zone that will contain your log files
+7. Click on the **Save Storage Configuration** button
+8. Check the Storage Zone the next day to find your log files
+
+***
+
+* [Table of Contents](#)
+* * [How to configure Permanent Log Storage?](#how-to-configure-permanent-log-storage)

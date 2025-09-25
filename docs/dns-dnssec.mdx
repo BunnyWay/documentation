@@ -1,0 +1,65 @@
+---
+title: "DNSSEC"
+description: "Suggest Edits"
+---
+
+## What is DNSSEC?
+
+DNSSEC (Domain Name System Security Extensions) adds a layer of security to your domain by enabling cryptographic validation of DNS responses. This ensures that visitors to your website are protected from DNS spoofing, cache poisoning, and man-in-the-middle attacks.
+
+When DNSSEC is enabled on your domain, DNS resolvers can verify that the DNS records they receive come from an authoritative source and haven’t been tampered with.
+
+## How DNSSEC Works with Bunny DNS
+
+Our DNS service supports full DNSSEC signing. Once enabled, your DNS zones are signed using cryptographic signatures, and we provide the necessary DS (Delegation Signer) records for your domain registrar.
+
+**Signing Algorithm:** We use Algorithm 13 (ECDSA Curve P-256 with SHA-256) for an ideal balance of security and performance.
+
+**Key Management:** DNSSEC keys are securely managed and automatically rotated.
+
+**Denial of Existence:** We employ NSEC Black Lies, an advanced privacy-preserving method. This prevents zone enumeration while providing authenticated denial-of-existence responses. NSEC Black Lies avoid exposing actual zone data, ensuring that attempts to list your domain’s DNS records are thwarted.
+
+## Steps to Enable DNSSEC
+
+* Enable DNSSEC within your DNS zone under the Security tab.
+
+![](/images/docs/1a1983ec6cabed83a892ce54e7ed52f4b66bab6445737261b474ee75a3bc5f1b-image.png)
+
+* Copy the DS Record provided after enabling.
+* Add the DS Record through your domain registrar (see setup guides below).
+
+**That’s it! Your domain will now serve DNSSEC-signed responses.**
+
+## Registrar-Specific DNSSEC Setup Guides
+
+| Registrar      | DNSSEC Setup Guide                                                                                                                                  |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GoDaddy        | [GoDaddy DNSSEC setup](https://www.godaddy.com/en-uk/help/add-a-ds-record-23865)                                                                    |
+| Namecheap      | [Namecheap DNSSEC guide](https://www.namecheap.com/support/knowledgebase/article.aspx/9722/2232/managing-dnssec-for-domains-pointed-to-custom-dns/) |
+| Google Domains | [Google Domains DNSSEC guide](https://cloud.google.com/dns/docs/dnssec-config)                                                                      |
+| Bluehost       | [Bluehost DNSSEC information](https://cp.cn.bluehost.com/kb/answer/1909)                                                                            |
+| Dynadot        | [Dynadot DNSSEC guide](https://www.dynadot.com/community/help/question/set-DNSSEC)                                                                  |
+| Name.com       | [Name.com DNSSEC guide](https://www.name.com/support/articles/205439058-managing-dnssec)                                                            |
+| Porkbun        | [Porkbun DNSSEC guide](https://kb.porkbun.com/article/93-how-to-install-dnssec)                                                                     |
+
+## Verify DNSSEC deployment
+
+To verify correct deployment of your DNSSEC-enabled zone, make sure that you placed the correct DS record in the parent zone. DNS resolution can fail if either of the following occurs:
+
+* The configuration is wrong, or you have mistyped it.
+* You have placed the incorrect DS record in the parent zone.
+
+To verify that you have the right configuration in place and to cross-check the DS record before placing it in the parent zone, use the following tools:
+
+* [DNSViz](https://dnsviz.net/)
+* [Verisign DNSSEC debugger](https://dnssec-analyzer.verisignlabs.com/)
+
+***
+
+* [Table of Contents](#)
+
+* * [What is DNSSEC?](#what-is-dnssec)
+  * [How DNSSEC Works with Bunny DNS](#how-dnssec-works-with-bunny-dns)
+  * [Steps to Enable DNSSEC](#steps-to-enable-dnssec)
+  * [Registrar-Specific DNSSEC Setup Guides](#registrar-specific-dnssec-setup-guides)
+  * [Verify DNSSEC deployment](#verify-dnssec-deployment)

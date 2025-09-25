@@ -1,0 +1,31 @@
+---
+title: "Overview"
+description: "Suggest Edits"
+---
+
+Edge Storage is a cloud storage solution provided by bunny.net that automatically replicates your data to multiple regions around the world. It integrates tightly with the bunny.net CDN and was designed to be the fastest performing global storage solution thanks to smart geographical load balancing.
+
+Currently, there are 2 supported ways of uploading files.
+
+# HTTP API
+
+This is the recommended way of uploading content to achieve the best performance, stability, and security. The HTTP API was designed to allow you to easily upload files from your own system through a very simple protocol.
+
+You can check the [API Documentation](/reference/api-overview) for the documentation, code samples and API libraries.
+
+# FTP
+
+Edge Storage also allows you to upload files through the FTP interface protocol. This provides compatibility with most software and programming languages to easily implement storage to your existing service.
+
+For more information about FTP compatibility, please see the [FTP Documentation](/docs/ftp).
+
+<Warning>
+  The FTP protocol is outdated and is not as secure as newer protocols such as HTTP and might be a target of a Man-In-The-Middle attack. We only recommend using FTP in a situation where other upload options are not available.
+</Warning>
+
+***
+
+* [Table of Contents](#)
+
+* * [HTTP API](#http-api)
+  * [FTP](#ftp)

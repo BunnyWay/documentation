@@ -1,0 +1,29 @@
+---
+title: "FTP"
+description: "Suggest Edits"
+---
+
+# Accessing your Edge Storage zone using FTP
+
+Our Edge Storage platform offers direct FTP connectivity into the storage zone, allowing the ease of management of files hosted in the zone.
+
+# Connection settings
+
+Your exact connection details will be defined under the 'FTP & API Access' tab of your storage zone in the Bunny control panel, however our standard connection settings are:
+
+| Hostname             | Username          | Password                                                        | Connection Type | Port |
+| -------------------- | ----------------- | --------------------------------------------------------------- | --------------- | ---- |
+| storage.bunnycdn.com | Storage Zone Name | Automatically generated, provided in the 'FTP & API Access' tab | Passive         | 21   |
+
+<Warning>
+  **ECONNREFUSED - Connection refused by server:** Returned by the FTP server when an invalid port has been entered, please verify you are connecting via port 21.
+
+  **331 Username ok, need password:** This error means that your connection password is incorrect, please verify your password from the 'FTP & API Access' tab of the Storage Zone area of the Bunny control panel before reconnecting.
+</Warning>
+
+***
+
+* [Table of Contents](#)
+
+* * [Accessing your Edge Storage zone using FTP](#accessing-your-edge-storage-zone-using-ftp)
+  * [Connection settings](#connection-settings)

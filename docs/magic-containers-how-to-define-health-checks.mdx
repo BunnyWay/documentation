@@ -1,0 +1,79 @@
+---
+title: "Defining health checks"
+description: "Suggest Edits"
+---
+
+Health checks are essential to ensuring the reliability and availability of your applications running in containers. These checks help determine whether an application is functioning correctly and ready to handle incoming requests. In this documentation, we will walk you through the process of defining health checks for your containerized applications.
+
+# What you'll need
+
+Before you dive in, make sure you have the following prerequisites in place:
+
+* A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+* Ensure you have already set up the container for which you want to configure health checks. See our Quickstart guide if you haven't set up a container yet.
+
+# Accessing health checks
+
+To access health checks for your Magic containers, follow these steps:
+
+1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+
+2. Click **Magic Containers** and locate the container you want to configure health checks.
+
+3. Click on **Container Settings** and click **Edit**.
+
+![](/images/docs/be9b107e79f7332b3f7ff3d1534f8ad5a5ab636fd18bb9a50f8a0eafcf7a311b-image.png)
+
+4. In the **Container Settings** menu, navigate to the **Monitoring** tab.
+
+![](/images/docs/181b5d78e5a4dbd5b657edb2036dce80d603f353d3c4007310e248d0f182554b-image.png)
+
+# Health check types
+
+There are three primary health check types available to you, each serving a unique purpose:
+
+* **Startup**: Verifies if the application has successfully started. Until this check is successful, no incoming requests will be routed to the application.
+* **Readiness**: Ensures the application is fully prepared to handle incoming requests. No requests will be routed to the application until this check is successful. We strongly recommend enabling this check to avoid failed requests.
+* **Liveness**: This check confirms that the application is actively running without problems. 
+
+# Enabling health checks
+
+To define and enable health checks for your containerized application, follow these steps:
+
+1. For each type of health check (**Startup**, **Readiness**, and **Liveness**), simply click the checkbox to enable it. Enabling these checks is essential to benefit from their functionality.
+
+2. From the dropdown under the required field you can select two configuration methods: **HTTP GET** and **TCP**.
+
+![](/images/docs/5a90e819e8620fab55dbc1abd0f534b945b26d8900b76c9ad93cd469b56e4f6c-image.png)
+
+For the **HTTP GET** method, provide the path for the HTTP GET request. The path should be properly formatted.
+
+![](/images/docs/d06706534176fda4c5f4d451b60b0def84a4cb76e082def6e2eda5cd7c632410-image.png)
+
+In the **Port** field specify the port on which your application is running within the container. The provided port should be valid.
+
+The advanced settings allow you to customize it further based on your needs.
+
+For the **TCP** method you only have to specify the port to be used for the TCP health check. This port should correspond to the container where your application is hosted.
+
+![](/images/docs/53acc10a3421d0d09e1f494fc6e5c8faa4dcc7a43d243a0b570bec022bb61349-image.png)
+
+<Info>
+  We strongly recommend enabling at least the Readiness health check. This check helps the platform detect when your application is ready to receive traffic, minimizing the chances of failed requests and ensuring a smoother user experience.
+</Info>
+
+# Need help or encountering issues?
+
+If you encounter any difficulties or have questions while following this Quickstart Guide, our support team is here to assist you. Please don't hesitate to contact us via [support request form](https://bunny.net/contact/) for prompt assistance.
+
+Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
+
+***
+
+* [Table of Contents](#)
+
+* * [What you'll need](#what-youll-need)
+  * [Accessing health checks](#accessing-health-checks)
+  * [Health check types](#health-check-types)
+  * [Enabling health checks](#enabling-health-checks)
+  * [Need help or encountering issues?](#need-help-or-encountering-issues)

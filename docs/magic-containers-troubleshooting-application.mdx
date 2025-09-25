@@ -1,0 +1,38 @@
+---
+title: "Troubleshooting application"
+description: "Suggest Edits"
+---
+
+This page describes how to troubleshoot issues with applications deployed on Magic Containers.
+
+# Checking the application status
+
+The first step is to verify the status of your application. Open the Magic Containers Dashboard and go to the Overview tab. In the top-right corner, you will find the global application status. If your application is experiencing issues, this status will remain in a “Processing” state.
+
+![](/images/docs/250edc547fd82a3b40b06207e505f5c06f066f42e8c233b5517a652903c64e0b-image.png)
+
+This indicates that the platform is attempting to auto-heal the application. However, if there is a problem with the container image or the application fails to start due to failing health probes, it may remain stuck in this state. In such cases, the Overview tab will display relevant information or errors indicating the current deployment status. If errors appear on this screen, the next step is to inspect the detailed status in each region hosting your application.
+
+# Checking region and pod status
+
+If the global application status shows “Processing” or indicates an error, select the specific region you suspect is having issues. This will navigate you to the region details page, where you can view the status of all pods deployed in that region. Look for any pods flagged as “Error” or showing other failure indicators. Selecting the problematic pod will open a side panel where you can view further details, including live logs and error messages. Pods that cannot start or fail health checks are usually labeled with an error message clarifying the reason. Inspect these messages to determine whether the issue is related to the container image, network configuration, environment variables, or a failing health probe. The side panel also provides a live log stream to help identify application-level exceptions as they occur. Note that historical logs are not yet available, so you must monitor logs in real time to capture relevant information.
+
+To get more details, select the affected region to check details about the pod(s) running in that region. You can do this by clicking on the troublesome region. The view will navigate to the region details and display the status of all pods deployed in that region.
+
+Pods with issues will have an error indicating the cause. For further details, click on the pod to open the side panel, where you can view additional information, including detailed logs.
+
+<Info>
+  At this time, we only support live streaming of logs. Historical log access is not yet available.
+</Info>
+
+# Additional support
+
+If you have attempted these troubleshooting steps without resolving your issue, consider redeploying your application with a fresh container image and reviewing your configuration for potential errors. If the issue persists or you suspect a problem within the bunny.net platform, you can reach out to our support team for further assistance.
+
+***
+
+* [Table of Contents](#)
+
+* * [Checking the application status](#checking-the-application-status)
+  * [Checking region and pod status](#checking-region-and-pod-status)
+  * [Additional support](#additional-support)

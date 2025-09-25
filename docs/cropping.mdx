@@ -1,0 +1,127 @@
+---
+title: "Cropping"
+description: "Suggest Edits"
+---
+
+## Crop
+
+***Parameter***: crop     ***Units***: Pixels    ***Format 1***: width,height    ***Format 2***: width,height,x,y
+
+Crop the output image to the given width and height. Two formats are accepted. Format 1 only includes the width and height of the crop. Format 2 also includes the X and Y offsets that determine where the crop should start. Image resizing with the width and height parameters is processed after the crop.
+
+If only width and height are given, the [Crop Gravity](/docs/cropping#crop-gravity) parameter will be used.
+
+<Warning />
+
+<Frame caption="?crop=">
+  <img src="/images/docs/bunny6.jpg" />
+
+  **3500,3500**
+</Frame>
+
+<Frame caption="?crop=">
+  <img src="/images/docs/bunny6.jpg" />
+
+  **3500,3500,250,300**
+</Frame>
+
+<Frame caption="?crop=">
+  <img src="/images/docs/bunny6.jpg" />
+
+  **300,300**
+</Frame>
+
+## Aspect Ratio Crop
+
+***Parameter***: aspect\_ratio    ***Default value***: auto Crop the output image to match the given aspect ratio. The default origin point (gravity) is set to the center of the image.
+
+<Frame caption="?aspect_ratio=">
+  <img src="/images/docs/bunny3.jpg" />
+
+  **2:4**
+</Frame>
+
+<Frame caption="?aspect_ratio=">
+  <img src="/images/docs/bunny3.jpg" />
+
+  **1:1**
+</Frame>
+
+<Frame caption="?aspect_ratio=">
+  <img src="/images/docs/bunny3.jpg" />
+
+  **16:9**
+</Frame>
+
+## Crop Gravity
+
+***Parameter***: crop\_gravity ***Default***: center ***Values***: center, east, north, south, west, northeast, northwest, southeast, southwest
+
+Set the gravity of the crop operation. This is used with Format 1 cropping only and snaps the crop to the selected position.
+
+Original:
+
+![](/images/docs/bunny20.jpg)
+
+<Frame caption="?crop_gravity=">
+  <img src="/images/docs/bunny20.jpg" />
+
+  **northwest**
+</Frame>
+
+<Frame caption="?crop_gravity=">
+  <img src="/images/docs/bunny20.jpg" />
+
+  **northwest**
+</Frame>
+
+<Frame caption="?crop_gravity=">
+  <img src="/images/docs/bunny20.jpg" />
+
+  **southwest**
+</Frame>
+
+<Frame caption="?crop_gravity=">
+  <img src="/images/docs/bunny20.jpg" />
+
+  **south**
+</Frame>
+
+<Frame caption="?crop_gravity=">
+  <img src="/images/docs/bunny20.jpg" />
+
+  **center**
+</Frame>
+
+## Focus crop
+
+***Parameter***: focus\_crop ***Format 1***: width,height,x\_coordinate,y\_coordinate ***Format 2***: width,height,x\_relative,y\_relative
+
+Focus crop is similar to a four-parameter crop function but you define the center of your crop instead of the start of a crop. This ensures that what you are trying to focus on is positioned in the middle of the picture where possible. If the focus is set too close to the borders of the image for a given *width* and *height*, the focus will be moved to ensure the cropped image matches the wanted dimensions.
+
+**x** and **y** can be either absolute values or a relative offset that ranges between 0.0 and 1.0. The optimizer will treat any decimal value as a relative offset.
+
+<Frame caption="Original.">
+  <img src="/images/docs/bunny_in_grass_4.jpg" />
+</Frame>
+
+<Frame caption="?focus_crop=">
+  <img src="/images/docs/bunny_in_grass_4.jpg" />
+
+  **800,600,900,600**
+</Frame>
+
+<Frame caption="?focus_crop=">
+  <img src="/images/docs/bunny_in_grass_4.jpg" />
+
+  **800,600,0.5,0.5**
+</Frame>
+
+***
+
+* [Table of Contents](#)
+
+* * [Crop](#crop)
+  * [Aspect Ratio Crop](#aspect-ratio-crop)
+  * [Crop Gravity](#crop-gravity)
+  * [Focus crop](#focus-crop)

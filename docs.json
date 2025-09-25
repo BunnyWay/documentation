@@ -1,35 +1,285 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Developer hub",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#183d6d",
+    "light": "#183d6d",
+    "dark": "#183d6d"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/a4af100-small-icon.png",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "bunny.net",
             "pages": [
-              "introduction",
-              "quickstart",
-              "development"
+              "docs/getting-started-with-bunnynet",
+              "docs/free-trial-overview"
             ]
           },
           {
-            "group": "Essentials",
+            "group": "CDN",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "docs/cdn-logging",
+              {
+                "group": "Logging",
+                "pages": [
+                  "docs/cdn-logging",
+                  "docs/cdn-logging-api",
+                  "docs/cdn-log-format",
+                  "docs/cdn-permanent-log-storage",
+                  "docs/cdn-log-forwarding"
+                ]
+              },
+              "docs/cdn-token-authentication",
+              "docs/cdn-token-authentication-basic",
+              "docs/edge-rules-variable-expansion"
+            ]
+          },
+          {
+            "group": "Magic Containers",
+            "pages": [
+              "docs/magic-containers-overview",
+              "docs/magic-containers-getting-started",
+              {
+                "group": "Tutorials",
+                "pages": [
+                  "docs/magic-containers-tutorials",
+                  "docs/magic-containers-how-to-deploy-your-app",
+                  "docs/magic-containers-undeploying-your-app",
+                  "docs/magic-containers-how-to-define-health-checks",
+                  "docs/magic-containers-how-to-configure-your-app-using-environment-variables",
+                  "docs/magic-containers-how-to-configure-advanced-features",
+                  "docs/magic-containers-how-to-delete-your-app",
+                  "docs/magic-containers-how-to-monitor-app-activity-and-use",
+                  "docs/magic-containers-how-to-update-an-existing-app",
+                  "docs/magic-containers-how-to-edit-app-configuration",
+                  "docs/magic-containers-how-to-configure-private-container-registry-integration",
+                  "docs/magic-containers-how-to-expose-your-app-to-the-internet"
+                ]
+              },
+              "docs/magic-containers-logs",
+              "docs/magic-containers-global-deployment",
+              "docs/magic-containers-integrating-containers",
+              "docs/magic-containers-autoscaling",
+              "docs/magic-containers-region-provisioning-and-latency-optimization",
+              "docs/magic-containers-health-checks-and-monitoring",
+              "docs/magic-containers-sandboxing-containers",
+              "docs/magic-containers-app-metadata",
+              "docs/magic-containters-rolling-update-process",
+              "docs/magic-containers-troubleshooting-application",
+              "docs/magic-containers-github-action",
+              "docs/magic-containers-list-of-nodes-to-whitelist",
+              "docs/magic-containers-log-forwarding",
+              {
+                "group": "Use cases",
+                "pages": [
+                  "docs/magic-containers-use-cases",
+                  "docs/magic-containers-gaming-as-a-service",
+                  "docs/magic-containers-ai-training-and-inference-with-magic-containers",
+                  "docs/magic-containers-image-optimizer"
+                ]
+              },
+              "docs/magic-containers-limits",
+              "docs/magic-containers-pricing"
+            ]
+          },
+          {
+            "group": "Edge Scripting",
+            "pages": [
+              "docs/edge-scripting-overview",
+              "docs/edge-scripting-quickstart",
+              {
+                "group": "Script examples",
+                "pages": [
+                  "docs/edge-scripting-script-examples",
+                  "docs/script-example-redirect-to-another-domain",
+                  "docs/script-example-send-email",
+                  "docs/script-example-fetch-url",
+                  "docs/script-example-modify-http-headers",
+                  "docs/script-example-return-html",
+                  "docs/script-example-return-json",
+                  "docs/script-example-modify-body",
+                  "docs/access-edge-database-with-turso"
+                ]
+              },
+              {
+                "group": "Script types",
+                "pages": [
+                  "docs/edge-scripting-script-types",
+                  "docs/edge-scripting-standalone",
+                  "docs/edge-scripting-middleware"
+                ]
+              },
+              "docs/edge-scripting-environment-variables-and-secrets",
+              "docs/edge-scripting-deployments",
+              "docs/edge-scripting-statistics-and-logs",
+              "docs/edge-scripting-github-action",
+              "docs/edge-scripting-github-integration",
+              "docs/edge-scripting-limits",
+              "docs/edge-scripting-pricing"
+            ]
+          },
+          {
+            "group": "Edge Storage",
+            "pages": [
+              "docs/edge-storage-overview",
+              "docs/edge-storage-ftp"
+            ]
+          },
+          {
+            "group": "Bunny AI",
+            "pages": [
+              "docs/bunny-ai-image-generation"
+            ]
+          },
+          {
+            "group": "Bunny Optimizer",
+            "pages": [
+              "docs/stream-image-processing",
+              {
+                "group": "Dynamic Image API",
+                "pages": [
+                  "docs/stream-image-processing",
+                  "docs/bunny-optimizer-face-crop",
+                  "docs/resizing",
+                  "docs/cropping",
+                  "docs/luminosity",
+                  "docs/color-manipulation",
+                  "docs/reflections-and-rotations",
+                  "docs/filters",
+                  "docs/quality-format",
+                  "docs/formats"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Stream",
+            "pages": [
+              "docs/stream-overview",
+              {
+                "group": "Overview",
+                "pages": [
+                  "docs/stream-overview",
+                  "docs/stream-quickstart-guide",
+                  "docs/stream-dashboard-overview"
+                ]
+              },
+              "docs/stream-embedding-videos",
+              "docs/adaptive-bitrate-streaming",
+              "docs/playback-control-api",
+              "docs/stream-video-storage-structure",
+              {
+                "group": "Security",
+                "pages": [
+                  "docs/stream-security",
+                  "docs/stream-embed-token-authentication"
+                ]
+              },
+              "docs/stream-webhook",
+              {
+                "group": "MediaCage DRM",
+                "pages": [
+                  "docs/stream-drm",
+                  "docs/mediacage-basic-drm-quickstart",
+                  "docs/mediacage-enterprise-drm-quickstart",
+                  "docs/fps-deployment-package-guide",
+                  "docs/widevine-drm-security-levels",
+                  {
+                    "group": "Player integration",
+                    "pages": [
+                      "docs/integration-methods",
+                      "docs/bitmovin-player-integration",
+                      "docs/widevine-integration",
+                      "docs/fairplay-html5-player-integration",
+                      "docs/shaka-player-integration"
+                    ]
+                  }
+                ]
+              },
+              "docs/multi-audio-support",
+              "docs/premium-encoding",
+              "docs/stream-collections",
+              "docs/stream-upload-video-from-url",
+              "docs/stream-video-specification",
+              "docs/stream-statistics",
+              "docs/stream-pricing"
+            ]
+          },
+          {
+            "group": "Scriptable DNS",
+            "pages": [
+              "docs/getting-started",
+              "docs/query-response-object-types",
+              "docs/scriptable-dns-helper-objects"
+            ]
+          },
+          {
+            "group": "Terraform",
+            "pages": [
+              "docs/terraform-overview",
+              "docs/terraform-quickstart",
+              "docs/importing-stream-library"
+            ]
+          },
+          {
+            "group": "Bunny Shield",
+            "pages": [
+              "docs/bunny-shield-documentation",
+              {
+                "group": "Overview",
+                "pages": [
+                  "docs/shield-overview",
+                  "docs/shield-verified-seo-bots"
+                ]
+              },
+              "docs/shield-quickstart",
+              {
+                "group": "WAF",
+                "pages": [
+                  "docs/shield-waf",
+                  "docs/shield-understanding-rule-engine",
+                  "docs/shield-creating-a-custom-waf-rule"
+                ]
+              },
+              {
+                "group": "Rate limiting",
+                "pages": [
+                  "docs/shield-rate-limiting",
+                  "docs/shield-creating-a-ratelimit-rule"
+                ]
+              },
+              "docs/shield-ddos-mitigation",
+              "docs/bot-detection",
+              "docs/shield-access-lists",
+              "docs/shield-metrics-logging",
+              "docs/shield-cookies"
+            ]
+          },
+          {
+            "group": "DNS",
+            "pages": [
+              "docs/dns-overview",
+              "docs/dns-dnssec"
+            ]
+          },
+          {
+            "group": "Affiliate",
+            "pages": [
+              "docs/best-practices-manual",
+              "docs/frequently-asked-questions",
+              "docs/affiliate-guidelines",
+              "docs/affiliate-competition-rules"
+            ]
+          },
+          {
+            "group": "WordPress",
+            "pages": [
+              "docs/wordpress-plugin-support-policy"
             ]
           }
         ]
@@ -38,64 +288,192 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "API Documentation",
+            "group": "bunny.net API",
             "pages": [
-              "api-reference/introduction"
+              "reference/bunnynet-api-overview",
+              {
+                "group": "DNS Zone",
+                "pages": [
+                  "reference/dnszonepublic_index"
+                ]
+              },
+              {
+                "group": "Countries",
+                "pages": [
+                  "reference/countriespublic_getcountrylist"
+                ]
+              },
+              {
+                "group": "Purge",
+                "pages": [
+                  "reference/purgepublic_indexpost"
+                ]
+              },
+              {
+                "group": "Stream Video Library",
+                "pages": [
+                  "reference/videolibrarypublic_index"
+                ]
+              },
+              {
+                "group": "Pull Zone",
+                "pages": [
+                  "reference/pullzonepublic_index"
+                ]
+              },
+              {
+                "group": "Region",
+                "pages": [
+                  "reference/regionpublic_index"
+                ]
+              },
+              {
+                "group": "Storage Zone",
+                "pages": [
+                  "reference/storagezonepublic_index"
+                ]
+              },
+              {
+                "group": "API Keys",
+                "pages": [
+                  "reference/apikeypublic_listapikeys"
+                ]
+              },
+              {
+                "group": "Statistics",
+                "pages": [
+                  "reference/statisticspublic_index"
+                ]
+              }
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Edge Storage API",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete"
+              "reference/storage-api",
+              "reference/edge-storage-api-limits",
+              {
+                "group": "Manage Files",
+                "pages": [
+                  "reference/get_-storagezonename-path-filename",
+                  "reference/put_-storagezonename-path-filename"
+                ]
+              },
+              "reference/api-limits",
+              {
+                "group": "Browse Files",
+                "pages": [
+                  "reference/get_-storagezonename-path-"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Stream API",
+            "pages": [
+              "reference/stream-api-overview",
+              "reference/tus-resumable-uploads",
+              {
+                "group": "Manage Collections",
+                "pages": [
+                  "reference/collection_getcollection"
+                ]
+              },
+              {
+                "group": "Manage Videos",
+                "pages": [
+                  "reference/video_getvideo"
+                ]
+              },
+              {
+                "group": "OEmbed",
+                "pages": [
+                  "reference/oembed_getoembed"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Edge Scripting API",
+            "pages": [
+              "reference/getedgescriptcodeendpoint_getcode",
+              {
+                "group": "Code",
+                "pages": [
+                  "reference/getedgescriptcodeendpoint_getcode"
+                ]
+              },
+              {
+                "group": "Edge Script",
+                "pages": [
+                  "reference/deleteedgescriptendpoint_delete"
+                ]
+              },
+              {
+                "group": "Variable",
+                "pages": [
+                  "reference/addedgescriptvariableendpoint_addedgescriptvariable"
+                ]
+              },
+              {
+                "group": "Secret",
+                "pages": [
+                  "reference/addedgescriptsecretendpoint_addedgescriptsecret"
+                ]
+              },
+              {
+                "group": "Release",
+                "pages": [
+                  "reference/getedgescriptactivereleaseendpoint_getcurrentlyactivereleaseendpoint"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Bunny Shield API",
+            "pages": [
+              "reference/get_shield-shield-zones",
+              {
+                "group": "Shield Zone",
+                "pages": [
+                  "reference/get_shield-shield-zones"
+                ]
+              },
+              {
+                "group": "WAF",
+                "pages": [
+                  "reference/get_shield-waf-rules"
+                ]
+              },
+              {
+                "group": "DDoS",
+                "pages": [
+                  "reference/get_shield-ddos-enums"
+                ]
+              },
+              {
+                "group": "Rate Limiting",
+                "pages": [
+                  "reference/get_shield-rate-limits-shieldzoneid"
+                ]
+              },
+              {
+                "group": "Metrics",
+                "pages": [
+                  "reference/get_shield-metrics-overview-shieldzoneid"
+                ]
+              },
+              {
+                "group": "Event Logs",
+                "pages": [
+                  "reference/get_shield-event-logs-shieldzoneid-date-continuationtoken"
+                ]
+              }
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
-  }
+  "logo": "/images/649bcfb-small-bunnynet-logo-dark.png"
 }

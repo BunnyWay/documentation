@@ -1,0 +1,62 @@
+---
+title: "Quickstart"
+description: "A guide to get you hopping on Bunny Shield."
+---
+
+[Suggest Edits](/edit/shield-quickstart)
+
+Protecting your web applications from malicious traffic is crucial in today's digital landscape. **Bunny Shield** offers a solution to safeguard your website by filtering out unwanted traffic and providing detailed logs for analysis. This quickstart guide will walk you through the initial setup of a Shield Zone and how to review and adjust your Web Application Firewall (WAF) settings.
+
+# What you’ll need
+
+Before you dive in, make sure you have the following prerequisites in place:
+
+* A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+* An existing Pull Zone you want to protect.
+* Your AccessKey or JWT for API authentication.
+
+# Creating a Shield Zone
+
+To get started, you'll need to create a **Shield Zone**. This is where all your Bunny Shield settings and configurations reside. The Shield Zone is then associated with the Pull Zone you wish to protect.
+
+1. Click on the **Get Started** button.
+
+![](/images/docs/025b6da75c4b14d2da72387fc826a5773bb56130fd757240ecf945afad12ee75-image.png)
+
+2. Select a WAF Profile and click **Next Step**, using a WAF Profile reduces the potential for false positives for your web application.
+
+![](/images/docs/cfaf5d261dd95d5b9f2abf393e952cfbf4d86fa290038af9f39c83e754d85f5d-image.png)
+
+3. Ensure you have choosen a plan that fits your needs, and then click **Confirm**.
+
+![](/images/docs/c48c7fc114cbe8507c8b133bb854d8768ca797463aa3b5400d20027b50c28d98-image.png)
+
+# Reviewing Logs
+
+![](/images/docs/1eef9717f751a67fc291412e5dfba79d74f3b42910802c640487f0c6316d052a-image.png)
+
+After reviewing the Event Logs, if you see any false positives you can update the specific rule to be logging only, or disable it via **WAF** -> **WAF Rules**, as pictured below.
+
+![](/images/docs/11f74b6393fd4702eb251307953fbe8286c6021029c020f5cc4d5e4259b5c395-image.png)
+
+# Need help or encountering issues?
+
+If you encounter any difficulties or have questions while following this Quickstart Guide, our support team is here to assist you. Please don't hesitate to contact us via [support request form](https://bunny.net/contact/) for prompt assistance.
+
+Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
+
+***
+
+What’s Next
+
+* [WAF](/docs/shield-waf)
+* [Rate limiting](/docs/shield-rate-limiting)
+* [DDoS Mitigation](/docs/shield-ddos-mitigation)
+* [Metrics & Logging](/docs/shield-metrics-logging)
+
+* [Table of Contents](#)
+
+* * [What you’ll need](#what-youll-need)
+  * [Creating a Shield Zone](#creating-a-shield-zone)
+  * [Reviewing Logs](#reviewing-logs)
+  * [Need help or encountering issues?](#need-help-or-encountering-issues)

@@ -1,0 +1,116 @@
+---
+title: "Exposing your app to the internet"
+description: "Suggest Edits"
+---
+
+In the ever-evolving landscape of web development and deployment, the manner in which applications are exposed to the internet plays a pivotal role in determining their accessibility, performance, and overall user experience. When deploying your application, you have the option to expose it to the internet using two different methods: **CDN** (Content Delivery Network) or **Anycast**. 
+
+# What you'll need
+
+Before you dive in, make sure you have the following prerequisites in place:
+
+* A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+* Ensure that you have already set up the application you want to configure. See our [quickstart guide](/docs/getting-started-1) if you haven't set up an application yet.
+
+# CDN configuration
+
+A CDN  is a system of distributed servers that work together to deliver web content, such as images, videos, and scripts, to users based on their geographical location. It helps improve website performance, reduce latency, and enhance the overall user experience.
+
+CDN can be used to create an Edge Endpoint through which containers of the application can be accessed. Any container running a process that is serving HTTP(S) traffic can be exposed using CDN.
+
+<Info>
+  For more information about CDN, see our [CDN documentation](https://bunny.net/academy/cdn/what-is-a-cdn-content-delivery-network/is).
+</Info>
+
+## Configuration steps
+
+To expose your app to the internet by using CDN configuration, follow the steps below:
+
+1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+
+2. Navigate to the **Magic Containers** section and select the app you want to modify.
+
+3. Click on **Endpoints** and **Add New Endpoint**.
+
+![](/images/docs/1ef14f4c14be1d252dfecd23dac3a6d6d81394af6f5ee821323f7c8e78203ad2-image.png)
+
+4. Select **CDN** under the type.
+
+![](/images/docs/f0373c65fac9c4ee93c2a5bc2450ab4e31b921e1f89317d7d782099918044a65-image.png)
+
+* You need to name the endpoint (it must have a unique name).
+* Specify the container port for every container.
+
+<Info>
+  It is recommended to have one process running within a container. If multiple processes are running, ensure they operate on different ports.
+</Info>
+
+* Specify whether your application inside the container uses SSL for origin (this feature is only applicable for CDN).
+
+5. Click **Add Endpoint**.
+
+### Sticky session
+
+bunny.net also provides you with the sticky session feature to enhance your application's user experience by ensuring session persistence across multiple requests.
+
+Sticky session is a method used in load-balanced environments to ensure that all requests from a single client are directed to the same server instance where the user's session was initially established. This is crucial for applications that maintain state information across multiple interactions with a user.
+
+The primary advantage of using sticky sessions is the ability to maintain a stateful interaction with the user. This is particularly useful for applications where user actions on the server need to be remembered within the session context.
+
+To enable sticky session, follow the steps below:
+
+1. In the endpoint configuration window select **Sticky Session**.
+
+![](/images/docs/81299b7686d70d6ddb86f019bfcfe9ab80f97bc154949c8ac1cfd1dac4563f1f-image.png)
+
+* You need to choose headers such as X-Forwarded-For or User-Agent, or use cookies like SessionID to maintain session consistency.
+
+2. Click **Add Endpoint**.
+
+Upon the first request, the load balancer assigns the session to a specific server based on the chosen identifier and subsequent requests continue to route to the same server.
+
+# Anycast configuration
+
+Anycast is a network addressing and routing methodology that enables multiple servers to share the same IP address. When a user makes a request, the network routes it to the nearest (in terms of network distance) Anycast node, improving performance and reliability.
+
+The Anycast option will map containers to Anycast IP and expose it on the specified port.
+
+## Configuration Steps
+
+To expose your app to the internet by using Anycast configuration, follow the steps below:
+
+1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+
+2. Navigate to the **Magic Containers** section and select the app you want to modify.
+
+3. Click on **Endpoints** and **Add New Endpoint**.
+
+![](/images/docs/08f7158fa6535905e68b635aca2e223d1818ab25753596466e881f51bbea8ee0-image.png)
+
+4. Select **Anycast** under the type.
+
+![](/images/docs/471a57e384cb41e7cbf6373ad1352046d6307207e105b0c0fe0b710096023f92-image.png)
+
+* You need to name the endpoint (it must have a unique name).
+* Specify the **Container Port** for every container.
+* Define the **Exposed Port**, which is the port on which the application will be available on the Anycast IP.
+* When Anycast is selected, the platform will associate an Anycast IP. Specify the container port within the container and the exposed port to be used in combination with the Anycast IP to expose the application.
+
+5. Click **Add Endpoint**.
+
+# Need help or encountering issues?
+
+If you encounter any difficulties or have questions while following this Quickstart Guide, our support team is here to assist you. Please don't hesitate to contact us via [support request form](https://bunny.net/contact/) for prompt assistance.
+
+Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
+
+***
+
+* [Table of Contents](#)
+
+* * [What you'll need](#what-youll-need)
+  * [CDN configuration](#cdn-configuration)
+    * [Configuration steps](#configuration-steps)
+  * [Anycast configuration](#anycast-configuration)
+    * [Configuration Steps](#configuration-steps-1)
+  * [Need help or encountering issues?](#need-help-or-encountering-issues)

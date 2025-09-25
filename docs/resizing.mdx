@@ -1,0 +1,87 @@
+---
+title: "Resizing"
+description: "Suggest Edits"
+---
+
+## Width
+
+***Parameter***: *width* ***Unit***: *pixels*
+
+Resize the image to match the given width while maintaining the current aspect ratio.
+
+<Frame caption="?width=">
+  <img src="/images/docs/bunny1.jpg" />
+
+  **500**
+</Frame>
+
+<Frame caption="?width=">
+  <img src="/images/docs/bunny1.jpg" />
+
+  **250**
+</Frame>
+
+## Height
+
+***Parameter***: height ***Unit***: *pixels*
+
+Resize the image to match the given height while maintaining the aspect ratio.
+
+<Frame caption="?height=">
+  <img src="/images/docs/bunny2.jpg" />
+
+  **250**
+</Frame>
+
+<Frame caption="?height=">
+  <img src="/images/docs/bunny2.jpg" />
+
+  **150**
+</Frame>
+
+### Width vs height
+
+If both **width** and **height** parameters are defined, the one that produces smaller image while preserving aspect ratio will take effect.
+
+Lets look at the following image. Its dimensions are 500x333.
+
+<Frame caption="Starting image.">
+  <img src="/images/docs/bunny_in_grass.jpg" />
+</Frame>
+
+<Frame caption="?width=&height=">
+  <img src="/images/docs/bunny_in_grass.jpg" />
+
+  **300****250**
+</Frame>
+
+Now we want to apply the following query parameters: *?width=300\&height=250* to it. Lets see what results we get if we apply them separately.
+
+<Frame caption="?width=">
+  <img src="/images/docs/bunny_in_grass.jpg" />
+
+  **300**
+</Frame>
+
+<Frame caption="height=">
+  <img src="/images/docs/bunny_in_grass.jpg" />
+
+  ***250***
+</Frame>
+
+The second image is smaller and that is also the result of *?=width=300\&height=250*.
+
+### Priority
+
+[Crop](/docs/cropping) operations have priority over the *width* or *height* commands. If any crop is defined in the query it will be applied first.
+
+***
+
+* [Table of Contents](#)
+
+* * [Width](#width)
+
+  * [Height](#height)
+
+    * [Width vs height](#width-vs-height)
+    * [Priority](#priority)

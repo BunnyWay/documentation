@@ -1,0 +1,166 @@
+---
+title: "Deploying your app"
+description: "Suggest Edits"
+---
+
+Magic Containers offers three deployment options for your applications: **Magic deployment**, **Single region deployment** and **Advanced deployment** . With Magic deployment, you can deploy your apps globally with minimal effort. The single region deployment option deploys your app to a single region with no default auto-scaling, and advanced deployment option gives you full control over provisioning settings, allowing you to select specific regions for deployment and manage the deployment of your app based on user activity.
+
+# What you'll need
+
+Before you dive in, make sure you have the following prerequisites in place:
+
+* A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+* You should have a private container registry set up for GitHub or Docker. Additionally, you need to integrate this registry with the Magic Containers platform.
+
+# Magic deployment
+
+![](/images/docs/a7425adfd3e165ff54bce0d5b569cd08fb2cafe6ebea61fa9a38fa8d69ec1bcf-Screenshot_2025-05-27_at_11.23.38.png)
+
+**Magic deployment** is the simplest way to get your app up and running. It leverages the power of Magic Containers AI to handle global provisioning efficiently and cost-effectively. Magic Containers AI will automatically analyze your app's requirements, determine the optimal deployment regions, and provision your app globally in just a few clicks. This approach ensures the best possible performance while minimizing costs.
+
+<Info>
+  For a detailed guide on deploying an app using the Magic deployment option, please refer to the [quickstart documentation](/docs/getting-started-1)
+</Info>
+
+# Single region deployment
+
+**Single region deployment** gives you full control over provisioning settings, allowing you to deploy to the closest single region without the worry of any scaling. This is ideal for scenarios where you are wanting fast deployment and no auto-scaling.
+
+To deploy your app using **Single region deployment**, follow the steps below:
+
+1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+
+2. Select **Magic Containers** and click the **Add App** button.
+
+![](/images/docs/c19bb3012eb95af51d13b459983d89e94a1ffd2064bafcea65b44a3925ec2e9e-image.png)
+
+3. Select the **Single region deployment** option, define the name of your app, and click **Next Step**.
+
+![](/images/docs/f05ba05a8cc798498c7dbe489345e62c5c98ce26c0bcd0b548a9afcbe66a01bc-Screenshot_2025-05-27_at_12.50.46.png)
+
+After selecting Single region deployment, the first step is to configure your **App region**. You will be presented with your closest region preselected and a list of all available regions.
+
+![](/images/docs/7c91eefa4bdc3531dba7cb24599ba7ae9c70d97989fa122d5a86eebdb2c66a3f-Screenshot_2025-06-30_at_15.21.40.png)
+
+4. After configuring the **App region** settings, click **Next Step.**
+
+![](/images/docs/6b64dc8cd01863d95de9c06351ec9421fe52f9283dbe14dc06813164d046a82f-Screenshot_2025-06-30_at_15.22.16.png)
+
+5. Next, you will need to add your container, click **Add Container**
+
+![](/images/docs/24b51224d1bbe27f2a261b7adc07434f699871f294faa6bb6e743521060b51b9-Single_region_-_container.png)
+
+If you want your app to be available on the internet, you need to set up edge endpoints:
+
+10. Go to the **Endpoints** tab and click **Add New Endpoint**.
+
+![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
+
+* You need to name the endpoint (it must have a unique name).
+* Decide how you want to expose the app, either using CDN or Anycast.
+* Define the container port, which is the port on which the application is listening inside the container
+* Specify whether your application inside the container uses SSL for origin (only CDN setting).
+
+12. Click **Add endpoint**, and then click **Add Container**.
+13. Review your settings. If everything looks good, click **Next Step**.
+
+![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
+
+14. Click **Confirm and Create**.
+
+![](/images/docs/5729c360c08606e07c12293f8feb22e98394689c830a8068f2fd26675693bcad-image.png)
+
+You will be navigated to the overview screen of your app. The processing button should turn green, indicating that your app is being deployed.
+
+![](/images/docs/94ef88fec4933b4e13cda07cad4689dbfcb852ece64eb52babb602214f530231-image.png)
+
+Congratulations! Your application is now deployed and can be accessed by clicking here:
+
+![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
+
+The provisioner will take your region settings into account and deploy your app accordingly.
+
+# Advanced deployment
+
+![](/images/docs/0b2c9b8e4451f8756fb4c187d3acbc6eb98bc4426b4a549263a156c2d2c8d83d-Advanced_Deployment.png)
+
+**Advanced deployment** gives you full control over provisioning settings, allowing you to customize the deployment regions and react to user activity. This level of customization is ideal for scenarios where you have specific geographical requirements or want to optimize your deployment strategy based on user behavior.
+
+To deploy your app using Custom deployment, follow the steps below:
+
+1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+
+2. Select **Magic Containers** and click the **Add App** button.
+
+![](/images/docs/c19bb3012eb95af51d13b459983d89e94a1ffd2064bafcea65b44a3925ec2e9e-image.png)
+
+3. Select the **Advanced deployment** option, define the name of your app, and click **Next Step**.
+
+![](/images/docs/98705a609aca2581e6d48dc9bd560193d2a128da47679f48a154a9355769a8fd-Screenshot_2025-05-27_at_11.27.18.png)
+
+After selecting advanced deployment, the first step is to configure **Region Settings**. You will be presented with a list of all available regions. For each region, you can set whether it is a base region or a standard region:
+
+* Base region: Base regions are those where your app will always be deployed. You must select at least one base region and there is no maximum limit.
+* Enabled region: The provisioning system will actively monitor user locations and behavior. If it identifies active users in a specific region, it will dynamically deploy the app to accomodate the user traffic. Conversely, if there is no user activity in a region, the app will not be deployed in that area.
+
+![](/images/docs/f3476bf7b00a1dc409c5125c37ed65b90d1f255b6099a9a119944ea9833580aa-Screenshot_2025-06-30_at_15.58.52.png)
+
+Based on your settings, the provisioner will react to user activity as follows:
+
+* If the **Enabled Regions** and **Base Regions** are equal, the provisioner will use Static Provisioning. In this mode, the regions deployed over time will remain the same.
+* If the sets are different, the provisioner will use **Auto Provisioning**. Regions are chosen based on end-user activity. If users are active in a region, the app will be deployed there. If there are no active users in a region, the app won't be deployed.
+
+4. After configuring the region settings, click **Next Step.**
+5. Set the minimum and maximum number of instances (maximum is 10), and click **Add New Container**.
+
+![](/images/docs/d348d268a258d52cc4b66ff09458184bdebd3ee196e0edc1a590d952246ea39a-image.png)
+
+6. Select the provisioning type.
+
+![](/images/docs/064da8f98d9fe1db4a596eda7e97a4217831873772c3b2fa2ca9f0156720a29e-image.png)
+
+If you want your app to be available on the internet, you need to set up edge endpoints:
+
+10. Go to the **Endpoints** tab and click **Add New Endpoint**.
+
+![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
+
+* You need to name the endpoint (it must have a unique name).
+* Decide how you want to expose the app, either using CDN or Anycast.
+* Define the container port, which is the port on which the application is listening inside the container
+* Specify whether your application inside the container uses SSL for origin (only CDN setting).
+
+12. Click **Add endpoint**, and then click **Add Container**.
+13. Review your settings. If everything looks good, click **Next Step**.
+
+![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
+
+14. Click **Confirm and Create**.
+
+![](/images/docs/5729c360c08606e07c12293f8feb22e98394689c830a8068f2fd26675693bcad-image.png)
+
+You will be navigated to the overview screen of your app. The processing button should turn green, indicating that your app is being deployed.
+
+![](/images/docs/94ef88fec4933b4e13cda07cad4689dbfcb852ece64eb52babb602214f530231-image.png)
+
+Congratulations! Your application is now deployed and can be accessed by clicking here:
+
+![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
+
+The provisioner will take your region settings into account and deploy your app accordingly. With the custom settings, you have the flexibility to tailor your app's deployment strategy to your specific needs, ensuring that it aligns with your user base and geographical requirements.
+
+# Need help or encountering issues?
+
+If you encounter any difficulties or have questions while following this Quickstart Guide, our support team is here to assist you. Please don't hesitate to contact us via [support request form](https://bunny.net/contact/) for prompt assistance.
+
+Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
+
+***
+
+* [Table of Contents](#)
+
+* * [What you'll need](#what-youll-need)
+  * [Magic deployment](#magic-deployment)
+  * [Single region deployment](#single-region-deployment)
+  * [Advanced deployment](#advanced-deployment)
+  * [Need help or encountering issues?](#need-help-or-encountering-issues)

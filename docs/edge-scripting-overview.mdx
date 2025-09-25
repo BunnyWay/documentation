@@ -1,0 +1,42 @@
+---
+title: "Overview"
+description: "Suggest Edits"
+---
+
+**Edge Scripting** represents a groundbreaking approach to software development, enabling scripts to run on the Content Delivery Network (CDN). This strategy places the code execution as close as possible to the user, significantly enhancing responsiveness and speed. By harnessing the power of Edge Scripting, developers can create and deploy applications directly on the edge of the network, leveraging the extensive global infrastructure of CDNs to deliver content and applications swiftly and efficiently.
+
+Our Edge Scripting engine is built upon the [Deno](https://deno.com/). This foundation enables us to create a Rust-based runtime for a v8 isolate, combining the safety and performance of Rust with the flexibility of JavaScript and TypeScript. We build on existing rich set of Deno Web APIs to embrace interoperability of web applications code. We are also expanding support for Node modules to make transition from Node-based applications as seamless as possible. This approach allows you to reuse a significant amount of proven code and provides a familiar environment for developers accustomed to Node and Deno.
+
+Scripts run inside V8 isolates (the same engine that powers Google Chrome) ensuring efficient and secure execution of your code. Edge Scripting offers a serverless platform for deploying JavaScript code, meaning you don't have to manage servers or infrastructure; simply deploy your code, and we handle the rest.
+
+# Key Features
+
+Proximity-Based Execution: Edge Scripts run on CDN nodes, minimizing latency by executing processes closer to the end user.
+
+* **Simple, Fast Development Environment**: A streamlined coding environment where users can quickly write, test, and deploy scripts.
+* **Extensibility**: Users can modify and extend the basic CDN functionality, tailoring it to specific needs or scenarios.
+* **Versatile Use Cases**: From implementing APIs and contact forms to AI-driven image manipulation, Edge Scripts cater to a broad spectrum of applications.
+
+# How It Works
+
+Traditionally, CDNs are used to cache content from a server and distribute it across a network of servers globally. This setup enhances the delivery speed of content by serving it from a location nearest to the user. However, this model primarily benefits static content delivery, leaving dynamic content and applications needing more flexibility and responsiveness.
+
+Edge Scripting transforms this model by introducing the ability to run code on the edge. This capability allows for dynamic content generation, real-time application logic execution, and personalized content delivery based on user-specific criteria such as time or geographical location. For example, a script could direct requests to different servers based on the time of day or the user's country of origin.
+
+# Applications and Use Cases
+
+Edge Scripting open up a world of possibilities for developers and businesses. By moving application logic to the edge, you can create highly responsive and dynamic user experiences. Practical applications include:
+
+* **Dynamic Content Delivery**: Customizing content delivery based on user-specific factors, such as location or time.
+* **API Implementation**: Creating and deploying APIs on the edge for faster, more efficient data retrieval and processing.
+* **Contact Forms and User Interaction**: Handling user input and responses directly at the edge, reducing the need for round-trip data transmission to central servers.
+
+Edge Scripting revolutionizes how we think about software development and content delivery. By leveraging the distributed nature of CDN nodes, developers can create more responsive, efficient, and personalized applications and websites. This innovative approach not only improves performance but also offers unparalleled flexibility in designing and deploying web solutions. Whether for basic website enhancements or complex application logic, Edge Scripts provide the tools to push the boundaries of what's possible on the web.
+
+***
+
+* [Table of Contents](#)
+
+* * [Key Features](#key-features)
+  * [How It Works](#how-it-works)
+  * [Applications and Use Cases](#applications-and-use-cases)

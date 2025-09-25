@@ -1,0 +1,43 @@
+---
+title: "Webhooks"
+description: "Suggest Edits"
+---
+
+Bunny Stream allows you to configure a webhook URL. Our system will automatically send notifications back to this URL once a video status changes. This allows you to track the updates and progress of the video processing cycles on your side.
+
+# Callback
+
+When the video state changes, a JSON callback will be sent back to your URL as a POST request. Below is an example object that will be sent.
+
+<CodeGroup>
+  ```json Example Callback Object
+  {
+  	"VideoLibraryId": 133,
+  	"VideoGuid": "657bb740-a71b-4529-a012-528021c31a92",
+  	"Status": 3
+  }
+  ```
+</CodeGroup>
+
+# Status list
+
+Below are the possible status codes sent with the webhook:
+
+* 0 - **Queued**: The video has been queued for encoding.
+* 1 - **Processing**: The video has begun processing the preview and format details.
+* 2 - **Encoding**: The video is encoding.
+* 3 - **Finished**: The video encoding has finished and the video is fully available.
+* 4 - **Resolution finished**: The encoder has finished processing one of the resolutions. The first request also signals that the video is now playable.
+* 5 - **Failed**: The video encoding failed. The video has finished processing.
+* 6 - **PresignedUploadStarted** : A pre-signed upload has been initiated.
+* 7 - **PresignedUploadFinished** : A pre-signed upload has been completed.
+* 8 - **PresignedUploadFailed** : A pre-signed upload has failed.
+* 9 - **CaptionsGenerated** : Automatic captions were generated.
+* 10 - **TitleOrDescriptionGenerated** : Automatic generation of title or description has been completed.
+
+***
+
+* [Table of Contents](#)
+
+* * [Callback](#callback)
+  * [Status list](#status-list)

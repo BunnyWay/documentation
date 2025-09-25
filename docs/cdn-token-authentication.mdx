@@ -1,0 +1,192 @@
+---
+title: "Token authentication"
+description: "Suggest Edits"
+---
+
+Bunny CDN provides a powerful token authentication system to strictly control who, where and for how long can access your content.
+
+This guide contains the documentation on how to enable, configure and generate the tokens to securely access your content. If you are looking for our older, but much more simple token authentication system, please check older token authentication guide instead. Both can be used interchangeably and our system will automatically detect and validate both token types.
+
+# What is token authentication
+
+If enabled, token authentication will block all requests to your URLs unless a valid token is passed with the request. The token is then compared on our server and we check if both values match. If the hash we generate matches the one sent by the request, then the request is accepted, otherwise, a 403 page is returned.
+
+The token can then either be put in as a query parameter or used as part of the URL path. The path version is useful for situations such as video delivery. Here are two examples of signed URLs:
+
+```
+https://test.b-cdn.net/my-partial/url/video.mp4?token=aiDhHXZGHidbDZZqIY14z1eHhhbZvMlzh_7u9cEIdfI&token_path=%2Fmy-partial%2Furl%2F&expires=1598024587
+https://test.b-cdn.net/bcdn_token=aiDhHXZGHidbDZZqIY14z1eHhhbZvMlzh_7u9cEIdfI&expires=1598024587&token_path=%2Fmy-partial%2Furl%2F/my-partial/url/video.mp4
+```
+
+<Warning>
+  IPv6 is automatically disabled when token authentication is in use. This is designed to ensure that users always authenticate correctly, such as when an origin may not support a forwarded IPv6 address. User's will be automatically routed to a CDN IPv4 address with this enabled.
+</Warning>
+
+# How to sign an URL
+
+This section contains instructions on how to generate and format the unique tokens and use those to sign an URL. We also provide [code examples and helper functions](https://github.com/BunnyWay/BunnyCDN.TokenAuthentication) for popular programming languages that allow you to sign an URL with a simple function call.
+
+The signing process consists of the following parameters that need to be added to the URL:
+
+* **token (required)**
+* **expires (required)**
+* token\_path (optional)
+* token\_countries (optional)
+* token\_countries\_blocked (optional)
+* limit (optional)
+
+### token
+
+The token parameter is the main key in signing the URL. It represents a Base64 encoded SHA256 hash based on the URL, expiration time and other parameters. We will show how to generate the token in the next section.
+
+### expires
+
+The expires parameter is the second main parameter that must always be included. It allows you to control exactly for how long the signed URL is valid. It is a UNIX timestamp based time representation. Any request after this timestamp will be rejected.
+
+For example, a token expiring on 08/21/2020 @ 3:43 pm (UTC) would use:
+
+<CodeGroup>
+  ```http http
+  &expires=1598024587
+  ```
+</CodeGroup>
+
+#### token\_path (optional)
+
+By default, the full request URL is used for signing a request. The token\_path parameter allows you to specify a partial path that will be used instead of the full URL.
+
+Let's use this URL for an example:
+
+<CodeGroup>
+  ```http http
+  https://test.b-cdn.net/my-partial/url/playlist.m3u8
+  ```
+</CodeGroup>
+
+By default, the full path would need to be used when generating the token, and only this specific path would be allowed to be accessed with the specific token:
+
+<CodeGroup>
+  ```http http
+  /my-partial/url/playlist.m3u8
+  ```
+</CodeGroup>
+
+However, by passing the token\_path for the following parameter:
+
+<CodeGroup>
+  ```http http
+  &token_path=%2Fmy-partial%2Furl%2F
+  ```
+</CodeGroup>
+
+That would create a token that has access to any file within that path, for example:
+
+<CodeGroup>
+  ```http http
+  https://test.b-cdn.net/my-partial/url/playlist.m3u8
+  https://test.b-cdn.net/my-partial/url/file1.ts
+  https://test.b-cdn.net/my-partial/url/file2.ts
+  https://test.b-cdn.net/my-partial/url/file3.ts
+  ```
+</CodeGroup>
+
+Would all be covered by the token. This is useful for video delivery.
+
+#### token\_countries (optional)
+
+The token\_countries allows you to specify a list of countries that will have access to the URL. Any request outside of these countries will be rejected. It is a comma-separated list, for example:
+
+<CodeGroup>
+  ```http http
+  &token_countries=SI,GB
+  ```
+</CodeGroup>
+
+### token\_countries\_blocked (optional)
+
+The token\_countries\_blocked is similar to token\_countries. It allows you to specify a list of countries that will not have access to the URL. Any request from one of the listed countries will be rejected. It is a comma-separated list, for example:
+
+<CodeGroup>
+  ```http http
+  &token_countries_blocked=SI,GB
+  ```
+</CodeGroup>
+
+### limit (optional)
+
+If set, this header will configure the download speed limit of the request in kilobytes per second (kB/s). It allows you to dynamically control the delivery speed using signed token requests (for example slow downloads for unpaid users, or faster downloads for paid users)
+
+<CodeGroup>
+  ```http http
+  &limit=1024
+  ```
+</CodeGroup>
+
+## Generating the token
+
+Now that we understand all the parameters, we can proceed to actually generate the token. The token is a Base64 encoded raw SHA256 hash based on the signed URL, expiration time, and any extra parameters. To generate the token, you can use the following algorithm:
+
+<CodeGroup>
+  ```c c
+  Base64Encode(
+      SHA256_RAW(token_security_key + signed_url + expiration + (optional)remote_ip + (optional)encoded_query_parameters)
+  )
+  ```
+</CodeGroup>
+
+When generating the token, all of the URL query parameters must also be appended at the end of the hashable string in an ascending order except for the "token" and "expires" parameter which should not be included. These **must NOT be URL encoded**, but they need to be in the form-encoded POST format without the starting "?" character, for example:
+
+<CodeGroup>
+  ```http http
+  "param1=something&param2=something&param3=something"
+  ```
+</CodeGroup>
+
+An example hashable base for a SHA256 token would then be:
+
+<CodeGroup>
+  ```http http
+  security-key/my-directory/12345192.168.1.1token_countries=SI,GB&width=500&token_path=/my-directory/
+  ```
+</CodeGroup>
+
+To properly format the token you have to then replace the following characters in the resulting Base64 string: '\n' with '', '+' with '-', '/' with '\_' and '=' with ''.
+
+## Putting it all together
+
+Once we have the token and all the parameters, it's time to put it all together. There are currently two ways of signing the URL.
+
+### Query parameter based tokens
+
+The easiest way is to append the token to the request using query parameters, for example:
+
+<CodeGroup>
+  ```http http
+  https://test.b-cdn.net/my-partial/url/video.mp4?token=aiDhHXZGHidbDZZqIY14z1eHhhbZvMlzh_7u9cEIdfI&token_path=%2Fmy-partial%2Furl%2F&expires=1598024587
+  ```
+</CodeGroup>
+
+### URL path based tokens
+
+The second option are the URL path based tokens that are useful for video delivery because any sub-request to the same directory of the URL will already have the token included.
+
+<CodeGroup>
+  ```http http
+  https://test.b-cdn.net/bcdn_token=aiDhHXZGHidbDZZqIY14z1eHhhbZvMlzh_7u9cEIdfI&expires=1598024587&token_path=%2Fmy-partial%2Furl%2F/my-partial/url/video.mp4
+  ```
+</CodeGroup>
+
+Note that when generating the token, the token\_path parameter does not need to include the signature path.
+
+If it all went well, you should now have secure URLs that are only accessible through the signed URLs. If you experience any difficulties generating the tokens, please feel free to get in touch and we'll be happy to help with the implementation.
+
+***
+
+* [Table of Contents](#)
+
+* * [What is token authentication](#what-is-token-authentication)
+
+  * [How to sign an URL](#how-to-sign-an-url)
+
+    * [Generating the token](#generating-the-token)
+    * [Putting it all together](#putting-it-all-together)

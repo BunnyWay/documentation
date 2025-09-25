@@ -1,0 +1,111 @@
+---
+title: "GitHub integration"
+description: "Suggest Edits"
+---
+
+The GitHub integration allows you to manage your Edge Script code within a GitHub repository. This integration simplifies version control and enables you to use Github's continuous integration/continuous deployment (CI/CD) workflows with your script code. It facilitates tasks such as building, testing, code optimization, minification, security scanning, and any other processes you can implement using GitHub Actions. To learn more about GitHub Actions, see [the official documentation](https://docs.github.com/en/actions) or explore actions in the [GitHub Marketplace](https://github.com/marketplace?type=actions).
+
+GitHub’s CI/CD capabilities enable seamless automation for script deployment. For more complex applications requiring multiple files or prebuilt resources, this setup allows you to manage all necessary components directly in GitHub, making it ideal for developing robust applications.
+
+# What you'll need
+
+Before you dive in, make sure you have the following prerequisites in place:
+
+* A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+* A GitHub account.
+
+With these prerequisites in place, you're ready to start using GitHub integration. Follow the steps below to create, customize, and manage your scripts using GitHub.
+
+# Creating a new repository
+
+If you’re starting a new project and want to use a bunny.net template, creating a new repository is the way to go. GitHub integration allows you to manage and deploy your Edge Scripts directly from your GitHub repository. Follow the steps below to set up and deploy a new repository using GitHub integration:
+
+1. Login to the bunny.net dashboard.
+2. Navigate to **Edge Platform** > **Scripting** and click **Add Script**.
+
+![](/images/docs/67f0ac06eb60d9f2e7bcfe49f7fe689a3bd45155a4fcb431923172c12a82e122-image.png)
+
+3. This step of script creation allows you to choose between managing the code with Github and managing it in the dashboard. The **Deploy and edit on Bunny.net** option lets you start coding directly in the browser and is designed for simple scripts. Select **Deploy and edit with GitHub** to manage the code in a GitHub repository.
+
+![](/images/docs/4c633aa635c71ca5a4587cde6c284e77664ec14c081a643591c078701c3fc225-image.png)
+
+4. In the second step of script creation, fill in the **Script Name**.
+
+![](/images/docs/fce102df7db0237f53c0b7c8ddbcd3683650997efa76b691e6c771bf4e551624-image.png)
+
+5. Select between Standalone or Middleware script type. For more information, see our [Script Types documentation](/docs/edge-scripting-script-types).
+
+![](/images/docs/a1f24d73bb4d2b69a77282030761e5bb36419ee969bc94afaf1da90f8a73a5d8-image.png)
+
+6. Use the Repository section to connect the script with the GitHub repository. If you haven’t connected your GitHub account yet, click Connect GitHub Account.
+
+![](/images/docs/9875891ba431d9019d9936c6e322e6d7191649942029810dbcc2e8b878f3e930-image.png)
+
+7. You will be redirected to the GitHub application permission page, where you can select the repositories that bunny.net can access.
+
+![](/images/docs/b49ea810738a3ba548ff9c935f58dbf764a18080ca3b9ac1ea4192761717353c-image.png)
+
+8. Select **New Repository** to create a preconfigured repository based on a template.
+
+![](/images/docs/883188c29dd1e7b951edc19e6f895b680b2af36cfc18b8360e02e1a3fcbad366-image.png)
+
+9. Choose a script template. A number of templates are provided to match the scenario you want to implement. These templates offer foundational setups tailored to different scenarios, simplifying the initial development process. For demo purposes, you can choose the **Default empty script**.
+
+![](/images/docs/3401a39467d544003dd71968803d98811c20e47c3294ce25ff59311f7061c32b-image.png)
+
+10. Click **Add Script**.
+
+A new GitHub repository will be created using the selected template. A workflow pipeline to deploy the build output to bunny.net scripting will also be created and executed. This process may take a few seconds, and you can monitor its progress within the repository's Actions tab.
+
+![](/images/docs/d6c147e33b08e9550748abad4cd2346079c4813f67b22e3bd4d39e83e7a5de4a-image.png)
+
+11. Your script is now live and ready to be invoked.
+
+<Info>
+  The provided templates are starting points for implementing your own application. Use the documentation available within the GitHub repository to learn how to extend it with your application logic, building custom functionality and features as needed.
+</Info>
+
+Once your script is live, you can view detailed insights and manage its deployment directly from the bunny.net dashboard.
+
+You can monitor the number of requests your script has served in real time, providing a clear overview of its usage and reach.
+
+The dashboard also displays detailed information about your production deployment, including timestamps, version history, and deployment status. Additionally, you can analyze execution logs to troubleshoot issues, optimize performance, and understand how your script behaves under various conditions.
+
+The interface allows you to manage configurations, adjust settings, update scripts, and redeploy changes seamlessly. For visual clarity, refer to the screenshot below, which highlights the key sections of the dashboard.
+
+![](/images/docs/7980c971aabe77ef7d11c6409da195b9be79d89d6608fefe87b5150356dbd708-image.png)
+
+# Using an existing repository
+
+This option is suitable if you already have a project in JavaScript or TypeScript that is ready to be deployed to Edge Scripting. The repository should be compatible with bunny.net's Edge Scripting, ideally using frameworks like Deno or Node.js. Your existing codebase should also be structured to integrate with the Edge Scripting deployment GitHub action. To integrate with an existing repository, the process is similar to setting up a new repository. **Follow the steps outlined in the previous guide (Creating a new repository) up to Step 7**. Once you have completed those steps, continue with the instructions below to finalize the integration with your existing repository:
+
+1. Select **Existing Repository**.
+2. Choose a repository from the list of your existing GitHub repositories. If the repository is not listed, ensure that the bunny.net GitHub app has the appropriate permissions.
+
+![](/images/docs/afca99d115e11345ebdca25c6bf09f96672f5a2c47f771c7b9a261ab16189904-image.png)
+
+3. Next, select a project preset based on the framework used in your project. If needed, adjust the **install command, build command**, and **entry file parameters**. A deployment workflow file will be automatically created in your existing repository based on these parameters. If you prefer to create the deployment workflow file yourself, select the **I will create the GitHub workflow file myself** option.
+4. Your script is now live and ready to be invoked.
+
+Once your script is live, you can view detailed insights and manage its deployment directly from the bunny.net dashboard.
+
+![](/images/docs/29a3192d50245eb62811b2a91819dd80e5fd53fc7abb2d0d24b62558cbb8dce8-image.png)
+
+You are able to monitor the number of requests your script has served in real time, providing a clear overview of its usage and reach.
+
+The dashboard also displays detailed information about your production deployment, including timestamps, version history, and deployment status. Additionally, you can analyze execution logs to troubleshoot issues, optimize performance, and understand how your script behaves under various conditions.
+
+The interface allows you to manage configurations, adjust settings, update scripts, and redeploy changes seamlessly. For visual clarity, refer to the screenshot below, which highlights the key sections of the dashboard.
+
+# Need help or encountered issues?
+
+If you encounter any difficulties or have questions while following this guide, our support team is here to assist you. Please don't hesitate to contact us via the [support request form](https://bunny.net/contact/) for prompt assistance. Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
+
+***
+
+* [Table of Contents](#)
+
+* * [What you'll need](#what-youll-need)
+  * [Creating a new repository](#creating-a-new-repository)
+  * [Using an existing repository](#using-an-existing-repository)
+  * [Need help or encountered issues?](#need-help-or-encountered-issues)

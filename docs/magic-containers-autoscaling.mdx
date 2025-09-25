@@ -1,0 +1,39 @@
+---
+title: "Autoscaling"
+description: "Suggest Edits"
+---
+
+**Autoscaling** is a powerful feature in Magic Containers that allows you to automatically adjust the number of replicas running in each region based on the CPU usage of your containers. This ensures optimal resource utilization and responsiveness for your applications. 
+
+# How autoscaling works
+
+Magic Containers employ a reinforcement learning-based autoscaling mechanism that continuously monitors the CPU usage of your containers. The goal is to maintain CPU usage within an optimal threshold span (optimal CPU usage span). Here's how it works:
+
+* **Optimal threshold**: The autoscaler sets an optimal threshold span for CPU usage.
+* **Downscaling**: If the CPU usage falls below the minimal threshold value, the autoscaler will initiate downscaling. This means it will reduce the number of replicas in that region, as fewer replicas are needed when the CPU usage is lower.
+* **Upscaling**: Conversely, if the CPU usage exceeds the maximum threshold value, the autoscaler will initiate upscaling. This involves adding replicas to bring the CPU usage closer to the optimal threshold.
+
+# Configuring autoscaling
+
+<Info>
+  Autoscaling limits can be updated or changed even after the application is deployed.
+</Info>
+
+To configure autoscaling for your Magic Containers, follow these steps:
+
+1. Log in to your bunny.net account.
+2. Navigate to the Magic Containers section and select the app from the dropdown menu that you want to modify.
+3. Click Regions and Scaling.
+4. Here you can configure the maximum and minimum number of running replicas per region (the same setting applies to all the regions).
+
+**Autoscaling** in Magic Containers allows you to set minimum and maximum limits for the number of replicas that can run in each region. It's important to note that these limits apply uniformly across all regions associated with your container:
+
+* **Minimum replicas**: Specify the minimum number of replicas that should be running in each region. Autoscaling will not downscale below this limit.
+* **Maximum replicas**: Set the maximum number of replicas that can run in each region. Autoscaling will not upscale beyond this limit (maximum is 10, however custom limit can be agreed through support request).
+
+***
+
+* [Table of Contents](#)
+
+* * [How autoscaling works](#how-autoscaling-works)
+  * [Configuring autoscaling](#configuring-autoscaling)

@@ -1,0 +1,69 @@
+---
+title: "WAF"
+description: "Suggest Edits"
+---
+
+Bunny Shield's WAF serves as a protective barrier for your web applications by filtering, monitoring, and blocking HTTP traffic to and from your services. It is designed to shield your websites from common security threats and vulnerabilities without disrupting the experience of legitimate users.
+
+## Key Features
+
+* **Automatic Threat Detection**: Bunny Shield's WAF automatically identifies and blocks prevalent attacks such as SQL injection, cross-site scripting (XSS), and cross-site request forgery (CSRF). By detecting malicious patterns in incoming requests, it prevents attackers from exploiting vulnerabilities in your application.
+* **Customizable Security Rules**: The WAF allows you to tailor security measures to your specific needs by configuring custom security rules. This flexibility enables you to address unique threats pertinent to your application, ensuring a higher level of protection.
+* **Real-Time Monitoring**: With real-time logs and security events, you gain complete visibility into your application's security status. Monitoring blocked and allowed traffic helps you stay informed about potential threats and respond promptly to any suspicious activities.
+* **Flexible API**: Bunny Shield provides a RESTful API that lets you manage your WAF configurations programmatically. This feature enables seamless integration with your existing workflows and automation tools, allowing for efficient and consistent security management.
+* **Low Latency Protection**: Optimized for speed, Bunny Shield's WAF ensures that security measures do not introduce delays to user requests. By maintaining low latency, it preserves a smooth and responsive user experience while keeping your application secure.
+
+## WAF Rules and Policies
+
+### Understanding Predefined Rules
+
+Bunny Shield’s WAF comes with a set of predefined rules that cover most common security vulnerabilities, including:
+
+* **SQL Injection Protection**: Detects and blocks SQL injection attempts in query parameters and forms.
+* **XSS (Cross-Site Scripting)**: Identifies and prevents attempts to execute JavaScript or HTML in user-generated content.
+* **Remote File Inclusion (RFI)**: Blocks attempts to include files from remote servers in your web application.
+* **OWASP Top 10**: We protect against all current known OWASP threats.
+
+These rules are regularly updated to stay ahead of emerging threats, ensuring your application remains protected against the latest vulnerabilities..
+
+## Configuring via API
+
+You can utilize the Bunny Shield API to automate WAF configurations or integrate them into your continuous integration and continuous deployment (CI/CD) pipelines. This capability allows you to manage your security settings efficiently and consistently across different environments.
+
+You can access the full API reference documentation [here](https://api.bunny.net/shield/docs/index.html).
+
+## Monitoring and Logging
+
+WAF logs are essential for gaining insights into the traffic patterns and potential threats targeting your application. By analyzing these logs, you can identify unusual activity, monitor the effectiveness of your security measures, and make informed decisions about updating your rules.
+
+You can access detailed logs through the WAF Logging API by sending a GET request to the following endpoint:
+
+GET [https://api.bunny.net/shield/event-logs/\{\{shieldZoneId}}](https://api.bunny.net/shield/event-logs/%7B%7BshieldZoneId%7D%7D)
+
+Replace `{{shieldZoneId}}` with your actual Shield Zone ID. This will provide you with comprehensive logs of blocked and allowed traffic, which you can use for further analysis.
+
+## Best Practices
+
+To maximize the effectiveness of Bunny Shield's WAF, consider the following best practices:
+
+* **Use Predefined Rules**: Begin by enabling the predefined rules provided by Bunny Shield to cover a broad spectrum of common threats effectively. These rules are designed to protect against known vulnerabilities and are regularly updated.
+* **Monitor and Review Logs**: Regularly checking your WAF logs helps you stay informed about potential threats and unusual activity. By monitoring these logs, you can identify new threat patterns and adjust your security measures accordingly.
+* **Regularly Update Rules**: Cyber threats evolve rapidly. Keeping your custom rules up-to-date allows you to adapt to new vulnerabilities and attack vectors, ensuring ongoing protection for your application.
+
+***
+
+***
+
+What’s Next
+
+* [Understanding Rule Engine](/docs/shield-understanding-rule-engine)
+* [Creating a custom WAF rule](/docs/shield-creating-a-custom-waf-rule)
+
+* [Table of Contents](#)
+
+* * [Key Features](#key-features)
+  * [WAF Rules and Policies](#waf-rules-and-policies)
+    * [Understanding Predefined Rules](#understanding-predefined-rules)
+  * [Configuring via API](#configuring-via-api)
+  * [Monitoring and Logging](#monitoring-and-logging)
+  * [Best Practices](#best-practices)

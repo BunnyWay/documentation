@@ -1,0 +1,57 @@
+---
+title: "Verified SEO Bots"
+description: "Suggest Edits"
+---
+
+Bunny Shield automatically recognizes and allows legitimate SEO and social media crawlers to pass through all mitigation layers and challenges. These crawlers are critical for search indexing, link previews, and content sharing, and ensuring their uninterrupted access helps your site remain discoverable and accessible.
+
+To prevent abuse, Bunny Shield verifies the authenticity of every bot request before allowing it through.
+
+## Verification Process
+
+Not all traffic claiming to be a search engine bot is genuine. Many malicious actors spoof user agents to bypass protections. To solve this, Bunny Shield verifies the authenticity of SEO bots using reverse DNS lookups (PTR records):
+
+1. The bot’s IP address is resolved to its PTR hostname.
+2. The hostname is checked against our whitelist of trusted domains.
+3. If the hostname matches, Bunny Shield confirms the authenticity by performing a forward DNS lookup to ensure the hostname resolves back to the same IP range.
+
+Only when these checks pass is the bot classified as legitimate and allowed through.
+
+## Supported Verified Bots
+
+The following crawlers are verified and allowed across all Bunny Shield mitigation methods and challenges:
+
+* **Googlebot**: `.googlebot.com`
+* **Google-InspectionTool**: `.google.com`
+* **Yahoo! Slurp**: `.crawl.yahoo.net`
+* **Bingbot (Microsoft)**: `.search.msn.com`
+* **Yandex**: `.yandex.ru`, `.yndx.net`
+* **Baiduspider**: `.crawl.baidu.com`
+* **Facebookexternalhit**: `.facebook.com`
+* **Twitterbot**: `.twitter.com`
+* **LinkedInBot**: `.linkedin.com`
+* **Pinterest**: `.pinterest.com`
+* **Applebot**: `.apple.com`
+* **WhatsApp**: `.whatsapp.net`
+* **Tumblr**: `.tumblr.com`
+* **SkypeUriPreview**: `.skype.com`
+* **Discordbot**: `.discordapp.com`
+* **TelegramBot**: `.telegram.org`
+* **MojeekBot**: `.mojeek.com`
+* **QwantBot**: `.qwant.com`
+
+## Why Verification Matters
+
+* **Prevents abuse**: Many malicious crawlers disguise themselves with fake user-agent strings. PTR verification ensures that only real search and social bots get access.
+* **Preserves SEO**: Legitimate crawlers are never blocked by WAF rules, rate limits, or bot detection challenges.
+* **Improves security**: Fake bots are denied, reducing the chance of scraping, spam, and credential stuffing attempts.
+
+Legitimate SEO bots are vital for site visibility and usability. With Bunny Shield, you can rest assured that authentic crawlers pass freely while fakes are stopped at the edge.
+
+***
+
+* [Table of Contents](#)
+
+* * [Verification Process](#verification-process)
+  * [Supported Verified Bots](#supported-verified-bots)
+  * [Why Verification Matters](#why-verification-matters)
