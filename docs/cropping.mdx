@@ -38,7 +38,7 @@ If only width and height are given, the [Crop Gravity](/docs/cropping#crop-gravi
 
 ## Aspect Ratio Crop
 
-**_Parameter_**: aspect_ratio    **_Default value_**: auto Crop the output image to match the given aspect ratio. The default origin point (gravity) is set to the center of the image.
+**_Parameter_**: aspect*ratio    \*\*\_Default value*\*\*: auto Crop the output image to match the given aspect ratio. The default origin point (gravity) is set to the center of the image.
 
 <Frame caption="?aspect_ratio=">
   <img src="/images/docs/bunny3.jpg" />
@@ -63,7 +63,7 @@ If only width and height are given, the [Crop Gravity](/docs/cropping#crop-gravi
 
 ## Crop Gravity
 
-**_Parameter_**: crop_gravity **_Default_**: center **_Values_**: center, east, north, south, west, northeast, northwest, southeast, southwest
+**_Parameter_**: crop*gravity \*\*\_Default***: center **_Values_\*\*: center, east, north, south, west, northeast, northwest, southeast, southwest
 
 Set the gravity of the crop operation. This is used with Format 1 cropping only and snaps the crop to the selected position.
 
@@ -108,7 +108,7 @@ Original:
 
 ## Focus crop
 
-**_Parameter_**: focus_crop **_Format 1_**: width,height,x_coordinate,y_coordinate **_Format 2_**: width,height,x_relative,y_relative
+**_Parameter_**: focus*crop \*\*\_Format 1***: width,height,x_coordinate,y_coordinate **_Format 2_\*\*: width,height,x_relative,y_relative
 
 Focus crop is similar to a four-parameter crop function but you define the center of your crop instead of the start of a crop. This ensures that what you are trying to focus on is positioned in the middle of the picture where possible. If the focus is set too close to the borders of the image for a given _width_ and _height_, the focus will be moved to ensure the cropped image matches the wanted dimensions.
 
@@ -131,16 +131,3 @@ Focus crop is similar to a four-parameter crop function but you define the cente
 **800,600,0.5,0.5**
 
 </Frame>
-
----
-
-[Resizing](/docs/resizing)
-
-[Luminosity](/docs/luminosity)
-
-- [Table of Contents](#)
-
-- - [Crop](#crop)
-  - [Aspect Ratio Crop](#aspect-ratio-crop)
-  - [Crop Gravity](#crop-gravity)
-  - [Focus crop](#focus-crop)

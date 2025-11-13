@@ -7,34 +7,35 @@ description: "The logging service provides an easy to use API endpoint for downl
 
 The logging API service is available at logging.bunnycdn.com. To access the log file, you need to send the request with the URL path as described below.
 
-<CodeGroup>
-  ```bash bash https://logging.bunnycdn.com/{mm}-{dd}-{yy}/{pull_zone_id}.log
-  ```
-</CodeGroup>
+```bash
+https://logging.bunnycdn.com/{mm}-{dd}-{yy}/{pull_zone_id}.log
+```
 
 # Authentication
 
 The logging API works with a basic AccessKey header authentication. To authenticate a request, you need to send your account API key through the AccessKey header.
 
-<CodeGroup>
-  ```bash bash AccessKey: bce1fd5a-a1da-464f-955e-9295201134f5 ```
-</CodeGroup>
+```bash
+AccessKey: bce1fd5a-a1da-464f-955e-9295201134f5
+```
 
 # Compression
 
 By default, the raw logs are returned in the raw text format. Due to the amount of data required, this can present a significantly large file size. To reduce the size of the download and greatly improve the performance of the download, you can use the Accept-Encoding header to signal our service that the data can be compressed using GZip. This can decrease the file size and download time by as much as 5 times.
 
-<CodeGroup>```bash bash Accept-Encoding: gzip ```</CodeGroup>
+```bash
+Accept-Encoding: gzip
+```
 
 # Complete example
 
 Below is a complete example code to download a log file from the bunny.net logging service.
 
-<CodeGroup>
-  ```bash bash curl --location \ --request GET
-  'https://logging.bunnycdn.com/03-13-24/60367.log' \ --header 'AccessKey:
-  bce1fd5a-a1da-464f-955e-9295201134f5' ```
-</CodeGroup>
+```bash
+curl --location \ --request GET
+'https://logging.bunnycdn.com/03-13-24/60367.log' \ --header 'AccessKey:
+bce1fd5a-a1da-464f-955e-9295201134f5'
+```
 
 # Additional parameters
 
@@ -57,11 +58,3 @@ By default, the logs are arranged from latest to oldest. The **sort** parameter 
 [Logging](/docs/cdn-logging)
 
 [Log format](/docs/cdn-log-format)
-
-- [Table of Contents](#)
-
-- - [Logging endpoint](#logging-endpoint)
-  - [Authentication](#authentication)
-  - [Compression](#compression)
-  - [Complete example](#complete-example)
-  - [Additional parameters](#additional-parameters)

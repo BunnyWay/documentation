@@ -7,56 +7,42 @@ description: "All videos on Bunny Stream are processed and stored in a standardi
 
 ### Direct play URL
 
-<CodeGroup>
-  ```bash bash https://video.bunnycdn.com/play/{video_library_id}/{video_id}
-  ```
-</CodeGroup>
+```bash
+https://video.bunnycdn.com/play/{video_library_id}/{video_id}
+```
 
 ### Original file (if enabled)
 
-<CodeGroup>
-  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/original ```
-</CodeGroup>
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/original
+```
 
 ### HLS playlist URL
 
-<CodeGroup>
-  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8 ```
-</CodeGroup>
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8
+```
 
 ### Thumbnail URL
 
-<CodeGroup>
-  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/
-  {thumbnail_file_name}
-  ```
-</CodeGroup>
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/{thumbnail_file_name}
+```
 
 ### Preview animation URL (WebP)
 
-<CodeGroup>
-  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/preview.webp ```
-</CodeGroup>
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/preview.webp
+```
 
 ### MP4 video URL
 
-<CodeGroup>
-  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/play_
-  {resolution_height}p.mp4 ```
-</CodeGroup>
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/play_{resolution_height}p.mp4
+```
 
 ### Subtitle file URL
 
-<CodeGroup>
-  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/captions/
-  {language_code}.vtt ```
-</CodeGroup>
-
----
-
-[Google Widevine DRM](/docs/widevine-drm-security-levels)
-
-[Security](/docs/stream-security)
-
-- [Table of Contents](#)
-- - [Video storage structure](#video-storage-structure)
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/captions/{language_code}.vtt
+```

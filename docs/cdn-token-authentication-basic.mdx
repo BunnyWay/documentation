@@ -18,26 +18,23 @@ To create a secure URL, you must add a **token** and **expires** query parameter
 
 The token parameter is a Base64 encoded MD5 hash based on the key, URL and any extra parameters. To generate the token, you can use the following algorithm.
 
-<CodeGroup>
-  ```bash bash MD5(token_security_key + url_path + expiration) ```
-</CodeGroup>
+```bash
+MD5(token_security_key + url_path + expiration)
+```
 
 To properly format the token you have to then replace the following characters in the resulting Base64 string: '\n' with '', '+' with '-', '/' with '\_' and '=' with ''
 
 An example secure URL will then look like:
 
-<CodeGroup>
-  ```bash bash
-  https://test.b-cdn.net/assets/favicon.ico?token=m0EMEkV3pNAKFB33gZuv_Q&expires=1456761770
-  ```
-</CodeGroup>
+```bash
+https://test.b-cdn.net/assets/favicon.ico?token=m0EMEkV3pNAKFB33gZuv_Q&expires=1456761770
+```
 
 # Code examples
 
-<CodeGroup>
-  ```bash bash
-  $securityKey = 'token_security_key';
-  $path = '/pathto/file.jpg';
+```js
+$securityKey = "token_security_key";
+$path = "/pathto/file.jpg";
 
 // Set the time of expiry to one hour from now
 $expires = time() + 3600;
@@ -50,15 +47,14 @@ $hashableBase = $securityKey.$path.$expires;
 
 $token = md5($hashableBase, true);
 $token = base64_encode($token);
-$token = strtr($token, '+/', '-\_');
-$token = str_replace('=', '', $token);
+$token = strtr($token, "+/", "-\_");
+$token = str_replace("=", "", $token);
 
 // Generate the URL
 $url = "https://myzone.b-cdn.net{$path}?token={$token}&expires={$expires}";
+```
 
-````
-
-```bash bash
+```js
 var securityKey = "token_security_key";
 var path = "/pathto/file.jpg";
 
@@ -83,12 +79,12 @@ token = token.Replace("\n", "").Replace("+", "-").Replace("/", "_").Replace("=",
 
 // Generate the URL
 var url = $"https://myzone.b-cdn.net{path}?token={token}&expires={expires}";
-````
+```
 
-```bash bash
-var crypto = require('crypto'),
-securityKey = 'token_security_key',
-path = '/pathto/file.jpg';
+```ts
+var crypto = require("crypto"),
+  securityKey = "token_security_key",
+  path = "/pathto/file.jpg";
 
 // Set the time of expiry to one hour from now
 var expires = Math.round(Date.now() / 1000) + 3600;
@@ -100,14 +96,15 @@ var hashableBase = securityKey + path + expires;
 
 // Generate and encode the token
 var md5String = crypto.createHash("md5").update(hashableBase).digest("binary");
-var token = new Buffer(md5String, 'binary').toString('base64');
-token = token.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, '');
+var token = new Buffer(md5String, "binary").toString("base64");
+token = token.replace(/\+/g, "-").replace(/\//g, "_").replace(/\=/g, "");
 
 // Generate the URL
-var url = 'https://myzone.b-cdn.net' + path + '?token=' + token + '&expires=' + expires;
+var url =
+  "https://myzone.b-cdn.net" + path + "?token=" + token + "&expires=" + expires;
 ```
 
-```bash bash
+```python
 #!/usr/bin/env python3
 import hashlib
 from base64 import b64encode
@@ -153,16 +150,3 @@ generate_secure_url('super-secret-code', '/index.html')
 # Returns: 'https://test.b-cdn.net/index.html?token=EuS4D8fFlTrT6zO4FymvUw&expires=1488672453'
 generate_secure_url('super-secret-code', '/index.html', 31536000, 'https://test.b-cdn.net')
 ```
-
-</CodeGroup>
-
----
-
-[Token authentication](/docs/cdn-token-authentication)
-
-[Edge Rules variable expansion](/docs/edge-rules-variable-expansion)
-
-- [Table of Contents](#)
-
-- - [Signing procedure](#signing-procedure)
-  - [Code examples](#code-examples)

@@ -10,11 +10,9 @@ Log Forwarding enables you to receive raw logs in real-time to the configured Sy
 
 The logs are sent in the standard Syslog RFC 5424 format. The log value is formatted in the [bunny.net Log Format](/docs/cdn-log-format). An example log would look like this:
 
-<CodeGroup>
-  ```bash bash
-  <165>1 2021-01-01T22:14:15.003Z mymachine.example.com evntslog - ID47 [exampleSDID@32473 iut="3" eventSource="BunnyCDN" eventID="1011"] BOMHIT|200|1507167062421|412|390|163.172.53.229|-|https://bunnycdn.b-cdn.net/assets/landingpage/images/cdn-video-preview-from-a-blue-moon.m4v|WA|Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36|322b688bd63fb63f2babe9de30a5d262|DE
-  ```
-</CodeGroup>
+```bash
+<165>1 2021-01-01T22:14:15.003Z mymachine.example.com evntslog - ID47 [exampleSDID@32473 iut="3" eventSource="BunnyCDN" eventID="1011"] BOMHIT|200|1507167062421|412|390|163.172.53.229|-|https://bunnycdn.b-cdn.net/assets/landingpage/images/cdn-video-preview-from-a-blue-moon.m4v|WA|Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36|322b688bd63fb63f2babe9de30a5d262|DE
+```
 
 <Info>
   ### UDP reliability
@@ -46,15 +44,3 @@ To enable realtime Log Forwarding, you can follow the following steps:
 8. (Optional) Configure the token
 9. Click on the **Save Forwarding Configuration** button
 10. Fire up a couple of requests to bunny.net and monitor your endpoint for new logs
-
----
-
-[Permanent Log Storage](/docs/cdn-permanent-log-storage)
-
-[Token authentication](/docs/cdn-token-authentication)
-
-- [Table of Contents](#)
-
-- - [What is Log Forwarding?](#what-is-log-forwarding)
-  - [Log format](#log-format)
-  - [How to configure Log Forwarding?](#how-to-configure-log-forwarding)

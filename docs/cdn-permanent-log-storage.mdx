@@ -7,11 +7,9 @@ The stored log files are compressed using **GZip** and must be decompressed befo
 
 The logs are stored in the selected Edge Storage zone under the following path format:
 
-<CodeGroup>
-  ```bash bash
-  /pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<part-index>.gzip
-  ```
-</CodeGroup>
+```bash
+/pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<part-index>.gzip
+```
 
 <Warning>
   ### Security Warning
@@ -32,12 +30,3 @@ To enable Permanent Log Storage you can follow the following steps:
 6. Select the desired Edge Storage zone that will contain your log files
 7. Click on the **Save Storage Configuration** button
 8. Check the Storage Zone the next day to find your log files
-
----
-
-[Log format](/docs/cdn-log-format)
-
-[Log Forwarding](/docs/cdn-log-forwarding)
-
-- [Table of Contents](#)
-- - [How to configure Permanent Log Storage?](#how-to-configure-permanent-log-storage)

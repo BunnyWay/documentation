@@ -46,36 +46,21 @@ Endpoint: _GET_ `https://cdn-origin-logging.bunny.net/{pullZoneId}/{dateTime:MM-
 
 Example Response:
 
-<CodeGroup>
-  ```bash bash
-  {
-    "logs": [
-      {
-        "logId": "a6a6b755-b6a4-46be-b523-aa82a17d4bc5",
-        "timestamp": 1728952065848,
-        "log": "{\"RequestUrl\":\"/apikey\",\"PullZoneId\":308006,\"Message\":\"Origin DNS lookup failed...\",\"ErrorCode\":\"dns_lookup\",\"StatusCode\":502}",
-        "labels": {
-          "ErrorCode": "dns_lookup",
-          "StatusCode": "502",
-          "ServerZone": "CA"
-        }
+```json
+{
+  "logs": [
+    {
+      "logId": "a6a6b755-b6a4-46be-b523-aa82a17d4bc5",
+      "timestamp": 1728952065848,
+      "log": "{\"RequestUrl\":\"/apikey\",\"PullZoneId\":308006,\"Message\":\"Origin DNS lookup failed...\",\"ErrorCode\":\"dns_lookup\",\"StatusCode\":502}",
+      "labels": {
+        "ErrorCode": "dns_lookup",
+        "StatusCode": "502",
+        "ServerZone": "CA"
       }
-    ]
-  }
-  ```
-</CodeGroup>
+    }
+  ]
+}
+```
 
 Authenticate with your API key `AccessKey` or user JWT `Authorization`, and query by Pull Zone ID and date to retrieve recent origin error events.
-
----
-
-[WebSockets](/docs/cdn-websockets)
-
-[Overview](/docs/magic-containers-overview)
-
-- [Table of Contents](#)
-
-- - [Status Codes](#status-codes)
-  - [Error Codes](#error-codes)
-  - [Dashboard](#dashboard)
-  - [API Access](#api-access)

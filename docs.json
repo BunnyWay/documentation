@@ -50,7 +50,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["index", "docs/free-trial-overview"]
+                "pages": ["index", "quickstart"]
               },
               {
                 "group": "Bunny AI",
@@ -464,6 +464,47 @@
               {
                 "group": "WordPress",
                 "pages": ["docs/wordpress-plugin-support-policy"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Database",
+        "description": "Scalable edge database for global applications",
+        "icon": "database",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Bunny Database",
+                "pages": ["database/overview", "database/quickstart"]
+              },
+              {
+                "group": "Connect",
+                "pages": [
+                  "database/connect/authorization",
+                  "database/connect/sql-api",
+                  {
+                    "group": "SDKs",
+                    "pages": ["database/connect/sdks"]
+                  },
+                  {
+                    "group": "ORMs",
+                    "pages": ["database/connect/orms"]
+                  },
+                  "database/connect/scripting",
+                  "database/connect/magic-containers"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "database/metrics",
+                  "database/pricing",
+                  "database/limits"
+                ]
               }
             ]
           }

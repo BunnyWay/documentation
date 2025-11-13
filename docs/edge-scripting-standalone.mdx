@@ -11,50 +11,42 @@ The `serve` function provided by the bunny.net Edge Script SDK allows you to def
 
 Let's look at an example script that demonstrates how to use a standalone function to implement A/B testing based on a custom header:
 
-<CodeGroup>
-  ```bash bash
-  import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
+```ts
+import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
 
-BunnySDK.net.http.serve(
-async (req) => {
-console.log(`[INFO]: ${req.method} - ${req.url}`);
-let origin = "bunny.net";
-let newOrigin = "dash.bunny.net/auth/register";
+BunnySDK.net.http.serve(async (req) => {
+  console.log(`[INFO]: ${req.method} - ${req.url}`);
+  let origin = "bunny.net";
+  let newOrigin = "dash.bunny.net/auth/register";
 
-      // Retrieve scenario header value
-      let scenario = req.headers.get("X-AB");
+  // Retrieve scenario header value
+  let scenario = req.headers.get("X-AB");
 
-      // We properly remap the port & the protocol as we could be in a local case
-      // where the port is 8080 for instance
-      let url = new URL(req.url);
-      url.port = "443";
-      url.protocol = "https";
+  // We properly remap the port & the protocol as we could be in a local case
+  // where the port is 8080 for instance
+  let url = new URL(req.url);
+  url.port = "443";
+  url.protocol = "https";
 
-      if (scenario === "new") {
-        url.host = newOrigin;
-      } else {
-        url.host = origin;
-      }
+  if (scenario === "new") {
+    url.host = newOrigin;
+  } else {
+    url.host = origin;
+  }
 
-      return fetch(url);
-    },
-
-);
-
-````
-</CodeGroup>
+  return fetch(url);
+});
+```
 
 You can run this example locally using Deno `deno run -A script.ts.`:
 
-<CodeGroup>
-```bash bash
+```ts
 # Case A
 curl http://127.0.0.1:8080/ --header 'X-AB: new'
+
 # Case B
 curl http://127.0.0.1:8080/
-````
-
-</CodeGroup>
+```
 
 # Serve function
 
@@ -64,27 +56,16 @@ If you do not provide a listener, the server will randomly assign one when runni
 
 **Signature**:
 
-<CodeGroup>
-  ```bash bash
-  declare const serve: (handler: (request: Request) => Response |
+```ts
+declare const serve: (handler: (request: Request) => Response |
 
 Promise<Response>): ServerHandler
 
 declare const serve: (listener: { port: number; hostname: string }, handler: (request: Request) => Response |
 
 Promise<Response>): ServerHandler
+```
 
 ```
-</CodeGroup>
 
-***
-
-[Script types](/docs/edge-scripting-script-types)
-
-[Middleware scripts](/docs/edge-scripting-middleware)
-
-* [Table of Contents](#)
-
-* * [Example script](#example-script)
-* [Serve function](#serve-function)
 ```

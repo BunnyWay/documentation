@@ -98,20 +98,3 @@ Signature :
 </CodeGroup>
 
 Both middleware functions can perform asynchronous operations as they return Promises. In `onOriginRequest`, returning a response directly allows you to short-circuit the request, preventing it from reaching the origin server. Modifications in `onOriginResponse` occur before the response is cached, allowing you to control what gets stored in the cache.
-
----
-
-[Standalone scripts](/docs/edge-scripting-standalone)
-
-[Environment variables and secrets](/docs/edge-scripting-environment-variables-and-secrets)
-
-- [Table of Contents](#)
-
-- - [Workflow](#workflow)
-
-  - [Example Script](#example-script)
-
-  - [Middleware Functions](#middleware-functions)
-
-  - - [onOriginRequest](#onoriginrequest)
-    - [onOriginResponse](#onoriginresponse)

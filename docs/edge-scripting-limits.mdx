@@ -17,25 +17,14 @@ The limits are designed to accommodate typical use cases under normal operating 
 
 Edge Scripting environments have built-in flexibility to handle occasional spikes that exceed these limits. However, if a script consistently hits or exceeds these limits, it will be subject to termination or other throttling measures to maintain system stability and performance.
 
-<Info>
-  ### Best Practices for Managing Limits
+### Best Practices for Managing Limits
 
 - **Optimize Script Performance:** Regularly review and optimize your script's code to ensure it executes within the time and memory limits.
 - **Manage Subrequests Efficiently**: Design your scripts to minimize the number of subrequests. Cache responses whenever possible to reduce load and improve response times.
 - **Monitor and Log**: Utilize logging and monitoring tools to track your script's performance and resource usage. This can help in identifying potential issues before they lead to limit violations.
-  </Info>
 
 ## CPU Time
 
 CPU time is measured when script actually uses CPU to execute script logic. It directly affects how quickly a script can respond to requests. It is allocated per request, ensuring that each script execution has a fair amount of processing time.
 
 The platform is designed to be forgiving for infrequent spikes in CPU usage; however, consistent exceedance will lead to script termination. This enforcement helps maintain the health of the system and ensures fair resource allocation across all scripts running on the platform.
-
----
-
-[GitHub integration](/docs/edge-scripting-github-integration)
-
-[Pricing](/docs/edge-scripting-pricing)
-
-- [Table of Contents](#)
-- - [CPU Time](#cpu-time)
