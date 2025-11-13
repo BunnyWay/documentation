@@ -1,15 +1,13 @@
 ---
 title: "Return JSON"
-description: "Suggest Edits"
+description: "In cases where you need to respond with JSON data, for instance, to simulate an API endpoint or return configuration data, this example illustrates how to create a JSON response. See example below:"
 ---
 
-In cases where you need to respond with JSON data, for instance, to simulate an API endpoint or return configuration data, this example illustrates how to create a JSON response. See example below:
-
 <CodeGroup>
-  ```typescript typescript
+  ```bash bash
   import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
 
-  BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
+BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
 
       const data= {
           "weather":"sunny",
@@ -25,6 +23,13 @@ In cases where you need to respond with JSON data, for instance, to simulate an 
               "content-type": "application/json"
           }
       });
-  });
-  ```
+
+});
+
+```
 </CodeGroup>
+
+***
+
+[Return HTML](/docs/script-example-return-html)
+```

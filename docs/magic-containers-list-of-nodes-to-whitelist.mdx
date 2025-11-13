@@ -1,11 +1,9 @@
 ---
 title: "How to retrieve Magic Container IP Addresses"
-description: "Suggest Edits"
+description: "This guide explains how to retrieve the current list of Magic Containers IP addresses that run Magic Containers workloads on our edge-nodes. You can use the following IP addresses to whitelist Bunny.net traffic in your firewall or ACLs."
 ---
 
-This guide explains how to retrieve the current list of Magic Containers IP addresses that run Magic Containers workloads on our edge-nodes. You can use the following IP addresses to whitelist Bunny.net traffic in your firewall or ACLs.
-
-***Warning:** **This list is dynamic, make sure to request it periodically to avoid missing newly added IPs.***
+**\*Warning:** **This list is dynamic, make sure to request it periodically to avoid missing newly added IPs.\***
 
 **Endpoint:** GET [https://api.bunny.net/mc/nodes](https://api.bunny.net/mc/nodes)
 
@@ -13,14 +11,18 @@ This guide explains how to retrieve the current list of Magic Containers IP addr
 
 **Headers:**
 
-* Accept (Optional): application/json → returns a JSON array instead of plain-text.
+- Accept (Optional): application/json → returns a JSON array instead of plain-text.
 
 **Responses:**
 
-* text/plain with one IP address per line.
-* application/json containing an array of IP strings.
+- text/plain with one IP address per line.
+- application/json containing an array of IP strings.
 
 **Quick examples:**
 
-* Plain text → curl [https://api.bunny.net/mc/nodes](https://api.bunny.net/mc/nodes)
-* JSON → curl -H “Accept: application/json” [https://api.bunny.net/mc/nodes](https://api.bunny.net/mc/nodes)
+- Plain text → curl [https://api.bunny.net/mc/nodes](https://api.bunny.net/mc/nodes)
+- JSON → curl -H “Accept: application/json” [https://api.bunny.net/mc/nodes](https://api.bunny.net/mc/nodes)
+
+---
+
+[GitHub Action](/docs/magic-containers-github-action)

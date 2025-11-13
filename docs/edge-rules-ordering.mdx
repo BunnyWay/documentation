@@ -1,0 +1,137 @@
+---
+title: "Edge Rules Ordering"
+description: "Control the sequence of your Edge Rules to fine-tune behavior and execution priority."
+---
+
+## How Edge Rules Are Ordered
+
+Edge Rules execute in the order defined by the **OrderIndex**. Rules are always processed from the smallest to the largest **OrderIndex** value:
+
+- A rule with `OrderIndex = 1` will execute **before** a rule with `OrderIndex = 2`.
+- All rules are executed sequentially based on their index.
+
+This allows you to control which rules should apply first, which is especially important when multiple rules affect the same headers or behaviors.
+
+## Default Behavior: What Happens if No `OrderIndex` Is Set?
+
+If you do not specify an `OrderIndex` for your Edge Rules:
+
+- Rules will execute in **the order they were created**.
+
+Because of this, **we strongly recommend setting an explicit OrderIndex for all rules** to ensure predictable and consistent execution order.
+
+## Short-Circuiting vs. Multi-Action Execution
+
+Edge rules process actions differently depending on the action type.
+
+Some actions follow a **short-circuiting model**, where **only the first matching action is executed**, and further actions of that same type are ignored. This behavior applies when executing multiple actions of the same kind would cause conflicts or unintended side effects.
+
+Other actions support **multi-action execution**, meaning **all matching actions of that type are processed**, in sequence. This is typical for additive behaviors like setting response headers or appending cookies, where multiple values can coexist.
+
+We will add either the 🛑(`short-circuiting model`) or 🔁(`multi-action execution`) icon to the action list below to indicate how each action is processed.
+
+### Example Behaviors
+
+If multiple rules modify the same request or response header, all matching actions will be executed, allowing cumulative changes.
+
+If multiple rules attempt to rewrite the URL or redirect, only the first matching action is executed, and subsequent conflicting actions are skipped.
+
+**Example:**
+
+| OrderIndex | Condition                                                | Action                                  |
+| ---------- | -------------------------------------------------------- | --------------------------------------- |
+| 1          | If `Request URL` equals `/images`                        | `Override Browser Cache Time` -> `3600` |
+| 2          | if `Request URL` equals `/images`                        | `SetResponseHeader` -> `hello=world`    |
+| 3          | If `Request Header` -> `User-Agent` contains `Googlebot` | `Override Browser Cache Time` -> `5`    |
+| 4          | if `Request Header` -> `User-Agent` contains `Google`    | `SetResponseHeader` -> `hello2=world2`  |
+
+If a request matches both conditions, the `Cache-Control` header will ultimately be set to `3600` because the rule with `OrderIndex = 1` executes first and short circuits, while they'll be two new response headers, `hello` and `hello2`.
+
+## Cached vs Non-Cached Edge Rule Execution
+
+You also need to factor into your edge rule creation and execution whether the content will become cached or not, below is our list of Edge Rules that will execute upon `CACHE: HIT` and additionally, `CACHE: MISS`.
+
+Executing Rules on a CACHE _HIT_ (Cache Layer):
+
+- `ForceSSL` (Enum Value: `0`) 🛑
+- `Redirect` (Enum Value: `1`) 🛑
+- `OverrideCacheTime` (Enum Value: `3`) 🛑 _Note: if set to`0` it will bypass edge cache, if we don't already have the content cached on our edge._
+- `BlockRequest` (Enum Value: `4`) 🛑
+- `SetResponseHeader` (Enum Value: `5`) 🔁
+- `ForceDownload` (Enum Value: `7`) 🛑
+- `DisableTokenAuthentication` (Enum Value: `8`) 🛑
+- `EnableTokenAuthentication` ( Enum Value: `9`) 🛑
+- `OverrideCacheTimePublic` (Enum Value: `10`) 🛑
+- `IgnoreQueryString` (Enum Value: `11`) 🛑
+- `DisableOptimizer` (Enum Value: `12`) 🛑
+- `ForceCompression` (Enum Value: `13`) 🛑
+- `SetStatusCode` (Enum Value: `14`) 🛑
+- `OverrideBrowserCacheTime` (Enum Value: `16`) 🛑
+- `SetNetworkRateLimit` (Enum Value: `18`) 🛑
+- `SetConnectionLimit` (Enum Value: `19`) 🛑
+- `SetRequestsPerSecondLimit` (Enum Value: `20`) 🛑
+- `OverrideBrowserCacheResponseHeader` (Enum Value: `25`) 🛑
+- `RemoveBrowserCacheResponseHeader` (Enum Value: `26`) 🛑
+- `DisableShieldChallenge` (Enum Value: `27`) 🛑
+
+Additionally, Executing Rules on a CACHE _MISS_ (Origin Layer):
+
+- `OriginUrl` (Enum Value: `2`) 🛑
+- `OverrideCacheTime` (Enum Value: `3`) 🛑
+- `SetResponseHeader` (Enum Value: `5`) 🔁
+- `SetRequestHeader` (Enum Value: `6`) 🔁
+- `BypassPermaCache` (Enum Value: `15`) 🛑
+- `OriginStorage` (Enum Value: `17`) 🛑
+- `RunEdgeScript` (Enum Value: `21`) 🛑
+- `OriginMagicContainers` (Enum Value: `22`) 🛑
+- `DisableWAF` (Enum Value: `23`) 🛑
+- `RetryOrigin` (Enum Value: `24`) 🛑
+- `DisableShieldChallenge` (Enum Value: `27`) 🛑
+- `DisableShieldBotDetection` (Enum Value: `29`) 🛑
+- `BypassAwsS3Authentication` (Enum Value: `30`) 🛑
+
+## Setting the Execution Order
+
+### Method 1: Dashboard (Drag & Drop)
+
+You can reorder your Edge Rules visually:
+
+1. Go to your **Pull Zone** > **Edge Rules** tab.
+2. Click "Reorder" badge at the top of the page.
+3. Drag rules to change their order.
+4. The order you set will automatically adjust the **OrderIndex** behind the scenes.
+
+### Method 2: API (Set OrderIndex Directly)
+
+If you manage rules programmatically via our API, you can set the execution order by adjusting the `OrderIndex` value when creating or updating an edge rule.
+
+## Best Practices
+
+- Plan rule priorities carefully, especially when multiple rules affect the same property or header.
+- Keep related rules grouped and ordered for easier maintenance.
+- Use the dashboard for visual management and the API for bulk or automated updates.
+
+---
+
+[Edge Rules variable expansion](/docs/edge-rules-variable-expansion)
+
+[WebSockets](/docs/cdn-websockets)
+
+- [Table of Contents](#)
+
+- - [How Edge Rules Are Ordered](#how-edge-rules-are-ordered)
+
+  - [Default Behavior: What Happens if No OrderIndex Is Set?](#default-behavior-what-happens-if-no-orderindex-is-set)
+
+  - [Short-Circuiting vs. Multi-Action Execution](#short-circuiting-vs-multi-action-execution)
+
+  - - [Example Behaviors](#example-behaviors)
+
+  - [Cached vs Non-Cached Edge Rule Execution](#cached-vs-non-cached-edge-rule-execution)
+
+  - [Setting the Execution Order](#setting-the-execution-order)
+
+  - - [Method 1: Dashboard (Drag & Drop)](#method-1-dashboard-drag--drop)
+    - [Method 2: API (Set OrderIndex Directly)](#method-2-api-set-orderindex-directly)
+
+  - [Best Practices](#best-practices)

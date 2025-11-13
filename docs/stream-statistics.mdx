@@ -1,6 +1,5 @@
 ---
 title: "Statistics"
-description: "Suggest Edits"
 ---
 
 | Dashboard Statistics             | Location      | Granularity   |
@@ -15,6 +14,10 @@ description: "Suggest Edits"
 | Data center traffic distribution | Statistics    | Video library |
 | Bandwidth served                 | Statistics    | Video library |
 | Requests served                  | Statistics    | Video library |
+
+### How are views counted?
+
+Views are calculated by playback starts, which is counted once per viewer session per video. Safeguards have been implemented to ensure accurate tallying.
 
 ### Total views (ViewsChart)
 
@@ -42,14 +45,19 @@ Visualizes how viewers engage with a specific video over time, highlighting the 
 
 ### [All stream statistics are available over stream API](/reference/video_getvideo)
 
-***
+---
 
-* [Table of Contents](#)
+[Adaptive bitrate streaming](/docs/adaptive-bitrate-streaming)
 
-* * [Total views (ViewsChart)](#total-views-viewschart)
-  * [Total watch time (WatchTimeChart)](#total-watch-time-watchtimechart)
-  * [Views per country (CountryViewCounts)](#views-per-country-countryviewcounts)
-  * [Watch time per country (CountryWatchTime)](#watch-time-per-country-countrywatchtime)
-  * [Engagement score](#engagement-score)
-  * [Heatmap](#heatmap)
-  * [All stream statistics are available over stream API](#all-stream-statistics-are-available-over-stream-api)
+[Playback control API](/docs/playback-control-api)
+
+- [Table of Contents](#)
+
+- - [How are views counted?](#how-are-views-counted)
+  - [Total views (ViewsChart)](#total-views-viewschart)
+  - [Total watch time (WatchTimeChart)](#total-watch-time-watchtimechart)
+  - [Views per country (CountryViewCounts)](#views-per-country-countryviewcounts)
+  - [Watch time per country (CountryWatchTime)](#watch-time-per-country-countrywatchtime)
+  - [Engagement score](#engagement-score)
+  - [Heatmap](#heatmap)
+  - [All stream statistics are available over stream API](#all-stream-statistics-are-available-over-stream-api)

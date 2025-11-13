@@ -1,28 +1,27 @@
 ---
 title: "Modify response body (Middleware)"
-description: "Suggest Edits"
+description: "This script example uses a Middleware script type to dynamically modify the response body. For this demonstration, we are loading the HTML response from the origin and dynamically adjusting the HTML  tag to include  at the end of each page."
 ---
 
-This script example uses a Middleware script type to dynamically modify the response body. For this demonstration, we are loading the HTML response from the origin and dynamically adjusting the HTML **`<title>`** tag to include **`- bunny.net`** at the end of each page.
-
 <CodeGroup>
-  ```typescript TypeScript
+  ```bash bash
   import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
 
-  /**
-   * When a response is not served from the cache, you can use this event handler
-   * to modify the response going from the origin.
-   * This modify the response before being cached.
-   *
-   * Returns an HTTP response.
-   * @param {Context} context - The context of the middleware.
-   * @param {Request} request - The current request done to the origin.
-   * @param {Response} response - The HTTP response or string.
-   */
+/\*\*
+
+- When a response is not served from the cache, you can use this event handler
+- to modify the response going from the origin.
+- This modify the response before being cached.
+-
+- Returns an HTTP response.
+- @param {Context} context - The context of the middleware.
+- @param {Request} request - The current request done to the origin.
+- @param {Response} response - The HTTP response or string.
+  \*/
   async function onOriginResponse(context: { request: Request, response: Response }): Promise<Response> | Response | void {
-      let body = await context.response.text();
-      body = body.replace('</title>', '- bunny.net</title>');
-    
+  let body = await context.response.text();
+  body = body.replace('</title>', '- bunny.net</title>');
+
       // We need to remove the original Content headers to make sure the response is returned correctly
       const headers = new Headers(context.response.headers);
       headers.delete('Content-Length');
@@ -32,9 +31,16 @@ This script example uses a Middleware script type to dynamically modify the resp
         status: context.response.status, // Preserve the original status code
         headers,  // Preserve the original headers
       });
+
   }
 
-  BunnySDK.net.http.servePullZone()
-    .onOriginResponse(onOriginResponse);
-  ```
+BunnySDK.net.http.servePullZone()
+.onOriginResponse(onOriginResponse);
+
+```
 </CodeGroup>
+
+***
+
+[Return JSON](/docs/script-example-return-json)
+```

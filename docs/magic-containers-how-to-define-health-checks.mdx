@@ -1,16 +1,14 @@
 ---
 title: "Defining health checks"
-description: "Suggest Edits"
+description: "Health checks are essential to ensuring the reliability and availability of your applications running in containers. These checks help determine whether an application is functioning correctly and ready to handle incoming requests. In this documentation, we will walk you through the process of defining health checks for your containerized applications."
 ---
-
-Health checks are essential to ensuring the reliability and availability of your applications running in containers. These checks help determine whether an application is functioning correctly and ready to handle incoming requests. In this documentation, we will walk you through the process of defining health checks for your containerized applications.
 
 # What you'll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
-* A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-* Ensure you have already set up the container for which you want to configure health checks. See our Quickstart guide if you haven't set up a container yet.
+- A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+- Ensure you have already set up the container for which you want to configure health checks. See our Quickstart guide if you haven't set up a container yet.
 
 # Accessing health checks
 
@@ -32,9 +30,9 @@ To access health checks for your Magic containers, follow these steps:
 
 There are three primary health check types available to you, each serving a unique purpose:
 
-* **Startup**: Verifies if the application has successfully started. Until this check is successful, no incoming requests will be routed to the application.
-* **Readiness**: Ensures the application is fully prepared to handle incoming requests. No requests will be routed to the application until this check is successful. We strongly recommend enabling this check to avoid failed requests.
-* **Liveness**: This check confirms that the application is actively running without problems. 
+- **Startup**: Verifies if the application has successfully started. Until this check is successful, no incoming requests will be routed to the application.
+- **Readiness**: Ensures the application is fully prepared to handle incoming requests. No requests will be routed to the application until this check is successful. We strongly recommend enabling this check to avoid failed requests.
+- **Liveness**: This check confirms that the application is actively running without problems. 
 
 # Enabling health checks
 
@@ -59,7 +57,10 @@ For the **TCP** method you only have to specify the port to be used for the TCP 
 ![](/images/docs/53acc10a3421d0d09e1f494fc6e5c8faa4dcc7a43d243a0b570bec022bb61349-image.png)
 
 <Info>
-  We strongly recommend enabling at least the Readiness health check. This check helps the platform detect when your application is ready to receive traffic, minimizing the chances of failed requests and ensuring a smoother user experience.
+  ### Note
+
+We strongly recommend enabling at least the Readiness health check. This check helps the platform detect when your application is ready to receive traffic, minimizing the chances of failed requests and ensuring a smoother user experience.
+
 </Info>
 
 # Need help or encountering issues?
@@ -68,12 +69,16 @@ If you encounter any difficulties or have questions while following this Quickst
 
 Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
 
-***
+---
 
-* [Table of Contents](#)
+[Undeploying your app](/docs/magic-containers-undeploying-your-app)
 
-* * [What you'll need](#what-youll-need)
-  * [Accessing health checks](#accessing-health-checks)
-  * [Health check types](#health-check-types)
-  * [Enabling health checks](#enabling-health-checks)
-  * [Need help or encountering issues?](#need-help-or-encountering-issues)
+[Configuring your app using environment variables](/docs/magic-containers-how-to-configure-your-app-using-environment-variables)
+
+- [Table of Contents](#)
+
+- - [What you'll need](#what-youll-need)
+  - [Accessing health checks](#accessing-health-checks)
+  - [Health check types](#health-check-types)
+  - [Enabling health checks](#enabling-health-checks)
+  - [Need help or encountering issues?](#need-help-or-encountering-issues)

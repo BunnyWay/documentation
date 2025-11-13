@@ -1,27 +1,25 @@
 ---
 title: "Send an email"
-description: "Suggest Edits"
+description: "To send an email using SendGrid, you can use @sendgrid/mail SDK. This example demonstrates how to send an email on every script request. You should set SendGrid Api Key to  environment secret to be able to use SendGrid SDK."
 ---
-
-To send an email using SendGrid, you can use @sendgrid/mail SDK. This example demonstrates how to send an email on every script request. You should set SendGrid Api Key to `SENDGRID_API_KEY` environment secret to be able to use SendGrid SDK.
 
 See example below:
 
 <CodeGroup>
-  ```typescript typescript
+  ```bash bash
   import * as BunnySDK from "@bunny.net/edgescript-sdk";
   import sgMail from "https://esm.sh/@sendgrid/[email protected]";
 
-  // Set your SendGrid API key from environment variable SENDGRID_API_KEY
-  sgMail.setApiKey(Deno.env.get('SENDGRID_API_KEY'));
+// Set your SendGrid API key from environment variable SENDGRID_API_KEY
+sgMail.setApiKey(Deno.env.get('SENDGRID_API_KEY'));
 
-  BunnySDK.net.http.serve(async (req) => { 
-      const msg = {
-          to: '[email protected]',
-          from: '[email protected]',
-          subject: 'Welcome to Bunny Edge Scripting!',
-          text: 'This email was sent directly from the edge.',
-      };
+BunnySDK.net.http.serve(async (req) => {
+const msg = {
+to: '[email protected]',
+from: '[email protected]',
+subject: 'Welcome to Bunny Edge Scripting!',
+text: 'This email was sent directly from the edge.',
+};
 
       try {
           await sgMail.send(msg);
@@ -30,6 +28,13 @@ See example below:
           console.error(error);
           return new Response("Failed to send email.", { status: 500 });
       }
-  });
-  ```
+
+});
+
+```
 </CodeGroup>
+
+***
+
+[Redirect to another domain](/docs/script-example-redirect-to-another-domain)
+```

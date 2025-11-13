@@ -1,32 +1,37 @@
 ---
 title: "Access Edge Database with Turso"
-description: "Suggest Edits"
+description: "Bunny Edge Scripting makes it easy to integrate with edge databases like . This allows you to bring dynamic data capabilities to your applications directly at the edge, enabling faster responses and reducing latency for your users."
 ---
-
-Bunny Edge Scripting makes it easy to integrate with edge databases like [Turso](https://turso.tech/). This allows you to bring dynamic data capabilities to your applications directly at the edge, enabling faster responses and reducing latency for your users.
 
 In this example, we demonstrate how to connect to a Turso database using Edge Scripting with just a few lines of code and seamlessly query your database to serve personalized responses with minimal effort.
 
 Below is a sample script that retrieves a user's details based on their email address.
 
 <CodeGroup>
-  ```typescript typescript
+  ```bash bash
   import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
   import { createClient } from "https://esm.sh/@libsql/[email protected]/web";
 
-  export const turso = createClient({
-    url: Deno.env.get("TURSO_DATABASE_URL"),
-    authToken: Deno.env.get("TURSO_AUTH_TOKEN"),
+export const turso = createClient({
+  url: Deno.env.get("TURSO_DATABASE_URL"),
+  authToken: Deno.env.get("TURSO_AUTH_TOKEN"),
+});
+
+/\*\*
+
+- Returns an HTTP response.
+- @param {Request} request - The Fetch API Request object.
+- @return {Response} The HTTP response or string.
+  _/
+  BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
+  var userResults = await turso.execute("SELECT _ FROM users WHERE email = '[email protected]'");
+  return new Response("User: " + userResults.rows[0].username);
   });
 
-  /**
-   * Returns an HTTP response.
-   * @param {Request} request - The Fetch API Request object.
-   * @return {Response} The HTTP response or string.
-   */
-  BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
-    var userResults = await turso.execute("SELECT * FROM users WHERE email = '[email protected]'");
-    return new Response("User: " + userResults.rows[0].username);
-  });
-  ```
+```
 </CodeGroup>
+
+***
+
+[Modify response body (Middleware)](/docs/script-example-modify-body)
+```

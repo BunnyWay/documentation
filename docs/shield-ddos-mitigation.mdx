@@ -1,15 +1,13 @@
 ---
 title: "DDoS Mitigation"
-description: "Suggest Edits"
+description: "Bunny Shield's DDoS Mitigation feature is designed to protect your web applications against Distributed Denial of Service (DDoS) attacks while maintaining a seamless user experience. Leveraging stateful validation and customizable defense mechanisms, it offers flexible and reliable protection against both automated and sophisticated threats."
 ---
-
-Bunny Shield's DDoS Mitigation feature is designed to protect your web applications against Distributed Denial of Service (DDoS) attacks while maintaining a seamless user experience. Leveraging stateful validation and customizable defense mechanisms, it offers flexible and reliable protection against both automated and sophisticated threats.
 
 ## Key Features
 
-* **Stateful Request Tracking**: Bunny Shield uses stateful validation to inspect and verify the legitimacy of incoming requests. This ensures effective filtering while minimizing false positives, maintaining uninterrupted access for legitimate users.
-* **JavaScript Proof-of-Work (PoW) Challenge**: The JavaScript Proof-of-Work (PoW) Challenge adds an additional layer of security by requiring browsers to complete a lightweight computational task before accessing your application. This mechanism helps distinguish between legitimate users and automated traffic, effectively mitigating DDoS attacks without degrading the user experience.
-* **Behavioural Analysis**: The Behavioral Analysis feature monitors and evaluates traffic patterns to identify unusual or potentially malicious behavior in real time. By analyzing request characteristics and traffic anomalies, it enhances the platform's ability to mitigate sophisticated DDoS attacks and other automated threats.
+- **Stateful Request Tracking**: Bunny Shield uses stateful validation to inspect and verify the legitimacy of incoming requests. This ensures effective filtering while minimizing false positives, maintaining uninterrupted access for legitimate users.
+- **JavaScript Proof-of-Work (PoW) Challenge**: The JavaScript Proof-of-Work (PoW) Challenge adds an additional layer of security by requiring browsers to complete a lightweight computational task before accessing your application. This mechanism helps distinguish between legitimate users and automated traffic, effectively mitigating DDoS attacks without degrading the user experience.
+- **Behavioural Analysis**: The Behavioral Analysis feature monitors and evaluates traffic patterns to identify unusual or potentially malicious behavior in real time. By analyzing request characteristics and traffic anomalies, it enhances the platform's ability to mitigate sophisticated DDoS attacks and other automated threats.
 
 These advanced approaches ensures proactive and precise mitigation, offering robust protection against evolving threats while maintaining optimal application performance.
 
@@ -31,17 +29,21 @@ Replace `{{shieldZoneId}}` with your actual Shield Zone ID. This will provide yo
 
 ## Best Practices
 
-* **Match Sensitivity to Risk**: Start with Medium (2) sensitivity for most scenarios and adjust to Low (1) High (3), or Extreme (4) based on your application's traffic patterns and risk profile.
-* **Leverage PoW Challenges Wisely**: Decide the best implementation approach based on your needs. Use Always-On Mode (DDoS Sensitivity Extreme) for continuous protection in high-risk environments, or configure Custom WAF Rules to target specific endpoints or traffic types requiring additional verification. This flexibility allows you to balance security and user experience.
-* **Monitor Regularly**: Regularly review logs and behavioural data to identify new trends or threats. Adjust your rules and configurations accordingly to maintain optimal protection.
+- **Match Sensitivity to Risk**: Start with Medium (2) sensitivity for most scenarios and adjust to Low (1) High (3), or Extreme (4) based on your application's traffic patterns and risk profile.
+- **Leverage PoW Challenges Wisely**: Decide the best implementation approach based on your needs. Use Always-On Mode (DDoS Sensitivity Extreme) for continuous protection in high-risk environments, or configure Custom WAF Rules to target specific endpoints or traffic types requiring additional verification. This flexibility allows you to balance security and user experience.
+- **Monitor Regularly**: Regularly review logs and behavioural data to identify new trends or threats. Adjust your rules and configurations accordingly to maintain optimal protection.
 
 By tailoring these practices to your unique application requirements, you can achieve a secure and seamless experience for your users.
 
-***
+---
 
-* [Table of Contents](#)
+[Creating a rate limit rule](/docs/shield-creating-a-ratelimit-rule)
 
-* * [Key Features](#key-features)
-  * [Configuring via API](#configuring-via-api)
-  * [Monitoring and Logging](#monitoring-and-logging)
-  * [Best Practices](#best-practices)
+[Bot Detection](/docs/bot-detection)
+
+- [Table of Contents](#)
+
+- - [Key Features](#key-features)
+  - [Configuring via API](#configuring-via-api)
+  - [Monitoring and Logging](#monitoring-and-logging)
+  - [Best Practices](#best-practices)

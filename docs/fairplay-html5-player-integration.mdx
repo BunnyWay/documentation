@@ -1,16 +1,14 @@
 ---
 title: "Fairplay HTML5 player integration"
-description: "Suggest Edits"
+description: "This documentation will guide you through the integration of the FairPlay DRM solution into your web application, ensuring secure and compliant playback of DRM-encrypted content."
 ---
-
-This documentation will guide you through the integration of the FairPlay DRM solution into your web application, ensuring secure and compliant playback of DRM-encrypted content.
 
 # What you'll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
-* A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-* Ensure that the Media Cage DRM Enterprise feature is enabled in your account. If you need guidance on how to enable this feature, please refer to our [Media Cage DRM Enterprise quickstart guide](/docs/mediacage-enterprise-drm-quickstart).
+- A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+- Ensure that the Media Cage DRM Enterprise feature is enabled in your account. If you need guidance on how to enable this feature, please refer to our [Media Cage DRM Enterprise quickstart guide](/docs/mediacage-enterprise-drm-quickstart).
 
 # Playing DRM content
 
@@ -34,27 +32,27 @@ Fairplay key server is accessible with the URL of the following pattern:
 https://video.bunnycdn.com/FairPlay/{library_id}/license/?videoId=${video_id}
 ```
 
-* `library_id`: A unique identifier for the library or content collection.
-* `video_id`: The specific identifier for the FairPlay encrypted video.
+- `library_id`: A unique identifier for the library or content collection.
+- `video_id`: The specific identifier for the FairPlay encrypted video.
 
 # Fairplay integration with Safari
 
 Safari browsers on macOS and iOS inherently support the playback of HLS streams encrypted with Fairplay. To facilitate Fairplay integration on Safari, use the provided sample code:
 
 <CodeGroup>
-  ```javascript javascript
-  // MODIFY: You need to replace {library_id} and {video_id} with actual values  
-  window.fp_certificate_url = "https://video.bunnycdn.com/FairPlay/{library_id}/certificate";
-  window.fp_license_server_url = "https://video.bunnycdn.com/FairPlay/{library_id}/license/?videoId=${video_id}";  
-  // MODIFY: You need to replace {pull_zone_url} and {video_id} with actual URL  
-  window.playback_url = "https://{pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8";
-  ```
+  ```bash bash // MODIFY: You need to replace {library_id} and {video_id} with
+  actual values window.fp_certificate_url =
+  "https://video.bunnycdn.com/FairPlay/{library_id}/certificate";
+  window.fp_license_server_url = "https://video.bunnycdn.com/FairPlay/
+  {library_id}/license/?videoId=${video_id}"; // MODIFY: You need to replace{" "}
+  {pull_zone_url} and {video_id} with actual URL window.playback_url = "https://
+  {pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8"; ```
 </CodeGroup>
 
 Ensure to replace `library_id`, `pull_zone_url`, and `video_id` with valid values corresponding to the specific video player. The next step is to create a function to download and store certificates, which will be used later:
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   async function loadFpCertificate()  
   {  
       try {  
@@ -70,7 +68,7 @@ Ensure to replace `library_id`, `pull_zone_url`, and `video_id` with valid value
 Write a function to call the certificate-loading function and initiate video playback:
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   async function startVideo()  
   {  
     await loadFpCertificate();
@@ -89,7 +87,7 @@ Write a function to call the certificate-loading function and initiate video pla
 Define the `onFpEncrypted` function to handle the 'encrypted' event. It fetches the license, passes it to secure session, and enables Safari to decode the encrypted content:
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   async function onFpEncrypted(event) {
     try {
       let initDataType = event.initDataType;
@@ -109,20 +107,20 @@ Define the `onFpEncrypted` function to handle the 'encrypted' event. It fetches 
         }]);
 
         let keys = await access.createMediaKeys();
-        
+
         // The FairPlay certificate we fetched earlier is used here.
         await keys.setServerCertificate(window.fp_certificate);
         await video.setMediaKeys(keys);
       }
 
       let initData = event.initData;
-      
+
       let session = video.mediaKeys.createSession();
       session.generateRequest(initDataType, initData);
-  		let message = await new Promise(resolve => {
+      let message = await new Promise(resolve => {
           session.addEventListener('message', resolve, { once: true });
       });
-  	
+
       // license_server_url we set earlier is used here.
       let response = await getResponse(message, window.fp_license_server_url);
       await session.update(response);
@@ -130,44 +128,45 @@ Define the `onFpEncrypted` function to handle the 'encrypted' event. It fetches 
     } catch(e) {
       window.console.error(`Could not start encrypted playback due to exception "${e}"`)
     }
-  }
-  ```
+
+}
+
+````
 </CodeGroup>
 
 Implement the `getResponse` function to send the SPC message to the FairPlay server and obtain the CKC for the encrypted session.
 
 <CodeGroup>
-  ```javascript javascript
-  async function getResponse(event, license_server_url) {  
-    	// need to convert the message to Base64 string  
-    	let spc_string = btoa(String.fromCharCode.apply(null, new Uint8Array(event.message)));  
-      let licenseResponse = await fetch(license_server_url, {  
-          method: 'POST',  
-          headers: new Headers({'Content-type': 'application/json'}),  
-          body: JSON.stringify({  
-              "spc" : spc_string  
-          }),  
-      });  
-      let responseObject = await licenseResponse.json();  
-    	return Uint8Array.from(atob(responseObject.ckc), c => c.charCodeAt(0));  
-  }
-  ```
+```bash bash
+async function getResponse(event, license_server_url) {
+    // need to convert the message to Base64 string
+    let spc_string = btoa(String.fromCharCode.apply(null, new Uint8Array(event.message)));
+    let licenseResponse = await fetch(license_server_url, {
+        method: 'POST',
+        headers: new Headers({'Content-type': 'application/json'}),
+        body: JSON.stringify({
+            "spc" : spc_string
+        }),
+    });
+    let responseObject = await licenseResponse.json();
+    return Uint8Array.from(atob(responseObject.ckc), c => c.charCodeAt(0));
+}
+````
+
 </CodeGroup>
 
-Place the following script block in the section or in a separate JavaScript file. This code ensures that video playback starts when the page is loaded.
+Place the following script block in the 'head' section or in a separate JavaScript file. This code ensures that video playback starts when the page is loaded.
 
 <CodeGroup>
-  ```html html
-  <script>
-    document.addEventListener('DOMContentLoaded', startVideo);
-  </script>
+  ```bash bash
+  <script>document.addEventListener('DOMContentLoaded', startVideo);</script>
   ```
 </CodeGroup>
 
 Place the HTML5 video element on desired place in the html document.
 
 <CodeGroup>
-  ```html HTML
+  ```bash bash
   <video controls preload="metadata" width=960></video>
   ```
 </CodeGroup>
@@ -188,19 +187,23 @@ If you encounter any difficulties or have questions while following this Quickst
 
 Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
 
-***
+---
 
-* [Table of Contents](#)
+[Widevine HTML5 integration](/docs/widevine-integration)
 
-* * [What you'll need](#what-youll-need)
+[Shaka Player integration](/docs/shaka-player-integration)
 
-  * [Playing DRM content](#playing-drm-content)
+- [Table of Contents](#)
 
-    * [Certificate URL](#certificate-url)
-    * [License server URL](#license-server-url)
+- - [What you'll need](#what-youll-need)
 
-  * [Fairplay integration with Safari](#fairplay-integration-with-safari)
+  - [Playing DRM content](#playing-drm-content)
 
-  * [Authentication](#authentication)
+  - - [Certificate URL](#certificate-url)
+    - [License server URL](#license-server-url)
 
-  * [Need help or encountering issues?](#need-help-or-encountering-issues)
+  - [Fairplay integration with Safari](#fairplay-integration-with-safari)
+
+  - [Authentication](#authentication)
+
+  - [Need help or encountering issues?](#need-help-or-encountering-issues)

@@ -1,22 +1,23 @@
 ---
 title: "Limits"
-description: "Suggest Edits"
+description: "To make sure everyone’s applications run reliably and smoothly, we have a few resource and usage limits in place. Below, you’ll find details on these limits, covering CPU, memory, storage, and more so that you can plan your deployments with confidence."
 ---
-
-To make sure everyone’s applications run reliably and smoothly, we have a few resource and usage limits in place. Below, you’ll find details on these limits, covering CPU, memory, storage, and more so that you can plan your deployments with confidence.
 
 # Dynamic runtime limits
 
 The following resource limits apply to each Magic Containers application running on the dynamic runtime:
 
-* **CPU**: 8 CPUs
-* **Memory**: 32 GiB
-* **Network ingress**: 1 Gbps
-* **Network egress**: 1 Gbps
-* **Ephemeral storage**: 10 GB
+- **CPU**: 8 CPUs
+- **Memory**: 32 GiB
+- **Network ingress**: 1 Gbps
+- **Network egress**: 1 Gbps
+- **Ephemeral storage**: 10 GB
 
 <Info>
-  Once an application consumes 10 GB of ephemeral storage, the container/pod will be evicted and automatically restarted. Any data stored in ephemeral storage is lost during this process.
+  ### Note
+
+Once an application consumes 10 GB of ephemeral storage, the container/pod will be evicted and automatically restarted. Any data stored in ephemeral storage is lost during this process.
+
 </Info>
 
 Magic Containers automatically attempts to restart a container if it detects a failure. The system will attempt to restart the container up to 10 times before giving up.
@@ -26,7 +27,10 @@ Magic Containers automatically attempts to restart a container if it detects a f
 Our platform applies default restrictions to inbound and outbound traffic on the following ports: **25**, **465**, **587**, and **2525**. This is to maintain a secure environment and prevent unauthorized mail relay.
 
 <Info>
-  If your application requires any of these ports to be opened, contact our support team for assistance. They will review and enable the necessary configurations to ensure your application functions correctly.
+  ### Note
+
+If your application requires any of these ports to be opened, contact our support team for assistance. They will review and enable the necessary configurations to ensure your application functions correctly.
+
 </Info>
 
 # Account-level limits
@@ -35,25 +39,29 @@ Our platform applies default restrictions to inbound and outbound traffic on the
 
 By default, the following limits apply to each standard (non-trial) account on the Magic Containers platform:
 
-* Number of applications per account: 10.
-* Number of regions per application: No limit (all available regions).
-* Number of instances/pods per region per application: Up to 10.
+- Number of applications per account: 10.
+- Number of regions per application: No limit (all available regions).
+- Number of instances/pods per region per application: Up to 10.
 
 # Trial accounts
 
 If you are on a trial account, additional restrictions apply:
 
-* Credit card information is required.
-* Number of applications per account: 10
-* Number of regions per application: 5
-* Number of instances/pods per region per application: 2
+- Credit card information is required.
+- Number of applications per account: 10
+- Number of regions per application: 5
+- Number of instances/pods per region per application: 2
 
-***
+---
 
-* [Table of Contents](#)
+[Image optimizer](/docs/magic-containers-image-optimizer)
 
-* * [Dynamic runtime limits](#dynamic-runtime-limits)
-  * [Port Limits](#port-limits)
-  * [Account-level limits](#account-level-limits)
-    * [Standard accounts](#standard-accounts)
-  * [Trial accounts](#trial-accounts)
+[Pricing](/docs/magic-containers-pricing)
+
+- [Table of Contents](#)
+
+- - [Dynamic runtime limits](#dynamic-runtime-limits)
+  - [Port Limits](#port-limits)
+  - [Account-level limits](#account-level-limits)
+  - - [Standard accounts](#standard-accounts)
+  - [Trial accounts](#trial-accounts)

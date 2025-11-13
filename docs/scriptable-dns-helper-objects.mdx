@@ -1,15 +1,13 @@
 ---
 title: "Scriptable DNS helper objects"
-description: "Suggest Edits"
+description: "The Scriptable DNS comes with a list of helper objects to help with various tasks needed for dynamic routing. This page contains the documentation for the helper objects."
 ---
-
-The Scriptable DNS comes with a list of helper objects to help with various tasks needed for dynamic routing. This page contains the documentation for the helper objects.
 
 # Monitoring
 
 The monitoring helper allows you to check and monitor the uptime status of an IP. This is useful for uptime checking when returning DNS records. It takes a single IP parameter that is then monitored in the background.
 
-The first time an IP is called, is it added into a background monitoring service while synchronously waiting for the initial latency. Once the IP is called again from the same server, the result is returned immediately.
+The first time an IP is called, it is added into a background monitoring service while synchronously waiting for the initial latency. Once the IP is called again from the same server, the result is returned immediately.
 
 ### Functions:
 
@@ -23,11 +21,11 @@ The monitoring status object is returned by the Monitoring.getStatus helper and 
 
 #### Fields:
 
-* **isOnline** *(boolean)* - The current status of the IP (true: online, false: offline)
-* **latency** *(integer)* - The last measured latency from the DNS server to this IP
+- **isOnline** _(boolean)_ - The current status of the IP (true: online, false: offline)
+- **latency** _(integer)_ - The last measured latency from the DNS server to this IP
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   /*
   	Example usage for Monitoring.getStatus
    	Returns the A record for 222.222.222.222 if the IP is online, otherwise return 111.111.111.111
@@ -49,10 +47,10 @@ GeoDatabase is a wrapper around a GeoDNS library. It allows you to easily look u
 
 #### GeoDatabase.resolve(IP: string): GeoLocation
 
-Returns the \[GeoLocation]\([https://docs.bunny.net/docs/getting-started#geolocation](/docs/getting-started#geolocation) result for the specified IP based on a GeoDNS database.
+Returns the [GeoLocation](/docs/getting-started#geolocation) result for the specified IP based on a GeoDNS database.
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   /*
   	Example usage for GeoDatabase.resolve
    	Resolves the geo location for the IP 142.251.10.102 and returns the country code as a TXT record
@@ -83,7 +81,7 @@ Returns the geographical distance between two GeoLocation objects.
 Returns the geographical distance between a Server object and a GeoLocation object.
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   /*
   	Example usage for GeoDistance.calculate
    	Calculates the distance between two points on the map and returns them as a TxtRecord value
@@ -104,12 +102,12 @@ RoutingEngine helps with dynamic geographic routing, weight calculation, and rou
 
 ### Functions:
 
-#### RoutingEngine.getWeightedRandom(servers: Array, onlineOnly: bool = false, applyWeight: bool = true): Server
+#### RoutingEngine.getWeightedRandom(servers: Array`<Server>`, onlineOnly: bool = false, applyWeight: bool = true): Server
 
 Returns one server from an array of servers based on a round robin weighted random principle. Additionally, servers can be filtered by online servers only. To activate weights, the applyWeight parameter should be set to true.
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   /*
   	Example usage for RoutingEngine.getWeightedRandom
     Returns one of the servers in a round robin fashion with the weights applied
@@ -119,25 +117,25 @@ Returns one server from an array of servers based on a round robin weighted rand
   		new Server("89.187.162.249", 40.69, -74.18, 100),
   		new Server("89.187.162.249", 40.69, -74.18, 100),
   		new Server("89.187.162.249", 40.69, -74.18, 75),
-  		new Server("89.187.162.249", 40.69, -74.18, 50),
+  		new Server("89.187.162.249", 40.69, -74.18, 50)
   	);
     
   	return RoutingEngine.getWeightedRandom(
   		servers,
-  		true, // Skip offline servers
+  		true // Skip offline servers
   	);
   }
   ```
 </CodeGroup>
 
-#### RoutingEngine.getClosestServer(servers: Array, location: GeoLocation, onlineOnly: bool = false, applyWeight: bool = true): Server
+#### RoutingEngine.getClosestServer(servers: Array`<Server>`, location: GeoLocation, onlineOnly: bool = false, applyWeight: bool = true): Server
 
 Returns one server from an array of servers based on a round robin weighted random principle that is closest to the given GeoLocation parameter.
 
 Additionally, servers can be filtered by online servers only. To activate weights, the applyWeight parameter should be set to true.
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   /*
   	Example usage for RoutingEngine.getClosestServer
    	Returns the geographically closest server to the client that sent the query
@@ -167,18 +165,22 @@ The Server object is used to pass or return server information to various other 
 
 #### Fields:
 
-* **ip** *(string)* - The IP of the server
-* **latitude** *(double)* - The geographical latitude of the server's location
-* **longitude** *(double)* - The geographical longitude of the server's location
-* **weight** *(int)* - The routing weight of the server in a weighted routing scenario
+- **ip** _(string)_ - The IP of the server
+- **latitude** _(double)_ - The geographical latitude of the server's location
+- **longitude** _(double)_ - The geographical longitude of the server's location
+- **weight** _(int)_ - The routing weight of the server in a weighted routing scenario
 
-***
+---
 
-* [Table of Contents](#)
+[Query response object types](/docs/query-response-object-types)
 
-* * [Monitoring](#monitoring)
-  * [MonitoringStatus (object)](#monitoringstatus-object)
-  * [GeoDatabase](#geodatabase)
-  * [GeoDistance](#geodistance)
-  * [RoutingEngine](#routingengine)
-  * [Server (object)](#server-object)
+[Terraform overview](/docs/terraform-overview)
+
+- [Table of Contents](#)
+
+- - [Monitoring](#monitoring)
+  - [MonitoringStatus (object)](#monitoringstatus-object)
+  - [GeoDatabase](#geodatabase)
+  - [GeoDistance](#geodistance)
+  - [RoutingEngine](#routingengine)
+  - [Server (object)](#server-object)

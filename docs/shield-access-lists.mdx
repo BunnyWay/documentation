@@ -1,34 +1,32 @@
 ---
 title: "Access Lists"
-description: "Suggest Edits"
+description: "Access Lists give you precise control over who can and cannot reach your applications. From blocking malicious proxies and anonymized botnets to allowing trusted infrastructure or internal tools, Access Lists provide real-time traffic filtering that is enforced instantly across our global edge."
 ---
-
-Access Lists give you precise control over who can and cannot reach your applications. From blocking malicious proxies and anonymized botnets to allowing trusted infrastructure or internal tools, Access Lists provide real-time traffic filtering that is enforced instantly across our global edge.
 
 ## Key Features
 
-* **Flexible Controls**: Allow, block, challenge, or log traffic based on IPs, CIDRs, ASNs, or entire countries.
-* **Curated Threat Lists**: Continuously updated feeds from leading reputation sources, available on Advanced, Business, and Enterprise plans.
-* **Custom Lists**: Create your own access policies with rules tailored to your exact needs, from trusted networks to high-risk regions.
-* **Instant Enforcement**: Rules propagate globally within seconds and are applied directly at the edge without adding latency or backend complexity.
+- **Flexible Controls**: Allow, block, challenge, or log traffic based on IPs, CIDRs, ASNs, or entire countries.
+- **Curated Threat Lists**: Continuously updated feeds from leading reputation sources, available on Advanced, Business, and Enterprise plans.
+- **Custom Lists**: Create your own access policies with rules tailored to your exact needs, from trusted networks to high-risk regions.
+- **Instant Enforcement**: Rules propagate globally within seconds and are applied directly at the edge without adding latency or backend complexity.
 
 ## Multi-layer Access Control
 
 Access Lists combine curated intelligence with your own rules to deliver adaptive protection:
 
-* **Curated threat feeds** cover VPNs, Tor nodes, abusive datacenters, and active attack sources.
-* **Custom rules** allow you to define access logic for IPs, CIDRs, ASNs, or countries.
-* **ASN-based filtering** gives you broad control over provider networks to stop botnets hiding behind hosting providers.
-* **Country-level rules** make it easy to allow or block entire regions.
+- **Curated threat feeds** cover VPNs, Tor nodes, abusive datacenters, and active attack sources.
+- **Custom rules** allow you to define access logic for IPs, CIDRs, ASNs, or countries.
+- **ASN-based filtering** gives you broad control over provider networks to stop botnets hiding behind hosting providers.
+- **Country-level rules** make it easy to allow or block entire regions.
 
 ## Access List Modes
 
 Each Access List rule gives you full control over how Bunny Shield should handle matched traffic:
 
-* **Allow**: Ensure trusted traffic passes through without restriction.
-* **Block**: Drop malicious requests at the edge instantly.
-* **Challenge**: Trigger browser verification for suspicious traffic without blocking it outright.
-* **Log**: Record traffic patterns for analysis without applying enforcement.
+- **Allow**: Ensure trusted traffic passes through without restriction.
+- **Block**: Drop malicious requests at the edge instantly.
+- **Challenge**: Trigger browser verification for suspicious traffic without blocking it outright.
+- **Log**: Record traffic patterns for analysis without applying enforcement.
 
 ## Action Precedence
 
@@ -46,9 +44,9 @@ This order ensures that trusted traffic is never blocked and that security actio
 
 Bunny Shield maintains a library of continuously updated reputation feeds that are deployed instantly across the edge. These feeds protect against evolving threats without manual upkeep:
 
-* **Advanced**: VPNs, common datacenters, Tor exit nodes, FireHOL Level 1, AbuseIPDB, NetMountains
-* **Business**: Includes all Advanced feeds plus Blocklist DE, ThreatFox, StopForumSpam, SpamHaus DROP, and more
-* **Enterprise**: Includes all Advanced and Business feeds with support for custom feed integrations tailored to your infrastructure
+- **Advanced**: VPNs, common datacenters, Tor exit nodes, FireHOL Level 1, AbuseIPDB, NetMountains
+- **Business**: Includes all Advanced feeds plus Blocklist DE, ThreatFox, StopForumSpam, SpamHaus DROP, and more
+- **Enterprise**: Includes all Advanced and Business feeds with support for custom feed integrations tailored to your infrastructure
 
 ![](/images/docs/78d3b9ba31a96c349979acef3aeedeea5dcafc51a6f188b263399a2433e4d116-image.png)
 
@@ -56,10 +54,10 @@ Bunny Shield maintains a library of continuously updated reputation feeds that a
 
 Custom Access Lists give you complete control over your traffic:
 
-* Allow internal ASNs or office IP ranges
-* Block abusive regions during sensitive launches
-* Challenge suspicious networks while monitoring behavior
-* Apply unique lists to different zones or endpoints
+- Allow internal ASNs or office IP ranges
+- Block abusive regions during sensitive launches
+- Challenge suspicious networks while monitoring behavior
+- Apply unique lists to different zones or endpoints
 
 All custom rules update globally within seconds.
 
@@ -67,9 +65,9 @@ All custom rules update globally within seconds.
 
 Access Lists provide visibility into every decision, so you always know what is being allowed, blocked, or challenged:
 
-* **Logged events**: Requests matched by access rules without being blocked
-* **Actioned events**: Requests that were blocked or challenged
-* **Curated feed hits**: Requests flagged by built-in reputation lists
+- **Logged events**: Requests matched by access rules without being blocked
+- **Actioned events**: Requests that were blocked or challenged
+- **Curated feed hits**: Requests flagged by built-in reputation lists
 
 ![](/images/docs/d2ee99d63b88b84e7703df109b6d19ffb3bdeb88a99833fc03843c742c24b5dd-image.png)
 
@@ -79,15 +77,19 @@ Access Lists can be managed through the Bunny Shield API. This makes it simple t
 
 You can access the full API reference documentation [here](https://api.bunny.net/shield/docs/index.html).
 
-***
+---
 
-* [Table of Contents](#)
+[Bot Detection](/docs/bot-detection)
 
-* * [Key Features](#key-features)
-  * [Multi-layer Access Control](#multi-layer-access-control)
-  * [Access List Modes](#access-list-modes)
-  * [Action Precedence](#action-precedence)
-  * [Curated Threat Intelligence](#curated-threat-intelligence)
-  * [Custom Access Lists](#custom-access-lists)
-  * [Logging and Observability](#logging-and-observability)
-  * [Configuring via API](#configuring-via-api)
+[Metrics & Logging](/docs/shield-metrics-logging)
+
+- [Table of Contents](#)
+
+- - [Key Features](#key-features)
+  - [Multi-layer Access Control](#multi-layer-access-control)
+  - [Access List Modes](#access-list-modes)
+  - [Action Precedence](#action-precedence)
+  - [Curated Threat Intelligence](#curated-threat-intelligence)
+  - [Custom Access Lists](#custom-access-lists)
+  - [Logging and Observability](#logging-and-observability)
+  - [Configuring via API](#configuring-via-api)

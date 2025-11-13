@@ -1,0 +1,81 @@
+---
+title: "Origin Errors"
+description: "No more 502 guesswork. See exactly why your origin failed in real time."
+---
+
+When your origin stops responding, you shouldn’t have to dig through layers of logs or guess whether it’s DNS, timeouts, or misconfiguration.
+
+Origin Errors Monitoring gives you full visibility into failed origin requests, directly in the dashboard or via API.
+
+Available for all users at no extra cost.
+
+## Status Codes
+
+- 400
+- 416
+- 500
+- 502
+- 504
+- 508
+
+## Error Codes
+
+- http_request_exception
+- http_invalid_range
+- http_request_failure
+- http_timeout
+- http_loop_detected
+- http_invalid_compression
+- network_socket_exception
+- network_io_error
+- dns_lookup
+- notfound_localdb
+- error
+
+## Dashboard
+
+Browse and filter origin errors under Monitoring → Origin Errors to quickly identify where and why failures occurred. Each entry includes timestamp, edge region, pull zone ID, error type, and status code, helping you isolate the issue instantly.
+
+![](/images/docs/df54714849709cfddab76e61c4b66c7fd2dc362789b6aa843b4c9385bf589266-image.png) ![](/images/docs/b7f34f204e81212cf940c6d4abbacc33f5cec920a2dcb185ad2e99b2cc3f6545-image.png)
+
+## API Access
+
+Access the same data programmatically to integrate with your monitoring or alerting systems.
+
+Endpoint: _GET_ `https://cdn-origin-logging.bunny.net/{pullZoneId}/{dateTime:MM-dd-yyyy}`
+
+Example Response:
+
+<CodeGroup>
+  ```bash bash
+  {
+    "logs": [
+      {
+        "logId": "a6a6b755-b6a4-46be-b523-aa82a17d4bc5",
+        "timestamp": 1728952065848,
+        "log": "{\"RequestUrl\":\"/apikey\",\"PullZoneId\":308006,\"Message\":\"Origin DNS lookup failed...\",\"ErrorCode\":\"dns_lookup\",\"StatusCode\":502}",
+        "labels": {
+          "ErrorCode": "dns_lookup",
+          "StatusCode": "502",
+          "ServerZone": "CA"
+        }
+      }
+    ]
+  }
+  ```
+</CodeGroup>
+
+Authenticate with your API key `AccessKey` or user JWT `Authorization`, and query by Pull Zone ID and date to retrieve recent origin error events.
+
+---
+
+[WebSockets](/docs/cdn-websockets)
+
+[Overview](/docs/magic-containers-overview)
+
+- [Table of Contents](#)
+
+- - [Status Codes](#status-codes)
+  - [Error Codes](#error-codes)
+  - [Dashboard](#dashboard)
+  - [API Access](#api-access)

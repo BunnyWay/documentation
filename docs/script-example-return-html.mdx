@@ -1,16 +1,14 @@
 ---
 title: "Return HTML"
-description: "Suggest Edits"
+description: "To dynamically generate and return HTML content, use the following example. It demonstrates creating an HTML document and embedding dynamic data, such as the request path. See example below:"
 ---
 
-To dynamically generate and return HTML content, use the following example. It demonstrates creating an HTML document and embedding dynamic data, such as the request path. See example below:
-
 <CodeGroup>
-  ```typescript typescript
+  ```bash bash
   import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
 
-  BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
-      const url=new URL(request.url);
+BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
+const url=new URL(request.url);
 
       const html = `<!DOCTYPE html>
       <html>
@@ -30,6 +28,13 @@ To dynamically generate and return HTML content, use the following example. It d
               "content-type": "text/html"
           }
       });
-  });
-  ```
+
+});
+
+```
 </CodeGroup>
+
+***
+
+[Modify HTTP headers](/docs/script-example-modify-http-headers)
+```

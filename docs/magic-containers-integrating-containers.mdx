@@ -1,9 +1,7 @@
 ---
 title: "Integrating with containers in the same application/pod"
-description: "Suggest Edits"
+description: "When using bunny.net Magic Containers, you can add multiple containers to the same application. These containers will all run inside a single pod sandbox, meaning they share the same network namespace and can communicate with each other via localhost. This document describes how to configure and optimize your setup when using multiple containers in the same pod."
 ---
-
-When using bunny.net Magic Containers, you can add multiple containers to the same application. These containers will all run inside a single pod sandbox, meaning they share the same network namespace and can communicate with each other via localhost. This document describes how to configure and optimize your setup when using multiple containers in the same pod.
 
 # Key concepts
 
@@ -13,7 +11,11 @@ Containers can communicate via `localhost`. This improves the performance of the
 
 Multiple containers cannot use the same port. Since the network namespace is shared, different containers cannot use the same port as they will collide and the pod will not start.
 
-***
+---
 
-* [Table of Contents](#)
-* * [Key concepts](#key-concepts)
+[Global deployment](/docs/magic-containers-global-deployment)
+
+[Autoscaling](/docs/magic-containers-autoscaling)
+
+- [Table of Contents](#)
+- - [Key concepts](#key-concepts)

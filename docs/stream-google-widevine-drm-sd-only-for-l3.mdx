@@ -1,0 +1,87 @@
+---
+title: "Google Widevine DRM SD only for L3"
+description: "Custom Settings for Content Distribution"
+---
+
+Bunny Stream MediaCage Enterprise DRM uniquely supports all three Widevine security levels (L1-L3) by default, providing flexibility for content providers to deliver protected media across a wide range of devices. Additionally, it offers customizable settings that allow content distributors to restrict the distribution of HD (High Definition) content to L3 clients. This feature enhances security by preventing L3 devices which rely on software-only decryption without a Trusted Execution Environment (TEE) from accessing higher-resolution streams, thereby reducing the risk of content leakage or unauthorized capture.
+
+When this restriction is enabled (e.g., via the `SdOnlyForL3` parameter in the Widevine License service), the license server will reject requests for HD keys on L3 devices, potentially causing playback failures if the player attempts to select an HD rendition. To handle this gracefully and ensure seamless playback, client-side players should proactively detect the device's Widevine security level and limit rendition selection to SD (Standard Definition) resolutions (typically 480p or lower) when L3 is detected. This approach avoids license rejection errors by ensuring only compatible SD streams are requested.
+
+# Handling Restrictions in Players
+
+If the HD restriction for L3 is enabled on the server side, implement the following best practices in your player:
+
+1. **Detect Widevine Security Level**: Use the Encrypted Media Extensions (EME) API to query the device's supported robustness levels before loading the manifest or starting playback. Attempt to request a high-robustness configuration (indicative of L1) and fallback to L3 if it fails.
+2. **Restrict to SD Renditions**: Upon detecting L3, configure the player's Adaptive Bitrate (ABR) logic to cap the maximum resolution or bitrate, ensuring only SD variants from the DASH or HLS manifest are selected.
+3. **Error Fallback**: As a safety net, monitor for DRM license errors (e.g., rejection due to L3 restrictions) and dynamically switch to SD if an error occurs during playback initialization.
+
+This client-side handling aligns with industry standards used by platforms like Netflix, promoting better user experience on browsers and lower-security devices.
+
+**Pseudo-Example: Detecting Widevine Level (JavaScript)** Here's a simple asynchronous function to detect the security level using the EME API:
+
+```
+async function detectWidevineLevel() {
+  const config = [{
+    initDataTypes: ['cenc'],
+    videoCapabilities: [{
+      contentType: 'video/mp4; codecs="avc1.42E01E"',
+      robustness: 'HW_SECURE_ALL'  // Tests for L1 (hardware-secure)
+    }]
+  }];
+
+  try {
+    await navigator.requestMediaKeySystemAccess('com.widevine.alpha', config);
+    return 'L1';  // HD supported
+  } catch (error) {
+    return 'L3';  // Assume L3 and restrict to SD
+  }
+}
+
+// Usage example
+detectWidevineLevel().then(level => {
+  if (level === 'L3') {
+    // Apply SD restrictions in player config
+    console.log('L3 detected: Limiting to SD resolutions');
+  }
+});
+```
+
+**Pseudo-Example: Configuring Shaka Player for SD Restriction** For Shaka Player (a popular open-source DASH/HLS player), integrate the detection logic and set ABR restrictions:
+
+```
+const player = new shaka.Player(videoElement);
+player.configure({
+  drm: {
+    servers: { 'com.widevine.alpha': 'YOUR_BUNNY_LICENSE_PROXY_URL' },
+    advanced: {
+      'com.widevine.alpha': {
+        videoRobustness: ['HW_SECURE_ALL', 'SW_SECURE_CRYPTO'],  // Fallback options
+        audioRobustness: ['HW_SECURE_ALL', 'SW_SECURE_CRYPTO']
+      }
+    }
+  }
+});
+detectWidevineLevel().then(level => {
+  if (level === 'L3') {
+    player.configure('abr.restrictions.maxHeight', 480);  // Restrict to SD (480p max)
+  }
+  player.load('YOUR_MANIFEST_URL').catch(error => {
+    // Handle errors, e.g., retry with SD if license fails
+    if (error.code === shaka.util.Error.Code.LICENSE_REQUEST_FAILED) {
+      player.configure('abr.restrictions.maxHeight', 480);
+      player.load('YOUR_MANIFEST_URL');
+    }
+  });
+});
+```
+
+These examples can be adapted for other players like Video.js or Bitmovin. Ensure your manifest includes dedicated SD representations for optimal compatibility. For further customization or API details, refer to the Bunny Stream API documentation or contact Support.
+
+---
+
+[Understanding Geo-Replication](/docs/stream-understanding-geo-replication)
+
+[Best practices](/docs/stream-best-practices)
+
+- [Table of Contents](#)
+- - [Handling Restrictions in Players](#handling-restrictions-in-players)

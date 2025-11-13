@@ -1,22 +1,21 @@
 ---
 title: "Log format"
-description: "Suggest Edits"
+description: "bunny.net provides a simple access log format. Additionally, extended logging can be enabled upon request. For extended logging, please reach out to our support team."
 ---
-
-bunny.net provides a simple access log format. Additionally, extended logging can be enabled upon request. For extended logging, please reach out to our support team.
 
 A request log is stored as a new line in the log file, for example:
 
 <CodeGroup>
-  ```text text
-  HIT|200|1507167062421|412|390|163.172.53.229|-|https://bunnycdn.b-cdn.net/assets/landingpage/images/cdn-video-preview-from-a-blue-moon.m4v|WA|Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36|322b688bd63fb63f2babe9de30a5d262|DE
-  ```
+  ```bash bash
+  HIT|200|1507167062421|412|390|163.172.53.229|-|https://bunnycdn.b-cdn.net/assets/landingpage/images/cdn-video-preview-from-a-blue-moon.m4v|WA|Mozilla/5.0
+  (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146
+  Safari/537.36|322b688bd63fb63f2babe9de30a5d262|DE ```
 </CodeGroup>
 
 Each field is separated by the | character and with the following format:
 
 <CodeGroup>
-  ```html html
+  ```bash bash
   <cache-status>|<status-code>|<timestamp>|<bytes-sent>|<pull-zone-id>|<remote-ip>|<referer-url>|<url>|<edge-location>|<user-agent>|<unique-request-id>|<country-code>
   ```
 </CodeGroup>
@@ -76,13 +75,15 @@ The two-letter country code (ISO-3166) where the request came from, based on the
 If extended logging is enabled, 3 additional fields are logged into the log file:
 
 <CodeGroup>
-  ```text text
-  HIT|200|1507167062421|412|390|163.172.53.229|-|https://bunnycdn.b-cdn.net/assets/landingpage/images/cdn-video-preview-from-a-blue-moon.m4v|WA|Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36|322b688bd63fb63f2babe9de30a5d262|DE|12345|bytes=0-12345|Bearer: MyToken
-  ```
+  ```bash bash
+  HIT|200|1507167062421|412|390|163.172.53.229|-|https://bunnycdn.b-cdn.net/assets/landingpage/images/cdn-video-preview-from-a-blue-moon.m4v|WA|Mozilla/5.0
+  (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146
+  Safari/537.36|322b688bd63fb63f2babe9de30a5d262|DE|12345|bytes=0-12345|Bearer:
+  MyToken ```
 </CodeGroup>
 
 <CodeGroup>
-  ```html html
+  ```bash bash
   <cache-status>|<status-code>|<timestamp>|<bytes-sent>|<pull-zone-id>|<remote-ip>|<referer-url>|<url>|<edge-location>|<user-agent>|<unique-request-id>|<country-code>|<body-bytes-sent>|<range-header-value>|<authorization-header-value>
   ```
 </CodeGroup>
@@ -99,9 +100,13 @@ The HTTP range header value that was used to return the file. If the header is n
 
 The Authorization header that was sent with the request. If the header is not set, this will be replaced by -.
 
-***
+---
 
-* [Table of Contents](#)
+[Logging API](/docs/cdn-logging-api)
 
-* * * [Log fields definitions](#log-fields-definitions)
-  * [Extended logging](#extended-logging)
+[Permanent Log Storage](/docs/cdn-permanent-log-storage)
+
+- [Table of Contents](#)
+
+- - - [Log fields definitions](#log-fields-definitions)
+  - [Extended logging](#extended-logging)

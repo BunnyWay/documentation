@@ -1,18 +1,16 @@
 ---
 title: "Metrics & Logging"
-description: "Suggest Edits"
+description: "We provide comprehensive metrics and logging features to enhance the monitoring and observability of your website's security. It is crucial to regularly review these metrics and logs to ensure that no false positives are triggered and that potential threats are effectively blocked."
 ---
-
-We provide comprehensive metrics and logging features to enhance the monitoring and observability of your website's security. It is crucial to regularly review these metrics and logs to ensure that no false positives are triggered and that potential threats are effectively blocked.
 
 # Metrics
 
 Our system allows you to view detailed metrics related to your website's traffic and security events processed by the WAF Engine. These metrics include:
 
-* The total number of processed requests.
-* The total number of triggered rules.
-* The number of triggered rules that were logged.
-* The number of triggered rules that were blocked.
+- The total number of processed requests.
+- The total number of triggered rules.
+- The number of triggered rules that were logged.
+- The number of triggered rules that were blocked.
 
 Analyzing these metrics provides valuable insights into the performance of your WAF Engine and helps determine whether further investigation or configuration adjustments are necessary for your WAF Engine rulesets. Monitoring these metrics can also help identify unusual patterns that may indicate security threats or misconfigurations leading to false positives. You can view the complete API documentation for our Metrics endpoints [here](https://api.bunny.net/shield/docs/index.html), under the section labeled **Metrics**.
 
@@ -24,9 +22,13 @@ You can view in-depth logs on any triggered requests by our WAF Engine, allowing
 
 To access the WAF logging data, use the following API endpoint: GET [\<https://api.bunny.net/shield/event-logs/\{\{shieldZoneId}}>](https://api.bunny.net/shield/event-logs/%7B%7BshieldZoneId%7D%7D).
 
-***
+---
 
-* [Table of Contents](#)
+[Access Lists](/docs/shield-access-lists)
 
-* * [Metrics](#metrics)
-  * [Logging](#logging)
+[Cookies](/docs/shield-cookies)
+
+- [Table of Contents](#)
+
+- - [Metrics](#metrics)
+  - [Logging](#logging)

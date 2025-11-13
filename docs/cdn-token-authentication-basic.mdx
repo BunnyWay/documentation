@@ -1,14 +1,15 @@
 ---
 title: "Token authentication (basic)"
-description: "Suggest Edits"
+description: "The basic URL Token Authentication allows you to easily protect your requests using specially signed URLs. These URLs will expire after the set timestamp and are only accessible using a token generated using a secret key and an expiry timestamp."
 ---
-
-The basic URL Token Authentication allows you to easily protect your requests using specially signed URLs. These URLs will expire after the set timestamp and are only accessible using a token generated using a secret key and an expiry timestamp.
 
 For the advanced implementation with more powerful features, please see [Token Authentication](/docs/token-authentication).
 
 <Warning>
-  IPv6 is automatically disabled when token authentication is in use. This is designed to ensure that users always authenticate correctly, such as when an origin may not support a forwarded IPv6 address. User's will be automatically routed to a CDN IPv4 address with this enabled.
+  ### IPv6 support
+
+IPv6 is automatically disabled when token authentication is in use. This is designed to ensure that users always authenticate correctly, such as when an origin may not support a forwarded IPv6 address. User's will be automatically routed to a CDN IPv4 address with this enabled.
+
 </Warning>
 
 # Signing procedure
@@ -18,9 +19,7 @@ To create a secure URL, you must add a **token** and **expires** query parameter
 The token parameter is a Base64 encoded MD5 hash based on the key, URL and any extra parameters. To generate the token, you can use the following algorithm.
 
 <CodeGroup>
-  ```c c
-  MD5(token_security_key + url_path + expiration)
-  ```
+  ```bash bash MD5(token_security_key + url_path + expiration) ```
 </CodeGroup>
 
 To properly format the token you have to then replace the following characters in the resulting Base64 string: '\n' with '', '+' with '-', '/' with '\_' and '=' with ''
@@ -28,7 +27,7 @@ To properly format the token you have to then replace the following characters i
 An example secure URL will then look like:
 
 <CodeGroup>
-  ```http http
+  ```bash bash
   https://test.b-cdn.net/assets/favicon.ico?token=m0EMEkV3pNAKFB33gZuv_Q&expires=1456761770
   ```
 </CodeGroup>
@@ -36,128 +35,134 @@ An example secure URL will then look like:
 # Code examples
 
 <CodeGroup>
-  ```php php
+  ```bash bash
   $securityKey = 'token_security_key';
   $path = '/pathto/file.jpg';
 
-  // Set the time of expiry to one hour from now
-  $expires = time() + 3600; 
+// Set the time of expiry to one hour from now
+$expires = time() + 3600;
 
-  // Generate the token
-  $hashableBase = $securityKey.$path.$expires;
+// Generate the token
+$hashableBase = $securityKey.$path.$expires;
 
-  // If using IP validation
-  // $hashableBase .= "146.14.19.7";
+// If using IP validation
+// $hashableBase .= "146.14.19.7";
 
-  $token = md5($hashableBase, true);
-  $token = base64_encode($token);
-  $token = strtr($token, '+/', '-_');
-  $token = str_replace('=', '', $token);  
+$token = md5($hashableBase, true);
+$token = base64_encode($token);
+$token = strtr($token, '+/', '-\_');
+$token = str_replace('=', '', $token);
 
-  // Generate the URL
-  $url = "https://myzone.b-cdn.net{$path}?token={$token}&expires={$expires}";
-  ```
+// Generate the URL
+$url = "https://myzone.b-cdn.net{$path}?token={$token}&expires={$expires}";
 
-  ```csharp csharp
-  var securityKey = "token_security_key";
-  var path = "/pathto/file.jpg";
+````
 
-  // Load the current time
-  var unixBaseTime = new DateTime(1970,1,1,0,0,0,0,System.DateTimeKind.Utc);
-  var currentTime = ((long)(DateTime.UtcNow - unixBaseTime).TotalSeconds);
+```bash bash
+var securityKey = "token_security_key";
+var path = "/pathto/file.jpg";
 
-  // Set the time of expiry to one hour from now
-  var expires = currentTime + 3600; 
+// Load the current time
+var unixBaseTime = new DateTime(1970,1,1,0,0,0,0,System.DateTimeKind.Utc);
+var currentTime = ((long)(DateTime.UtcNow - unixBaseTime).TotalSeconds);
 
-  // Generate the token
-  System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create();
+// Set the time of expiry to one hour from now
+var expires = currentTime + 3600;
 
-  string hashableBase = securityKey + path + expires;
+// Generate the token
+System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create();
 
-  // If using IP validation
-  // hashableBase += "146.14.19.7";
+string hashableBase = securityKey + path + expires;
 
-  byte[] outpufBuffer = md5.ComputeHash(Encoding.UTF8.GetBytes(hashableBase)); 
-  var token = Convert.ToBase64String(outpufBuffer); 
-  token = token.Replace("\n", "").Replace("+", "-").Replace("/", "_").Replace("=", ""); 
+// If using IP validation
+// hashableBase += "146.14.19.7";
 
-  // Generate the URL 
-  var url = $"https://myzone.b-cdn.net{path}?token={token}&expires={expires}";
-  ```
+byte[] outpufBuffer = md5.ComputeHash(Encoding.UTF8.GetBytes(hashableBase));
+var token = Convert.ToBase64String(outpufBuffer);
+token = token.Replace("\n", "").Replace("+", "-").Replace("/", "_").Replace("=", "");
 
-  ```javascript javascript
-  var crypto = require('crypto'),
-  securityKey = 'token_security_key',
-  path = '/pathto/file.jpg';
+// Generate the URL
+var url = $"https://myzone.b-cdn.net{path}?token={token}&expires={expires}";
+````
 
-  // Set the time of expiry to one hour from now
-  var expires = Math.round(Date.now() / 1000) + 3600;
+```bash bash
+var crypto = require('crypto'),
+securityKey = 'token_security_key',
+path = '/pathto/file.jpg';
 
-  var hashableBase = securityKey + path + expires;
+// Set the time of expiry to one hour from now
+var expires = Math.round(Date.now() / 1000) + 3600;
 
-  // If using IP validation
-  // hashableBase += "146.14.19.7";
+var hashableBase = securityKey + path + expires;
 
-  // Generate and encode the token 
-  var md5String = crypto.createHash("md5").update(hashableBase).digest("binary");
-  var token = new Buffer(md5String, 'binary').toString('base64');
-  token = token.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, '');
+// If using IP validation
+// hashableBase += "146.14.19.7";
 
-  // Generate the URL
-  var url = 'https://myzone.b-cdn.net' + path + '?token=' + token + '&expires=' + expires;
-  ```
+// Generate and encode the token
+var md5String = crypto.createHash("md5").update(hashableBase).digest("binary");
+var token = new Buffer(md5String, 'binary').toString('base64');
+token = token.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, '');
 
-  ```python python
-  #!/usr/bin/env python3
-  import hashlib
-  from base64 import b64encode
-  from time import time
+// Generate the URL
+var url = 'https://myzone.b-cdn.net' + path + '?token=' + token + '&expires=' + expires;
+```
 
-  def generate_secure_url(security_key, path,
-                          expire_timeframe=3600,
-                          base_url=str(),
-                          filtered_ip=""):
-      """Generate BunnyCDN URL authentication token.
-   
-     Arguments:
-         security_key (str): Generated token from the panel.
-         path (str): /path/to/file.ext, with the initial slash included.
-         expire_timeframe (int): Time until expiry, in seconds.
-         base_url (str): CDN's base URL of the site, without ending slash.
-         filtered_ip: The IP that should be included in the hash. Use this if doing IP validation.
+```bash bash
+#!/usr/bin/env python3
+import hashlib
+from base64 import b64encode
+from time import time
 
-     Returns:
-         str: URL
-     """
-      expire_timestamp = int(time()) + 3600
-      token_content = '{key}{path}{timestamp}{filtered_ip}'.format(key=security_key,path=path,timestamp=expire_timestamp)
-      md5sum = hashlib.md5()
-      md5sum.update(token_content.encode('ascii'))
-      token_digest = md5sum.digest()
-      token_base64 = b64encode(token_digest).decode('ascii')
-      token_formatted = token_base64.replace('\n', '').replace('+', '-').replace('/', '_').replace('=', '')
-   
-      # Build the URL
-      url = '{base_url}{path}?token={token}&expires={expire_timestamp}'.format(
-          base_url=base_url,
-          path=path,
-          token=token_formatted,
-          expire_timestamp=expire_timestamp)
-   
-      return url
-   
-  # Example usage:
-  # Returns: '/index.html?token=IuNSzXOiYkL-LmGJcwxMQg&expires=1488672404'
-  generate_secure_url('super-secret-code', '/index.html')
+def generate_secure_url(security_key, path,
+                        expire_timeframe=3600,
+                        base_url=str(),
+                        filtered_ip=""):
+    """Generate BunnyCDN URL authentication token.
 
-  # Returns: 'https://test.b-cdn.net/index.html?token=EuS4D8fFlTrT6zO4FymvUw&expires=1488672453'
-  generate_secure_url('super-secret-code', '/index.html', 31536000, 'https://test.b-cdn.net')
-  ```
+   Arguments:
+       security_key (str): Generated token from the panel.
+       path (str): /path/to/file.ext, with the initial slash included.
+       expire_timeframe (int): Time until expiry, in seconds.
+       base_url (str): CDN's base URL of the site, without ending slash.
+       filtered_ip: The IP that should be included in the hash. Use this if doing IP validation.
+
+   Returns:
+       str: URL
+   """
+    expire_timestamp = int(time()) + 3600
+    token_content = '{key}{path}{timestamp}{filtered_ip}'.format(key=security_key,path=path,timestamp=expire_timestamp)
+    md5sum = hashlib.md5()
+    md5sum.update(token_content.encode('ascii'))
+    token_digest = md5sum.digest()
+    token_base64 = b64encode(token_digest).decode('ascii')
+    token_formatted = token_base64.replace('\n', '').replace('+', '-').replace('/', '_').replace('=', '')
+
+    # Build the URL
+    url = '{base_url}{path}?token={token}&expires={expire_timestamp}'.format(
+        base_url=base_url,
+        path=path,
+        token=token_formatted,
+        expire_timestamp=expire_timestamp)
+
+    return url
+
+# Example usage:
+# Returns: '/index.html?token=IuNSzXOiYkL-LmGJcwxMQg&expires=1488672404'
+generate_secure_url('super-secret-code', '/index.html')
+
+# Returns: 'https://test.b-cdn.net/index.html?token=EuS4D8fFlTrT6zO4FymvUw&expires=1488672453'
+generate_secure_url('super-secret-code', '/index.html', 31536000, 'https://test.b-cdn.net')
+```
+
 </CodeGroup>
 
-***
+---
 
-* [Table of Contents](#)
+[Token authentication](/docs/cdn-token-authentication)
 
-* * [Signing procedure](#signing-procedure)
-  * [Code examples](#code-examples)
+[Edge Rules variable expansion](/docs/edge-rules-variable-expansion)
+
+- [Table of Contents](#)
+
+- - [Signing procedure](#signing-procedure)
+  - [Code examples](#code-examples)

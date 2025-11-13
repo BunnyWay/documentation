@@ -1,25 +1,23 @@
 ---
 title: "Modify HTTP headers"
-description: "Suggest Edits"
+description: "For scenarios requiring modification of HTTP headers, such as enforcing certain request methods or setting custom response headers, this example demonstrates handling only GET requests and responding with a JSON object. See example below:"
 ---
 
-For scenarios requiring modification of HTTP headers, such as enforcing certain request methods or setting custom response headers, this example demonstrates handling only GET requests and responding with a JSON object. See example below:
-
 <CodeGroup>
-  ```typescript typescript
+  ```bash bash
   import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
 
-  BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
+BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
 
       const url=new URL(request.url);
-      if (request.method !== "GET") 
+      if (request.method !== "GET")
           return new Response("Not Allowed", {
               status: 405,
               headers: {
                   Allow: "GET",
               }
           });
-      
+
       const responseObj={
           "hello":"world"
       }
@@ -29,6 +27,13 @@ For scenarios requiring modification of HTTP headers, such as enforcing certain 
               "Content-type":"application/json"
           }
       });
-  });
-  ```
+
+});
+
+```
 </CodeGroup>
+
+***
+
+[Fetch url](/docs/script-example-fetch-url)
+```

@@ -1,73 +1,76 @@
 ---
 title: "Collections"
-description: "Suggest Edits"
+description: "Understanding Collections"
 ---
 
-Collections are an integral feature of Bunny Stream designed to help you organize and manage your video assets efficiently. Instead of storing videos in a single, unstructured list, you can group related videos into logical categories called Collections. By grouping videos into Collections, you can simplify your management workflows, apply common settings uniformly, and quickly find and share related content.
+# Bunny Stream offers a collection system that allows you to organize your videos in a simple and logical way within each video library. This makes it easier to manage large volumes of content visually.
 
-# What you'll need
+ℹ️ **Important Note:**
 
-Before you dive in, make sure you have the following prerequisites in place:
+They are not public, You cannot generate a public URL for a collection, And they do not function as playlists.
 
-* A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-* A Video Library already created.
-* A video file you want to add to the collection.
+**Their sole purpose is to help you keep your video content neatly arranged in folders.**
 
-# Adding a collection
+# How to Add a Collection
 
-Adding a collection is simple. You can follow the steps below:
+Creating a collection is quick and easy:
 
-1. Log in to your bunny net account.
-2. Go to **Stream** and select the video library
+1. Open the Video Library where you want to add the collection.
+2. Click the + Add Collection button in the top-right corner.
+3. Enter a name for your collection.
+4. Done! Your new collection will appear as a folder in the library view
 
-![](/images/docs/5d466d3d802e11cf8a6c8fd2cd5fe994e6e70d48abd289ca49b43baf4360de36-image.png)
+# How to upload a video to a collection?
 
-3. Select the **Manage Library** tab and click on **Add Collection**.
+To upload videos directly into a collection:
 
-![](/images/docs/dc313784737deb7ff625af17f970964d67555ebad361af44a5e6afca7c67cfc3-image.png)
+1. Click on the collection folder in your library to open it.
+2. Use the regular Upload button.
+3. Select one or more video files to upload.
+4. The uploaded videos will automatically be saved inside that collection.
 
-4. Enter the name of the collection and click **Create**.
+# How to move videos between collections?
 
-![](/images/docs/ee411636bd510e353936efb1df0f6444f8a6ae83a80fb33973c6f616296426bf-image.png)
+You can move existing videos to a different collection using two methods:
 
-5. You're done!
+**Drag and Drop**
 
-# Uploading a video to a collection
+Simply drag the video thumbnail and drop it into the desired collection folder.
 
-When you have your Collection in place, you can easily upload your video to a Collection by following the steps below:
+**Using the Context Menu**
 
-1. Open the newly created collection and click on **Upload a Video** .
+If you have many collections and prefer a more precise method:
 
-![](/images/docs/c77fdab8a500b76c036bc76bfc58965d3d6d3b6e6b3564092effd84db707421e-image.png)
+1. Click the three dots (…) on the video you want to move.
 
-2. In the pop-up window you can easily drag and drop or browse for the video file.
+2. Select Move to collection from the menu.
 
-![](/images/docs/4eec82f6545d235483df905cb2ead46cd35179d1da8ed5aa55e05436699396e3-image.png)
+3. In the pop-up window, choose the target collection.
 
-# Moving videos between collections
+4. Click Confirm, the video will be moved.
 
-If you need to reorganize your videos, you can easily move them from one Collection to another.
+   ![](/images/docs/9aed7da6d85c89826049cb087a8f8971061ce47de71e4f8717c983015edb74fa-image.png)
 
-1. Click on the video’s hamburger menu icon and select **Move to collection**.
+# Moving Multiple Videos to Collections (API Method)
 
-![](/images/docs/af9477561c6211a76f9fce14e190cee1b3cdf6e5e83253462d2ed51be4548613-image.png)
+If you need to move multiple videos to one or more collections in bulk, please note that this functionality is not currently available through the dashboard.
 
-2. Select the collection from the dropdown menu and click **Move**.
+However, it can be automated using the Update Video API by passing the desired collectionId to each video.
 
-![](/images/docs/d3dad86da4cfbb63c9c3c403ce27661a20a95cbacba4582be6954b8058b6abda-image.png)
+**Update Video API Documentation:** [https://docs.bunny.net/reference/video_updatevideo](/reference/video_updatevideo)
 
-3. You are done!
+**Need help organizing your content or have questions about Bunny Stream features?** Feel free to [contact our support](https://bunny.net/contact/) team we’re happy to assist!
 
-# Need help or encountered issues?
+---
 
-If you encounter any difficulties or have questions while following this guide, our support team is here to assist you. Please don't hesitate to contact us via the [support request form](https://bunny.net/contact/) for prompt assistance. Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
+[Use & expand](/docs/stream-use-and-expand)
 
-***
+[Embedding videos](/docs/stream-embedding-videos)
 
-* [Table of Contents](#)
+- [Table of Contents](#)
 
-* * [What you'll need](#what-youll-need)
-  * [Adding a collection](#adding-a-collection)
-  * [Uploading a video to a collection](#uploading-a-video-to-a-collection)
-  * [Moving videos between collections](#moving-videos-between-collections)
-  * [Need help or encountered issues?](#need-help-or-encountered-issues)
+- - [Bunny Stream offers a collection system that allows you to organize your videos in a simple and logical way within each video library. This makes it easier to manage large volumes of content visually.](#bunny-stream-offers-a-collection-system-that-allows-you-to-organize-your-videos-in-a-simple-and-logical-way-within-each-video-library-this-makes-it-easier-to-manage-large-volumes-of-content-visually)
+  - [How to Add a Collection](#how-to-add-a-collection)
+  - [How to upload a video to a collection?](#how-to-upload-a-video-to-a-collection)
+  - [How to move videos between collections?](#how-to-move-videos-between-collections)
+  - [Moving Multiple Videos to Collections (API Method)](#moving-multiple-videos-to-collections-api-method)

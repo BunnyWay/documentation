@@ -1,16 +1,14 @@
 ---
 title: "Deploying your app"
-description: "Suggest Edits"
+description: "Magic Containers offers three deployment options for your applications: ,  and  . With Magic deployment, you can deploy your apps globally with minimal effort. The single region deployment option deploys your app to a single region with no default auto-scaling, and advanced deployment option gives you full control over provisioning settings, allowing you to select specific regions for deployment and manage the deployment of your app based on user activity."
 ---
-
-Magic Containers offers three deployment options for your applications: **Magic deployment**, **Single region deployment** and **Advanced deployment** . With Magic deployment, you can deploy your apps globally with minimal effort. The single region deployment option deploys your app to a single region with no default auto-scaling, and advanced deployment option gives you full control over provisioning settings, allowing you to select specific regions for deployment and manage the deployment of your app based on user activity.
 
 # What you'll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
-* A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-* You should have a private container registry set up for GitHub or Docker. Additionally, you need to integrate this registry with the Magic Containers platform.
+- A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+- You should have a private container registry set up for GitHub or Docker. Additionally, you need to integrate this registry with the Magic Containers platform.
 
 # Magic deployment
 
@@ -19,7 +17,10 @@ Before you dive in, make sure you have the following prerequisites in place:
 **Magic deployment** is the simplest way to get your app up and running. It leverages the power of Magic Containers AI to handle global provisioning efficiently and cost-effectively. Magic Containers AI will automatically analyze your app's requirements, determine the optimal deployment regions, and provision your app globally in just a few clicks. This approach ensures the best possible performance while minimizing costs.
 
 <Info>
-  For a detailed guide on deploying an app using the Magic deployment option, please refer to the [quickstart documentation](/docs/getting-started-1)
+  ### Note
+
+For a detailed guide on deploying an app using the Magic deployment option, please refer to the [quickstart documentation](/docs/getting-started-1)
+
 </Info>
 
 # Single region deployment
@@ -56,10 +57,10 @@ If you want your app to be available on the internet, you need to set up edge en
 
 ![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
 
-* You need to name the endpoint (it must have a unique name).
-* Decide how you want to expose the app, either using CDN or Anycast.
-* Define the container port, which is the port on which the application is listening inside the container
-* Specify whether your application inside the container uses SSL for origin (only CDN setting).
+- You need to name the endpoint (it must have a unique name).
+- Decide how you want to expose the app, either using CDN or Anycast.
+- Define the container port, which is the port on which the application is listening inside the container
+- Specify whether your application inside the container uses SSL for origin (only CDN setting).
 
 12. Click **Add endpoint**, and then click **Add Container**.
 13. Review your settings. If everything looks good, click **Next Step**.
@@ -100,15 +101,15 @@ To deploy your app using Custom deployment, follow the steps below:
 
 After selecting advanced deployment, the first step is to configure **Region Settings**. You will be presented with a list of all available regions. For each region, you can set whether it is a base region or a standard region:
 
-* Base region: Base regions are those where your app will always be deployed. You must select at least one base region and there is no maximum limit.
-* Enabled region: The provisioning system will actively monitor user locations and behavior. If it identifies active users in a specific region, it will dynamically deploy the app to accomodate the user traffic. Conversely, if there is no user activity in a region, the app will not be deployed in that area.
+- Base region: Base regions are those where your app will always be deployed. You must select at least one base region and there is no maximum limit.
+- Enabled region: The provisioning system will actively monitor user locations and behavior. If it identifies active users in a specific region, it will dynamically deploy the app to accomodate the user traffic. Conversely, if there is no user activity in a region, the app will not be deployed in that area.
 
 ![](/images/docs/f3476bf7b00a1dc409c5125c37ed65b90d1f255b6099a9a119944ea9833580aa-Screenshot_2025-06-30_at_15.58.52.png)
 
 Based on your settings, the provisioner will react to user activity as follows:
 
-* If the **Enabled Regions** and **Base Regions** are equal, the provisioner will use Static Provisioning. In this mode, the regions deployed over time will remain the same.
-* If the sets are different, the provisioner will use **Auto Provisioning**. Regions are chosen based on end-user activity. If users are active in a region, the app will be deployed there. If there are no active users in a region, the app won't be deployed.
+- If the **Enabled Regions** and **Base Regions** are equal, the provisioner will use Static Provisioning. In this mode, the regions deployed over time will remain the same.
+- If the sets are different, the provisioner will use **Auto Provisioning**. Regions are chosen based on end-user activity. If users are active in a region, the app will be deployed there. If there are no active users in a region, the app won't be deployed.
 
 4. After configuring the region settings, click **Next Step.**
 5. Set the minimum and maximum number of instances (maximum is 10), and click **Add New Container**.
@@ -125,10 +126,10 @@ If you want your app to be available on the internet, you need to set up edge en
 
 ![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
 
-* You need to name the endpoint (it must have a unique name).
-* Decide how you want to expose the app, either using CDN or Anycast.
-* Define the container port, which is the port on which the application is listening inside the container
-* Specify whether your application inside the container uses SSL for origin (only CDN setting).
+- You need to name the endpoint (it must have a unique name).
+- Decide how you want to expose the app, either using CDN or Anycast.
+- Define the container port, which is the port on which the application is listening inside the container
+- Specify whether your application inside the container uses SSL for origin (only CDN setting).
 
 12. Click **Add endpoint**, and then click **Add Container**.
 13. Review your settings. If everything looks good, click **Next Step**.
@@ -155,12 +156,16 @@ If you encounter any difficulties or have questions while following this Quickst
 
 Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
 
-***
+---
 
-* [Table of Contents](#)
+[Tutorials](/docs/magic-containers-tutorials)
 
-* * [What you'll need](#what-youll-need)
-  * [Magic deployment](#magic-deployment)
-  * [Single region deployment](#single-region-deployment)
-  * [Advanced deployment](#advanced-deployment)
-  * [Need help or encountering issues?](#need-help-or-encountering-issues)
+[Undeploying your app](/docs/magic-containers-undeploying-your-app)
+
+- [Table of Contents](#)
+
+- - [What you'll need](#what-youll-need)
+  - [Magic deployment](#magic-deployment)
+  - [Single region deployment](#single-region-deployment)
+  - [Advanced deployment](#advanced-deployment)
+  - [Need help or encountering issues?](#need-help-or-encountering-issues)

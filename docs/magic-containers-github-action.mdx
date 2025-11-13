@@ -1,16 +1,14 @@
 ---
 title: "GitHub Action"
-description: "Suggest Edits"
+description: "This GitHub Action provides an automated way to update container images on Magic Containers, enabling the building and pushing of new container images without manual intervention. When integrated into your GitHub workflow, the process includes building a Docker image, pushing the image to a container registry such as GitHub Container Registry or DockerHub, and updating your application on Magic Containers."
 ---
-
-This GitHub Action provides an automated way to update container images on Magic Containers, enabling the building and pushing of new container images without manual intervention. When integrated into your GitHub workflow, the process includes building a Docker image, pushing the image to a container registry such as GitHub Container Registry or DockerHub, and updating your application on Magic Containers.
 
 # What you’ll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
-* An application already deployed on the Magic Containers platform.
-* A GitHub repository containing a Dockerfile or another valid build context for containerization. Make sure you have the necessary container registry credentials. If you are using the GitHub Container Registry, you can rely on the GITHUB\_TOKEN, while DockerHub may require personal access tokens or similar credentials.
+- An application already deployed on the Magic Containers platform.
+- A GitHub repository containing a Dockerfile or another valid build context for containerization. Make sure you have the necessary container registry credentials. If you are using the GitHub Container Registry, you can rely on the GITHUB_TOKEN, while DockerHub may require personal access tokens or similar credentials.
 
 # Usage example
 
@@ -60,10 +58,10 @@ jobs:
 
 Use the following inputs to configure the action:
 
-* `app_id `(required): The App ID for your Magic Containers application.
-* `api_key` (required): The API Key for your Bunny account. Sub-user accounts are not supported at this time.
-* `container` (required): The name of the container within the Magic Containers application.
-* `image_tag` (required): The new image tag.
+- `app_id `(required): The App ID for your Magic Containers application.
+- `api_key` (required): The API Key for your Bunny account. Sub-user accounts are not supported at this time.
+- `container` (required): The name of the container within the Magic Containers application.
+- `image_tag` (required): The new image tag.
 
 # Need help or encountering issues?
 
@@ -71,11 +69,15 @@ If you encounter any difficulties or have questions while following this Quickst
 
 Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
 
-***
+---
 
-* [Table of Contents](#)
+[Troubleshooting application](/docs/magic-containers-troubleshooting-application)
 
-* * [What you’ll need](#what-youll-need)
-  * [Usage example](#usage-example)
-  * [Inputs](#inputs)
-  * [Need help or encountering issues?](#need-help-or-encountering-issues)
+[How to retrieve Magic Container IP Addresses](/docs/magic-containers-list-of-nodes-to-whitelist)
+
+- [Table of Contents](#)
+
+- - [What you’ll need](#what-youll-need)
+  - [Usage example](#usage-example)
+  - [Inputs](#inputs)
+  - [Need help or encountering issues?](#need-help-or-encountering-issues)
