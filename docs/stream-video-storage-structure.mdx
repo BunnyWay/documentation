@@ -1,69 +1,62 @@
 ---
-title: "Video storage structure"
-description: "Suggest Edits"
+title: "Overview"
+description: "All videos on Bunny Stream are processed and stored in a standardized location. The following page describes how and where videos are stored, allowing you to access them programmatically or within your own video player."
 ---
-
-All videos on Bunny Stream are processed and stored in a standardized location. The following page describes how and where videos are stored, allowing you to access them programmatically or within your own video player.
 
 # Video storage structure
 
 ### Direct play URL
 
 <CodeGroup>
-  ```http http
-  https://video.bunnycdn.com/play/{video_library_id}/{video_id}
+  ```bash bash https://video.bunnycdn.com/play/{video_library_id}/{video_id}
   ```
 </CodeGroup>
 
 ### Original file (if enabled)
 
 <CodeGroup>
-  ```http http
-  https://{pull_zone_url}.b-cdn.net/{video_id}/original
-  ```
+  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/original ```
 </CodeGroup>
 
 ### HLS playlist URL
 
 <CodeGroup>
-  ```http http
-  https://{pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8
-  ```
+  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8 ```
 </CodeGroup>
 
 ### Thumbnail URL
 
 <CodeGroup>
-  ```http http
-  https://{pull_zone_url}.b-cdn.net/{video_id}/{thumbnail_file_name}
+  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/
+  {thumbnail_file_name}
   ```
 </CodeGroup>
 
 ### Preview animation URL (WebP)
 
 <CodeGroup>
-  ```http http
-  https://{pull_zone_url}.b-cdn.net/{video_id}/preview.webp
-  ```
+  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/preview.webp ```
 </CodeGroup>
 
 ### MP4 video URL
 
 <CodeGroup>
-  ```http http
-  https://{pull_zone_url}.b-cdn.net/{video_id}/play_{resolution_height}p.mp4
-  ```
+  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/play_
+  {resolution_height}p.mp4 ```
 </CodeGroup>
 
 ### Subtitle file URL
 
 <CodeGroup>
-  ```http http
-  https://{pull_zone_url}.b-cdn.net/{video_id}/captions/{language_code}.vtt
-  ```
+  ```bash bash https://{pull_zone_url}.b-cdn.net/{video_id}/captions/
+  {language_code}.vtt ```
 </CodeGroup>
 
-***
+---
 
-* [Table of Contents](#)
-* * [Video storage structure](#video-storage-structure)
+[Google Widevine DRM](/docs/widevine-drm-security-levels)
+
+[Security](/docs/stream-security)
+
+- [Table of Contents](#)
+- - [Video storage structure](#video-storage-structure)

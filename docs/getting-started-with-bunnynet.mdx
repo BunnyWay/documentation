@@ -1,65 +1,61 @@
 ---
 title: "Overview"
-description: "Suggest Edits"
+description: "Welcome to the bunny.net Developer Hub!"
 ---
 
-Welcome to the bunny.net Developer Hub! This hub is designed to help you quickly and effectively integrate bunny.net products into your projects. Whether you're new to bunny.net or an experienced user, this page will guide you to the right resources.
+This hub is designed to help you quickly and effectively integrate bunny.net products into your projects. Whether you're new to bunny.net or an experienced user, this page will guide you to the right resources.
 
-# Core services
+## Core Services
 
-## CDN
+<CardGroup style="grid-template-columns:repeat(2, 1fr)">
+  <Card title="CDNSupercharge your content at a truly global scale." href="https://docs.bunny.net/docs/cdn-overview" />
 
-The Bunny CDN provides a global network for delivering content to users at maximum speed. Its architecture accelerates load times through geographically distributed edge locations, ensuring that data travels the shortest possible distance. This approach reduces latency, enhances reliability, and helps maintain seamless, high-quality user experiences regardless of location.
+<Card
+  title="ShieldProtect your site and stay online no matter what."
+  href="https://docs.bunny.net/docs/bunny-shield-documentation"
+/>
 
-## Optimizer
+<Card
+  title="Magic ContainersDeploy any app. Anywhere. Like magic."
+  href="https://docs.bunny.net/docs/magic-containers-overview"
+/>
 
-With the Optimizer service, images are transformed on-the-fly to improve visual quality, reduce file sizes, and minimize loading times. Images can be dynamically converted to efficient formats such as WebP and automatically resized, cropped, and manipulated via a straightforward API. This approach simplifies the workflow and removes manual overhead, enabling developers to serve images tailored to any device without compromising performance.
+<Card
+  title="Edge ScriptingA better way to build and run script at the edge."
+  href="https://docs.bunny.net/docs/edge-scripting-overview"
+/>
 
-## Edge Scripting
+<Card
+  title="StreamTake your video delivery to the next level."
+  href="https://docs.bunny.net/docs/stream-overview"
+/>
 
-Edge Scripting enables developers to deploy serverless applications worldwide using Deno-based JavaScript and TypeScript, allowing complex logic to run at the edge. Middleware Apps let teams customize CDN behavior by modifying real-time requests and responses, facilitating load balancing, A/B testing, and personalized user experiences. The solution delivers global code execution within milliseconds, supported by a vast network of 119 edge locations.
+<Card
+  title="Edge StorageExperience hot object storage, replicated globally."
+  href="https://docs.bunny.net/docs/edge-storage-overview"
+/>
 
-## Edge Storage
+<Card
+  title="OptimizerOptimize your website with the click of a button."
+  href="https://docs.bunny.net/docs/stream-image-processing"
+/>
 
-With Bunny Edge Storage, static files are stored in a globally replicated environment. This enhances data durability and blazing-fast content delivery, as files are served from the nearest location. By seamlessly integrating Edge Storage with the CDN, bunny.net streamlines content management, ensuring that data is always accessible, replicated, and delivered at top speeds.
+  <Card title="Scriptable DNSUnlock the true power of DNS." href="https://docs.bunny.net/docs/getting-started" />
+</CardGroup>
 
-## Bunny AI
+## Quickstart Guides
 
-Bunny AI leverages cutting-edge machine learning models like DALL-E 2 and Stable Diffusion to generate images on demand. Instead of sourcing or creating visuals manually, developers can craft them dynamically via a simple URL-based interface. By integrating AI-generated images into content workflows, bunny.net simplifies content creation, personalizes visuals for individual users, and expands the scope of creative expression without the need for complex AI infrastructure.
+- [Create your first edge script](/docs/edge-scripting-quickstart)
+- [Create your video library](/docs/stream-quickstart-guide)
+- [Script your DNS](/docs/getting-started)
+- [Describe your Bunny infra as code](/docs/terraform-quickstart)
+- [Integrate Bunny services into your product using API](/reference/bunnynet-api-overview)
 
-## Stream
+---
 
-With Bunny Stream, video is delivered seamlessly to a global audience through adaptive bitrate streaming. This ensures optimal playback quality and minimal buffering. Stream’s management tools support secure authentication, making it simple to host and protect premium content, while integrated features like encoding, thumbnail generation, and detailed analytics simplify the entire video lifecycle, from upload to playback.
+[Free trial overview](/docs/free-trial-overview)
 
-## Scriptable DNS
+- [Table of Contents](#)
 
-Bunny Scriptable DNS offers a customizable DNS layer that makes intelligent routing decisions based on changing conditions. Through script-based logic, requests can be directed to the most suitable servers or resources, enabling advanced load balancing, failover strategies, and geo-specific routing without manually reconfiguring DNS entries.
-
-## Terraform
-
-bunny.net’s Terraform integration allows you to manage infrastructure as code, streamlining the setup and maintenance of Bunny services. Using Terraform, configurations become easily reproducible and consistent across multiple environments. This infrastructure-as-code approach simplifies resource deployment, updates, and reconfiguration, giving teams greater control, scalability, and agility.
-
-# Quickstart guides
-
-* [Create your first edge script](/docs/edge-scripting-quickstart)
-* [Create your video library](/docs/stream-quickstart-guide)
-* [Script your DNS](/docs/getting-started)
-* [Describe your Bunny infra as code](/docs/terraform-quickstart)
-* [Integrate Bunny services into your product using API](/reference/bunnynet-api-overview)
-
-***
-
-* [Table of Contents](#)
-
-* * [Core services](#core-services)
-
-    * [CDN](#cdn)
-    * [Optimizer](#optimizer)
-    * [Edge Scripting](#edge-scripting)
-    * [Edge Storage](#edge-storage)
-    * [Bunny AI](#bunny-ai)
-    * [Stream](#stream)
-    * [Scriptable DNS](#scriptable-dns)
-    * [Terraform](#terraform)
-
-  * [Quickstart guides](#quickstart-guides)
+- - [Core Services](#core-services)
+  - [Quickstart Guides](#quickstart-guides)

@@ -1,17 +1,15 @@
 ---
 title: "Script types"
-description: "Suggest Edits"
+description: "Edge Scripting supports two primary types of scripts:  and . Each type serves distinct purposes and scenarios, enabling developers to tailor their solutions to meet specific performance and functionality requirements effectively."
 ---
-
-Edge Scripting supports two primary types of scripts: **Standalone** and **Middleware**. Each type serves distinct purposes and scenarios, enabling developers to tailor their solutions to meet specific performance and functionality requirements effectively.
 
 # Standalone scripts
 
 Standalone scripts are designed to run independently to perform specific tasks without the need for external intervention. They are particularly useful in scenarios where complete control over the execution and state is crucial. Standalone scripts are versatile and can be employed in various applications such as:
 
-* **REST services:** Building RESTful APIs that handle client requests and return responses directly from the edge, reducing latency and offloading traffic from central servers.
-* **UI applications**: Delivering user interfaces from the edge, which can dynamically generate and serve content based on user interactions and geolocation.
-* **Data processing services**: Executing data transformations and computations close to the data source, minimizing data transfer times and improving performance.
+- **REST services:** Building RESTful APIs that handle client requests and return responses directly from the edge, reducing latency and offloading traffic from central servers.
+- **UI applications**: Delivering user interfaces from the edge, which can dynamically generate and serve content based on user interactions and geolocation.
+- **Data processing services**: Executing data transformations and computations close to the data source, minimizing data transfer times and improving performance.
 
 By executing directly at the network's edge, these scripts reduce latency significantly, enabling faster data processing and response times which greatly enhance performance. Furthermore, scalability is a hallmark of standalone scripts; they are inherently capable of handling multiple requests simultaneously without straining resources, facilitating smooth scalability as user demands increase.
 
@@ -19,17 +17,21 @@ By executing directly at the network's edge, these scripts reduce latency signif
 
 Middleware scripts act as intermediaries within the CDN request workflow, allowing developers to insert custom logic that modifies requests or responses as they pass through the CDN. Common use-cases include:
 
-* **User Authentication**: Verifying user credentials and managing session tokens to control access to content at the edge.
-* **Error Handling**: Customizing error responses based on the request attributes and specific user needs. Logging and Monitoring: Implementing real-time logging and monitoring to track and analyze traffic patterns and anomalies.
-* **Security Enhancements**: Adding additional security layers such as rate limiting, IP filtering, and DDoS protection.
-* **A/B Testing**: Dynamically routing users to different versions of a site or application to test features and user experiences.
-* **HTML Rewriting**: Analyze, transform, optimize or filter origin generated HTML to implement different web content manipulation scenarios on the edge.
+- **User Authentication**: Verifying user credentials and managing session tokens to control access to content at the edge.
+- **Error Handling**: Customizing error responses based on the request attributes and specific user needs. Logging and Monitoring: Implementing real-time logging and monitoring to track and analyze traffic patterns and anomalies.
+- **Security Enhancements**: Adding additional security layers such as rate limiting, IP filtering, and DDoS protection.
+- **A/B Testing**: Dynamically routing users to different versions of a site or application to test features and user experiences.
+- **HTML Rewriting**: Analyze, transform, optimize or filter origin generated HTML to implement different web content manipulation scenarios on the edge.
 
 Middleware scripts provide the flexibility to integrate complex logic seamlessly into the CDN request flow without the need for modifications to backend infrastructure. This flexibility is key in deploying features like user authentication or content customization efficiently. Moreover, by processing requests and responses directly at the edge, these scripts improve the overall speed and efficiency of content delivery. Additionally, they present a cost-effective solution by reducing the reliance on backend processing power and the associated costs of data transfer and server maintenance, which can be significant in traditional setups.
 
-***
+---
 
-* [Table of Contents](#)
+[Access Edge Database with Turso](/docs/access-edge-database-with-turso)
 
-* * [Standalone scripts](#standalone-scripts)
-  * [Middleware scripts](#middleware-scripts)
+[Standalone scripts](/docs/edge-scripting-standalone)
+
+- [Table of Contents](#)
+
+- - [Standalone scripts](#standalone-scripts)
+  - [Middleware scripts](#middleware-scripts)

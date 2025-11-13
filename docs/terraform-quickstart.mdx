@@ -1,17 +1,15 @@
 ---
 title: "Terraform quickstart"
-description: "Suggest Edits"
+description: "This quickstart guide will help you get started with the bunny.net Terraform provider. Follow the steps below to set up and manage your Bunny.net resources using Terraform's infrastructure as code capabilities."
 ---
-
-This quickstart guide will help you get started with the bunny.net Terraform provider. Follow the steps below to set up and manage your Bunny.net resources using Terraform's infrastructure as code capabilities.
 
 # What you'll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
-* A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-* Terraform installed on your local machine.
-* Your bunny.net API key (you can get it [here](https://dash.bunny.net/account/api-key)).
+- A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+- Terraform installed on your local machine.
+- Your bunny.net API key (you can get it [here](https://dash.bunny.net/account/api-key)).
 
 # Initializing a Terraform project
 
@@ -37,7 +35,7 @@ provider "bunnynet" {
 EOF
 ```
 
-Update the api\_key with your actual API key in the configuration file, then initialize using the Terraform [Init command](https://developer.hashicorp.com/terraform/tutorials/cli/init).
+Update the api_key with your actual API key in the configuration file, then initialize using the Terraform [Init command](https://developer.hashicorp.com/terraform/tutorials/cli/init).
 
 ## Existing project
 
@@ -60,7 +58,7 @@ provider "bunnynet" {
 }
 ```
 
-Update the api\_key with your actual API key in the configuration file, then initialize using the Terraform [Init command](https://developer.hashicorp.com/terraform/tutorials/cli/init).
+Update the api_key with your actual API key in the configuration file, then initialize using the Terraform [Init command](https://developer.hashicorp.com/terraform/tutorials/cli/init).
 
 ## Starting from our template project
 
@@ -71,7 +69,7 @@ git clone https://github.com/BunnyWay/terraform-provider-bunnynet-template.git m
 cd my-terraform-project
 ```
 
-Update the api\_key with your actual API key in the configuration file, then initialize using the Terraform [Init command](https://developer.hashicorp.com/terraform/tutorials/cli/init).
+Update the api_key with your actual API key in the configuration file, then initialize using the Terraform [Init command](https://developer.hashicorp.com/terraform/tutorials/cli/init).
 
 # Defining the resources
 
@@ -150,27 +148,34 @@ Navigate to your bunny.net dashboard to see your content being served:
 ![](/images/docs/45131d8-image.png)Use your project URL for preview:![](/images/docs/a165007-image.png)
 
 <Info>
-  For more detailed configuration examples and advanced usage, please visit our [bunny.net terraform documentation](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs).
+  ### Note
+
+For more detailed configuration examples and advanced usage, please visit our [bunny.net terraform documentation](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs).
+
 </Info>
 
 # Need help or encountered issues?
 
 If you encounter any difficulties or have questions while following this guide, our support team is here to assist you. Please don't hesitate to contact us via the [support request form](https://bunny.net/contact/) for prompt assistance. Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
 
-***
+---
 
-* [Table of Contents](#)
+[Terraform overview](/docs/terraform-overview)
 
-* * [What you'll need](#what-youll-need)
+[Importing stream library](/docs/importing-stream-library)
 
-  * [Initializing a Terraform project](#initializing-a-terraform-project)
+- [Table of Contents](#)
 
-    * [New project](#new-project)
-    * [Existing project](#existing-project)
-    * [Starting from our template project](#starting-from-our-template-project)
+- - [What you'll need](#what-youll-need)
 
-  * [Defining the resources](#defining-the-resources)
+  - [Initializing a Terraform project](#initializing-a-terraform-project)
 
-  * [Previewing and applying the changes](#previewing-and-applying-the-changes)
+  - - [New project](#new-project)
+    - [Existing project](#existing-project)
+    - [Starting from our template project](#starting-from-our-template-project)
 
-  * [Need help or encountered issues?](#need-help-or-encountered-issues)
+  - [Defining the resources](#defining-the-resources)
+
+  - [Previewing and applying the changes](#previewing-and-applying-the-changes)
+
+  - [Need help or encountered issues?](#need-help-or-encountered-issues)

@@ -1,28 +1,32 @@
 ---
 title: "Bitmovin player integration"
-description: "Suggest Edits"
+description: "This documentation expands on our  to guide you through the integration of  with Bunny Stream’s video streams and MediaCage Enterprise DRM solution into your web application."
 ---
 
-This documentation expands on our [player integration guide](/docs/integration-methods) to guide you through the integration of [Bitmovin Player](https://bitmovin.com/video-playe) with Bunny Stream’s video streams and MediaCage Enterprise DRM solution into your web application.
-
 <Info>
-  If your use case doesn’t require DRM, you can follow the same steps provided below, omit the DRM configuration part, and follow our [video storage structure guide](/docs/stream-video-storage-structure), which describes how to access your Bunny Stream videos programmatically.
+  ### Note
+
+If your use case doesn’t require DRM, you can follow the same steps provided below, omit the DRM configuration part, and follow our [video storage structure guide](/docs/stream-video-storage-structure), which describes how to access your Bunny Stream videos programmatically.
+
 </Info>
 
 # What you’ll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
-* A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)) .
-* Ensure that the Media Cage DRM Enterprise feature is enabled in your account. If you need guidance on how to enable this feature, please refer to our [Media Cage DRM Enterprise quickstart guide](/docs/mediacage-enterprise-drm-quickstart).
-* A [Bitmovin](https://bitmovin.com/) account.
+- A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)) .
+- Ensure that the Media Cage DRM Enterprise feature is enabled in your account. If you need guidance on how to enable this feature, please refer to our [Media Cage DRM Enterprise quickstart guide](/docs/mediacage-enterprise-drm-quickstart).
+- A [Bitmovin](https://bitmovin.com/) account.
 
 # Setting up Bitmovin player
 
 Bitmovin offers an HTML web player that can be embedded into your site using JavaScript. You can read official [Bitmovin documentation](https://developer.bitmovin.com/playback/docs/getting-started-web) on how to get started with the player or copy the code sample below.
 
 <Info>
-  You are required to use your own license key for the player to ensure domain whitelisting for production environments.
+  ### Note
+
+You are required to use your own license key for the player to ensure domain whitelisting for production environments.
+
 </Info>
 
 The demo code provided below can be run in localhost without issues.The JavaScript changes below are required to ensure compatibility with our license endpoints.
@@ -32,7 +36,7 @@ The demo code provided below can be run in localhost without issues.The JavaScri
 Incorporate the following HTML code into your web page:
 
 <CodeGroup>
-  ```Text HTML
+  ```bash bash
   <html lang="en">
   <head>
       <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bitmovin-player@8/bitmovinplayer-ui.css">
@@ -55,7 +59,7 @@ Incorporate the following HTML code into your web page:
 Replace `[ENTER_YOUR_BITMOVIN_KEY]` with your actual Bitmovin license key. The JavaScript configuration below includes necessary modifications to ensure compatibility with the license endpoints, as well as DRM configurations for both Widevine and FairPlay:
 
 <CodeGroup>
-  ```Text JavaScript
+  ```bash bash
   var conf = {
       key: '[ENTER_YOUR_BITMOVIN_KEY]', // change key here 
       logs: {
@@ -86,52 +90,54 @@ Replace `[ENTER_YOUR_BITMOVIN_KEY]` with your actual Bitmovin license key. The J
       },
   };
 
-  var source = {
-      title: 'New Dashboard',
-      hls: '{{playlistUrl}}',
-      drm: {
-          widevine: {
-              LA_URL: "https://video.bunnycdn.com/WidevineLicense/{{videoLibraryId}}/{{videoId}}",
-              maxCertificateRequestRetries: 0,
-              maxLicenseRequestRetries: 0,
-          },
-          fairplay: {
-              LA_URL: "https://video.bunnycdn.com/FairPlayLicense/{{videoLibraryId}}/{{videoId}}",
-              certificateURL: 'https://video.bunnycdn.com/FairPlayLicense/{{videoLibraryId}}/{{videoId}}',
-              maxCertificateRequestRetries: 0,
-              maxLicenseRequestRetries: 0,
-              useUint16InitData: true,
-              licenseResponseType: 'json',
-              prepareContentId: (url) => {
-                  return url.substring(url.indexOf('skd://'));
-              },
-              prepareLicense: (license) => {
-                  return license.ckc;
-              },
-              prepareMessage: (event, session) => {
-                  const obj = JSON.stringify({
-                      spc: btoa(String.fromCharCode.apply(null, event.message))
-                  });
-                  return obj;
-              },
+var source = {
+title: 'New Dashboard',
+hls: '{{playlistUrl}}',
+drm: {
+widevine: {
+LA_URL: "https://video.bunnycdn.com/WidevineLicense/{{videoLibraryId}}/{{videoId}}",
+maxCertificateRequestRetries: 0,
+maxLicenseRequestRetries: 0,
+},
+fairplay: {
+LA_URL: "https://video.bunnycdn.com/FairPlayLicense/{{videoLibraryId}}/{{videoId}}",
+certificateURL: 'https://video.bunnycdn.com/FairPlayLicense/{{videoLibraryId}}/{{videoId}}',
+maxCertificateRequestRetries: 0,
+maxLicenseRequestRetries: 0,
+useUint16InitData: true,
+licenseResponseType: 'json',
+prepareContentId: (url) => {
+return url.substring(url.indexOf('skd://'));
+},
+prepareLicense: (license) => {
+return license.ckc;
+},
+prepareMessage: (event, session) => {
+const obj = JSON.stringify({
+spc: btoa(String.fromCharCode.apply(null, event.message))
+});
+return obj;
+},
 
           },
       },
-  };
 
-  function base64ToArrayBuffer(base64) {
-      var binary_string = window.atob(base64);
-      var len = binary_string.length;
-      var bytes = new Uint8Array(len);
-      for (var i = 0; i < len; i++) {
-          bytes[i] = binary_string.charCodeAt(i);
-      }
-      return bytes.buffer;
-  };
+};
 
-  const player = new bitmovin.player.Player(document.getElementById('player'), conf);
-  player.load(source);
-  ```
+function base64ToArrayBuffer(base64) {
+var binary_string = window.atob(base64);
+var len = binary_string.length;
+var bytes = new Uint8Array(len);
+for (var i = 0; i < len; i++) {
+bytes[i] = binary_string.charCodeAt(i);
+}
+return bytes.buffer;
+};
+
+const player = new bitmovin.player.Player(document.getElementById('player'), conf);
+player.load(source);
+
+```
 </CodeGroup>
 
 # Finalizing integration
@@ -146,15 +152,20 @@ Our dedicated support team is ready to help you resolve any issues you might fac
 
 ***
 
+[3rd party integrations](/docs/integration-methods)
+
+[Widevine HTML5 integration](/docs/widevine-integration)
+
 * [Table of Contents](#)
 
 * * [What you’ll need](#what-youll-need)
 
-  * [Setting up Bitmovin player](#setting-up-bitmovin-player)
+* [Setting up Bitmovin player](#setting-up-bitmovin-player)
 
-    * [HTML configuration](#html-configuration)
-    * [JavaScript configuration](#javascript-configuration)
+* * [HTML configuration](#html-configuration)
+  * [JavaScript configuration](#javascript-configuration)
 
-  * [Finalizing integration](#finalizing-integration)
+* [Finalizing integration](#finalizing-integration)
 
-  * [Need help or encountering issues?](#need-help-or-encountering-issues)
+* [Need help or encountering issues?](#need-help-or-encountering-issues)
+```

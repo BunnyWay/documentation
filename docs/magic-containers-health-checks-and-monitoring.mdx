@@ -1,9 +1,7 @@
 ---
 title: "Health checks and monitoring"
-description: "Suggest Edits"
+description: "In the dynamic landscape of containerized applications, ensuring your software's reliability, availability, and optimal performance is crucial."
 ---
-
-In the dynamic landscape of containerized applications, ensuring your software's reliability, availability, and optimal performance is crucial.
 
 # The importance of health checks
 
@@ -15,21 +13,24 @@ Magic containers offer three distinct types of health checks, each serving a uni
 
 **Startup check**
 
-* Validates whether your application has successfully started.
-* Delays routing requests until the application is in a stable state.
+- Validates whether your application has successfully started.
+- Delays routing requests until the application is in a stable state.
 
 **Readiness check**
 
-* Ensures that the application is fully prepared to handle incoming requests.
-* This is a recommended step to detect when the application is ready to receive traffic, minimizing the risk of failed requests.
+- Ensures that the application is fully prepared to handle incoming requests.
+- This is a recommended step to detect when the application is ready to receive traffic, minimizing the risk of failed requests.
 
 **Liveness check**
 
-* Monitors the active runtime status of your application.
-* Acts as a continuous assurance that your application is running smoothly without encountering issues.
+- Monitors the active runtime status of your application.
+- Acts as a continuous assurance that your application is running smoothly without encountering issues.
 
 <Info>
-  Enabling health checks in Magic containers is straightforward. To learn more, see our [Defining health checks guide](/docs/magic-containers-how-to-define-health-checks).
+  ### Note
+
+Enabling health checks in Magic containers is straightforward. To learn more, see our [Defining health checks guide](/docs/magic-containers-how-to-define-health-checks).
+
 </Info>
 
 # Monitoring your application's pulse
@@ -38,28 +39,28 @@ While health checks provide a crucial snapshot of your application's immediate s
 
 **Latency**
 
-* Measures the time it takes for your application to respond to requests.
-* Offers insights into the responsiveness and efficiency of your application.
+- Measures the time it takes for your application to respond to requests.
+- Offers insights into the responsiveness and efficiency of your application.
 
 **Instances & active regions**
 
-* Tracks the number of instances running and their distribution across active regions.
-* Provides an overview of your application's geographical presence and redundancy.
+- Tracks the number of instances running and their distribution across active regions.
+- Provides an overview of your application's geographical presence and redundancy.
 
 **Traffic served**
 
-* Monitors the volume of incoming and outgoing traffic.
-* A key metric for understanding your application's popularity and user engagement.
+- Monitors the volume of incoming and outgoing traffic.
+- A key metric for understanding your application's popularity and user engagement.
 
 **CPU usage**
 
-* Gauges the utilization of the CPU resources by your application.
-* It helps in optimizing resource allocation and identifying potential bottlenecks.
+- Gauges the utilization of the CPU resources by your application.
+- It helps in optimizing resource allocation and identifying potential bottlenecks.
 
 **Memory Usage**
 
-* Essential for ensuring efficient memory management and overall application stability.
-* Measures the utilization of memory resources by your application.
+- Essential for ensuring efficient memory management and overall application stability.
+- Measures the utilization of memory resources by your application.
 
 You can access these insightful metrics through the **Statistics** section of the container dashboard :
 
@@ -67,10 +68,14 @@ You can access these insightful metrics through the **Statistics** section of th
 
 This monitoring approach empowers you to make informed decisions, proactively identify trends, and ensure your app's continuous and optimal performance.
 
-***
+---
 
-* [Table of Contents](#)
+[Region provisioning and latency optimization](/docs/magic-containers-region-provisioning-and-latency-optimization)
 
-* * [The importance of health checks](#the-importance-of-health-checks)
-  * [Health check types](#health-check-types)
-  * [Monitoring your application's pulse](#monitoring-your-applications-pulse)
+[Sandboxing containers](/docs/magic-containers-sandboxing-containers)
+
+- [Table of Contents](#)
+
+- - [The importance of health checks](#the-importance-of-health-checks)
+  - [Health check types](#health-check-types)
+  - [Monitoring your application's pulse](#monitoring-your-applications-pulse)

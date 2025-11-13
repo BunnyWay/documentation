@@ -1,0 +1,51 @@
+---
+title: "Understanding MediaCage basic DRM"
+---
+
+# What is MediaCage?
+
+MediaCage is a basic free DRM system designed to prevent most attempts at downloading your video content. MediaCage is tightly integrated into Bunny CDN to dynamically encrypt the video content.
+
+It was designed to operate as a device-agnostic system and does not require any special hardware or software support on the client.
+
+# Clear-Key Encryption
+
+Unlike enterprise-style DRM systems, MediaCage uses clear-key based keys to encrypt the video files. While the system was designed to make it extremely difficult to download and decrypt the video content, the keys are transferred to the client in a clear format, making them potentially vulnerable to a sophisticated attack.
+
+# Dynamic Key Generation
+
+To prevent unauthorized access, MediaCage uses dynamic key generation. This means each video session generates a unique set of keys that can only be used once with that specific session. This prevents users from sharing or attempting to decrypt the video streams.
+
+<Info>
+  ### Security Considerations
+
+While MediaCage was designed to prevent a vast majority of download attempts and successfully tested with the majority of well-known download plugins it is not a replacement for an enterprise-grade DRM system such as PlayReady or Widevine. If you are interested in an enterprise multi-DRM solution, please get in touch with our support team.
+
+</Info>
+
+# Limitations
+
+MediaCage is a powerful system. However, to provide the best security possible, it comes with a couple of feature limitations listed below.
+
+# Embed View Only
+
+To offer a secure environment, MediaCage requires playback to be made through our Embed View only. Trying to access the videos directly or within a third-party video player will be disabled.
+
+# No MP4 Fallback & Early-Play Support
+
+Due to lack of security and data protection, MP4 fallback and Early-Play are disabled if MediaCage is active on the video library.
+
+---
+
+[Understanding Bunny Stream security options](/docs/stream-understanding-bunny-stream-security-options)
+
+[What is the difference between Standard and Volume tier zones?](/docs/stream-what-is-the-difference-between-standard-and-volume-tier-zones)
+
+- [Table of Contents](#)
+
+- - [What is MediaCage?](#what-is-mediacage)
+  - [Clear-Key Encryption](#clear-key-encryption)
+  - [Dynamic Key Generation](#dynamic-key-generation)
+  - [Limitations](#limitations)
+  - [Embed View Only](#embed-view-only)
+  - [No MP4 Fallback & Early-Play Support](#no-mp4-fallback--early-play-support)

@@ -1,33 +1,31 @@
 ---
 title: "Bot Detection"
-description: "Suggest Edits"
+description: "Bunny Shield's bot detection engine gives you deep control over identifying and blocking malicious bots without impacting legitimate automation or user experience. From headless browsers to impersonators and scraping tools, Bunny Shield offers layered defense designed to preserve performance while enhancing protection."
 ---
-
-Bunny Shield's bot detection engine gives you deep control over identifying and blocking malicious bots without impacting legitimate automation or user experience. From headless browsers to impersonators and scraping tools, Bunny Shield offers layered defense designed to preserve performance while enhancing protection.
 
 ## Key Features
 
-* **Behavioral Fingerprinting**: Leverage advanced techniques like fingerprinting, header anomaly detection, and request behavior modeling to distinguish real users from automated traffic.
-* **Real-Time Response**: Create detection logic and mitigation rules that propagate globally across our edge within seconds, ensuring rapid reaction to attacks as they unfold.
-* **Customizable Rules**: Tailor detection conditions based on HTTP headers, IP reputation, user-agent anomalies, cookie presence, request frequency, and more.
-* **False Positive Resistant**: Designed to avoid blocking legitimate crawlers or automation, Bunny Shield provides flexible allow-listing, ASN validation, and crawl integrity filters.
+- **Behavioral Fingerprinting**: Leverage advanced techniques like fingerprinting, header anomaly detection, and request behavior modeling to distinguish real users from automated traffic.
+- **Real-Time Response**: Create detection logic and mitigation rules that propagate globally across our edge within seconds, ensuring rapid reaction to attacks as they unfold.
+- **Customizable Rules**: Tailor detection conditions based on HTTP headers, IP reputation, user-agent anomalies, cookie presence, request frequency, and more.
+- **False Positive Resistant**: Designed to avoid blocking legitimate crawlers or automation, Bunny Shield provides flexible allow-listing, ASN validation, and crawl integrity filters.
 
 ## Multi-layer request analysis
 
 Every request that reaches Bunny Shield is evaluated using multiple layers of analysis, designed to catch automation wherever it tries to hide:
 
-* **Request integrity checks** analyzes headers, query structures, and protocol patterns to detect spoofed or malformed requests.
-* **Request body inspection** for applicable methods, which will inspect payload structure and behavior to spot signs of scripted abuse.
-* **External intelligence** uses IP and ASN reputation, rate patterns, and global behavior history to flag known abuse sources.
+- **Request integrity checks** analyzes headers, query structures, and protocol patterns to detect spoofed or malformed requests.
+- **Request body inspection** for applicable methods, which will inspect payload structure and behavior to spot signs of scripted abuse.
+- **External intelligence** uses IP and ASN reputation, rate patterns, and global behavior history to flag known abuse sources.
 
 ## Sensitivity profiles
 
 You can choose from predefined detection profiles, each tuned to different use cases:
 
-* **Low** (*default*) catches basic bots with minimal overhead using lightweight IP and header analysis.
-* **Medium** applies balanced checks across IPs, headers, and fingerprint signals to detect common automation.
-* **High** enables strict fingerprint validation, request integrity analysis, and IP behavior scoring to stop advanced or evasive bots.
-* **Custom** lets you configure individual detection components for total control.
+- **Low** (_default_) catches basic bots with minimal overhead using lightweight IP and header analysis.
+- **Medium** applies balanced checks across IPs, headers, and fingerprint signals to detect common automation.
+- **High** enables strict fingerprint validation, request integrity analysis, and IP behavior scoring to stop advanced or evasive bots.
+- **Custom** lets you configure individual detection components for total control.
 
 ![](/images/docs/8e473394675b0cd12cd9e8b427c3f6efe55cdcda921ea57d4245c7c7065abc58-image.png)
 
@@ -35,10 +33,10 @@ You can choose from predefined detection profiles, each tuned to different use c
 
 With Custom mode enabled, you can adjust:
 
-* **Request integrity** looks for anomalies in headers, protocol usage, and request structure.
-* **IP address** scores requests based on IP reputation, behavior, and known rate patterns.
-* **Fingerprint sensitivity** determines how assertively Bunny Shield should treat unusual browser fingerprints as bots.
-* **Complex fingerprinting** (*Enterprise only*) combines advanced entropy analysis and cross-session consistency.
+- **Request integrity** looks for anomalies in headers, protocol usage, and request structure.
+- **IP address** scores requests based on IP reputation, behavior, and known rate patterns.
+- **Fingerprint sensitivity** determines how assertively Bunny Shield should treat unusual browser fingerprints as bots.
+- **Complex fingerprinting** (_Enterprise only_) combines advanced entropy analysis and cross-session consistency.
 
 ![](/images/docs/1e86729bb9352d34a81922ae5317d1a9e4fd01c901b6845470b06f8a40beb01c-image.png)
 
@@ -48,8 +46,8 @@ These options let you tailor detection to match your traffic profile and risk to
 
 Bot detection isn’t a black box. Bunny Shield shows you exactly what it’s seeing and doing, in real time:
 
-* **Logged requests**: Number of requests identified as bots but not challenged.
-* **Challenged requests**: Number of requests that triggered browser validation. We give you the full picture, with clear metrics and event logs that show what’s being flagged and how it’s being handled. No guesswork required.
+- **Logged requests**: Number of requests identified as bots but not challenged.
+- **Challenged requests**: Number of requests that triggered browser validation. We give you the full picture, with clear metrics and event logs that show what’s being flagged and how it’s being handled. No guesswork required.
 
 ![](/images/docs/95b722d902c90359a27782b336dbc9d05d189ece6bc37a268f17d849a9092e25-image.png)
 
@@ -59,13 +57,17 @@ You can utilize the Bunny Shield API to automate Bot detection configurations or
 
 You can access the full API reference documentation [here](https://api.bunny.net/shield/docs/index.html).
 
-***
+---
 
-* [Table of Contents](#)
+[DDoS Mitigation](/docs/shield-ddos-mitigation)
 
-* * [Key Features](#key-features)
-  * [Multi-layer request analysis](#multi-layer-request-analysis)
-  * [Sensitivity profiles](#sensitivity-profiles)
-  * [Granular detection toggles](#granular-detection-toggles)
-  * [Logging & Observability](#logging--observability)
-  * [Configuring via API](#configuring-via-api)
+[Access Lists](/docs/shield-access-lists)
+
+- [Table of Contents](#)
+
+- - [Key Features](#key-features)
+  - [Multi-layer request analysis](#multi-layer-request-analysis)
+  - [Sensitivity profiles](#sensitivity-profiles)
+  - [Granular detection toggles](#granular-detection-toggles)
+  - [Logging & Observability](#logging--observability)
+  - [Configuring via API](#configuring-via-api)

@@ -1,6 +1,5 @@
 ---
 title: "DNSSEC"
-description: "Suggest Edits"
 ---
 
 ## What is DNSSEC?
@@ -21,12 +20,12 @@ Our DNS service supports full DNSSEC signing. Once enabled, your DNS zones are s
 
 ## Steps to Enable DNSSEC
 
-* Enable DNSSEC within your DNS zone under the Security tab.
+- Enable DNSSEC within your DNS zone under the Security tab.
 
 ![](/images/docs/1a1983ec6cabed83a892ce54e7ed52f4b66bab6445737261b474ee75a3bc5f1b-image.png)
 
-* Copy the DS Record provided after enabling.
-* Add the DS Record through your domain registrar (see setup guides below).
+- Copy the DS Record provided after enabling.
+- Add the DS Record through your domain registrar (see setup guides below).
 
 **That’s it! Your domain will now serve DNSSEC-signed responses.**
 
@@ -46,20 +45,24 @@ Our DNS service supports full DNSSEC signing. Once enabled, your DNS zones are s
 
 To verify correct deployment of your DNSSEC-enabled zone, make sure that you placed the correct DS record in the parent zone. DNS resolution can fail if either of the following occurs:
 
-* The configuration is wrong, or you have mistyped it.
-* You have placed the incorrect DS record in the parent zone.
+- The configuration is wrong, or you have mistyped it.
+- You have placed the incorrect DS record in the parent zone.
 
 To verify that you have the right configuration in place and to cross-check the DS record before placing it in the parent zone, use the following tools:
 
-* [DNSViz](https://dnsviz.net/)
-* [Verisign DNSSEC debugger](https://dnssec-analyzer.verisignlabs.com/)
+- [DNSViz](https://dnsviz.net/)
+- [Verisign DNSSEC debugger](https://dnssec-analyzer.verisignlabs.com/)
 
-***
+---
 
-* [Table of Contents](#)
+[Overview](/docs/dns-overview)
 
-* * [What is DNSSEC?](#what-is-dnssec)
-  * [How DNSSEC Works with Bunny DNS](#how-dnssec-works-with-bunny-dns)
-  * [Steps to Enable DNSSEC](#steps-to-enable-dnssec)
-  * [Registrar-Specific DNSSEC Setup Guides](#registrar-specific-dnssec-setup-guides)
-  * [Verify DNSSEC deployment](#verify-dnssec-deployment)
+[Best Practices Manual](/docs/best-practices-manual)
+
+- [Table of Contents](#)
+
+- - [What is DNSSEC?](#what-is-dnssec)
+  - [How DNSSEC Works with Bunny DNS](#how-dnssec-works-with-bunny-dns)
+  - [Steps to Enable DNSSEC](#steps-to-enable-dnssec)
+  - [Registrar-Specific DNSSEC Setup Guides](#registrar-specific-dnssec-setup-guides)
+  - [Verify DNSSEC deployment](#verify-dnssec-deployment)

@@ -1,19 +1,23 @@
 ---
 title: "Playback control API"
-description: "Suggest Edits"
+description: "The Bunny Stream Player offers a rich set of events and methods through its embeddable iframe player, enabling external programmatic interaction with playback sessions. To ensure standardization and ease of integration, the embeddable iframe player employs the player.js JavaScript library."
 ---
 
-The Bunny Stream Player offers a rich set of events and methods through its embeddable iframe player, enabling external programmatic interaction with playback sessions. To ensure standardization and ease of integration, the embeddable iframe player employs the player.js JavaScript library.
-
 <Info>
-  For more information, see detailed documentation available at [player.js website](https://github.com/embedly/player.js#playerjs).
+  ### Note
+
+For more information, see detailed documentation available at [player.js website](https://github.com/embedly/player.js#playerjs).
+
 </Info>
 
 Player.js library is hosted on Bunny.net CDN so you can easily integrate it in your website by including the following script block in your HTML:
 
 <CodeGroup>
-  ```javascript javascript
-  <script type="text/javascript" src="//assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
+  ```bash bash
+  <script
+    type="text/javascript"
+    src="//assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
+  ></script>
   ```
 </CodeGroup>
 
@@ -22,13 +26,13 @@ Player.js library is hosted on Bunny.net CDN so you can easily integrate it in y
 After loading the library and embedding the Player iframe, you can create a player object and interact with it using various events and methods. The following example illustrates the basic usage:
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   const player = new playerjs.Player('iframe');
 
-  player.on('ready', () => {
-    player.on('play', () => {
-      console.log('play');
-    });
+player.on('ready', () => {
+player.on('play', () => {
+console.log('play');
+});
 
     player.getDuration(duration => console.log(duration));
 
@@ -37,8 +41,10 @@ After loading the library and embedding the Player iframe, you can create a play
     }
 
     player.play();
-  });
-  ```
+
+});
+
+````
 </CodeGroup>
 
 ## Methods
@@ -48,23 +54,20 @@ The Bunny Stream Player provides the following methods for controlling playback:
 `play`: void - Play the media. Example:
 
 <CodeGroup>
-  ```javascript javascript
-  player.play();
-  ```
+```bash bash
+player.play();
+````
+
 </CodeGroup>
 
 `pause`: void - Pause the media. Example:
 
-<CodeGroup>
-  ```javascript javascript
-  player.pause();
-  ```
-</CodeGroup>
+<CodeGroup>```bash bash player.pause(); ```</CodeGroup>
 
 `getPaused`: boolean - Determine if the media is paused. Example:
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   player.getPaused(function(value){
     console.log('paused:', value);
   });
@@ -73,93 +76,71 @@ The Bunny Stream Player provides the following methods for controlling playback:
 
 `mute`: void - Mute the media. Example:
 
-<CodeGroup>
-  ```javascript javascript
-  player.mute();
-  ```
-</CodeGroup>
+<CodeGroup>```bash bash player.mute(); ```</CodeGroup>
 
 `unmute`: void - Unmute the media. Example:
 
-<CodeGroup>
-  ```javascript javascript
-  player.unmute();
-  ```
-</CodeGroup>
+<CodeGroup>```bash bash player.unmute(); ```</CodeGroup>
 
 `getMuted`: boolean - Determine if the media is muted. Example:
 
 <CodeGroup>
-  ```javascript javascript
-  player.getMuted(value => console.log('muted:', value));
-  ```
+  ```bash bash player.getMuted(value => console.log('muted:', value)); ```
 </CodeGroup>
 
 `setVolume`: void - Set the volume. Value needs to be between 0-100. Example:
 
-<CodeGroup>
-  ```javascript javascript
-  player.setVolume(50);
-  ```
-</CodeGroup>
+<CodeGroup>```bash bash player.setVolume(50); ```</CodeGroup>
 
 `getVolume`: number - Get the volume. Value will be between 0-100. Example:
 
 <CodeGroup>
-  ```javascript javascript
-  player.getVolume(value => console.log('getVolume:', value));
-  ```
+  ```bash bash player.getVolume(value => console.log('getVolume:', value)); ```
 </CodeGroup>
 
 `getDuration`: number - Get the duration of the media is seconds. Example:
 
 <CodeGroup>
-  ```javascript javascript
-  player.getDuration(value => console.log('getDuration:', value));
+  ```bash bash player.getDuration(value => console.log('getDuration:', value));
   ```
 </CodeGroup>
 
 `setCurrentTime`: number - Perform a seek to a particular time in seconds. Example:
 
-<CodeGroup>
-  ```javascript javascript
-  player.setCurrentTime(50);
-  ```
-</CodeGroup>
+<CodeGroup>```bash bash player.setCurrentTime(50); ```</CodeGroup>
 
 `getCurrentTime`: number - Get the current time in seconds of the video. Example:
 
 <CodeGroup>
-  ```javascript javascript
-  player.getCurrentTime(value => console.log('getCurrentTime:', value));
-  ```
+  ```bash bash player.getCurrentTime(value => console.log('getCurrentTime:',
+  value)); ```
 </CodeGroup>
 
 `off`: void - Remove an event listener. If the listener is specified it should remove only that listener, otherwise remove all listeners. Example:
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   player.off('play');
 
-  player.off('play', playCallback);
-  ```
+player.off('play', playCallback);
+
+````
 </CodeGroup>
 
 `on`: void - Add an event listener. Example:
 
 <CodeGroup>
-  ```javascript javascript
-  player.on('play', () => console.log('play'));
-  ```
+```bash bash
+player.on('play', () => console.log('play'));
+````
+
 </CodeGroup>
 
 `supports`: \['method', 'event'], methodOrEventName - Determines if the player supports a given event or method. Example:
 
 <CodeGroup>
-  ```javascript javascript
-  player.supports('method', 'getDuration');
-  player.supports('event', 'ended');
-  ```
+  ```bash bash player.supports('method', 'getDuration');
+  player.supports('event', 'ended'); ```
 </CodeGroup>
 
 ## Events
@@ -173,7 +154,10 @@ The Bunny Stream Player emits the following player.js events that can be attache
 `ready`- Fired when the media is ready to receive commands.
 
 <Info>
-  As outlined in the PlayerJs Spec, there may be inconsistencies if multiple players on the page have the same source `src`. To address this, append a UUID or a timestamp to the iframe's `src`to ensure all players on the page have a unique source.
+  ### Note
+
+As outlined in the PlayerJs Spec, there may be inconsistencies if multiple players on the page have the same source `src`. To address this, append a UUID or a timestamp to the iframe's `src`to ensure all players on the page have a unique source.
+
 </Info>
 
 fired when the media is ready to receive commands. This is fired regardless of listening to the event. Note: As outlined in the PlayerJs Spec, you may run into inconsistencies if you have multiple players on the page with the same `src`. To get around this, simply append a UUID or a timestamp to the iframe's src to guarantee that all players on the page have a unique `src`.
@@ -181,7 +165,7 @@ fired when the media is ready to receive commands. This is fired regardless of l
 `progress`- Fires when the media is loading additional media for playback. Example:
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   {
     percent: 0.8,
   }
@@ -191,7 +175,7 @@ fired when the media is ready to receive commands. This is fired regardless of l
 `timeupdate` - Fires during playback. Example:
 
 <CodeGroup>
-  ```javascript javascript
+  ```bash bash
   data: {
     seconds: 10,
     duration: 40
@@ -209,11 +193,15 @@ fired when the media is ready to receive commands. This is fired regardless of l
 
 `error` - Fires when an error occurs.
 
-***
+---
 
-* [Table of Contents](#)
+[Statistics](/docs/stream-statistics)
 
-* * [Quickstart](#quickstart)
-  * [Methods](#methods)
-  * [Events](#events)
-    * [Event list](#event-list)
+[Webhooks](/docs/stream-webhook)
+
+- [Table of Contents](#)
+
+- - [Quickstart](#quickstart)
+  - [Methods](#methods)
+  - [Events](#events)
+  - - [Event list](#event-list)

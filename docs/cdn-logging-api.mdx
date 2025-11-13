@@ -1,17 +1,14 @@
 ---
 title: "Logging API"
-description: "Suggest Edits"
+description: "The logging service provides an easy to use API endpoint for downloading the raw log files."
 ---
-
-The logging service provides an easy to use API endpoint for downloading the raw log files.
 
 # Logging endpoint
 
 The logging API service is available at logging.bunnycdn.com. To access the log file, you need to send the request with the URL path as described below.
 
 <CodeGroup>
-  ```http http
-  https://logging.bunnycdn.com/{mm}-{dd}-{yy}/{pull_zone_id}.log
+  ```bash bash https://logging.bunnycdn.com/{mm}-{dd}-{yy}/{pull_zone_id}.log
   ```
 </CodeGroup>
 
@@ -20,31 +17,23 @@ The logging API service is available at logging.bunnycdn.com. To access the log 
 The logging API works with a basic AccessKey header authentication. To authenticate a request, you need to send your account API key through the AccessKey header.
 
 <CodeGroup>
-  ```http http
-  AccessKey: bce1fd5a-a1da-464f-955e-9295201134f5
-  ```
+  ```bash bash AccessKey: bce1fd5a-a1da-464f-955e-9295201134f5 ```
 </CodeGroup>
 
 # Compression
 
 By default, the raw logs are returned in the raw text format. Due to the amount of data required, this can present a significantly large file size. To reduce the size of the download and greatly improve the performance of the download, you can use the Accept-Encoding header to signal our service that the data can be compressed using GZip. This can decrease the file size and download time by as much as 5 times.
 
-<CodeGroup>
-  ```http http
-  Accept-Encoding: gzip
-  ```
-</CodeGroup>
+<CodeGroup>```bash bash Accept-Encoding: gzip ```</CodeGroup>
 
 # Complete example
 
 Below is a complete example code to download a log file from the bunny.net logging service.
 
 <CodeGroup>
-  ```curl curl
-  curl --location \
-  --request GET 'https://logging.bunnycdn.com/03-13-24/60367.log' \
-  --header 'AccessKey: bce1fd5a-a1da-464f-955e-9295201134f5'
-  ```
+  ```bash bash curl --location \ --request GET
+  'https://logging.bunnycdn.com/03-13-24/60367.log' \ --header 'AccessKey:
+  bce1fd5a-a1da-464f-955e-9295201134f5' ```
 </CodeGroup>
 
 # Additional parameters
@@ -63,12 +52,16 @@ The **end** parameter defines the end index of the log lines that will be proces
 
 By default, the logs are arranged from latest to oldest. The **sort** parameter defines the order in which the log file will be returned. Possible values: **asc**, **desc** (default).
 
-***
+---
 
-* [Table of Contents](#)
+[Logging](/docs/cdn-logging)
 
-* * [Logging endpoint](#logging-endpoint)
-  * [Authentication](#authentication)
-  * [Compression](#compression)
-  * [Complete example](#complete-example)
-  * [Additional parameters](#additional-parameters)
+[Log format](/docs/cdn-log-format)
+
+- [Table of Contents](#)
+
+- - [Logging endpoint](#logging-endpoint)
+  - [Authentication](#authentication)
+  - [Compression](#compression)
+  - [Complete example](#complete-example)
+  - [Additional parameters](#additional-parameters)

@@ -1,6 +1,5 @@
 ---
 title: "Log Forwarding"
-description: "Suggest Edits"
 ---
 
 # What is Log Forwarding?
@@ -12,19 +11,25 @@ Log Forwarding enables you to receive raw logs in real-time to the configured Sy
 The logs are sent in the standard Syslog RFC 5424 format. The log value is formatted in the [bunny.net Log Format](/docs/cdn-log-format). An example log would look like this:
 
 <CodeGroup>
-  ```html html
+  ```bash bash
   <165>1 2021-01-01T22:14:15.003Z mymachine.example.com evntslog - ID47 [exampleSDID@32473 iut="3" eventSource="BunnyCDN" eventID="1011"] BOMHIT|200|1507167062421|412|390|163.172.53.229|-|https://bunnycdn.b-cdn.net/assets/landingpage/images/cdn-video-preview-from-a-blue-moon.m4v|WA|Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36|322b688bd63fb63f2babe9de30a5d262|DE
   ```
 </CodeGroup>
 
 <Info>
-  The UDP protocol is unaware of lost packets and does not contain an auto-retry mechanism. This means that in a case of packet loss or connectivity issue between your forwarding endpoint and our logging service, some packets might get lost on the way.
+  ### UDP reliability
 
-  While this is likely a rare occurrence, it is important to keep in mind in case your logging relies on receiving 100% of the requests.
+The UDP protocol is unaware of lost packets and does not contain an auto-retry mechanism. This means that in a case of packet loss or connectivity issue between your forwarding endpoint and our logging service, some packets might get lost on the way.
+
+While this is likely a rare occurrence, it is important to keep in mind in case your logging relies on receiving 100% of the requests.
+
 </Info>
 
 <Warning>
-  The [UDP protocol](https://bunny.net/academy/network/what-is-user-datagram-protocol-udp-and-how-does-it-work) does not provide a layer of security. This means all the logs are sent to your endpoint in a raw, unencrypted form. While unlikely, please note that those might be vulnerable to a potential **man-in-the-middle attack** if you send critical information as part of your logs.
+  ### UDP security
+
+The [UDP protocol](https://bunny.net/academy/network/what-is-user-datagram-protocol-udp-and-how-does-it-work) does not provide a layer of security. This means all the logs are sent to your endpoint in a raw, unencrypted form. While unlikely, please note that those might be vulnerable to a potential **man-in-the-middle attack** if you send critical information as part of your logs.
+
 </Warning>
 
 # How to configure Log Forwarding?
@@ -42,10 +47,14 @@ To enable realtime Log Forwarding, you can follow the following steps:
 9. Click on the **Save Forwarding Configuration** button
 10. Fire up a couple of requests to bunny.net and monitor your endpoint for new logs
 
-***
+---
 
-* [Table of Contents](#)
+[Permanent Log Storage](/docs/cdn-permanent-log-storage)
 
-* * [What is Log Forwarding?](#what-is-log-forwarding)
-  * [Log format](#log-format)
-  * [How to configure Log Forwarding?](#how-to-configure-log-forwarding)
+[Token authentication](/docs/cdn-token-authentication)
+
+- [Table of Contents](#)
+
+- - [What is Log Forwarding?](#what-is-log-forwarding)
+  - [Log format](#log-format)
+  - [How to configure Log Forwarding?](#how-to-configure-log-forwarding)

@@ -1,6 +1,5 @@
 ---
 title: "Log Forwarding"
-description: "Suggest Edits"
 ---
 
 # What is Log forwarding?
@@ -14,7 +13,7 @@ Log forwarding enables your **Magic Container's** application to send raw logs i
 An example **RFC 5424 log** would look like this:
 
 <CodeGroup>
-  ```text text
+  ```bash bash
   <134>1 2025-07-10T02:03:30.998108+00:00 - - - - - {"log":"Pod deployment finished","time":"2025-07-10T02:03:25.840126Z"}
   ```
 </CodeGroup>
@@ -22,13 +21,19 @@ An example **RFC 5424 log** would look like this:
 **Log server protocol** The logs can be sent in either **UDP** or **TCP** transport layer protocol.
 
 <Info>
-  The UDP protocol is unaware of lost packets and does not contain an auto-retry mechanism. This means that in a case of packet loss or connectivity issue between your application and your logging service, some packets might get lost on the way.
+  ### UDP reliability
 
-  While this is likely a rare occurrence, it is important to keep in mind in case your logging relies on receiving 100% of the requests.
+The UDP protocol is unaware of lost packets and does not contain an auto-retry mechanism. This means that in a case of packet loss or connectivity issue between your application and your logging service, some packets might get lost on the way.
+
+While this is likely a rare occurrence, it is important to keep in mind in case your logging relies on receiving 100% of the requests.
+
 </Info>
 
 <Warning>
-  The [UDP protocol](https://bunny.net/academy/network/what-is-user-datagram-protocol-udp-and-how-does-it-work) does not provide a layer of security. This means all the logs are sent to your endpoint in a raw, unencrypted form. While unlikely, please note that those might be vulnerable to a potential **man-in-the-middle attack** if you send critical information as part of your logs.
+  ### UDP security
+
+The [UDP protocol](https://bunny.net/academy/network/what-is-user-datagram-protocol-udp-and-how-does-it-work) does not provide a layer of security. This means all the logs are sent to your endpoint in a raw, unencrypted form. While unlikely, please note that those might be vulnerable to a potential **man-in-the-middle attack** if you send critical information as part of your logs.
+
 </Warning>
 
 # How to configure Log forwarding?
@@ -38,9 +43,9 @@ To enable realtime **Log forwarding** on your Magic Container application, you c
 1. Visit your **Logging** page for your Magic Containers application in the left-side menu.
 2. Open the **Settings** panel inside of the Logging option.
 3. Make sure that the **Enable Log forwarding** feature is enabled.
-4. Enter the **Hostname** of your Syslog endpoint. *This can be either an IP or a host address where your listening server is enabled.*
-5. Enter the **Port** of your Syslog endpoint. *Make sure the port is open to the internet, as otherwise our servers will not be able to reach you.*
-6. *(Optional)* Configure the **Token**. *For secure log forwarding*
+4. Enter the **Hostname** of your Syslog endpoint. _This can be either an IP or a host address where your listening server is enabled._
+5. Enter the **Port** of your Syslog endpoint. _Make sure the port is open to the internet, as otherwise our servers will not be able to reach you._
+6. _(Optional)_ Configure the **Token**. _For secure log forwarding_
 7. Select the **Log server protocol** you would like to use.
 8. Select the **Log format** of choice.
 9. Click on the **Save Forwarding Configuration** button.
@@ -48,10 +53,14 @@ To enable realtime **Log forwarding** on your Magic Container application, you c
 
 ![](/images/docs/5a1098ba6e970c4559a8e0f0498c3575821395715fc100d577c8036959185c9d-Screenshot_2025-07-17_at_15.21.28.png)
 
-***
+---
 
-* [Table of Contents](#)
+[How to retrieve Magic Container IP Addresses](/docs/magic-containers-list-of-nodes-to-whitelist)
 
-* * [What is Log forwarding?](#what-is-log-forwarding)
-  * [What Log format and protocol does it support?](#what-log-format-and-protocol-does-it-support)
-  * [How to configure Log forwarding?](#how-to-configure-log-forwarding)
+[Use cases](/docs/magic-containers-use-cases)
+
+- [Table of Contents](#)
+
+- - [What is Log forwarding?](#what-is-log-forwarding)
+  - [What Log format and protocol does it support?](#what-log-format-and-protocol-does-it-support)
+  - [How to configure Log forwarding?](#how-to-configure-log-forwarding)

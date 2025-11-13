@@ -1,20 +1,21 @@
 ---
 title: "Rolling update process"
-description: "Suggest Edits"
+description: "The Rolling Update process on Magic Containers ensures that updates to your application's container settings are applied smoothly and without any downtime. By updating pods incrementally, your application remains available to users throughout the update."
 ---
-
-The Rolling Update process on Magic Containers ensures that updates to your application's container settings are applied smoothly and without any downtime. By updating pods incrementally, your application remains available to users throughout the update.
 
 # How does the rolling update work?
 
 A Rolling Update is initiated when changes are made to the Container Settings of your application, such as:
 
-* Updating the container image
-* Changing the container name
-* Modifying health check settings
+- Updating the container image
+- Changing the container name
+- Modifying health check settings
 
 <Info>
-  Changes to endpoints do not trigger a Rolling Update. Endpoint changes are applied immediately without interrupting the running containers.
+  ### Note
+
+Changes to endpoints do not trigger a Rolling Update. Endpoint changes are applied immediately without interrupting the running containers.
+
 </Info>
 
 The Rolling Update process occurs simultaneously in all regions where the application is deployed. During a Rolling Update, other changes to the application are paused. This includes scaling operations, whether upscaling or downscaling, provisioning, and any additional settings updates. These changes will only be applied after the Rolling Update completes.
@@ -24,13 +25,12 @@ The Rolling Update process occurs simultaneously in all regions where the applic
 Imagine you have an application deployed in 3 regions, each with 10 pods. If you update the container image:
 
 1. Iteration 1:
-
-   * Add 2 new pods (20% of 10) in each region.
-   * Wait until new pods are running and healthy.
-   * Remove 2 old pods in each region.
+   - Add 2 new pods (20% of 10) in each region.
+   - Wait until new pods are running and healthy.
+   - Remove 2 old pods in each region.
 
 2. Iterations 2–5:
-   * Repeat the above steps until all pods are updated.
+   - Repeat the above steps until all pods are updated.
 
 **Total Iterations** - 5 iterations to update all pods in each region.
 
@@ -38,10 +38,14 @@ Imagine you have an application deployed in 3 regions, each with 10 pods. If you
 
 If the Rolling Update encounters problems, such as deploying a broken image, it handles the situation by detecting any new pod that fails to reach a running state within ten minutes and considering it unhealthy. In such cases, the Rolling Update is terminated. All new pods with the faulty configuration are deleted, and old pods are restored to maintain application stability. The Rolling Update then restarts automatically, using the latest configuration. If the issue is fixed, such as by providing a healthy image, the update will proceed successfully.
 
-***
+---
 
-* [Table of Contents](#)
+[App metadata](/docs/magic-containers-app-metadata)
 
-* * [How does the rolling update work?](#how-does-the-rolling-update-work)
-  * [Practical example](#practical-example)
-  * [Handling issues during a rolling update](#handling-issues-during-a-rolling-update)
+[Troubleshooting application](/docs/magic-containers-troubleshooting-application)
+
+- [Table of Contents](#)
+
+- - [How does the rolling update work?](#how-does-the-rolling-update-work)
+  - [Practical example](#practical-example)
+  - [Handling issues during a rolling update](#handling-issues-during-a-rolling-update)

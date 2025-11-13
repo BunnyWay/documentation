@@ -1,16 +1,14 @@
 ---
-title: "FPS deployment package guide"
-description: "Suggest Edits"
+title: "Apple FairPlay Streaming"
+description: "FairPlay Streaming is Apple's robust digital rights management (DRM) solution, ensuring secure and protected content distribution for your applications on Apple devices. In this guide, we will walk you through the process of obtaining the FPS Deployment Package."
 ---
-
-**FairPlay Streaming** is Apple's robust digital rights management (DRM) solution, ensuring secure and protected content distribution for your applications on Apple devices. In this guide, we will walk you through the process of obtaining the FPS Deployment Package.
 
 FPS Deployment Package consists of:
 
-* FPS Certificate file (.der or .cer)
-* Private key file (.pem)
-* Private key password string
-* Application secret key (ASK) string
+- FPS Certificate file (.der or .cer)
+- Private key file (.pem)
+- Private key password string
+- Application secret key (ASK) string
 
 # Signing up for an Apple developer account
 
@@ -33,7 +31,10 @@ To request the Deployment Package, follow the steps below:
 4. Fill out the deployment package request form with the necessary information.
 
 <Info>
-  During the application process, you may be asked about the implementation and testing of the Key Server Module (KSM). Answer accordingly, stating that you are using a 3rd party DRM company and that the company has already built and tested KSM.
+  ### Note
+
+During the application process, you may be asked about the implementation and testing of the Key Server Module (KSM). Answer accordingly, stating that you are using a 3rd party DRM company and that the company has already built and tested KSM.
+
 </Info>
 
 5. Submit the deployment package request and wait for Apple's confirmation, usually taking few days.
@@ -42,7 +43,10 @@ To request the Deployment Package, follow the steps below:
 # Creating a private key and Certificate Signing Request (CSR)
 
 <Info>
-  If you haven't already installed OpenSSL, download and install it on your PC or server. You can find OpenSSL packages for various operating systems on the official OpenSSL website.
+  ### Note
+
+If you haven't already installed OpenSSL, download and install it on your PC or server. You can find OpenSSL packages for various operating systems on the official OpenSSL website.
+
 </Info>
 
 1. Open a terminal or command prompt and run the following command to generate a private key. You will be prompted to enter a password. Choose a password (shorter than 32 characters) and make a note of it for future reference.
@@ -78,14 +82,21 @@ The next step is to create FPS certificate. Follow the steps below:
 8. Once the generation is complete, the FairPlay Streaming certificate will be displayed in the Certificate list. Locate the certificate and click the **Download** button to save the FPS certificate file (fairplay.cer) to your computer.
 
 <Info>
-  If you encounter any errors during this process, please reach out to Apple support for assistance.
+  ### Note
+
+If you encounter any errors during this process, please reach out to Apple support for assistance.
+
 </Info>
 
-***
+---
 
-* [Table of Contents](#)
+[MediaCage Enterprise DRM](/docs/stream-mediacage-enterprise-drm)
 
-* * [Signing up for an Apple developer account](#signing-up-for-an-apple-developer-account)
-  * [Requesting deployment package](#requesting-deployment-package)
-  * [Creating a private key and Certificate Signing Request (CSR)](#creating-a-private-key-and-certificate-signing-request-csr)
-  * [Creating FPS certificate at Apple developer portal](#creating-fps-certificate-at-apple-developer-portal)
+[Google Widevine DRM](/docs/widevine-drm-security-levels)
+
+- [Table of Contents](#)
+
+- - [Signing up for an Apple developer account](#signing-up-for-an-apple-developer-account)
+  - [Requesting deployment package](#requesting-deployment-package)
+  - [Creating a private key and Certificate Signing Request (CSR)](#creating-a-private-key-and-certificate-signing-request-csr)
+  - [Creating FPS certificate at Apple developer portal](#creating-fps-certificate-at-apple-developer-portal)

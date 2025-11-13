@@ -1,21 +1,22 @@
 ---
 title: "Edge Rules variable expansion"
-description: "Suggest Edits"
+description: "Edge Rules allow you to use variable expansion to dynamically configure the value of the result based on specific request parameters."
 ---
-
-Edge Rules allow you to use variable expansion to dynamically configure the value of the result based on specific request parameters.
 
 Variable expansion is supported by the following rules:
 
-* Change Origin URL
-* Redirect to URL
-* Set Request Header
-* Set Response Header
+- Change Origin URL
+- Redirect to URL
+- Set Request Header
+- Set Response Header
 
 Variable expansion is performed through the following syntax **%\{Collection.Key}** where the collection is a super-set of variables that can be accessed with the specific key. Some collections such as request headers or query parameters are automatically populated based on the request data whereas others have a specific set of keys.
 
 <Info>
-  For more information, see [the list of dynamic variables in the Edge Rule redirect URL](https://support.bunny.net/hc/en-us/articles/360001576412-The-list-of-dynamic-variables-in-the-Edge-Rule-redirect-URL).
+  ### Note
+
+For more information, see [the list of dynamic variables in the Edge Rule redirect URL](https://support.bunny.net/hc/en-us/articles/360001576412-The-list-of-dynamic-variables-in-the-Edge-Rule-redirect-URL).
+
 </Info>
 
 Supported variable collections:
@@ -32,66 +33,66 @@ The Query collection is automatically populated with keys from the HTTP request.
 
 The Request collection contains a set of variables from the list below:
 
-* **Method:** The HTTP method that was sent with the request (such as GET, POST, etc.)
-* **Path:** The full URL path and query of the HTTP request
-* **QueryString:** The full URL query string parameter of the HTTP request
+- **Method:** The HTTP method that was sent with the request (such as GET, POST, etc.)
+- **Path:** The full URL path and query of the HTTP request
+- **QueryString:** The full URL query string parameter of the HTTP request
 
 ### **Path**
 
 The Path collection is a special collection that allows you to dynamically extract parts of the URL request path. It uses an index as a key parameter to extract a specific part, or range of parts from the URL Path. For the examples, the following URL path will be used: /hello/world/bunny/eat/carrot.jpg
 
-* **0:** Extract the path of the part at the specified index
+- **0:** Extract the path of the part at the specified index
+  - `%{Path.0}` -> `hello`
+  - `%{Path.1}` -> `world`
 
-  * `%{Path.0}` -> `hello`
-  * `%{Path.1}` -> `world`
+- **0-2:** Extract the range of path parts from index 0 to 2
+  - `%{Path.0-2}` ->`hello/world/bunny`
+  - `%{Path.1-3}` ->`world/bunny/eat`
 
-* **0-2:** Extract the range of path parts from index 0 to 2
+- **3-:** Extracts all parts of the path starting with index 3
+  - `%{Path.3-}` ->`eat/carrot.jpg`
+  - `%{Path.1-}` ->`world/bunny/eat/carrot.jpg`
 
-  * `%{Path.0-2}` ->`hello/world/bunny`
-  * `%{Path.1-3}` ->`world/bunny/eat`
-
-* **3-:** Extracts all parts of the path starting with index 3
-
-  * `%{Path.3-}` ->`eat/carrot.jpg`
-  * `%{Path.1-}` ->`world/bunny/eat/carrot.jpg`
-
-* **-3:** Extracts all parts of the path until index 3
-
-  * `%{Path.-3}` ->`hello/world/bunny`
-  * `%{Path.-1}` ->`hello/world`
+- **-3:** Extracts all parts of the path until index 3
+  - `%{Path.-3}` ->`hello/world/bunny`
+  - `%{Path.-1}` ->`hello/world`
 
 ### **Url**
 
 The Url collection contains a set of variables from the list below:
 
-* **FileName:** The file name of the requested URL. If the request is to a folder, this will remain empty.
-* **Path:** The full URL path and query of the HTTP request
-* **Extension:** The extension of the requested filename
-* **Directory:** The directory of the requested URL without the file name
-* **Hostname:** The hostname that was sent with the HTTP request
+- **FileName:** The file name of the requested URL. If the request is to a folder, this will remain empty.
+- **Path:** The full URL path and query of the HTTP request
+- **Extension:** The extension of the requested filename
+- **Directory:** The directory of the requested URL without the file name
+- **Hostname:** The hostname that was sent with the HTTP request
 
 ### **User**
 
 The User collection contains a set of variables from the list below:
 
-* **IP:** The IP of the end-user that initiated the request
-* **CountryCode:** The two-letter country code of the end-user that initiated the request
+- **IP:** The IP of the end-user that initiated the request
+- **CountryCode:** The two-letter country code of the end-user that initiated the request
 
 ### **Server**
 
 The Server collection contains a set of variables from the list below:
 
-* **ZoneCode:** The Zone Code of the server that is serving the request
-* **ID:** The unique ID of the server that is serving the request
+- **ZoneCode:** The Zone Code of the server that is serving the request
+- **ID:** The unique ID of the server that is serving the request
 
-***
+---
 
-* [Table of Contents](#)
+[Token authentication (basic)](/docs/cdn-token-authentication-basic)
 
-* * [RequestHeaders](#requestheaders)
-  * [**Query**](#query)
-  * [**Request**](#request)
-  * [**Path**](#path)
-  * [**Url**](#url)
-  * [**User**](#user)
-  * [**Server**](#server)
+[Edge Rules Ordering](/docs/edge-rules-ordering)
+
+- [Table of Contents](#)
+
+- - [RequestHeaders](#requestheaders)
+  - [Query](#query)
+  - [Request](#request)
+  - [Path](#path)
+  - [Url](#url)
+  - [User](#user)
+  - [Server](#server)

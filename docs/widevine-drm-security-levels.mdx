@@ -1,6 +1,5 @@
 ---
-title: "Widevine DRM Security Levels"
-description: "Suggest Edits"
+title: "Google Widevine DRM"
 ---
 
 # Trusted Execution Environment (TEE)
@@ -12,11 +11,14 @@ The Trusted Execution Environment (TEE) is an essential component within a prima
 Google's Widevine DRM technology offers three distinct security levels — L1, L2, and L3 — each designed to cater to different requirements of content protection. These levels are critical in determining the quality of content that can be securely streamed and accessed on various devices.
 
 <Info>
-  If a device does not meet the minimum required security level for a given type of content, the content will be blocked. In such cases, the following error message will be displayed:
+  ### Note
 
-  ![](/images/docs/5bfeb57-image.png)
+If a device does not meet the minimum required security level for a given type of content, the content will be blocked. In such cases, the following error message will be displayed:
 
-  ![]()
+![](/images/docs/5bfeb57-image.png)
+
+![]()
+
 </Info>
 
 ## L1 security level
@@ -27,10 +29,10 @@ All operations involving video rendering, hardware-level decryption, and content
 
 Devices and platforms that typically support L1 include:
 
-* Android apps
-* Samsung and LG Smart TVs
-* Android TV
-* Fire TV
+- Android apps
+- Samsung and LG Smart TVs
+- Android TV
+- Fire TV
 
 ## L2 security level
 
@@ -45,7 +47,10 @@ L3 is a software-only security solution, providing the lowest tier of Widevine's
 Decryption processes are handled in a software Content Decryption Module (CDM), without the benefit of TEE. Due to its minimal security provisions, devices operating at L3 are often restricted from accessing HD video content by content providers.
 
 <Info>
-  A notable exception in Widevine DRM support is found with desktop browsers like Chrome and Firefox on Windows or macOS, which only support the L3 security level, employing software-based DRM mechanisms.
+  ### Important
+
+A notable exception in Widevine DRM support is found with desktop browsers like Chrome and Firefox on Windows or macOS, which only support the L3 security level, employing software-based DRM mechanisms.
+
 </Info>
 
 # Supporting Widevine levels across devices
@@ -56,18 +61,22 @@ Most environments, including various smart TVs, Android devices, and Fire TV, ar
 
 Bunny Stream MediaCage Enterprise DRM uniquely supports all three Widevine security levels (L1-L3) by default. Additionally, it offers customizable settings that allow content distributors to restrict the distribution of HD content to L3 clients, thereby safeguarding against potential content leakage. These settings can be adjusted via the Stream API or through direct contact with Support services.
 
-***
+---
 
-* [Table of Contents](#)
+[Apple FairPlay Streaming](/docs/fps-deployment-package-guide)
 
-* * [Trusted Execution Environment (TEE)](#trusted-execution-environment-tee)
+[Storage](/docs/stream-storage)
 
-  * [Widevine DRM security levels explained](#widevine-drm-security-levels-explained)
+- [Table of Contents](#)
 
-    * [L1 security level](#l1-security-level)
-    * [L2 security level](#l2-security-level)
-    * [L3 security level](#l3-security-level)
+- - [Trusted Execution Environment (TEE)](#trusted-execution-environment-tee)
 
-  * [Supporting Widevine levels across devices](#supporting-widevine-levels-across-devices)
+  - [Widevine DRM security levels explained](#widevine-drm-security-levels-explained)
 
-  * [Custom settings for content distribution](#custom-settings-for-content-distribution)
+  - - [L1 security level](#l1-security-level)
+    - [L2 security level](#l2-security-level)
+    - [L3 security level](#l3-security-level)
+
+  - [Supporting Widevine levels across devices](#supporting-widevine-levels-across-devices)
+
+  - [Custom settings for content distribution](#custom-settings-for-content-distribution)

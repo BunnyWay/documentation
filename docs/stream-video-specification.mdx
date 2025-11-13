@@ -3,31 +3,27 @@ title: "Video specification"
 description: "Video, audio, and caption formats that Bunny Stream supports"
 ---
 
-[Suggest Edits](/edit/stream-video-specification)
-
 # Guidelines
 
-* The total storage used to store your encoded video files may be larger than your source video file size
+- The total storage used to store your encoded video files may be larger than your source video file size
 
-* Encoding compresses your input video file into multiple video files of different resolutions, sizes, and formats for web streaming
+- Encoding compresses your input video file into multiple video files of different resolutions, sizes, and formats for web streaming
 
-* The higher the quality of your input video file, the higher the quality your video encodes will be
+- The higher the quality of your input video file, the higher the quality your video encodes will be
 
-* Use uncompressed video formats or the highest quality compressed videos where possible
+- Use uncompressed video formats or the highest quality compressed videos where possible
 
-* The following additional options will increase video storage when enabled
+- The following additional options will increase video storage when enabled
+  - MP4 fallback
+  - Keep original file
+  - The number of enabled Premium Encoding codecs will impact your storage usage
+  - The number of enabled resolutions will impact your storage usage
 
-  * MP4 fallback
-  * Keep original file
-  * The number of enabled Premium Encoding codecs will impact your storage usage
-  * The number of enabled resolutions will impact your storage usage
+- Premium and free encoding does not deinterlace your video, ensure your input video is progressive format and not interlaced before uploading
 
-* Premium and free encoding does not deinterlace your video, ensure your input video is progressive format and not interlaced before uploading
-
-* Portrait video orientation is supported
-
-  * 1080 width x 1920 height
-  * 720 width x 1280 height
+- Portrait video orientation is supported
+  - 1080 width x 1920 height
+  - 720 width x 1280 height
 
 # Supported input file containers
 
@@ -60,10 +56,10 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
 
 # Premium encoding outputs
 
-* Matches source video file frame rates up to 60 frames per second
-* If your input video file frame rate is higher than 60, the video output file will be reduced down to 60 frames per second
-* Video bitrate varies up to x1.4 pending input video bitrate
-* VP9 HDR-10 bit support
+- Matches source video file frame rates up to 60 frames per second
+- If your input video file frame rate is higher than 60, the video output file will be reduced down to 60 frames per second
+- Video bitrate varies up to x1.4 pending input video bitrate
+- VP9 HDR-10 bit support
 
 | H.264 (AVC) resolution  | Default video bitrate | Audio bitrate (AAC Codec) |
 | ----------------------- | --------------------- | ------------------------- |
@@ -117,11 +113,11 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
 
 # Multi-audio support
 
-* Video files with embedded multi-channel audio tracks are supported. This means a single media file containing both video and multiple separate audio tracks
-* Stereo pair tracks = 2 audio channels per track
-* Audio track names are visible within the Bunny player
-* We do not currently support surround sound or Dolby audio formats
-* We only support ISO 639-1 language codes
+- Video files with embedded multi-channel audio tracks are supported. This means a single media file containing both video and multiple separate audio tracks
+- Stereo pair tracks = 2 audio channels per track
+- Audio track names are visible within the Bunny player
+- We do not currently support surround sound or Dolby audio formats
+- We only support ISO 639-1 language codes
 
 # Caption support
 
@@ -129,18 +125,22 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
 
 # Video file upload limits
 
-* Maximum video file duration: 72 hours
-* Maximum video resolution: 2160p (UHD 3840 x 2160) / 2160 x 3840
+- Maximum video file duration: 72 hours
+- Maximum video resolution: 2160p (UHD 3840 x 2160) / 2160 x 3840
 
-***
+---
 
-* [Table of Contents](#)
+[Best practices](/docs/stream-best-practices)
 
-* * [Guidelines](#guidelines)
-  * [Supported input file containers](#supported-input-file-containers)
-  * [Supported input codecs](#supported-input-codecs)
-  * [Premium encoding outputs](#premium-encoding-outputs)
-  * [Free encoding outputs](#free-encoding-outputs)
-  * [Multi-audio support](#multi-audio-support)
-  * [Caption support](#caption-support)
-  * [Video file upload limits](#video-file-upload-limits)
+[Use & expand](/docs/stream-use-and-expand)
+
+- [Table of Contents](#)
+
+- - [Guidelines](#guidelines)
+  - [Supported input file containers](#supported-input-file-containers)
+  - [Supported input codecs](#supported-input-codecs)
+  - [Premium encoding outputs](#premium-encoding-outputs)
+  - [Free encoding outputs](#free-encoding-outputs)
+  - [Multi-audio support](#multi-audio-support)
+  - [Caption support](#caption-support)
+  - [Video file upload limits](#video-file-upload-limits)

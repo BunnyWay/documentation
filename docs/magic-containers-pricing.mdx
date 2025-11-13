@@ -1,9 +1,7 @@
 ---
 title: "Pricing"
-description: "Suggest Edits"
+description: "Magic Containers provides two pricing models designed to match your workload characteristics and usage needs. The dynamic (shared) instances model offers flexible, pay-as-you-go pricing, making it ideal for workloads that experience fluctuations. Alternatively, the reserved instances model provides a cost-efficient and predictable pricing structure with fixed resource allocations, catering to workloads with consistent and stable demands."
 ---
-
-Magic Containers provides two pricing models designed to match your workload characteristics and usage needs. The dynamic (shared) instances model offers flexible, pay-as-you-go pricing, making it ideal for workloads that experience fluctuations. Alternatively, the reserved instances model provides a cost-efficient and predictable pricing structure with fixed resource allocations, catering to workloads with consistent and stable demands.
 
 # Dynamic (shared) instances
 
@@ -15,17 +13,15 @@ Dynamic instances are particularly well-suited for developers conducting experim
 
 There are two types of cost components: based only on amount or on amount and time.
 
-* Cost components based on time and amount
+- Cost components based on time and amount
+  - CPU
+  - RAM
+  - Anycast IP
+  - Disk usage
 
-  * CPU
-  * RAM
-  * Anycast IP
-  * Disk usage
-
-* Cost components based on amount only
-
-  * Anycast ingress traffic
-  * Egress traffic
+- Cost components based on amount only
+  - Anycast ingress traffic
+  - Egress traffic
 
 ### CPU
 
@@ -33,31 +29,33 @@ CPU is billed per second of CPU time consumed by your containers. If your contai
 
 **Calculation example:**
 
-* CPU cost: **$0.02 per CPU per hour**
-* Cost per second of CPU time: $0.02 / 60 / 60 = **$0.000005555555556 per second**
+- CPU cost: **$0.02 per CPU per hour**
+- Cost per second of CPU time: $0.02 / 60 / 60 = **$0.000005555555556 per second**
 
 **Example scenario:** If your application uses 3 seconds of full CPU time per minute; every minute for the period of entire month:
 
-* 1 minute = 60 seconds
-* CPU usage per hour = 180 seconds ( 3 second per minute \* 60 minutes)
-* Hourly CPU cost = 180 x $0.000005555555556 ≈ **$0.001**
-* Daily CPU cost = 24 x $0.001≈ **$0.024**
-* Over an entire month (31 days), your CPU cost would be roughly **$0.744**.
+- 1 minute = 60 seconds
+- CPU usage per hour = 180 seconds ( 3 second per minute \* 60 minutes)
+- Hourly CPU cost = 180 x $0.000005555555556 ≈ **$0.001**
+- Daily CPU cost = 24 x $0.001≈ **$0.024**
+- Over an entire month (31 days), your CPU cost would be roughly **$0.744**.
 
 ### RAM usage
 
 Memory (RAM) is billed in 64 MB increments per hour. Even if your application uses only 10 MB, you’ll pay for one 64 MB block. Usage is calculated hourly and aggregated at the end of the billing cycle.
 
+> For actual workload memory, please note that the total reported memory usage charged will include an additional system overhead that is variable with the workload.
+
 **Calculation example:**
 
-* RAM Cost: $0.005 per GB per hour (1 GB \~ 16 blocks by 64MB)
-* Cost per 64 MB block per hour: $0.005 / 16 = **$0.0003125**
+- RAM Cost: $0.005 per GB per hour (1 GB \~ 16 blocks by 64MB)
+- Cost per 64 MB block per hour: $0.005 / 16 = **$0.0003125**
 
 **Example scenario:** If your application uses 512 MB of RAM usage (8 blocks of 64 MB) per hour; every hour for the period of entire month:
 
-* Price per 512 MB per hour: $0.00025 x 8 = **$0.002**
-* Price per day: $0.002 x 24 = **$0.048**
-* Price per month (31d): $0.048 x 31 = **$1.488**
+- Price per 512 MB per hour: $0.00025 x 8 = **$0.002**
+- Price per day: $0.002 x 24 = **$0.048**
+- Price per month (31d): $0.048 x 31 = **$1.488**
 
 ### Anycast IP usage
 
@@ -65,14 +63,14 @@ The cost for Anycast IP (IPv4) is $2 for per month. If you use Anycast IP (IP is
 
 **Calculation example:**
 
-* Anycast IP Cost: **$2 per month**
-* Anycast IP Cost per minute (if 31d month): 2 / 31 / 24 / 60 = **$0.000044802867384**
+- Anycast IP Cost: **$2 per month**
+- Anycast IP Cost per minute (if 31d month): 2 / 31 / 24 / 60 = **$0.000044802867384**
 
 **Practical scenario:** If Anycast IP is attached to your application for 10 days, 7 hours, and 15 minutes in the last month you will be charged for:
 
-* Anycast IP Cost per hour: $0.000044802867384 x 60 = **$0.002688172043011**
-* Anycast IP Cost per day: $0.002688172043011 x 24 = **$0.064516129032258**
-* Total Anycast cost: 10 \* $0.064516129032258 + 7 x $0.002688172043011 + 15 x $0.000044802867384 = **$0.664650537634417**
+- Anycast IP Cost per hour: $0.000044802867384 x 60 = **$0.002688172043011**
+- Anycast IP Cost per day: $0.002688172043011 x 24 = **$0.064516129032258**
+- Total Anycast cost: 10 \* $0.064516129032258 + 7 x $0.002688172043011 + 15 x $0.000044802867384 = **$0.664650537634417**
 
 ### Disk usage
 
@@ -80,38 +78,38 @@ Persistent storage (coming soon) is billed per 1 GB block, prorated hourly, ensu
 
 **Calculation example:**
 
-* Storage cost: **$0.10 per GB per month**
-* Daily cost per 1 GB (31 days): $0.10 / 31 = **$0.003225806451613 per GB per day**
+- Storage cost: **$0.10 per GB per month**
+- Daily cost per 1 GB (31 days): $0.10 / 31 = **$0.003225806451613 per GB per day**
 
 **Practical scenario:** Let’s use the following scenario: your application uses 3 GB of storage for 3 days. Then you upload an additional 2 GB (5 GB total) and keep it for 5 days. After that, upload another 5 GB (now 10 GB total) and keep it for the rest of the month. The cost will be calculated as follows:
 
-* Cost for 3 days for 3 GB = 3 x 3 x $0.003225806451613 = **$0.029032258064516**
-* Cost for 5 days for 5 GB = 5 x 5 x $0.003225806451613 = **$0.080645161290323**
-* Cost for (31 - 8) = 23 days for 10 GB = 23 x 10 x $0.003225806451613 = **$0.741935483870968**
-* Total cost: **\~$0.77**
+- Cost for 3 days for 3 GB = 3 x 3 x $0.003225806451613 = **$0.029032258064516**
+- Cost for 5 days for 5 GB = 5 x 5 x $0.003225806451613 = **$0.080645161290323**
+- Cost for (31 - 8) = 23 days for 10 GB = 23 x 10 x $0.003225806451613 = **$0.741935483870968**
+- Total cost: **\~$0.77**
 
 ### Network traffic usage
 
 Network traffic is charged based on the total data transferred each month. The prices vary by region. The MC costs include the following traffic:
 
-* Anycast Ingress traffic.
-* All egress traffic, except for traffic going through the CDN (CDN traffic is charged as part of the CDN service).
+- Anycast Ingress traffic.
+- All egress traffic, except for traffic going through the CDN (CDN traffic is charged as part of the CDN service).
 
 **Region prices:**
 
-* Europe & North America: $0.01/GB
-* South America: $0.045/GB
-* Asia & Oceania: $0.03/GB
-* Middle East & Africa: $0.06/GB
+- Europe & North America: $0.01/GB
+- South America: $0.045/GB
+- Asia & Oceania: $0.03/GB
+- Middle East & Africa: $0.06/GB
 
 **Practical Scenario:**
 
 If your application served 15 GB of traffic from Europe, 10 GB of traffic from the Middle East, and 3 GB from South America, the costs would be calculated as follows:
 
-* Europe traffic cost: $0.01 x 15 = **$0.15**
-* Middle East traffic cost: $0.06 x 10 = **$0.6**
-* South America traffic cost: $0.045 x 3 = **$0.135**
-* Total: **$0.885**
+- Europe traffic cost: $0.01 x 15 = **$0.15**
+- Middle East traffic cost: $0.06 x 10 = **$0.6**
+- South America traffic cost: $0.045 x 3 = **$0.135**
+- Total: **$0.885**
 
 # Reserved instances (coming soon)
 
@@ -139,12 +137,16 @@ These instances will be available in multiple standardized configurations, each 
 
 If you have any questions, need guidance choosing the right pricing model, or require assistance estimating costs, please **contact our support team**. We’re here to help you navigate your options and ensure you get the most value out of Magic Containers.
 
-***
+---
 
-* [Table of Contents](#)
+[Limits](/docs/magic-containers-limits)
 
-* * [Dynamic (shared) instances](#dynamic-shared-instances)
-    * [Cost components and rates](#cost-components-and-rates)
-  * [Reserved instances (coming soon)](#reserved-instances-coming-soon)
-  * [FAQ](#faq)
-  * [Need help or have questions?](#need-help-or-have-questions)
+[Overview](/docs/edge-scripting-overview)
+
+- [Table of Contents](#)
+
+- - [Dynamic (shared) instances](#dynamic-shared-instances)
+  - - [Cost components and rates](#cost-components-and-rates)
+  - [Reserved instances (coming soon)](#reserved-instances-coming-soon)
+  - [FAQ](#faq)
+  - [Need help or have questions?](#need-help-or-have-questions)

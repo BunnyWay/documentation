@@ -1,18 +1,16 @@
 ---
 title: "Creating a custom WAF rule"
-description: "Suggest Edits"
+description: "Creating a Custom WAF Rule allows you to tailor Bunny Shield’s Web Application Firewall to meet your specific security needs. By defining custom rules, you gain precise control over how your web applications are safeguarded, enabling you to fine-tune existing protections or address unique threats. Bunny Shield's advanced capabilities ensure that you can enhance your defences without compromising the seamless experience of legitimate users."
 ---
-
-Creating a Custom WAF Rule allows you to tailor Bunny Shield’s Web Application Firewall to meet your specific security needs. By defining custom rules, you gain precise control over how your web applications are safeguarded, enabling you to fine-tune existing protections or address unique threats. Bunny Shield's advanced capabilities ensure that you can enhance your defences without compromising the seamless experience of legitimate users.
 
 # What you'll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
-* A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-* An existing Shield Zone.
-* Advanced Plan or above on the existing Shield Zone.
-* Your AccessKey or JWT for API authentication.
+- A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+- An existing Shield Zone.
+- Advanced Plan or above on the existing Shield Zone.
+- Your AccessKey or JWT for API authentication.
 
 These prerequisites ensure you have the necessary access and permissions to create and manage custom WAF rules effectively.
 
@@ -22,7 +20,7 @@ To get started, first ensure you understand the fundamentals of how we build a c
 
 ![](/images/docs/7943f5069c900e680d2b136f98d0bce7ddd320d2beec28157b16af24e41caa16-image.png)
 
-This rule processes each HTTP request by extracting only the REQUEST\_URI (**Variable**), converting it to lowercase, and removing whitespaces (**Transformations**). It then verifies if the transformed REQUEST\_URI matches exactly (**Operator**) with '/blockedpath' (**Operator Value**). If a match is found, our WAF Engine will block (**Response Action**) the request, halting further rule processing and intercepting the request.
+This rule processes each HTTP request by extracting only the REQUEST_URI (**Variable**), converting it to lowercase, and removing whitespaces (**Transformations**). It then verifies if the transformed REQUEST_URI matches exactly (**Operator**) with '/blockedpath' (**Operator Value**). If a match is found, our WAF Engine will block (**Response Action**) the request, halting further rule processing and intercepting the request.
 
 With the basics covered, you can now create highly effective WAF rules tailored to protect your site with customized mitigation strategies.
 
@@ -68,20 +66,24 @@ If you encounter any difficulties or have questions, our support team is here to
 
 Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
 
-***
+---
 
-* [Table of Contents](#)
+[Understanding Rule Engine](/docs/shield-understanding-rule-engine)
 
-* * [What you'll need](#what-youll-need)
+[Rate limiting](/docs/shield-rate-limiting)
 
-  * [Creating a custom WAF rule](#creating-a-custom-waf-rule)
+- [Table of Contents](#)
 
-  * [Examples of custom WAF rules](#examples-of-custom-waf-rules)
+- - [What you'll need](#what-youll-need)
 
-    * [Block request by ASN](#block-request-by-asn)
-    * [Block Request by Country Code](#block-request-by-country-code)
-    * [Log request if the specific cookie is set and has a specific value](#log-request-if-the-specific-cookie-is-set-and-has-a-specific-value)
-    * [Challenge request if a specific path is accessed](#challenge-request-if-a-specific-path-is-accessed)
-    * [Block request if User-Agent is a known crawler](#block-request-if-user-agent-is-a-known-crawler)
+  - [Creating a custom WAF rule](#creating-a-custom-waf-rule)
 
-  * [Need help or encountering issues?](#need-help-or-encountering-issues)
+  - [Examples of custom WAF rules](#examples-of-custom-waf-rules)
+
+  - - [Block request by ASN](#block-request-by-asn)
+    - [Block Request by Country Code](#block-request-by-country-code)
+    - [Log request if the specific cookie is set and has a specific value](#log-request-if-the-specific-cookie-is-set-and-has-a-specific-value)
+    - [Challenge request if a specific path is accessed](#challenge-request-if-a-specific-path-is-accessed)
+    - [Block request if User-Agent is a known crawler](#block-request-if-user-agent-is-a-known-crawler)
+
+  - [Need help or encountering issues?](#need-help-or-encountering-issues)
