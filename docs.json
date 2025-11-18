@@ -142,7 +142,11 @@
             "groups": [
               {
                 "group": "Bunny Optimizer",
-                "pages": ["optimizer/index", "optimizer/quickstart"]
+                "pages": [
+                  "optimizer/index",
+                  "optimizer/quickstart",
+                  "optimizer/pricing"
+                ]
               },
               {
                 "group": "Features",
