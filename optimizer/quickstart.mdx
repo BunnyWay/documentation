@@ -1,0 +1,91 @@
+---
+title: Quickstart
+description: Enable Bunny Optimizer and start optimizing your website in minutes
+---
+
+<Steps>
+
+<Step title="Access the CDN Zone">
+
+1. From your Bunny dashboard, go to the left-hand navigation menu
+2. Select the Pull Zone where you want to enable Bunny Optimizer
+3. Once inside your Pull Zone, scroll down in the left-hand menu and click on “Optimizer”
+
+<Frame>![Access the CDN Zone](/images/optimizer/locate-optimizer.png)</Frame>
+
+</Step>
+
+<Step title="Enable Bunny Optimizer">
+
+You will now see the Bunny Optimizer overview screen
+Click the orange button labeled “Turn on Bunny Optimizer.”
+That’s it! Bunny Optimizer is now active for your zone
+
+<Frame>
+  ![Access the CDN Zone](/images/optimizer/enable-bunny-optimizer.png)
+</Frame>
+
+That's it! Your CSS, JavaScript, and images are now being automatically optimized.
+
+</Step>
+
+<Step title="Configure automatic optimization (optional)">
+
+**Image optimization:**
+
+- Set maximum image widths for desktop and mobile
+- Adjust quality settings (0-100%)
+- Enable smart device-specific optimization
+
+**Minification:**
+
+- Toggle CSS minification
+- Toggle JavaScript minification
+
+**WebP compression:**
+
+- Automatically serves WebP to supported browsers
+- No URL changes required
+
+See [Settings](/optimizer/settings) for detailed configuration options.
+
+</Step>
+
+<Step title="Try the Dynamic Images API (optional)">
+Transform images on the fly by adding query parameters:
+
+1. Go to **Optimizer** → **Settings**
+2. Enable **Dynamic Image API**
+
+Now you can manipulate any image:
+
+```bash
+# Original
+https://yourzone.b-cdn.net/photo.jpg
+
+# Resize to 500px width
+https://yourzone.b-cdn.net/photo.jpg?width=500
+
+# Create 16:9 thumbnail
+https://yourzone.b-cdn.net/photo.jpg?aspect_ratio=16:9&width=256
+```
+
+Learn more in the [Dynamic Images guide](/optimizer/dynamic-images).
+
+</Step>
+
+<Step title="Enable advanced features">
+
+<Card title="Burrow Smart Routing" href="/optimizer/burrow-smart-routing">
+  Routes uncached requests over optimized paths for faster origin response
+  times.
+</Card>
+
+<Card title="HTML Prerender" href="/optimizer/html-prerender">
+  Improves SEO for single-page applications by serving rendered HTML to
+  crawlers.
+</Card>
+
+</Step>
+
+</Steps>

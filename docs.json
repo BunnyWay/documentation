@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "almond",
   "name": "bunny.net Documentation",
   "colors": {
     "primary": "#EF6126",
@@ -42,22 +42,52 @@
     "products": [
       {
         "product": "Get Started",
-        "description": "Account and setup guides",
         "icon": "book-open",
         "tabs": [
           {
-            "tab": "Welcome",
+            "tab": "Documentation",
             "groups": [
               {
-                "group": "Documentation",
+                "group": "Getting Started",
                 "pages": ["index", "quickstart"]
               },
               {
-                "group": "Bunny AI",
-                "pages": ["docs/bunny-ai-image-generation"]
+                "group": "Account & Profile",
+                "pages": [
+                  "docs/profile-settings",
+                  "docs/two-factor-authentication",
+                  "docs/account-deletion"
+                ]
               },
               {
-                "group": "Affiliate",
+                "group": "Team Management",
+                "pages": [
+                  "docs/users-and-permissions",
+                  "docs/manage-team-members",
+                  "docs/api-tokens",
+                  "docs/notifications"
+                ]
+              },
+              {
+                "group": "Billing",
+                "pages": [
+                  "docs/billing-overview",
+                  "docs/understanding-auto-recharge",
+                  "docs/understanding-pricing-module",
+                  "docs/credit-and-billing-system",
+                  "docs/payment-methods",
+                  "docs/invoices-and-payment-history",
+                  "docs/changing-pricing-tiers",
+                  "docs/refund-policy",
+                  "docs/account-limits"
+                ]
+              },
+              {
+                "group": "Logging & Observability",
+                "pages": ["docs/statistics-overview", "docs/understanding-logs"]
+              },
+              {
+                "group": "Affiliates",
                 "pages": [
                   "docs/best-practices-manual",
                   "docs/frequently-asked-questions",
@@ -71,7 +101,6 @@
       },
       {
         "product": "CDN",
-        "description": "Supercharge content delivery at global scale",
         "icon": "zap",
         "tabs": [
           {
@@ -105,7 +134,7 @@
       },
       {
         "product": "Optimizer",
-        "description": "Optimize your website with one click",
+        "description": "Automatic image and web optimization.",
         "icon": "sparkles",
         "tabs": [
           {
@@ -113,23 +142,40 @@
             "groups": [
               {
                 "group": "Bunny Optimizer",
+                "pages": ["optimizer/index", "optimizer/quickstart"]
+              },
+              {
+                "group": "Features",
                 "pages": [
-                  "docs/stream-image-processing",
+                  "optimizer/automatic-optimization",
                   {
-                    "group": "Dynamic Image API",
+                    "group": "Dynamic Images API",
                     "pages": [
-                      "docs/stream-image-processing",
-                      "docs/bunny-optimizer-face-crop",
-                      "docs/resizing",
-                      "docs/cropping",
-                      "docs/luminosity",
-                      "docs/color-manipulation",
-                      "docs/reflections-and-rotations",
-                      "docs/filters",
-                      "docs/quality-format",
-                      "docs/formats"
+                      "optimizer/dynamic-images/overview",
+                      "optimizer/dynamic-images/face-detection",
+                      "optimizer/dynamic-images/resizing",
+                      "optimizer/dynamic-images/cropping",
+                      "optimizer/dynamic-images/luminosity",
+                      "optimizer/dynamic-images/color-manipulation",
+                      "optimizer/dynamic-images/reflections-and-rotations",
+                      "optimizer/dynamic-images/blur-and-sharpen",
+                      "optimizer/dynamic-images/quality",
+                      "optimizer/dynamic-images/formats"
                     ]
-                  }
+                  },
+                  "optimizer/image-classes",
+                  "optimizer/watermarking",
+                  "optimizer/burrow-smart-routing",
+                  "optimizer/html-prerender",
+                  "optimizer/ai-image-generation"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "optimizer/api-reference",
+                  "optimizer/statistics",
+                  "optimizer/faq"
                 ]
               }
             ]
@@ -138,7 +184,6 @@
       },
       {
         "product": "Stream",
-        "description": "Take video delivery to the next level",
         "icon": "video",
         "tabs": [
           {
@@ -261,7 +306,6 @@
       },
       {
         "product": "Storage",
-        "description": "Hot object storage replicated worldwide",
         "icon": "hard-drive",
         "tabs": [
           {
@@ -471,7 +515,6 @@
       },
       {
         "product": "Database",
-        "description": "Scalable edge database for global applications",
         "icon": "database",
         "tabs": [
           {

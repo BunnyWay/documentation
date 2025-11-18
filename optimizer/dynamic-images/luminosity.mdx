@@ -1,0 +1,130 @@
+---
+title: Luminosity
+description: Adjust brightness and gamma to control image exposure and tonality
+---
+
+Control the brightness and exposure of your images with luminosity adjustments. Fix underexposed or overexposed photos, correct tonality issues, or create stylistic lighting effects.
+
+## Parameters
+
+<ParamField query="brightness" type="integer">
+  Uniformly lighten or darken the image by adjusting all pixels equally.
+
+**Range:** `-100` to `100`
+
+**Default:** `0`
+
+</ParamField>
+
+<ParamField query="gamma" type="integer">
+  Adjust brightness based on each pixel's current luminosity, affecting bright pixels more than dark pixels.
+
+**Range:** `-100` to `100`
+
+**Default:** `0`
+
+</ParamField>
+
+## How it works
+
+Bunny Optimizer provides two methods for adjusting image luminosity:
+
+**Brightness:** Applies a uniform adjustment to every pixel. Increases or decreases all pixel values by the same amount, which can quickly clip highlights (lose whites) when brightening or crush shadows (lose blacks) when darkening.
+
+**Gamma:** Applies a non-linear adjustment based on each pixel's current luminosity. Bright pixels are affected more than dark pixels, which mimics how human vision perceives brightness. This better preserves detail in both highlights and shadows.
+
+## Usage
+
+### Brightness adjustment
+
+Uniformly lighten or darken all pixels in the image. The adjustment affects each pixel equally regardless of its current value.
+
+```bash Original
+https://yourzone.b-cdn.net/image.jpg?brightness=0
+```
+
+| brightness=0                                                                          | brightness=15                                                                       | brightness=-15                                                                     |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| ![Original brightness](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?brightness=0) | ![Brightened image](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?brightness=15) | ![Darkened image](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?brightness=-15) |
+
+Positive values lighten the image, while negative values darken it. Useful for quick exposure corrections, though extreme values may lose detail in highlights or shadows.
+
+```bash Lighten significantly
+https://yourzone.b-cdn.net/image.jpg?brightness=30
+```
+
+| brightness=0                                                                          | brightness=30                                                                               |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| ![Original brightness](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?brightness=0) | ![Significantly brightened](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?brightness=30) |
+
+```bash Darken significantly
+https://yourzone.b-cdn.net/image.jpg?brightness=-30
+```
+
+| brightness=0                                                                          | brightness=-30                                                                             |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| ![Original brightness](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?brightness=0) | ![Significantly darkened](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?brightness=-30) |
+
+<Note>
+  Brightness adjustments affect all pixels uniformly. High positive values can
+  cause bright areas to lose detail (blown highlights), while high negative
+  values can cause dark areas to lose detail (crushed blacks).
+</Note>
+
+### Gamma correction
+
+Adjust brightness based on luminosity values, affecting bright pixels more than dark ones. This creates more natural-looking adjustments that preserve detail in both highlights and shadows.
+
+```bash Original
+https://yourzone.b-cdn.net/image.jpg?gamma=0
+```
+
+| gamma=0                                                                     | gamma=20                                                                      | gamma=-20                                                                      |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| ![Original gamma](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?gamma=0) | ![Gamma increased](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?gamma=20) | ![Gamma decreased](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?gamma=-20) |
+
+Positive values brighten the image while better preserving shadow detail. Negative values darken while maintaining highlight detail. Ideal for fixing global tonality issues or exposing additional detail in challenging lighting conditions.
+
+```bash Brighten with gamma
+https://yourzone.b-cdn.net/image.jpg?gamma=40
+```
+
+| gamma=0                                                                     | gamma=40                                                                   |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| ![Original gamma](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?gamma=0) | ![Higher gamma](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?gamma=40) |
+
+```bash Darken with gamma
+https://yourzone.b-cdn.net/image.jpg?gamma=-40
+```
+
+| gamma=0                                                                     | gamma=-40                                                                  |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| ![Original gamma](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?gamma=0) | ![Lower gamma](https://bunnyoptimizerdemo.b-cdn.net/bunny15.jpg?gamma=-40) |
+
+Perfect for correcting images shot in challenging lighting, fixing tonality issues, or creating more nuanced exposure adjustments than brightness alone.
+
+## Brightness vs Gamma
+
+The key difference lies in how each adjustment affects pixels:
+
+**Brightness** adds or subtracts the same value from all pixels. A brightness of `+20` adds 20 to every pixel value, whether it's already bright or dark. This can quickly clip highlights or shadows.
+
+**Gamma** adjusts pixels proportionally based on their current luminosity. Bright pixels receive larger adjustments than dark pixels, creating a curve that mimics human vision and preserves more detail across the tonal range.
+
+Use brightness for simple, uniform adjustments. Use gamma when you need to preserve detail in highlights and shadows, or when correcting tonality issues in photos with varied lighting.
+
+## Combining with other transformations
+
+Luminosity adjustments work seamlessly with other Bunny Optimizer parameters:
+
+```bash Brighten and increase saturation
+https://yourzone.b-cdn.net/image.jpg?gamma=15&saturation=10
+```
+
+```bash Darken and sharpen
+https://yourzone.b-cdn.net/image.jpg?brightness=-10&sharpen=5
+```
+
+```bash Gamma correction with contrast
+https://yourzone.b-cdn.net/image.jpg?gamma=20&contrast=5
+```

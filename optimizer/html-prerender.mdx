@@ -1,0 +1,86 @@
+---
+title: HTML Prerender
+description: Improve SEO for single-page applications
+tag: "Preview"
+---
+
+HTML Prerender improves search engine optimization and social media link previews for single-page applications by serving fully rendered HTML to bots and crawlers.
+
+Modern JavaScript frameworks like React, Vue, Angular, Blazor, and others make building rich, interactive experiences easier. However, search engines and AI crawlers don't execute JavaScript during indexing, which means your content can be missed or deprioritized.
+
+HTML Prerender solves this by capturing fully rendered HTML snapshots and serving them to bots, while your users continue to receive the full dynamic application.
+
+## How to enable
+
+1. Open your **Pull Zone** settings
+2. Navigate to **Optimizer**
+3. **Enable Bunny Optimizer** if not already enabled
+4. Enable **HTML Prerender**
+
+<Frame>
+  ![Enable HTML Prender](/images/optimizer/enable-html-prerender.png)
+</Frame>
+
+Changes propagate across the CDN within a few minutes. Crawlers and bots will immediately start receiving fully rendered HTML snapshots.
+
+## How it works
+
+When enabled, Bunny Optimizer detects search engine bots and social media crawlers, then:
+
+1. **Detects** crawlers and bots based on user agents and creates a specialized cache key
+2. **Renders** your page in a real browser to generate a complete HTML snapshot
+3. **Optimizes** critical metadata (title, description, canonical, Open Graph, Twitter Card tags) for reliable parsing
+4. **Caches** snapshots globally at the edge, revalidating based on your cache headers and purge rules
+5. **Serves** the static HTML to crawlers while delivering your dynamic app to human visitors
+
+**No code changes required.** Your URLs and frontend remain unchanged.
+
+<Frame>
+  ![Before and after Bunny Optimizer Prerender
+  comparison](/images/optimizer/bunny-optimizer-prerender-before-after-comparison.png)
+</Frame>
+
+## Benefits
+
+**Improved crawl performance:** Crawlers get instant access to your content without waiting for JavaScript execution, reducing page load time by up to 99.9%.
+
+**Better search visibility:** Search engines can index your content immediately, potentially improving visibility by up to 95%.
+
+**AI-ready content:** Large language models and AI crawlers can quickly parse your content structure and headings.
+
+**Optimized social previews:** Open Graph and Twitter Card metadata is present in the first response, ensuring rich link previews on social platforms like Facebook, LinkedIn, X, Slack, and Discord.
+
+**Reduced crawl budget waste:** Faster response times mean crawlers can discover more of your pages per session.
+
+<Info>
+  HTML Prerender is particularly valuable for single-page applications, headless
+  CMS sites, e-commerce catalogs, marketing pages, documentation sites, and
+  WebAssembly applications. Even if you're using SSR, SSG, or ISR, it ensures
+  crawlers consistently receive clean, static HTML from the edge.
+</Info>
+
+## Supported crawlers
+
+Prerender automatically serves rendered HTML to:
+
+- Google, Bing, Yahoo search bots
+- Facebook, Twitter/X, LinkedIn social crawlers
+- AI model crawlers (ChatGPT, Claude, etc.)
+- Other known SEO and preview bots
+
+Human visitors always receive the standard application.
+
+## Content integrity
+
+HTML Prerender is designed to help search engines and bots consume your content optimally, not to manipulate rankings:
+
+- **No cloaking:** Serves semantically equivalent content; the prerender is a faithful representation of what users see
+- **Respects directives:** Honors robots.txt and meta tag directives
+- **No manipulation:** Only optimizes delivery, never alters content structure or adds keywords
+- **Developer-friendly:** Works with any origin behind Bunny Optimizer, including Bunny Storage
+
+## Limitations
+
+- Only publicly accessible URLs are prerendered
+- Pages requiring authentication are not prerendered
+- Complex client-side interactions may not be captured

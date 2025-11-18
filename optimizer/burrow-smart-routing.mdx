@@ -1,0 +1,81 @@
+---
+title: Burrow Smart Routing
+description: Optimize uncached requests with intelligent path selection
+tag: "Preview"
+---
+
+Burrow Smart Routing accelerates uncached, origin-bound requests by dynamically choosing the fastest, most reliable paths across Bunny's global backbone network.
+
+The internet relies on a fragile system of cables, infrastructure, and partnerships. Network outages, congestion, and cable cuts happen regularly and can cause severe connectivity issues. Burrow helps your traffic avoid these problems by intelligently routing requests around issues in real time.
+
+## How to enable
+
+1. Open your **Pull Zone** settings
+2. Navigate to **Optimizer**
+3. **Enable Bunny Optimizer** if not already enabled
+4. Open the **Burrow** tab and click **Enable**
+
+<Frame>
+  ![Enable Burrow Smart
+  Routing](/images/optimizer/enable-burrow-smart-routing.png)
+</Frame>
+
+Your uncached traffic will immediately start using intelligent path selection across the Bunny backbone network.
+
+## How it works
+
+Burrow is an always-on, self-optimizing routing engine built into the bunny.net network infrastructure. When a request isn't in cache, Burrow:
+
+1. **Monitors** global network conditions across 119 datacenters in 77 countries
+2. **Analyzes** real-time latency and health signals
+3. **Selects** the optimal path to your origin for each request
+4. **Routes** traffic around congestion, packet loss, outages, and cable cuts
+5. **Optimizes** TLS connections by reusing pre-secured connections instead of performing slow handshakes from distant locations
+
+On a typical day, Burrow delivers up to 40% faster average response times for dynamic or uncached content. During network outages or congestion, it can be the difference between staying online and experiencing downtime.
+
+Cached traffic continues to be served instantly from the edge as usual.
+
+<Frame>![Bunny Burrow](/images/optimizer/bunny-burrow.png)</Frame>
+
+## Benefits
+
+**Faster response times:** Lower TTFB and up to 40% improvement in average response times for uncached requests.
+
+**Network resilience:** Automatic routing around outages, packet loss, and congestion across the global internet.
+
+**Optimized connections:** Pre-secured, reused TLS connections reduce handshake overhead and connection errors.
+
+**Better caching:** Improved connection reliability means more consistent cache population.
+
+**Self-optimizing:** Learns from real global traffic patterns to continuously improve path selection.
+
+**No configuration required:** Works automatically with no code changes or migrations needed.
+
+Burrow is particularly beneficial for API traffic, real-time applications, personalized content, e-commerce transactions, and SaaS applications where users are geographically distributed or far from your origin server.
+
+## Pricing
+
+**During early access:** Free with no traffic limitations
+
+**After early access:**
+
+- 50 GB/month of uncached traffic included with Optimizer
+- $0.06/GB for additional uncached traffic beyond the free tier
+- Only uncached, origin-bound requests count toward usage
+- Cached requests are not counted
+
+## Performance monitoring
+
+View Burrow's impact in your Bunny Optimizer Statistics:
+
+- **Total time saved:** Cumulative milliseconds saved across all requests
+- **Average time saved per request:** Per-request performance improvement
+
+## Active Origin Probing
+
+<Note>Coming soon</Note>
+
+Active probing will periodically test origin connection quality from edge locations with lightweight checks. This allows Burrow to map optimal paths ahead of time, ensuring the routing engine is always prepared with up-to-date network information, even during low-traffic periods.
+
+This feature is particularly beneficial for smaller projects that don't generate enough traffic volume for Burrow to learn patterns organically.

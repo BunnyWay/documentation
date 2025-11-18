@@ -1,0 +1,165 @@
+---
+title: Color Manipulation
+description: Adjust saturation, hue, contrast, tint, and sepia for precise color control
+---
+
+Transform the color characteristics of your images with precise control over saturation, hue rotation, contrast, tinting, and sepia effects. Perfect for maintaining brand consistency, creating stylistic effects, or correcting color issues.
+
+## Parameters
+
+<ParamField query="saturation" type="integer">
+  Adjust the intensity of colors in the image.
+
+**Range:** `-100` to `100`
+
+**Default:** `0`
+
+</ParamField>
+
+<ParamField query="hue" type="integer">
+  Rotate colors around the color wheel.
+
+**Range:** `0` to `100`
+
+**Default:** `0`
+
+</ParamField>
+
+<ParamField query="contrast" type="integer">
+  Adjust the difference between light and dark tones.
+
+**Range:** `-100` to `100`
+
+**Default:** `0`
+
+</ParamField>
+
+<ParamField query="tint" type="string">
+  Apply a subtractive color tint over the image.
+
+**Format:** Hex color code (e.g., `aaffff`, `ff0000`)
+
+**Default:** `ffffff` (no tint)
+
+</ParamField>
+
+<ParamField query="sepia" type="integer">
+  Apply a sepia tone effect to the image.
+
+**Range:** `0` to `100`
+
+**Default:** `0`
+
+</ParamField>
+
+## How it works
+
+Bunny Optimizer provides multiple color manipulation tools:
+
+**Saturation:** Controls color intensity. Negative values desaturate (moving toward grayscale), positive values increase color vibrancy.
+
+**Hue:** Rotates colors around the color wheel. Every 33 units shifts to the next primary color in the spectrum.
+
+**Contrast:** Adjusts the difference between bright and dark areas. Positive values increase contrast, negative values reduce it.
+
+**Tint:** Applies a subtractive color overlay. The tint color is subtracted from the image, creating a color cast effect.
+
+**Sepia:** Converts the image to warm brown tones reminiscent of antique photographs.
+
+## Usage
+
+### Saturation adjustment
+
+Control the intensity of colors in your image. Negative values desaturate toward grayscale, while positive values increase color vibrancy.
+
+```bash Comparison
+https://yourzone.b-cdn.net/image.jpg?saturation=VALUE
+```
+
+| saturation=-100                                                                        | saturation=-25                                                                            | saturation=0                                                                          | saturation=25                                                                           |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| ![Fully desaturated](https://bunnyoptimizerdemo.b-cdn.net/bunny17.jpg?saturation=-100) | ![Partially desaturated](https://bunnyoptimizerdemo.b-cdn.net/bunny17.jpg?saturation=-25) | ![Original saturation](https://bunnyoptimizerdemo.b-cdn.net/bunny17.jpg?saturation=0) | ![Increased saturation](https://bunnyoptimizerdemo.b-cdn.net/bunny17.jpg?saturation=25) |
+
+A value of `-100` produces a completely grayscale image. Useful for creating black and white photos, reducing oversaturated colors, or maintaining consistent color intensity across different source images.
+
+### Hue rotation
+
+Rotate colors around the color wheel. The hue parameter shifts colors through the spectrum, with every 33 units moving to the next primary color.
+
+```bash Original colors
+https://yourzone.b-cdn.net/image.jpg?hue=0
+```
+
+| hue=0                                                                          | hue=33                                                                            |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| ![Original hue](https://bunny-optimizer-demo.b-cdn.net/easter_bunny.jpg?hue=0) | ![Hue shifted 33](https://bunny-optimizer-demo.b-cdn.net/easter_bunny.jpg?hue=33) |
+
+| hue=66                                                                            | hue=90                                                                            |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| ![Hue shifted 66](https://bunny-optimizer-demo.b-cdn.net/easter_bunny.jpg?hue=66) | ![Hue shifted 90](https://bunny-optimizer-demo.b-cdn.net/easter_bunny.jpg?hue=90) |
+
+Perfect for color theme variations, creating stylistic effects, or adjusting color casts without affecting luminosity.
+
+### Contrast adjustment
+
+Adjust the difference between bright and dark areas. Positive values make bright areas brighter and dark areas darker, while negative values flatten the tonal range.
+
+```bash Original contrast
+https://yourzone.b-cdn.net/image.jpg?contrast=0
+```
+
+| contrast=0                                                                        | contrast=20                                                                         | contrast=-20                                                                         |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| ![Original contrast](https://bunnyoptimizerdemo.b-cdn.net/bunny19.jpg?contrast=0) | ![Increased contrast](https://bunnyoptimizerdemo.b-cdn.net/bunny19.jpg?contrast=20) | ![Decreased contrast](https://bunnyoptimizerdemo.b-cdn.net/bunny19.jpg?contrast=-20) |
+
+Useful for making flat images pop, correcting overexposed or underexposed photos, or creating high-contrast stylistic effects.
+
+### Tint application
+
+Apply a subtractive color tint over the image. The tint function works by subtracting the specified color from the image, creating a color cast effect.
+
+```bash Apply cyan tint
+https://yourzone.b-cdn.net/image.jpg?tint=aaffff
+```
+
+| Original                                                                            | tint=aaffff (cyan)                                                                         | tint=ffffaa (yellow)                                                                         | tint=ffaaff (magenta)                                                                         |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/white_bunny_closeup_1.jpg) | ![Cyan tint](https://bunny-optimizer-demo.b-cdn.net/white_bunny_closeup_1.jpg?tint=aaffff) | ![Yellow tint](https://bunny-optimizer-demo.b-cdn.net/white_bunny_closeup_1.jpg?tint=ffffaa) | ![Magenta tint](https://bunny-optimizer-demo.b-cdn.net/white_bunny_closeup_1.jpg?tint=ffaaff) |
+
+Ideal for creating mood-based color grading, maintaining brand color themes, or correcting color temperature issues. Use hex color codes without the `#` prefix.
+
+### Sepia effect
+
+Apply a warm, brown-toned sepia effect reminiscent of antique photographs. The intensity ranges from 0 (no effect) to 100 (full sepia tone).
+
+```bash Apply sepia effect
+https://yourzone.b-cdn.net/image.jpg?sepia=50
+```
+
+| sepia=0                                                                                        | sepia=50                                                                                             | sepia=100                                                                                          |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| ![No sepia](https://bunny-optimizer-demo.b-cdn.net/bunny-at-the-edge-of-a-forrest.png?sepia=0) | ![Partial sepia](https://bunny-optimizer-demo.b-cdn.net/bunny-at-the-edge-of-a-forrest.png?sepia=50) | ![Full sepia](https://bunny-optimizer-demo.b-cdn.net/bunny-at-the-edge-of-a-forrest.png?sepia=100) |
+
+Perfect for creating vintage aesthetics, nostalgic effects, or warm-toned artistic presentations.
+
+## Combining color adjustments
+
+Color manipulation parameters work seamlessly together and with other Bunny Optimizer transformations:
+
+```bash Desaturate and increase contrast
+https://yourzone.b-cdn.net/image.jpg?saturation=-50&contrast=15
+```
+
+```bash Hue shift with brightness
+https://yourzone.b-cdn.net/image.jpg?hue=33&brightness=10
+```
+
+```bash Sepia with gamma correction
+https://yourzone.b-cdn.net/image.jpg?sepia=75&gamma=15
+```
+
+```bash Tint and resize
+https://yourzone.b-cdn.net/image.jpg?tint=aaffff&width=800
+```
+
+Combine multiple adjustments to achieve precise color grading, correct multiple issues simultaneously, or create complex stylistic effects.

@@ -1,0 +1,169 @@
+---
+title: Dynamic Images
+sidebarTitle: Overview
+description: Transform images on the fly using URL parameters
+---
+
+The Dynamic Images API lets you resize, crop, and transform images in real time by appending query parameters to image URLs. **No pre-processing or multiple file versions required**, just add parameters to your image URLs and Bunny Optimizer handles the rest.
+
+## How it works
+
+Add transformation parameters to any image URL served through your Pull Zone:
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?width=500&sharpen=true
+```
+
+Bunny Optimizer processes the transformation on the first request and caches the result at the edge. Subsequent requests are served instantly from the global CDN cache.
+
+All transformations preserve the original image. You can request the same source image with different parameters to generate multiple variations without storing duplicates.
+
+## Prerequisites
+
+Before using Dynamic Images, ensure:
+
+1. **Bunny Optimizer is enabled** on your Pull Zone
+2. **Dynamic Image API is enabled** in Optimizer settings (**Optimizer → Settings**)
+3. (Optional) Create [Image Classes](/optimizer/image-classes) for predefined transformation presets
+
+## Quick examples
+
+Perfect for responsive images across different devices and screen resolutions.
+
+**Resize while maintaining aspect ratio:**
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?width=500
+https://yourzone.b-cdn.net/image.jpg?height=300
+```
+
+**Create thumbnails with specific aspect ratios:**
+
+Ideal for product listings and galleries.
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?aspect_ratio=16:9&width=256
+https://yourzone.b-cdn.net/image.jpg?aspect_ratio=1:1&height=400
+```
+
+**Crop to specific dimensions:**
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?crop=800,600
+https://yourzone.b-cdn.net/image.jpg?crop=400,300&crop_gravity=north
+```
+
+**Smart cropping with face detection:**
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?face_crop=600,600
+```
+
+**Adjust colors and exposure:**
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?brightness=10&contrast=5&saturation=15
+https://yourzone.b-cdn.net/image.jpg?gamma=20&hue=33
+```
+
+**Apply filters and effects:**
+
+Great for privacy protection and brand consistency.
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?sharpen=true&blur=0
+https://yourzone.b-cdn.net/image.jpg?sepia=75
+```
+
+**Optimize quality and format:**
+
+Essential for performance optimization and social media.
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?quality=75&format=webp
+```
+
+**Combine multiple transformations:**
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?width=800&crop=600,400&brightness=5&sharpen=true&quality=80
+https://yourzone.b-cdn.net/image.jpg?aspect_ratio=16:9&gamma=10&saturation=10&format=webp
+```
+
+## Available transformations
+
+<CardGroup cols={2}>
+  <Card title="Resizing" href="/optimizer/dynamic-images/resizing">
+    Resize by width or height while maintaining aspect ratio
+  </Card>
+  <Card title="Cropping" href="/optimizer/dynamic-images/cropping">
+    Crop to dimensions, aspect ratios, or focal points
+  </Card>
+  <Card title="Face Detection" href="/optimizer/dynamic-images/face-detection">
+    Automatically detect and crop around faces
+  </Card>
+  <Card
+    title="Color Manipulation"
+    href="/optimizer/dynamic-images/color-manipulation"
+  >
+    Adjust saturation, hue, contrast, tint, and sepia
+  </Card>
+  <Card title="Luminosity" href="/optimizer/dynamic-images/luminosity">
+    Control brightness and gamma for exposure correction
+  </Card>
+  <Card
+    title="Blur and Sharpen"
+    href="/optimizer/dynamic-images/blur-and-sharpen"
+  >
+    Apply blur effects or enhance sharpness
+  </Card>
+  <Card
+    title="Reflections and Rotations"
+    href="/optimizer/dynamic-images/reflections-and-rotations"
+  >
+    Flip, flop, and rotate in 90-degree increments
+  </Card>
+  <Card title="Quality" href="/optimizer/dynamic-images/quality">
+    Control compression levels and file size
+  </Card>
+  <Card title="Formats" href="/optimizer/dynamic-images/formats">
+    Convert between JPEG, PNG, WebP, and GIF
+  </Card>
+</CardGroup>
+
+## Transformation order
+
+When combining multiple parameters, transformations are applied in a specific order:
+
+1. **Crop operations** (`crop`, `aspect_ratio`, `focus_crop`, `face_crop`)
+2. **Resize operations** (`width`, `height`)
+3. **Reflections and rotations** (`flip`, `flop`, `rotate`)
+4. **Color and luminosity adjustments** (`brightness`, `gamma`, `contrast`, `saturation`, `hue`, `tint`, `sepia`)
+5. **Filters** (`blur`, `sharpen`)
+6. **Format and quality** (`format`, `quality`)
+
+Understanding this order helps you predict the final output when combining multiple transformations.
+
+## Performance and caching
+
+All transformations are processed once and cached at the edge:
+
+- **First request:** Bunny Optimizer processes the transformation and stores the result in the global CDN cache
+- **Subsequent requests:** Served instantly from the nearest edge location
+- **Cache invalidation:** Purging the original image also purges all transformed variations
+
+This approach ensures fast delivery while maintaining flexibility. You can request new transformation combinations at any time without impacting performance of existing cached variations.
+
+## Best practices
+
+**Use Image Classes for consistency:** Define common transformation patterns as [Image Classes](/optimizer/image-classes) to maintain consistency and simplify URLs.
+
+**Combine transformations in single requests:** Apply multiple transformations in one URL rather than chaining multiple requests to reduce processing overhead.
+
+**Test quality settings:** Always verify that quality and compression settings produce acceptable visual results on target devices.
+
+**Leverage automatic format conversion:** Enable WebP in Optimizer settings to automatically serve modern formats to supported browsers.
+
+**Consider transformation order:** Remember that crops are applied before resizing. Base crop dimensions on the original image size, not the target size.
+
+**Monitor bandwidth savings:** Use quality control and format conversion together to achieve significant file size reductions while maintaining visual quality.

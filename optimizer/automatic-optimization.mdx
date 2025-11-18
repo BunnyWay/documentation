@@ -1,0 +1,40 @@
+---
+title: Automatic Optimization
+description: Configure automatic image, CSS, and JavaScript optimization settings
+---
+
+Once [Bunny Optimizer](/optimizer) is enabled, it automatically optimizes your static assets without any code changes. This guide covers the available configuration options.
+
+## WebP Image Compression
+
+Automatically converts images to WebP format for supported browsers, reducing file sizes by up to 80% while maintaining visual quality.
+
+**How it works:**
+
+- Original URLs remain unchanged (e.g., `image.jpg`)
+- WebP is served transparently when supported
+- Verify by checking the `content-type` header: `image/webp`
+- Unsupported browsers receive the original format
+
+## Smart Image Optimization
+
+Serves appropriately sized images based on device type (desktop vs mobile).
+
+**Configuration:**
+
+- **Maximum desktop image width:** Images larger than this are automatically downsized
+- **Maximum mobile image width:** Separate sizing for mobile devices
+- **Desktop image quality:** 0-100% (recommended: 85-90%)
+- **Mobile image quality:** 0-100% (recommended: 75-85%)
+
+Lower quality settings on mobile save bandwidth without noticeable quality loss on smaller screens.
+
+## CSS & JavaScript Minification
+
+Removes whitespace, comments, and unnecessary characters from CSS and JavaScript files.
+
+- Smaller file sizes
+- Faster download times
+- Identical functionality
+
+Toggle these independently in your Optimizer settings.

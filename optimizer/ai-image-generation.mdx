@@ -1,0 +1,326 @@
+---
+title: AI Image Generation
+sidebarTitle: AI Image Generation
+description: Generate unique images on the fly using AI-powered generative models
+tag: "Beta"
+---
+
+Bunny AI Image Generation provides a dynamic way to generate images on the fly using different generative machine learning models. Create unique, AI-generated images for user avatars, blog content, profile pictures, placeholder images, and more without storing multiple files.
+
+<Frame>
+  ![AI-generated image examples](/images/optimizer/bunny-ai-image-examples.jpg)
+</Frame>
+
+<Info>
+  All AI-generated images are automatically protected with [Token
+  Authentication](/docs/cdn-token-authentication-basic) to prevent abuse. The
+  bunny.net dashboard generates tokens automatically.
+</Info>
+
+## How it works
+
+After enabling Bunny AI on your Pull Zone, generate images by crafting URLs with the following structure:
+
+```http
+/.ai/img/<engine-name>/<blueprint>/<seed>/<prompt>.jpg
+```
+
+**Example:**
+
+```http
+https://yourzone.b-cdn.net/.ai/img/dalle-256/default/12345/rabbit.jpg
+```
+
+The first request processes the generation and caches the result at the edge. Subsequent requests with the same parameters are served instantly from the global CDN cache.
+
+## How to enable
+
+1. Make sure **Bunny Optimizer is enabled** on your Pull Zone
+2. Navigate to **Optimizer → Settings**
+3. Enable **Bunny AI Image Generation**
+
+<Frame>
+  ![Enable AI Image Generation](/images/optimizer/enable-image-generation.png)
+</Frame>
+
+<Info>
+  Authentication is handled automatically while using Image Generation inside
+  the dashboard.
+</Info>
+
+## URL structure
+
+### Engine name
+
+Specifies which AI model and resolution to use. See [Supported engines](#supported-engines) for available options.
+
+### Blueprint
+
+Predefined prompt templates that add consistent styling. Use `default` for no additional styling, or create [custom blueprints](#blueprints) to apply specific visual styles.
+
+### Seed
+
+A numeric value that ensures consistent results. The same seed with the same prompt always generates the same image.
+
+**Example:** `12345`, `7890`, `1`
+
+### Prompt
+
+The text description of what you want to generate. Hyphens are automatically converted to spaces, and file extensions (`.jpg`, `.jpeg`, `.png`) are removed.
+
+**Example:**
+
+```text
+bunny-eating-carrots.jpg → "bunny eating carrots"
+```
+
+This creates cleaner, SEO-friendly URLs that are easier to share.
+
+## Engines & Pricing
+
+Bunny AI supports multiple models, each with unique characteristics, pricing, and output styles:
+
+| Engine name                       | Code         | Resolution | Price/Image |
+| :-------------------------------- | :----------- | :--------- | :---------- |
+| **DALL-E 2 (256px)**              | `dalle-256`  | 256×256    | **$0.016**  |
+| **DALL-E 2 (512px)**              | `dalle-512`  | 512×512    | **$0.018**  |
+| **DALL-E 2 (1024px)**             | `dalle-1024` | 1024×1024  | **$0.020**  |
+| **Stable Diffusion v1.5 (512px)** | `sd15-512`   | 512×512    | **$0.001**  |
+| **Stable Diffusion v2.1 (512px)** | `sd21-512`   | 512×512    | **$0.001**  |
+| **Stable Diffusion v2.1 (768px)** | `sd21-768`   | 768×768    | **$0.030**  |
+
+**Cost optimization:**
+
+- **Cached results:** The same prompt, seed, and parameters count as one generation and are cached for up to 3 months
+- **Blueprint reuse:** Using consistent blueprints minimizes unique generations
+- **Choose engines wisely:** Stable Diffusion engines are significantly cheaper for high-volume use cases
+
+### DALL-E 2
+
+Created by OpenAI, DALL-E 2 excels at creative and abstract interpretations with descriptive inputs.
+
+**Best for:**
+
+- Concept art and illustrations
+- Pixel art and retro graphics
+- Abstract prompts and creative compositions
+- 3D renders and stylized artwork
+
+**Not ideal for:**
+
+- Photo-realistic images
+
+**Example:**
+
+```http
+/.ai/img/dalle-512/default/100/a-happy-robot-with-flowers-growing-out-of-his-head-clouds-in-the-background-digital-art.jpg
+```
+
+### Stable Diffusion
+
+Open-source model that uses keyword-focused prompting and excels at photo-realistic generation.
+
+**Best for:**
+
+- Photo-realistic images
+- Landscape and architectural photography
+- Traditional and digital art
+- Portrait and scene generation
+
+**Not ideal for:**
+
+- Pixel art
+- Highly abstract concept art
+- Faces and hands (especially v2.1)
+
+**Example:**
+
+```http
+/.ai/img/sd21-512/default/200/rabbit-sitting-in-front-of-a-christmas-tree.jpg
+```
+
+<Note>
+  Stable Diffusion v2.1 is trained on an open-source dataset and may produce
+  different results compared to v1.5, particularly for faces and hands. However,
+  it excels at landscapes and architectural scenes.
+</Note>
+
+## Blueprints
+
+Blueprints allow you to apply consistent styling across generated images by prepending or appending phrases to prompts. This simplifies URLs and maintains visual consistency across your application.
+
+### Creating a blueprint
+
+Configure blueprints in **Optimizer → Settings → Bunny AI**:
+
+1. **Name:** The identifier used in the URL (e.g., `avatar`)
+2. **Prefix:** Text added before the prompt
+3. **Suffix:** Text added after the prompt
+
+**Example configuration:**
+
+| Field  | Value                              |
+| :----- | :--------------------------------- |
+| Name   | `avatar`                           |
+| Prefix | `cute pixel art of a`              |
+| Suffix | `with a colorful solid background` |
+
+### Using blueprints
+
+With the above blueprint, this URL:
+
+```http
+https://yourzone.b-cdn.net/.ai/img/dalle-256/avatar/500/bunny.jpg
+```
+
+Generates the prompt:
+
+```text
+cute pixel art of a bunny with a colorful solid background
+```
+
+This creates a powerful system for generating unique user avatars, maintaining brand consistency, or applying complex styling across your site.
+
+<Tip>When generating pixel art, use DALL-E 2 engines for optimal results.</Tip>
+
+## Advanced parameters
+
+Configure additional generation parameters through blueprint settings. Some parameters are engine-specific:
+
+| Parameter          | Description                                                                                                             | Type             | Engines          |
+| :----------------- | :---------------------------------------------------------------------------------------------------------------------- | :--------------- | :--------------- |
+| **Steps**          | Number of generation steps (default: 90). Higher values may improve quality but increase processing time.               | numeric (10-150) | Stable Diffusion |
+| **Cfg**            | Prompt adherence level (default: 7). Lower values give more creative freedom, higher values stick closer to the prompt. | numeric (1-15)   | Stable Diffusion |
+| **NegativePrompt** | Replaces the default negative prompt list. Specifies elements to avoid in the generated image.                          | string           | Stable Diffusion |
+
+### Negative prompts
+
+Stable Diffusion supports negative prompts to exclude unwanted elements from generated images. Bunny AI uses a default set optimized for quality:
+
+```text Default negative prompts
+deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb,
+ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs,
+malformed hands, blur, out of focus, long neck, long body, pixelated,
+((((mutated hands and fingers)))), (((out of frame)))
+```
+
+<Warning>
+  These defaults are crucial for producing good results with Stable Diffusion
+  v2.1. If you override them with a custom blueprint, test thoroughly to ensure
+  quality output.
+</Warning>
+
+Override defaults by setting the `NegativePrompt` parameter in your blueprint configuration.
+
+## Prompt best practices
+
+### General guidelines
+
+Effective prompts typically include:
+
+- **Descriptive nouns:** Subject matter (e.g., "bunny", "robot", "landscape")
+- **Style descriptors:** Visual style (e.g., "digital art", "oil painting", "photorealistic")
+- **Colors and mood:** Atmosphere and palette (e.g., "vibrant colors", "moody lighting")
+- **Quality modifiers:** Fidelity hints (e.g., "4k", "high quality", "detailed")
+
+### Style suggestions
+
+Try these style keywords for different visual effects:
+
+<Tabs>
+  <Tab title="Artistic Styles">
+    - `digital art` - `oil painting of` - `traditional art` - `abstract art of`
+    - `watercolor painting`
+  </Tab>
+  <Tab title="Artist & Movement Styles">
+    - `in style of Picasso` - `in steampunk style` - `in style of Murakami` -
+    `art deco style`
+  </Tab>
+  <Tab title="Quality & Fidelity">
+    - `high quality` - `photorealistic` - `4k` - `detailed texture` - `sharp
+    focus`
+  </Tab>
+</Tabs>
+
+### Model-specific tips
+
+**For DALL-E 2:**
+
+Use full descriptive sentences with creative, abstract concepts:
+
+```text
+a happy robot with flowers growing out of his head, clouds in the background, digital art
+```
+
+**For Stable Diffusion:**
+
+Use keyword-focused prompts for photo-realistic results:
+
+```text
+rabbit sitting in front of a christmas tree, photorealistic, high quality
+```
+
+## Use cases
+
+**Dynamic user avatars:**
+
+```http
+/.ai/img/dalle-256/avatar/<user-id>/<username>.jpg
+```
+
+**Unique blog thumbnails:**
+
+```http
+/.ai/img/sd21-512/blog-hero/<post-id>/<post-title>.jpg
+```
+
+**Placeholder images:**
+
+```http
+/.ai/img/sd15-512/default/1/modern-office-workspace.jpg
+```
+
+**Product concept visualization:**
+
+```http
+/.ai/img/dalle-1024/product-concept/<sku>/<description>.jpg
+```
+
+## Combining with Dynamic Images API
+
+AI-generated images support all [Dynamic Images transformations](/optimizer/dynamic-images/overview). Apply resizing, cropping, filters, and format conversions to AI-generated images:
+
+```http
+/.ai/img/dalle-512/default/100/mountain-landscape.jpg?width=800&sharpen=true&quality=85
+```
+
+This allows you to generate base images with AI and apply responsive sizing or branding overlays dynamically.
+
+## Security and token authentication
+
+All AI generation paths are automatically protected with [Token Authentication](/docs/cdn-token-authentication-basic) to prevent:
+
+- Unauthorized image generation
+- Abuse and excessive costs
+- Resource exhaustion attacks
+
+The bunny.net dashboard automatically generates tokens for preview and testing. For dynamic URL generation in your application, implement token generation according to the [Token Authentication documentation](/docs/cdn-token-authentication-basic).
+
+## Performance and caching
+
+**First request:**
+
+1. Bunny AI processes the generation using the specified engine
+2. The result is cached at the edge for 3 months
+3. Response time varies by engine and complexity (typically 5-30 seconds)
+
+**Subsequent requests:**
+
+- Served instantly from the nearest edge location
+- Same performance as standard CDN-cached images
+- Cache purging works the same as regular images
+
+<Tip>
+  Pre-generate common images during deployment or user onboarding to ensure
+  instant delivery when users access them.
+</Tip>

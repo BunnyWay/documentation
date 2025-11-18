@@ -1,0 +1,118 @@
+---
+title: Resizing
+description: Resize images by width or height while maintaining aspect ratio
+---
+
+Resize images to specific dimensions while automatically maintaining aspect ratio. Generate responsive images for different screen sizes, create consistent thumbnails, or optimize oversized images for faster loading.
+
+<Info>
+  When both width and height are specified, Bunny Optimizer automatically uses
+  whichever produces the smaller image while preserving aspect ratio.
+</Info>
+
+## Parameters
+
+<ParamField query="width" type="integer">
+  Resize the image to match the given width in pixels while maintaining aspect
+  ratio.
+
+**Unit:** pixels
+
+</ParamField>
+
+<ParamField query="height" type="integer">
+  Resize the image to match the given height in pixels while maintaining aspect
+  ratio.
+
+**Unit:** pixels
+
+</ParamField>
+
+## How it works
+
+When you apply width or height parameters, Bunny Optimizer:
+
+1. Calculates the new dimensions based on your specified value
+2. Maintains the original aspect ratio automatically
+3. Resizes the image proportionally
+4. Delivers the optimized result from the edge cache
+
+## Usage
+
+### Width-based resizing
+
+Specify a width to resize the image proportionally. The height adjusts automatically to maintain aspect ratio. Ideal for creating responsive images where you need consistent widths across different screen sizes or generating multiple sizes for `srcset` attributes.
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?width=300
+```
+
+| Original                                                                     | width=300                                                                                      |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg) | ![Resized to 300px width](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg?width=300) |
+
+```bash Smaller width
+https://yourzone.b-cdn.net/image.jpg?width=150
+```
+
+| Original                                                                     | width=150                                                                                      |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg) | ![Resized to 150px width](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg?width=150) |
+
+### Height-based resizing
+
+Specify a height to resize the image proportionally. The width adjusts automatically to maintain aspect ratio. Perfect for layouts where vertical space is constrained, such as horizontal carousels, fixed-height containers, or product listing grids.
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?height=150
+```
+
+| Original                                                                     | height=150                                                                                       |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg) | ![Resized to 150px height](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg?height=150) |
+
+```bash Smaller height
+https://yourzone.b-cdn.net/image.jpg?height=100
+```
+
+| Original                                                                     | height=100                                                                                       |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg) | ![Resized to 100px height](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg?height=100) |
+
+## Combining width and height
+
+When both width and height are specified, Bunny Optimizer intelligently selects whichever produces the smaller image while preserving aspect ratio. This ensures images fit within specific layout constraints while maintaining their original proportions.
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?width=100&height=75
+```
+
+Given an image with dimensions 500×333:
+
+| width=100                                                                                | height=75                                                                                 | width=100&height=75 (result)                                                                              |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| ![Resized by width](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg?width=100) | ![Resized by height](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg?height=75) | ![Both parameters applied](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass.jpg?width=100&height=75) |
+
+In this example, `height=75` produces a smaller image (113×75) compared to `width=100` (100×67), so the height parameter takes effect.
+
+## Combining with other transformations
+
+Resizing works seamlessly with other Bunny Optimizer parameters. Reduce bandwidth by combining with quality adjustments, convert formats for better compression, or apply filters to enhance resized images:
+
+```bash Resize with quality adjustment
+https://yourzone.b-cdn.net/image.jpg?width=800&quality=85
+```
+
+```bash Resize with format conversion
+https://yourzone.b-cdn.net/image.jpg?width=600&format=webp
+```
+
+```bash Resize with sharpen filter
+https://yourzone.b-cdn.net/image.jpg?height=400&sharpen=3
+```
+
+<Note>
+  [Crop](/optimizer/dynamic-images/cropping) operations have priority over width
+  or height parameters. If any crop is defined in the query, it will be applied
+  first, then resizing is applied to the cropped result.
+</Note>

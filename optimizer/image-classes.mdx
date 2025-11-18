@@ -1,0 +1,77 @@
+---
+title: Image Classes
+description: Define reusable transformation presets
+---
+
+Image Classes let you create named presets for Dynamic Images API transformations, making it easier to maintain consistent image styles across your website.
+
+## Why use Image Classes?
+
+Instead of this:
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?width=300&height=200&quality=85&sharpen=true
+```
+
+Use this:
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?class=thumbnail
+```
+
+**Benefits:**
+
+- Consistent transformations across your site
+- Easier to update styles (change the class, not every URL)
+- Improved cache hit rates
+- Enhanced security with forced transformation classes
+
+## Creating Image Classes
+
+<Steps>
+  <Step title="Navigate to Image Classes">
+    Navigate to **Optimizer** → **Image Classes**
+
+    <Frame>
+      <img src="/images/optimizer/image-classes/image-classes-overview.png" alt="Image Classes overview" />
+    </Frame>
+
+  </Step>
+
+  <Step title="Define your class properties">
+    Configure the transformation settings for your image class:
+    - Width, height, aspect ratio
+    - Quality settings
+    - Filters and effects
+    - Any Dynamic Images API parameter
+
+    <Frame>
+      <img src="/images/optimizer/image-classes/image-classes-add-property.png" alt="Add image class properties" />
+    </Frame>
+
+  </Step>
+
+  <Step title="Save the class">
+    Save the class with a memorable name that describes its purpose (e.g., `thumbnail`, `hero`, `product-mobile`).
+  </Step>
+</Steps>
+
+## Forced transformation classes
+
+Enable this option to restrict the Dynamic Images API to only use predefined classes:
+
+- Improves cache efficiency (fewer unique transformations)
+- Prevents arbitrary transformations (security benefit)
+- Returns 403 for invalid or missing classes
+
+This is recommended for production environments where you want tight control over image transformations.
+
+## Example classes
+
+| Property            | `thumbnail`   | `hero_image` | `mobile_product`            |
+| ------------------- | ------------- | ------------ | --------------------------- |
+| Width               | 300px         | 1920px       | 800px                       |
+| Height              | 200px         | -            | -                           |
+| Aspect Ratio        | -             | 16:9         | -                           |
+| Quality             | 80%           | 90%          | 75%                         |
+| Additional Settings | Sharpen: true | -            | Smart optimization: enabled |

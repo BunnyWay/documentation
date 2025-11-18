@@ -1,0 +1,95 @@
+---
+title: Face Detection
+description: Automatically detect faces and crop images intelligently
+---
+
+The Face Detection API uses AI to automatically detect faces in your images and create intelligent crops that keep people in frame.
+
+<Info>
+  Face detection processing happens on the first request. The result is cached
+  at the edge for instant delivery on subsequent requests.
+</Info>
+
+## Parameter
+
+<ParamField query="face_crop" type="string | boolean">
+  Automatically detect faces and center the crop around them.
+
+**Format 1 (Boolean):** Set to `true` to detect all faces and ensure they're in frame with padding.
+
+**Format 2 (Dimensions):** Specify `width,height` to crop with detected faces as the center point.
+
+</ParamField>
+
+## How it works
+
+When you enable face detection, Bunny Optimizer:
+
+1. Scans the image for human faces
+2. Identifies all detected faces
+3. Calculates the optimal center point (average of all face positions)
+4. Crops the image to keep faces in frame with appropriate padding
+
+## Usage
+
+### Automatic padding
+
+Set `face_crop=true` to automatically detect faces and add padding around them. The algorithm ensures all detected faces remain in frame with intelligent padding.
+
+```bash
+https://yourzone.b-cdn.net/image.jpg?face_crop=true
+```
+
+| Original                                                              | With face_crop=true                                                                              |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/face_1.jpeg) | ![Face detected with padding](https://bunny-optimizer-demo.b-cdn.net/face_1.jpeg?face_crop=true) |
+
+Ideal for dynamically cropping user-uploaded photos where you want to keep faces in frame without fixed dimensions.
+
+### Dimensions (fixed size)
+
+Specify exact dimensions using `width,height` in pixels to crop around detected faces. Bunny Optimizer finds all faces and centers the crop at the average position.
+
+```bash Portrait crop
+https://yourzone.b-cdn.net/image.jpg?face_crop=800,1000
+```
+
+```bash Square thumbnail
+https://yourzone.b-cdn.net/image.jpg?face_crop=500,500
+```
+
+| Original                                                              | face_crop=800,1000                                                                                        |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/face_1.jpeg) | ![800x1000 crop centered on faces](https://bunny-optimizer-demo.b-cdn.net/face_1.jpeg?face_crop=800,1000) |
+
+Perfect for creating consistent thumbnail sizes across your site while ensuring faces remain centered.
+
+## Multiple faces
+
+When multiple faces are detected:
+
+- Bunny Optimizer calculates the center point between all faces
+- The crop is positioned to include as many faces as possible
+- With dimension mode, faces are prioritized at the center of the crop
+
+When only one face is detected:
+
+- The single face becomes the center point
+- Padding is added around the face (boolean mode)
+- The face is centered in the specified dimensions (dimension mode)
+
+## Combining with other transformations
+
+Face detection works seamlessly with other parameters:
+
+```bash Face crop with brightness adjustment
+https://yourzone.b-cdn.net/image.jpg?face_crop=600,600&brightness=5
+```
+
+```bash Face crop with aspect ratio
+https://yourzone.b-cdn.net/image.jpg?face_crop=true&aspect_ratio=1:1
+```
+
+```bash Face crop with blur
+https://yourzone.b-cdn.net/image.jpg?face_crop=800,800&blur=5
+```

@@ -1,0 +1,104 @@
+---
+title: Blur and Sharpen
+description: Apply blur effects or sharpen images for clarity and focus control
+---
+
+Control image sharpness and focus with blur and sharpen filters. Perfect for emphasizing subjects, creating depth effects, obscuring sensitive information, or enhancing image clarity.
+
+## Parameters
+
+<ParamField query="sharpen" type="boolean">
+  Enhance image clarity by increasing edge definition.
+
+**Default:** `false`
+
+</ParamField>
+
+<ParamField query="blur" type="integer">
+  Apply a blur effect to soften the image.
+
+**Range:** `0` to `100`
+
+**Default:** `0`
+
+</ParamField>
+
+## How it works
+
+Bunny Optimizer provides two complementary filters for controlling image sharpness:
+
+**Sharpen:** Enhances edge definition and detail by increasing contrast along edges. Makes images appear crisper and more defined.
+
+**Blur:** Softens the image by reducing detail and creating a smooth, out-of-focus effect. Higher values produce stronger blur.
+
+## Usage
+
+### Sharpen
+
+Enhance image clarity by sharpening edges and details. The sharpen filter increases contrast along edges to make the image appear crisper.
+
+```bash Original image
+https://yourzone.b-cdn.net/image.jpg?sharpen=false
+```
+
+| sharpen=false                                                                                        | sharpen=true                                                                                     |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| ![Original sharpness](https://bunny-optimizer-demo.b-cdn.net/bunny_next_to_flower.jpg?sharpen=false) | ![Sharpened image](https://bunny-optimizer-demo.b-cdn.net/bunny_next_to_flower.jpg?sharpen=true) |
+
+Useful for enhancing soft or slightly out-of-focus images, improving perceived detail after resizing, or compensating for compression artifacts.
+
+### Blur
+
+Apply a blur effect to soften the image. The blur intensity increases with higher values, creating progressively softer results.
+
+```bash No blur
+https://yourzone.b-cdn.net/image.jpg?blur=0
+```
+
+| blur=0                                                             | blur=10                                                                |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| ![No blur](https://bunnyoptimizerdemo.b-cdn.net/bunny5.jpg?blur=0) | ![Light blur](https://bunnyoptimizerdemo.b-cdn.net/bunny5.jpg?blur=10) |
+
+```bash Medium blur
+https://yourzone.b-cdn.net/image.jpg?blur=25
+```
+
+| blur=0                                                             | blur=25                                                                 |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| ![No blur](https://bunnyoptimizerdemo.b-cdn.net/bunny5.jpg?blur=0) | ![Medium blur](https://bunnyoptimizerdemo.b-cdn.net/bunny5.jpg?blur=25) |
+
+```bash Heavy blur
+https://yourzone.b-cdn.net/image.jpg?blur=60
+```
+
+| blur=0                                                             | blur=60                                                                |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| ![No blur](https://bunnyoptimizerdemo.b-cdn.net/bunny5.jpg?blur=0) | ![Heavy blur](https://bunnyoptimizerdemo.b-cdn.net/bunny5.jpg?blur=60) |
+
+Perfect for creating background effects, obscuring sensitive information like faces or license plates, generating thumbnails with privacy protection, or adding depth-of-field effects to emphasize foreground subjects.
+
+## Combining with other transformations
+
+Blur and sharpen filters work seamlessly with other Bunny Optimizer parameters:
+
+```bash Sharpen after resize
+https://yourzone.b-cdn.net/image.jpg?width=800&sharpen=true
+```
+
+```bash Blur with crop
+https://yourzone.b-cdn.net/image.jpg?crop=600,400&blur=15
+```
+
+```bash Sharpen with brightness
+https://yourzone.b-cdn.net/image.jpg?sharpen=true&brightness=10
+```
+
+```bash Blur background with focus crop
+https://yourzone.b-cdn.net/image.jpg?focus_crop=400,300,0.5,0.5&blur=30
+```
+
+<Note>
+  Applying sharpen after resizing images can help restore clarity lost during
+  the resize operation. This is especially useful when creating smaller
+  thumbnails or responsive images.
+</Note>

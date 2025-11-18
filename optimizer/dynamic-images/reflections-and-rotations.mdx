@@ -1,0 +1,129 @@
+---
+title: Reflections and Rotations
+description: Flip, flop, and rotate images to adjust orientation
+---
+
+Transform image orientation with flip, flop, and rotation operations. Perfect for correcting image orientation, creating mirror effects, or ensuring consistent alignment across your content.
+
+## Parameters
+
+<ParamField query="flip" type="boolean">
+  Flip the image vertically along the horizontal axis.
+
+**Default:** `false`
+
+</ParamField>
+
+<ParamField query="flop" type="boolean">
+  Flip the image horizontally along the vertical axis (mirror effect).
+
+**Default:** `false`
+
+</ParamField>
+
+<ParamField query="rotate" type="integer">
+  Rotate the image by a specified angle.
+
+**Accepted values:** `-270`, `-180`, `-90`, `0`, `90`, `180`, `270`
+
+**Default:** `0`
+
+</ParamField>
+
+## How it works
+
+Bunny Optimizer provides three types of orientation transformations:
+
+**Flip:** Creates a vertical reflection by flipping the image along the horizontal axis (top becomes bottom).
+
+**Flop:** Creates a horizontal reflection by flipping the image along the vertical axis (left becomes right), producing a mirror effect.
+
+**Rotate:** Rotates the image clockwise (positive values) or counter-clockwise (negative values) in 90-degree increments.
+
+## Usage
+
+### Flip (vertical reflection)
+
+Flip the image vertically along the horizontal axis. The top of the image becomes the bottom and vice versa.
+
+```bash Original image
+https://yourzone.b-cdn.net/image.jpg?flip=false
+```
+
+| flip=false                                                                        | flip=true                                                                        |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| ![Original orientation](https://bunnyoptimizerdemo.b-cdn.net/bunny7.jpg?flip=false) | ![Flipped vertically](https://bunnyoptimizerdemo.b-cdn.net/bunny7.jpg?flip=true) |
+
+Useful for correcting upside-down images or creating reflection effects.
+
+### Flop (horizontal reflection)
+
+Flip the image horizontally along the vertical axis, creating a mirror effect. The left side becomes the right side and vice versa.
+
+```bash Original image
+https://yourzone.b-cdn.net/image.jpg?flop=false
+```
+
+| flop=false                                                                                     | flop=true                                                                                     |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| ![Original orientation](https://bunny-optimizer-demo.b-cdn.net/red_bunny_closeup.jpg?flop=false) | ![Flopped horizontally](https://bunny-optimizer-demo.b-cdn.net/red_bunny_closeup.jpg?flop=true) |
+
+Perfect for creating mirror images, correcting camera orientation, or ensuring subjects face the desired direction in your layout.
+
+### Rotate
+
+Rotate the image in 90-degree increments. Positive values rotate clockwise, negative values rotate counter-clockwise.
+
+```bash Rotate 90 degrees clockwise
+https://yourzone.b-cdn.net/image.jpg?rotate=90
+```
+
+| rotate=0                                                                                  | rotate=90                                                                                  |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| ![Original rotation](https://bunnyoptimizerdemo.b-cdn.net/bunny7.jpg?rotate=0) | ![Rotated 90 degrees](https://bunnyoptimizerdemo.b-cdn.net/bunny7.jpg?rotate=90) |
+
+```bash Rotate 180 degrees
+https://yourzone.b-cdn.net/image.jpg?rotate=180
+```
+
+| rotate=0                                                                                  | rotate=180                                                                                  |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| ![Original rotation](https://bunnyoptimizerdemo.b-cdn.net/bunny7.jpg?rotate=0) | ![Rotated 180 degrees](https://bunnyoptimizerdemo.b-cdn.net/bunny7.jpg?rotate=180) |
+
+```bash Rotate 90 degrees counter-clockwise
+https://yourzone.b-cdn.net/image.jpg?rotate=-90
+```
+
+| rotate=0                                                                                  | rotate=-90                                                                                   |
+| ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| ![Original rotation](https://bunnyoptimizerdemo.b-cdn.net/bunny7.jpg?rotate=0) | ![Rotated -90 degrees](https://bunnyoptimizerdemo.b-cdn.net/bunny7.jpg?rotate=-90) |
+
+Ideal for correcting images taken in portrait mode, fixing EXIF orientation issues, or adjusting content to fit different layout orientations.
+
+## Combining transformations
+
+Reflection and rotation operations work seamlessly with other Bunny Optimizer parameters:
+
+```bash Flip and resize
+https://yourzone.b-cdn.net/image.jpg?flip=true&width=800
+```
+
+```bash Rotate and crop
+https://yourzone.b-cdn.net/image.jpg?rotate=90&crop=600,400
+```
+
+```bash Flop with brightness
+https://yourzone.b-cdn.net/image.jpg?flop=true&brightness=10
+```
+
+```bash Rotate and convert format
+https://yourzone.b-cdn.net/image.jpg?rotate=180&format=webp
+```
+
+You can also combine multiple orientation operations:
+
+```bash Flip and rotate
+https://yourzone.b-cdn.net/image.jpg?flip=true&rotate=90
+```
+
+This applies both transformations sequentially, allowing for complex orientation adjustments.

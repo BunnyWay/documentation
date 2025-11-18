@@ -1,0 +1,200 @@
+---
+title: Cropping
+description: Crop images to specific dimensions with precise control over positioning
+---
+
+Crop images to exact dimensions with flexible positioning options. Perfect for creating thumbnails, hero images, or ensuring images fit specific layout requirements while keeping the important content in frame.
+
+<Note>
+  Crop operations are processed before
+  [resizing](/optimizer/dynamic-images/resizing). When combining crop with width
+  or height parameters, make sure to base your crop values on the original image
+  dimensions.
+</Note>
+
+## Parameters
+
+<ParamField query="crop" type="string">
+  Crop the output image to specific dimensions with optional positioning.
+
+**Format 1 (Center crop):** Specify `width,height` to crop from the center or use with `crop_gravity` to control positioning.
+
+**Format 2 (Positioned crop):** Specify `width,height,x,y` where x and y are pixel offsets from the top-left corner.
+
+**Unit:** pixels
+
+</ParamField>
+
+<ParamField query="aspect_ratio" type="string">
+  Crop the image to match a specific aspect ratio while maintaining the center point.
+
+**Format:** `width:height` (e.g., `16:9`, `1:1`, `4:3`)
+
+**Default:** `auto`
+
+</ParamField>
+
+<ParamField query="crop_gravity" type="string">
+  Set the anchor point for center-based crops (Format 1 only).
+
+**Values:** `center`, `north`, `south`, `east`, `west`, `northeast`, `northwest`, `southeast`, `southwest`
+
+**Default:** `center`
+
+</ParamField>
+
+<ParamField query="focus_crop" type="string">
+  Crop with a defined focal point that stays centered when possible.
+
+**Format 1 (Absolute):** `width,height,x_coordinate,y_coordinate` where x,y are pixel coordinates of the focal point.
+
+**Format 2 (Relative):** `width,height,x_relative,y_relative` where x,y are decimal values from 0.0 to 1.0.
+
+</ParamField>
+
+## How it works
+
+When you apply crop parameters, Bunny Optimizer:
+
+1. Identifies the crop dimensions and positioning you specified
+2. Extracts the selected region from the original image
+3. Applies any additional transformations (resize, filters, etc.)
+4. Delivers the cropped result from the edge cache
+
+## Usage
+
+### Basic cropping
+
+Specify width and height to crop from the center of the image.
+
+```bash Center crop
+https://yourzone.b-cdn.net/image.jpg?crop=300,300
+```
+
+| Original                                                                       | crop=300,300                                                                                     |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![300x300 center crop](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?crop=300,300) |
+
+Ideal for creating square thumbnails or consistently sized previews from various source images.
+
+### Positioned cropping
+
+Add x and y coordinates to specify exactly where the crop should start. The coordinates represent pixels from the top-left corner of the original image.
+
+```bash Crop from specific position
+https://yourzone.b-cdn.net/image.jpg?crop=400,300,200,150
+```
+
+| Original                                                                       | crop=400,300,200,150                                                                                 |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![Positioned crop](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?crop=400,300,200,150) |
+
+Perfect for extracting specific portions of an image when you know the exact location of product details, logos, or areas of interest.
+
+### Aspect ratio cropping
+
+Crop to a specific aspect ratio while keeping the center of the image in frame.
+
+```bash Square crop
+https://yourzone.b-cdn.net/image.jpg?aspect_ratio=1:1
+```
+
+| Original                                                                       | aspect_ratio=1:1                                                                                     |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![Square aspect ratio](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?aspect_ratio=1:1) |
+
+```bash Widescreen crop
+https://yourzone.b-cdn.net/image.jpg?aspect_ratio=16:9
+```
+
+| Original                                                                       | aspect_ratio=16:9                                                                                   |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![16:9 aspect ratio](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?aspect_ratio=16:9) |
+
+```bash Portrait crop
+https://yourzone.b-cdn.net/image.jpg?aspect_ratio=2:3
+```
+
+| Original                                                                       | aspect_ratio=2:3                                                                                  |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![2:3 aspect ratio](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?aspect_ratio=2:3) |
+
+Ideal for creating consistent image proportions across different content types like social media posts, product listings, or blog headers.
+
+### Crop gravity
+
+Control where the crop is positioned using gravity anchors. Works with Format 1 cropping (width and height only) to snap the crop to different positions.
+
+```bash Northwest gravity
+https://yourzone.b-cdn.net/image.jpg?crop=400,300&crop_gravity=northwest
+```
+
+| Original                                                                       | crop_gravity=northwest                                                                                             |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![Northwest crop](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?crop=400,300&crop_gravity=northwest) |
+
+```bash South gravity
+https://yourzone.b-cdn.net/image.jpg?crop=400,300&crop_gravity=south
+```
+
+| Original                                                                       | crop_gravity=south                                                                                         |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![South crop](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?crop=400,300&crop_gravity=south) |
+
+```bash East gravity
+https://yourzone.b-cdn.net/image.jpg?crop=400,300&crop_gravity=east
+```
+
+| Original                                                                       | crop_gravity=east                                                                                        |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![East crop](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?crop=400,300&crop_gravity=east) |
+
+Perfect for ensuring important content stays in frame when cropping to fixed dimensions, such as keeping subjects visible in portraits or horizons aligned in landscape photography.
+
+Available gravity values: `center` (default), `north`, `south`, `east`, `west`, `northeast`, `northwest`, `southeast`, `southwest`
+
+### Focus cropping
+
+Define a focal point that the crop centers around. Unlike standard positioned cropping, focus crop ensures your point of interest stays in the middle of the cropped area.
+
+When the focal point is too close to the image borders, Bunny Optimizer automatically adjusts the crop to maintain the specified dimensions while keeping the focal point as centered as possible.
+
+```bash Absolute coordinates
+https://yourzone.b-cdn.net/image.jpg?focus_crop=400,300,500,400
+```
+
+| Original                                                                       | focus_crop=400,300,500,400                                                                                     |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![Focus crop absolute](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?focus_crop=400,300,500,400) |
+
+```bash Relative coordinates
+https://yourzone.b-cdn.net/image.jpg?focus_crop=400,300,0.5,0.5
+```
+
+| Original                                                                       | focus_crop=400,300,0.5,0.5                                                                                     |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| ![Original image](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg) | ![Focus crop relative](https://bunny-optimizer-demo.b-cdn.net/bunny_in_grass_4.jpg?focus_crop=400,300,0.5,0.5) |
+
+Use absolute pixel coordinates when you know the exact position, or relative positioning (0.0 to 1.0) for responsive focal points across images of different sizes. Ideal for user-uploaded images where you need to maintain specific focal points like profile pictures or product showcases.
+
+## Combining with other transformations
+
+Cropping works seamlessly with other Bunny Optimizer parameters. Crop first, then apply resizing, quality adjustments, or filters to the cropped result:
+
+```bash Crop and resize
+https://yourzone.b-cdn.net/image.jpg?crop=800,600&width=400
+```
+
+```bash Crop with aspect ratio and quality
+https://yourzone.b-cdn.net/image.jpg?aspect_ratio=16:9&quality=85
+```
+
+```bash Crop and convert format
+https://yourzone.b-cdn.net/image.jpg?crop=600,600&format=webp
+```
+
+<Note>
+  Remember that crop operations are processed before resizing. If you apply
+  `crop=800,600&width=400`, the image is first cropped to 800×600, then resized
+  to 400×300 (maintaining the aspect ratio from the crop).
+</Note>

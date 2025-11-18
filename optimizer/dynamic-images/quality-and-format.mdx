@@ -1,0 +1,132 @@
+---
+title: Quality and Format
+description: Control image compression and output format for optimal performance
+---
+
+Optimize image file size and quality with compression controls and automatic format conversion. Balance visual quality with bandwidth savings to deliver fast-loading images without sacrificing appearance.
+
+## Parameters
+
+<ParamField query="quality" type="integer">
+  Control the compression level of the output image.
+
+**Range:** `0` to `100` (higher values = better quality, larger file size)
+
+**Default:** `85` (or configured Smart Image Optimization value)
+
+</ParamField>
+
+<ParamField query="format" type="string">
+  Convert the image to a specific output format.
+
+**Accepted values:** `webp`, `jpeg`, `png`, `avif`
+
+**Default:** Original format (or auto-optimized based on client support)
+
+</ParamField>
+
+## How it works
+
+**Quality:** Controls the compression ratio applied to the image. Higher values preserve more detail but result in larger file sizes. Lower values reduce file size but may introduce compression artifacts. The quality parameter affects JPEG, WebP, and AVIF formats.
+
+**Format:** Converts images to modern, efficient formats. Bunny Optimizer can automatically detect client browser capabilities and serve the most optimal format (e.g., WebP for supported browsers, JPEG for older clients).
+
+## Usage
+
+### Quality control
+
+Adjust the compression level to balance visual quality with file size. Higher quality values preserve more detail but increase bandwidth usage.
+
+```bash High quality
+https://yourzone.b-cdn.net/image.jpg?quality=80
+```
+
+| quality=80                                                                              | quality=50                                                                              | quality=10                                                                              |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| ![High quality (117KB)](https://bunny-optimizer-demo.b-cdn.net/bunnies_1.jpg?quality=80) | ![Medium quality (81KB)](https://bunny-optimizer-demo.b-cdn.net/bunnies_1.jpg?quality=50) | ![Low quality (35KB)](https://bunny-optimizer-demo.b-cdn.net/bunnies_1.jpg?quality=10) |
+
+As shown above, reducing quality from 80 to 50 cuts file size by nearly 30% with minimal visible impact. Extreme compression (`quality=10`) significantly reduces file size but introduces noticeable artifacts.
+
+```bash Recommended for web use
+https://yourzone.b-cdn.net/image.jpg?quality=75
+```
+
+A quality setting between 70-85 typically provides the best balance for web images, maintaining good visual quality while achieving substantial file size reduction.
+
+### Default quality behavior
+
+If you don't specify a quality parameter, Bunny Optimizer uses a default value based on your configuration.
+
+#### Smart Image Optimization
+
+Configure quality defaults in your Pull Zone settings at **Optimizer → Settings**. You can set different quality levels for desktop, mobile, and other device types.
+
+<Frame>
+  <img src="/images/optimizer/smart-image-optimization-settings.png" alt="Smart Image Optimization settings" />
+</Frame>
+
+With Smart Image Optimization enabled, desktop requests might use `quality=80` while mobile devices use `quality=70` to reduce bandwidth on slower connections.
+
+#### Fallback default
+
+When Smart Image Optimization is not configured and no quality parameter is provided, images default to `quality=85`.
+
+<Note>
+  **Priority order:** Quality specified in query parameters takes highest
+  priority, followed by Smart Image Optimization settings, then the fallback
+  default of 85.
+</Note>
+
+### Format conversion
+
+Convert images to modern, efficient formats for better compression and performance.
+
+```bash Convert to WebP
+https://yourzone.b-cdn.net/image.jpg?format=webp
+```
+
+```bash Convert to AVIF (best compression)
+https://yourzone.b-cdn.net/image.jpg?format=avif
+```
+
+```bash Combine format and quality
+https://yourzone.b-cdn.net/image.jpg?format=webp&quality=75
+```
+
+WebP typically offers 25-35% better compression than JPEG at equivalent quality. AVIF provides even better compression but has more limited browser support.
+
+#### Automatic format selection
+
+Bunny Optimizer can automatically serve the best format based on the client's browser capabilities. When configured, browsers that support WebP receive WebP images, while older browsers receive JPEG or PNG.
+
+This ensures optimal performance without requiring manual format detection or multiple URL variants.
+
+## Combining with other transformations
+
+Quality and format parameters work seamlessly with all other Bunny Optimizer transformations:
+
+```bash Resize with quality control
+https://yourzone.b-cdn.net/image.jpg?width=800&quality=75
+```
+
+```bash Crop, resize, and convert format
+https://yourzone.b-cdn.net/image.jpg?crop=600,400&width=300&format=webp&quality=80
+```
+
+```bash Complete optimization pipeline
+https://yourzone.b-cdn.net/image.jpg?width=1200&quality=75&format=webp&sharpen=true
+```
+
+Combining transformations allows you to resize, crop, apply filters, and optimize compression in a single request, reducing processing overhead and simplifying your image workflow.
+
+## Best practices
+
+**For photography and detailed images:** Use quality values between 75-85 to preserve detail while achieving good compression.
+
+**For thumbnails and previews:** Quality values between 60-75 are often sufficient, as small images hide compression artifacts better.
+
+**For images with text or sharp edges:** Consider using PNG format or higher quality values (85+) to avoid artifacts around text.
+
+**For maximum bandwidth savings:** Combine aggressive quality settings with WebP or AVIF format conversion, but always verify visual quality meets your standards.
+
+**Test on real devices:** Quality perception varies across devices and screen resolutions. Test your quality settings on target devices to ensure acceptable visual results.
