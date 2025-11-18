@@ -763,5 +763,62 @@
         ]
       }
     ]
-  }
+  },
+  "redirects": [
+    {
+      "source": "/docs/bunny-ai",
+      "destination": "/optimizer/bunny-ai-image-generation",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-image-processing",
+      "destination": "/optimizer/dynamic-images/overview",
+      "permanent": true
+    },
+    {
+      "source": "/docs/bunny-optimizer-face-crop",
+      "destination": "/optimizer/dynamic-images/face-detection",
+      "permanent": true
+    },
+    {
+      "source": "/docs/resizing",
+      "destination": "/optimizer/dynamic-images/resizing",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cropping",
+      "destination": "/optimizer/dynamic-images/cropping",
+      "permanent": true
+    },
+    {
+      "source": "/docs/luminosity",
+      "destination": "/optimizer/dynamic-images/luminosity",
+      "permanent": true
+    },
+    {
+      "source": "/docs/color-manipulation",
+      "destination": "/optimizer/dynamic-images/color-manipulation",
+      "permanent": true
+    },
+    {
+      "source": "/docs/reflections-and-rotations",
+      "destination": "/optimizer/dynamic-images/reflections-and-rotations",
+      "permanent": true
+    },
+    {
+      "source": "/docs/filters",
+      "destination": "/optimizer/dynamic-images/blur-and-sharpen",
+      "permanent": true
+    },
+    {
+      "source": "/docs/quality-format",
+      "destination": "/optimizer/dynamic-images/quality",
+      "permanent": true
+    },
+    {
+      "source": "/docs/formats",
+      "destination": "/optimizer/dynamic-images/formats",
+      "permanent": true
+    }
+  ]
 }
