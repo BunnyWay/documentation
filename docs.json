@@ -311,7 +311,7 @@
       },
       {
         "product": "Storage",
-        "description": "Globally replicated cloud storage with CDN integration",
+        "description": "Global object storage with S3 compatibility",
         "icon": "hard-drive",
         "tabs": [
           {
