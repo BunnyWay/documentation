@@ -1,0 +1,94 @@
+---
+title: Durability
+description: Data durability guarantees, redundancy configuration, and disaster recovery capabilities
+---
+
+Bunny Storage achieves maximum data durability through multi-region redundancy and RAID 6 storage configuration.
+
+## Durability guarantees
+
+| Configuration | Durability | Annual Expected Loss |
+|---------------|------------|---------------------|
+| Single region only | Standard | Variable |
+| With additional replication region(s) | **99.999999999%** (eleven nines) | 0.000000001% of objects |
+
+<Info>
+  Eleven nines durability (99.999999999%) corresponds to an average annual expected loss of 0.000000001% of objects.
+</Info>
+
+To achieve eleven nines durability, enable at least one additional replication region beyond your primary region. Each additional replication region further reduces the chance of data loss.
+
+## Storage configuration
+
+### RAID 6 configuration
+
+Each datacenter stores a single replica of your data on **RAID 6 storage configuration**:
+
+- Protects against simultaneous failure of up to two drives
+- Provides redundancy at the hardware level
+- Automatic rebuild when drives fail
+- No data loss during drive failures
+
+### Multi-region redundancy
+
+When you enable replication regions:
+
+- Data is automatically replicated across all selected regions
+- Each region stores a complete copy of your data
+- If data is lost in one datacenter, it is automatically re-streamed from another region
+- Automatic failover ensures continuous availability
+
+## Disaster recovery
+
+Bunny Storage provides excellent durability even in extreme scenarios:
+
+### Local disaster recovery
+
+If a datacenter is damaged by natural disasters (earthquake, fire, flood, etc.):
+- Automatic failover to the next closest region
+- No data loss when using multiple replication regions
+- Continuous availability for your users
+- Transparent recovery with no action required
+
+### Data loss protection
+
+If data is lost in one datacenter:
+- Data is automatically re-streamed from a different region
+- New servers in the affected datacenter receive fresh copies
+- No manual intervention required
+- Replication continues in the background
+
+### High availability
+
+Your data remains accessible even during regional issues:
+- Multiple regions provide redundancy
+- Automatic routing to healthy regions
+- No single point of failure
+- 99.99% availability SLA
+
+## Recommended configuration
+
+For optimal durability and reliability:
+
+### Minimum setup
+- Enable at least **one additional replication region** for eleven nines durability
+- Choose a region geographically distant from your primary region
+
+### High availability setup
+- Enable **multiple replication regions** across different continents
+- Provides protection against regional disasters
+- Ensures lowest latency for global users
+
+### By storage tier
+
+**Standard tier (HDD):**
+- Enable geographically diverse regions (e.g., US, Europe, Asia)
+- Up to 9 regions available
+
+**Edge (SSD) tier:**
+- Enable as many regions as possible for lowest latency
+- Up to 15 regions available
+
+See [Replication](/storage/replication) for details about configuring replication regions.
+
+See [Pricing](/storage/pricing) for replication region costs.

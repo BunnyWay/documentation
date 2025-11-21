@@ -179,7 +179,8 @@
                 "pages": [
                   "optimizer/api-reference",
                   "optimizer/statistics",
-                  "optimizer/faq"
+                  "optimizer/faq",
+                  "optimizer/limits"
                 ]
               }
             ]
@@ -310,14 +311,49 @@
       },
       {
         "product": "Storage",
+        "description": "Globally replicated cloud storage with CDN integration",
         "icon": "hard-drive",
         "tabs": [
           {
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Edge Storage",
-                "pages": ["docs/edge-storage-overview", "docs/edge-storage-ftp"]
+                "group": "Bunny Storage",
+                "pages": [
+                  "storage/index",
+                  "storage/quickstart",
+                  "storage/pricing"
+                ]
+              },
+              {
+                "group": "Features",
+                "pages": ["storage/storage-tiers", "storage/replication"]
+              },
+              {
+                "group": "Usage",
+                "pages": [
+                  {
+                    "group": "SDKs",
+                    "pages": [
+                      "storage/typescript-sdk",
+                      "storage/php-sdk",
+                      "storage/dotnet-sdk",
+                      "storage/java-sdk"
+                    ]
+                  },
+                  "storage/http-api",
+                  "storage/ftp",
+                  "storage/s3-api",
+                  "storage/dashboard"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "storage/durability",
+                  "storage/limits",
+                  "storage/settings"
+                ]
               }
             ]
           }
@@ -612,7 +648,7 @@
                 ]
               },
               {
-                "group": "Edge Storage API",
+                "group": "Bunny Storage API",
                 "pages": [
                   "reference/storage-api",
                   "reference/edge-storage-api-limits",

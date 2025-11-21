@@ -1,0 +1,88 @@
+---
+title: Storage Tiers
+description: Choose between Standard and Edge (SSD) storage tiers based on your performance requirements
+---
+
+Bunny Storage offers two storage tiers optimized for different use cases and performance requirements.
+
+## Standard tier
+
+The Standard storage tier is optimized for low cost, high throughput global file storage and delivery.
+
+**Specifications:**
+
+- **Storage type**: HDD-based
+- **Latency**: Variable (30-300ms)
+- **Replication points**: Up to 9 regions (HTTP API/FTP) or 4 regions (S3-compatible)
+- **Primary region**: Any available region
+- **Recommended regions**: Geographically diverse
+
+**Best for:**
+
+- Object storage
+- Video delivery
+- File hosting
+- Large file storage
+- Cost-sensitive applications
+- Moderate performance requirements
+
+## Edge (SSD) tier
+
+The Edge storage tier is optimized for ultra-high global performance powered by strictly SSD storage.
+
+**Specifications:**
+
+- **Storage type**: SSD-based
+- **Latency**: Consistent (1-5ms)
+- **Replication points**: Up to 15 regions (HTTP API/FTP) or 4 regions (S3-compatible)
+- **Primary region**: Frankfurt (DE) only
+- **Recommended regions**: As many as possible
+
+**Best for:**
+
+- Perma-Cache
+- Website acceleration
+- High performance content delivery
+- Small files
+- Applications where performance is paramount
+- Low latency requirements
+
+<Info>
+  Edge (SSD) tier requires Frankfurt (DE) as the primary region. All uploads go
+  through Frankfurt first, then replicate to your selected regions.
+</Info>
+
+## S3 compatibility impact
+
+When S3 compatibility is enabled (currently in beta), the number of available replication points is reduced:
+
+| Tier       | HTTP API/FTP     | S3-compatible |
+| ---------- | ---------------- | ------------- |
+| Standard   | Up to 9 regions  | 4 regions     |
+| Edge (SSD) | Up to 15 regions | 4 regions     |
+
+See [S3-compatible API](/storage/s3-api) for more details about S3 compatibility.
+
+## Choosing a tier
+
+Consider these factors when selecting your storage tier:
+
+**Choose Standard if:**
+
+- Cost is a primary concern
+- Files are large (videos, archives, backups)
+- Latency of 30-300ms is acceptable
+- Files are primarily accessed via CDN (cached)
+
+**Choose Edge (SSD) if:**
+
+- Performance is critical
+- You need consistent low latency (1-5ms)
+- Files are small and frequently accessed
+- You're using Perma-Cache or website acceleration
+- Budget allows for premium performance
+
+<Info>
+  The storage tier cannot be changed after zone creation. Choose carefully based
+  on your long-term requirements.
+</Info>

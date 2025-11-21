@@ -1,0 +1,124 @@
+---
+title: Replication
+description: Automatically replicate your data across multiple regions for improved reliability and performance
+---
+
+Geo-replication automatically replicates your data to selected locations around the world. Data is served from the nearest region to the CDN PoP, significantly improving data reliability and performance for uncached requests.
+
+<Warning>
+  Replication regions cannot be removed after the storage zone is created.
+  Choose your replication regions carefully during initial setup.
+</Warning>
+
+## Adding replication regions
+
+<Steps>
+
+<Step title="Navigate to your storage zone">
+
+1. Log in to your Bunny dashboard
+2. Go to **Storage** in the left navigation
+3. Select your storage zone
+
+</Step>
+
+<Step title="Access replication settings">
+
+1. In your storage zone, click **Replication** in the left sidebar
+2. You'll see your current primary region and any enabled replication regions
+
+</Step>
+
+<Step title="Select additional regions">
+
+1. Click **Add Replication Region** or select from the available regions
+2. Choose the regions you want to replicate to
+3. Click **Save** or **Add** to confirm
+
+Your data will begin replicating to the new regions automatically.
+
+</Step>
+
+</Steps>
+
+<Warning>Replication regions cannot be removed once added.</Warning>
+
+## How it works
+
+When you enable replication regions:
+
+1. Your data is automatically replicated to all selected locations
+2. Files are served from the nearest region to the CDN PoP
+3. If data is lost in any datacenter, it is automatically re-streamed from a different region
+4. Each additional replication region further reduces the chance of data loss
+
+## Primary storage region
+
+Your primary storage region is where file uploads are performed. All uploads go to the primary region first, then are automatically replicated to your selected replication regions.
+
+**Standard tier**: You can select any available region as your primary region.
+
+**Edge (SSD) tier**: Frankfurt (DE) must be the primary region.
+
+<Warning>
+  If the main region goes offline, data uploading will not be possible until
+  connectivity is restored. However, file delivery continues from other
+  replication regions.
+</Warning>
+
+## Available regions
+
+### Standard (HDD) tier - up to 9 regions
+
+| Continent      | Regions                                     |
+| -------------- | ------------------------------------------- |
+| Europe         | Frankfurt (DE), London (UK), Stockholm (SE) |
+| North America  | Los Angeles (LA), New York (NY)             |
+| Asia & Oceania | Singapore (SG), Sydney (SYD)                |
+| LATAM          | Sao Paulo (BR)                              |
+| Africa         | Johannesburg (ZA)                           |
+
+### Edge (SSD) tier - up to 15 regions
+
+| Continent      | Regions                                                    |
+| -------------- | ---------------------------------------------------------- |
+| Europe         | Frankfurt (DE)\*, Stockholm (SE), Madrid (ES), Prague (CZ) |
+| North America  | Los Angeles (LA), Seattle (WA), New York (NY), Miami (FL)  |
+| Asia & Oceania | Sydney (AU), Tokyo (JP), Singapore (SG), Hong Kong (HK)    |
+| LATAM          | Sao Paulo (BR)                                             |
+| Africa         | Johannesburg (ZA)                                          |
+
+\*Frankfurt (DE) is the required primary region for Edge (SSD) tier.
+
+See [Pricing](/storage/pricing) for region-specific costs.
+
+## Replication by storage tier
+
+The number of available replication points depends on your storage tier and whether S3 compatibility is enabled:
+
+| Storage Tier   | HTTP API/FTP     | S3-compatible |
+| -------------- | ---------------- | ------------- |
+| Standard (HDD) | Up to 9 regions  | 4 regions     |
+| Edge (SSD)     | Up to 15 regions | 4 regions     |
+
+See [Storage Tiers](/storage/storage-tiers) for more details about each tier.
+
+For information about data durability guarantees, RAID 6 configuration, and disaster recovery, see [Durability](/storage/durability).
+
+## Recommended setup
+
+For optimal reliability and performance:
+
+- **Standard tier**: Enable geographically diverse regions (e.g., US, Europe, Asia)
+- **Edge (SSD) tier**: Enable as many regions as possible for lowest latency worldwide
+- **Minimum**: At least one additional replication region for eleven nines durability
+- **High availability**: Multiple replication regions across different continents
+
+## Performance benefits
+
+Geo-replication improves performance by:
+
+- Serving uncached requests from the nearest region to the CDN PoP
+- Reducing latency for users across different geographic locations
+- Providing faster data access when cache is cold or expired
+- Improving reliability during regional network issues

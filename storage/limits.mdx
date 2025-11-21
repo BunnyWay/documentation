@@ -1,0 +1,41 @@
+---
+title: Limits
+description: Connection limits and rate limits for Bunny Storage API and FTP access
+---
+
+To ensure optimal performance for all users, Bunny Storage has limits on concurrent connections and uploads.
+
+## Connection limits
+
+| Limit                           | Value   | Description                                                                          |
+| ------------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| Concurrent Connections Per IP   | 100-200 | Up to 200 connections allowed from a single IP address                               |
+| Concurrent Connections Per Zone | 100     | Up to 100 concurrent connections allowed to upload to a single zone at the same time |
+| Maximum FTP Connections Per IP  | 25      | Maximum concurrent FTP connections from a single IP address                          |
+
+## How limits are applied
+
+Limits are applied on a **per-server basis**. Each Bunny Storage region runs multiple servers, and each server tracks limits independently.
+
+In practice, this allows you to achieve much higher concurrency than the per-server limits suggest.
+
+## Rate limit responses
+
+When you reach a connection limit, further requests will be rejected with:
+
+- **HTTP Status Code**: 429 (Too Many Requests)
+- **FTP Response**: Connection refused
+
+If this happens:
+
+1. Reduce concurrent connections
+2. Implement exponential backoff retry logic
+3. Distribute requests across longer time periods
+
+## Increasing limits
+
+If you continue to hit these limits, contact support. We can increase limits on a case-by-case basis for high-volume use cases.
+
+## Durability and reliability
+
+For information about data durability, redundancy, and reliability guarantees, see [Durability](/storage/durability).

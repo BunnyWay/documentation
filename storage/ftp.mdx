@@ -1,0 +1,85 @@
+---
+title: FTP Access
+description: Upload and manage files using FTP for compatibility with existing software and workflows
+---
+
+Bunny Storage supports FTP access for easy file management using familiar FTP clients and workflows. This provides compatibility with most software and programming languages.
+
+<Warning>
+  The FTP protocol is outdated and not as secure as newer protocols like HTTP.
+  It may be vulnerable to Man-In-The-Middle attacks. We recommend using FTP only
+  when other upload options are not available. Use the [HTTP
+  API](/storage/http-api) for better security and performance.
+</Warning>
+
+## Connection settings
+
+Find your exact connection details in the **FTP & API Access** tab of your storage zone. Standard settings:
+
+| Setting         | Value                                          |
+| --------------- | ---------------------------------------------- |
+| Hostname        | storage.bunnycdn.com                           |
+| Port            | 21                                             |
+| Username        | Your storage zone name                         |
+| Password        | Auto-generated (found in FTP & API Access tab) |
+| Connection Type | Passive                                        |
+| Encryption      | Not supported                                  |
+
+## Regional endpoints
+
+Use the appropriate endpoint based on your storage zone's primary region:
+
+| Region           | FTP Endpoint             |
+| ---------------- | ------------------------ |
+| Frankfurt, DE    | storage.bunnycdn.com     |
+| London, UK       | uk.storage.bunnycdn.com  |
+| New York, US     | ny.storage.bunnycdn.com  |
+| Los Angeles, US  | la.storage.bunnycdn.com  |
+| Singapore, SG    | sg.storage.bunnycdn.com  |
+| Stockholm, SE    | se.storage.bunnycdn.com  |
+| São Paulo, BR    | br.storage.bunnycdn.com  |
+| Johannesburg, SA | jh.storage.bunnycdn.com  |
+| Sydney, SYD      | syd.storage.bunnycdn.com |
+
+## Using FileZilla
+
+1. Open FileZilla (or your preferred FTP client)
+2. Enter your connection settings:
+   - Host: storage.bunnycdn.com
+   - Username: your-zone-name
+   - Password: your-storage-password
+   - Port: 21
+3. Click **Quickconnect**
+4. Upload files by dragging them to the remote site panel
+
+## Common errors
+
+**ECONNREFUSED - Connection refused by server**
+
+This error occurs when using an invalid port. Verify you are connecting via port 21.
+
+**331 Username ok, need password**
+
+Your connection password is incorrect. Check your password in the **FTP & API Access** tab of your storage zone.
+
+**Connection timeout**
+
+Ensure you are using **Passive mode** in your FTP client settings. Some networks block active FTP connections.
+
+## Rate limits
+
+FTP connections are subject to the same limits as HTTP API uploads:
+
+- Maximum 25 concurrent FTP connections per IP
+- Maximum 50 concurrent uploads per storage zone
+- Maximum 100 concurrent connections per IP (across all protocols)
+
+See the [Limits](/storage/limits) page for more details.
+
+## Alternative methods
+
+For better performance and security, consider using:
+
+- [HTTP API](/storage/http-api) - Recommended for programmatic uploads
+- [S3-compatible API](/storage/s3-api) - Use familiar S3 tools
+- [Dashboard](/storage/dashboard) - Visual file management

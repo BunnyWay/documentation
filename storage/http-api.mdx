@@ -1,0 +1,137 @@
+---
+title: HTTP API
+description: Upload and manage files using the Bunny Storage HTTP API for best performance, stability, and security
+---
+
+The HTTP API is the recommended way to upload content to Bunny Storage. It provides the best performance, stability, and security through a simple RESTful protocol.
+
+## Authentication
+
+All requests require authentication using the `AccessKey` header with your storage zone password.
+
+```bash
+AccessKey: your-storage-zone-password
+```
+
+Find your storage zone password in the **FTP & API Access** tab of your storage zone.
+
+<Warning>
+  Use your storage zone password (AccessKey), not your global bunny.net API key
+  or Stream API key.
+</Warning>
+
+## Storage endpoints
+
+The API endpoint depends on your storage zone's primary region:
+
+| Region           | Endpoint                 |
+| ---------------- | ------------------------ |
+| Frankfurt, DE    | storage.bunnycdn.com     |
+| London, UK       | uk.storage.bunnycdn.com  |
+| New York, US     | ny.storage.bunnycdn.com  |
+| Los Angeles, US  | la.storage.bunnycdn.com  |
+| Singapore, SG    | sg.storage.bunnycdn.com  |
+| Stockholm, SE    | se.storage.bunnycdn.com  |
+| São Paulo, BR    | br.storage.bunnycdn.com  |
+| Johannesburg, SA | jh.storage.bunnycdn.com  |
+| Sydney, SYD      | syd.storage.bunnycdn.com |
+
+Find your endpoint in the **FTP & API Access** page of your storage zone.
+
+## Upload a file
+
+Upload files using a PUT request with the file content in the request body.
+
+### Request format
+
+**Method:** `PUT`
+
+**URL format:** `https://{region}.bunnycdn.com/{storageZoneName}/{path}/{fileName}`
+
+**Path parameters:**
+
+- `storageZoneName` (required) - Your storage zone name
+- `path` (optional) - Directory path where the file will be stored (omit for root)
+- `fileName` (required) - Name for the uploaded file
+
+**Headers:**
+
+- `AccessKey` (required) - Your storage zone password
+- `Content-Type` (optional) - MIME type of the file (e.g., `image/jpeg`, `application/pdf`)
+- `Checksum` (optional) - SHA256 checksum in HEX format (uppercase)
+
+**Request body:** Raw binary file content (no encoding)
+
+### Example
+
+```bash
+curl -X PUT \
+  https://storage.bunnycdn.com/your-zone-name/path/to/file.jpg \
+  -H "AccessKey: your-storage-password" \
+  -H "Content-Type: image/jpeg" \
+  --data-binary "@/path/to/local/file.jpg"
+```
+
+### With checksum
+
+```bash
+curl -X PUT \
+  https://storage.bunnycdn.com/your-zone-name/path/to/file.jpg \
+  -H "AccessKey: your-storage-password" \
+  -H "Content-Type: image/jpeg" \
+  -H "Checksum: SHA256_HASH_IN_UPPERCASE" \
+  --data-binary "@/path/to/local/file.jpg"
+```
+
+### Response codes
+
+| Status Code | Description                                                   |
+| ----------- | ------------------------------------------------------------- |
+| 201         | File uploaded successfully                                    |
+| 400         | Upload unsuccessful (bad request)                             |
+| 401         | Invalid AccessKey, region hostname, or non-binary file format |
+
+### Important considerations
+
+<Warning>
+  **File content must be raw binary:** Send the file as raw binary in the
+  request body without any encoding. Other formats will result in a 401 error.
+</Warning>
+
+- Use the correct regional endpoint for your storage zone's primary region
+- Checksum hashes must be SHA256 in HEX format and UPPERCASE
+- Always use `--data-binary` with curl to preserve binary data
+- The `Content-Type` header helps with proper file serving but is optional
+
+## Download a file
+
+Download files using a GET request:
+
+```bash
+curl -X GET \
+  https://storage.bunnycdn.com/your-zone-name/path/to/file.jpg \
+  -H "AccessKey: your-storage-password" \
+  -o downloaded-file.jpg
+```
+
+## List files
+
+List files in a directory using a GET request to the directory path:
+
+```bash
+curl -X GET \
+  https://storage.bunnycdn.com/your-zone-name/path/to/directory/ \
+  -H "AccessKey: your-storage-password"
+```
+
+Returns a JSON array of files and directories.
+
+## Delete a file
+
+Delete files using a DELETE request:
+
+```bash
+curl -X DELETE \
+  https://storage.bunnycdn.com/your-zone-name/path/to/file.jpg \
+  -H "AccessKey: your-storage-password"
+```
