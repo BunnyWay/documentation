@@ -41,8 +41,6 @@ Your data will begin replicating to the new regions automatically.
 
 </Steps>
 
-<Warning>Replication regions cannot be removed once added.</Warning>
-
 ## How it works
 
 When you enable replication regions:
@@ -80,15 +78,13 @@ Your primary storage region is where file uploads are performed. All uploads go 
 
 ### Edge (SSD) tier - up to 15 regions
 
-| Continent      | Regions                                                    |
-| -------------- | ---------------------------------------------------------- |
-| Europe         | Frankfurt (DE)\*, Stockholm (SE), Madrid (ES), Prague (CZ) |
-| North America  | Los Angeles (LA), Seattle (WA), New York (NY), Miami (FL)  |
-| Asia & Oceania | Sydney (AU), Tokyo (JP), Singapore (SG), Hong Kong (HK)    |
-| LATAM          | Sao Paulo (BR)                                             |
-| Africa         | Johannesburg (ZA)                                          |
-
-\*Frankfurt (DE) is the required primary region for Edge (SSD) tier.
+| Continent      | Regions                                                                                                                                             |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Europe         | <Tooltip tip="Frankfurt (DE) is the required primary region for Edge (SSD) tier">Frankfurt (DE)</Tooltip>, Stockholm (SE), Madrid (ES), Prague (CZ) |
+| North America  | Los Angeles (LA), Seattle (WA), New York (NY), Miami (FL)                                                                                           |
+| Asia & Oceania | Sydney (AU), Tokyo (JP), Singapore (SG), Hong Kong (HK)                                                                                             |
+| LATAM          | Sao Paulo (BR)                                                                                                                                      |
+| Africa         | Johannesburg (ZA)                                                                                                                                   |
 
 See [Pricing](/storage/pricing) for region-specific costs.
 
@@ -103,7 +99,10 @@ The number of available replication points depends on your storage tier and whet
 
 See [Storage Tiers](/storage/storage-tiers) for more details about each tier.
 
-For information about data durability guarantees, RAID 6 configuration, and disaster recovery, see [Durability](/storage/durability).
+<Info>
+  For information about data durability guarantees, RAID 6 configuration, and
+  disaster recovery, see [Durability](/storage/durability).
+</Info>
 
 ## Recommended setup
 

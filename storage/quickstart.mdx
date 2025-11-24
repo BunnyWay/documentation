@@ -18,7 +18,7 @@ description: Create a storage zone and upload your first file in minutes
 7. Optionally enable S3 compatibility (currently in beta)
 8. Click **Add Storage Zone**
 
-See [Storage Tiers](/storage/storage-tiers) and [Geo-Replication](/storage/replication) for help choosing options.
+See [Storage Tiers](/storage/storage-tiers) and [Replication](/storage/replication) for help choosing options.
 
 </Step>
 
@@ -61,6 +61,26 @@ Use any FTP client with these settings:
 
 </Tab>
 
+<Tab title="S3 (rclone)">
+
+<Note>
+  Requires S3 compatibility to be enabled during storage zone creation.
+</Note>
+
+```bash
+# Configure rclone (one-time setup)
+rclone config create bunnycdn s3 \
+  provider=Other \
+  access_key_id=your-access-key-id \
+  secret_access_key=your-storage-password \
+  endpoint=https://[region]-s3.storage.bunnycdn.com
+
+# Upload a file
+rclone copy /path/to/local/file.jpg bunnycdn:your-zone-name/path/to/
+```
+
+</Tab>
+
 <Tab title="Dashboard">
 
 1. Open your storage zone
@@ -96,20 +116,20 @@ Files are automatically replicated across regions and cached globally for fast a
 
 <Step title="Learn more">
 
-<Card title="HTTP API" href="/storage/http">
-  Best performance and security for programmatic uploads
-</Card>
-
-<Card title="FTP Access" href="/storage/ftp">
-  Use existing FTP tools and workflows
+<Card title="Dashboard" href="/storage/dashboard">
+  Manage files with a visual interface
 </Card>
 
 <Card title="S3-compatible API" href="/storage/s3">
   Use S3 tools and libraries
 </Card>
 
-<Card title="Dashboard" href="/storage/dashboard">
-  Manage files with a visual interface
+<Card title="HTTP API" href="/storage/http">
+  Best performance and security for programmatic uploads
+</Card>
+
+<Card title="FTP Access" href="/storage/ftp">
+  Use existing FTP tools and workflows
 </Card>
 
 </Step>
