@@ -1,14 +1,14 @@
 ---
 title: Dashboard
-description: Manage files directly from the bunny.net dashboard with a user-friendly interface
+description: Manage files directly from the bunny.net dashboard
 ---
 
-The bunny.net dashboard provides a visual interface for managing files in your storage zones without writing code. It's ideal for quick file uploads, visual file organization, one-time uploads or testing, and non-technical team members managing content.
+The bunny.net dashboard provides a visual interface for managing files in your storage zones without writing code. It's ideal for quick file uploads, visual file organization, and non-technical team members managing content.
 
 ## Access the file browser
 
 1. Log in to your bunny.net dashboard
-2. Navigate to **Storage** in the left sidebar
+2. Navigate to **CDN > Storage** in the left sidebar
 3. Select your storage zone
 4. Click **Browse Files**
 
@@ -34,7 +34,11 @@ Create and organize folders to structure your files:
 ## Upload files
 
 1. In the file browser, navigate to your desired directory
-2. Click the **Upload** button
+   <Frame>![Select Folder](/images/storage/select-folder.png)</Frame>
+2. Click the **Upload** or **Upload Folder** button
+   <Frame>
+     ![Upload File or Folder](/images/storage/upload-file-or-folder.png)
+   </Frame>
 3. Select one or multiple files from your computer
 4. Files will upload and appear in the file list
 
@@ -61,12 +65,18 @@ Select multiple files and folders to perform bulk operations:
 2. Click the download icon next to the file
 3. The file will download to your computer
 
+<Frame>![Download File](/images/storage/download-file.png)</Frame>
+
 **Multiple files or folders:**
 
 1. Select the files or folders using checkboxes
 2. Click the **Download** button in the toolbar
 
+<Frame>![Download Folder](/images/storage/download-folder.png)</Frame>
+
 ## Delete files
+
+<Frame>![Delete Files](/images/storage/delete-files.png)</Frame>
 
 **Single file or folder:**
 
@@ -89,6 +99,8 @@ Select multiple files and folders to perform bulk operations:
 
 Reduce file size directly from the dashboard without downloading and re-uploading:
 
+<Frame>![Compress Files](/images/storage/compress-files.png)</Frame>
+
 **Single file or folder:**
 
 1. Locate the file or folder you want to compress
@@ -103,22 +115,14 @@ Reduce file size directly from the dashboard without downloading and re-uploadin
 
 Compressing folders will compress all files within them. This is useful for optimizing images and other compressible files.
 
-## View file details
-
-Click on any file to view its details:
-
-- File name and path
-- File size
-- Upload date
-- CDN URL for accessing the file
-- Storage region
-
 ## Copy CDN URL
 
 Once you connect a Pull Zone, each file has a CDN URL for public access:
 
-```
+```bash
 https://your-zone-name.b-cdn.net/path/to/file.jpg
 ```
 
 Click the copy icon next to any file to copy its CDN URL to your clipboard.
+
+<Frame>![Copy CDN URL](/images/storage/copy-cdn-url.png)</Frame>
