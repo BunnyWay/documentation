@@ -7,7 +7,7 @@
     "light": "#EF6126",
     "dark": "#EF6126"
   },
-  "favicon": "/a4af100-small-icon.png",
+  "favicon": "/favicon.png",
   "icons": {
     "library": "lucide"
   },
@@ -179,7 +179,8 @@
                 "pages": [
                   "optimizer/api-reference",
                   "optimizer/statistics",
-                  "optimizer/faq"
+                  "optimizer/faq",
+                  "optimizer/limits"
                 ]
               }
             ]
@@ -310,14 +311,58 @@
       },
       {
         "product": "Storage",
+        "description": "Global object storage with S3 compatibility",
         "icon": "hard-drive",
         "tabs": [
           {
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Edge Storage",
-                "pages": ["docs/edge-storage-overview", "docs/edge-storage-ftp"]
+                "group": "Bunny Storage",
+                "pages": [
+                  "storage/index",
+                  "storage/quickstart",
+                  "storage/pricing"
+                ]
+              },
+              {
+                "group": "Features",
+                "pages": ["storage/storage-tiers", "storage/replication"]
+              },
+              {
+                "group": "File Management",
+                "pages": [
+                  "storage/dashboard",
+                  "storage/s3",
+                  "storage/http",
+                  {
+                    "group": "SDKs",
+                    "pages": [
+                      "storage/typescript-sdk",
+                      "storage/php-sdk",
+                      "storage/dotnet-sdk",
+                      "storage/java-sdk"
+                    ]
+                  },
+                  "storage/ftp"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
+                  {
+                    "group": "WordPress",
+                    "pages": ["storage/move-files-to-wordpress"]
+                  }
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "storage/durability",
+                  "storage/limits",
+                  "storage/settings"
+                ]
               }
             ]
           }
@@ -612,7 +657,7 @@
                 ]
               },
               {
-                "group": "Edge Storage API",
+                "group": "Bunny Storage API",
                 "pages": [
                   "reference/storage-api",
                   "reference/edge-storage-api-limits",
@@ -822,6 +867,32 @@
     {
       "source": "/docs/formats",
       "destination": "/optimizer/dynamic-images/formats",
+      "permanent": true
+    },
+
+    {
+      "source": "/docs/edge-storage-overview",
+      "destination": "/storage",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-storage-ftp",
+      "destination": "/storage/ftp",
+      "permanent": true
+    },
+    {
+      "source": "/reference/edge-storage-api-limits",
+      "destination": "/storage/limits",
+      "permanent": true
+    },
+    {
+      "source": "/reference/api-limits",
+      "destination": "/storage/limits",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storage-api",
+      "destination": "/storage/http",
       "permanent": true
     }
   ]

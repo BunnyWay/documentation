@@ -1,0 +1,258 @@
+---
+title: TypeScript SDK
+sidebarTitle: TypeScript
+description: Official TypeScript/JavaScript SDK for Bunny Storage
+---
+
+The official TypeScript SDK provides a type-safe way to interact with Bunny Storage in Node.js, Deno, and Bunny Edge Scripts environments.
+
+## Installation
+
+<Tabs>
+<Tab title="npm">
+
+```bash
+npm install @bunny.net/storage-sdk
+```
+
+</Tab>
+
+<Tab title="pnpm">
+
+```bash
+pnpm add @bunny.net/storage-sdk
+```
+
+</Tab>
+
+<Tab title="yarn">
+
+```bash
+yarn add @bunny.net/storage-sdk
+```
+
+</Tab>
+</Tabs>
+
+## Quickstart
+
+### Connect to your storage zone
+
+```typescript
+import * as BunnyStorageSDK from "@bunny.net/storage-sdk";
+
+const storageZone = BunnyStorageSDK.zone.connect_with_accesskey(
+  BunnyStorageSDK.regions.StorageRegion.Falkenstein,
+  "your-storage-zone-name",
+  "your-access-key",
+);
+```
+
+**Available regions:**
+
+| Region Code                 | Location         | City         |
+| --------------------------- | ---------------- | ------------ |
+| `StorageRegion.Falkenstein` | Frankfurt, DE    | Falkenstein  |
+| `StorageRegion.UK`          | London, UK       | London       |
+| `StorageRegion.NY`          | New York, US     | New York     |
+| `StorageRegion.LA`          | Los Angeles, US  | Los Angeles  |
+| `StorageRegion.SG`          | Singapore, SG    | Singapore    |
+| `StorageRegion.SE`          | Stockholm, SE    | Stockholm    |
+| `StorageRegion.BR`          | Sao Paulo, BR    | Sao Paulo    |
+| `StorageRegion.JH`          | Johannesburg, ZA | Johannesburg |
+| `StorageRegion.SYD`         | Sydney, AU       | Sydney       |
+
+### List files
+
+```typescript
+const files = await BunnyStorageSDK.file.list(storageZone, "/");
+
+// Navigate subdirectories
+const subfolderFiles = await BunnyStorageSDK.file.list(
+  storageZone,
+  "/my-folder",
+);
+```
+
+### Upload a file
+
+```typescript
+await BunnyStorageSDK.file.upload(storageZone, "/path/to/file.jpg", fileStream);
+
+// With options
+await BunnyStorageSDK.file.upload(
+  storageZone,
+  "/path/to/file.jpg",
+  fileStream,
+  {
+    sha256Checksum: "abc123...", // Optional: server calculates if not provided
+    contentType: "image/jpeg", // Optional: override content-type
+  },
+);
+```
+
+### Download a file
+
+**Method 1: Direct download**
+
+```typescript
+const { stream, response, length } = await BunnyStorageSDK.file.download(
+  storageZone,
+  "/path/to/file.jpg",
+);
+```
+
+**Method 2: Get metadata first**
+
+```typescript
+const fileMetadata = await BunnyStorageSDK.file.get(
+  storageZone,
+  "/path/to/file.jpg",
+);
+
+// Access metadata
+console.log(fileMetadata.Length);
+console.log(fileMetadata.ContentType);
+console.log(fileMetadata.LastChanged);
+
+// Download the content
+const { stream, response, length } = await fileMetadata.data();
+```
+
+**File metadata properties:**
+
+- `Guid` - Unique identifier
+- `ObjectName` - File name
+- `Path` - Directory path
+- `Length` - File size in bytes
+- `ContentType` - MIME type
+- `DateCreated` - Creation date
+- `LastChanged` - Last modification date
+- `IsDirectory` - Whether it's a directory
+- `Checksum` - File checksum
+- `ReplicatedZones` - Replication regions
+
+### Delete files
+
+```typescript
+// Delete a file
+await BunnyStorageSDK.file.remove(storageZone, "/path/to/file.jpg");
+
+// Delete a directory
+await BunnyStorageSDK.file.removeDirectory(storageZone, "/path/to/folder");
+```
+
+## Examples
+
+### Node.js HTTP server
+
+```typescript
+import * as BunnyStorageSDK from "@bunny.net/storage-sdk";
+import * as http from "http";
+
+const storageZone = BunnyStorageSDK.zone.connect_with_accesskey(
+  BunnyStorageSDK.regions.StorageRegion.Falkenstein,
+  process.env.STORAGE_ZONE!,
+  process.env.STORAGE_ACCESS_KEY!,
+);
+
+http
+  .createServer(async (req, res) => {
+    const files = await BunnyStorageSDK.file.list(storageZone, "/");
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(files));
+  })
+  .listen(8080);
+
+console.log("Server running at http://localhost:8080/");
+```
+
+### Deno
+
+```typescript
+import * as BunnyStorageSDK from "npm:@bunny.net/storage-sdk";
+
+const storageZone = BunnyStorageSDK.zone.connect_with_accesskey(
+  BunnyStorageSDK.regions.StorageRegion.Falkenstein,
+  Deno.env.get("STORAGE_ZONE")!,
+  Deno.env.get("STORAGE_ACCESS_KEY")!,
+);
+
+Deno.serve({ port: 8080 }, async (req) => {
+  const files = await BunnyStorageSDK.file.list(storageZone, "/");
+  return new Response(JSON.stringify(files), {
+    headers: { "Content-Type": "application/json" },
+  });
+});
+```
+
+### Bunny Edge Scripts
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+import * as BunnyStorageSDK from "@bunny.net/storage-sdk";
+
+const storageZone = BunnyStorageSDK.zone.connect_with_accesskey(
+  BunnyStorageSDK.regions.StorageRegion.Falkenstein,
+  BunnySDK.environment.get("STORAGE_ZONE")!,
+  BunnySDK.environment.get("STORAGE_ACCESS_KEY")!,
+);
+
+BunnySDK.net.http.serve({ port: 8080, hostname: "127.0.0.1" }, async (req) => {
+  const files = await BunnyStorageSDK.file.list(storageZone, "/");
+  console.log(`[INFO]: ${req.method} - ${req.url}`);
+  return new Response(JSON.stringify(files));
+});
+```
+
+### Upload from file system (Node.js)
+
+```typescript
+import * as BunnyStorageSDK from "@bunny.net/storage-sdk";
+import * as fs from "fs";
+
+const storageZone = BunnyStorageSDK.zone.connect_with_accesskey(
+  BunnyStorageSDK.regions.StorageRegion.Falkenstein,
+  process.env.STORAGE_ZONE!,
+  process.env.STORAGE_ACCESS_KEY!,
+);
+
+// Read file and create stream
+const fileStream = fs.createReadStream("./local-file.jpg");
+
+// Upload to storage
+await BunnyStorageSDK.file.upload(storageZone, "/uploads/file.jpg", fileStream);
+
+console.log("File uploaded successfully!");
+```
+
+### Download to file system (Node.js)
+
+```typescript
+import * as BunnyStorageSDK from "@bunny.net/storage-sdk";
+import * as fs from "fs";
+import { pipeline } from "stream/promises";
+
+const storageZone = BunnyStorageSDK.zone.connect_with_accesskey(
+  BunnyStorageSDK.regions.StorageRegion.Falkenstein,
+  process.env.STORAGE_ZONE!,
+  process.env.STORAGE_ACCESS_KEY!,
+);
+
+// Download from storage
+const { stream } = await BunnyStorageSDK.file.download(
+  storageZone,
+  "/uploads/file.jpg",
+);
+
+// Save to local file
+const writeStream = fs.createWriteStream("./downloaded-file.jpg");
+await pipeline(stream, writeStream);
+
+console.log("File downloaded successfully!");
+```
+
+## Resources
+
+- [NPM Package](https://www.npmjs.com/package/@bunny.net/storage-sdk)
+- [GitHub Repository](https://github.com/BunnyWay/edge-script-sdk/tree/main/libs/bunny-storage)

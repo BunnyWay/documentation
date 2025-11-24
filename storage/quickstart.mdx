@@ -1,0 +1,137 @@
+---
+title: Quickstart
+description: Create a storage zone and upload your first file in minutes
+---
+
+<Steps>
+
+<Step title="Create a Storage Zone">
+
+1. From your Bunny dashboard, go to the left-hand navigation menu
+2. Click on **Storage** and then **Add Storage Zone**
+3. Enter a name for your storage zone
+4. Select your storage tier (Standard or Edge SSD)
+5. Select your primary storage region:
+   - **Standard tier**: Choose any region (closest to your users or origin)
+   - **Edge (SSD) tier**: Frankfurt (DE) only
+6. Optionally enable additional replication regions for better reliability
+7. Optionally enable S3 compatibility (currently in beta)
+8. Click **Add Storage Zone**
+
+See [Storage Tiers](/storage/storage-tiers) and [Replication](/storage/replication) for help choosing options.
+
+</Step>
+
+<Step title="Get your credentials">
+
+1. Open your newly created storage zone
+2. Navigate to the **FTP & API Access** tab
+3. Copy your storage zone credentials:
+   - **Storage Zone Name**: Your zone identifier
+   - **Password**: Your API access key (keep this secure)
+   - **API Endpoint**: Regional endpoint URL
+
+</Step>
+
+<Step title="Upload your first file">
+
+Choose your preferred upload method:
+
+<Tabs>
+<Tab title="HTTP API">
+
+```bash
+curl -X PUT \
+  https://storage.bunnycdn.com/your-zone-name/path/to/file.jpg \
+  -H "AccessKey: your-storage-password" \
+  --data-binary "@/path/to/local/file.jpg"
+```
+
+</Tab>
+
+<Tab title="FTP">
+
+Use any FTP client with these settings:
+
+- **Host**: storage.bunnycdn.com
+- **Port**: 21
+- **Username**: Your storage zone name
+- **Password**: Your storage zone password
+- **Mode**: Passive
+
+</Tab>
+
+<Tab title="S3 (rclone)">
+
+<Note>
+  Requires S3 compatibility to be enabled during storage zone creation.
+</Note>
+
+```bash
+# Configure rclone (one-time setup)
+rclone config create bunnycdn s3 \
+  provider=Other \
+  access_key_id=your-access-key-id \
+  secret_access_key=your-storage-password \
+  endpoint=https://[region]-s3.storage.bunnycdn.com
+
+# Upload a file
+rclone copy /path/to/local/file.jpg bunnycdn:your-zone-name/path/to/
+```
+
+</Tab>
+
+<Tab title="Dashboard">
+
+1. Open your storage zone
+2. Click **Browse Files**
+3. Click **Upload** and select your file
+4. Your file is now uploaded
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a Pull Zone">
+
+To access your files via CDN, connect your storage zone to a pull zone:
+
+1. Go to **CDN** in the left navigation menu
+2. Select an existing pull zone or create a new one
+3. In your pull zone settings, go to **Origin**
+4. Set **Origin Type** to **Bunny Storage Zone**
+5. Select your storage zone from the dropdown
+6. Click **Save**
+
+Your files are now accessible via the pull zone URL:
+
+```
+https://your-pull-zone.b-cdn.net/path/to/file.jpg
+```
+
+Files are automatically replicated across regions and cached globally for fast access.
+
+</Step>
+
+<Step title="Learn more">
+
+<Card title="Dashboard" href="/storage/dashboard">
+  Manage files with a visual interface
+</Card>
+
+<Card title="S3-compatible API" href="/storage/s3">
+  Use S3 tools and libraries
+</Card>
+
+<Card title="HTTP API" href="/storage/http">
+  Best performance and security for programmatic uploads
+</Card>
+
+<Card title="FTP Access" href="/storage/ftp">
+  Use existing FTP tools and workflows
+</Card>
+
+</Step>
+
+</Steps>

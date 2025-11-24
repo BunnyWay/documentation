@@ -1,0 +1,81 @@
+---
+title: Pricing
+---
+
+Storage pricing is based on your storage tier and the number of replication regions you enable. View current pricing at [bunny.net/pricing](https://bunny.net/pricing).
+
+## Standard tier (HDD)
+
+**Pricing structure:**
+
+- **Single region**: \$0.01/GB
+- **Two regions**: \$0.02/GB
+- **Three regions**: \$0.025/GB
+- **Each additional region**: +\$0.005/GB
+- **Maximum**: Up to 9 regions
+
+The first two regions cost \$0.01/GB each. Additional regions beyond two cost \$0.005/GB each.
+
+**Example calculations:**
+
+- 1 region: \$0.01/GB
+- 2 regions: \$0.02/GB (2 × \$0.01)
+- 3 regions: \$0.025/GB (2 × \$0.01 + 1 × \$0.005)
+- 4 regions: \$0.03/GB (2 × \$0.01 + 2 × \$0.005)
+- 9 regions: \$0.055/GB (2 × \$0.01 + 7 × \$0.005)
+
+## Edge tier (SSD)
+
+**Pricing structure:**
+
+- **Single region**: \$0.02/GB
+- **Each additional region**: +\$0.02/GB
+- **Maximum**: Up to 15 regions
+
+Each region costs \$0.02/GB, including the primary region.
+
+**Example calculations:**
+
+- 1 region: \$0.02/GB
+- 2 regions: \$0.04/GB (2 × \$0.02)
+- 3 regions: \$0.06/GB (3 × \$0.02)
+- 15 regions: \$0.30/GB (15 × \$0.02)
+
+## What's included
+
+Both storage tiers include:
+
+- True pay-as-you-go pricing
+- \$1 monthly minimum
+- **FREE traffic to Bunny CDN**
+- **No API fees**
+- **Free API egress**
+- RAID 6 storage configuration
+- Eleven nines durability (with multiple replication regions)
+- Automatic failover and recovery
+
+## Bandwidth costs
+
+Traffic served via Bunny CDN is billed separately according to CDN pricing. However:
+
+- Traffic from Storage to CDN is **FREE**
+- API egress is **FREE**
+- Only end-user CDN delivery is billed
+
+## Region availability
+
+### Standard tier regions (up to 9)
+
+- **Europe**: Frankfurt (DE), London (UK), Stockholm (SE)
+- **North America**: Los Angeles (LA), New York (NY)
+- **Asia & Oceania**: Singapore (SG), Sydney (SYD)
+- **LATAM**: Sao Paulo (BR)
+- **Africa**: Johannesburg (ZA)
+
+### Edge tier regions (up to 15)
+
+- **Europe**: Frankfurt (DE - main region), Stockholm (SE), Madrid (ES), Prague (CZ)
+- **North America**: Los Angeles (LA), Seattle (WA), New York (NY), Miami (FL)
+- **Asia & Oceania**: Sydney (AU), Tokyo (JP), Singapore (SG), Hong Kong (HK)
+- **LATAM**: Sao Paulo (BR)
+- **Africa**: Johannesburg (ZA)

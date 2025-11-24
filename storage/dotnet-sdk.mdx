@@ -1,0 +1,283 @@
+---
+title: .NET SDK
+sidebarTitle: .NET
+description: Official .NET SDK for Bunny Storage
+---
+
+The official .NET SDK provides a strongly-typed way to interact with Bunny Storage in your .NET applications.
+
+## Installation
+
+```bash
+dotnet add package BunnyCDN.Net.Storage
+```
+
+## Quickstart
+
+### Connect to your storage zone
+
+```csharp
+var bunnyCDNStorage = new BunnyCDNStorage(
+    "your-storage-zone-name",
+    "your-access-key",
+    "de" // Optional: storage zone region
+);
+```
+
+**Available regions:**
+
+| Region Code | Location         | City                  |
+| ----------- | ---------------- | --------------------- |
+| `de`        | Frankfurt, DE    | Falkenstein (default) |
+| `uk`        | London, UK       | London                |
+| `ny`        | New York, US     | New York              |
+| `la`        | Los Angeles, US  | Los Angeles           |
+| `sg`        | Singapore, SG    | Singapore             |
+| `se`        | Stockholm, SE    | Stockholm             |
+| `br`        | Sao Paulo, BR    | Sao Paulo             |
+| `jh`        | Johannesburg, ZA | Johannesburg          |
+| `syd`       | Sydney, AU       | Sydney                |
+
+### List files
+
+```csharp
+var files = await bunnyCDNStorage.GetStorageObjectsAsync("/storagezonename/");
+
+// Navigate subdirectories
+var subfolderFiles = await bunnyCDNStorage.GetStorageObjectsAsync("/storagezonename/my-folder/");
+```
+
+**File metadata properties:**
+
+- `Guid` - Unique identifier
+- `ObjectName` - File name
+- `Path` - Directory path
+- `FullPath` - Complete path to the file
+- `Length` - File size in bytes
+- `DateCreated` - Creation date
+- `LastChanged` - Last modification date
+- `IsDirectory` - Whether it's a directory
+- `ServerId` - Storage server ID
+- `UserId` - BunnyCDN user ID
+- `StorageZoneName` - Storage zone name
+- `StorageZoneId` - Storage zone ID
+
+### Upload a file
+
+**Upload from stream:**
+
+```csharp
+await bunnyCDNStorage.UploadAsync(stream, "/storagezonename/path/to/file.jpg");
+```
+
+**Upload from local file:**
+
+```csharp
+await bunnyCDNStorage.UploadAsync("local/file/path/file.jpg", "/storagezonename/path/to/file.jpg");
+```
+
+**Upload with checksum verification:**
+
+```csharp
+// Provide SHA-256 hash
+await bunnyCDNStorage.UploadAsync(
+    stream,
+    "/storagezonename/file.jpg",
+    "d04b98f48e8f8bcc15c6ae5ac050801cd6dcfd428fb5f9e65c4e16e7807340fa"
+);
+
+// Auto-generate hash
+await bunnyCDNStorage.UploadAsync(stream, "/storagezonename/file.jpg", true);
+
+// Auto-generate if provided hash is invalid
+await bunnyCDNStorage.UploadAsync(
+    stream,
+    "/storagezonename/file.jpg",
+    true,
+    "d04b98f48e8f8bcc15c6ae5ac050801cd6dcfd428fb5f9e65c4e16e7807340fa"
+);
+```
+
+### Download a file
+
+**Download as stream:**
+
+```csharp
+var stream = await bunnyCDNStorage.DownloadObjectAsStreamAsync("/storagezonename/path/to/file.jpg");
+```
+
+**Download to local file:**
+
+```csharp
+await bunnyCDNStorage.DownloadObjectAsync(
+    "/storagezonename/path/to/file.jpg",
+    "local/file/path/downloaded-file.jpg"
+);
+```
+
+### Delete files
+
+```csharp
+// Delete a file
+await bunnyCDNStorage.DeleteObjectAsync("/storagezonename/path/to/file.jpg");
+
+// Delete a directory (including contents)
+await bunnyCDNStorage.DeleteObjectAsync("/storagezonename/path/to/folder/");
+```
+
+## Examples
+
+### ASP.NET Core Web API
+
+```csharp
+using BunnyCDN.Net.Storage;
+using Microsoft.AspNetCore.Mvc;
+
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+var storage = new BunnyCDNStorage(
+    builder.Configuration["BunnyStorage:ZoneName"]!,
+    builder.Configuration["BunnyStorage:AccessKey"]!,
+    builder.Configuration["BunnyStorage:Region"] ?? "de"
+);
+
+app.MapGet("/files", async () =>
+{
+    var files = await storage.GetStorageObjectsAsync($"/{builder.Configuration["BunnyStorage:ZoneName"]}/");
+    return Results.Ok(files);
+});
+
+app.Run();
+```
+
+### Console application
+
+```csharp
+using BunnyCDN.Net.Storage;
+
+var storage = new BunnyCDNStorage(
+    Environment.GetEnvironmentVariable("STORAGE_ZONE")!,
+    Environment.GetEnvironmentVariable("STORAGE_ACCESS_KEY")!,
+    "de"
+);
+
+// List all files
+var files = await storage.GetStorageObjectsAsync($"/{Environment.GetEnvironmentVariable("STORAGE_ZONE")}/");
+foreach (var file in files)
+{
+    Console.WriteLine($"{file.ObjectName} - {file.Length} bytes");
+}
+```
+
+### Upload file from disk
+
+```csharp
+using BunnyCDN.Net.Storage;
+
+var storage = new BunnyCDNStorage("my-storage-zone", "my-access-key", "de");
+
+// Upload a local file
+var localFilePath = "./images/photo.jpg";
+var remotePath = "/my-storage-zone/uploads/photo.jpg";
+
+await storage.UploadAsync(localFilePath, remotePath);
+Console.WriteLine("File uploaded successfully!");
+```
+
+### Download file to disk
+
+```csharp
+using BunnyCDN.Net.Storage;
+
+var storage = new BunnyCDNStorage("my-storage-zone", "my-access-key", "de");
+
+// Download to local file
+var remotePath = "/my-storage-zone/uploads/photo.jpg";
+var localFilePath = "./downloads/photo.jpg";
+
+await storage.DownloadObjectAsync(remotePath, localFilePath);
+Console.WriteLine("File downloaded successfully!");
+```
+
+### Stream processing
+
+```csharp
+using BunnyCDN.Net.Storage;
+using System.IO;
+
+var storage = new BunnyCDNStorage("my-storage-zone", "my-access-key", "de");
+
+// Upload from stream
+using (var fileStream = File.OpenRead("./input.jpg"))
+{
+    await storage.UploadAsync(fileStream, "/my-storage-zone/processed/output.jpg");
+}
+
+// Download as stream
+var downloadStream = await storage.DownloadObjectAsStreamAsync("/my-storage-zone/processed/output.jpg");
+using (var fileStream = File.Create("./result.jpg"))
+{
+    await downloadStream.CopyToAsync(fileStream);
+}
+
+Console.WriteLine("Stream processing completed!");
+```
+
+### Batch operations
+
+```csharp
+using BunnyCDN.Net.Storage;
+
+var storage = new BunnyCDNStorage("my-storage-zone", "my-access-key", "de");
+
+// Get all files
+var files = await storage.GetStorageObjectsAsync("/my-storage-zone/");
+
+// Upload multiple files
+var filesToUpload = Directory.GetFiles("./uploads");
+foreach (var file in filesToUpload)
+{
+    var fileName = Path.GetFileName(file);
+    await storage.UploadAsync(file, $"/my-storage-zone/batch/{fileName}");
+    Console.WriteLine($"Uploaded: {fileName}");
+}
+
+// Delete old files (example: files older than 30 days)
+var thirtyDaysAgo = DateTime.UtcNow.AddDays(-30);
+var oldFiles = files.Where(f => !f.IsDirectory && f.LastChanged < thirtyDaysAgo);
+
+foreach (var file in oldFiles)
+{
+    await storage.DeleteObjectAsync(file.FullPath);
+    Console.WriteLine($"Deleted: {file.ObjectName}");
+}
+```
+
+### Custom HTTP handler
+
+```csharp
+using BunnyCDN.Net.Storage;
+using System.Net.Http;
+
+// Create a custom HTTP handler for advanced scenarios
+var httpHandler = new HttpClientHandler
+{
+    MaxConnectionsPerServer = 10,
+    UseProxy = false
+};
+
+var storage = new BunnyCDNStorage(
+    "my-storage-zone",
+    "my-access-key",
+    "de",
+    httpHandler
+);
+
+var files = await storage.GetStorageObjectsAsync("/my-storage-zone/");
+Console.WriteLine($"Found {files.Count} objects");
+```
+
+## Resources
+
+- [GitHub Repository](https://github.com/BunnyWay/BunnyCDN.Net.Storage)

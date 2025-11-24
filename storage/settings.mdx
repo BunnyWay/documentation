@@ -1,0 +1,102 @@
+---
+title: Settings
+description: Configure storage zone settings including error handling and custom responses
+---
+
+Storage zone settings allow you to customize the behavior of your storage zone, including error handling and response customization.
+
+## Error handling
+
+### Rewrite 404 to 200 status code
+
+When enabled, 404 status codes for requests without a file extension are replaced with a 200 status code.
+
+<Info>
+  Host static single-page applications (SPAs) such as Angular, React, Vue, or
+  Blazor that rely on `index.html` for client-side routing.
+</Info>
+
+**How it works:**
+
+- Request to `/about` (no extension) returns 404 → Rewritten to 200 status code
+- Request to `/image.jpg` (has extension) returns 404 → Remains 404 status code
+
+**To enable:**
+
+<Steps>
+
+<Step title="Navigate to your storage zone">
+
+Log in to your Bunny dashboard, go to **Storage** in the left navigation, and select your storage zone.
+
+</Step>
+
+<Step title="Access Error handling settings">
+
+Open the **Error handling** page.
+
+</Step>
+
+<Step title="Enable the option">
+
+Check the box for **Rewrite 404 to 200 status code** and click **Save** to apply changes.
+
+</Step>
+
+</Steps>
+
+### Custom 404 file path
+
+Specify a custom file path to serve instead of the standard 404 response. If the custom file does not exist, the standard 404 error will be returned.
+
+**Example:** `/bunnycdn_errors/404.html`
+
+**How it works:**
+
+1. User requests a file that doesn't exist
+2. Storage checks if custom 404 file path is configured
+3. If configured and the custom file exists, serves that file
+4. If custom file doesn't exist, returns standard 404 response
+
+**To configure:**
+
+<Steps>
+
+<Step title="Create your custom 404 file">
+
+Upload your custom 404 error page to your storage zone (e.g., `/bunnycdn_errors/404.html`).
+
+</Step>
+
+<Step title="Navigate to your storage zone">
+
+Log in to your Bunny dashboard, go to **Storage** in the left navigation, and select your storage zone.
+
+</Step>
+
+<Step title="Access Error handling settings">
+
+Open the **Error handling** page.
+
+</Step>
+
+<Step title="Set the 404 file path">
+
+Find the **404 File path** field, enter the path to your custom 404 file (e.g., `/bunnycdn_errors/404.html`), and click **Save**.
+
+</Step>
+
+</Steps>
+
+**Best practices:**
+
+- Use a descriptive path like `/bunnycdn_errors/` or `/errors/`
+- Include helpful information in your custom 404 page
+- Keep the file size small for fast loading
+- Test the custom 404 page by requesting a non-existent URL
+
+<Info>
+  For single-page applications (SPAs) with client-side routing, enable **Rewrite
+  404 to 200 status code** and set **404 File path** to `/index.html`. This
+  ensures all routes are handled by your application's JavaScript router.
+</Info>

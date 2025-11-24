@@ -1,0 +1,60 @@
+---
+title: "Migrate Media Files from Bunny Storage"
+description: "Move media files that were previously offloaded to a Bunny Storage Zone back to your WordPress server"
+---
+
+In some cases, you may want to migrate media files that were previously offloaded to a Bunny Storage Zone back to your WordPress server. This could be to simplify management, regain file ownership, or consolidate your hosting setup.
+
+Follow this step-by-step guide to safely complete the process without affecting your site's functionality.
+
+<Warning>
+  Before proceeding: Always create a complete backup of your WordPress files and
+  database. This ensures you can restore your site if needed.
+</Warning>
+
+## Step 1: Copy Files from Bunny Storage
+
+1. In your WordPress Admin, go to the **bunny.net → Offloader** tab.
+2. Note the **Storage Zone** listed; this is where your offloaded files are currently stored.
+3. Download or transfer the files from the Storage Zone to your WordPress server. You can do this via FTP or by downloading from the Bunny.net Storage dashboard.
+4. Ensure you preserve the original directory structure so WordPress can correctly locate the files.
+
+<Frame>
+  ![Content offloading](/images/storage/guides/content-offloading.png)
+</Frame>
+
+## Step 2: Update the WordPress Database
+
+Once files are back on your server, you'll need to inform WordPress that these files are no longer offloaded.
+
+Run the following SQL query (using phpMyAdmin or your preferred database tool) to remove the offload markers:
+
+```sql
+DELETE FROM wp_postmeta WHERE meta_key = '_bunnycdn_offloaded';
+```
+
+This removes the `_bunnycdn_offloaded` meta entries that tell WordPress the file is stored externally.
+
+<Note>
+The name of the `wp_postmeta` table may vary depending on the table prefix used in your WordPress installation. While the `postmeta` suffix remains the same, the prefix (e.g., `wp`, `wp3c_`) may differ, resulting in names like `wp3c_postmeta`.
+
+To confirm your prefix, check your database using phpMyAdmin, WP-CLI, or by listing the tables directly.
+
+</Note>
+
+<Warning>
+  Make sure you have a database backup before running any queries.
+</Warning>
+
+## Verify Your Changes
+
+**If you're no longer using Bunny DNS:** Verify that your media files load correctly. If everything works, you can delete the Storage Zone to stop recurring charges.
+
+**If you're still using Bunny DNS:** Your files may still be served from the Storage Zone. To test if they now load from your server:
+
+- Disable the Edge Rule called **WordPress Content Offloading**.
+- Purge the cache for your Pull Zone.
+
+<Frame>![Edge Rules Purge](/images/storage/guides/edge-rules.png)</Frame>
+
+Once verified, you can safely remove the files from the Storage Zone.
