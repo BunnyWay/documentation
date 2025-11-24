@@ -4,7 +4,7 @@ description: Use S3-compatible tools and libraries to manage your Bunny Storage 
 tag: "Beta"
 ---
 
-Bunny Storage supports an S3-compatible API (currently in beta), allowing you to use familiar S3 tools, libraries, and workflows with your storage zones.
+Bunny Storage supports an S3-compatible API (currently in beta), allowing you to use familiar S3 tools, libraries, and workflows with your storage zones. Use existing S3 tools and scripts, leverage popular S3 libraries across all programming languages, migrate from AWS S3 with minimal code changes, and work with S3 GUI tools.
 
 <Info>
   S3 compatibility is currently in beta. S3 compatibility must be enabled during
@@ -15,101 +15,50 @@ Bunny Storage supports an S3-compatible API (currently in beta), allowing you to
 
 To create an S3-compatible storage zone:
 
-1. Navigate to **Storage** → **Add Storage**
+1. Navigate to **Storage** → **Add Storage Zone**
 2. Enter a name (minimum 4 characters, letters, numbers, and dashes only)
 3. Enable the **S3 Compatibility** option
 4. Select your preferred storage tier
-5. Choose your region (currently available: Frankfurt, New York, and Singapore)
-6. Complete the setup process
+5. Choose your region
+6. Configure replication
+7. Confirm and **Add Storage Zone**
 
 <Note>
   S3 compatibility is currently only supported in Frankfurt, New York, and
   Singapore. Additional regions will be added later.
 </Note>
 
-## Supported S3 operations
+## Quickstart
 
-Bunny Storage provides comprehensive S3 API compatibility for all your storage needs.
+### Authentication and credentials
 
-### Object operations
-
-- **PUT Object**: Create and update objects
-- **GET Object**: Read objects (range requests supported)
-- **DELETE Object**: Delete objects (single and batch operations)
-- **COPY Object**: Copy objects between locations
-- **HEAD Object**: Get object metadata
-
-### Directory listing
-
-- **LIST Objects**: v1 and v2 API versions supported
-- List with prefix filtering
-- Paginated results
-- Directory-style navigation
-- Common prefixes support
-
-### Multipart upload
-
-- Initiate multipart upload
-- Upload parts (up to 10,000 parts)
-- Complete multipart upload
-- Abort multipart upload
-- List multipart uploads
-- Recommended for files over 100MB
-
-### S3 API compatibility matrix
-
-| Operation          | Status           | Notes                        |
-| ------------------ | ---------------- | ---------------------------- |
-| PUT Object         | ✅ Supported     | Upload files                 |
-| GET Object         | ✅ Supported     | Range requests supported     |
-| DELETE Object      | ✅ Supported     | Single and batch operations  |
-| LIST Objects       | ✅ Supported     | v1 and v2 API versions       |
-| Multipart Upload   | ✅ Supported     | Recommended for files >100MB |
-| COPY Object        | ✅ Supported     |                              |
-| HEAD Object        | ✅ Supported     |                              |
-| Pre-signed URLs    | ❌ Not supported | Temporary access links       |
-| CORS Configuration | ❌ Not supported |                              |
-
-## Benefits
-
-- Use existing S3 tools and scripts
-- Leverage popular S3 libraries across all programming languages
-- Migrate from AWS S3 with minimal code changes
-- Compatible with S3 GUI tools like Cyberduck, S3 Browser, and CloudBerry
-
-## Impact on replication
-
-Enabling S3 compatibility reduces the number of available replication points:
-
-| Storage Tier | HTTP API/FTP     | S3-compatible |
-| ------------ | ---------------- | ------------- |
-| Standard     | Up to 9 regions  | 4 regions     |
-| Edge (SSD)   | Up to 15 regions | 4 regions     |
-
-<Warning>
-  S3 compatibility cannot be changed after storage zone creation. If you need
-  more than 4 replication points, use the HTTP API or FTP instead.
-</Warning>
-
-## S3 credentials
-
-After creating your S3-compatible storage zone, you'll receive:
+After creating your S3-compatible storage zone, you'll receive credentials in the **FTP & API Access** tab:
 
 - **Access Key ID**: Your unique identifier
-- **Secret Access Key**: Your authentication credential
-- **Endpoint URL**: Your storage zone's S3-compatible endpoint (format: `https://[region]-s3.storage.bunnycdn.com`)
-- **Region**: The primary region for your storage zone (e.g., `de` for Frankfurt, `ny` for New York, `sg` for Singapore)
+- **Secret Access Key**: Your authentication credential (storage zone password)
+- **Endpoint URL**: `https://[region]-s3.storage.bunnycdn.com`
+- **Region**: `de` (Frankfurt), `ny` (New York), or `sg` (Singapore)
 
-Find your credentials in the **FTP & API Access** tab of your storage zone.
-
-When using S3-compatible tools, configure them with:
+Bunny Storage uses **AWS Signature Version 4** for authentication. Configure your S3-compatible tools with:
 
 - **Endpoint**: `https://[region]-s3.storage.bunnycdn.com`
 - **Bucket name**: Your storage zone name
 - **Access Key ID**: From your storage zone settings
 - **Secret Access Key**: Your storage zone password
 
-## Usage
+### Content Type Detection
+
+When uploading objects, Content-Type is determined in the following order:
+
+1. **Content-Type header** - If provided in the request
+2. **File extension detection** - Automatic detection based on file extension
+3. **Default fallback** - `binary/octet-stream` for unknown types
+
+### Checksum Validation
+
+SHA256 checksum validation is available using the `x-amz-checksum-sha256` header (Base64 encoded).
+
+## Examples
 
 ### AWS CLI
 
@@ -128,23 +77,38 @@ aws configure --profile bunny
 # Default region name: your-region (e.g., de, ny, sg)
 # Default output format: json
 
-# Upload a file
+# Upload an object (PUT Object)
 aws s3 cp /path/to/local/file s3://bucket-name/path/to/destination/ \
   --profile bunny \
   --endpoint-url https://[region]-s3.storage.bunnycdn.com
 
-# List objects
+# Download an object (GET Object)
+aws s3 cp s3://bucket-name/path/to/object /path/to/local/destination/ \
+  --profile bunny \
+  --endpoint-url https://[region]-s3.storage.bunnycdn.com
+
+# List objects (LIST Objects)
 aws s3 ls s3://bucket-name/ --recursive \
   --profile bunny \
   --endpoint-url https://[region]-s3.storage.bunnycdn.com
 
-# Create a directory
-aws s3api put-object --bucket bucket-name --key folder-name/ \
+# Delete an object (DELETE Object)
+aws s3 rm s3://bucket-name/path/to/object \
   --profile bunny \
   --endpoint-url https://[region]-s3.storage.bunnycdn.com
 
-# Download a file
-aws s3 cp s3://bucket-name/path/to/file /path/to/local/destination/ \
+# Copy object (COPY Object)
+aws s3 cp s3://bucket-name/source/object s3://bucket-name/destination/object \
+  --profile bunny \
+  --endpoint-url https://[region]-s3.storage.bunnycdn.com
+
+# Get object metadata (HEAD Object)
+aws s3api head-object --bucket bucket-name --key path/to/object \
+  --profile bunny \
+  --endpoint-url https://[region]-s3.storage.bunnycdn.com
+
+# Sync a directory
+aws s3 sync ./local-dir s3://bucket-name/remote-dir/ \
   --profile bunny \
   --endpoint-url https://[region]-s3.storage.bunnycdn.com
 ```
@@ -173,15 +137,168 @@ rclone config create bunnycdn s3 \
   secret_access_key=your-storage-password \
   endpoint=https://[region]-s3.storage.bunnycdn.com
 
-# Upload a file
+# Upload an object (PUT Object)
 rclone copy /path/to/local/file bunnycdn:bucket-name/path/to/destination/
 
-# Download a file
-rclone copy bunnycdn:bucket-name/path/to/file /path/to/local/destination/
+# Download an object (GET Object)
+rclone copy bunnycdn:bucket-name/path/to/object /path/to/local/destination/
 
-# List files
+# List objects (LIST Objects)
 rclone ls bunnycdn:bucket-name/
+rclone lsd bunnycdn:bucket-name/  # List directories only
+rclone lsl bunnycdn:bucket-name/  # List with size and modification time
+
+# Delete an object (DELETE Object)
+rclone delete bunnycdn:bucket-name/path/to/object
+
+# Delete a directory
+rclone purge bunnycdn:bucket-name/path/to/directory/
+
+# Copy object within bucket (COPY Object)
+rclone copy bunnycdn:bucket-name/source/object bunnycdn:bucket-name/destination/
+
+# Get object info (HEAD Object)
+rclone lsl bunnycdn:bucket-name/path/to/object
 
 # Sync a directory
 rclone sync ./local-dir bunnycdn:bucket-name/remote-dir/
+
+# Move objects
+rclone move /path/to/local/file bunnycdn:bucket-name/destination/
 ```
+
+## Supported S3 operations
+
+Bunny Storage provides comprehensive S3 API compatibility for all your storage needs.
+
+### Object operations
+
+- **PUT Object**: Create and update objects
+- **GET Object**: Read objects (range requests supported)
+- **DELETE Object**: Delete objects (single and batch operations)
+- **COPY Object**: Copy objects between locations
+- **HEAD Object**: Get object metadata
+
+### Directory listing
+
+- **LIST Objects**: v1 and v2 API versions supported
+- List with prefix filtering
+- Paginated results
+- Directory-style navigation
+- Common prefixes support
+
+### Multipart upload operations
+
+Bunny Storage provides full support for S3 multipart uploads, enabling efficient upload of large objects. Recommended for objects over 100MB.
+
+| API Name                                                                                                         | Feature                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ✅ [`CreateMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html)     | ✅ Multipart session creation<br />✅ Returns UploadId<br />✅ System Metadata:<br />✅ Content-Type (with automatic detection from file extension)<br />✅ Session expiry (10 days)<br />✅ Content-Type stored in session for final object<br />✅ Automatic replication session creation<br />❌ Storage class selection<br />❌ Cache-Control, Content-Disposition, etc.<br />❌ SSE/SSE-C encryption<br />❌ Object tagging<br />❌ Object locking<br />❌ ACL headers |
+| ✅ [`UploadPart`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html)                           | ✅ Part upload (up to 10,000 parts)<br />✅ Returns ETag (part checksum)<br />✅ Automatic replication of parts<br />❌ Content-MD5 validation<br />❌ SSE/SSE-C encryption                                                                                                                                                                                                                                                                                                 |
+| ✅ [`UploadPartCopy`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html)                   | ✅ Copy part from existing object<br />✅ Range support (x-amz-copy-source-range)<br />❌ Conditional copy operations<br />❌ SSE-C encryption                                                                                                                                                                                                                                                                                                                              |
+| ✅ [`ListParts`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html)                             | ✅ Query Parameters:<br />✅ max-parts (default 1000)<br />&nbsp;✅ part-number-marker<br />✅ Returns part ETag and size<br />✅ Pagination support<br />✅ IsTruncated flag                                                                                                                                                                                                                                                                                               |
+| ✅ [`CompleteMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html) | ✅ Finalizes multipart upload<br />✅ Validates all parts present<br />✅ Validates part ETags<br />✅ Creates final object with combined checksum<br />✅ Final checksum format: `MD5(part1+part2+...)-{partCount}`<br />✅ Applies Content-Type from session<br />✅ Automatic replication of completed object<br />✅ Cleanup of part files<br />✅ Returns ETag, Location, Bucket, Key<br />❌ Checksums in response                                                    |
+| ✅ [`AbortMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html)       | ✅ Cancels multipart upload<br />✅ Deletes all uploaded parts<br />✅ Removes session from database<br />✅ Cleanup of disk storage                                                                                                                                                                                                                                                                                                                                        |
+| ✅ [`ListMultipartUploads`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html)       | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ key-marker<br />✅ upload-id-marker<br />✅ max-uploads (default 1000)<br />✅ Pagination support<br />✅ Returns UploadId, Key, Initiated date                                                                                                                                                                                                                                                               |
+
+### S3 API compatibility matrix
+
+Below is a detailed list of implemented object-level operations with their supported features:
+
+| API Name                                                                                     | Feature                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ✅ [`HeadObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html)       | ✅ Basic metadata retrieval<br />✅ Content-Type header<br />✅ Content-Length header<br />✅ Last-Modified header<br />❌ ETag<br />❌ Conditional Operations (If-Match, If-Modified-Since, etc.)<br />❌ Range queries<br />❌ SSE-C encryption headers                                                                                                                                                                                                                                                                                   |
+| ✅ [`GetObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)         | ✅ Full object download<br />✅ Content-Type header<br />✅ Content-Length header<br />✅ Range requests (byte ranges)<br />✅ Multipart object download<br />❌ Conditional Operations (If-Match, If-Modified-Since, etc.)<br />❌ SSE-C encryption<br />❌ Versioning support                                                                                                                                                                                                                                                             |
+| ✅ [`PutObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)         | ✅ Object upload<br />✅ System Metadata:<br />✅ Content-Type (with automatic detection)<br />✅ Content-Length<br />✅ Checksum validation:<br />✅ x-amz-checksum-sha256 (Base64 encoded)<br />✅ Automatic replication to configured zones<br />❌ Storage Class selection<br />❌ Cache-Control, Content-Disposition, Content-Encoding<br />❌ Expires, Content-Language<br />❌ SSE encryption<br />❌ SSE-C encryption<br />❌ Object tagging (x-amz-tagging)<br />❌ Object locking<br />❌ ACL headers (x-amz-acl, x-amz-grant-\*) |
+| ✅ [`DeleteObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html)   | ✅ Single object deletion<br />❌ Multi-factor authentication<br />❌ Object Locking<br />❌ Request Payer                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ✅ [`CopyObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html)       | ✅ Object copy within same storage zone<br />✅ LastModified in response<br />✅ ChecksumSHA256 in response (Base64 encoded)<br />✅ Content-Type preservation<br />✅ Source object checksum validation<br />❌ ETag in response<br />❌ Cross-zone copying<br />❌ Metadata directive (x-amz-metadata-directive)<br />❌ Conditional copy operations<br />❌ Storage class selection<br />❌ SSE/SSE-C encryption<br />❌ Tagging                                                                                                         |
+| ✅ [`ListObjects`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjects.html)     | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ max-keys (default 1000)<br />✅ marker (pagination)                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ✅ [`ListObjectsV2`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html) | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ max-keys<br />✅ continuation-token<br />✅ start-after<br />✅ Common prefix support<br />❌ fetch-owner                                                                                                                                                                                                                                                                                                                                                                     |
+
+### Unsupported operations
+
+<Accordion title="View unsupported S3 operations">
+  The following S3 operations are not currently supported:
+
+| API Name                                                                                               | Feature                             |
+| ------------------------------------------------------------------------------------------------------ | ----------------------------------- |
+| ❌ [GetObjectAcl](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html)               | ❌ ACLs not supported               |
+| ❌ [PutObjectAcl](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectAcl.html)               | ❌ ACLs not supported               |
+| ❌ [GetObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectTagging.html)       | ❌ Object tagging not supported     |
+| ❌ [PutObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html)       | ❌ Object tagging not supported     |
+| ❌ [DeleteObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html) | ❌ Object tagging not supported     |
+| ❌ [GetObjectAttributes](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAttributes.html) | ❌ Not implemented                  |
+| ❌ [GetObjectLegalHold](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLegalHold.html)   | ❌ Object locking not supported     |
+| ❌ [PutObjectLegalHold](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectLegalHold.html)   | ❌ Object locking not supported     |
+| ❌ [GetObjectRetention](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectRetention.html)   | ❌ Object retention not supported   |
+| ❌ [PutObjectRetention](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectRetention.html)   | ❌ Object retention not supported   |
+| ❌ [SelectObjectContent](https://docs.aws.amazon.com/AmazonS3/latest/API/API_SelectObjectContent.html) | ❌ S3 Select not supported          |
+| ❌ [RestoreObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_RestoreObject.html)             | ❌ Glacier operations not supported |
+| ❌ [DeleteObjects](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjects.html)             | ❌ Batch delete not supported       |
+
+</Accordion>
+
+## Limits
+
+Be aware of the following limitations when using S3-compatible storage:
+
+### Regional availability
+
+S3-compatible storage zones support automatic multi-region replication. All operations including uploads, deletes, and multipart uploads are automatically replicated to your configured replication regions.
+
+**S3 compatibility is currently only available in the following regions:**
+
+- Frankfurt (de)
+- New York (ny)
+- Singapore (sg)
+
+Additional regions will be added in the future.
+
+### Reduced replication points
+
+Enabling S3 compatibility reduces the number of available replication points:
+
+| Storage Tier | HTTP API/FTP     | S3-compatible |
+| ------------ | ---------------- | ------------- |
+| Standard     | Up to 9 regions  | 4 regions     |
+| Edge (SSD)   | Up to 15 regions | 4 regions     |
+
+<Warning>
+  S3 compatibility cannot be changed after storage zone creation.
+</Warning>
+
+### Known limitations
+
+The following S3 features are not currently supported:
+
+- **Pre-signed URLs**: Temporary access links for time-limited object access
+- **CORS Configuration**: Cross-Origin Resource Sharing settings (must be handled at the CDN level)
+- **Versioning**: Object versioning is not supported
+- **ACLs**: Access Control Lists are not supported
+- **Server-Side Encryption**: SSE/SSE-C encryption is not currently supported
+- **Object Tagging**: Object and bucket tagging is not supported
+- **Lifecycle Policies**: Automatic lifecycle transitions are not supported
+- **Conditional Requests**: If-Match, If-Modified-Since headers not yet supported for GET/HEAD
+- **Multipart Limits**: Maximum 10,000 parts per upload
+- **Multipart Session Expiry**: Sessions expire after 10 days
+
+## Error Codes
+
+Bunny Storage returns standard S3 error codes:
+
+| Error Code           | HTTP Status | Description                                        |
+| -------------------- | ----------- | -------------------------------------------------- |
+| `NoSuchKey`          | 404         | The specified key does not exist                   |
+| `NoSuchBucket`       | 404         | The specified bucket (storage zone) does not exist |
+| `InvalidRequest`     | 400         | Invalid request parameters or headers              |
+| `InternalError`      | 500         | Internal server error                              |
+| `ServiceUnavailable` | 503         | Service temporarily unavailable                    |
+
+## Best Practices
+
+1. **Use ListObjectsV2** instead of ListObjects for better performance and features
+2. **Implement retry logic** for transient failures
+3. **Use multipart uploads** for objects larger than 100MB
+4. **Include Content-Type headers** when uploading, or rely on automatic detection
+5. **Handle pagination properly** when listing objects or parts (max 1000 per request)
+6. **Monitor multipart sessions** and abort abandoned uploads to free storage
