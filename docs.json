@@ -332,6 +332,9 @@
               {
                 "group": "Usage",
                 "pages": [
+                  "storage/dashboard",
+                  "storage/s3",
+                  "storage/http",
                   {
                     "group": "SDKs",
                     "pages": [
@@ -341,10 +344,7 @@
                       "storage/java-sdk"
                     ]
                   },
-                  "storage/http-api",
-                  "storage/ftp",
-                  "storage/s3-api",
-                  "storage/dashboard"
+                  "storage/ftp"
                 ]
               },
               {
@@ -858,6 +858,32 @@
     {
       "source": "/docs/formats",
       "destination": "/optimizer/dynamic-images/formats",
+      "permanent": true
+    },
+
+    {
+      "source": "/docs/edge-storage-overview",
+      "destination": "/storage",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-storage-ftp",
+      "destination": "/storage/ftp",
+      "permanent": true
+    },
+    {
+      "source": "/reference/edge-storage-api-limits",
+      "destination": "/storage/limits",
+      "permanent": true
+    },
+    {
+      "source": "/reference/api-limits",
+      "destination": "/storage/limits",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storage-api",
+      "destination": "/storage/http",
       "permanent": true
     }
   ]
