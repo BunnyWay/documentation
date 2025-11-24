@@ -244,7 +244,9 @@ Be aware of the following limitations when using S3-compatible storage:
 
 ### Regional availability
 
-S3 compatibility is currently only available in the following regions:
+S3-compatible storage zones support automatic multi-region replication. All operations including uploads, deletes, and multipart uploads are automatically replicated to your configured replication regions.
+
+**S3 compatibility is currently only available in the following regions:**
 
 - Frankfurt (de)
 - New York (ny)
@@ -279,12 +281,6 @@ The following S3 features are not currently supported:
 - **Conditional Requests**: If-Match, If-Modified-Since headers not yet supported for GET/HEAD
 - **Multipart Limits**: Maximum 10,000 parts per upload
 - **Multipart Session Expiry**: Sessions expire after 10 days
-
-## Replication
-
-S3-compatible storage zones support automatic multi-region replication. All operations including uploads, deletes, and multipart uploads are automatically replicated to your configured replication regions.
-
-For detailed information about configuring replication regions, available regions by tier, and performance benefits, see [Replication](/storage/replication).
 
 ## Error Codes
 
