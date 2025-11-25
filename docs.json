@@ -330,7 +330,7 @@
                 "pages": ["storage/storage-tiers", "storage/replication"]
               },
               {
-                "group": "Object Management",
+                "group": "Manage Files & Objects",
                 "pages": [
                   "storage/dashboard",
                   "storage/s3",

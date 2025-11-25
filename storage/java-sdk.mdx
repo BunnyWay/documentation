@@ -1,25 +1,277 @@
 ---
 title: Java SDK
+sidebarTitle: Java
 description: Official Java SDK for Bunny Storage
 ---
 
-The official Java SDK provides a type-safe way to interact with Bunny Storage in your Java applications.
+The official Java SDK provides a type-safe way to interact with Bunny Storage in your Java applications. Requires Java 8+.
 
 ## Installation
 
-Add to your `pom.xml`:
+Clone the [GitHub repository](https://github.com/BunnyWay/BunnyCDN.Java.Storage) and build from source.
 
-```xml
-<dependency>
-  <groupId>net.bunny</groupId>
-  <artifactId>storage</artifactId>
-  <version>1.0.0</version>
-</dependency>
-```
+The SDK uses Jackson for JSON parsing. Add Jackson `Core/Databind/Annotations` as dependencies to your project.
 
 ## Quickstart
 
-For detailed usage examples and documentation, see the [Java Storage Library on GitHub](https://github.com/BunnyWay/BunnyCDN.Java.Storage).
+### Connect to your storage zone
+
+```java
+import BCDNStorageAPI.BCDNStorage;
+
+// Default region (Falkenstein)
+BCDNStorage client = new BCDNStorage("your-storage-zone-name", "your-access-key");
+
+// With specific region
+BCDNStorage client = new BCDNStorage("your-storage-zone-name", "your-access-key", "ny");
+```
+
+**Available regions:**
+
+| Region Code | Location         | City                  |
+| ----------- | ---------------- | --------------------- |
+| `de`        | Frankfurt, DE    | Falkenstein (default) |
+| `uk`        | London, UK       | London                |
+| `ny`        | New York, US     | New York              |
+| `la`        | Los Angeles, US  | Los Angeles           |
+| `sg`        | Singapore, SG    | Singapore             |
+| `se`        | Stockholm, SE    | Stockholm             |
+| `br`        | Sao Paulo, BR    | Sao Paulo             |
+| `jh`        | Johannesburg, ZA | Johannesburg          |
+| `syd`       | Sydney, AU       | Sydney                |
+
+### List files
+
+```java
+import BCDNStorageAPI.BCDNObject;
+
+BCDNObject[] files = client.getStorageObjects("remote/path/");
+
+for (BCDNObject file : files) {
+    System.out.println(file.getObjectName() + " - " + file.getLength() + " bytes");
+}
+```
+
+Returns an array of `BCDNObject` objects.
+
+**BCDNObject properties:**
+
+- `getGUID()` - Unique identifier
+- `getObjectName()` - File name
+- `getPath()` - Directory path
+- `getLength()` - File size in bytes
+- `getChecksum()` - File checksum
+- `getDateCreated()` - Creation date
+- `getLastChanged()` - Last modification date
+- `getIsDirectory()` - Whether it's a directory
+- `getServerID()` - Storage server ID
+- `getUserID()` - BunnyCDN user ID
+- `getStorageZoneName()` - Storage zone name
+- `getStorageZoneID()` - Storage zone ID
+- `getReplicatedZones()` - Replication regions
+
+### Upload a file
+
+```java
+client.uploadObject("/path/to/local/file.png", "remote/path/file.png");
+```
+
+### Upload a folder
+
+```java
+// Upload entire folder to storage zone root
+client.uploadFolder("/path/to/local/folder/", "/");
+
+// Upload to specific remote path
+client.uploadFolder("/path/to/local/folder/", "uploads/");
+```
+
+<Note>Empty directories will not be uploaded.</Note>
+
+### Download a file
+
+```java
+client.downloadObject("remote/path/file.png", "/path/to/local/file.png");
+```
+
+### Delete files
+
+```java
+// Delete a file
+client.deleteObject("remote/path/file.png");
+
+// Delete a folder
+client.deleteObject("remote/path/folder/");
+```
+
+<Note>
+  Delete operations are irreversible and will succeed regardless of whether the
+  file exists.
+</Note>
+
+## Examples
+
+### Basic usage
+
+```java
+import BCDNStorageAPI.BCDNStorage;
+import BCDNStorageAPI.BCDNObject;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            BCDNStorage client = new BCDNStorage(
+                System.getenv("STORAGE_ZONE"),
+                System.getenv("STORAGE_ACCESS_KEY"),
+                "de"
+            );
+
+            // List all files in root
+            BCDNObject[] files = client.getStorageObjects("/");
+
+            for (BCDNObject file : files) {
+                if (file.getIsDirectory()) {
+                    System.out.println("Folder: " + file.getObjectName());
+                } else {
+                    System.out.println("File: " + file.getObjectName());
+                }
+                System.out.println("- Size: " + file.getLength() + " bytes");
+                System.out.println("- Last Modified: " + file.getLastChanged());
+                System.out.println();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Upload and download
+
+```java
+import BCDNStorageAPI.BCDNStorage;
+
+public class FileOperations {
+    public static void main(String[] args) {
+        try {
+            BCDNStorage client = new BCDNStorage(
+                "my-storage-zone",
+                "my-access-key",
+                "de"
+            );
+
+            // Upload a file
+            client.uploadObject("./local/image.png", "uploads/image.png");
+            System.out.println("File uploaded successfully!");
+
+            // Download the file
+            client.downloadObject("uploads/image.png", "./downloads/image.png");
+            System.out.println("File downloaded successfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Batch upload folder
+
+```java
+import BCDNStorageAPI.BCDNStorage;
+
+public class BatchUpload {
+    public static void main(String[] args) {
+        try {
+            BCDNStorage client = new BCDNStorage(
+                "my-storage-zone",
+                "my-access-key",
+                "de"
+            );
+
+            // Upload entire assets folder
+            client.uploadFolder("./assets/", "static/assets/");
+            System.out.println("Folder uploaded successfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### List and delete files
+
+```java
+import BCDNStorageAPI.BCDNStorage;
+import BCDNStorageAPI.BCDNObject;
+
+public class CleanupOldFiles {
+    public static void main(String[] args) {
+        try {
+            BCDNStorage client = new BCDNStorage(
+                "my-storage-zone",
+                "my-access-key",
+                "de"
+            );
+
+            // List all files
+            BCDNObject[] files = client.getStorageObjects("uploads/");
+
+            // Delete each file
+            for (BCDNObject file : files) {
+                if (!file.getIsDirectory()) {
+                    String filePath = "uploads/" + file.getObjectName();
+                    client.deleteObject(filePath);
+                    System.out.println("Deleted: " + file.getObjectName());
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Spring Boot integration
+
+```java
+import BCDNStorageAPI.BCDNStorage;
+import BCDNStorageAPI.BCDNObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BunnyStorageService {
+
+    private final BCDNStorage client;
+
+    public BunnyStorageService(
+        @Value("${bunny.storage.zone}") String storageZone,
+        @Value("${bunny.storage.access-key}") String accessKey,
+        @Value("${bunny.storage.region:de}") String region
+    ) {
+        this.client = new BCDNStorage(storageZone, accessKey, region);
+    }
+
+    public void upload(String localPath, String remotePath) throws Exception {
+        client.uploadObject(localPath, remotePath);
+    }
+
+    public void download(String remotePath, String localPath) throws Exception {
+        client.downloadObject(remotePath, localPath);
+    }
+
+    public BCDNObject[] list(String path) throws Exception {
+        return client.getStorageObjects(path);
+    }
+
+    public void delete(String path) throws Exception {
+        client.deleteObject(path);
+    }
+}
+```
 
 ## Resources
 
