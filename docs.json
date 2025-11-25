@@ -423,10 +423,18 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Getting Started",
+                "group": "Bunny Magic Containers",
                 "pages": [
                   "magic-containers/index",
                   "magic-containers/quickstart",
+                  {
+                    "group": "Use Cases",
+                    "pages": [
+                      "magic-containers/gaming",
+                      "magic-containers/ai-training",
+                      "magic-containers/image-optimizer"
+                    ]
+                  },
                   "magic-containers/pricing"
                 ]
               },
@@ -455,7 +463,7 @@
                 ]
               },
               {
-                "group": "Monitoring & Logging",
+                "group": "Observability",
                 "pages": [
                   "magic-containers/monitoring",
                   "magic-containers/logs",
@@ -474,19 +482,11 @@
                 ]
               },
               {
-                "group": "Use Cases",
-                "pages": [
-                  "magic-containers/use-cases",
-                  "magic-containers/gaming",
-                  "magic-containers/ai-training",
-                  "magic-containers/image-optimizer"
-                ]
-              },
-              {
                 "group": "Reference",
                 "pages": [
                   "magic-containers/limits",
-                  "magic-containers/troubleshooting"
+                  "magic-containers/troubleshooting",
+                  "magic-containers/faqs"
                 ]
               }
             ]
