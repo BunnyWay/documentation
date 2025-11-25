@@ -423,51 +423,70 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Magic Containers",
+                "group": "Getting Started",
                 "pages": [
-                  "docs/magic-containers-overview",
-                  "docs/magic-containers-getting-started",
-                  {
-                    "group": "Tutorials",
-                    "pages": [
-                      "docs/magic-containers-tutorials",
-                      "docs/magic-containers-how-to-deploy-your-app",
-                      "docs/magic-containers-undeploying-your-app",
-                      "docs/magic-containers-how-to-define-health-checks",
-                      "docs/magic-containers-how-to-configure-your-app-using-environment-variables",
-                      "docs/magic-containers-how-to-configure-advanced-features",
-                      "docs/magic-containers-how-to-delete-your-app",
-                      "docs/magic-containers-how-to-monitor-app-activity-and-use",
-                      "docs/magic-containers-how-to-update-an-existing-app",
-                      "docs/magic-containers-how-to-edit-app-configuration",
-                      "docs/magic-containers-how-to-configure-private-container-registry-integration",
-                      "docs/magic-containers-how-to-expose-your-app-to-the-internet"
-                    ]
-                  },
-                  "docs/magic-containers-logs",
-                  "docs/magic-containers-global-deployment",
-                  "docs/magic-containers-integrating-containers",
-                  "docs/magic-containers-autoscaling",
-                  "docs/magic-containers-region-provisioning-and-latency-optimization",
-                  "docs/magic-containers-health-checks-and-monitoring",
-                  "docs/magic-containers-sandboxing-containers",
-                  "docs/magic-containers-app-metadata",
-                  "docs/magic-containters-rolling-update-process",
-                  "docs/magic-containers-troubleshooting-application",
-                  "docs/magic-containers-github-action",
-                  "docs/magic-containers-list-of-nodes-to-whitelist",
-                  "docs/magic-containers-log-forwarding",
-                  {
-                    "group": "Use cases",
-                    "pages": [
-                      "docs/magic-containers-use-cases",
-                      "docs/magic-containers-gaming-as-a-service",
-                      "docs/magic-containers-ai-training-and-inference-with-magic-containers",
-                      "docs/magic-containers-image-optimizer"
-                    ]
-                  },
-                  "docs/magic-containers-limits",
-                  "docs/magic-containers-pricing"
+                  "magic-containers/index",
+                  "magic-containers/quickstart",
+                  "magic-containers/pricing"
+                ]
+              },
+              {
+                "group": "Deployment",
+                "pages": [
+                  "magic-containers/deploy",
+                  "magic-containers/github-action",
+                  "magic-containers/private-registry",
+                  "magic-containers/global-deployment",
+                  "magic-containers/regions",
+                  "magic-containers/node-whitelist"
+                ]
+              },
+              {
+                "group": "Managing Apps",
+                "pages": [
+                  "magic-containers/update-app",
+                  "magic-containers/rolling-updates",
+                  "magic-containers/edit-configuration",
+                  "magic-containers/environment-variables",
+                  "magic-containers/advanced-features",
+                  "magic-containers/expose-app",
+                  "magic-containers/undeploy",
+                  "magic-containers/delete-app"
+                ]
+              },
+              {
+                "group": "Monitoring & Logging",
+                "pages": [
+                  "magic-containers/monitoring",
+                  "magic-containers/logs",
+                  "magic-containers/log-forwarding",
+                  "magic-containers/define-health-checks",
+                  "magic-containers/health-checks"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "magic-containers/autoscaling",
+                  "magic-containers/sandboxing",
+                  "magic-containers/integrating",
+                  "magic-containers/app-metadata"
+                ]
+              },
+              {
+                "group": "Use Cases",
+                "pages": [
+                  "magic-containers/use-cases",
+                  "magic-containers/gaming",
+                  "magic-containers/ai-training",
+                  "magic-containers/image-optimizer"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "magic-containers/limits",
+                  "magic-containers/troubleshooting"
                 ]
               }
             ]
@@ -893,6 +912,176 @@
     {
       "source": "/reference/storage-api",
       "destination": "/storage/http",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-overview",
+      "destination": "/magic-containers",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-getting-started",
+      "destination": "/magic-containers/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-pricing",
+      "destination": "/magic-containers/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-deploy-your-app",
+      "destination": "/magic-containers/deploy",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-github-action",
+      "destination": "/magic-containers/github-action",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-configure-private-container-registry-integration",
+      "destination": "/magic-containers/private-registry",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-global-deployment",
+      "destination": "/magic-containers/global-deployment",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-region-provisioning-and-latency-optimization",
+      "destination": "/magic-containers/regions",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-list-of-nodes-to-whitelist",
+      "destination": "/magic-containers/node-whitelist",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-update-an-existing-app",
+      "destination": "/magic-containers/update-app",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containters-rolling-update-process",
+      "destination": "/magic-containers/rolling-updates",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-edit-app-configuration",
+      "destination": "/magic-containers/edit-configuration",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-configure-your-app-using-environment-variables",
+      "destination": "/magic-containers/environment-variables",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-configure-advanced-features",
+      "destination": "/magic-containers/advanced-features",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-expose-your-app-to-the-internet",
+      "destination": "/magic-containers/expose-app",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-undeploying-your-app",
+      "destination": "/magic-containers/undeploy",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-delete-your-app",
+      "destination": "/magic-containers/delete-app",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-monitor-app-activity-and-use",
+      "destination": "/magic-containers/monitoring",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-logs",
+      "destination": "/magic-containers/logs",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-log-forwarding",
+      "destination": "/magic-containers/log-forwarding",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-how-to-define-health-checks",
+      "destination": "/magic-containers/define-health-checks",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-health-checks-and-monitoring",
+      "destination": "/magic-containers/health-checks",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-autoscaling",
+      "destination": "/magic-containers/autoscaling",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-sandboxing-containers",
+      "destination": "/magic-containers/sandboxing",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-integrating-containers",
+      "destination": "/magic-containers/integrating",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-app-metadata",
+      "destination": "/magic-containers/app-metadata",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-use-cases",
+      "destination": "/magic-containers/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-gaming-as-a-service",
+      "destination": "/magic-containers/gaming",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-ai-training-and-inference-with-magic-containers",
+      "destination": "/magic-containers/ai-training",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-image-optimizer",
+      "destination": "/magic-containers/image-optimizer",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-tutorials",
+      "destination": "/magic-containers/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/tutorials",
+      "destination": "/magic-containers/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-limits",
+      "destination": "/magic-containers/limits",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-troubleshooting-application",
+      "destination": "/magic-containers/troubleshooting",
       "permanent": true
     }
   ]
