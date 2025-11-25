@@ -7,13 +7,13 @@ description: "bunny.net's platform automatically injects specific metadata into 
 
 The Magic Containers feature automatically injects metadata into each container. The following Environment Variables are configured:
 
-- **BUNNYNET_MC_APPID**: Unique identifier for the application.
-- **BUNNYNET_MC_PODID**: Identifier for the pod within which the container runs.
-- **BUNNYNET_MC_REGION**: Geographic location data where the container is deployed.
-- **BUNNYNET_MC_PUBLIC_ENDPOINTS**: Publicly accessible endpoints of the pod, which are essential for inter-service communication.
-- **BUNNYNET_MC_PODIP**: Internal IP address of the host, useful for intra-network communications within the cloud environment.
-- **BUNNYNET_MC_HOSTIP**: IP address of the host machine on which the container is running.
-- **BUNNYNET_MC_ZONE**: A more specific designation within the region. These environment variables are injected into the containers, providing dynamic data that can be accessed programmatically within the application. The simplicity of access to this data is facilitated through environment variables, which can be easily queried by the application running within the container.
+- `BUNNYNET_MC_APPID`: Unique identifier for the application.
+- `BUNNYNET_MC_PODID`: Identifier for the pod within which the container runs.
+- `BUNNYNET_MC_REGION`: Geographic location data where the container is deployed.
+- `BUNNYNET_MC_PUBLIC_ENDPOINTS`: Publicly accessible endpoints of the pod, which are essential for inter-service communication.
+- `BUNNYNET_MC_PODIP`: Internal IP address of the host, useful for intra-network communications within the cloud environment.
+- `BUNNYNET_MC_HOSTIP`: IP address of the host machine on which the container is running.
+- `BUNNYNET_MC_ZONE`: A more specific designation within the region. These environment variables are injected into the containers, providing dynamic data that can be accessed programmatically within the application. The simplicity of access to this data is facilitated through environment variables, which can be easily queried by the application running within the container.
 
 # Benefits of app metadata
 
@@ -23,14 +23,3 @@ App metadata carries several practical benefits, making it an indispensable feat
 - **Dynamic Configuration**: Metadata like region or public endpoints can be used by the application to adjust its behavior or configuration dynamically. This is particularly useful in geo-distributed deployments where applications need to serve region-specific content or adhere to region-specific regulations.
 - **Service Discovery**: For microservices architectures, public endpoints metadata allows services to register themselves or discover other services dynamically, facilitating smoother inter-service communication and scalability.
 - **Operational Efficiency**: Knowing the internal IP and host details can help in network planning and management, ensuring that resources are optimally utilized and performance bottlenecks are minimized.
-
----
-
-[Sandboxing containers](/docs/magic-containers-sandboxing-containers)
-
-[Rolling update process](/docs/magic-containters-rolling-update-process)
-
-- [Table of Contents](#)
-
-- - [What is app metadata?](#what-is-app-metadata)
-  - [Benefits of app metadata](#benefits-of-app-metadata)

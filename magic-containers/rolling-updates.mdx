@@ -37,15 +37,3 @@ Imagine you have an application deployed in 3 regions, each with 10 pods. If you
 # Handling issues during a rolling update
 
 If the Rolling Update encounters problems, such as deploying a broken image, it handles the situation by detecting any new pod that fails to reach a running state within ten minutes and considering it unhealthy. In such cases, the Rolling Update is terminated. All new pods with the faulty configuration are deleted, and old pods are restored to maintain application stability. The Rolling Update then restarts automatically, using the latest configuration. If the issue is fixed, such as by providing a healthy image, the update will proceed successfully.
-
----
-
-[App metadata](/docs/magic-containers-app-metadata)
-
-[Troubleshooting application](/docs/magic-containers-troubleshooting-application)
-
-- [Table of Contents](#)
-
-- - [How does the rolling update work?](#how-does-the-rolling-update-work)
-  - [Practical example](#practical-example)
-  - [Handling issues during a rolling update](#handling-issues-during-a-rolling-update)
