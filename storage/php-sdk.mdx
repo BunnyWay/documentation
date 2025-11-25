@@ -65,26 +65,33 @@ Returns an array of `FileInfo` objects.
 
 ### Upload a file
 
-**Upload from local file:**
+<Tabs>
+<Tab title="Single file">
 
 ```php
 $client->upload('/path/to/local/file.txt', 'remote/path/hello-world.txt');
 ```
 
-**Upload without checksum verification:**
+</Tab>
+
+<Tab title="Without checksum">
 
 ```php
 $client->upload('/path/to/local/file.txt', 'remote/path/hello-world.txt', false);
 ```
 
-**Async upload:**
+</Tab>
+
+<Tab title="Async">
 
 ```php
 $promise = $client->uploadAsync('/path/to/local/file.txt', 'remote/path/hello-world.txt');
 // Returns a GuzzleHttp\Promise\PromiseInterface
 ```
 
-**Upload string content:**
+</Tab>
+
+<Tab title="String content">
 
 ```php
 $content = 'Hello, world!';
@@ -94,20 +101,68 @@ $client->putContents('hello-world.txt', $content);
 $client->putContents('hello-world.txt', $content, false);
 ```
 
+</Tab>
+</Tabs>
+
+### Upload multiple files
+
+<Tabs>
+<Tab title="Batch (sequential)">
+
+```php
+$files = glob('./uploads/*');
+
+foreach ($files as $file) {
+    if (is_file($file)) {
+        $client->upload($file, 'batch/' . basename($file));
+    }
+}
+```
+
+</Tab>
+
+<Tab title="Async (concurrent)">
+
+```php
+use GuzzleHttp\Promise\Utils;
+
+$files = [
+    '/path/to/file1.jpg' => 'uploads/file1.jpg',
+    '/path/to/file2.jpg' => 'uploads/file2.jpg',
+    '/path/to/file3.jpg' => 'uploads/file3.jpg',
+];
+
+$promises = [];
+foreach ($files as $localPath => $remotePath) {
+    $promises[$remotePath] = $client->uploadAsync($localPath, $remotePath);
+}
+
+$results = Utils::settle($promises)->wait();
+```
+
+</Tab>
+</Tabs>
+
 ### Download a file
 
-**Download to local file:**
+<Tabs>
+<Tab title="To local file">
 
 ```php
 $client->download('remote/path/hello-world.txt', '/path/to/local/file.txt');
 ```
 
-**Get file contents as string:**
+</Tab>
+
+<Tab title="As string">
 
 ```php
 $content = $client->getContents('hello-world.txt');
 echo $content; // Hello, world!
 ```
+
+</Tab>
+</Tabs>
 
 ### Get file info
 
@@ -127,17 +182,16 @@ if ($client->exists('remote/path/hello-world.txt')) {
 }
 ```
 
-### Delete files
+### Delete a file
 
 ```php
-// Delete a file
 $client->delete('remote/path/hello-world.txt');
 
 // Delete a directory
 $client->delete('remote/path/folder/');
 ```
 
-**Delete multiple files:**
+### Delete multiple files
 
 ```php
 $errors = $client->deleteMultiple(['file1.txt', 'file2.txt', 'non-existing.txt']);
@@ -148,205 +202,21 @@ $errors = $client->deleteMultiple(['file1.txt', 'file2.txt', 'non-existing.txt']
 
 ## Examples
 
-### Basic usage
+Explore complete working examples in the GitHub repository:
 
-```php
-<?php
-
-require_once 'vendor/autoload.php';
-
-use Bunny\Storage\Client;
-use Bunny\Storage\Region;
-
-$client = new Client(
-    getenv('STORAGE_ACCESS_KEY'),
-    getenv('STORAGE_ZONE'),
-    Region::FALKENSTEIN
-);
-
-// List all files in root
-$files = $client->listFiles('/');
-
-foreach ($files as $file) {
-    echo $file->getName() . ' - ' . $file->getSize() . " bytes\n";
-}
-```
-
-### Laravel integration
-
-```php
-<?php
-
-namespace App\Services;
-
-use Bunny\Storage\Client;
-use Bunny\Storage\Region;
-
-class BunnyStorageService
-{
-    private Client $client;
-
-    public function __construct()
-    {
-        $this->client = new Client(
-            config('services.bunny.access_key'),
-            config('services.bunny.storage_zone'),
-            config('services.bunny.region', Region::FALKENSTEIN)
-        );
-    }
-
-    public function upload(string $localPath, string $remotePath): void
-    {
-        $this->client->upload($localPath, $remotePath);
-    }
-
-    public function download(string $remotePath, string $localPath): void
-    {
-        $this->client->download($remotePath, $localPath);
-    }
-
-    public function list(string $path = '/'): array
-    {
-        return $this->client->listFiles($path);
-    }
-
-    public function delete(string $path): void
-    {
-        $this->client->delete($path);
-    }
-}
-```
-
-### Upload from form submission
-
-```php
-<?php
-
-require_once 'vendor/autoload.php';
-
-use Bunny\Storage\Client;
-use Bunny\Storage\Region;
-
-$client = new Client(
-    getenv('STORAGE_ACCESS_KEY'),
-    getenv('STORAGE_ZONE'),
-    Region::FALKENSTEIN
-);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['upload'])) {
-    $tmpPath = $_FILES['upload']['tmp_name'];
-    $fileName = basename($_FILES['upload']['name']);
-    $remotePath = 'uploads/' . $fileName;
-
-    $client->upload($tmpPath, $remotePath);
-    echo "File uploaded successfully!";
-}
-```
-
-### Batch upload
-
-```php
-<?php
-
-require_once 'vendor/autoload.php';
-
-use Bunny\Storage\Client;
-use Bunny\Storage\Region;
-
-$client = new Client(
-    getenv('STORAGE_ACCESS_KEY'),
-    getenv('STORAGE_ZONE'),
-    Region::FALKENSTEIN
-);
-
-$localDirectory = './uploads';
-$files = glob($localDirectory . '/*');
-
-foreach ($files as $file) {
-    if (is_file($file)) {
-        $fileName = basename($file);
-        $client->upload($file, 'batch/' . $fileName);
-        echo "Uploaded: {$fileName}\n";
-    }
-}
-
-echo "Batch upload completed!";
-```
-
-### Async batch upload
-
-```php
-<?php
-
-require_once 'vendor/autoload.php';
-
-use Bunny\Storage\Client;
-use Bunny\Storage\Region;
-use GuzzleHttp\Promise\Utils;
-
-$client = new Client(
-    getenv('STORAGE_ACCESS_KEY'),
-    getenv('STORAGE_ZONE'),
-    Region::FALKENSTEIN
-);
-
-$files = [
-    '/path/to/file1.jpg' => 'uploads/file1.jpg',
-    '/path/to/file2.jpg' => 'uploads/file2.jpg',
-    '/path/to/file3.jpg' => 'uploads/file3.jpg',
-];
-
-$promises = [];
-foreach ($files as $localPath => $remotePath) {
-    $promises[$remotePath] = $client->uploadAsync($localPath, $remotePath);
-}
-
-// Wait for all uploads to complete
-Utils::unwrap($promises);
-
-echo "All files uploaded!";
-```
-
-### Delete old files
-
-```php
-<?php
-
-require_once 'vendor/autoload.php';
-
-use Bunny\Storage\Client;
-use Bunny\Storage\Region;
-
-$client = new Client(
-    getenv('STORAGE_ACCESS_KEY'),
-    getenv('STORAGE_ZONE'),
-    Region::FALKENSTEIN
-);
-
-$files = $client->listFiles('/');
-$thirtyDaysAgo = new DateTimeImmutable('-30 days');
-
-$toDelete = [];
-foreach ($files as $file) {
-    if (!$file->isDirectory() && $file->getDateModified() < $thirtyDaysAgo) {
-        $toDelete[] = $file->getName();
-    }
-}
-
-if (!empty($toDelete)) {
-    $errors = $client->deleteMultiple($toDelete);
-
-    foreach ($toDelete as $fileName) {
-        if (!isset($errors[$fileName])) {
-            echo "Deleted: {$fileName}\n";
-        }
-    }
-
-    foreach ($errors as $fileName => $error) {
-        echo "Failed to delete {$fileName}: {$error}\n";
-    }
-}
-```
+| Example                                                                                                              | Description                                       |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| [file-upload](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/file-upload)                     | Upload a single file to storage                   |
+| [batch-upload](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/batch-upload)                   | Upload multiple files sequentially                |
+| [async-upload](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/async-upload)                   | Upload multiple files concurrently using promises |
+| [form-upload](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/form-upload)                     | Handle file uploads from HTML forms               |
+| [list-files](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/list-files)                       | List all files in a directory                     |
+| [download-file](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/download-file)                 | Download a file from storage                      |
+| [file-info](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/file-info)                         | Retrieve file metadata                            |
+| [delete-file](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/delete-file)                     | Delete a single file                              |
+| [delete-multiple-files](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/delete-multiple-files) | Delete multiple files in one operation            |
+| [delete-old-files](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/delete-old-files)           | Find and delete files older than a specified age  |
+| [kitchen-sink](https://github.com/BunnyWay/BunnyCDN.PHP.Storage/tree/master/examples/kitchen-sink)                   | Complete UI with upload, list, view, and delete   |
 
 ## Resources
 
