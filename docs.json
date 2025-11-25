@@ -101,31 +101,158 @@
       },
       {
         "product": "CDN",
+        "description": "Global content delivery network",
         "icon": "zap",
         "tabs": [
           {
             "tab": "Documentation",
             "groups": [
               {
-                "group": "CDN",
+                "group": "Bunny CDN",
+                "pages": ["cdn/index", "cdn/quickstart", "cdn/pricing"]
+              },
+              {
+                "group": "CDN Basics",
                 "pages": [
-                  "docs/cdn-logging",
+                  "cdn/custom-hostname",
+                  "cdn/cdn-acceleration",
+                  "cdn/verify-configuration",
+                  "cdn/ssl-setup"
+                ]
+              },
+              {
+                "group": "Caching",
+                "pages": [
+                  "cdn/cache-duration",
+                  "cdn/smart-cache",
+                  "cdn/vary-cache",
+                  "cdn/perma-cache",
+                  "cdn/request-coalescing",
+                  "cdn/query-string-sort",
+                  "cdn/purge-cache"
+                ]
+              },
+              {
+                "group": "Performance",
+                "pages": [
+                  "cdn/performance/index",
+                  "cdn/performance/origin-shield",
+                  "cdn/performance/smart-preloader",
+                  "cdn/performance/routing-filters",
+                  "cdn/performance/video-delivery",
+                  "cdn/performance/network-limits"
+                ]
+              },
+              {
+                "group": "Security",
+                "pages": [
+                  "cdn/security/index",
+                  "cdn/security/hotlink-protection",
+                  "cdn/security/token-authentication",
+                  "cdn/security/token-authentication-advanced",
+                  "cdn/security/token-authentication-basic"
+                ]
+              },
+              {
+                "group": "Edge Rules",
+                "pages": [
+                  "cdn/edge-rules/index",
+                  "cdn/edge-rules/trigger-path",
+                  "cdn/edge-rules/custom-cache-time",
+                  "cdn/edge-rules/redirect-hostname",
+                  "cdn/edge-rules/ip-origin",
+                  "cdn/edge-rules/variable-expansion",
+                  "cdn/edge-rules/ordering"
+                ]
+              },
+              {
+                "group": "Logging",
+                "pages": [
+                  "cdn/logging/index",
+                  "cdn/logging/api",
+                  "cdn/logging/format",
+                  "cdn/logging/permanent-storage",
+                  "cdn/logging/forwarding",
+                  "cdn/logging/origin-errors"
+                ]
+              },
+              {
+                "group": "Integration Guides",
+                "pages": [
                   {
-                    "group": "Logging",
+                    "group": "WordPress",
                     "pages": [
-                      "docs/cdn-logging",
-                      "docs/cdn-logging-api",
-                      "docs/cdn-log-format",
-                      "docs/cdn-permanent-log-storage",
-                      "docs/cdn-log-forwarding"
+                      "cdn/integrations/wordpress",
+                      "cdn/integrations/wordpress-wp-rocket",
+                      "cdn/integrations/wordpress-w3-total-cache"
                     ]
                   },
-                  "docs/cdn-token-authentication",
-                  "docs/cdn-token-authentication-basic",
-                  "docs/edge-rules-variable-expansion",
-                  "docs/edge-rules-ordering",
-                  "docs/cdn-websockets",
-                  "docs/cdn-origin-errors"
+                  {
+                    "group": "CMS Websites",
+                    "pages": [
+                      "cdn/integrations/expressionengine",
+                      "cdn/integrations/typo3",
+                      "cdn/integrations/joomla",
+                      "cdn/integrations/shopware",
+                      "cdn/integrations/drupal",
+                      "cdn/integrations/prestashop",
+                      "cdn/integrations/magento",
+                      "cdn/integrations/discourse"
+                    ]
+                  },
+                  {
+                    "group": "Cloud Storage Providers",
+                    "pages": [
+                      "cdn/integrations/digitalocean-spaces",
+                      "cdn/integrations/backblaze-b2",
+                      "cdn/integrations/azure-storage",
+                      "cdn/integrations/wasabi",
+                      "cdn/integrations/amazon-s3",
+                      "cdn/integrations/ovh-public-cloud"
+                    ]
+                  },
+                  {
+                    "group": "Other Guides",
+                    "pages": [
+                      "cdn/integrations/sign-urls-token-auth",
+                      "cdn/integrations/cloudflare-custom-hostname"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Technical Reference",
+                "pages": [
+                  "cdn/response-codes",
+                  "cdn/status-code-499",
+                  "cdn/cache-headers",
+                  "cdn/perma-cache-structure",
+                  "cdn/mime-types-compression",
+                  "cdn/detect-pop-access",
+                  "cdn/find-pop-routing",
+                  "cdn/standard-vs-volume-tier",
+                  "cdn/cache-hit-rate-stats",
+                  "cdn/useful-tools",
+                  "cdn/custom-404-page",
+                  "cdn/websockets"
+                ]
+              },
+              {
+                "group": "Troubleshooting",
+                "pages": [
+                  "cdn/troubleshooting/acceleration-not-enabled",
+                  "cdn/troubleshooting/turkey-delivery-issues",
+                  "cdn/troubleshooting/unexpected-redirects",
+                  "cdn/troubleshooting/wordpress-static-urls",
+                  "cdn/troubleshooting/cookies-still-sent",
+                  "cdn/troubleshooting/run-traceroute",
+                  "cdn/troubleshooting/still-slow",
+                  "cdn/troubleshooting/301-redirects",
+                  "cdn/troubleshooting/502-504-errors",
+                  "cdn/troubleshooting/low-cache-hit-rate",
+                  "cdn/troubleshooting/lets-encrypt-issues",
+                  "cdn/troubleshooting/wordpress-plugin-conflicts",
+                  "cdn/troubleshooting/video-skip-issues"
                 ]
               }
             ]
@@ -893,6 +1020,61 @@
     {
       "source": "/reference/storage-api",
       "destination": "/storage/http",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-token-authentication",
+      "destination": "/cdn/security/token-authentication-advanced",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-token-authentication-basic",
+      "destination": "/cdn/security/token-authentication-basic",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-rules-variable-expansion",
+      "destination": "/cdn/edge-rules/variable-expansion",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-rules-ordering",
+      "destination": "/cdn/edge-rules/ordering",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-logging",
+      "destination": "/cdn/logging",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-logging-api",
+      "destination": "/cdn/logging/api",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-log-format",
+      "destination": "/cdn/logging/format",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-permanent-log-storage",
+      "destination": "/cdn/logging/permanent-storage",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-log-forwarding",
+      "destination": "/cdn/logging/forwarding",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-origin-errors",
+      "destination": "/cdn/logging/origin-errors",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-websockets",
+      "destination": "/cdn/websockets",
       "permanent": true
     }
   ]

@@ -1,0 +1,44 @@
+---
+title: Introduction
+description: Bunny CDN delivers your content globally through a network of edge locations, reducing latency and improving performance for users worldwide.
+---
+
+Bunny CDN accelerates your websites, applications, and media by caching and delivering content from edge locations closest to your users. With servers spanning six continents, your content reaches audiences faster while reducing load on your origin server.
+
+## Key features
+
+- **Global edge network**: Over 100 points of presence deliver content from the nearest location to each user
+- **Smart caching**: Intelligent cache management with configurable durations, query string handling, and vary headers
+- **Origin Shield**: Protect your origin server by consolidating requests through a single shield location
+- **Edge Rules**: Customize request handling, set headers, rewrite URLs, and implement redirects at the edge
+- **Token authentication**: Secure your content with signed URLs and time-limited access tokens
+- **WebSocket support**: Enable real-time bidirectional communication for interactive applications
+- **Perma-Cache**: Store content permanently at the edge for maximum cache hit rates
+- **Logging and analytics**: Access detailed logs via API, forward to storage, or enable permanent log retention
+
+## How it works
+
+A Pull Zone connects your origin server to the Bunny CDN network. When a user requests content:
+
+1. The request routes to the nearest edge location
+2. If cached, the content serves immediately from the edge
+3. If not cached, the edge fetches from your origin, caches the response, and delivers it
+
+This reduces round-trip time and offloads traffic from your infrastructure.
+
+## Getting started
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/cdn/quickstart">
+    Create your first Pull Zone and start delivering content
+  </Card>
+  <Card title="Custom hostname" icon="globe" href="/cdn/custom-hostname">
+    Configure your own domain for CDN delivery
+  </Card>
+  <Card title="Cache settings" icon="database" href="/cdn/cache-duration">
+    Control how long content stays cached at the edge
+  </Card>
+  <Card title="Security" icon="shield" href="/cdn/security">
+    Protect your content with authentication and access controls
+  </Card>
+</CardGroup>
