@@ -1,0 +1,45 @@
+---
+title: Image Registries
+description: "Connect public or private container registries to Magic Containers."
+---
+
+Magic Containers supports both public and private container registries from Docker Hub and GitHub.
+
+## Public registries
+
+Public Docker Hub and GitHub container registries are already connected to Magic Containers. You can deploy any public image without additional configuration.
+
+## Private registries
+
+To deploy images from private repositories, connect your registry by providing authentication credentials.
+
+<Steps>
+  <Step title="Navigate to Image Registries">
+    In the bunny.net dashboard, go to **Magic Containers** and select **Image Registries**.
+  </Step>
+  <Step title="Add Image Registry">
+    Click **Add Image Registry**.
+
+    <Frame>
+      ![](/images/docs/c1a77dac24aa59142f707b2c46c08b708ff6004183fb465e55c5168b4ea59504-image.png)
+    </Frame>
+  </Step>
+  <Step title="Configure registry credentials">
+    Fill in the following fields:
+
+    <Frame>
+      ![](/images/docs/af3182e32adfc622633b1ed4ab832dd0728f446f0bde5a0c0a20eabc0fd7ed81-image.png)
+    </Frame>
+
+    - **Registry** - Select Docker or GitHub
+    - **Username** - Your username or organization name
+    - **Personal access token** - Your access token with read-only permissions
+  </Step>
+  <Step title="Save">
+    Click **Add Image Registry**.
+  </Step>
+</Steps>
+
+<Info>
+To create a personal access token, see the official [GitHub](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-with-a-personal-access-token-classic) or [Docker](https://docs.docker.com/security/for-developers/access-tokens/#create-an-access-token) documentation.
+</Info>

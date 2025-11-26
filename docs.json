@@ -429,6 +429,7 @@
                   "magic-containers/quickstart",
                   {
                     "group": "Use Cases",
+                    "hidden": true,
                     "pages": [
                       "magic-containers/gaming",
                       "magic-containers/ai-training",
@@ -442,9 +443,8 @@
                 "group": "Deployment",
                 "pages": [
                   "magic-containers/deploy",
-                  "magic-containers/github-action",
-                  "magic-containers/registry",
-                  "magic-containers/global-deployment",
+                  "magic-containers/deploy-with-github-actions",
+                  "magic-containers/image-registries",
                   "magic-containers/regions",
                   "magic-containers/ip-addresses"
                 ]
@@ -453,9 +453,9 @@
                 "group": "Managing Apps",
                 "pages": [
                   "magic-containers/update",
-                  "magic-containers/rolling-updates",
                   "magic-containers/configuration",
                   "magic-containers/environment-variables",
+                  "magic-containers/persistent-volumes",
                   "magic-containers/advanced",
                   "magic-containers/endpoints",
                   "magic-containers/undeploy",
@@ -468,14 +468,14 @@
                   "magic-containers/monitoring",
                   "magic-containers/logs",
                   "magic-containers/log-forwarding",
-                  "magic-containers/health-checks-setup",
-                  "magic-containers/health-checks-overview"
+                  "magic-containers/health-checks"
                 ]
               },
               {
                 "group": "Platform",
                 "pages": [
                   "magic-containers/autoscaling",
+                  "magic-containers/rolling-updates",
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
                   "magic-containers/app-metadata"
@@ -488,6 +488,14 @@
                   "magic-containers/troubleshooting",
                   "magic-containers/faqs"
                 ]
+              }
+            ]
+          },
+          {
+            "tab": "Guides",
+            "groups": [
+              {
+                "pages": ["magic-containers/guides/nextjs"]
               }
             ]
           }
@@ -941,7 +949,7 @@
     },
     {
       "source": "/docs/magic-containers-how-to-configure-private-container-registry-integration",
-      "destination": "/magic-containers/private-registry",
+      "destination": "/magic-containers/image-registries",
       "permanent": true
     },
     {
@@ -1137,6 +1145,26 @@
     {
       "source": "/magic-containers/update-app",
       "destination": "/magic-containers/update",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/github-action",
+      "destination": "/magic-containers/deploy-with-github-actions",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/global-deployment",
+      "destination": "/magic-containers/regions",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/health-checks-setup",
+      "destination": "/magic-containers/health-checks",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/health-checks-overview",
+      "destination": "/magic-containers/health-checks",
       "permanent": true
     }
   ]

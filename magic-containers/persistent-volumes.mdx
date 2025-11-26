@@ -1,0 +1,58 @@
+---
+title: Persistent Volumes
+description: Attach persistent storage to your Magic Containers applications.
+tag: "Beta"
+---
+
+Persistent Volumes provide durable storage that persists across restarts and redeployments. Attach a volume directly to your Magic Containers application for \$0.10 per GB/month to keep your data safe, secure, and accessible as your application scales globally.
+
+- **Auto-scaling** - Volumes automatically scale up with regional pod deployments and detach when scaling down
+- **Encrypted by default** - All persistent data is AES encrypted
+- **Flexible storage** - Each volume can expand up to 100GB
+- **Dedicated volumes** - Each pod generates its own unique blank volume with no data duplication
+- **Resource efficiency** - Containers within the same pod can share the same volume
+
+## Quickstart
+
+<Steps>
+  <Step title="Add volume details">
+    During container setup, add your volume details including the mount path and
+    initial size.
+  </Step>
+  <Step title="Save settings">
+    Select **Update Container** and save your settings.
+  </Step>
+</Steps>
+
+Your application now has scalable persistent volumes attached to each container. Manage your volumes from the dedicated **Volumes** tab.
+
+## Key features
+
+- Maximum volume size of 100GB per volume
+- All volumes are AES encrypted by default
+- Maximum of 2 volumes per application
+- Volumes can only be extended in size, never reduced
+- Detached volumes remain billable until deleted
+- Detached volumes reattach automatically if your app scales up regionally
+- Volumes can be shared between containers on the same pod
+- Mount paths are unique to the application
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Will I still be charged while my volume is detached from the container?">
+    Yes, you will still be charged while the volume exists, even if it's
+    detached from a container.
+  </Accordion>
+  <Accordion title="How do volumes scale down?">
+    The default behavior means the volume will detach when scaling down.
+  </Accordion>
+  <Accordion title="Can I reduce the size of my volume?">
+    No, you cannot reduce the size of your volume. You can only extend it to
+    make it larger.
+  </Accordion>
+</AccordionGroup>
+
+## Pricing
+
+\$0.10 per GB/month, charged based on volume size.

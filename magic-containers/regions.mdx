@@ -1,13 +1,39 @@
 ---
-title: "Regions"
-description: "Autoprovisioning in Magic Containers is a feature that uses reinforcement learning to periodically analyze and adjust the deployment of your app across different data centers or regions. The goal is to optimize the distribution of your app to ensure it is located closer to users, reduce latency, and improve overall performance."
+title: Regions
+description: "Deploy your applications globally across Magic Containers' distributed network of servers."
 ---
 
-# Autoprovisioning process
+Magic Containers provides servers across multiple continents, allowing you to deploy applications close to your users for optimal performance and reduced latency.
 
-Autoprovisioning involves periodic checks of your app's traffic distribution worldwide. Each time it runs, the provisioner assesses the current traffic patterns and determines whether any adjustments are needed for deploying or undeploying instances from data centers. The key steps in the autoprovisioning process include:
+## Available regions
 
-1. **Traffic distribution analysis**: The provisioner analyzes the current traffic distribution of your app globally.
-2. **Optimization Decision**: Based on the traffic distribution, the provisioner decides whether to deploy additional instances in specific regions or undeploy instances where traffic demand is lower.
-3. **Deployment/Undeployment**: The provisioner then takes action, deploying new instances in regions with increased demand or undeploying instances from regions where demand is lower.
-4. **Periodic execution**: Autoprovisioning runs periodically to ensure that your app continuously adapts to changing traffic patterns.
+<AccordionGroup>
+  <Accordion title="North America">
+    - Ashburn - Atlanta - Boston - Chicago - Dallas - Denver - Los Angeles -
+    Miami - New York City - San Jose - Seattle - Toronto
+  </Accordion>
+  <Accordion title="Europe">
+    - Amsterdam - Athens - Bucharest - Copenhagen - Frankfurt - London - Madrid
+    - Milan - Paris - Prague - Stockholm - Vienna - Warsaw - Zagreb
+  </Accordion>
+  <Accordion title="Asia">
+    - Bangkok - Hong Kong - Istanbul - Jakarta - Kuala Lumpur - Manila -
+    Singapore - Tel Aviv - Tokyo
+  </Accordion>
+  <Accordion title="South America">
+    - Bogota - Mexico City - Sao Paulo
+  </Accordion>
+  <Accordion title="Oceania">- Sydney</Accordion>
+  <Accordion title="Africa">- Johannesburg - Lagos</Accordion>
+</AccordionGroup>
+
+## Autoprovisioning
+
+Autoprovisioning uses reinforcement learning to automatically distribute your app across regions based on traffic patterns. The provisioner periodically analyzes your app's traffic and adjusts deployments to ensure optimal performance.
+
+The autoprovisioning process:
+
+1. **Traffic analysis** - The provisioner analyzes your app's global traffic distribution
+2. **Optimization decision** - Based on traffic patterns, it decides whether to deploy or undeploy instances in specific regions
+3. **Deployment** - New instances are deployed in regions with increased demand, or removed from regions with lower demand
+4. **Continuous adaptation** - This process runs periodically to adapt to changing traffic patterns
