@@ -443,23 +443,23 @@
                 "pages": [
                   "magic-containers/deploy",
                   "magic-containers/github-action",
-                  "magic-containers/private-registry",
+                  "magic-containers/registry",
                   "magic-containers/global-deployment",
                   "magic-containers/regions",
-                  "magic-containers/node-whitelist"
+                  "magic-containers/ip-addresses"
                 ]
               },
               {
                 "group": "Managing Apps",
                 "pages": [
-                  "magic-containers/update-app",
+                  "magic-containers/update",
                   "magic-containers/rolling-updates",
-                  "magic-containers/edit-configuration",
+                  "magic-containers/configuration",
                   "magic-containers/environment-variables",
-                  "magic-containers/advanced-features",
-                  "magic-containers/expose-app",
+                  "magic-containers/advanced",
+                  "magic-containers/endpoints",
                   "magic-containers/undeploy",
-                  "magic-containers/delete-app"
+                  "magic-containers/delete"
                 ]
               },
               {
@@ -468,16 +468,16 @@
                   "magic-containers/monitoring",
                   "magic-containers/logs",
                   "magic-containers/log-forwarding",
-                  "magic-containers/define-health-checks",
-                  "magic-containers/health-checks"
+                  "magic-containers/health-checks-setup",
+                  "magic-containers/health-checks-overview"
                 ]
               },
               {
                 "group": "Platform",
                 "pages": [
                   "magic-containers/autoscaling",
-                  "magic-containers/sandboxing",
-                  "magic-containers/integrating",
+                  "magic-containers/sandbox",
+                  "magic-containers/multi-container",
                   "magic-containers/app-metadata"
                 ]
               },
@@ -1082,6 +1082,61 @@
     {
       "source": "/docs/magic-containers-troubleshooting-application",
       "destination": "/magic-containers/troubleshooting",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/advanced-features",
+      "destination": "/magic-containers/advanced",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/define-health-checks",
+      "destination": "/magic-containers/health-checks-setup",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/delete-app",
+      "destination": "/magic-containers/delete",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/edit-configuration",
+      "destination": "/magic-containers/configuration",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/expose-app",
+      "destination": "/magic-containers/endpoints",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/health-checks",
+      "destination": "/magic-containers/health-checks-overview",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/integrating",
+      "destination": "/magic-containers/multi-container",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/node-whitelist",
+      "destination": "/magic-containers/ip-addresses",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/private-registry",
+      "destination": "/magic-containers/registry",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/sandboxing",
+      "destination": "/magic-containers/sandbox",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/update-app",
+      "destination": "/magic-containers/update",
       "permanent": true
     }
   ]

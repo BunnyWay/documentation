@@ -1,5 +1,5 @@
 ---
-title: "Defining health checks"
+title: "Health Checks"
 description: "Health checks are essential to ensuring the reliability and availability of your applications running in containers. These checks help determine whether an application is functioning correctly and ready to handle incoming requests. In this documentation, we will walk you through the process of defining health checks for your containerized applications."
 ---
 
@@ -21,13 +21,13 @@ To access health checks for your Magic containers, follow these steps:
 3. Click on **Container Settings** and click **Edit**.
 
 <Frame>
-![](/images/docs/be9b107e79f7332b3f7ff3d1534f8ad5a5ab636fd18bb9a50f8a0eafcf7a311b-image.png)
+  ![](/images/docs/be9b107e79f7332b3f7ff3d1534f8ad5a5ab636fd18bb9a50f8a0eafcf7a311b-image.png)
 </Frame>
 
 4. In the **Container Settings** menu, navigate to the **Monitoring** tab.
 
 <Frame>
-![](/images/docs/181b5d78e5a4dbd5b657edb2036dce80d603f353d3c4007310e248d0f182554b-image.png)
+  ![](/images/docs/181b5d78e5a4dbd5b657edb2036dce80d603f353d3c4007310e248d0f182554b-image.png)
 </Frame>
 
 # Health check types
@@ -47,13 +47,13 @@ To define and enable health checks for your containerized application, follow th
 2. From the dropdown under the required field you can select two configuration methods: **HTTP GET** and **TCP**.
 
 <Frame>
-![](/images/docs/5a90e819e8620fab55dbc1abd0f534b945b26d8900b76c9ad93cd469b56e4f6c-image.png)
+  ![](/images/docs/5a90e819e8620fab55dbc1abd0f534b945b26d8900b76c9ad93cd469b56e4f6c-image.png)
 </Frame>
 
 For the **HTTP GET** method, provide the path for the HTTP GET request. The path should be properly formatted.
 
 <Frame>
-![](/images/docs/d06706534176fda4c5f4d451b60b0def84a4cb76e082def6e2eda5cd7c632410-image.png)
+  ![](/images/docs/d06706534176fda4c5f4d451b60b0def84a4cb76e082def6e2eda5cd7c632410-image.png)
 </Frame>
 
 In the **Port** field specify the port on which your application is running within the container. The provided port should be valid.
@@ -63,18 +63,10 @@ The advanced settings allow you to customize it further based on your needs.
 For the **TCP** method you only have to specify the port to be used for the TCP health check. This port should correspond to the container where your application is hosted.
 
 <Frame>
-![](/images/docs/53acc10a3421d0d09e1f494fc6e5c8faa4dcc7a43d243a0b570bec022bb61349-image.png)
+  ![](/images/docs/53acc10a3421d0d09e1f494fc6e5c8faa4dcc7a43d243a0b570bec022bb61349-image.png)
 </Frame>
 
 <Info>
-  ### Note
-
 We strongly recommend enabling at least the Readiness health check. This check helps the platform detect when your application is ready to receive traffic, minimizing the chances of failed requests and ensuring a smoother user experience.
 
 </Info>
-
-# Need help or encountering issues?
-
-If you encounter any difficulties or have questions while following this Quickstart Guide, our support team is here to assist you. Please don't hesitate to contact us via [support request form](https://bunny.net/contact/) for prompt assistance.
-
-Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
