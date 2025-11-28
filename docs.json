@@ -512,38 +512,64 @@
               {
                 "group": "Edge Scripting",
                 "pages": [
-                  "docs/edge-scripting-overview",
-                  "docs/edge-scripting-quickstart",
-                  {
-                    "group": "Script examples",
-                    "pages": [
-                      "docs/edge-scripting-script-examples",
-                      "docs/script-example-redirect-to-another-domain",
-                      "docs/script-example-send-email",
-                      "docs/script-example-fetch-url",
-                      "docs/script-example-modify-http-headers",
-                      "docs/script-example-return-html",
-                      "docs/script-example-return-json",
-                      "docs/script-example-modify-body",
-                      "docs/access-edge-database-with-turso"
-                    ]
-                  },
-                  {
-                    "group": "Script types",
-                    "pages": [
-                      "docs/edge-scripting-script-types",
-                      "docs/edge-scripting-standalone",
-                      "docs/edge-scripting-middleware"
-                    ]
-                  },
-                  "docs/edge-scripting-environment-variables-and-secrets",
-                  "docs/edge-scripting-deployments",
-                  "docs/edge-scripting-statistics-and-logs",
-                  "docs/edge-scripting-github-action",
-                  "docs/edge-scripting-github-integration",
-                  "docs/edge-scripting-limits",
-                  "docs/edge-scripting-pricing"
+                  "scripting/index",
+                  "scripting/quickstart",
+                  "scripting/pricing"
                 ]
+              },
+              {
+                "group": "Script Types",
+                "pages": [
+                  "scripting/script-types",
+                  {
+                    "group": "Standalone",
+                    "pages": [
+                      "scripting/standalone/overview",
+                      {
+                        "group": "Examples",
+                        "pages": [
+                          "scripting/standalone/examples/fetch-url",
+                          "scripting/standalone/examples/return-json",
+                          "scripting/standalone/examples/return-html",
+                          "scripting/standalone/examples/send-email",
+                          "scripting/standalone/examples/edge-database",
+                          "scripting/standalone/examples/redirect-domain"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Middleware",
+                    "pages": [
+                      "scripting/middleware/overview",
+                      {
+                        "group": "Examples",
+                        "pages": [
+                          "scripting/middleware/examples/modify-headers",
+                          "scripting/middleware/examples/modify-body"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Deployment",
+                "pages": [
+                  "scripting/deployments",
+                  "scripting/github-actions",
+                  "scripting/github-integration",
+                  "scripting/environment-variables",
+                  "scripting/secrets"
+                ]
+              },
+              {
+                "group": "Observability",
+                "pages": ["scripting/statistics", "scripting/logs"]
+              },
+              {
+                "group": "Reference",
+                "pages": ["scripting/limits"]
               }
             ]
           }
@@ -1165,6 +1191,116 @@
     {
       "source": "/magic-containers/health-checks-overview",
       "destination": "/magic-containers/health-checks",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-overview",
+      "destination": "/scripting",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-quickstart",
+      "destination": "/scripting/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-pricing",
+      "destination": "/scripting/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-script-types",
+      "destination": "/scripting/script-types",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-standalone",
+      "destination": "/scripting/standalone/overview",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-middleware",
+      "destination": "/scripting/middleware/overview",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-environment-variables-and-secrets",
+      "destination": "/scripting/environment-variables",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-deployments",
+      "destination": "/scripting/deployments",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-github-action",
+      "destination": "/scripting/github-actions",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-github-integration",
+      "destination": "/scripting/github-integration",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-statistics-and-logs",
+      "destination": "/scripting/statistics",
+      "permanent": true
+    },
+    {
+      "source": "/scripting/statistics-and-logs",
+      "destination": "/scripting/statistics",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-limits",
+      "destination": "/scripting/limits",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-script-examples",
+      "destination": "/scripting/standalone/overview",
+      "permanent": true
+    },
+    {
+      "source": "/docs/script-example-fetch-url",
+      "destination": "/scripting/standalone/examples/fetch-url",
+      "permanent": true
+    },
+    {
+      "source": "/docs/script-example-return-json",
+      "destination": "/scripting/standalone/examples/return-json",
+      "permanent": true
+    },
+    {
+      "source": "/docs/script-example-return-html",
+      "destination": "/scripting/standalone/examples/return-html",
+      "permanent": true
+    },
+    {
+      "source": "/docs/script-example-send-email",
+      "destination": "/scripting/standalone/examples/send-email",
+      "permanent": true
+    },
+    {
+      "source": "/docs/access-edge-database-with-turso",
+      "destination": "/scripting/standalone/examples/edge-database",
+      "permanent": true
+    },
+    {
+      "source": "/docs/script-example-redirect-to-another-domain",
+      "destination": "/scripting/standalone/examples/redirect-domain",
+      "permanent": true
+    },
+    {
+      "source": "/docs/script-example-modify-http-headers",
+      "destination": "/scripting/middleware/examples/modify-headers",
+      "permanent": true
+    },
+    {
+      "source": "/docs/script-example-modify-body",
+      "destination": "/scripting/middleware/examples/modify-body",
       "permanent": true
     }
   ]
