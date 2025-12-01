@@ -1,0 +1,47 @@
+---
+title: "Authentication"
+description: "Learn how to authenticate with the bunny.net Terraform provider using your API key."
+---
+
+The bunny.net Terraform provider supports two authentication methods.
+
+<Warning>
+Team member API keys are not supported. You must use your account's main API key.
+</Warning>
+
+## Using the provider configuration
+
+Set the `api_key` attribute directly in your provider configuration:
+
+```hcl
+provider "bunnynet" {
+  api_key = "your-api-key"
+}
+```
+
+## Using environment variables
+
+Alternatively, set the `BUNNYNET_API_KEY` environment variable:
+
+```bash
+export BUNNYNET_API_KEY="your-api-key"
+```
+
+Then configure the provider without the `api_key` attribute:
+
+```hcl
+provider "bunnynet" {}
+```
+
+## Provider configuration options
+
+| Attribute | Description | Default |
+| --- | --- | --- |
+| `api_key` | Your bunny.net API key | `BUNNYNET_API_KEY` env var |
+| `api_url` | Primary API endpoint | `https://api.bunny.net` |
+| `stream_api_url` | Video streaming API endpoint | `https://video.bunnycdn.com` |
+| `container_api_url` | Container service API endpoint | `https://api-mc.opsbunny.net` |
+
+<Info>
+You can find your API key in the [bunny.net dashboard](https://dash.bunny.net/account/api-key).
+</Info>

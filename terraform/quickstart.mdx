@@ -1,0 +1,187 @@
+---
+title: "Quickstart"
+description: "Get started with the bunny.net Terraform provider to manage your infrastructure as code."
+---
+
+# What you'll need
+
+Before you begin, make sure you have:
+
+- A [bunny.net account](https://dash.bunny.net/auth/register)
+- [Terraform](https://developer.hashicorp.com/terraform/install) installed on your machine
+- Your [bunny.net API key](https://dash.bunny.net/account/api-key)
+
+## Quickstart
+
+<Steps>
+
+<Step title="Set up your project">
+
+<Tabs>
+  <Tab title="New project">
+    Create a new directory and add the provider configuration:
+
+    ```bash
+    mkdir my-terraform-project
+    cd my-terraform-project
+    ```
+
+    Create a `provider.tf` file with the following content:
+
+    ```hcl
+    terraform {
+      required_providers {
+        bunnynet = {
+          source = "BunnyWay/bunnynet"
+        }
+      }
+    }
+
+    provider "bunnynet" {
+      api_key = "your-api-key"
+    }
+    ```
+
+  </Tab>
+  <Tab title="Existing project">
+    Add the bunny.net provider to your existing `provider.tf`:
+
+    ```hcl
+    terraform {
+      required_providers {
+        bunnynet = {
+          source = "BunnyWay/bunnynet"
+        }
+        # ... your other providers
+      }
+    }
+
+    provider "bunnynet" {
+      api_key = "your-api-key"
+    }
+    ```
+
+  </Tab>
+  <Tab title="From template">
+    Clone the official template repository:
+
+    ```bash
+    git clone https://github.com/BunnyWay/terraform-provider-bunnynet-template.git my-terraform-project
+    cd my-terraform-project
+    ```
+
+    Update the `api_key` in the configuration file with your API key.
+
+  </Tab>
+</Tabs>
+
+<Info>
+  You can also use the `BUNNYNET_API_KEY` environment variable instead of
+  hardcoding your API key. See [Authentication](/terraform/authentication) for
+  more options.
+</Info>
+
+</Step>
+
+<Step title="Initialize Terraform">
+
+Run the init command to download the bunny.net provider:
+
+```bash
+terraform init
+```
+
+</Step>
+
+<Step title="Define your resources">
+
+Create a `main.tf` file with your infrastructure. This example creates a Storage Zone with an index file and a Pull Zone:
+
+```hcl
+resource "bunnynet_storage_zone" "my_storage" {
+  name      = "my-project-name"
+  zone_tier = "Edge"
+  region    = "DE"
+}
+
+resource "bunnynet_storage_file" "index" {
+  zone    = bunnynet_storage_zone.my_storage.id
+  path    = "index.html"
+  content = "<h1>Hello world!</h1><p>Deployed with Terraform.</p>"
+}
+
+resource "bunnynet_pullzone" "my_cdn" {
+  name = bunnynet_storage_zone.my_storage.name
+
+  origin {
+    type        = "StorageZone"
+    storagezone = bunnynet_storage_zone.my_storage.id
+  }
+
+  routing {
+    tier = "Standard"
+  }
+}
+```
+
+Replace `my-project-name` with your desired project name.
+
+</Step>
+
+<Step title="Preview and apply">
+
+Preview the changes Terraform will make:
+
+```bash
+terraform plan
+```
+
+Apply the configuration to create your resources:
+
+```bash
+terraform apply
+```
+
+Type `yes` when prompted to confirm.
+
+```
+bunnynet_storage_zone.my_storage: Creating...
+bunnynet_storage_zone.my_storage: Creation complete after 3s
+bunnynet_pullzone.my_cdn: Creating...
+bunnynet_pullzone.my_cdn: Creation complete after 0s
+bunnynet_storage_file.index: Creating...
+bunnynet_storage_file.index: Creation complete after 0s
+
+Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+```
+
+</Step>
+
+<Step title="Verify your deployment">
+
+Open the [bunny.net dashboard](https://dash.bunny.net) to see your new resources. Your content is now being served through the bunny.net CDN.
+
+</Step>
+
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Resources" icon="box" href="/terraform/resources">
+    Explore all available Terraform resources
+  </Card>
+  <Card title="Data Sources" icon="database" href="/terraform/data-sources">
+    Query existing bunny.net resources
+  </Card>
+  <Card title="Authentication" icon="key" href="/terraform/authentication">
+    Configure provider authentication options
+  </Card>
+  <Card
+    title="Provider docs"
+    icon="book"
+    href="https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs"
+  >
+    Official Terraform Registry documentation
+  </Card>
+</CardGroup>

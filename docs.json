@@ -872,11 +872,19 @@
             "groups": [
               {
                 "group": "Terraform",
+                "pages": ["terraform/index", "terraform/quickstart"]
+              },
+              {
+                "group": "Reference",
                 "pages": [
-                  "docs/terraform-overview",
-                  "docs/terraform-quickstart",
-                  "docs/importing-stream-library"
+                  "terraform/authentication",
+                  "terraform/resources",
+                  "terraform/data-sources"
                 ]
+              },
+              {
+                "group": "Guides",
+                "pages": ["terraform/importing-stream-library"]
               }
             ]
           }
@@ -1329,6 +1337,21 @@
     {
       "source": "/docs/script-example-modify-body",
       "destination": "/scripting/middleware/examples/modify-body",
+      "permanent": true
+    },
+    {
+      "source": "/docs/terraform-overview",
+      "destination": "/terraform",
+      "permanent": true
+    },
+    {
+      "source": "/docs/terraform-quickstart",
+      "destination": "/terraform/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/importing-stream-library",
+      "destination": "/terraform/importing-stream-library",
       "permanent": true
     }
   ]
