@@ -1,25 +1,11 @@
 ---
-title: AI Image Generation
-sidebarTitle: AI Image Generation
-description: Generate unique images on the fly using AI-powered generative models
-tag: "Beta"
+title: Reference
+description: Complete reference for AI Image Generation engines, parameters, and blueprints
 ---
 
-Bunny AI Image Generation provides a dynamic way to generate images on the fly using different generative machine learning models. Create unique, AI-generated images for user avatars, blog content, profile pictures, placeholder images, and more without storing multiple files.
+## URL structure
 
-<Frame>
-  ![AI-generated image examples](/images/optimizer/bunny-ai-image-examples.jpg)
-</Frame>
-
-<Info>
-  All AI-generated images are automatically protected with [Token
-  Authentication](/docs/cdn-token-authentication-basic) to prevent abuse. The
-  bunny.net dashboard generates tokens automatically.
-</Info>
-
-## How it works
-
-After enabling Bunny AI on your Pull Zone, generate images by crafting URLs with the following structure:
+Generate images by constructing URLs with the following structure:
 
 ```http
 /.ai/img/<engine-name>/<blueprint>/<seed>/<prompt>.jpg
@@ -28,27 +14,8 @@ After enabling Bunny AI on your Pull Zone, generate images by crafting URLs with
 **Example:**
 
 ```http
-https://yourzone.b-cdn.net/.ai/img/dalle-256/default/12345/rabbit.jpg
+https://your-pull-zone.b-cdn.net/.ai/img/dalle-256/default/12345/rabbit.jpg
 ```
-
-The first request processes the generation and caches the result at the edge. Subsequent requests with the same parameters are served instantly from the global CDN cache.
-
-## How to enable
-
-1. Make sure **Bunny Optimizer is enabled** on your Pull Zone
-2. Navigate to **Optimizer → Settings**
-3. Enable **Bunny AI Image Generation**
-
-<Frame>
-  ![Enable AI Image Generation](/images/optimizer/enable-image-generation.png)
-</Frame>
-
-<Info>
-  Authentication is handled automatically while using Image Generation inside
-  the dashboard.
-</Info>
-
-## URL structure
 
 ### Engine name
 
@@ -76,28 +43,19 @@ bunny-eating-carrots.jpg → "bunny eating carrots"
 
 This creates cleaner, SEO-friendly URLs that are easier to share.
 
-## Engines & Pricing
+---
 
-Bunny AI supports multiple models, each with unique characteristics, pricing, and output styles:
-
-| Engine name                       | Code         | Resolution | Price/Image |
-| :-------------------------------- | :----------- | :--------- | :---------- |
-| **DALL-E 2 (256px)**              | `dalle-256`  | 256×256    | **$0.016**  |
-| **DALL-E 2 (512px)**              | `dalle-512`  | 512×512    | **$0.018**  |
-| **DALL-E 2 (1024px)**             | `dalle-1024` | 1024×1024  | **$0.020**  |
-| **Stable Diffusion v1.5 (512px)** | `sd15-512`   | 512×512    | **$0.001**  |
-| **Stable Diffusion v2.1 (512px)** | `sd21-512`   | 512×512    | **$0.001**  |
-| **Stable Diffusion v2.1 (768px)** | `sd21-768`   | 768×768    | **$0.030**  |
-
-**Cost optimization:**
-
-- **Cached results:** The same prompt, seed, and parameters count as one generation and are cached for up to 3 months
-- **Blueprint reuse:** Using consistent blueprints minimizes unique generations
-- **Choose engines wisely:** Stable Diffusion engines are significantly cheaper for high-volume use cases
+## Supported engines
 
 ### DALL-E 2
 
 Created by OpenAI, DALL-E 2 excels at creative and abstract interpretations with descriptive inputs.
+
+| Code | Resolution | Price/Image |
+| :--- | :--------- | :---------- |
+| `dalle-256` | 256x256 | $0.016 |
+| `dalle-512` | 512x512 | $0.018 |
+| `dalle-1024` | 1024x1024 | $0.020 |
 
 **Best for:**
 
@@ -119,6 +77,12 @@ Created by OpenAI, DALL-E 2 excels at creative and abstract interpretations with
 ### Stable Diffusion
 
 Open-source model that uses keyword-focused prompting and excels at photo-realistic generation.
+
+| Code | Resolution | Price/Image |
+| :--- | :--------- | :---------- |
+| `sd15-512` | 512x512 | $0.001 |
+| `sd21-512` | 512x512 | $0.001 |
+| `sd21-768` | 768x768 | $0.030 |
 
 **Best for:**
 
@@ -145,13 +109,15 @@ Open-source model that uses keyword-focused prompting and excels at photo-realis
   it excels at landscapes and architectural scenes.
 </Note>
 
+---
+
 ## Blueprints
 
 Blueprints allow you to apply consistent styling across generated images by prepending or appending phrases to prompts. This simplifies URLs and maintains visual consistency across your application.
 
 ### Creating a blueprint
 
-Configure blueprints in **Optimizer → Settings → Bunny AI**:
+Configure blueprints in **Optimizer > Settings > Bunny AI**:
 
 1. **Name:** The identifier used in the URL (e.g., `avatar`)
 2. **Prefix:** Text added before the prompt
@@ -159,10 +125,10 @@ Configure blueprints in **Optimizer → Settings → Bunny AI**:
 
 **Example configuration:**
 
-| Field  | Value                              |
-| :----- | :--------------------------------- |
-| Name   | `avatar`                           |
-| Prefix | `cute pixel art of a`              |
+| Field | Value |
+| :---- | :---- |
+| Name | `avatar` |
+| Prefix | `cute pixel art of a` |
 | Suffix | `with a colorful solid background` |
 
 ### Using blueprints
@@ -170,7 +136,7 @@ Configure blueprints in **Optimizer → Settings → Bunny AI**:
 With the above blueprint, this URL:
 
 ```http
-https://yourzone.b-cdn.net/.ai/img/dalle-256/avatar/500/bunny.jpg
+https://your-pull-zone.b-cdn.net/.ai/img/dalle-256/avatar/500/bunny.jpg
 ```
 
 Generates the prompt:
@@ -183,21 +149,23 @@ This creates a powerful system for generating unique user avatars, maintaining b
 
 <Tip>When generating pixel art, use DALL-E 2 engines for optimal results.</Tip>
 
+---
+
 ## Advanced parameters
 
 Configure additional generation parameters through blueprint settings. Some parameters are engine-specific:
 
-| Parameter          | Description                                                                                                             | Type             | Engines          |
-| :----------------- | :---------------------------------------------------------------------------------------------------------------------- | :--------------- | :--------------- |
-| **Steps**          | Number of generation steps (default: 90). Higher values may improve quality but increase processing time.               | numeric (10-150) | Stable Diffusion |
-| **Cfg**            | Prompt adherence level (default: 7). Lower values give more creative freedom, higher values stick closer to the prompt. | numeric (1-15)   | Stable Diffusion |
-| **NegativePrompt** | Replaces the default negative prompt list. Specifies elements to avoid in the generated image.                          | string           | Stable Diffusion |
+| Parameter | Description | Type | Engines |
+| :-------- | :---------- | :--- | :------ |
+| **Steps** | Number of generation steps (default: 90). Higher values may improve quality but increase processing time. | numeric (10-150) | Stable Diffusion |
+| **Cfg** | Prompt adherence level (default: 7). Lower values give more creative freedom, higher values stick closer to the prompt. | numeric (1-15) | Stable Diffusion |
+| **NegativePrompt** | Replaces the default negative prompt list. Specifies elements to avoid in the generated image. | string | Stable Diffusion |
 
 ### Negative prompts
 
 Stable Diffusion supports negative prompts to exclude unwanted elements from generated images. Bunny AI uses a default set optimized for quality:
 
-```text Default negative prompts
+```text
 deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb,
 ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs,
 malformed hands, blur, out of focus, long neck, long body, pixelated,
@@ -211,6 +179,8 @@ malformed hands, blur, out of focus, long neck, long body, pixelated,
 </Warning>
 
 Override defaults by setting the `NegativePrompt` parameter in your blueprint configuration.
+
+---
 
 ## Prompt best practices
 
@@ -229,16 +199,24 @@ Try these style keywords for different visual effects:
 
 <Tabs>
   <Tab title="Artistic Styles">
-    - `digital art` - `oil painting of` - `traditional art` - `abstract art of`
+    - `digital art`
+    - `oil painting of`
+    - `traditional art`
+    - `abstract art of`
     - `watercolor painting`
   </Tab>
   <Tab title="Artist & Movement Styles">
-    - `in style of Picasso` - `in steampunk style` - `in style of Murakami` -
-    `art deco style`
+    - `in style of Picasso`
+    - `in steampunk style`
+    - `in style of Murakami`
+    - `art deco style`
   </Tab>
   <Tab title="Quality & Fidelity">
-    - `high quality` - `photorealistic` - `4k` - `detailed texture` - `sharp
-    focus`
+    - `high quality`
+    - `photorealistic`
+    - `4k`
+    - `detailed texture`
+    - `sharp focus`
   </Tab>
 </Tabs>
 
@@ -260,31 +238,7 @@ Use keyword-focused prompts for photo-realistic results:
 rabbit sitting in front of a christmas tree, photorealistic, high quality
 ```
 
-## Use cases
-
-**Dynamic user avatars:**
-
-```http
-/.ai/img/dalle-256/avatar/<user-id>/<username>.jpg
-```
-
-**Unique blog thumbnails:**
-
-```http
-/.ai/img/sd21-512/blog-hero/<post-id>/<post-title>.jpg
-```
-
-**Placeholder images:**
-
-```http
-/.ai/img/sd15-512/default/1/modern-office-workspace.jpg
-```
-
-**Product concept visualization:**
-
-```http
-/.ai/img/dalle-1024/product-concept/<sku>/<description>.jpg
-```
+---
 
 ## Combining with Dynamic Images API
 
@@ -296,6 +250,8 @@ AI-generated images support all [Dynamic Images transformations](/optimizer/dyna
 
 This allows you to generate base images with AI and apply responsive sizing or branding overlays dynamically.
 
+---
+
 ## Security and token authentication
 
 All AI generation paths are automatically protected with [Token Authentication](/docs/cdn-token-authentication-basic) to prevent:
@@ -305,6 +261,8 @@ All AI generation paths are automatically protected with [Token Authentication](
 - Resource exhaustion attacks
 
 The bunny.net dashboard automatically generates tokens for preview and testing. For dynamic URL generation in your application, implement token generation according to the [Token Authentication documentation](/docs/cdn-token-authentication-basic).
+
+---
 
 ## Performance and caching
 

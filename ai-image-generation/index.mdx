@@ -1,0 +1,68 @@
+---
+title: Introduction
+description: Generate unique images on the fly using AI-powered generative models
+---
+
+Bunny AI Image Generation provides a dynamic way to generate images on the fly using different generative machine learning models. Create unique, AI-generated images for user avatars, blog content, profile pictures, placeholder images, and more without storing multiple files.
+
+<Frame>
+  ![AI-generated image examples](/images/optimizer/bunny-ai-image-examples.jpg)
+</Frame>
+
+## What's included
+
+- **Multiple AI engines** including DALL-E 2 and Stable Diffusion models
+- **Blueprint templates** for consistent styling across generated images
+- **Automatic caching** at the edge for instant delivery after first generation
+- **Token authentication** to prevent abuse and control costs
+- **Dynamic Images API integration** for post-processing transformations
+
+<Card title="Quickstart" href="/ai-image-generation/quickstart" cta="Get started">
+  Enable AI Image Generation and create your first AI-generated image in
+  minutes.
+</Card>
+
+<Card title="Reference" href="/ai-image-generation/reference" cta="Learn more">
+  Explore all available engines, parameters, blueprints, and advanced
+  configuration options.
+</Card>
+
+<Card title="Pricing" href="/ai-image-generation/pricing" cta="View pricing">
+  Understand the pricing for each AI engine and optimize costs for your use
+  case.
+</Card>
+
+## Use cases
+
+**Dynamic user avatars:**
+
+```http
+/.ai/img/dalle-256/avatar/<user-id>/<username>.jpg
+```
+
+**Unique blog thumbnails:**
+
+```http
+/.ai/img/sd21-512/blog-hero/<post-id>/<post-title>.jpg
+```
+
+**Placeholder images:**
+
+```http
+/.ai/img/sd15-512/default/1/modern-office-workspace.jpg
+```
+
+**Product concept visualization:**
+
+```http
+/.ai/img/dalle-1024/product-concept/<sku>/<description>.jpg
+```
+
+## How it works
+
+After enabling Bunny AI on your Pull Zone, generate images by crafting URLs with a specific structure. The first request processes the generation and caches the result at the edge. Subsequent requests with the same parameters are served instantly from the global CDN cache.
+
+<Info>
+  All AI-generated images are automatically protected with [Token
+  Authentication](/docs/cdn-token-authentication-basic) to prevent abuse.
+</Info>

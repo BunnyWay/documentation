@@ -1,0 +1,47 @@
+---
+title: Pricing
+description: AI Image Generation pricing per engine and resolution
+---
+
+AI Image Generation pricing varies by engine and resolution. View current pricing at [bunny.net/pricing](https://bunny.net/pricing).
+
+## Pricing per image
+
+| Engine | Code | Resolution | Price/Image |
+| :----- | :--- | :--------- | :---------- |
+| **DALL-E 2 (256px)** | `dalle-256` | 256x256 | **$0.016** |
+| **DALL-E 2 (512px)** | `dalle-512` | 512x512 | **$0.018** |
+| **DALL-E 2 (1024px)** | `dalle-1024` | 1024x1024 | **$0.020** |
+| **Stable Diffusion v1.5 (512px)** | `sd15-512` | 512x512 | **$0.001** |
+| **Stable Diffusion v2.1 (512px)** | `sd21-512` | 512x512 | **$0.001** |
+| **Stable Diffusion v2.1 (768px)** | `sd21-768` | 768x768 | **$0.030** |
+
+## Cost optimization
+
+### Caching
+
+Generated images are cached at the edge for up to 3 months. The same prompt, seed, and parameters count as one generation:
+
+- First request: Generates and caches the image (billed)
+- Subsequent requests: Served from cache (free)
+
+### Blueprint reuse
+
+Using consistent blueprints minimizes unique generations. Design your blueprints to maximize cache hits across your application.
+
+### Engine selection
+
+For high-volume use cases, Stable Diffusion engines are significantly cheaper:
+
+- **DALL-E 2**: $0.016-$0.020 per image
+- **Stable Diffusion**: $0.001-$0.030 per image
+
+Choose Stable Diffusion v1.5 or v2.1 at 512px for the most cost-effective generation at $0.001 per image.
+
+## What's included
+
+- **No minimum commitment**
+- **Pay only for generations** (cached requests are free)
+- **Token authentication** included at no extra cost
+- **Global CDN delivery** for cached images
+- **Dynamic Images API** transformations on generated images

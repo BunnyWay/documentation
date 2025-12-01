@@ -1,0 +1,107 @@
+---
+title: Quickstart
+description: Enable AI Image Generation and create your first AI-generated image in minutes
+---
+
+<Steps>
+
+<Step title="Go to your Pull Zone">
+
+1. From your Bunny dashboard, go to the left-hand navigation menu
+2. Click on **CDN**
+3. Select an existing pull zone or create a new one
+
+</Step>
+
+<Step title="Enable AI Image Generation">
+
+1. In your pull zone settings, navigate to **Optimizer**
+2. Scroll to **Bunny AI Image Generation**
+3. Toggle the feature to **Enabled**
+4. Click **Save**
+
+<Frame>
+  ![Enable AI Image Generation](/images/optimizer/enable-image-generation.png)
+</Frame>
+
+</Step>
+
+<Step title="Generate your first image">
+
+Construct a URL using this structure:
+
+```http
+/.ai/img/<engine-name>/<blueprint>/<seed>/<prompt>.jpg
+```
+
+**Example:**
+
+```http
+https://your-pull-zone.b-cdn.net/.ai/img/dalle-256/default/12345/rabbit-eating-carrots.jpg
+```
+
+| Parameter | Description |
+| :-------- | :---------- |
+| `engine-name` | The AI model to use (e.g., `dalle-256`, `sd21-512`) |
+| `blueprint` | Prompt template for styling (use `default` for none) |
+| `seed` | Numeric value for consistent results |
+| `prompt` | Text description with hyphens as spaces |
+
+The first request processes the generation (5-30 seconds depending on engine). Subsequent requests are served instantly from cache.
+
+<Info>
+  Authentication is handled automatically while using Image Generation inside
+  the dashboard.
+</Info>
+
+</Step>
+
+<Step title="Try different engines">
+
+Experiment with different AI models:
+
+<Tabs>
+<Tab title="DALL-E 2">
+
+Best for creative and abstract interpretations:
+
+```http
+/.ai/img/dalle-512/default/100/a-happy-robot-with-flowers-growing-out-of-his-head-digital-art.jpg
+```
+
+Available sizes: `dalle-256`, `dalle-512`, `dalle-1024`
+
+</Tab>
+
+<Tab title="Stable Diffusion">
+
+Best for photo-realistic images:
+
+```http
+/.ai/img/sd21-512/default/200/rabbit-sitting-in-front-of-a-christmas-tree.jpg
+```
+
+Available sizes: `sd15-512`, `sd21-512`, `sd21-768`
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Learn more">
+
+<Card title="Reference" href="/ai-image-generation/reference">
+  Explore all engines, blueprints, and advanced parameters
+</Card>
+
+<Card title="Pricing" href="/ai-image-generation/pricing">
+  Understand costs and optimize for your use case
+</Card>
+
+<Card title="Token Authentication" href="/docs/cdn-token-authentication-basic">
+  Implement secure URL generation in your application
+</Card>
+
+</Step>
+
+</Steps>

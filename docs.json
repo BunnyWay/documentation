@@ -170,8 +170,7 @@
                   "optimizer/image-classes",
                   "optimizer/watermarking",
                   "optimizer/burrow-smart-routing",
-                  "optimizer/html-prerender",
-                  "optimizer/ai-image-generation"
+                  "optimizer/html-prerender"
                 ]
               },
               {
@@ -181,6 +180,27 @@
                   "optimizer/statistics",
                   "optimizer/faq",
                   "optimizer/limits"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "AI Image Generation",
+        "description": "Generate unique images on the fly using AI",
+        "icon": "wand-sparkles",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "AI Image Generation",
+                "pages": [
+                  "ai-image-generation/index",
+                  "ai-image-generation/quickstart",
+                  "ai-image-generation/reference",
+                  "ai-image-generation/pricing"
                 ]
               }
             ]
@@ -867,7 +887,12 @@
   "redirects": [
     {
       "source": "/docs/bunny-ai",
-      "destination": "/optimizer/bunny-ai-image-generation",
+      "destination": "/ai-image-generation",
+      "permanent": true
+    },
+    {
+      "source": "/optimizer/ai-image-generation",
+      "destination": "/ai-image-generation",
       "permanent": true
     },
     {
