@@ -682,188 +682,58 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "bunny.net API",
+                "group": "API Reference",
                 "pages": [
-                  "reference/bunnynet-api-overview",
-                  {
-                    "group": "Countries",
-                    "pages": ["reference/countriespublic_getcountrylist"]
-                  },
-                  {
-                    "group": "DNS Zone",
-                    "pages": ["reference/dnszonepublic_index"]
-                  },
-                  {
-                    "group": "Pull Zone",
-                    "pages": ["reference/pullzonepublic_index"]
-                  },
-                  {
-                    "group": "Stream Video Library",
-                    "pages": ["reference/videolibrarypublic_index"]
-                  },
-                  {
-                    "group": "Storage Zone",
-                    "pages": ["reference/storagezonepublic_index"]
-                  },
-                  {
-                    "group": "Region",
-                    "pages": ["reference/regionpublic_index"]
-                  },
-                  {
-                    "group": "Purge",
-                    "pages": ["reference/purgepublic_indexpost"]
-                  },
-                  {
-                    "group": "Statistics",
-                    "pages": ["reference/statisticspublic_index"]
-                  },
-                  {
-                    "group": "API Keys",
-                    "pages": ["reference/apikeypublic_listapikeys"]
-                  },
-                  {
-                    "group": "User",
-                    "pages": ["reference/getuserauditlog_getuserauditlog"]
-                  }
+                  "api-reference/introduction",
+                  "api-reference/authentication"
                 ]
               },
               {
-                "group": "Bunny Storage API",
-                "pages": [
-                  "reference/storage-api",
-                  "reference/edge-storage-api-limits",
-                  {
-                    "group": "Manage Files",
-                    "pages": [
-                      "reference/get_-storagezonename-path-filename",
-                      "reference/put_-storagezonename-path-filename"
-                    ]
-                  },
-                  "reference/api-limits",
-                  {
-                    "group": "Browse Files",
-                    "pages": ["reference/get_-storagezonename-path-"]
-                  }
-                ]
-              },
-              {
-                "group": "Stream API",
-                "pages": [
-                  "reference/stream-api-overview",
-                  "reference/tus-resumable-uploads",
-                  {
-                    "group": "Manage Collections",
-                    "pages": ["reference/collection_getcollection"]
-                  },
-                  {
-                    "group": "Manage Videos",
-                    "pages": ["reference/video_getvideo"]
-                  },
-                  {
-                    "group": "OEmbed",
-                    "pages": ["reference/oembed_getoembed"]
-                  }
-                ]
-              },
-              {
-                "group": "Edge Scripting API",
-                "pages": [
-                  "reference/getedgescriptcodeendpoint_getcode",
-                  {
-                    "group": "Code",
-                    "pages": ["reference/getedgescriptcodeendpoint_getcode"]
-                  },
-                  {
-                    "group": "Edge Script",
-                    "pages": ["reference/deleteedgescriptendpoint_delete"]
-                  },
-                  {
-                    "group": "Variable",
-                    "pages": [
-                      "reference/addedgescriptvariableendpoint_addedgescriptvariable"
-                    ]
-                  },
-                  {
-                    "group": "Secret",
-                    "pages": [
-                      "reference/addedgescriptsecretendpoint_addedgescriptsecret"
-                    ]
-                  },
-                  {
-                    "group": "Release",
-                    "pages": [
-                      "reference/getedgescriptactivereleaseendpoint_getcurrentlyactivereleaseendpoint"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Bunny Shield API",
-                "pages": [
-                  "reference/get_shield-shield-zones",
-                  {
-                    "group": "Shield Zone",
-                    "pages": ["reference/get_shield-shield-zones"]
-                  },
-                  {
-                    "group": "WAF",
-                    "pages": [
-                      "reference/get_shield-waf-rules-review-triggered-shieldzoneid"
-                    ]
-                  },
-                  {
-                    "group": "DDoS",
-                    "pages": ["reference/get_shield-ddos-enums"]
-                  },
-                  {
-                    "group": "Rate Limiting",
-                    "pages": ["reference/get_shield-rate-limits-shieldzoneid"]
-                  },
-                  {
-                    "group": "Metrics",
-                    "pages": [
-                      "reference/get_shield-metrics-overview-shieldzoneid"
-                    ]
-                  },
-                  {
-                    "group": "Event Logs",
-                    "pages": [
-                      "reference/get_shield-event-logs-shieldzoneid-date-continuationtoken"
-                    ]
-                  },
-                  {
-                    "group": "Access Lists",
-                    "pages": [
-                      "reference/get_shield-shield-zone-shieldzoneid-access-lists"
-                    ]
-                  },
-                  {
-                    "group": "Bot Detection",
-                    "pages": [
-                      "reference/get_shield-shield-zone-shieldzoneid-bot-detection"
-                    ]
-                  },
-                  {
-                    "group": "Promotions",
-                    "pages": ["reference/get_shield-promo-state"]
-                  },
-                  {
-                    "group": "Upload Scanning",
-                    "pages": [
-                      "reference/get_shield-shield-zone-shieldzoneid-upload-scanning"
-                    ]
-                  }
-                ]
+                "group": "Core Platform API",
+                "pages": ["api-reference/platform/overview"],
+                "openapi": {
+                  "source": "https://docs.bunny.net/openapi/bunnynet-api-1.json",
+                  "directory": "api-reference/platform"
+                }
               },
               {
                 "group": "Origin Errors API",
-                "pages": [
-                  "reference/get-cdn-origin-errors",
-                  {
-                    "group": "Fetch Origin Errors",
-                    "pages": ["reference/get-cdn-origin-errors"]
-                  }
-                ]
+                "openapi": {
+                  "source": "https://docs.bunny.net/openapi/origin-errors-spec.json",
+                  "directory": "api-reference/origin-errors"
+                }
+              },
+              {
+                "group": "Edge Storage API",
+                "pages": ["api-reference/storage/overview"],
+                "openapi": {
+                  "source": "https://docs.bunny.net/openapi/bunnynet-edge-storage-api.json",
+                  "directory": "api-reference/storage"
+                }
+              },
+              {
+                "group": "Stream API",
+                "pages": ["api-reference/stream/overview"],
+                "openapi": {
+                  "source": "https://docs.bunny.net/openapi/stream-api.json",
+                  "directory": "api-reference/stream"
+                }
+              },
+              {
+                "group": "Bunny Shield API",
+                "pages": ["api-reference/shield/overview"],
+                "openapi": {
+                  "source": "https://docs.bunny.net/openapi/bunny-shield-api.json",
+                  "directory": "api-reference/shield"
+                }
+              },
+              {
+                "group": "Scripting API",
+                "pages": ["api-reference/scripting/overview"],
+                "openapi": {
+                  "source": "https://docs.bunny.net/openapi/edge-scripting-api.json",
+                  "directory": "api-reference/scripting"
+                }
               }
             ]
           },
@@ -1352,6 +1222,181 @@
     {
       "source": "/docs/importing-stream-library",
       "destination": "/terraform/importing-stream-library",
+      "permanent": true
+    },
+    {
+      "source": "/reference/bunnynet-api-overview",
+      "destination": "/api-reference/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/reference/countriespublic_getcountrylist",
+      "destination": "/api-reference/platform/countries/get-country-list",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_index",
+      "destination": "/api-reference/platform/dns-zone/list-dns-zones",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_index",
+      "destination": "/api-reference/platform/pull-zone/list-pull-zones",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_index",
+      "destination": "/api-reference/platform/stream-video-library/list-video-libraries",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_index",
+      "destination": "/api-reference/platform/storage-zone/list-storage-zones",
+      "permanent": true
+    },
+    {
+      "source": "/reference/regionpublic_index",
+      "destination": "/api-reference/platform/region/region-list",
+      "permanent": true
+    },
+    {
+      "source": "/reference/purgepublic_indexpost",
+      "destination": "/api-reference/platform/purge/purge-url",
+      "permanent": true
+    },
+    {
+      "source": "/reference/statisticspublic_index",
+      "destination": "/api-reference/platform/statistics/get-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/apikeypublic_listapikeys",
+      "destination": "/api-reference/platform/api-keys/list-api-keys",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getuserauditlog_getuserauditlog",
+      "destination": "/api-reference/platform/user/getuserauditlog",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_-storagezonename-path-filename",
+      "destination": "/api-reference/storage/manage-files/download-file",
+      "permanent": true
+    },
+    {
+      "source": "/reference/put_-storagezonename-path-filename",
+      "destination": "/api-reference/storage/manage-files/upload-file",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_-storagezonename-path-",
+      "destination": "/api-reference/storage/browse-files/list-files",
+      "permanent": true
+    },
+    {
+      "source": "/reference/stream-api-overview",
+      "destination": "/api-reference/stream/overview",
+      "permanent": true
+    },
+    {
+      "source": "/reference/tus-resumable-uploads",
+      "destination": "/api-reference/stream/tus-resumable-uploads",
+      "permanent": true
+    },
+    {
+      "source": "/reference/collection_getcollection",
+      "destination": "/api-reference/stream/manage-collections/get-collection",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_getvideo",
+      "destination": "/api-reference/stream/manage-videos/get-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/oembed_getoembed",
+      "destination": "/api-reference/stream/oembed/get-oembed",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getedgescriptcodeendpoint_getcode",
+      "destination": "/api-reference/scripting/code/get-code",
+      "permanent": true
+    },
+    {
+      "source": "/reference/deleteedgescriptendpoint_delete",
+      "destination": "/api-reference/scripting/edge-script/delete-edge-script",
+      "permanent": true
+    },
+    {
+      "source": "/reference/addedgescriptvariableendpoint_addedgescriptvariable",
+      "destination": "/api-reference/scripting/variable/add-variable",
+      "permanent": true
+    },
+    {
+      "source": "/reference/addedgescriptsecretendpoint_addedgescriptsecret",
+      "destination": "/api-reference/scripting/secret/add-secret",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getedgescriptactivereleaseendpoint_getcurrentlyactivereleaseendpoint",
+      "destination": "/api-reference/scripting/release/get-active-release",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zones",
+      "destination": "/api-reference/shield/shieldzone/get-shieldshield-zones",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-rules-review-triggered-shieldzoneid",
+      "destination": "/api-reference/shield/waf/get-shieldwafrulesreview-triggered",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-ddos-enums",
+      "destination": "/api-reference/shield/ddos/get-shieldddosenums",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-rate-limits-shieldzoneid",
+      "destination": "/api-reference/shield/ratelimits/get-shieldrate-limits",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-metrics-overview-shieldzoneid",
+      "destination": "/api-reference/shield/metrics/get-shieldmetricsoverview",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-event-logs-shieldzoneid-date-continuationtoken",
+      "destination": "/api-reference/shield/eventlogs/get-shieldevent-logs-",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-shieldzoneid-access-lists",
+      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-access-lists",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-shieldzoneid-bot-detection",
+      "destination": "/api-reference/shield/botdetection/get-shieldshield-zone-bot-detection",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-promo-state",
+      "destination": "/api-reference/shield/promo/gives-a-breakdown-of-promo-data",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-shieldzoneid-upload-scanning",
+      "destination": "/api-reference/shield/uploadscanning/get-shieldshield-zone-upload-scanning",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get-cdn-origin-errors",
+      "destination": "/api-reference/origin-errors/get-origin-error-logs-for-a-specific-pull-zone-and-date",
       "permanent": true
     }
   ]
