@@ -20,14 +20,28 @@ To create your first script, follow the steps outlined below:
 
 ![](/images/docs/0b5bff4662563e07b358a70392b77a8be85f58aa8e1cd21968b2dfef2f88b34e-image.png)
 
-3. Provide a name for your script, select **Standalone** type and then **Default standalone** template.
+3. Provide a name for your script and select a script type:
 
-![](/images/docs/68f18ff3816d5947d7acd499028840c65c3e6c7dc5461a8e81d1f8807cc3548e-image.png)
+<Tabs>
+  <Tab title="Standalone">
+    Select **Standalone** type and then **Default standalone** template.
 
-<Info>
-To learn more about differences between Standalone and Middleware, see our [script types documentation](/docs/script-types-1).
+    ![](/images/docs/68f18ff3816d5947d7acd499028840c65c3e6c7dc5461a8e81d1f8807cc3548e-image.png)
 
-</Info>
+    Standalone scripts run independently and handle HTTP requests directly at the edge without an origin server. They're ideal for REST APIs, UI applications, and data processing.
+
+    [Learn more about standalone scripts](/scripting/standalone/overview)
+
+  </Tab>
+  <Tab title="Middleware">
+    Select **Middleware** type and then **Default middleware** template.
+
+    Middleware scripts intercept and modify requests and responses as they flow through the CDN. They're perfect for authentication, header manipulation, and content transformation.
+
+    [Learn more about middleware scripts](/scripting/middleware/overview)
+
+  </Tab>
+</Tabs>
 
 4. Click **Add script**.
 5. An underlying pull zone is automatically set up for your script, making it accessible from the outside through a unique URL. Your new script starts with a placeholder function that issues a simple "Hello from" when accessed through its URL.
@@ -50,7 +64,3 @@ It serves as a crucial debugging aid, providing real-time insights into the scri
 ![](/images/docs/a3a37ccbb4b2fbbad74ad195292713e3875f727a99bb2bba411cc3e7c11e977a-image.png)
 
 Once you save and publish your changes, they are applied immediately, allowing for real-time updates and modifications.
-
-# Need help or encountered issues?
-
-If you encounter any difficulties or have questions while following this guide, our support team is here to assist you. Please don't hesitate to contact us via the [support request form](https://bunny.net/contact/) for prompt assistance. Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.

@@ -3,23 +3,16 @@ title: "Fetch url"
 description: "If you need to proxy the request to another URL, you can use the fetch method. This example shows how to append the original request path to a new domain and fetch content from there. See example below:"
 ---
 
-<CodeGroup>
-  ```bash bash
-  import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
+```ts
+import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
 
-BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
-const url=new URL(request.url);
+BunnySDK.net.http.serve(
+  async (request: Request): Response | Promise<Response> => {
+    const url = new URL(request.url);
 
-      const fetchUrl="https://example.com"
+    const fetchUrl = "https://example.com";
 
-      return fetch(fetchUrl + url.pathname);
-
-});
-
-```
-</CodeGroup>
-
-***
-
-[Send an email](/docs/script-example-send-email)
+    return fetch(fetchUrl + url.pathname);
+  },
+);
 ```

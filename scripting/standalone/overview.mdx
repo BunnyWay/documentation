@@ -1,30 +1,64 @@
 ---
 title: "Standalone scripts"
-description: "Standalone functions in bunny.net Edge Scripts allow you to run custom scripts as close as possible to bunny.net's CDN network. These functions act as substitutes for an origin server, enabling you to handle HTTP requests directly at the edge. You can think of them as infinitely scalable Node.js scripts that run on bunny.net's global infrastructure."
+sidebarTitle: "Introduction"
+description: "Standalone functions in bunny.net Edge Scripts allow you to run custom scripts as close as possible to bunny.net's CDN network. These functions act as substitutes for an origin server, enabling you to handle HTTP requests directly at the edge."
 ---
+
+Standalone scripts run independently to perform specific tasks without the need for external intervention. They are useful when you need complete control over execution and state.
 
 By using standalone functions, you can serve dynamic content, implement custom logic, and manipulate requests and responses directly at the edge. This approach eliminates the need for an origin server in many scenarios, allowing you to build powerful, low-latency applications.
 
-The `serve` function provided by the bunny.net Edge Script SDK allows you to define a handler for incoming HTTP requests. This handler can process requests and return responses directly, without passing them to an origin server.
+## Use cases
 
-# Example script
+- **REST APIs and microservices** — Handle client requests and return responses directly from the edge
+- **Dynamic UIs and landing pages** — Generate and serve content based on user interactions or geolocation
+- **AI-powered endpoints** — Process images, run chat completions, or generate embeddings
+- **Backend functions for static frontends** — Power contact forms, webhooks, and data submissions
+- **External API calls** — Send emails, transform data, or integrate with third-party services
 
-Let's look at an example script that demonstrates how to use a standalone function to implement A/B testing based on a custom header:
+## Benefits
+
+By executing directly at the network's edge, standalone scripts reduce latency significantly, enabling faster data processing and response times. They are inherently capable of handling multiple requests simultaneously without straining resources, facilitating smooth scalability as user demands increase.
+
+## The `serve` function
+
+The `serve` function starts an HTTP server that listens for incoming requests and handles them using the provided handler function.
 
 ```ts
-import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(async (request: Request) => {
+  return new Response("Hello from the edge!");
+});
+```
+
+### Function signature
+
+```ts
+serve(handler: (request: Request) => Response | Promise<Response>)
+```
+
+### Handler
+
+The handler function receives a standard [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) or `Promise<Response>`.
+
+## Example
+
+This example demonstrates A/B testing based on a custom header:
+
+```ts
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
 
 BunnySDK.net.http.serve(async (req) => {
   console.log(`[INFO]: ${req.method} - ${req.url}`);
-  let origin = "bunny.net";
-  let newOrigin = "dash.bunny.net/auth/register";
+
+  const origin = "bunny.net";
+  const newOrigin = "dash.bunny.net/auth/register";
 
   // Retrieve scenario header value
-  let scenario = req.headers.get("X-AB");
+  const scenario = req.headers.get("X-AB");
 
-  // We properly remap the port & the protocol as we could be in a local case
-  // where the port is 8080 for instance
-  let url = new URL(req.url);
+  const url = new URL(req.url);
   url.port = "443";
   url.protocol = "https";
 
@@ -38,34 +72,20 @@ BunnySDK.net.http.serve(async (req) => {
 });
 ```
 
-You can run this example locally using Deno `deno run -A script.ts.`:
+### Local development
 
-```ts
-# Case A
+You can run standalone scripts locally using Deno:
+
+```bash
+deno run -A script.ts
+```
+
+Test with curl:
+
+```bash
+# Case A - routes to new origin
 curl http://127.0.0.1:8080/ --header 'X-AB: new'
 
-# Case B
+# Case B - routes to default origin
 curl http://127.0.0.1:8080/
-```
-
-# Serve function
-
-The `serve` function starts an HTTP server that listens for incoming requests and handles them using the provided handler function. If you do not specify a listener, a default one is assigned, which is especially useful when running the script within bunny.net's network.
-
-If you do not provide a listener, the server will randomly assign one when running locally. When running within bunny.net's network, the listener is automatically assigned, even if you specify one.
-
-**Signature**:
-
-```ts
-declare const serve: (handler: (request: Request) => Response |
-
-Promise<Response>): ServerHandler
-
-declare const serve: (listener: { port: number; hostname: string }, handler: (request: Request) => Response |
-
-Promise<Response>): ServerHandler
-```
-
-```
-
 ```

@@ -1,9 +1,15 @@
 ---
-title: "Environment variables"
+title: Environment Variables
 description: "Environment variables are used to store information or configuration data that your script requires at runtime."
 ---
 
 Environment variables are used to store information or configuration data that your script requires at runtime. They enable you to manage any values separate from the script code. This separation ensures that variable values are not exposed and stored in your scripts or version control systems but rather configured in the runtime.
+
+<Note>
+  For sensitive data such as API keys, passwords, or tokens, use [environment
+  secrets](/scripting/secrets) instead. Secrets are encrypted and cannot be
+  viewed once set.
+</Note>
 
 ## Adding environment variables
 
@@ -26,35 +32,39 @@ You can access environment variable value in the script code using node process 
 
 The following script example shows how to access an environment variable value using node process module:
 
-```javascript
+```ts
 import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
 import process from "node:process";
 
-BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
-  // Load environment variable named OriginUrl
-  const originUrl = process.env.OriginUrl;
+BunnySDK.net.http.serve(
+  async (request: Request): Response | Promise<Response> => {
+    // Load environment variable named OriginUrl
+    const originUrl = process.env.OriginUrl;
 
-  // Parse initial url
-  const url = new URL(request.url);
+    // Parse initial url
+    const url = new URL(request.url);
 
-  // Rewrite and fetch request from origin
-  return fetch(originUrl + url.pathname);
-});
+    // Rewrite and fetch request from origin
+    return fetch(originUrl + url.pathname);
+  },
+);
 ```
 
 The following script example shows script code with same logic but using Deno.env to access variable value:
 
-```javascript
+```ts
 import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
 
-BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
-  // Load environment variable named OriginUrl
-  const originUrl = Deno.env.get("OriginUrl");
+BunnySDK.net.http.serve(
+  async (request: Request): Response | Promise<Response> => {
+    // Load environment variable named OriginUrl
+    const originUrl = Deno.env.get("OriginUrl");
 
-  // Parse initial url
-  const url = new URL(request.url);
+    // Parse initial url
+    const url = new URL(request.url);
 
-  // Rewrite and fetch request from origin
-  return fetch(originUrl + url.pathname);
-});
+    // Rewrite and fetch request from origin
+    return fetch(originUrl + url.pathname);
+  },
+);
 ```

@@ -1,5 +1,5 @@
 ---
-title: "Deploying your scripts with the GitHub action"
+title: Deploying your scripts with GitHub Actions
 description: "Deploying with the GitHub Action feature is designed to automate the deployment of scripts directly to bunny.net's Edge Scripting platform. This action ensures that your edge computing scripts are consistently and efficiently updated in response to changes within your codebase, particularly from specified branches in a GitHub repository."
 ---
 
@@ -9,19 +9,19 @@ By integrating this GitHub Action into your workflow, you can enhance the reliab
 
 The following GitHub workflow file example demonstrates how to configure this action to deploy a script automatically whenever there is a push to the main branch:
 
-```
+```yml
 name: Deploy when pushing on main
 
 on:
   push:
     branches:
-      - 'main'
+      - "main"
 
 jobs:
   publish:
     runs-on: ubuntu-latest
 
-    name: 'Upload script'
+    name: "Upload script"
 
     steps:
       - name: Checkout repository
@@ -37,10 +37,10 @@ jobs:
 
 # Inputs
 
-To use this GitHub Action, you will need to provide the following inputs: script_id (required):
+To use this GitHub Action, you will need to provide the following inputs: `script_id` (required):
 
-- The ID of the script you wish to deploy. This should be securely stored as a GitHub secret (SCRIPT_ID).
-- deploy_key: The deployment key used to authorize the deployment of the script. This should also be securely stored as a GitHub secret (DEPLOY_KEY).
+- The ID of the script you wish to deploy. This should be securely stored as a GitHub secret (`SCRIPT_ID`).
+- `deploy_key`: The deployment key used to authorize the deployment of the script. This should also be securely stored as a GitHub secret (`DEPLOY_KEY`).
 - file (required): The path of the script file that will be deployed. Ensure this file exists in your repository or that preceding actions generate it.
 
 The script ID and deploy key are available in the dashboard under **Script** -> **Deployments** -> **Settings**.
@@ -51,20 +51,11 @@ You should place the workflow file in the .github/workflows folder in your repos
 
 # Setting up secrets
 
-To ensure your script_id and deploy_key remain secure, follow these steps to store them as secrets in your GitHub repository:
+To ensure your `script_id` and `deploy_key` remain secure, follow these steps to store them as secrets in your GitHub repository:
 
 1. Navigate to your GitHub repository.
 2. Click on **Settings**.
 3. Select **Secrets and variables**.
 4. Choose **Actions**.
 5. Click **New repository secret**.
-6. Add SCRIPT_ID and DEPLOY_KEY as the names of the secrets and provide their respective values.
-
-<Info>
-For more information regarding secrets, see our [environment secrets documentation](/docs/edge-scripting-environment-variables-and-secrets).
-
-</Info>
-
-# Need help or encountered issues?
-
-If you encounter any difficulties or have questions while following this guide, our support team is here to assist you. Please don't hesitate to contact us via the [support request form](https://bunny.net/contact/) for prompt assistance. Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.
+6. Add `SCRIPT_ID` and `DEPLOY_KEY` as the names of the secrets and provide their respective values.

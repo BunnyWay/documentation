@@ -520,7 +520,6 @@
               {
                 "group": "Script Types",
                 "pages": [
-                  "scripting/script-types",
                   {
                     "group": "Standalone",
                     "pages": [
@@ -532,7 +531,6 @@
                           "scripting/standalone/examples/return-json",
                           "scripting/standalone/examples/return-html",
                           "scripting/standalone/examples/send-email",
-                          "scripting/standalone/examples/edge-database",
                           "scripting/standalone/examples/redirect-domain"
                         ]
                       }
@@ -1210,7 +1208,12 @@
     },
     {
       "source": "/docs/edge-scripting-script-types",
-      "destination": "/scripting/script-types",
+      "destination": "/scripting",
+      "permanent": true
+    },
+    {
+      "source": "/scripting/script-types",
+      "destination": "/scripting",
       "permanent": true
     },
     {
