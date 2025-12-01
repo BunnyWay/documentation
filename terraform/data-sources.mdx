@@ -1,0 +1,39 @@
+---
+title: "Data Sources"
+description: "Overview of all data sources available in the bunny.net Terraform provider."
+---
+
+Data sources allow you to fetch information about existing bunny.net resources for use in your Terraform configuration.
+
+<Info>
+For detailed configuration options and examples, see the [official provider documentation](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs).
+</Info>
+
+## Pull Zone
+
+| Data Source | Description |
+| --- | --- |
+| [bunnynet_pullzone](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/data-sources/pullzone) | Fetch an existing pull zone |
+| [bunnynet_pullzone_access_lists](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/data-sources/pullzone_access_lists) | Fetch access lists for a pull zone |
+
+## DNS
+
+| Data Source | Description |
+| --- | --- |
+| [bunnynet_dns_zone](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/data-sources/dns_zone) | Fetch an existing DNS zone |
+| [bunnynet_dns_record](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/data-sources/dns_record) | Fetch an existing DNS record |
+
+## Compute
+
+| Data Source | Description |
+| --- | --- |
+| [bunnynet_compute_container_app_container](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/data-sources/compute_container_app_container) | Fetch container details |
+| [bunnynet_compute_container_app_container_endpoint](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/data-sources/compute_container_app_container_endpoint) | Fetch container endpoint details |
+| [bunnynet_compute_container_imageregistry](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/data-sources/compute_container_imageregistry) | Fetch image registry details |
+
+## Utility
+
+| Data Source | Description |
+| --- | --- |
+| [bunnynet_region](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/data-sources/region) | Fetch available regions |
+| [bunnynet_video_language](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/data-sources/video_language) | Fetch supported video languages |

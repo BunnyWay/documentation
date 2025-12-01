@@ -1,0 +1,174 @@
+---
+title: "Importing stream library"
+description: "Learn how to import an existing Stream library and its associated resources into Terraform."
+---
+
+When you create a Stream library, bunny.net automatically provisions a Pull Zone and Storage Zone. To manage these resources with Terraform, you need to import them into your state.
+
+<Tabs>
+  <Tab title="Terraform 1.5+">
+    <Steps>
+
+    <Step title="Define the stream library">
+
+    Create or update your Terraform configuration with the stream library resource:
+
+    ```hcl
+    resource "bunnynet_stream_library" "library" {
+      name = "my-library"
+    }
+    ```
+
+    </Step>
+
+    <Step title="Apply the configuration">
+
+    Run apply to create or sync the library:
+
+    ```bash
+    terraform apply
+    ```
+
+    </Step>
+
+    <Step title="Add resources with import blocks">
+
+    Define the associated Pull Zone and Storage Zone resources, along with import blocks:
+
+    ```hcl
+    resource "bunnynet_pullzone" "pullzone" {
+      name = "my-library-pullzone"
+
+      origin {
+        type        = "StorageZone"
+        storagezone = bunnynet_stream_library.library.storage_zone
+      }
+
+      routing {
+        tier = "Volume"
+      }
+    }
+
+    resource "bunnynet_storage_zone" "storage" {
+      name      = "my-library-storage"
+      region    = "DE"
+      zone_tier = "Standard"
+    }
+
+    import {
+      to = bunnynet_pullzone.pullzone
+      id = bunnynet_stream_library.library.pullzone
+    }
+
+    import {
+      to = bunnynet_storage_zone.storage
+      id = bunnynet_stream_library.library.storage_zone
+    }
+    ```
+
+    </Step>
+
+    <Step title="Apply to import">
+
+    Run apply to import the resources into your Terraform state:
+
+    ```bash
+    terraform apply
+    ```
+
+    The Pull Zone and Storage Zone are now managed by Terraform.
+
+    </Step>
+
+    </Steps>
+
+  </Tab>
+  <Tab title="Terraform 1.4 and earlier">
+    <Steps>
+
+    <Step title="Define the stream library">
+
+    Create or update your Terraform configuration with the stream library resource:
+
+    ```hcl
+    resource "bunnynet_stream_library" "library" {
+      name = "my-library"
+    }
+    ```
+
+    </Step>
+
+    <Step title="Apply the configuration">
+
+    Run apply to create or sync the library:
+
+    ```bash
+    terraform apply
+    ```
+
+    </Step>
+
+    <Step title="Add resources and outputs">
+
+    Define the associated Pull Zone and Storage Zone resources, with outputs to retrieve their IDs:
+
+    ```hcl
+    resource "bunnynet_pullzone" "pullzone" {
+      name = "my-library-pullzone"
+
+      origin {
+        type        = "StorageZone"
+        storagezone = bunnynet_stream_library.library.storage_zone
+      }
+
+      routing {
+        tier = "Volume"
+      }
+    }
+
+    resource "bunnynet_storage_zone" "storage" {
+      name      = "my-library-storage"
+      region    = "DE"
+      zone_tier = "Standard"
+    }
+
+    output "pullzone_id" {
+      value = bunnynet_stream_library.library.pullzone
+    }
+
+    output "storage_zone_id" {
+      value = bunnynet_stream_library.library.storage_zone
+    }
+    ```
+
+    </Step>
+
+    <Step title="Get the resource IDs">
+
+    Run plan to retrieve the Pull Zone and Storage Zone IDs from the outputs:
+
+    ```bash
+    terraform plan
+    ```
+
+    Note the IDs shown in the output.
+
+    </Step>
+
+    <Step title="Import the resources">
+
+    Use the IDs to import each resource into your Terraform state:
+
+    ```bash
+    terraform import bunnynet_pullzone.pullzone <pullzone_id>
+    terraform import bunnynet_storage_zone.storage <storage_zone_id>
+    ```
+
+    Replace `<pullzone_id>` and `<storage_zone_id>` with the actual IDs from the previous step.
+
+    </Step>
+
+    </Steps>
+
+  </Tab>
+</Tabs>

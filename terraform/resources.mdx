@@ -1,0 +1,75 @@
+---
+title: "Resources"
+description: "Overview of all resources available in the bunny.net Terraform provider."
+---
+
+The bunny.net Terraform provider includes resources for managing CDN, storage, DNS, streaming, and compute services.
+
+<Info>
+  For detailed configuration options and examples, see the [official provider
+  documentation](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs).
+</Info>
+
+## Pull Zone
+
+Manage CDN pull zones, hostnames, edge rules, and optimization settings &mdash; [learn more](/cdn).
+
+| Resource                                                                                                                                      | Description                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| [bunnynet_pullzone](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/pullzone)                                 | CDN pull zone                               |
+| [bunnynet_pullzone_hostname](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/pullzone_hostname)               | Custom hostname for a pull zone             |
+| [bunnynet_pullzone_edgerule](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/pullzone_edgerule)               | Edge rule for request/response manipulation |
+| [bunnynet_pullzone_optimizer_class](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/pullzone_optimizer_class) | Image optimizer class                       |
+| [bunnynet_pullzone_ratelimit_rule](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/pullzone_ratelimit_rule)   | Rate limiting rule                          |
+| [bunnynet_pullzone_waf_rule](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/pullzone_waf_rule)               | Web Application Firewall rule               |
+| [bunnynet_pullzone_shield](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/pullzone_shield)                   | Origin shield configuration                 |
+| [bunnynet_pullzone_access_list](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/pullzone_access_list)         | Access control list                         |
+
+## Storage
+
+Manage edge storage zones and files &mdash; [learn more](/storage).
+
+| Resource                                                                                                              | Description            |
+| --------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| [bunnynet_storage_zone](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/storage_zone) | Edge storage zone      |
+| [bunnynet_storage_file](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/storage_file) | File in a storage zone |
+
+## DNS
+
+Manage DNS zones and records &mdash; [learn more](/dns).
+
+| Resource                                                                                                                            | Description         |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| [bunnynet_dns_zone](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/dns_zone)                       | DNS zone            |
+| [bunnynet_dns_record](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/dns_record)                   | DNS record          |
+| [bunnynet_dns_script](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/dns_script)                   | DNS script          |
+| [bunnynet_dns_script_variable](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/dns_script_variable) | DNS script variable |
+
+## Stream
+
+Manage video libraries, collections, and videos &mdash; [learn more](/stream).
+
+| Resource                                                                                                                        | Description      |
+| ------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| [bunnynet_stream_library](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/stream_library)       | Video library    |
+| [bunnynet_stream_collection](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/stream_collection) | Video collection |
+| [bunnynet_stream_video](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/stream_video)           | Video            |
+
+## Scripting
+
+Manage edge scripts for serverless compute at the edge &mdash; [learn more](/scripting).
+
+| Resource                                                                                                                                    | Description                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| [bunnynet_compute_script](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/compute_script)                   | Edge compute script         |
+| [bunnynet_compute_script_variable](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/compute_script_variable) | Script environment variable |
+| [bunnynet_compute_script_secret](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/compute_script_secret)     | Script secret               |
+
+## Magic Containers
+
+Manage containerized applications deployed to the edge &mdash; [learn more](/magic-containers).
+
+| Resource                                                                                                                                                    | Description              |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| [bunnynet_compute_container_app](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/compute_container_app)                     | Container application    |
+| [bunnynet_compute_container_imageregistry](https://registry.terraform.io/providers/BunnyWay/bunnynet/latest/docs/resources/compute_container_imageregistry) | Container image registry |
