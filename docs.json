@@ -1288,7 +1288,7 @@
     },
     {
       "source": "/docs/access-edge-database-with-turso",
-      "destination": "/scripting/standalone/examples/edge-database",
+      "destination": "/scripting/standalone",
       "permanent": true
     },
     {
