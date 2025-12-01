@@ -1,0 +1,16 @@
+---
+title: "Redirect to another domain"
+description: "To redirect requests to a different domain, you can use the Response.redirect method. This example demonstrates how to permanently redirect (HTTP status code 301) all incoming requests to a specific URL. See example below:"
+---
+
+```ts
+import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
+
+BunnySDK.net.http.serve(
+  async (request: Request): Response | Promise<Response> => {
+    const destinationURL = "https://example.com";
+    const statusCode = 301;
+    return Response.redirect(destinationURL, statusCode);
+  },
+);
+```

@@ -1,0 +1,27 @@
+---
+title: "Return JSON"
+description: "In cases where you need to respond with JSON data, for instance, to simulate an API endpoint or return configuration data, this example illustrates how to create a JSON response. See example below:"
+---
+
+```ts
+import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
+
+BunnySDK.net.http.serve(
+  async (request: Request): Response | Promise<Response> => {
+    const data = {
+      weather: "sunny",
+      temperature: 27,
+      windspeed: 0,
+      uvindex: 7,
+    };
+
+    const json = JSON.stringify(data);
+
+    return new Response(json, {
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+  },
+);
+```

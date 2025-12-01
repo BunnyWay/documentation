@@ -1,0 +1,53 @@
+---
+title: Introduction
+description: Run JavaScript and TypeScript at the edge. Build APIs, dynamic UIs, AI-powered functions, or extend Bunny CDN with middleware, all without managing servers.
+---
+
+Bunny Edge Scripting lets you deploy code directly to the edge. Your code runs close to your users, with zero server management.
+
+Built on [Deno](https://deno.com/) and V8 (the engine behind Chrome), Edge Scripting provides a secure, isolated runtime with access to standard Web APIs. Write code in the browser or connect your GitHub repository for continuous deployment.
+
+## Script Types
+
+<CardGroup cols={2}>
+  <Card
+    title="Standalone Scripts"
+    icon="server"
+    href="/scripting/standalone/overview"
+  >
+    Independent scripts that handle HTTP requests directly. Build REST APIs,
+    serve dynamic HTML, process data, or call external services like AI models —
+    no origin server required.
+  </Card>
+  <Card
+    title="Middleware Scripts"
+    icon="shuffle"
+    href="/scripting/middleware/overview"
+  >
+    Intercept and modify requests and responses as they flow through Bunny CDN.
+    Add authentication, manipulate headers, transform content, or implement
+    custom caching logic.
+  </Card>
+</CardGroup>
+
+## Features
+
+- **Browser-based editor** — Write, test, and deploy scripts without leaving your browser
+- **GitHub integration** — Connect a repository for version control and automatic deployments via GitHub Actions
+- **Secrets and environment variables** — Store API keys and configuration securely
+- **Logs and statistics** — Debug with real-time logs and monitor execution metrics
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/scripting/quickstart">
+    Create and deploy your first edge script in minutes.
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/scripting/standalone/examples/return-json"
+  >
+    See practical examples for standalone and middleware scripts.
+  </Card>
+</CardGroup>

@@ -1,0 +1,33 @@
+---
+title: "Return HTML"
+description: "To dynamically generate and return HTML content, use the following example. It demonstrates creating an HTML document and embedding dynamic data, such as the request path. See example below:"
+---
+
+```ts
+import * as BunnySDK from "https://esm.sh/@bunny.net/[email protected]";
+
+BunnySDK.net.http.serve(
+  async (request: Request): Response | Promise<Response> => {
+    const url = new URL(request.url);
+
+    const html = `<!DOCTYPE html>
+    <html>
+        <head>
+            <title>HTML Edgescript example</title>
+        </head>
+        <body>
+            <h1>Hello</h1>
+            <h2>there</h2>
+            <div>Lorem ipsum bla bla</div>
+            <div>from ${url.pathname}</div>
+        </body>
+    </html>`;
+
+    return new Response(html, {
+      headers: {
+        "content-type": "text/html",
+      },
+    });
+  },
+);
+```
