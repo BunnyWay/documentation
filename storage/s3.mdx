@@ -30,21 +30,23 @@ To create an S3-compatible storage zone:
 
 ## Quickstart
 
+Once you've created your S3-compatible storage zone, you're ready to connect.
+
 ### Authentication and credentials
 
-After creating your S3-compatible storage zone, you'll receive credentials in the **FTP & API Access** tab:
+The credentials you need to connect via S3 are located in the **FTP & API Access** tab:
 
-- **Access Key ID**: Your unique identifier
-- **Secret Access Key**: Your authentication credential (storage zone password)
+- **Access Key ID**: Your unique identifier (Storage Zone Read Only Password)
+- **Secret Access Key**: Your authentication credential (Storage Zone Password)
 - **Endpoint URL**: `https://[region]-s3.storage.bunnycdn.com`
 - **Region**: `de` (Frankfurt), `ny` (New York), or `sg` (Singapore)
 
-Bunny Storage uses **AWS Signature Version 4** for authentication. Configure your S3-compatible tools with:
-
-- **Endpoint**: `https://[region]-s3.storage.bunnycdn.com`
-- **Bucket name**: Your storage zone name
-- **Access Key ID**: From your storage zone settings
-- **Secret Access Key**: Your storage zone password
+<Note>
+  Bunny Storage only supports path-style URLs (e.g.,
+  `https://[region]-s3.storage.bunnycdn.com/bucket-name/key`). Virtual
+  hosted-style URLs (e.g., `bucket-name.s3.region.amazonaws.com`) are not
+  supported.
+</Note>
 
 ### Content Type Detection
 
@@ -115,19 +117,7 @@ aws s3 sync ./local-dir s3://bucket-name/remote-dir/ \
 
 ### rclone
 
-Configure rclone for Bunny Storage by running `rclone config` and following these steps:
-
-1. Choose `n` for a new remote
-2. Name it (e.g., `bunnycdn`)
-3. Choose `s3` as the storage type
-4. For the S3 provider, choose `Other` (since BunnyCDN isn't officially listed)
-5. Press `1` to select `Enter AWS credentials in the next step`
-6. Enter the `access_key_id` and `secret_access_key` for your S3-enabled storage zone
-7. Leave the region and other fields as default unless necessary
-8. Enter the custom endpoint URL: `https://[region]-s3.storage.bunnycdn.com` (e.g., `https://de-s3.storage.bunnycdn.com`)
-9. Leave the rest as the defaults
-
-Alternatively, configure rclone via command line:
+You can use rclone with Bunny Storage:
 
 ```bash
 # Configure rclone
@@ -245,7 +235,7 @@ Be aware of the following limitations when using S3-compatible storage:
 
 S3-compatible storage zones support automatic multi-region replication. All operations including uploads, deletes, and multipart uploads are automatically replicated to your configured replication regions.
 
-**S3 compatibility is currently only available in the following regions:**
+S3 compatibility is currently only available in the following regions:
 
 - Frankfurt (de)
 - New York (ny)
@@ -253,18 +243,7 @@ S3-compatible storage zones support automatic multi-region replication. All oper
 
 Additional regions will be added in the future.
 
-### Reduced replication points
-
-Enabling S3 compatibility reduces the number of available replication points:
-
-| Storage Tier | HTTP API/FTP     | S3-compatible |
-| ------------ | ---------------- | ------------- |
-| Standard     | Up to 9 regions  | 4 regions     |
-| Edge (SSD)   | Up to 15 regions | 4 regions     |
-
-<Warning>
-  S3 compatibility cannot be changed after storage zone creation.
-</Warning>
+<Note>S3 compatibility cannot be changed after storage zone creation.</Note>
 
 ### Known limitations
 
@@ -285,13 +264,18 @@ The following S3 features are not currently supported:
 
 Bunny Storage returns standard S3 error codes:
 
-| Error Code           | HTTP Status | Description                                        |
-| -------------------- | ----------- | -------------------------------------------------- |
-| `NoSuchKey`          | 404         | The specified key does not exist                   |
-| `NoSuchBucket`       | 404         | The specified bucket (storage zone) does not exist |
-| `InvalidRequest`     | 400         | Invalid request parameters or headers              |
-| `InternalError`      | 500         | Internal server error                              |
-| `ServiceUnavailable` | 503         | Service temporarily unavailable                    |
+<Note>
+  Some error codes may differ from standard AWS S3 behavior. See the notes below
+  for Bunny-specific details.
+</Note>
+
+| Error Code           | HTTP Status | Description                                                                    |
+| -------------------- | ----------- | ------------------------------------------------------------------------------ |
+| `NoSuchKey`          | 404         | The specified file, folder, or multipart upload does not exist                 |
+| `InvalidSecurity`    | 403         | Signature validation failed (incorrect bucket name, access key, or secret key) |
+| `InvalidRequest`     | 400         | Invalid request parameters or headers                                          |
+| `InternalError`      | 500         | Internal server error                                                          |
+| `ServiceUnavailable` | 503         | S3 compatibility is not enabled for this storage zone                          |
 
 ## Best Practices
 

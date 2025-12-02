@@ -1,0 +1,77 @@
+---
+title: Quickstart
+description: Make your first API request to bunny.net in minutes.
+mode: center
+---
+
+This guide walks you through making your first API request to bunny.net.
+
+<Steps>
+  <Step title="Get your API key">
+    1. Log in to the [bunny.net dashboard](https://dash.bunny.net)
+    2. Navigate to **Account** > **API**
+    3. Copy your **Account API Key**
+
+    <Warning>
+    Keep your API key secure and never share it publicly.
+    </Warning>
+
+  </Step>
+
+  <Step title="Make your first request">
+    Use the following curl command to list your pull zones:
+
+    ```bash
+    curl --request GET \
+      --url https://api.bunny.net/pullzone \
+      --header 'AccessKey: YOUR_API_KEY' \
+      --header 'Content-Type: application/json'
+    ```
+
+    Replace `YOUR_API_KEY` with the API key you copied from the dashboard.
+
+  </Step>
+
+  <Step title="View the response">
+    A successful response returns a list of your pull zones:
+
+    ```json
+    {
+      "Items": [
+        {
+          "Id": 1234,
+          "Name": "my-pull-zone",
+          "OriginUrl": "https://example.com",
+          "Enabled": true,
+          "Hostnames": [
+            {
+              "Id": 5678,
+              "Value": "my-pull-zone.b-cdn.net"
+            }
+          ]
+        }
+      ],
+      "CurrentPage": 0,
+      "TotalItems": 1,
+      "HasMoreItems": false
+    }
+    ```
+
+    If you don't have any pull zones yet, the `Items` array will be empty.
+
+  </Step>
+
+  <Step title="Integrate with other APIs">
+    Explore the full range of bunny.net APIs:
+
+    <CardGroup cols={2}>
+      <Card title="Core Platform" href="/api-reference/platform/overview" horizontal />
+      <Card title="Edge Storage" href="/api-reference/storage/overview" horizontal />
+      <Card title="Stream" href="/api-reference/stream/overview" horizontal />
+      <Card title="Shield" href="/api-reference/shield/overview" horizontal />
+      <Card title="Scripting" href="/api-reference/scripting/overview" horizontal />
+      <Card title="Origin Errors" href="/api-reference/origin-errors/get-origin-error-logs-for-a-specific-pull-zone-and-date" horizontal />
+    </CardGroup>
+
+  </Step>
+</Steps>

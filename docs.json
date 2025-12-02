@@ -379,9 +379,10 @@
               {
                 "group": "Reference",
                 "pages": [
-                  "storage/durability",
+                  "storage/settings",
                   "storage/limits",
-                  "storage/settings"
+                  "storage/durability",
+                  "storage/api-reference"
                 ]
               }
             ]
@@ -587,7 +588,7 @@
               },
               {
                 "group": "Reference",
-                "pages": ["scripting/limits"]
+                "pages": ["scripting/limits", "scripting/api-reference"]
               }
             ]
           }
@@ -685,12 +686,16 @@
                 "group": "API Reference",
                 "pages": [
                   "api-reference/introduction",
+                  "api-reference/quickstart",
                   "api-reference/authentication"
                 ]
               },
               {
                 "group": "Core Platform API",
-                "pages": ["api-reference/platform/overview"],
+                "pages": [
+                  "api-reference/platform/overview",
+                  "api-reference/platform/errors"
+                ],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/bunnynet-api-1.json",
                   "directory": "api-reference/platform"
@@ -704,7 +709,7 @@
                 }
               },
               {
-                "group": "Edge Storage API",
+                "group": "Storage API",
                 "pages": ["api-reference/storage/overview"],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/bunnynet-edge-storage-api.json",
@@ -720,7 +725,7 @@
                 }
               },
               {
-                "group": "Bunny Shield API",
+                "group": "Shield API",
                 "pages": ["api-reference/shield/overview"],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/bunny-shield-api.json",
@@ -728,7 +733,7 @@
                 }
               },
               {
-                "group": "Scripting API",
+                "group": "Edge Scripting API",
                 "pages": ["api-reference/scripting/overview"],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/edge-scripting-api.json",

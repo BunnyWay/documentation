@@ -1,3 +1,39 @@
 ---
-title: Overview
+title: Storage API Reference
+sidebarTitle: Overview
+description: Upload, download, and manage files in your storage zones via HTTP.
 ---
+
+The Edge Storage API provides a simple RESTful interface for managing files in your storage zones.
+
+## Base URL
+
+```
+https://{region}.storage.bunnycdn.com
+```
+
+The endpoint depends on your storage zone's primary region. See [storage endpoints](/storage/http#storage-endpoints) for all available regions.
+
+## Authentication
+
+Authenticate using the `AccessKey` header with your storage zone password:
+
+```bash
+curl --request GET \
+  --url https://storage.bunnycdn.com/{storageZoneName}/ \
+  --header 'AccessKey: YOUR_STORAGE_ZONE_PASSWORD'
+```
+
+<Note>
+  Use your storage zone password, not your account API key. Find it in the **FTP
+  & API Access** tab of your storage zone.
+</Note>
+
+## SDKs
+
+<CardGroup cols={2}>
+  <Card title="TypeScript" href="/storage/typescript-sdk" />
+  <Card title="PHP" href="/storage/php-sdk" />
+  <Card title=".NET" href="/storage/dotnet-sdk" />
+  <Card title="Java" href="/storage/java-sdk" />
+</CardGroup>

@@ -1,3 +1,46 @@
 ---
-title: Overview
+title: Edge Scripting API Reference
+sidebarTitle: Overview
+description: Deploy, manage, and monitor edge scripts via HTTP.
 ---
+
+The Scripting API lets you manage edge scripts programmatically. Create scripts, configure deployments, and monitor execution via HTTP.
+
+## Base URL
+
+```
+https://api.bunny.net
+```
+
+## Authentication
+
+Authenticate using the `AccessKey` header with your account API key:
+
+```bash
+curl --request GET \
+  --url https://api.bunny.net/compute/script \
+  --header 'AccessKey: YOUR_API_KEY'
+```
+
+<Note>
+  Find your API key in the [account
+  settings](https://dash.bunny.net/account/settings) under **API Keys**.
+</Note>
+
+## Script Types
+
+Edge Scripting supports two script types:
+
+- **Standalone** — Handle requests directly without an origin server
+- **Middleware** — Intercept and modify requests/responses flowing through a pull zone
+
+See the [Edge Scripting documentation](/scripting) for details on each type.
+
+## SDKs
+
+<CardGroup cols={2}>
+  <Card
+    title="TypeScript"
+    href="https://github.com/nicosommi/bunnycdn-api-client"
+  />
+</CardGroup>

@@ -1,3 +1,38 @@
 ---
 title: Authentication
+description: Learn how to authenticate requests to the bunny.net APIs.
 ---
+
+To authenticate requests, include your API key in the request headers.
+
+## Header
+
+| Header      | Value        |
+| ----------- | ------------ |
+| `AccessKey` | Your API key |
+
+The API key is required for performing account-specific actions, such as managing zones or other resources. You can have only one API key associated with your account, which can be viewed anytime in the dashboard.
+
+<Info>
+  You can learn how to locate your API key in the
+  [dashboard](https://dash.bunny.net).
+</Info>
+
+<Note>
+  The Stream and Edge Storage APIs use the same `AccessKey` header, but require
+  their own credentials. Use the library API key for Stream, or the storage zone
+  password for Edge Storage, instead of your account API key.
+</Note>
+
+## Example
+
+```bash
+curl --request GET \
+  --url https://api.bunny.net/dnszone \
+  --header 'AccessKey: YOUR_API_KEY'
+```
+
+<Warning>
+  Ensure your API key is stored securely and never shared publicly to prevent
+  unauthorized access to your account.
+</Warning>

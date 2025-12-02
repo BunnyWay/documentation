@@ -1,3 +1,39 @@
 ---
 title: Introduction
+description: Learn about the bunny.net APIs and how to integrate with the platform.
 ---
+
+bunny.net provides a comprehensive set of APIs that enable you to programmatically manage your resources and integrate with our services.
+
+<Card
+  title="Quickstart"
+  icon="rocket"
+  href="/api-reference/quickstart"
+  horizontal
+>
+  Get started and create your first API request
+</Card>
+
+## Core Platform API
+
+The [Core Platform API](/api-reference/platform/overview) provides access to manage your account resources including:
+
+- Pull Zones (CDN)
+- Storage Zones
+- DNS Zones
+- Stream Video Libraries
+- Statistics and billing
+
+**Base URL:** `https://api.bunny.net`
+
+## Product APIs
+
+In addition to the Core Platform API, each product has its own dedicated API for managing content and product-specific operations:
+
+| Product                                                                                               | Description                                             | Base URL                                |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------- |
+| [Stream](/api-reference/stream/overview)                                                              | Manage video libraries, collections, and videos         | `https://video.bunnycdn.com`            |
+| [Edge Storage](/api-reference/storage/overview)                                                       | Upload, download, and manage files in storage zones     | `https://{region}.storage.bunnycdn.com` |
+| [Shield](/api-reference/shield/overview)                                                              | Configure WAF rules, rate limiting, and DDoS protection | `https://api.bunny.net`                 |
+| [Scripting](/api-reference/scripting/overview)                                                        | Deploy and manage edge scripts                          | `https://api.bunny.net`                 |
+| [Origin Errors](/api-reference/origin-errors/get-origin-error-logs-for-a-specific-pull-zone-and-date) | Retrieve origin error logs for pull zones               | `https://api.bunny.net`                 |
