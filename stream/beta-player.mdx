@@ -1,0 +1,89 @@
+---
+title: Player 2
+tag: beta
+---
+
+# Introduction
+
+The new Bunny Stream beta video player is ready to power your video experiences!
+
+# Quickstart guide
+
+**How to enable the beta video player** from your Bunny Stream dashboard:
+
+**Existing video libraries**
+
+1. Log into your **Bunny.net** account
+
+2. Navigate to **Stream** from the side bar
+
+3. Select the **Video Library** you would like to utilize the new beta player on
+
+4. Click on **Player Settings**
+
+5. Toggle on **'Enable Beta Video Player'** feature
+
+   ![](/images/docs/6709ccbaf706a9b8bcc9c6d836040cb40ec621e706581b8b2b5efa8fee746b16-Screenshot_2025-10-08_at_10.44.47.png)
+
+6. Click **Enable** on the pop-up modal
+
+7. Your video library**Videos and embed codes** will now reflect the new beta video player
+
+8. **Enjoy!**
+
+# API
+
+You can also activate the beta player over API on your video library using the following **cURL commands** via the '**Update video library**' endpoint: [https://docs.bunny.net/reference/videolibrarypublic_update#/](/reference/videolibrarypublic_update#/)
+
+**To enable beta video player:**
+
+<CodeGroup>
+  ```bash bash
+  curl <https://api.bunny.net/videolibrary/<library_id>  
+   -X POST  
+   -H 'authorization: <token>'  
+   -H 'content-type: application/json'  
+   --data-raw '{"PlayerVersion":2}'
+  ```
+</CodeGroup>
+
+**To disable beta video player:**
+
+<CodeGroup>
+  ```bash bash
+  curl <https://api.bunny.net/videolibrary/library_id>  
+   -X POST  
+   -H 'authorization: <token>'  
+   -H 'content-type: application/json'  
+   --data-raw '{"PlayerVersion":1}'
+  ```
+</CodeGroup>
+
+# About
+
+**Why we built our new beta video player**
+
+The player uses a modern and flexible technology that helps us deliver a better video experience for you. Here’s what that means:
+
+**A custom, modern Interface**
+
+The player offers a clean, intuitive interface that works seamlessly across desktops, tablets, and mobile devices. It’s fully customizable, allowing us to deliver a user experience that matches the quality of our content
+
+**Fast and responsive performance**
+
+The player is optimized for performance. Video controls feel smooth and responsive, and playback starts quickly without delays or glitches.
+
+**A consistent experience across browsers**
+
+No matter what browser you use; whether it’s Chrome, Safari, Firefox, or Edge you’ll get a consistent and reliable experience. The interface and functionality remain the same everywhere
+
+**Designed for accessibility**
+
+The player is built to be inclusive. It supports screen readers, keyboard navigation, and other accessibility features so that everyone can enjoy our content with ease
+
+# Notes
+
+- The beta video player uses a new player URL for both embed iframe and direct play URLs [https://player.mediadelivery.net](https://player.mediadelivery.net) 
+- Your pre-existing player embed iframe and direct play URLs will still work [https://iframe.mediadelivery.net](https://iframe.mediadelivery.net)
+- You can still swap your video library back to the current player by disabling the beta video player toggle
+- As the player is still in Beta - please report any issues to support

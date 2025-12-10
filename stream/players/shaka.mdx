@@ -1,0 +1,135 @@
+---
+title: "Shaka Player integration"
+description: "This guide will help you integrate Shaka Player with bunny.net to stream video content. Shaka Player is a free, open-source media player that plays adaptive media formats such as DASH and HLS. bunny.net is a content delivery network (CDN) service that provides fast and secure video delivery."
+---
+
+<Info>
+This guide provides a basic setup for integrating Shaka Player with bunny.net. For advanced configurations and customizations, refer to the [Shaka Player documentation](https://shaka-player-demo.appspot.com/docs/api/tutorial-drm-config.html).
+
+</Info>
+
+# What you'll need
+
+Before you dive in, make sure you have the following prerequisites in place:
+
+- A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+
+# HTML setup
+
+First, create an HTML file and add a `<video>` element where the Shaka Player will attach. Include the Shaka Player library in your HTML file.
+
+```
+<video id="video" width="640" controls autoplay></video>
+<script src="https://cdn.jsdelivr.net/npm/[email protected]/dist/shaka-player.compiled.debug.js"></script>
+```
+
+# JavaScript setup
+
+To integrate Widevine with Shaka Player, add the following code snippet after initializing the Shaka Player. This configuration includes fetching the certificate and configuring the license server URL:
+
+First, we setup the variables to set streamApi endpoint, library, and video information:
+
+```
+const streamApiHostName = "https://video.bunnycdn.com";
+const libraryId = 249011;
+const videoId = "b98c3c67-402c-4471-9a9e-7fb2a1917ea8";
+const storageZoneId = "vz-b63efbcf-f92";
+const storageDomain = "b-cdn.net";
+```
+
+From the variables above, the actual URL to media file is constructed:
+
+```
+const manifestUri = `https://${storageZoneId}.${storageDomain}/${videoId}/playlist.m3u8`;
+```
+
+If `theLightslibrary` has Enterprise DRM configured, prepare a Fairplay certificate, license URLs, and the Widevine license URL:
+
+```
+const fpCertificateUri = `${streamApiHostName}/FairPlay/${libraryId}/certificate`;
+const fpLicenseUri = `${streamApiHostName}/FairPlay/${libraryId}/license/?videoId=${videoId}`;
+const wvLicenseUri = `${streamApiHostName}/WidevineLicense/${libraryId}/${videoId}`;
+```
+
+Next, perform the application initialization based on official Shaka Player documentation:
+
+```
+async function initApp() {
+  // Install built-in polyfills to patch browser incompatibilities.
+  shaka.polyfill.installAll();
+
+  // Check to see if the browser supports the basic APIs Shaka needs.
+  if (shaka.Player.isBrowserSupported()) {
+    // Everything looks good!
+    initPlayer();
+  } else {
+    // This browser does not have the minimum set of APIs we need.
+    console.error('Browser not supported!');
+  }
+}
+```
+
+Initialization of the player is implemented in the `initPlayer` function. The segments that are related to DRM are only needed if Enterprise DRM is enabled on the video library:
+
+```
+async function initPlayer() {
+  // Create a player instance.
+  const video = document.getElementById('video');
+  const player = new shaka.Player();
+
+  // If Library has Enterprise DRM enabled we also configure Widevine and Fairplay license URLs
+  player.configure({
+    drm: {
+      servers: {
+        'com.widevine.alpha': wvLicenseUri,
+        'com.apple.fps': fpLicenseUri
+      }
+    }
+  });
+
+  // For Fairplay, we have to manually configure the Fairplay server certificate uri. For Widevine that is automatically handled by Shaka Player.
+  player.configure('drm.advanced.com\\.apple\\.fps.serverCertificateUri', fpCertificateUri);
+
+  video.addEventListener("error", (event) => {
+    console.error(event);
+  });
+
+  // Attach Shaka Player to html element
+  await player.attach(video);
+
+  // Attach player to the window to make it easy to access in the JS console.
+  window.player = player;
+
+  // Listen for error events.
+  player.addEventListener('error', onErrorEvent);
+
+  // Try to load a manifest.
+  // This is an asynchronous process.
+  try {
+    await player.load(manifestUri);
+    // This runs if the asynchronous load is successful.
+    console.log('The video has now been loaded!');
+  } catch (e) {
+    // onError is executed if the asynchronous load fails.
+    onError(e);
+  }
+}
+
+function onErrorEvent(event) {
+  // Extract the shaka.util.Error object from the event.
+  onError(event.detail);
+}
+
+function onError(error) {
+  // Log the error.
+  console.error('Error code', error.code, 'object', error);
+}
+
+document.addEventListener('DOMContentLoaded', initApp);
+```
+
+# Need help or encountering issues?
+
+If you encounter any difficulties or have questions while following this Quickstart Guide, our support team is here to assist you. Please don't hesitate to contact us via [support request form](https://bunny.net/contact/) for prompt assistance.
+
+Our dedicated support team is ready to help you resolve any issues you might face during the deployment process, provide additional guidance, or answer your questions.

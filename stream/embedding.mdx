@@ -1,0 +1,106 @@
+---
+title: "Embedding videos"
+description: "Bunny Stream is designed for developers and content creators to easily upload, process, and display videos within any application or website. Once your videos have been processed, you can embed them by using our lightweight embed player, enabling seamless playback across all devices and browsers."
+---
+
+# How to embed a video?
+
+Embedding a video involves placing an `<iframe>` element on your webpage. By referencing the correct Bunny Stream embed url and including your video library and video IDs, you can display your video anywhere you like. Each embedded video is accessed via the following URL pattern:
+
+```
+https://iframe.mediadelivery.net/embed/`{video_library_id}`/`{video_id}`
+```
+
+Bunny Stream’s embed player will automatically adjust to fill the full width and height of the `<iframe>`. For best results, we recommend using a responsive layout. If a fixed aspect ratio is required, a common approach is to use a container with a `position:absolute;top:0;width:100%;height:100%;` style, maintaining a standard 16:9 format or your desired ratio.
+
+Example code:
+
+<CodeGroup>
+  ```bash bash
+  <div style={{ position: "relative", paddingTop: "56.25%" }}>
+    <iframe
+      src="https://iframe.mediadelivery.net/embed/759/eb1c4f77-0cda-46be-b47d-1118ad7c2ffe?autoplay=true"
+      loading="lazy"
+      style={{
+        border: "none",
+        position: "absolute",
+        top: "0",
+        height: "100%",
+        width: "100%",
+      }}
+      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+      allowFullScreen="true"
+    ></iframe>
+  </div>
+  ```
+</CodeGroup>
+
+<CodeGroup>
+  ```bash bash
+  <iframe
+    src="https://iframe.mediadelivery.net/embed/256380/d9d9ab1f-fc9f-4488-9c26-4ffc653c0024?autoplay=true&loop=false&muted=false&preload=true&responsive=false"
+    loading="lazy"
+    style={{
+      border: "0",
+      position: "absolute",
+      top: "0",
+      height: "100%",
+      width: "100%",
+    }}
+    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+    allowFullScreen="true"
+  ></iframe>
+  ```
+</CodeGroup>
+
+The embed code for a particular video can be generated on the video details page in the dashboard.
+
+# Parameters
+
+By default, many of the player’s controls and behaviors, such as captions, autoplay, and preload, can be configured on a global scale within the Player tab of your Bunny Stream library settings. Adjusting these default configurations ensures that any video embedded from that library inherits the same baseline behavior, providing a consistent user experience across all embedded instances.
+
+![](/images/docs/d267314b297a80462b1668920e710619e6a80d7c2e1e9ad1b9491b4ccbdcda84-image.png)
+
+However, you can also fine-tune or override these defaults on a per-embed basis by adding query parameters directly to the embed URL. This flexibility allows you to tailor the playback experience for specific pages or use-cases without affecting the global settings of your library.
+
+# Supported Parameters
+
+Below is a concise table summarizing each parameter, its possible values, a brief description, and the default value.
+
+| **Parameter**          | **Values**                                     | **Description**                                                                                                                                                                                                                                                                       | **Default Value** |
+| ---------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| **`autoplay`**         | `true`, `false`                                | Controls whether the video should start playing automatically. Due to browser restrictions on auto-play, this may not always work.                                                                                                                                                    | `true`            |
+| **`captions`**         | _caption short-code string_                    | Controls the default captions file that will be shown. By passing the caption code, the player will automatically load these captions. By default, the player remembers the user's last selection or does not load captions.                                                          | _N/A_             |
+| **`preload`**          | `true`, `false`                                | Controls whether the video files are preloaded. When set to `true`, the player immediately starts downloading the video so playback begins more quickly.                                                                                                                              | `true`            |
+| **`t`**                | 1. `Xs` or `1h20m45s` 2) `hh:mm:ss` 3) Numeric | Sets the video start time. Supports multiple formats: seconds/minutes/hours notation, `hh:mm:ss` format, or a simple numeric value interpreted as seconds.                                                                                                                            | _N/A_             |
+| **`chromecast`**       | `true`, `false`                                | Enables or disables Chromecast support within the player.                                                                                                                                                                                                                             | _N/A_             |
+| **`disableAirplay`**   | `true`, `false`                                | Disables AirPlay support when set to `true`.                                                                                                                                                                                                                                          | _N/A_             |
+| **`disableIosPlayer`** | `true`, `false`                                | Disables the native iOS player (used typically for fullscreen handling on iOS).                                                                                                                                                                                                       | _N/A_             |
+| **`showHeatmap`**      | `true`, `false`                                | Displays a heatmap on the progress bar when set to `true`, highlighting viewer engagement at different points in the video.                                                                                                                                                           | _N/A_             |
+| **`muted`**            | `true`, `false`                                | If set to `true`, the player starts in mute mode (no sound). This is often used for autoplay scenarios.                                                                                                                                                                               | _N/A_             |
+| **`loop`**             | `true`, `false`                                | Replays the video automatically after it ends, creating a continuous loop.                                                                                                                                                                                                            | _N/A_             |
+| **`playsinline`**      | `true`, `false`                                | Allows the video to play inline on mobile devices rather than forcing fullscreen playback.                                                                                                                                                                                            | _N/A_             |
+| **`showSpeed`**        | `true`, `false`                                | Shows a speed control within the player, allowing playback rate adjustments.                                                                                                                                                                                                          | _N/A_             |
+| **`rememberPosition`** | `true`, `false`                                | Controls whether the player remembers the last playback position for the viewer within their browser. If set to `true`, the player stores the last position and attempts to resume from that point when the viewer returns. When `false`, the video always starts from the beginning. | `false`           |
+
+# Player keyboard shortcuts
+
+Bunny Stream player has support for the following keyboard shortcuts.
+
+| Key    | Action                               |
+| ------ | ------------------------------------ |
+| 0 to 9 | Seek from 0 to 90% respectively      |
+| space  | Toggle playback                      |
+| K      | Toggle playback                      |
+| ←      | Seek backward by the seekTime option |
+| →      | Seek forward by the seekTime option  |
+| ↑      | Increase volume                      |
+| ↓      | Decrease volume                      |
+| M      | Toggle mute                          |
+| F      | Toggle fullscreen                    |
+| C      | Toggle captions                      |
+| L      | Toggle loop                          |
+
+# Custom integration
+
+If you prefer to use your own player or a fully custom video integration, you can directly access the raw video files from Bunny Stream’s infrastructure. Please refer to our [Video Storage Structure](/docs/stream-video-storage-structure) documentation for details on how to retrieve and utilize video files directly.

@@ -209,120 +209,111 @@
       },
       {
         "product": "Stream",
+        "description": "Video streaming and delivery platform",
         "icon": "video",
         "tabs": [
           {
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Stream",
+                "group": "Bunny Stream",
                 "pages": [
-                  "docs/stream-overview",
-                  {
-                    "group": "Get started",
-                    "pages": [
-                      "docs/stream-get-started",
-                      {
-                        "group": "Quickstart",
-                        "pages": [
-                          "docs/stream-quickstart",
-                          "docs/stream-quickstart-guide",
-                          "docs/mediacage-enterprise-drm-quickstart",
-                          "docs/mediacage-basic-drm-quickstart"
-                        ]
-                      },
-                      {
-                        "group": "Tutorials",
-                        "pages": [
-                          "docs/stream-tutorials",
-                          "docs/stream-dashboard-overview",
-                          "docs/stream-upload-video-from-url",
-                          "docs/stream-how-to-retrieve-an-mp4-url-from-stream",
-                          "docs/stream-uploading-videos-through-our-http-api",
-                          "docs/stream-how-to-find-your-stream-api-key",
-                          "docs/stream-understanding-content-tagging",
-                          "docs/stream-understanding-bunny-stream-security-options",
-                          "docs/stream-understanding-mediacage-basic-drm",
-                          "docs/stream-what-is-the-difference-between-standard-and-volume-tier-zones",
-                          "docs/stream-understanding-geo-replication",
-                          "docs/stream-google-widevine-drm-sd-only-for-l3"
-                        ]
-                      },
-                      {
-                        "group": "Best practices",
-                        "pages": [
-                          "docs/stream-best-practices",
-                          "docs/stream-video-specification"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "group": "Use & expand",
-                    "pages": [
-                      "docs/stream-use-and-expand",
-                      "docs/stream-collections",
-                      "docs/stream-embedding-videos",
-                      "docs/multi-audio-support",
-                      "docs/adaptive-bitrate-streaming",
-                      "docs/stream-statistics",
-                      "docs/playback-control-api",
-                      "docs/stream-webhook",
-                      "docs/stream-metatags"
-                    ]
-                  },
-                  {
-                    "group": "Player",
-                    "pages": [
-                      "docs/stream-player-settings",
-                      "docs/stream-beta-video-player",
-                      {
-                        "group": "3rd party integrations",
-                        "pages": [
-                          "docs/integration-methods",
-                          "docs/bitmovin-player-integration",
-                          "docs/widevine-integration",
-                          "docs/fairplay-html5-player-integration",
-                          "docs/shaka-player-integration"
-                        ]
-                      }
-                    ]
-                  },
-                  "docs/stream-mobile-sdk",
-                  {
-                    "group": "Advertising",
-                    "pages": ["docs/stream-advertising", "docs/stream-vast"]
-                  },
+                  "stream/index",
+                  "stream/quickstart",
+                  "stream/authentication",
+                  "stream/pricing"
+                ]
+              },
+              {
+                "group": "Features",
+                "pages": [
                   {
                     "group": "Encoding",
                     "pages": [
-                      "docs/stream-encoding",
-                      "docs/stream-premium-encoding"
+                      "stream/encoding",
+                      "stream/video-specification",
+                      "stream/adaptive-bitrate",
+                      "stream/multi-audio"
                     ]
                   },
-                  "docs/stream-transcribing",
+                  "stream/premium-encoding",
+                  "stream/transcribing",
                   {
                     "group": "MediaCage DRM",
                     "pages": [
-                      "docs/stream-drm",
-                      "docs/stream-mediacage-basic-drm",
-                      "docs/stream-mediacage-enterprise-drm",
-                      "docs/fps-deployment-package-guide",
-                      "docs/widevine-drm-security-levels"
+                      "stream/drm/index",
+                      "stream/mediacage-basic",
+                      "stream/mediacage-basic-guide",
+                      "stream/quickstart-mediacage-basic",
+                      "stream/mediacage-enterprise",
+                      "stream/quickstart-mediacage-enterprise",
+                      "stream/widevine-security-levels",
+                      "stream/widevine-l3",
+                      "stream/fairplay-deployment"
                     ]
                   },
-                  {
-                    "group": "Storage",
-                    "pages": ["docs/stream-video-storage-structure"]
-                  },
+                  "stream/vast",
+                  "stream/storage-tiers",
+                  "stream/replication",
                   {
                     "group": "Security",
                     "pages": [
-                      "docs/stream-security",
-                      "docs/stream-embed-token-authentication"
+                      "stream/security",
+                      "stream/security-options",
+                      "stream/token-authentication"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Manage Videos",
+                "pages": [
+                  {
+                    "group": "Upload",
+                    "pages": [
+                      "stream/dashboard",
+                      "stream/http-api",
+                      "stream/url-fetch"
                     ]
                   },
-                  "docs/stream-pricing"
+                  "stream/collections",
+                  "stream/tagging",
+                  "stream/metatags",
+                  "stream/storage-structure"
+                ]
+              },
+              {
+                "group": "Playback",
+                "pages": [
+                  {
+                    "group": "Bunny Player",
+                    "pages": [
+                      "stream/player-settings",
+                      "stream/beta-player",
+                      "stream/playback-api"
+                    ]
+                  },
+                  {
+                    "group": "3rd Party Players",
+                    "pages": [
+                      "stream/players/index",
+                      "stream/players/bitmovin",
+                      "stream/players/shaka",
+                      "stream/players/widevine",
+                      "stream/players/fairplay"
+                    ]
+                  },
+                  "stream/mobile-sdk",
+                  "stream/embedding",
+                  "stream/mp4-downloads"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "stream/statistics",
+                  "stream/webhooks",
+                  "stream/api-reference"
                 ]
               }
             ]
@@ -1402,6 +1393,277 @@
     {
       "source": "/reference/get-cdn-origin-errors",
       "destination": "/api-reference/origin-errors/get-origin-error-logs-for-a-specific-pull-zone-and-date",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-overview",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-quickstart-guide",
+      "destination": "/stream/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-pricing",
+      "destination": "/stream/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-dashboard-overview",
+      "destination": "/stream/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-uploading-videos-through-our-http-api",
+      "destination": "/stream/http-api",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-upload-video-from-url",
+      "destination": "/stream/url-fetch",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-collections",
+      "destination": "/stream/collections",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-understanding-content-tagging",
+      "destination": "/stream/tagging",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-metatags",
+      "destination": "/stream/metatags",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-video-storage-structure",
+      "destination": "/stream/storage-structure",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-embedding-videos",
+      "destination": "/stream/embedding",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-player-settings",
+      "destination": "/stream/player-settings",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-beta-video-player",
+      "destination": "/stream/beta-player",
+      "permanent": true
+    },
+    {
+      "source": "/docs/adaptive-bitrate-streaming",
+      "destination": "/stream/adaptive-bitrate",
+      "permanent": true
+    },
+    {
+      "source": "/docs/multi-audio-support",
+      "destination": "/stream/multi-audio",
+      "permanent": true
+    },
+    {
+      "source": "/docs/playback-control-api",
+      "destination": "/stream/playback-api",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-how-to-retrieve-an-mp4-url-from-stream",
+      "destination": "/stream/mp4-downloads",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integration-methods",
+      "destination": "/stream/players",
+      "permanent": true
+    },
+    {
+      "source": "/stream/players/overview",
+      "destination": "/stream/players",
+      "permanent": true
+    },
+    {
+      "source": "/docs/bitmovin-player-integration",
+      "destination": "/stream/players/bitmovin",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shaka-player-integration",
+      "destination": "/stream/players/shaka",
+      "permanent": true
+    },
+    {
+      "source": "/docs/widevine-integration",
+      "destination": "/stream/players/widevine",
+      "permanent": true
+    },
+    {
+      "source": "/docs/fairplay-html5-player-integration",
+      "destination": "/stream/players/fairplay",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-encoding",
+      "destination": "/stream/encoding",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-premium-encoding",
+      "destination": "/stream/premium-encoding",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-transcribing",
+      "destination": "/stream/transcribing",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-video-specification",
+      "destination": "/stream/video-specification",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-security",
+      "destination": "/stream/security",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-understanding-bunny-stream-security-options",
+      "destination": "/stream/security-options",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-embed-token-authentication",
+      "destination": "/stream/token-authentication",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-drm",
+      "destination": "/stream/drm",
+      "permanent": true
+    },
+
+    {
+      "source": "/docs/stream-mediacage-basic-drm",
+      "destination": "/stream/mediacage-basic",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-understanding-mediacage-basic-drm",
+      "destination": "/stream/mediacage-basic-guide",
+      "permanent": true
+    },
+    {
+      "source": "/docs/mediacage-basic-drm-quickstart",
+      "destination": "/stream/quickstart-mediacage-basic",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-mediacage-enterprise-drm",
+      "destination": "/stream/mediacage-enterprise",
+      "permanent": true
+    },
+    {
+      "source": "/docs/mediacage-enterprise-drm-quickstart",
+      "destination": "/stream/quickstart-mediacage-enterprise",
+      "permanent": true
+    },
+    {
+      "source": "/docs/fps-deployment-package-guide",
+      "destination": "/stream/fairplay-deployment",
+      "permanent": true
+    },
+    {
+      "source": "/docs/widevine-drm-security-levels",
+      "destination": "/stream/widevine-security-levels",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-google-widevine-drm-sd-only-for-l3",
+      "destination": "/stream/widevine-l3",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-advertising",
+      "destination": "/stream/vast",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-vast",
+      "destination": "/stream/vast",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-statistics",
+      "destination": "/stream/statistics",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-webhook",
+      "destination": "/stream/webhooks",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-understanding-geo-replication",
+      "destination": "/stream/replication",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-what-is-the-difference-between-standard-and-volume-tier-zones",
+      "destination": "/stream/storage-tiers",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-mobile-sdk",
+      "destination": "/stream/mobile-sdk",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-how-to-find-your-stream-api-key",
+      "destination": "/stream/authentication",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-get-started",
+      "destination": "/stream/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-quickstart",
+      "destination": "/stream/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-tutorials",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-best-practices",
+      "destination": "/stream/video-specification",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-use-and-expand",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/stream/geo-replication",
+      "destination": "/stream/replication",
+      "permanent": true
+    },
+    {
+      "source": "/stream/api-key",
+      "destination": "/stream/authentication",
       "permanent": true
     }
   ]
