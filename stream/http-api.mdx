@@ -1,0 +1,168 @@
+---
+title: HTTP
+description: "Upload videos to Bunny Stream using the HTTP API."
+---
+
+From creating the video object to sending the actual video content, you’ll learn how to complete the process smoothly.
+
+# What You’ll Need
+
+Before you begin, ensure you have:
+
+- A [bunny.net](bunny.net) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+
+A video library already created. It can be done **via Dashboard** (Follow "Step 1" in the guide [quickstart stream](/docs/stream-quickstart-2) to create a video library. An incorrect library ID will result in upload failure) or **via API** (use the "Add Video Library" HTTP call explained in our [Add Video Library - docs.bunny.net](/reference/videolibrarypublic_add) guide).
+
+Have your Stream API key prepared. To learn how to obtain your Stream API key, see [How to obtain your Stream API key guide.](https://support.bunny.net/hc/en-us/articles/13503339878684-How-to-find-your-stream-API-key)
+
+# Understanding the Upload Process
+
+Uploading a video through the HTTP API involves **two main steps:**
+
+1. **Create the video object** in your library (metadata and title).
+2. **Upload the video file** in **binary format** using a PUT request.
+
+# Creating a Video
+
+Before uploading any video content, you must first **create a video object** in your library. This step is often overlooked, so please ensure it’s completed before proceeding with the upload.
+
+> This step tells Bunny Stream that you’re about to upload a new video and gives it a title and optional metadata. It doesn’t upload the video yet, just sets up the “slot” for it.
+
+You can find full details about the available parameters in our documentation here: [Create Video - docs.bunny.net.](/reference/video_createvideo)
+
+# How to Create a Video:
+
+Make an authenticated POST request to the following endpoint:
+
+```bash
+POST https://video.bunnycdn.com/library/:libraryId/videos
+```
+
+**Headers:**
+
+- `AccessKey`: Your **Stream API key**
+
+- `Accept: application/json`
+
+- `Content-Type: application/json`
+
+**Body Parameters:**
+
+- `title`: The name of your video. This will appear in the library UI.
+
+- `collectionId` (optional): The ID of a collection in your library where this video should be placed.
+
+- `thumbnailTime` (optional): The time (in milliseconds) to use when extracting the main video thumbnail.
+
+**Example request:**
+
+```bash
+curl --request POST
+  --url https://video.bunnycdn.com/library/:libraryId/videos
+  --header 'AccessKey: <Your Stream Library API key>'
+  --header 'accept: application/json'
+  --header 'content-type: application/json'
+  --data '{"title":"test"}'
+```
+
+**Example Response:**
+
+The response will return a new video object, including:
+
+- A unique videoId (guid)
+
+- The libraryId
+
+- Basic metadata such as title and creation date
+
+At this stage, most fields (like encoding status or view count) will be empty or zero since the file hasn’t been uploaded yet.
+
+You’ll need the `videoId` from this response in the next step.
+
+# Uploading the Video File
+
+Once the video object is created, you can proceed to upload the actual video file.
+
+Full API reference: [Upload Video - docs.bunny.net.](/reference/video_uploadvideo)
+
+**Upload Endpoint:**
+
+```bash
+PUT https://video.bunnycdn.com/library/{libraryId}/videos/{videoId}
+```
+
+**Required Parameters:**
+
+libraryId: Your video library ID (retrieved as before).
+
+videoId: The unique ID returned when you created the video object.
+
+You can also find this ID in the Bunny dashboard under the “Video ID” field for any listed video.
+
+**Example curl request:**
+
+```bash
+curl --request PUT
+  --url <https://video.bunnycdn.com/library/><Your Library ID>/videos/<Your Video ID>
+  --header 'AccessKey: <Your Stream Library API key>'
+  --header 'accept: application/json'
+  --data-binary '@path/to/your/video.mp4'
+```
+
+**Example Response:**
+
+```json
+{ "success": true, "message": "OK" }
+```
+
+This response indicates that the video was uploaded successfully.
+
+**File Format Requirements:**
+
+When uploading your video file, it must be sent as r**aw binary data,** not encoded or wrapped in JSON.
+
+Don’t base64 encode the file
+
+Send the video as binary in the body of the request
+
+**cURL Tip:**
+
+Use the "--data-binary" flag to send the file correctly
+
+```bash
+\--data-binary '@video.mp4'
+```
+
+If this step is skipped or misconfigured, the upload may silently fail or the video will not process correctly.
+
+# Fetching Videos from a Remote URL (Optional)
+
+If you already have a video file hosted on another platform or server, [Bunny.net](http://bunny.net/) allows you to fetch it directly using a remote URL, saving you the trouble of downloading and re-uploading manually.
+
+<Info>
+  The URL you provide must be publicly accessible. Protected URLs (e.g., those
+  requiring authentication, signed tokens, or expiring links) may not work
+  correctly, as Bunny.net’s fetch system cannot access content behind security
+  gates.
+</Info>
+
+The documentation link to this can be found here: [Fetch Video - docs.bunny.net.](/reference/video_fetchnewvideo)
+
+**Endpoint:**
+
+```bash bash
+POST <https://video.bunnycdn.com/library/{libraryId}/videos/fetch>
+```
+
+**Example Request:**
+
+```bash
+curl --request POST
+  --url <https://video.bunnycdn.com/library/><Your Library ID>/videos/fetch
+  --header 'AccessKey: <Your Stream Library API key>'
+  --header 'accept: application/json'
+  --header 'content-type: application/json'
+  --data '{"url": "<https://example.com/video.mp4>"}'
+```
+
+Once fetched, the video will be automatically added to your library and begin processing like a normal upload.

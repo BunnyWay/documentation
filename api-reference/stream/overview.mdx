@@ -1,3 +1,37 @@
 ---
-title: Overview
+title: Stream API Reference
+sidebarTitle: API Reference
+description: Upload, manage, and deliver videos with the Stream API.
 ---
+
+The Stream API provides a RESTful interface for managing video libraries, uploading videos, and controlling playback settings.
+
+## Base URL
+
+```
+https://video.bunnycdn.com
+```
+
+## Authentication
+
+Authenticate using the `AccessKey` header with your Stream API key:
+
+```bash
+curl --request GET \
+  --url https://video.bunnycdn.com/library/{libraryId}/videos \
+  --header 'AccessKey: YOUR_STREAM_API_KEY'
+```
+
+<Note>
+  Find your Stream API key in the **API** section of your video library
+  settings. See [Authentication](/stream/authentication) for details.
+</Note>
+
+## Resources
+
+<CardGroup cols={2}>
+  <Card title="Upload Videos" href="/stream/http-api" />
+  <Card title="Embed Videos" href="/stream/embedding" />
+  <Card title="Collections" href="/stream/collections" />
+  <Card title="Webhooks" href="/stream/webhooks" />
+</CardGroup>

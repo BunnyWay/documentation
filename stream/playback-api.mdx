@@ -1,0 +1,188 @@
+---
+title: "Playback control API"
+description: "The Bunny Stream Player offers a rich set of events and methods through its embeddable iframe player, enabling external programmatic interaction with playback sessions. To ensure standardization and ease of integration, the embeddable iframe player employs the player.js JavaScript library."
+---
+
+<Info>
+For more information, see detailed documentation available at [player.js website](https://github.com/embedly/player.js#playerjs).
+
+</Info>
+
+Player.js library is hosted on Bunny.net CDN so you can easily integrate it in your website by including the following script block in your HTML:
+
+<CodeGroup>
+  ```bash bash
+  <script
+    type="text/javascript"
+    src="//assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
+  ></script>
+  ```
+</CodeGroup>
+
+## Quickstart
+
+After loading the library and embedding the Player iframe, you can create a player object and interact with it using various events and methods. The following example illustrates the basic usage:
+
+<CodeGroup>
+  ```bash bash
+  const player = new playerjs.Player('iframe');
+
+player.on('ready', () => {
+player.on('play', () => {
+console.log('play');
+});
+
+    player.getDuration(duration => console.log(duration));
+
+    if (player.supports('method', 'mute')) {
+      player.mute();
+    }
+
+    player.play();
+
+});
+
+````
+</CodeGroup>
+
+## Methods
+
+The Bunny Stream Player provides the following methods for controlling playback:
+
+`play`: void - Play the media. Example:
+
+<CodeGroup>
+```bash bash
+player.play();
+````
+
+</CodeGroup>
+
+`pause`: void - Pause the media. Example:
+
+<CodeGroup>```bash bash player.pause(); ```</CodeGroup>
+
+`getPaused`: boolean - Determine if the media is paused. Example:
+
+<CodeGroup>
+  ```bash bash
+  player.getPaused(function(value){
+    console.log('paused:', value);
+  });
+  ```
+</CodeGroup>
+
+`mute`: void - Mute the media. Example:
+
+<CodeGroup>```bash bash player.mute(); ```</CodeGroup>
+
+`unmute`: void - Unmute the media. Example:
+
+<CodeGroup>```bash bash player.unmute(); ```</CodeGroup>
+
+`getMuted`: boolean - Determine if the media is muted. Example:
+
+<CodeGroup>
+  ```bash bash player.getMuted(value => console.log('muted:', value)); ```
+</CodeGroup>
+
+`setVolume`: void - Set the volume. Value needs to be between 0-100. Example:
+
+<CodeGroup>```bash bash player.setVolume(50); ```</CodeGroup>
+
+`getVolume`: number - Get the volume. Value will be between 0-100. Example:
+
+<CodeGroup>
+  ```bash bash player.getVolume(value => console.log('getVolume:', value)); ```
+</CodeGroup>
+
+`getDuration`: number - Get the duration of the media is seconds. Example:
+
+<CodeGroup>
+  ```bash bash player.getDuration(value => console.log('getDuration:', value));
+  ```
+</CodeGroup>
+
+`setCurrentTime`: number - Perform a seek to a particular time in seconds. Example:
+
+<CodeGroup>```bash bash player.setCurrentTime(50); ```</CodeGroup>
+
+`getCurrentTime`: number - Get the current time in seconds of the video. Example:
+
+<CodeGroup>
+  ```bash bash player.getCurrentTime(value => console.log('getCurrentTime:',
+  value)); ```
+</CodeGroup>
+
+`off`: void - Remove an event listener. If the listener is specified it should remove only that listener, otherwise remove all listeners. Example:
+
+<CodeGroup>
+  ```bash bash
+  player.off('play');
+
+player.off('play', playCallback);
+
+````
+</CodeGroup>
+
+`on`: void - Add an event listener. Example:
+
+<CodeGroup>
+```bash bash
+player.on('play', () => console.log('play'));
+````
+
+</CodeGroup>
+
+`supports`: \['method', 'event'], methodOrEventName - Determines if the player supports a given event or method. Example:
+
+<CodeGroup>
+  ```bash bash player.supports('method', 'getDuration');
+  player.supports('event', 'ended'); ```
+</CodeGroup>
+
+## Events
+
+The Bunny Stream Player provides a set of events that can be used to enhance and customize your media playback experience. These events can be attached using the `on`method in the player.js script.
+
+### Event list
+
+The Bunny Stream Player emits the following player.js events that can be attached using the `on`method:
+
+`ready`- Fired when the media is ready to receive commands.
+
+<Info>
+As outlined in the PlayerJs Spec, there may be inconsistencies if multiple players on the page have the same source `src`. To address this, append a UUID or a timestamp to the iframe's `src`to ensure all players on the page have a unique source.
+
+</Info>
+
+fired when the media is ready to receive commands. This is fired regardless of listening to the event. Note: As outlined in the PlayerJs Spec, you may run into inconsistencies if you have multiple players on the page with the same `src`. To get around this, simply append a UUID or a timestamp to the iframe's src to guarantee that all players on the page have a unique `src`.
+
+`progress`- Fires when the media is loading additional media for playback. Example:
+
+<CodeGroup>
+  ```bash bash
+  {
+    percent: 0.8,
+  }
+  ```
+</CodeGroup>
+
+`timeupdate` - Fires during playback. Example:
+
+```bash
+data: {
+  seconds: 10,
+  duration: 40
+}
+```
+
+`play`- Fires when the video starts to play.
+
+`pause`- Fires when the video is paused.
+
+`ended`- Fires when the video is finished.
+
+`seeked` - Fires when the video has been seeked by the user.
+
+`error` - Fires when an error occurs.
