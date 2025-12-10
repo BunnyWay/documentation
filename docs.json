@@ -1593,7 +1593,7 @@
     },
     {
       "source": "/docs/stream-advertising",
-      "destination": "/stream/advertising",
+      "destination": "/stream/vast",
       "permanent": true
     },
     {
@@ -1613,7 +1613,7 @@
     },
     {
       "source": "/docs/stream-understanding-geo-replication",
-      "destination": "/stream/geo-replication",
+      "destination": "/stream/replication",
       "permanent": true
     },
     {
@@ -1628,7 +1628,7 @@
     },
     {
       "source": "/docs/stream-how-to-find-your-stream-api-key",
-      "destination": "/stream/api-key",
+      "destination": "/stream/authentication",
       "permanent": true
     },
     {
