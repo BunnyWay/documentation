@@ -1,62 +1,50 @@
 ---
-title: "Rate limiting"
+title: Rate Limiting
+sidebarTitle: Overview
 description: "Bunny Shield's rate limiting is a critical feature of its Web Application Firewall (WAF) that helps prevent abuse of your web resources by controlling the number of requests a client can make to your application within a given timeframe. This feature is essential in mitigating brute force attacks, Distributed Denial-of-Service (DDoS) attacks, and other types of automated abuse. In this section, we’ll guide you through configuring rate limiting rules to protect your application effectively without impacting legitimate users."
 ---
 
 <Info>
-  ### Rate limiting is not designed to guarantee an exact number of requests to
-  your origin. Because Bunny Shield aggregates counters across our global
-  network, there can be a short propagation delay, typically up to a few seconds
-  before updated values are visible at every edge. During this time, some excess
+  Rate limiting is not designed to guarantee an exact number of requests to your
+  origin. Because Bunny Shield aggregates counters across our global network,
+  there can be a short propagation delay, typically up to a few seconds before
+  updated values are visible at every edge. During this time, some excess
   requests may still reach the origin before action (block, limit, or challenge)
   is enforced.
 </Info>
 
-# What is rate limiting?
+## What is rate limiting?
 
 Rate limiting is a technique used to control the flow of incoming traffic to a server by restricting the number of requests a client, be it a user, an IP address, or a specific application can make within a predetermined period. When a client exceeds the defined request limit, additional requests are either blocked or delayed. This mechanism is essential in preventing server overload, mitigating abusive behavior, and ensuring the fair use of resources.
 
 In the context of Bunny Shield's WAF, rate limiting can be finely tuned to match your application's specific needs. It allows you to set thresholds based on various criteria, providing flexibility in how you manage and protect your web resources.
 
-# Common use cases
+## Common use cases
 
-## Brute force protection
+### Brute force protection
 
 Brute force attacks involve an attacker attempting to gain unauthorized access to user accounts by systematically trying numerous password combinations. By implementing rate limiting on login endpoints, you can:
 
 - Limit the number of login attempts from a single IP address or user within a certain timeframe.
 - Reduce the risk of unauthorized access by slowing down or blocking repeated failed login attempts.
 
-## Distributed denial-of-service (DDoS) mitigation
+### Distributed denial-of-service (DDoS) mitigation
 
 DDoS attacks aim to overwhelm your server with a flood of requests, rendering your application unavailable to legitimate users. Rate limiting helps mitigate the impact of such attacks by controlling the rate of incoming requests from suspicious IP addresses or ranges. Rate limiting helps mitigate the impact of such attacks by:
 
 - Controlling the rate of incoming requests from suspicious IP addresses or ranges.
 - Ensuring your server remains responsive during an attack by setting appropriate request thresholds.
 
-## API abuse prevention
+### API abuse prevention
 
 APIs are often targeted for abuse due to their automated nature and potential access to sensitive data. Rate limiting protects your API endpoints by:
 
 - Restricting the number of requests allowed from a single IP address or user within a specific timeframe.
 - Preventing activities like data scraping, unauthorized data harvesting, and other forms of API misuse.
 
-## Bot traffic control
+### Bot traffic control
 
 Automated bots can generate significant non-human traffic, consuming server resources and affecting application performance. By implementing rate limiting, you can:
 
 - Throttle or block requests from bots that exceed normal usage patterns.
 - Maintain optimal performance levels and protect against bots attempting to exploit vulnerabilities or scrape content.
-
-- [Creating a rate limit rule](/docs/shield-creating-a-ratelimit-rule)
-
-- [Table of Contents](#)
-
-- - [What is rate limiting?](#what-is-rate-limiting)
-
-  - [Common use cases](#common-use-cases)
-
-  - - [Brute force protection](#brute-force-protection)
-    - [Distributed denial-of-service (DDoS) mitigation](#distributed-denial-of-service-ddos-mitigation)
-    - [API abuse prevention](#api-abuse-prevention)
-    - [Bot traffic control](#bot-traffic-control)

@@ -1,0 +1,33 @@
+---
+title: "Upload Scanning"
+description: "Keep your platform safe from harmful uploads. Automatically scan files for viruses, malware, and CSAM to stop threats before they spread."
+---
+
+Upload scanning is designed to be seamless, private, and thorough. All scanning happens within the Bunny ecosystem, ensuring data is processed securely and remains encrypted.
+
+## Antivirus scanning
+
+All antivirus scanning is done entirely in-house. This ensures that no sensitive files leave our system.
+
+## CSAM detection
+
+Files are first converted into a PDQ hash (a type of perceptual fingerprint). The hash is sent over TLS to a trusted third-party database for verification.
+
+<Note>
+Bunny is currently working to bring CSAM checks entirely in-house.
+</Note>
+
+## Logging and reporting
+
+- If a scan detects a positive trigger (e.g., a virus), the event is logged, but the sensitive content that triggered it is fully redacted
+- Positive CSAM results are automatically reported to authorities through the third-party partner
+
+## What we scan
+
+- Multipart form files
+- Base64-encoded strings
+- Raw data streams not submitted via forms (e.g., large contact form submissions)
+
+<Note>
+Upload scanning does not perform file sanitization.
+</Note>

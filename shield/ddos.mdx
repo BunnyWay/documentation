@@ -15,7 +15,11 @@ These advanced approaches ensures proactive and precise mitigation, offering rob
 
 You can utilize the Bunny Shield API to automate DDoS Mitigation configurations or integrate them into your continuous integration and continuous deployment (CI/CD) pipelines. This capability allows you to manage your security settings efficiently and consistently across different environments.
 
-You can access the full API reference documentation [here](https://api.bunny.net/shield/docs/index.html).
+<Card
+  title="Shield API Reference"
+  href="http://localhost:3000/api-reference/shield"
+  horizontal
+/>
 
 ## Monitoring and Logging
 
@@ -23,7 +27,11 @@ DDoS logs are essential for gaining insights into the traffic patterns and poten
 
 You can access detailed logs through the WAF Logging API by sending a GET request to the following endpoint:
 
-GET [https://api.bunny.net/shield/event-logs/\{\{shieldZoneId}}](https://api.bunny.net/shield/event-logs/%7B%7BshieldZoneId%7D%7D)
+<Card
+  title="Get Shield Event Logs"
+  href="http://localhost:3000/api-reference/shield/eventlogs/get-shieldevent-logs="
+  horizontal
+/>
 
 Replace `{{shieldZoneId}}` with your actual Shield Zone ID. This will provide you with comprehensive logs of blocked and allowed traffic, which you can use for further analysis.
 
@@ -34,16 +42,3 @@ Replace `{{shieldZoneId}}` with your actual Shield Zone ID. This will provide yo
 - **Monitor Regularly**: Regularly review logs and behavioural data to identify new trends or threats. Adjust your rules and configurations accordingly to maintain optimal protection.
 
 By tailoring these practices to your unique application requirements, you can achieve a secure and seamless experience for your users.
-
----
-
-[Creating a rate limit rule](/docs/shield-creating-a-ratelimit-rule)
-
-[Bot Detection](/docs/bot-detection)
-
-- [Table of Contents](#)
-
-- - [Key Features](#key-features)
-  - [Configuring via API](#configuring-via-api)
-  - [Monitoring and Logging](#monitoring-and-logging)
-  - [Best Practices](#best-practices)
