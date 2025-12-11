@@ -101,6 +101,7 @@
       },
       {
         "product": "CDN",
+        "description": "Accelerate and protect your content globally",
         "icon": "zap",
         "tabs": [
           {
@@ -740,6 +741,7 @@
       },
       {
         "product": "Database",
+        "description": "Serverless SQLite",
         "icon": "database",
         "tabs": [
           {
