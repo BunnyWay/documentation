@@ -586,36 +586,38 @@
             "groups": [
               {
                 "group": "Bunny Shield",
+                "pages": ["shield/index", "shield/quickstart"]
+              },
+              {
+                "group": "Protection Features",
                 "pages": [
-                  "docs/bunny-shield-documentation",
-                  {
-                    "group": "Overview",
-                    "pages": [
-                      "docs/shield-overview",
-                      "docs/shield-verified-seo-bots"
-                    ]
-                  },
-                  "docs/shield-quickstart",
                   {
                     "group": "WAF",
                     "pages": [
-                      "docs/shield-waf",
-                      "docs/shield-understanding-rule-engine",
-                      "docs/shield-creating-a-custom-waf-rule"
+                      "shield/waf",
+                      "shield/rule-engine",
+                      "shield/custom-waf-rule"
                     ]
                   },
                   {
-                    "group": "Rate limiting",
+                    "group": "Rate Limiting",
                     "pages": [
-                      "docs/shield-rate-limiting",
-                      "docs/shield-creating-a-ratelimit-rule"
+                      "shield/rate-limiting",
+                      "shield/custom-rate-limit-rule"
                     ]
                   },
-                  "docs/shield-ddos-mitigation",
-                  "docs/bot-detection",
-                  "docs/shield-access-lists",
-                  "docs/shield-metrics-logging",
-                  "docs/shield-cookies"
+                  "shield/ddos",
+                  "shield/bot-detection",
+                  "shield/access-lists",
+                  "shield/upload-scanning"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "shield/verified-bots",
+                  "shield/metrics",
+                  "shield/cookies"
                 ]
               }
             ]
@@ -870,6 +872,81 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/docs/bunny-shield-documentation",
+      "destination": "/shield",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-overview",
+      "destination": "/shield",
+      "permanent": true
+    },
+    {
+      "source": "/shield/overview",
+      "destination": "/shield",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-quickstart",
+      "destination": "/shield/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-waf",
+      "destination": "/shield/waf",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-understanding-rule-engine",
+      "destination": "/shield/rule-engine",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-creating-a-custom-waf-rule",
+      "destination": "/shield/custom-waf-rule",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-rate-limiting",
+      "destination": "/shield/rate-limiting",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-creating-a-ratelimit-rule",
+      "destination": "/shield/custom-rate-limit-rule",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-ddos-mitigation",
+      "destination": "/shield/ddos",
+      "permanent": true
+    },
+    {
+      "source": "/docs/bot-detection",
+      "destination": "/shield/bot-detection",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-access-lists",
+      "destination": "/shield/access-lists",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-verified-seo-bots",
+      "destination": "/shield/verified-bots",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-metrics-logging",
+      "destination": "/shield/metrics",
+      "permanent": true
+    },
+    {
+      "source": "/docs/shield-cookies",
+      "destination": "/shield/cookies",
+      "permanent": true
+    },
     {
       "source": "/docs/bunny-ai",
       "destination": "/ai-image-generation",
