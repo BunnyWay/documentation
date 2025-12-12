@@ -1,109 +1,86 @@
 ---
 title: "Endpoints"
-description: "In the ever-evolving landscape of web development and deployment, the manner in which applications are exposed to the internet plays a pivotal role in determining their accessibility, performance, and overall user experience. When deploying your application, you have the option to expose it to the internet using two different methods:  (Content Delivery Network) or ."
+description: "Expose your container to the internet using CDN or Anycast endpoints."
 ---
 
-# What you'll need
+Once you have a [deployed container](/magic-containers/quickstart), you can expose it to the internet using two endpoint types: **CDN** for HTTP(S) traffic or **Anycast** for direct IP access.
 
-Before you dive in, make sure you have the following prerequisites in place:
+## CDN
 
-- A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-- Ensure that you have already set up the application you want to configure. See our [quickstart guide](/docs/getting-started-1) if you haven't set up an application yet.
-
-# CDN configuration
-
-A CDN  is a system of distributed servers that work together to deliver web content, such as images, videos, and scripts, to users based on their geographical location. It helps improve website performance, reduce latency, and enhance the overall user experience.
-
-CDN can be used to create an Edge Endpoint through which containers of the application can be accessed. Any container running a process that is serving HTTP(S) traffic can be exposed using CDN.
+CDN endpoints route HTTP(S) traffic through bunny.net's edge network, improving performance and reducing latency based on user location.
 
 <Info>
-For more information about CDN, see our [CDN documentation](https://bunny.net/academy/cdn/what-is-a-cdn-content-delivery-network/is).
-
+  For more information about CDN, see our [CDN
+  documentation](https://bunny.net/academy/cdn/what-is-a-cdn-content-delivery-network/).
 </Info>
 
-## Configuration steps
+To create a CDN endpoint:
 
-To expose your app to the internet by using CDN configuration, follow the steps below:
+1. Go to **Magic Containers** and select your container.
 
-1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
-
-2. Navigate to the **Magic Containers** section and select the app you want to modify.
-
-3. Click on **Endpoints** and **Add New Endpoint**.
+2. Click **Endpoints**, then **Add New Endpoint**.
 
 <Frame>
   ![](/images/docs/1ef14f4c14be1d252dfecd23dac3a6d6d81394af6f5ee821323f7c8e78203ad2-image.png)
 </Frame>
 
-4. Select **CDN** under the type.
+3. Select **CDN** as the type.
 
 <Frame>
   ![](/images/docs/f0373c65fac9c4ee93c2a5bc2450ab4e31b921e1f89317d7d782099918044a65-image.png)
 </Frame>
 
-- You need to name the endpoint (it must have a unique name).
-- Specify the container port for every container.
+4. Configure the endpoint:
+   - **Name**: A unique name for this endpoint.
+   - **Container Port**: The port your application listens on.
+   - **SSL for origin**: Enable if your application uses SSL internally.
 
 <Info>
-It is recommended to have one process running within a container. If multiple processes are running, ensure they operate on different ports.
-
+  It's recommended to run one process per container. If running multiple
+  processes, ensure they use different ports.
 </Info>
-
-- Specify whether your application inside the container uses SSL for origin (this feature is only applicable for CDN).
 
 5. Click **Add Endpoint**.
 
-### Sticky session
+### Sticky sessions
 
-bunny.net also provides you with the sticky session feature to enhance your application's user experience by ensuring session persistence across multiple requests.
+Sticky sessions ensure all requests from a client are routed to the same server instance, maintaining session state across requests.
 
-Sticky session is a method used in load-balanced environments to ensure that all requests from a single client are directed to the same server instance where the user's session was initially established. This is crucial for applications that maintain state information across multiple interactions with a user.
+To enable sticky sessions:
 
-The primary advantage of using sticky sessions is the ability to maintain a stateful interaction with the user. This is particularly useful for applications where user actions on the server need to be remembered within the session context.
-
-To enable sticky session, follow the steps below:
-
-1. In the endpoint configuration window select **Sticky Session**.
+1. In the endpoint configuration, select **Sticky Session**.
 
 <Frame>
   ![](/images/docs/81299b7686d70d6ddb86f019bfcfe9ab80f97bc154949c8ac1cfd1dac4563f1f-image.png)
 </Frame>
 
-- You need to choose headers such as X-Forwarded-For or User-Agent, or use cookies like SessionID to maintain session consistency.
+2. Choose an identifier (headers like `X-Forwarded-For` or `User-Agent`, or cookies like `SessionID`).
 
-2. Click **Add Endpoint**.
+3. Click **Add Endpoint**.
 
-Upon the first request, the load balancer assigns the session to a specific server based on the chosen identifier and subsequent requests continue to route to the same server.
+## Anycast
 
-# Anycast configuration
+Anycast endpoints map your container to an Anycast IP address, routing requests to the nearest node for improved performance.
 
-Anycast is a network addressing and routing methodology that enables multiple servers to share the same IP address. When a user makes a request, the network routes it to the nearest (in terms of network distance) Anycast node, improving performance and reliability.
+To create an Anycast endpoint:
 
-The Anycast option will map containers to Anycast IP and expose it on the specified port.
+1. Go to **Magic Containers** and select your container.
 
-## Configuration Steps
-
-To expose your app to the internet by using Anycast configuration, follow the steps below:
-
-1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
-
-2. Navigate to the **Magic Containers** section and select the app you want to modify.
-
-3. Click on **Endpoints** and **Add New Endpoint**.
+2. Click **Endpoints**, then **Add New Endpoint**.
 
 <Frame>
   ![](/images/docs/08f7158fa6535905e68b635aca2e223d1818ab25753596466e881f51bbea8ee0-image.png)
 </Frame>
 
-4. Select **Anycast** under the type.
+3. Select **Anycast** as the type.
 
 <Frame>
   ![](/images/docs/471a57e384cb41e7cbf6373ad1352046d6307207e105b0c0fe0b710096023f92-image.png)
 </Frame>
 
-- You need to name the endpoint (it must have a unique name).
-- Specify the **Container Port** for every container.
-- Define the **Exposed Port**, which is the port on which the application will be available on the Anycast IP.
-- When Anycast is selected, the platform will associate an Anycast IP. Specify the container port within the container and the exposed port to be used in combination with the Anycast IP to expose the application.
+4. Configure the endpoint:
+   - **Name**: A unique name for this endpoint.
+   - **Container Port**: The port your application listens on inside the container.
+   - **Exposed Port**: The port available on the Anycast IP.
 
 5. Click **Add Endpoint**.

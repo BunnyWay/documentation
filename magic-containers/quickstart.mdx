@@ -1,134 +1,97 @@
 ---
-title: "Quickstart"
-description: "Welcome to the Magic Containers quickstart, your gateway to unlocking the full potential of container deployment with a technical edge. Starting with preparing your application, we'll guide you through integrating your image registry, deploying your application, and fine-tuning its configuration."
+title: Quickstart
+description: Learn how to deploy your first application with Magic Containers.
 ---
 
-And here's the exciting part: while testing the Magic Containers feature, you can experiment with our demo app by following this link. It's a fantastic way to get a hands-on experience.
-
-# What you'll need
-
-Before you dive in, make sure you have the following prerequisites in place:
-
-- A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-- You should have a private container registry set up for GitHub or Docker. Additionally, you need to integrate this registry with the Magic Containers platform.
+This guide walks you through deploying your first application with Magic Containers.
 
 <Info>
+If you are using a trial account:
 
-You can add integration to your image registry during the app deployment process.
+- You will need to add valid payment card details to unlock trial features.
+- Trial accounts are limited to five regions, with up to two instances per region.
 
 </Info>
 
-# Integrating with Magic Containers
+## Before you begin
 
-<Info>
-If you are using a trial account, please note the following limits:
+If you're deploying from a private registry, [connect your image registry](/magic-containers/image-registries) first. Public Docker Hub and GitHub images work without additional setup.
 
-- You will need to add valid payment card details to the platform to unlock trial features and help prevent misuse.
-- Trial accounts are limited to provisioning a maximum of five regions at a time. Furthermore, within each region, you can deploy up to two instances.
+## Deploy your application
 
-</Info>
+<Steps>
+  <Step title="Create a new app">
+    In the bunny.net dashboard, go to **Magic Containers** and click **Add App**.
 
-Now, let's integrate your private registry with the Magic Containers platform. Follow these steps:
+    <Frame>
+      ![](/images/docs/7c23cfd96b446b8deab0096c5c9d2c8e07449b954653436cd35f93ab91112b23-image.png)
+    </Frame>
 
-1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
-2. Navigate to the **Magic Containers** ➝ **Image Registries** and click **Add Image Registry**.
+  </Step>
+  <Step title="Configure deployment settings">
+    Define the name of your app and select the deployment option (**Magic deployment**, **Single region deployment** or **Advanced deployment**), then click **Next Step**.
 
-<Frame>
-  ![](/images/docs/e63d2230c747875b5bf0c78ec9d95beeb04173f288a4f7d1ede12db57fe8f27f-image.png)
-</Frame>
+    <Frame>
+      ![](/images/docs/1a494e346f15d00d6bc158d19c64c70e5a07ec8dbd55d5df48a73b52cf9ce3b9-MC_Deploy_page.png)
+    </Frame>
 
-3. Fill in the following fields:
+  </Step>
+  <Step title="Add a container">
+    Click **Add Container**.
 
-<Frame>
-  ![](/images/docs/cb0de6613e79f26327b5f46150650d8d71399d596e9a847956ac929bdf2a28e8-image.png)
-</Frame>
+    <Frame>
+      ![](/images/docs/185a1e9579a90115450467c9bf2e76caf88ac5cd8e8083d07149b6810484824e-image.png)
+    </Frame>
 
-- **Registry**: Select the proper registry type from the drop-down menu (Github or Docker).
+    Name your container (ensure each container has a unique name within the application).
 
-<Info>
+    <Frame>
+      ![](/images/docs/d7aac2b139e515f46873646144a6b73e5dc39b6af69b2d6d959eb816e0f4e302-image.png)
+    </Frame>
 
-To integrate Magic Containers with GitHub, you must create a classic Personal Access Token (PAT) in your GitHub account. Be sure to include `read:packages`and `read:org` permissions.
+    Select the container registry, image (only `linux/amd64` images are supported), and tag.
 
-</Info>
+  </Step>
+  <Step title="Configure an endpoint">
+    To make your app available on the internet, go to the **Endpoints** tab and click **Add New Endpoint**.
 
-- **Username**: Enter your username or organization for Docker Hub or GitHub.
-- **Personal Access Token**: If you are using GitHub or Docker Hub, you need to provide your personal access token. Make sure your personal access token has read-only permissions!
+    <Frame>
+      ![](/images/docs/ff6201592ea4228a118dc628ac90e566fda918a7fcb6111f5858e7595c701de5-image.png)
+    </Frame>
 
-<Info>
+    Fill in the required information:
 
-To learn how to retrieve your personal access token, see the official [Github](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-with-a-personal-access-token-classic) or [Docker](https://docs.docker.com/security/for-developers/access-tokens/#create-an-access-token) documentation.
+    <Frame>
+      ![](/images/docs/b123e4e93b2f164c151e61212f6051efa53523a2c26d7d2b399abb30a09ae709-image.png)
+    </Frame>
 
-</Info>
+    - **Name** - A unique name for the endpoint
+    - **Expose via** - CDN or Anycast
+    - **Container port** - The port your application listens on inside the container
+    - **SSL for origin** - Whether your container uses SSL (CDN only)
 
-4. **Click Add Image Registry**. The system will then verify the token information, and a new image registry will be created.
+    <Info>
+    For more information on exposing your app to the internet, see [our dedicated guide](/docs/magic-containers-how-to-expose-your-app-to-the-internet).
+    </Info>
 
-# Deploying your application
+    Click **Add endpoint**, then click **Add Container**.
 
-You are now ready to deploy your application, to do so, follow the steps below:
+  </Step>
+  <Step title="Review and deploy">
+    Review your settings and click **Next Step**.
 
-1. Select **Magic Containers** and click the **Add App** button.
+    <Frame>
+      ![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/7c23cfd96b446b8deab0096c5c9d2c8e07449b954653436cd35f93ab91112b23-image.png)
-</Frame>
+    Click **Confirm and Create**.
 
-2. Define the name of your app and select the deployment option (**Magic deployment**, **Single region deployment** or **Advanced deployment**) then click **Next Step**
+    <Frame>
+      ![](/images/docs/29094b8b92f25885168fd137ec1367f678b14b71a88d0ed18f18192abcf04800-image.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/1a494e346f15d00d6bc158d19c64c70e5a07ec8dbd55d5df48a73b52cf9ce3b9-MC_Deploy_page.png)
-</Frame>
-
-3. Click **Add Container**.
-
-<Frame>
-  ![](/images/docs/185a1e9579a90115450467c9bf2e76caf88ac5cd8e8083d07149b6810484824e-image.png)
-</Frame>
-
-4. Name your container (ensure each container has a unique name within the application).
-
-<Frame>
-  ![](/images/docs/d7aac2b139e515f46873646144a6b73e5dc39b6af69b2d6d959eb816e0f4e302-image.png)
-</Frame>
-
-5. Select the container registry, image (we only support images build for linux/amd64), and tag.
-
-If you want your app to be available on the internet, you need to set up edge endpoints:
-
-6. Go to the **Endpoints** tab and click **Add New Endpoint**.
-
-<Frame>
-  ![](/images/docs/ff6201592ea4228a118dc628ac90e566fda918a7fcb6111f5858e7595c701de5-image.png)
-</Frame>
-
-7. Fill in required information.
-
-<Frame>
-  ![](/images/docs/b123e4e93b2f164c151e61212f6051efa53523a2c26d7d2b399abb30a09ae709-image.png)
-</Frame>
-
-- You need to name the endpoint (it must have a unique name).
-- Decide how you want to expose the app, either using CDN or Anycast.
-- Define the container port, which is the port where the application is listening inside the container.
-- Specify whether your application inside the container uses SSL for origin (only CDN setting).
-
-<Info>
-
-For more information on exposing your app to the internet, see [our dedicated guide](/docs/magic-containers-how-to-expose-your-app-to-the-internet).
-
-</Info>
-
-8. Click **Add endpoint** and then click **Add Container**.
-9. Review your settings. If everything looks good, click **Next Step**.
-
-<Frame>
-  ![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
-</Frame>
-
-10. Click **Confirm and Create**.
-
-<Frame>
-  ![](/images/docs/29094b8b92f25885168fd137ec1367f678b14b71a88d0ed18f18192abcf04800-image.png)
-</Frame>
+  </Step>
+</Steps>
 
 You will be navigated to your app's overview screen. The processing button should turn green, indicating that your app is being deployed.
 
@@ -136,13 +99,13 @@ You will be navigated to your app's overview screen. The processing button shoul
   ![](/images/docs/088796ede6fd82ee1b4a899568fcb21b77a13c6f394f40ae0a5b1b5e4f1cedab-image.png)
 </Frame>
 
-Congratulations! Your application is now deployed and can be accessed by clicking here:
+Your application is now deployed and can be accessed by clicking the endpoint URL:
 
 <Frame>
   ![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
 </Frame>
 
-By clicking on the hamburger menu on the right side of the screen, you can easily restart, deploy, rename or delete the app:
+Use the menu on the right side of the screen to restart, deploy, rename, or delete the app:
 
 <Frame>
   ![](/images/docs/aca5804b3c52f1ce670cf53406257c143b9185b8faa1857da651b1bfd2cbb3cc-image.png)

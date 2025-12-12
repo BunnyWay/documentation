@@ -1,33 +1,35 @@
 ---
 title: "Configuration"
-description: "Once you've deployed an application using Magic Containers, you may need to adjust its configuration to accommodate changes or optimizations. Editing your app's configuration in Magic Containers is straightforward. Whether you need to adjust environment variables, allocate additional resources, or modify network settings, the Edit feature in Container Settings provides the flexibility to fine-tune your application's configuration."
+description: "Configure your container's environment variables, health checks, endpoints, and runtime settings."
 ---
 
-# What you'll need
+Once you have a [deployed container](/magic-containers/quickstart), you can modify its configuration by going to **Magic Containers**, selecting your container, then clicking **Container Settings**.
 
-Before you dive in, make sure you have the following prerequisites in place:
+## General settings
 
-- A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-- Ensure that you have already set up the application you want to configure. See our Quickstart guide if you haven't set up an application yet.
-
-# Editing app configuration
-
-To edit the configuration of your app, follow the steps below: 
-
-1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
-
-2. Navigate to the **Magic Containers** section and select the app you want to modify.
-
-3. Click on **Container Settings** and click on **Edit**.
+Click **Edit** to modify environment variables, health checks, endpoints, and resource allocation.
 
 <Frame>
   ![](/images/docs/7e7018b9b95eae9ed2157305c047f802618299c40888dd8202562ecc5392be2c-image.png)
 </Frame>
 
-5. Within the edit window, you can modify various configuration parameters, such as environment variables, health checks, endpoints, etc.
-
 <Frame>
   ![](/images/docs/b3926acc2c98c4d616bed5973d9cbdb3d442f0a7d9253457cfcdca0ff2eb36b3-image.png)
 </Frame>
 
-6. After making the necessary modifications, click on **Update Container** to apply the updated configuration.
+After making changes, click **Update Container** to apply the new configuration.
+
+## Advanced settings
+
+Click the **Advanced** tab to configure runtime behavior.
+
+<Frame>
+  ![](/images/docs/8e2a2cdaef5760ac80ed1d5cf7bb261992e8748211229bb8d64119714b55b3df-image.png)
+</Frame>
+
+The following settings are available:
+
+- **Always pull the image**: When enabled, the container image is pulled from the registry whenever a new node is started. This ensures your container is always running the latest version.
+- **Startup command**: A custom command that executes when the container is launched, giving you control over the initial behavior.
+- **Container Arguments**: Arguments added to the container's entry point when starting the image. Useful for passing runtime parameters.
+- **Working Dir**: The working directory for the container runtime. Configure this for applications that rely on specific file paths.

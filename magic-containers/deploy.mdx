@@ -1,14 +1,9 @@
 ---
-title: "Deploy"
-description: "Magic Containers offers three deployment options for your applications: ,  and  . With Magic deployment, you can deploy your apps globally with minimal effort. The single region deployment option deploys your app to a single region with no default auto-scaling, and advanced deployment option gives you full control over provisioning settings, allowing you to select specific regions for deployment and manage the deployment of your app based on user activity."
+title: Deploy
+description: Choose from Magic, Single region, or Advanced deployment options.
 ---
 
-# What you'll need
-
-Before you dive in, make sure you have the following prerequisites in place:
-
-- A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-- You should have a private container registry set up for GitHub or Docker. Additionally, you need to integrate this registry with the Magic Containers platform.
+Magic Containers offers three deployment options: Magic deployment for effortless global provisioning, Single region for fast deployment without auto-scaling, and Advanced for full control over regions and scaling based on user activity. Before deploying, you'll need a [private container registry](/magic-containers/container-registry) configured.
 
 # Magic deployment
 
@@ -16,90 +11,110 @@ Before you dive in, make sure you have the following prerequisites in place:
   ![](/images/docs/a7425adfd3e165ff54bce0d5b569cd08fb2cafe6ebea61fa9a38fa8d69ec1bcf-Screenshot_2025-05-27_at_11.23.38.png)
 </Frame>
 
-**Magic deployment** is the simplest way to get your app up and running. It leverages the power of Magic Containers AI to handle global provisioning efficiently and cost-effectively. Magic Containers AI will automatically analyze your app's requirements, determine the optimal deployment regions, and provision your app globally in just a few clicks. This approach ensures the best possible performance while minimizing costs.
+**Magic deployment** is the simplest way to get your app up and running. It leverages the power of Magic Containers AI to handle global provisioning efficiently and cost-effectively.
 
-<Info>
-For a detailed guide on deploying an app using the Magic deployment option, please refer to the [quickstart documentation](/docs/getting-started-1)
+Magic Containers AI will automatically analyze your app's requirements, determine the optimal deployment regions, and provision your app globally in just a few clicks. This approach ensures the best possible performance while minimizing costs.
 
-</Info>
+<Card
+  title="Magic Containers Quickstart"
+  href="/magic-containers/quickstart"
+  icon="rocket"
+  horizontal
+/>
 
 # Single region deployment
 
 **Single region deployment** gives you full control over provisioning settings, allowing you to deploy to the closest single region without the worry of any scaling. This is ideal for scenarios where you are wanting fast deployment and no auto-scaling.
 
-To deploy your app using **Single region deployment**, follow the steps below:
+<Steps>
+  <Step title="Login to bunny.net">
+    Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+  </Step>
 
-1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+  <Step title="Add a new app">
+    Select **Magic Containers** and click the **Add App** button.
 
-2. Select **Magic Containers** and click the **Add App** button.
+    <Frame>
+      ![](/images/docs/c19bb3012eb95af51d13b459983d89e94a1ffd2064bafcea65b44a3925ec2e9e-image.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/c19bb3012eb95af51d13b459983d89e94a1ffd2064bafcea65b44a3925ec2e9e-image.png)
-</Frame>
+  </Step>
 
-3. Select the **Single region deployment** option, define the name of your app, and click **Next Step**.
+  <Step title="Select Single region deployment">
+    Select the **Single region deployment** option, define the name of your app, and click **Next Step**.
 
-<Frame>
-  ![](/images/docs/f05ba05a8cc798498c7dbe489345e62c5c98ce26c0bcd0b548a9afcbe66a01bc-Screenshot_2025-05-27_at_12.50.46.png)
-</Frame>
+    <Frame>
+      ![](/images/docs/f05ba05a8cc798498c7dbe489345e62c5c98ce26c0bcd0b548a9afcbe66a01bc-Screenshot_2025-05-27_at_12.50.46.png)
+    </Frame>
 
-After selecting Single region deployment, the first step is to configure your **App region**. You will be presented with your closest region preselected and a list of all available regions.
+  </Step>
 
-<Frame>
-  ![](/images/docs/7c91eefa4bdc3531dba7cb24599ba7ae9c70d97989fa122d5a86eebdb2c66a3f-Screenshot_2025-06-30_at_15.21.40.png)
-</Frame>
+  <Step title="Configure App region">
+    After selecting Single region deployment, configure your **App region**. You will be presented with your closest region preselected and a list of all available regions.
 
-4. After configuring the **App region** settings, click **Next Step.**
+    <Frame>
+      ![](/images/docs/7c91eefa4bdc3531dba7cb24599ba7ae9c70d97989fa122d5a86eebdb2c66a3f-Screenshot_2025-06-30_at_15.21.40.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/6b64dc8cd01863d95de9c06351ec9421fe52f9283dbe14dc06813164d046a82f-Screenshot_2025-06-30_at_15.22.16.png)
-</Frame>
+    After configuring the **App region** settings, click **Next Step.**
 
-5. Next, you will need to add your container, click **Add Container**
+    <Frame>
+      ![](/images/docs/6b64dc8cd01863d95de9c06351ec9421fe52f9283dbe14dc06813164d046a82f-Screenshot_2025-06-30_at_15.22.16.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/24b51224d1bbe27f2a261b7adc07434f699871f294faa6bb6e743521060b51b9-Single_region_-_container.png)
-</Frame>
+  </Step>
 
-If you want your app to be available on the internet, you need to set up edge endpoints:
+  <Step title="Add your container">
+    Click **Add Container**.
 
-10. Go to the **Endpoints** tab and click **Add New Endpoint**.
+    <Frame>
+      ![](/images/docs/24b51224d1bbe27f2a261b7adc07434f699871f294faa6bb6e743521060b51b9-Single_region_-_container.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
-</Frame>
+    If you want your app to be available on the internet, you need to set up edge endpoints. Go to the **Endpoints** tab and click **Add New Endpoint**.
 
-- You need to name the endpoint (it must have a unique name).
-- Decide how you want to expose the app, either using CDN or Anycast.
-- Define the container port, which is the port on which the application is listening inside the container
-- Specify whether your application inside the container uses SSL for origin (only CDN setting).
+    <Frame>
+      ![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
+    </Frame>
 
-12. Click **Add endpoint**, and then click **Add Container**.
-13. Review your settings. If everything looks good, click **Next Step**.
+    - You need to name the endpoint (it must have a unique name).
+    - Decide how you want to expose the app, either using CDN or Anycast.
+    - Define the container port, which is the port on which the application is listening inside the container.
+    - Specify whether your application inside the container uses SSL for origin (only CDN setting).
 
-<Frame>
-  ![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
-</Frame>
+    Click **Add endpoint**, and then click **Add Container**.
 
-14. Click **Confirm and Create**.
+  </Step>
 
-<Frame>
-  ![](/images/docs/5729c360c08606e07c12293f8feb22e98394689c830a8068f2fd26675693bcad-image.png)
-</Frame>
+  <Step title="Review and create">
+    Review your settings. If everything looks good, click **Next Step**.
 
-You will be navigated to the overview screen of your app. The processing button should turn green, indicating that your app is being deployed.
+    <Frame>
+      ![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/94ef88fec4933b4e13cda07cad4689dbfcb852ece64eb52babb602214f530231-image.png)
-</Frame>
+    Click **Confirm and Create**.
 
-Congratulations! Your application is now deployed and can be accessed by clicking here:
+    <Frame>
+      ![](/images/docs/5729c360c08606e07c12293f8feb22e98394689c830a8068f2fd26675693bcad-image.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
-</Frame>
+    You will be navigated to the overview screen of your app. The processing button should turn green, indicating that your app is being deployed.
 
-The provisioner will take your region settings into account and deploy your app accordingly.
+    <Frame>
+      ![](/images/docs/94ef88fec4933b4e13cda07cad4689dbfcb852ece64eb52babb602214f530231-image.png)
+    </Frame>
+
+    Your application is now deployed and can be accessed by clicking here:
+
+    <Frame>
+      ![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
+    </Frame>
+
+    The provisioner will take your region settings into account and deploy your app accordingly.
+
+  </Step>
+</Steps>
 
 # Advanced deployment
 
@@ -109,85 +124,102 @@ The provisioner will take your region settings into account and deploy your app 
 
 **Advanced deployment** gives you full control over provisioning settings, allowing you to customize the deployment regions and react to user activity. This level of customization is ideal for scenarios where you have specific geographical requirements or want to optimize your deployment strategy based on user behavior.
 
-To deploy your app using Custom deployment, follow the steps below:
+<Steps>
+  <Step title="Login to bunny.net">
+    Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+  </Step>
 
-1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+  <Step title="Add a new app">
+    Select **Magic Containers** and click the **Add App** button.
 
-2. Select **Magic Containers** and click the **Add App** button.
+    <Frame>
+      ![](/images/docs/c19bb3012eb95af51d13b459983d89e94a1ffd2064bafcea65b44a3925ec2e9e-image.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/c19bb3012eb95af51d13b459983d89e94a1ffd2064bafcea65b44a3925ec2e9e-image.png)
-</Frame>
+  </Step>
 
-3. Select the **Advanced deployment** option, define the name of your app, and click **Next Step**.
+  <Step title="Select Advanced deployment">
+    Select the **Advanced deployment** option, define the name of your app, and click **Next Step**.
 
-<Frame>
-  ![](/images/docs/98705a609aca2581e6d48dc9bd560193d2a128da47679f48a154a9355769a8fd-Screenshot_2025-05-27_at_11.27.18.png)
-</Frame>
+    <Frame>
+      ![](/images/docs/98705a609aca2581e6d48dc9bd560193d2a128da47679f48a154a9355769a8fd-Screenshot_2025-05-27_at_11.27.18.png)
+    </Frame>
 
-After selecting advanced deployment, the first step is to configure **Region Settings**. You will be presented with a list of all available regions. For each region, you can set whether it is a base region or a standard region:
+  </Step>
 
-- Base region: Base regions are those where your app will always be deployed. You must select at least one base region and there is no maximum limit.
-- Enabled region: The provisioning system will actively monitor user locations and behavior. If it identifies active users in a specific region, it will dynamically deploy the app to accomodate the user traffic. Conversely, if there is no user activity in a region, the app will not be deployed in that area.
+  <Step title="Configure Region Settings">
+    You will be presented with a list of all available regions. For each region, you can set whether it is a base region or a standard region:
 
-<Frame>
-  ![](/images/docs/f3476bf7b00a1dc409c5125c37ed65b90d1f255b6099a9a119944ea9833580aa-Screenshot_2025-06-30_at_15.58.52.png)
-</Frame>
+    - **Base region**: Regions where your app will always be deployed. You must select at least one base region and there is no maximum limit.
+    - **Enabled region**: The provisioning system will actively monitor user locations and behavior. If it identifies active users in a specific region, it will dynamically deploy the app to accommodate the user traffic. Conversely, if there is no user activity in a region, the app will not be deployed in that area.
 
-Based on your settings, the provisioner will react to user activity as follows:
+    <Frame>
+      ![](/images/docs/f3476bf7b00a1dc409c5125c37ed65b90d1f255b6099a9a119944ea9833580aa-Screenshot_2025-06-30_at_15.58.52.png)
+    </Frame>
 
-- If the **Enabled Regions** and **Base Regions** are equal, the provisioner will use Static Provisioning. In this mode, the regions deployed over time will remain the same.
-- If the sets are different, the provisioner will use **Auto Provisioning**. Regions are chosen based on end-user activity. If users are active in a region, the app will be deployed there. If there are no active users in a region, the app won't be deployed.
+    Based on your settings, the provisioner will react to user activity as follows:
 
-4. After configuring the region settings, click **Next Step.**
-5. Set the minimum and maximum number of instances (maximum is 10), and click **Add New Container**.
+    - If the **Enabled Regions** and **Base Regions** are equal, the provisioner will use Static Provisioning. In this mode, the regions deployed over time will remain the same.
+    - If the sets are different, the provisioner will use **Auto Provisioning**. Regions are chosen based on end-user activity. If users are active in a region, the app will be deployed there. If there are no active users in a region, the app won't be deployed.
 
-<Frame>
-  ![](/images/docs/d348d268a258d52cc4b66ff09458184bdebd3ee196e0edc1a590d952246ea39a-image.png)
-</Frame>
+    After configuring the region settings, click **Next Step.**
 
-6. Select the provisioning type.
+  </Step>
 
-<Frame>
-  ![](/images/docs/064da8f98d9fe1db4a596eda7e97a4217831873772c3b2fa2ca9f0156720a29e-image.png)
-</Frame>
+  <Step title="Configure instances and add container">
+    Set the minimum and maximum number of instances (maximum is 10), and click **Add New Container**.
 
-If you want your app to be available on the internet, you need to set up edge endpoints:
+    <Frame>
+      ![](/images/docs/d348d268a258d52cc4b66ff09458184bdebd3ee196e0edc1a590d952246ea39a-image.png)
+    </Frame>
 
-10. Go to the **Endpoints** tab and click **Add New Endpoint**.
+    Select the provisioning type.
 
-<Frame>
-  ![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
-</Frame>
+    <Frame>
+      ![](/images/docs/064da8f98d9fe1db4a596eda7e97a4217831873772c3b2fa2ca9f0156720a29e-image.png)
+    </Frame>
 
-- You need to name the endpoint (it must have a unique name).
-- Decide how you want to expose the app, either using CDN or Anycast.
-- Define the container port, which is the port on which the application is listening inside the container
-- Specify whether your application inside the container uses SSL for origin (only CDN setting).
+    If you want your app to be available on the internet, you need to set up edge endpoints. Go to the **Endpoints** tab and click **Add New Endpoint**.
 
-12. Click **Add endpoint**, and then click **Add Container**.
-13. Review your settings. If everything looks good, click **Next Step**.
+    <Frame>
+      ![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
-</Frame>
+    - You need to name the endpoint (it must have a unique name).
+    - Decide how you want to expose the app, either using CDN or Anycast.
+    - Define the container port, which is the port on which the application is listening inside the container.
+    - Specify whether your application inside the container uses SSL for origin (only CDN setting).
 
-14. Click **Confirm and Create**.
+    Click **Add endpoint**, and then click **Add Container**.
 
-<Frame>
-  ![](/images/docs/5729c360c08606e07c12293f8feb22e98394689c830a8068f2fd26675693bcad-image.png)
-</Frame>
+  </Step>
 
-You will be navigated to the overview screen of your app. The processing button should turn green, indicating that your app is being deployed.
+  <Step title="Review and create">
+    Review your settings. If everything looks good, click **Next Step**.
 
-<Frame>
-  ![](/images/docs/94ef88fec4933b4e13cda07cad4689dbfcb852ece64eb52babb602214f530231-image.png)
-</Frame>
+    <Frame>
+      ![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
+    </Frame>
 
-Congratulations! Your application is now deployed and can be accessed by clicking here:
+    Click **Confirm and Create**.
 
-<Frame>
-  ![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
-</Frame>
+    <Frame>
+      ![](/images/docs/5729c360c08606e07c12293f8feb22e98394689c830a8068f2fd26675693bcad-image.png)
+    </Frame>
 
-The provisioner will take your region settings into account and deploy your app accordingly. With the custom settings, you have the flexibility to tailor your app's deployment strategy to your specific needs, ensuring that it aligns with your user base and geographical requirements.
+    You will be navigated to the overview screen of your app. The processing button should turn green, indicating that your app is being deployed.
+
+    <Frame>
+      ![](/images/docs/94ef88fec4933b4e13cda07cad4689dbfcb852ece64eb52babb602214f530231-image.png)
+    </Frame>
+
+    Your application is now deployed and can be accessed by clicking here:
+
+    <Frame>
+      ![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
+    </Frame>
+
+    The provisioner will take your region settings into account and deploy your app accordingly.
+
+  </Step>
+</Steps>

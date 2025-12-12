@@ -287,7 +287,6 @@
                   "magic-containers/configuration",
                   "magic-containers/environment-variables",
                   "magic-containers/persistent-volumes",
-                  "magic-containers/advanced",
                   "magic-containers/endpoints",
                   "magic-containers/undeploy",
                   "magic-containers/delete"
@@ -1106,7 +1105,7 @@
     },
     {
       "source": "/docs/magic-containers-how-to-configure-advanced-features",
-      "destination": "/magic-containers/advanced-features",
+      "destination": "/magic-containers/configuration",
       "permanent": true
     },
     {
@@ -1211,7 +1210,12 @@
     },
     {
       "source": "/magic-containers/advanced-features",
-      "destination": "/magic-containers/advanced",
+      "destination": "/magic-containers/configuration",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/advanced",
+      "destination": "/magic-containers/configuration",
       "permanent": true
     },
     {
