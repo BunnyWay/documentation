@@ -1,12 +1,13 @@
 ---
 title: "DNSSEC"
+description: "Enable DNSSEC to protect your domain from DNS spoofing, cache poisoning, and man-in-the-middle attacks."
 ---
 
 ## What is DNSSEC?
 
 DNSSEC (Domain Name System Security Extensions) adds a layer of security to your domain by enabling cryptographic validation of DNS responses. This ensures that visitors to your website are protected from DNS spoofing, cache poisoning, and man-in-the-middle attacks.
 
-When DNSSEC is enabled on your domain, DNS resolvers can verify that the DNS records they receive come from an authoritative source and haven’t been tampered with.
+When DNSSEC is enabled on your domain, DNS resolvers can verify that the DNS records they receive come from an authoritative source and haven't been tampered with.
 
 ## How DNSSEC Works with Bunny DNS
 
@@ -16,18 +17,18 @@ Our DNS service supports full DNSSEC signing. Once enabled, your DNS zones are s
 
 **Key Management:** DNSSEC keys are securely managed and automatically rotated.
 
-**Denial of Existence:** We employ NSEC Black Lies, an advanced privacy-preserving method. This prevents zone enumeration while providing authenticated denial-of-existence responses. NSEC Black Lies avoid exposing actual zone data, ensuring that attempts to list your domain’s DNS records are thwarted.
+**Denial of Existence:** We employ NSEC Black Lies, an advanced privacy-preserving method. This prevents zone enumeration while providing authenticated denial-of-existence responses. NSEC Black Lies avoid exposing actual zone data, ensuring that attempts to list your domain's DNS records are thwarted.
 
 ## Steps to Enable DNSSEC
 
-- Enable DNSSEC within your DNS zone under the Security tab.
+1. Enable DNSSEC within your DNS zone under the Security tab.
 
 ![](/images/docs/1a1983ec6cabed83a892ce54e7ed52f4b66bab6445737261b474ee75a3bc5f1b-image.png)
 
-- Copy the DS Record provided after enabling.
-- Add the DS Record through your domain registrar (see setup guides below).
+2. Copy the DS Record provided after enabling.
+3. Add the DS Record through your domain registrar (see setup guides below).
 
-**That’s it! Your domain will now serve DNSSEC-signed responses.**
+**That's it! Your domain will now serve DNSSEC-signed responses.**
 
 ## Registrar-Specific DNSSEC Setup Guides
 

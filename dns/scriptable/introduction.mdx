@@ -1,0 +1,52 @@
+---
+title: "Introduction"
+description: "The Scriptable DNS allows you to dynamically respond to DNS queries using JavaScript scripts. The following pages contain sample documentation to help you get started."
+---
+
+## Entry function
+
+The Scriptable DNS pipeline executes through a statically defined function **handleQuery**.
+
+To return a response to the query, you can return one of the DNS response objects as documented in the [Query Response Object Types](/dns/scriptable/query-response-object-types).
+
+```javascript
+export default function handleQuery(query) {
+  return new ARecord("111.111.111.111", 30);
+}
+```
+
+<Warning>
+  `console.log` is intended for use within the Script Editor only. Please remove
+  all logging statements before saving or publishing, as they may cause your
+  script to fail at runtime.
+</Warning>
+
+## Query object
+
+The entry function is passed a DnsRequest object parameter called **query** that contains the information about the request, such as the hostname, country, remote IP, etc.
+
+### DnsRequest
+
+| Field     | Type     | Description                                                     |
+| --------- | -------- | --------------------------------------------------------------- |
+| `request` | DnsQuery | The DNS query request that contains the details about the query |
+
+### DnsQuery
+
+| Field         | Type        | Description                                                                  |
+| ------------- | ----------- | ---------------------------------------------------------------------------- |
+| `hostname`    | string      | The hostname that is being queried                                           |
+| `clientIP`    | string      | The IP of the remote client that sent the DNS query                          |
+| `queryType`   | string      | The query question type (A, AAAA, TXT)                                       |
+| `ednsIP`      | string      | The EDNS0 IP of the DNS query that was attached by the client                |
+| `geoLocation` | GeoLocation | The geo location of the client                                               |
+| `serverZone`  | string      | The server zone of the DNS server that received the query (DE, UK, SG, etc.) |
+
+### GeoLocation
+
+| Field       | Type   | Description                                            |
+| ----------- | ------ | ------------------------------------------------------ |
+| `latitude`  | double | The latitude location of the client                    |
+| `longitude` | double | The longitude location of the client                   |
+| `country`   | string | The detected two letter ISO country code of the client |
+| `asn`       | long   | The detected ASN number of the client                  |

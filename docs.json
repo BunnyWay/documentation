@@ -679,7 +679,7 @@
       },
       {
         "product": "DNS",
-        "description": "Ultra-fast scriptable DNS",
+        "description": "Unlock the true power of DNS with an ultra-fast scriptable platform",
         "icon": "globe",
         "tabs": [
           {
@@ -687,14 +687,14 @@
             "groups": [
               {
                 "group": "Bunny DNS",
-                "pages": ["docs/dns-overview", "docs/dns-dnssec"]
+                "pages": ["dns/index", "dns/dnssec"]
               },
               {
                 "group": "Scriptable DNS",
                 "pages": [
-                  "docs/getting-started",
-                  "docs/query-response-object-types",
-                  "docs/scriptable-dns-helper-objects"
+                  "dns/scriptable/introduction",
+                  "dns/scriptable/query-response-object-types",
+                  "dns/scriptable/helper-objects"
                 ]
               }
             ]
@@ -776,6 +776,7 @@
                 "pages": [
                   "database/replication",
                   "database/metrics",
+                  "database/durability-and-consistency",
                   "database/limits"
                 ]
               }
@@ -1927,6 +1928,36 @@
     {
       "source": "/docs/database-overview",
       "destination": "/database",
+      "permanent": true
+    },
+    {
+      "source": "/docs/dns-overview",
+      "destination": "/dns",
+      "permanent": true
+    },
+    {
+      "source": "/docs/dns-dnssec",
+      "destination": "/dns/dnssec",
+      "permanent": true
+    },
+    {
+      "source": "/docs/getting-started",
+      "destination": "/dns/scriptable/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/dns/scriptable/getting-started",
+      "destination": "/dns/scriptable/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/docs/query-response-object-types",
+      "destination": "/dns/scriptable/query-response-object-types",
+      "permanent": true
+    },
+    {
+      "source": "/docs/scriptable-dns-helper-objects",
+      "destination": "/dns/scriptable/helper-objects",
       "permanent": true
     }
   ]
