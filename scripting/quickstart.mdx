@@ -1,66 +1,83 @@
 ---
 title: "Quickstart"
-description: "This guide will walk you through the basic steps to get you started with creating and managing your scripts on the bunny.net platform. Whether you're looking to enhance your website's performance or add custom functionality, Edge Scripting makes it easy and efficient."
+description: "Create and deploy your first Edge Script in minutes."
 ---
 
-# What you'll need
+<Steps>
+  <Step title="Login and navigate to scripting">
+    Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu), then navigate to **Edge Platform** > **Scripting** and click **Add Script**.
 
-Before you dive in, make sure you have the following prerequisites in place:
+    <Frame>
+      ![](/images/docs/0b5bff4662563e07b358a70392b77a8be85f58aa8e1cd21968b2dfef2f88b34e-image.png)
+    </Frame>
 
-- A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+  </Step>
 
-With these prerequisites in place, you're ready to start using Edge Scripting. Follow the steps below to create, customize, and manage your scripts effectively.
+  <Step title="Select a script type">
+    Provide a name for your script and select a script type:
 
-# Creating your first script
+    <Tabs>
+      <Tab title="Standalone">
+        Select **Standalone** type and then **Default standalone** template.
 
-To create your first script, follow the steps outlined below:
+        <Frame>
+          ![](/images/docs/68f18ff3816d5947d7acd499028840c65c3e6c7dc5461a8e81d1f8807cc3548e-image.png)
+        </Frame>
 
-1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
-2. Navigate to **Edge Platform** > **Scripting** and click **Add Script**.
+        Standalone scripts run independently and handle HTTP requests directly at the edge without an origin server. They're ideal for REST APIs, UI applications, and data processing.
 
-![](/images/docs/0b5bff4662563e07b358a70392b77a8be85f58aa8e1cd21968b2dfef2f88b34e-image.png)
+        [Learn more about standalone scripts](/scripting/standalone/overview)
+      </Tab>
+      <Tab title="Middleware">
+        Select **Middleware** type and then **Default middleware** template.
 
-3. Provide a name for your script and select a script type:
+        Middleware scripts intercept and modify requests and responses as they flow through the CDN. They're perfect for authentication, header manipulation, and content transformation.
 
-<Tabs>
-  <Tab title="Standalone">
-    Select **Standalone** type and then **Default standalone** template.
+        [Learn more about middleware scripts](/scripting/middleware/overview)
+      </Tab>
+    </Tabs>
 
-    ![](/images/docs/68f18ff3816d5947d7acd499028840c65c3e6c7dc5461a8e81d1f8807cc3548e-image.png)
+    Click **Add script**.
 
-    Standalone scripts run independently and handle HTTP requests directly at the edge without an origin server. They're ideal for REST APIs, UI applications, and data processing.
+  </Step>
 
-    [Learn more about standalone scripts](/scripting/standalone/overview)
+  <Step title="Explore the script editor">
+    An underlying pull zone is automatically set up for your script, making it accessible from the outside through a unique URL. Your new script starts with a placeholder function that issues a simple "Hello from" when accessed through its URL.
 
-  </Tab>
-  <Tab title="Middleware">
-    Select **Middleware** type and then **Default middleware** template.
+    <Frame>
+      ![](/images/docs/da2454f3d77252f3af19246fb567d36fcd0d40a767a564e238f3f481d3f4fcb5-image.png)
+    </Frame>
 
-    Middleware scripts intercept and modify requests and responses as they flow through the CDN. They're perfect for authentication, header manipulation, and content transformation.
+    The bottom left panel is a preview pane where you can input a URL and execute the script currently open in the editor. Executing the script here doesn't alter the actual deployed script, allowing you to safely test and refine your code before publishing.
 
-    [Learn more about middleware scripts](/scripting/middleware/overview)
+    <Frame>
+      ![](/images/docs/23d1b7ac94614fa713ed6fb811bc5284d46539c1c2b8b0019d7ca6a344c9f7c0-image.png)
+    </Frame>
 
-  </Tab>
-</Tabs>
+    On the bottom right, the dashboard includes a logs pane. This pane captures and displays output from any `console.log` calls made by the script when it is run in the preview pane.
 
-4. Click **Add script**.
-5. An underlying pull zone is automatically set up for your script, making it accessible from the outside through a unique URL. Your new script starts with a placeholder function that issues a simple "Hello from" when accessed through its URL.
+    <Frame>
+      ![](/images/docs/d5c773703340b197b87dbc664e48ae7fc0eae31d410d70ad2fca4acbb07994da-image.png)
+    </Frame>
 
-![](/images/docs/da2454f3d77252f3af19246fb567d36fcd0d40a767a564e238f3f481d3f4fcb5-image.png)
+    It serves as a crucial debugging aid, providing real-time insights into the script's performance and helping you identify any issues or confirm operations through the log outputs.
 
-The bottom left panel is a preview pane where you can input a URL and execute the script currently open in the editor. Executing the script here doesn't alter the actual deployed script, allowing you to safely test and refine your code before publishing. You can initiate the script execution via a play button within this pane, making it a practical tool for real-time testing and verification of how the script behaves.
+  </Step>
 
-![](/images/docs/23d1b7ac94614fa713ed6fb811bc5284d46539c1c2b8b0019d7ca6a344c9f7c0-image.png)
+<Step title="Edit and test your script">
+  Edit your script to customize its functionality. You can replace the
+  placeholder with your desired code. Use the provided URL to test your script
+  and ensure your changes work as expected.
+</Step>
 
-On the bottom right, the dashboard includes a logs pane. This pane captures and displays output from any console.log calls made by the script when it is run in the preview pane.
+  <Step title="Save and publish">
+    When you are happy with your script, click **Save** and **Publish**.
 
-![](/images/docs/d5c773703340b197b87dbc664e48ae7fc0eae31d410d70ad2fca4acbb07994da-image.png)
+    <Frame>
+      ![](/images/docs/a3a37ccbb4b2fbbad74ad195292713e3875f727a99bb2bba411cc3e7c11e977a-image.png)
+    </Frame>
 
-It serves as a crucial debugging aid, providing real-time insights into the script’s performance and helping you identify any issues or confirm operations through the log outputs. This logs pane is an essential component for optimizing your scripts based on detailed feedback from test runs.
+    Once you save and publish your changes, they are applied immediately, allowing for real-time updates and modifications.
 
-6. Edit your script to customize its functionality. You can replace the placeholder with your desired code. You can use the provided URL to test your script and ensure your changes work as expected.
-7. When you are happy with your script, click **Save** and **Publish**.
-
-![](/images/docs/a3a37ccbb4b2fbbad74ad195292713e3875f727a99bb2bba411cc3e7c11e977a-image.png)
-
-Once you save and publish your changes, they are applied immediately, allowing for real-time updates and modifications.
+  </Step>
+</Steps>
