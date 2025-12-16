@@ -469,7 +469,8 @@
                     "pages": [
                       "stream/dashboard",
                       "stream/http-api",
-                      "stream/url-fetch"
+                      "stream/url-fetch",
+                      "stream/tus-resumable-uploads"
                     ]
                   },
                   "stream/collections",
@@ -1496,7 +1497,12 @@
     },
     {
       "source": "/reference/tus-resumable-uploads",
-      "destination": "/api-reference/stream/tus-resumable-uploads",
+      "destination": "/stream/tus-resumable-uploads",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/stream/tus-resumable-uploads",
+      "destination": "/stream/tus-resumable-uploads",
       "permanent": true
     },
     {
