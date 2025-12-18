@@ -850,6 +850,14 @@
                   "source": "https://docs.bunny.net/openapi/edge-scripting-api.json",
                   "directory": "api-reference/scripting"
                 }
+              },
+              {
+                "group": "Magic Containers API",
+                "pages": ["api-reference/magic-containers/overview"],
+                "openapi": {
+                  "source": "https://api-mc-stage.opsbunny.net/docs/v3-users-public/swagger.json",
+                  "directory": "api-reference/magic-containers"
+                }
               }
             ]
           },

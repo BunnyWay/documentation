@@ -1,0 +1,28 @@
+---
+title: Magic Containers API Reference
+sidebarTitle: API Reference
+description: Create, modify or delete your Magic Containers applications configuration.
+---
+
+The Magic Containers API provides a RESTful interface for managing your magic containers applications.
+
+## Base URL
+
+```
+https://api.bunny.net/mc
+```
+
+## Authentication
+
+Authenticate using the `AccessKey` header with your Bunny Net Access Key:
+
+```bash
+curl --request GET \
+  --url https://api.bunny.net/mc/apps \
+  --header 'AccessKey: YOUR_API_KEY'
+```
+
+<Note>
+  Find your API key in the [account
+  settings](https://dash.bunny.net/account/settings) under **API Keys**.
+</Note>
