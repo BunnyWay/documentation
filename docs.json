@@ -53,7 +53,10 @@
             "groups": [
               {
                 "group": "bunny.net",
-                "pages": ["index", "quickstart"]
+                "pages": [
+                  "index",
+                  "quickstart"
+                ]
               },
               {
                 "group": "Account & Profile",
@@ -88,7 +91,10 @@
               },
               {
                 "group": "Logging & Observability",
-                "pages": ["docs/statistics-overview", "docs/understanding-logs"]
+                "pages": [
+                  "docs/statistics-overview",
+                  "docs/understanding-logs"
+                ]
               },
               {
                 "group": "Affiliates",
@@ -112,7 +118,11 @@
             "groups": [
               {
                 "group": "Bunny CDN",
-                "pages": ["cdn/index", "cdn/quickstart", "cdn/pricing"]
+                "pages": [
+                  "cdn/index",
+                  "cdn/quickstart",
+                  "cdn/pricing"
+                ]
               },
               {
                 "group": "Usage",
@@ -317,7 +327,9 @@
             "tab": "Guides",
             "groups": [
               {
-                "pages": ["magic-containers/guides/nextjs"]
+                "pages": [
+                  "magic-containers/guides/nextjs"
+                ]
               }
             ]
           }
@@ -384,12 +396,24 @@
                 ]
               },
               {
+                "group": "Runtime",
+                "pages": [
+                  "scripting/websockets"
+                ]
+              },
+              {
                 "group": "Observability",
-                "pages": ["scripting/statistics", "scripting/logs"]
+                "pages": [
+                  "scripting/statistics",
+                  "scripting/logs"
+                ]
               },
               {
                 "group": "Reference",
-                "pages": ["scripting/limits", "scripting/api-reference"]
+                "pages": [
+                  "scripting/limits",
+                  "scripting/api-reference"
+                ]
               }
             ]
           }
@@ -527,7 +551,10 @@
               },
               {
                 "group": "Features",
-                "pages": ["storage/storage-tiers", "storage/replication"]
+                "pages": [
+                  "storage/storage-tiers",
+                  "storage/replication"
+                ]
               },
               {
                 "group": "Manage Files & Objects",
@@ -552,7 +579,9 @@
                 "pages": [
                   {
                     "group": "WordPress",
-                    "pages": ["storage/move-files-to-wordpress"]
+                    "pages": [
+                      "storage/move-files-to-wordpress"
+                    ]
                   }
                 ]
               },
@@ -579,7 +608,10 @@
             "groups": [
               {
                 "group": "Bunny Shield",
-                "pages": ["shield/index", "shield/quickstart"]
+                "pages": [
+                  "shield/index",
+                  "shield/quickstart"
+                ]
               },
               {
                 "group": "Protection Features",
@@ -680,7 +712,10 @@
             "groups": [
               {
                 "group": "Bunny DNS",
-                "pages": ["dns/index", "dns/dnssec"]
+                "pages": [
+                  "dns/index",
+                  "dns/dnssec"
+                ]
               },
               {
                 "group": "Scriptable DNS",
@@ -725,7 +760,9 @@
             "groups": [
               {
                 "group": "WordPress",
-                "pages": ["docs/wordpress-plugin-support-policy"]
+                "pages": [
+                  "docs/wordpress-plugin-support-policy"
+                ]
               }
             ]
           }
@@ -754,11 +791,15 @@
                   "database/connect/sql-api",
                   {
                     "group": "SDKs",
-                    "pages": ["database/connect/sdks"]
+                    "pages": [
+                      "database/connect/sdks"
+                    ]
                   },
                   {
                     "group": "ORMs",
-                    "pages": ["database/connect/orms"]
+                    "pages": [
+                      "database/connect/orms"
+                    ]
                   },
                   "database/connect/scripting",
                   "database/connect/magic-containers"
@@ -806,7 +847,9 @@
               },
               {
                 "group": "Origin Errors API",
-                "pages": ["api-reference/origin-errors/index"],
+                "pages": [
+                  "api-reference/origin-errors/index"
+                ],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/origin-errors-spec.json",
                   "directory": "api-reference/origin-errors"
@@ -814,7 +857,9 @@
               },
               {
                 "group": "Storage API",
-                "pages": ["api-reference/storage/index"],
+                "pages": [
+                  "api-reference/storage/index"
+                ],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/bunnynet-edge-storage-api.json",
                   "directory": "api-reference/storage"
@@ -822,7 +867,9 @@
               },
               {
                 "group": "Stream API",
-                "pages": ["api-reference/stream/index"],
+                "pages": [
+                  "api-reference/stream/index"
+                ],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/stream-api.json",
                   "directory": "api-reference/stream"
@@ -830,7 +877,9 @@
               },
               {
                 "group": "Shield API",
-                "pages": ["api-reference/shield/index"],
+                "pages": [
+                  "api-reference/shield/index"
+                ],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/bunny-shield-api.json",
                   "directory": "api-reference/shield"
@@ -838,7 +887,9 @@
               },
               {
                 "group": "Edge Scripting API",
-                "pages": ["api-reference/scripting/index"],
+                "pages": [
+                  "api-reference/scripting/index"
+                ],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/edge-scripting-api.json",
                   "directory": "api-reference/scripting"
@@ -846,7 +897,9 @@
               },
               {
                 "group": "Magic Containers API",
-                "pages": ["api-reference/magic-containers/overview"],
+                "pages": [
+                  "api-reference/magic-containers/overview"
+                ],
                 "openapi": {
                   "source": "https://api-mc-stage.opsbunny.net/docs/v3-users-public/swagger.json",
                   "directory": "api-reference/magic-containers"
@@ -859,7 +912,10 @@
             "groups": [
               {
                 "group": "Terraform",
-                "pages": ["terraform/index", "terraform/quickstart"]
+                "pages": [
+                  "terraform/index",
+                  "terraform/quickstart"
+                ]
               },
               {
                 "group": "Reference",
@@ -871,7 +927,9 @@
               },
               {
                 "group": "Guides",
-                "pages": ["terraform/importing-stream-library"]
+                "pages": [
+                  "terraform/importing-stream-library"
+                ]
               }
             ]
           }
@@ -1015,7 +1073,6 @@
       "destination": "/optimizer/dynamic-images/formats",
       "permanent": true
     },
-
     {
       "source": "/docs/edge-storage-overview",
       "destination": "/storage",
@@ -1756,7 +1813,6 @@
       "destination": "/stream/drm",
       "permanent": true
     },
-
     {
       "source": "/docs/stream-mediacage-basic-drm",
       "destination": "/stream/mediacage-basic",

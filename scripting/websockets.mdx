@@ -1,0 +1,58 @@
+---
+title: "Websockets"
+description: "Bunny.net supports WebSockets to deliver low-latency, bidirectional communication between your applications and users across the globe."
+---
+
+# Enabling WebSocket
+
+To be able to use Websockets on your scripts, you'll first need to enable it for
+your pullzone on the Dashboard.
+
+# Constructor
+
+In the [Bunny Runtime](#), every [Request](#) coming in has a possibility to run a
+function to upgrade the connection to a [WebSocket](#) connection:
+
+```typescript
+type UpgradeWebSocketOptions = {
+  /**
+   *
+   */
+  protocol: string;
+  /**
+    * If the client does not respond to this frame with a pong within the 
+    * timeout specified, the connection is deemed unhealthy and is closed. 
+    * The close and error event will be emitted.
+    *
+    * The unit is seconds, with a default of 30.
+    *
+    * If no data is transmitted from the client for 2min, whatever the
+    * configuration is, the connection will be closed.
+    */
+  idleTimeout: number;
+}
+
+type Request = {
+  function upgradeWebSocket(options?: UpgradeWebSocketOptions): {
+    /**
+     * The [Response] to send back to the client to have the upgrade
+     * established.
+     */
+    response: Response;
+    /**
+     * The [WebSocket] interface to communicate with a client.
+     */
+    socket: WebSocket;
+  };
+  ...
+}
+```
+
+# Methods
+todo
+
+# Events
+todo
+
+# Examples
+todo
