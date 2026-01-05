@@ -1,4 +1,119 @@
 ---
 title: Vary Cache
-url:
+description: Customize the cache key to store multiple versions of files based on browser support, location, device type, or request parameters.
 ---
+
+By default, Bunny uses the request URL as the cache key. Vary Cache lets you extend the cache key with additional factors—browser capabilities, geographic location, device type, or cookies—so your origin can serve different content to different users from the same URL.
+
+<Info>
+  If [Bunny Optimizer](/optimizer) is enabled, WebP and URL Query String vary
+  settings are automatically turned on for image files.
+</Info>
+
+## Configure Vary Cache
+
+<Steps>
+  <Step title="Open your Pull Zone">
+    Go to your Pull Zone in the [dashboard](https://dash.bunny.net) and click **Caching** in the side menu.
+
+  </Step>
+
+  <Step title="Open the General panel">
+    Click **General** inside the Caching section.
+
+  </Step>
+
+  <Step title="Select Vary Cache behaviors">
+    Enable the desired Vary Cache options (WebP, AVIF, Query String, etc.).
+
+  </Step>
+
+  <Step title="Save your configuration">
+    Click **Save Vary Configuration**.
+
+    <Frame>
+      ![Save Vary Cache configuration](/images/cdn/save-vary-cache.png)
+    </Frame>
+
+  </Step>
+</Steps>
+
+## Vary Cache settings
+
+### WebP support
+
+Stores separate cached versions based on whether the browser supports WebP images. When enabled, browsers that support WebP receive WebP-optimized content while others receive the original format—all from the same URL.
+
+Only applies to these extensions: `jpg`, `jpeg`, `webp`, `png`, `gif`
+
+### AVIF support
+
+Similar to WebP, this varies the cache based on the browser's ability to display AVIF images. Useful for serving next-gen image formats to supported browsers.
+
+### URL Query String
+
+By default, query strings are ignored when constructing the cache key. These URLs would all return the same cached file:
+
+```
+https://cdn.example.com/image.jpg
+https://cdn.example.com/image.jpg?width=300
+https://cdn.example.com/image.jpg?width=200
+```
+
+When enabled, each unique query string is treated as a separate file. This is useful for:
+
+- Dynamic responses generated from query parameters
+- Cache busting via versioned URLs
+- Bunny Optimizer transformations
+
+### User Country Code
+
+Includes the end-user's GeoIP country code in the cache key. Your origin can return different content based on the `CDN-RequestCountryCode` header, and each country-specific version is cached separately.
+
+<Warning>
+  Enabling User Country Code creates a separate cached copy per country, which
+  can significantly decrease your cache HIT rate. It also disables individual
+  URL cache purging—you'll only be able to purge the entire zone.
+</Warning>
+
+### Requested Hostname
+
+Uses the hostname from the request as part of the cache key. With this enabled, requests to `cdn.example.com` and `example.b-cdn.net` on the same Pull Zone are cached separately.
+
+This allows your origin to return different content based on the requested domain. Combine with the **Forward Host Header** setting so your origin receives the actual hostname.
+
+### Mobile/Desktop
+
+Varies the cache based on whether the request comes from a mobile or desktop device, determined by the User-Agent header.
+
+When enabled, Bunny sends a `CDN-MobileDevice` header to your origin with a value of `true` or `false`. Your origin can use this to serve device-appropriate content (such as different image sizes), and each version is cached separately.
+
+### Cookie
+
+Varies the cache based on specific cookie values. When enabled, enter the cookie names you want to use as part of the cache key.
+
+<Note>
+  Custom header-based vary is available via internal configuration. Contact
+  [support@bunny.net](mailto:support@bunny.net) if you need to vary cache on a
+  header not listed here.
+</Note>
+
+## Cache key impact
+
+Each vary setting you enable multiplies the number of cached versions per URL:
+
+| Setting        | Cache versions per URL           |
+| -------------- | -------------------------------- |
+| WebP           | 2 (supported / not supported)    |
+| AVIF           | 2 (supported / not supported)    |
+| Mobile/Desktop | 2 (mobile / desktop)             |
+| Country Code   | Up to 195+ (one per country)     |
+| Query String   | Unlimited (one per unique query) |
+| Cookie         | Varies by cookie values          |
+
+Enabling multiple settings compounds this effect. For example, WebP + Mobile + Country Code could create `2 × 2 × 195 = 780` cached versions of a single URL.
+
+<Warning>
+  High cache cardinality reduces your cache HIT rate and increases origin load.
+  Only enable vary settings you actually need.
+</Warning>

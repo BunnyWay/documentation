@@ -1,4 +1,69 @@
 ---
-title: Set up a custom CDN hostname
-url: 
+title: Custom Hostname
+description: Serve content from your own branded domain like cdn.yourdomain.com.
 ---
+
+Use a custom hostname to serve CDN content from your own domain instead of the default bunny.net URL.
+
+<Steps>
+  <Step title="Add the hostname to your pull zone">
+    1. Open your pull zone in the [dashboard](https://dash.bunny.net)
+    2. Locate the **Hostnames** panel in the General section
+    3. Enter your custom domain (e.g., `cdn.yourdomain.com`)
+    4. Click **Add hostname**
+
+    <Frame>
+    ![Add custom hostname](/images/cdn/add-a-custom-hostname.png)
+    </Frame>
+
+    The hostname appears in the Linked Hostnames list.
+
+  </Step>
+
+  <Step title="Copy the CNAME record">
+    Copy the CNAME record value shown below the hostname field. You'll need this for the next step.
+
+    <Frame>
+    ![Copy custom hostname CNAME](/images/cdn/copy-custom-hostname-cname.png)
+    </Frame>
+
+  </Step>
+
+  <Step title="Update your DNS settings">
+    Add a CNAME record at your DNS provider:
+
+    1. Log in to your DNS provider (Cloudflare, Route 53, or similar)
+    2. Create a new **CNAME** record:
+       - **Name/Host**: Your subdomain (e.g., `cdn`)
+       - **Type**: CNAME
+       - **Value**: The CNAME from step 2 (e.g., `yourzone.b-cdn.net`)
+       - **TTL**: 3600 seconds or lower
+
+    <Warning>
+      On Cloudflare, disable the proxy option (orange cloud icon). Proxying interferes with DNS resolution and prevents your custom domain from working with bunny.net.
+    </Warning>
+
+  </Step>
+
+  <Step title="Wait for DNS propagation">
+    Save the DNS record. Your domain connects to bunny.net once DNS propagates, typically within a few minutes to an hour.
+
+  </Step>
+
+  <Step title="Enable SSL">
+    Click **Verify & Activate SSL** to get a free Let's Encrypt certificate for your custom hostname.
+
+    <Frame>
+      ![Verify and activate SSL](/images/cdn/verify-and-active-ssl-custom-hostname.png)
+    </Frame>
+
+    <Accordion title="Enable SSL later">
+      If you skip SSL verification initially, find your hostname in the **Linked Hostnames** section and click **Enable** to activate a free certificate or upload your own.
+
+      <Frame>
+        ![Enable custom hostname SSL](/images/cdn/enable-custom-hostname-ssl.png)
+      </Frame>
+    </Accordion>
+
+  </Step>
+</Steps>

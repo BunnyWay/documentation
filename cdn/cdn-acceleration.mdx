@@ -1,4 +1,77 @@
 ---
 title: CDN Acceleration
-url: 
+description: Connect your domain to a Pull Zone using Bunny DNS for automatic CDN routing and simplified SSL.
 ---
+
+CDN Acceleration routes your domain's traffic through the Bunny CDN automatically when using Bunny DNS. Static assets (images, CSS, JS, videos) are served from Bunny's global network without manually configuring Pull Zones for each subdomain.
+
+## Benefits
+
+- Connect your domain to the CDN with a few clicks
+- Automatic SSL via Let's Encrypt (no manual certificate setup)
+- Reduced load on your origin server
+- Works with root domains (no CNAME limitation)
+
+## Prerequisites
+
+Your domain must use Bunny DNS. Update your domain's nameservers at your registrar to:
+
+- `coco.bunny.net`
+- `kiki.bunny.net`
+
+## Setup
+
+<Steps>
+  <Step title="Open your DNS zone">
+    1. Go to **DNS** in your [bunny.net dashboard](https://dash.bunny.net)
+    2. Click on the domain you want to accelerate
+
+  </Step>
+
+  <Step title="Enable CDN Acceleration">
+    1. Find the **CDN Acceleration** button (or CDN Proxy column)
+    2. Click **Enable**
+
+    Bunny automatically creates a Pull Zone and configures SSL for your domain.
+
+    <Warning>
+      If you have an existing Pull Zone with the same hostname, delete that hostname from the Pull Zone first. Hostnames can only be mapped to one Pull Zone at a time.
+    </Warning>
+
+  </Step>
+
+  <Step title="Verify it's working">
+    Visit your site. Static assets should now be served through bunny.net's CDN.
+
+    <Tabs>
+      <Tab title="Dashboard">
+        The green **CDN Proxy** icon next to your DNS record confirms successful setup.
+
+        You can also check **Monitoring** > **Logs** and filter by your accelerated pull zone to confirm requests are being logged.
+      </Tab>
+
+      <Tab title="HTTP headers">
+        Open your browser's Developer Tools (**F12** or right-click > **Inspect**), go to the **Network** tab, and refresh the page. Click on a static file (`.jpg`, `.css`, `.js`) and check for these headers:
+
+        | Header | Description |
+        | --- | --- |
+        | `cdn-pullzone` | The Pull Zone handling the request |
+        | `cdn-cache` | Cache status (`HIT`, `MISS`, or `BYPASS`) |
+        | `cdn-requestcountrycode` | Country from which the request was served |
+
+        If these headers are present, your content is being served through bunny.net's CDN.
+      </Tab>
+    </Tabs>
+
+  </Step>
+</Steps>
+
+## SSL certificate timing
+
+Bunny issues SSL certificates via Let's Encrypt within seconds of enabling acceleration. If HTTPS doesn't work immediately, wait a few minutes for the certificate to propagate.
+
+<Note>
+  Ensure your nameservers point to Bunny DNS before enabling acceleration. If
+  the domain isn't resolving through Bunny yet, SSL certificate verification
+  will fail.
+</Note>

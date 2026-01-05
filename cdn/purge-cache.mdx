@@ -1,4 +1,73 @@
 ---
-title: Purge all files from a Pull Zone
-url: 
+title: Purge Cache
+description: Clear cached content from your Pull Zone to serve fresh files from your origin.
 ---
+
+Purge cached files when you need visitors to see updated content immediately rather than waiting for cache expiration.
+
+You can purge the entire Pull Zone, or purge only files matching a specific tag.
+
+<Warning>
+  Purging large zones puts temporary load on your origin server while content is
+  re-cached. Performance may decrease briefly until edge nodes repopulate.
+</Warning>
+
+## Dashboard
+
+<Steps>
+  <Step title="Open your Pull Zone">
+    Go to your Pull Zone in the [dashboard](https://dash.bunny.net) and click **Purge Cache** in the top right corner.
+
+    <Frame>
+      ![Purge cache button](/images/cdn/purge-cache-button.png)
+    </Frame>
+
+  </Step>
+
+  <Step title="Enter a search tag (optional)">
+    Leave the search tag empty to purge the entire Pull Zone. If you enter a tag, only files with a matching `CDN-Tag` header are removed—the rest of your cache stays intact.
+
+    <Frame>
+      ![Purge cache by tag](/images/cdn/full-cache-purge-or-by-tag.png)
+    </Frame>
+
+  </Step>
+
+  <Step title="Confirm the purge">
+    Click **Purge** to clear the cache.
+
+  </Step>
+</Steps>
+
+## API
+
+You can also purge cache programmatically. See the [Purge Cache API reference](/api-reference/core/pull-zone/purge-cache) for full details.
+
+### Full Pull Zone purge
+
+```bash
+curl -X POST "https://api.bunny.net/pullzone/{id}/purgeCache" \
+  -H "AccessKey: YOUR_API_KEY"
+```
+
+### Purge by tag
+
+Tag responses from your origin with the `CDN-Tag` header, then purge all files matching that tag:
+
+```bash
+curl -X POST "https://api.bunny.net/pullzone/{id}/purgeCache" \
+  -H "AccessKey: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"CacheTag": "product-123"}'
+```
+
+Useful for invalidating all assets related to a specific product, user, or category without clearing your entire cache.
+
+To purge a specific URL across all pull zones, use the [Purge URL endpoint](/api-reference/core/purge/purge-url).
+
+## Perma-Cache behavior
+
+If you're using [Perma-Cache](/docs/perma-cache):
+
+- **Full zone purge**: Clears CDN cache but Perma-Cache switches to a new directory (manually delete the old folder if needed)
+- **Tag-based purging**: Not supported with Perma-Cache enabled

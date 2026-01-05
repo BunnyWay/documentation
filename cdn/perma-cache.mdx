@@ -1,4 +1,93 @@
 ---
 title: Perma-Cache
-url:
+description: Permanently store cached files on geo-replicated storage to eliminate repeated origin fetches.
 ---
+
+Perma-Cache is a secondary permanent cache layer that sits between the CDN and your origin. When a cache MISS occurs on the CDN, the system first checks if the file exists in your geo-replicated storage before fetching from your origin.
+
+Due to the optimized routing and global footprint of Bunny's geo-replicated storage, this provides a significant performance boost for uncached content and reduces traffic to your origin. Instead of going from the CDN to your server every time, there's a high chance the file is already available right next to the CDN nodes on globally replicated storage.
+
+## How it works
+
+```mermaid
+flowchart LR
+    CDN[CDN Edge]
+    PC[[Perma-Cache]]
+    Origin[(Origin)]
+
+    CDN -->|cache MISS| PC
+    PC -->|file found| CDN
+    PC -.->|file not found| Origin
+    Origin -.->|async download| PC
+```
+
+1. When a cache MISS happens on the CDN, the request is first sent to the Perma-Cache storage
+2. If the file exists in storage, it's returned to the CDN immediately. Your origin is never contacted.
+3. If the file doesn't exist, the request passes through to your origin. The file is then asynchronously downloaded to Perma-Cache storage in the background
+
+The next time any CDN node requests this file as part of a cache MISS, it will already be available on the storage node. The file is effectively permanently stored in the system.
+
+<Note>
+  Perma-Cache connects to any Edge Storage zone and uses a special folder
+  structure. See [Perma-Cache Folder
+  Structure](/docs/cdn/perma-cache-folder-structure) for details.
+</Note>
+
+## Enable Perma-Cache
+
+<Steps>
+  <Step title="Create a Storage Zone">
+    Go to **Storage** and create a new Storage Zone. Enable geo-replication if you want files distributed across multiple regions.
+  </Step>
+  <Step title="Open your Pull Zone settings">
+    Go to **CDN** > **Pull Zones** and select your zone.
+  </Step>
+  <Step title="Connect the Storage Zone">
+    Click **Caching**, select **Perma-Cache**, and choose your Storage Zone from the dropdown.
+  </Step>
+  <Step title="Save configuration">
+    Click **Save Configuration**. Perma-Cache will begin filling as cache MISSes occur.
+  </Step>
+</Steps>
+
+<Info>
+  If you initially see a very small number of cached files, that just means the
+  CDN is already doing a great job keeping its own cached files. Perma-Cache
+  only fills on cache MISSes.
+</Info>
+
+## Cache headers
+
+Perma-Cache adds a `Perma-Cache` response header:
+
+| Header Value | Meaning                                  |
+| ------------ | ---------------------------------------- |
+| `HIT`        | File was loaded from Perma-Cache storage |
+| `MISS`       | Request was passed to the origin         |
+
+In cases where a file is already cached on the CDN, the request won't reach the Perma-Cache system until a cache MISS happens.
+
+## Cache purging behavior
+
+Perma-Cache integrates with the file purging API:
+
+- **Single URL purge:** The file is first deleted from Perma-Cache storage, then purged from the CDN. A fresh file is fetched from your origin on the next request.
+- **Full Pull Zone purge:** Perma-Cache files are not deleted. Instead, the system switches to a new directory structure within the storage zone. You'll need to manually delete the old caching folder if needed.
+
+<Warning>
+  Wildcard purging and tag-based purging do not work when Perma-Cache is
+  enabled.
+</Warning>
+
+## Important notes
+
+<Warning>
+  Don't use Perma-Cache as a substitute for permanent storage. A cache MISS on
+  the CDN does not 100% guarantee that a file will appear in Perma-Cache. Always
+  keep files on your origin. Purging the cache will cause Perma-Cache to
+  re-fetch from the origin.
+</Warning>
+
+- **Origin Shield conflict:** You cannot use Perma-Cache and Origin Shield simultaneously. These features are mutually exclusive.
+- **Storage-backed Pull Zones:** If your Pull Zone is directly connected to a Storage Zone as its origin, Perma-Cache is not available (you're already hosting content on Bunny storage).
+- **Geo-replication:** If enabled on your Storage Zone, files are replicated across the global storage network for improved availability and performance.

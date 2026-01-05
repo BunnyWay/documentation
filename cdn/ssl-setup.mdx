@@ -1,4 +1,122 @@
 ---
-title: Set up SSL for your custom domain name
-url: 
+title: SSL for Custom Domains
+description: Enable free Let's Encrypt SSL or upload your own certificate for custom hostnames.
 ---
+
+Bunny provides free auto-renewing SSL certificates via Let's Encrypt, or you can upload your own certificate from a commercial provider.
+
+## Prerequisites
+
+Your custom domain must point to Bunny using a CNAME record before SSL validation can succeed. See [Custom Hostname](/cdn/custom-hostname) for setup instructions.
+
+<Warning>
+  On Cloudflare, disable the proxy option (orange cloud icon). Proxying hides
+  DNS resolution and prevents SSL validation from working.
+</Warning>
+
+## Free Let's Encrypt certificate
+
+<Steps>
+  <Step title="Add your custom hostname">
+    Open your Pull Zone in the [dashboard](https://dash.bunny.net), navigate to **General** > **Hostnames**, and add your custom hostname if you haven't already.
+
+  </Step>
+
+  <Step title="Enable SSL">
+    Find your hostname in the **Linked Hostnames** section and click **Enable**.
+
+    <Frame>
+      ![Select hostname and enable SSL](/images/cdn/select-hostnames-and-enable-ssl.png)
+    </Frame>
+
+  </Step>
+
+  <Step title="Select free certificate">
+    Choose **Add Free Let's Encrypt Certificate** and click **Continue**.
+
+    <Frame>
+      ![Enable HTTPS with Let's Encrypt](/images/cdn/enable-https.png)
+    </Frame>
+
+    Bunny issues and installs the certificate automatically. Renewal is handled for you.
+
+  </Step>
+
+  <Step title="Confirm CNAME configuration">
+    Verify your CNAME record is correctly configured and click **Continue** to complete validation.
+
+    <Frame>
+      ![CNAME configuration](/images/cdn/cname-configuration.png)
+    </Frame>
+
+  </Step>
+
+  <Step title="Verify it's working">
+    Visit your domain using `https://` and confirm the certificate is valid. You can also use [SSL Labs](https://www.ssllabs.com/ssltest/) to test.
+
+  </Step>
+</Steps>
+
+## Custom certificate
+
+Use this option for wildcard domains (`*.yourdomain.com`) or certificates from commercial providers.
+
+<Steps>
+  <Step title="Prepare your certificate files">
+    Bunny requires Nginx-compatible format. Combine your certificate chain into a single file by placing your domain certificate at the top, followed by intermediate certificates in order. Save as a single `.pem` file (e.g., `fullchain.pem`). You'll also need your private key file.
+
+  </Step>
+
+  <Step title="Enable SSL">
+    Open your Pull Zone, go to **Hostnames**, find your hostname, and click **Enable**.
+
+  </Step>
+
+  <Step title="Select custom certificate">
+    Choose **Upload your own certificate** and click **Continue**.
+
+    <Frame>
+      ![Enable custom HTTPS](/images/cdn/enable-custom-https.png)
+    </Frame>
+
+  </Step>
+
+  <Step title="Upload the certificate">
+    Paste your certificate chain and private key into the respective fields, then click **Upload**.
+
+    <Frame>
+      ![Upload custom SSL certificate](/images/cdn/upload-custom-ssl-certificate.png)
+    </Frame>
+
+    Wait for the certificate to propagate across the network.
+
+  </Step>
+</Steps>
+
+<Note>
+  Let's Encrypt wildcard certificates are not supported through Bunny's
+  automatic issuance. For wildcards, generate the certificate yourself (e.g.,
+  using certbot with DNS validation) and upload it manually.
+</Note>
+
+## Troubleshooting
+
+### SSL validation fails
+
+Common causes:
+
+- **DNS not propagated**: Use [dnschecker.org](https://dnschecker.org) to confirm your CNAME is resolving globally
+- **Cloudflare proxy enabled**: Disable the orange cloud icon on your CNAME record
+- **Geolocation blocks**: Let's Encrypt validates from multiple regions (including USA and Europe). If you've blocked these regions via Traffic Manager or Edge Rules, validation will fail
+- **CAA records**: If your domain has CAA DNS records, add `letsencrypt.org` to the allowed issuers
+
+### Rate limiting
+
+Requesting certificates too many times in a short period can trigger Let's Encrypt rate limits (up to one week). Be patient when troubleshooting DNS issues before retrying.
+
+## Root domains
+
+CNAME records aren't allowed at the apex level (`yourdomain.com`) by most DNS providers. You have two options:
+
+1. Use a subdomain like `www.yourdomain.com` with a CNAME, then redirect the apex to it
+2. Use [Bunny DNS](/dns) with [CDN Acceleration](/cdn/cdn-acceleration), which handles this automatically

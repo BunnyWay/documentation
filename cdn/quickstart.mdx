@@ -1,5 +1,123 @@
 ---
 title: Quickstart
+description: Create your first Pull Zone and start delivering content in minutes.
 ---
 
-{/* Content to be added */}
+A Pull Zone connects your website to bunny.net's global CDN network. When visitors request your content, bunny.net automatically fetches it from your server, caches it at edge locations worldwide, and delivers it from the location closest to each visitor.
+
+Once created, the file available at:
+
+```
+https://mywebsite.com/image.jpg
+```
+
+Will also now be available at:
+
+```bash
+https://mywebsite.b-cdn.net/image.jpg
+```
+
+<Steps>
+
+<Step title="Add Pull Zone">
+
+In the [bunny.net dashboard](https://dash.bunny.net), select **Add Pull Zone** from the **+ Add** sidebar launcher:
+
+<Frame>![Add Pull Zone](/images/cdn/add-pull-zone.png)</Frame>
+
+</Step>
+
+<Step title="Enter Pull Zone name">
+
+Enter a name for your Pull Zone. This becomes your CDN hostname — for example, naming it `mysite` creates `mysite.b-cdn.net`.
+
+The name can only contain letters and numbers.
+
+<Frame>![Pull Zone Name](/images/cdn/pull-zone-name.png)</Frame>
+
+If you plan to use a custom hostname (like `cdn.mysite.com`), this default hostname won't be visible to your users.
+
+</Step>
+
+<Step title="Select origin type">
+
+Choose where bunny.net fetches your original content from:
+
+<Tabs>
+  <Tab title="Origin URL">
+    Enter your website URL (e.g., `https://mywebsite.com`). The CDN fetches content directly from your existing server when a file is first requested.
+
+    <Frame>![Pull Zone Origin](/images/cdn/origin-type.png)</Frame>
+
+    <Info>Host header (optional): The host HTTP header sent to the origin. If left empty, the hostname is automatically extracted from your Origin URL. Only change this if your origin expects a different hostname, such as when using an IP address as the origin.</Info>
+
+  </Tab>
+  <Tab title="Storage Zone">
+    Select an existing Bunny Storage zone from the dropdown. Use this option if you're hosting files in Bunny Storage and want to deliver them through the CDN.
+
+    <Frame>![Storage Zone Dropdown](/images/cdn/storage-zone-dropdown.png)</Frame>
+
+    No host header configuration is needed when using a Storage Zone.
+
+  </Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Choose tier">
+
+Select a pricing tier based on your use case:
+
+<Frame>![Choose pricing tier](/images/cdn/choose-tier.png)</Frame>
+
+| Tier            | Best For                                                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Standard**    | Small files and websites. Exceptional global latency for high performance solutions like website acceleration and ad delivery. |
+| **High Volume** | Large files and video. Cost-optimized for global high bandwidth solutions using a smaller set of high performance PoPs.        |
+
+</Step>
+
+<Step title="Select pricing zones">
+
+Choose the geographic regions where you want your content served from:
+
+<Frame>![Pricing zones](/images/cdn/pricing-zones.png)</Frame>
+
+<Note>
+  Disabling a region doesn't block visitors from that area — their requests are
+  automatically routed to the nearest enabled region.
+</Note>
+
+</Step>
+
+<Step title="Complete creation">
+
+Click **Add Pull Zone** to finish. You'll see setup instructions and integration options for platforms like WordPress.
+
+</Step>
+
+<Step title="Next steps">
+
+<CardGroup cols={2}>
+
+<Card title="Custom Hostname" href="/cdn/custom-hostname">
+  Use your own domain instead of b-cdn.net.
+</Card>
+
+<Card title="Integration Guides" href="/cdn/integrations/wordpress">
+  Connect with WordPress, CMS platforms, and cloud storage.
+</Card>
+
+<Card title="Edge Rules" href="/cdn/edge-rules">
+  Customize request handling at the edge.
+</Card>
+
+<Card title="Security" href="/cdn/security">
+  Set up hotlink protection and token authentication.
+</Card>
+
+</CardGroup>
+
+</Step>
+
+</Steps>

@@ -1,4 +1,84 @@
 ---
 title: Smart Cache
-url:
+description: Prevent accidental caching of sensitive content by limiting caching to known static file types.
 ---
+
+By default, Bunny caches all responses from your origin that include cacheable headers like `Cache-Control` or `Expires`. If your server is misconfigured, this could result in sensitive or personalized content being cached and served to other users.
+
+Smart Cache prevents this by only caching responses with specific file extensions and MIME types. Dynamic content passes through to your origin on every request.
+
+<Note>
+  Pull Zones accelerated by Bunny DNS have Smart Cache enabled by default.
+</Note>
+
+## Enable Smart Cache
+
+<Steps>
+  <Step title="Open your Pull Zone settings">
+    Go to **CDN** > **Pull Zones** and select your zone.
+  </Step>
+  <Step title="Navigate to Caching settings">
+    Click **Caching** in the left menu.
+  </Step>
+  <Step title="Enable Smart Cache">
+    Check the **Smart Cache** option at the top of the page.
+  </Step>
+</Steps>
+
+When Smart Cache determines a request is cacheable, the standard [Cache Expiration Time](/docs/cdn/cache-expiration-time) settings apply.
+
+## Cacheable extensions
+
+Smart Cache only caches files with these extensions:
+
+| Images          | Video          | Audio          |
+| --------------- | -------------- | -------------- |
+| avif, bmp, gif  | 3g2, 3gp, asf  | aif, flac, mid |
+| heic, ico, jpg  | avi, flv, m3u8 | midi, mp3, mpa |
+| jpeg, pict, png | m4u, mkv, mp4  | ogg, wav, wma  |
+| svg, svg2, tif  | mpg, swf, ts   |                |
+| tiff, webp      | vob, webm, yuv |                |
+
+| Fonts         | Documents           | Archives          |
+| ------------- | ------------------- | ----------------- |
+| eot, otf, ttf | csv, doc, docx      | 7z, bz2, gz       |
+| woff, woff2   | odt, pdf, ppt       | iso, jar, rar     |
+|               | pptx, ps, psd       | tar, xz, zip, zst |
+|               | srt, txt, xls, xlsx |                   |
+
+| Code & Binaries   | Other         |
+| ----------------- | ------------- |
+| bat, class, css   | apk, bin, dat |
+| dll, ejs, exe, js | dmg, eps, pls |
+
+## MIME types excluded from caching
+
+These MIME types are never cached, regardless of extension:
+
+| MIME Type          |
+| ------------------ |
+| `text/html`        |
+| `application/json` |
+| `application/xml`  |
+
+## Override Smart Cache
+
+To cache a file type that Smart Cache normally excludes, create an Edge Rule with the **Override Cache Time** action. This bypasses Smart Cache's decision and caches the response for your specified duration.
+
+<Steps>
+  <Step title="Create an Edge Rule">
+    Go to **Edge Rules** in your Pull Zone settings and click **Add Rule**.
+  </Step>
+  <Step title="Set the action">
+    Select **Override Cache Time** and enter the cache duration in seconds.
+  </Step>
+  <Step title="Add conditions">
+    Add conditions to match the requests you want to cache, such as file
+    extension or URL path.
+  </Step>
+</Steps>
+
+<Info>
+  This is useful for caching HTML pages or API responses that you know are safe
+  to cache, such as static site generators or public API endpoints.
+</Info>
