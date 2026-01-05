@@ -175,8 +175,6 @@
                 "group": "Logging",
                 "pages": [
                   "cdn/logging/index",
-                  "cdn/logging/api",
-                  "cdn/logging/format",
                   "cdn/logging/permanent-storage",
                   "cdn/logging/forwarding",
                   "cdn/logging/origin-errors"
@@ -1998,6 +1996,16 @@
     {
       "source": "/docs/affiliate-competition-rules",
       "destination": "/affiliates",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/logging/api",
+      "destination": "/cdn/logging",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/logging/format",
+      "destination": "/cdn/logging",
       "permanent": true
     }
   ]

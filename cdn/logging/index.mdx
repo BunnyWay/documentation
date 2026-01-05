@@ -1,28 +1,82 @@
 ---
-title: "Overview"
+title: Logging
+sidebarTitle: Overview
+description: "Access raw request logs via API or dashboard with up to 3 days retention."
 ---
 
-# About Logging
+Bunny CDN provides raw request logs for all Pull Zones. Logs appear in near real-time for high-traffic zones, with up to a 5-minute delay for quieter zones. Searchable logs are retained for 3 days.
 
-Bunny CDN provides a raw logging service giving you access to raw request logs. For high traffic zones, the logs will generally appear in close to real-time. For less-busy zones, new logs might appear with a 5-minute logging delay. The logs are available both through the dashboard as well as through our [Logging API](/docs/cdn-logging-api).
+For longer retention, use [Permanent Log Storage](/cdn/logging/permanent-storage) to automatically archive logs to Edge Storage.
 
-# Privacy & GDPR
+## Privacy & GDPR
 
-To comply with GDPR and privacy regulations all logs are provided with anonymized IP addresses. To enable full IP logging, you will first need to accept and sign the Data Processing Agreement (DPA) in your account settings. After that, a new setting will be enabled in your pull zone logging settings to disable anonymization.
+IP addresses are anonymized by default. To enable full IP logging, sign the Data Processing Agreement (DPA) in your account settings, then disable anonymization in your Pull Zone logging settings.
 
-# Log Retention
+## API endpoint
 
-Searchable logs are stored for up to 3 days. If long-term log storage is required, we provide an additional log [Permanent Log Storage](/docs/cdn-permanent-log-storage) feature. If enabled, the logs will be automatically uploaded to your selected Edge Storage zone at the end of each day.
+Download raw log files from the logging API:
 
-# Learn more about Logging:
+```bash
+GET https://logging.bunnycdn.com/{MM}-{DD}-{YY}/{pull_zone_id}.log
+```
 
-- [Logging API](/docs/cdn-logging-api)
-- [Log Format](/docs/cdn-log-format)
-- [Permanent Log Storage](/docs/cdn-permanent-log-storage)
-- [Log Forwarding](/docs/cdn-log-forwarding)
+Authenticate with your account API key:
 
----
+```bash
+AccessKey: your-api-key
+```
 
-[Bunny CDN](/docs/cdn-overview)
+Use gzip compression to reduce download size:
 
-[Logging API](/docs/cdn-logging-api)
+```bash
+Accept-Encoding: gzip
+```
+
+**Example:**
+
+```bash
+curl -H "AccessKey: your-api-key" \
+     -H "Accept-Encoding: gzip" \
+     "https://logging.bunnycdn.com/03-13-24/60367.log"
+```
+
+### Query parameters
+
+| Parameter | Description                                    |
+| --------- | ---------------------------------------------- |
+| `start`   | Number of log lines to skip from the beginning |
+| `end`     | End index of log lines to return               |
+| `order`   | Sort order: `asc` or `desc` (default)          |
+
+## Log format
+
+Each request is stored as a pipe-separated line:
+
+```
+HIT|200|1507167062421|412|390|163.172.53.229|-|https://example.b-cdn.net/video.mp4|WA|Mozilla/5.0...|322b688bd63fb63f2babe9de30a5d262|DE
+```
+
+| Field         | Description                       |
+| ------------- | --------------------------------- |
+| Cache Status  | `HIT` or `MISS`                   |
+| Status Code   | HTTP response code                |
+| Timestamp     | UTC UNIX timestamp (milliseconds) |
+| Bytes Sent    | Total bytes sent to client        |
+| Pull Zone ID  | ID of the Pull Zone               |
+| Remote IP     | Client IP (anonymized by default) |
+| Referer       | Referer header value              |
+| URL           | Requested URL                     |
+| Edge Location | POP code that served the request  |
+| User Agent    | Client user agent                 |
+| Request ID    | Unique request identifier         |
+| Country Code  | Two-letter ISO country code       |
+
+### Extended logging
+
+Extended logging adds three additional fields (contact support to enable):
+
+| Field                | Description                             |
+| -------------------- | --------------------------------------- |
+| Body Bytes Sent      | Response body bytes (excluding headers) |
+| Range Header         | HTTP Range header value                 |
+| Authorization Header | Authorization header value              |
