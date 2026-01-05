@@ -1,4 +1,82 @@
 ---
-title: Pull Zone Network Limits
-url:
+title: Network Limits
+description: Control download speeds, request rates, and bandwidth usage per Pull Zone.
 ---
+
+Network Limits are settings that can be applied to a Pull Zone to control performance and improve security. These limits help prevent abuse, control bandwidth costs, and protect against DDoS attacks.
+
+Configure these options in your Pull Zone under **Limits**.
+
+## Connection Speed
+
+Limits the download speed for any file served by the Pull Zone, in kilobytes per second.
+
+| Value | Behavior                                    |
+| ----- | ------------------------------------------- |
+| `0`   | No limit. Full download speed allowed.      |
+| `> 0` | Download speed capped at the specified KB/s |
+
+This setting works together with **Limit After** (see below).
+
+## Limit After
+
+Sets the amount of data (in kilobytes) that can be transferred at full speed before the **Connection Speed** limit applies.
+
+| Value | Behavior                                                         |
+| ----- | ---------------------------------------------------------------- |
+| `0`   | Connection Speed limit applies immediately                       |
+| `> 0` | First N kilobytes transfer at full speed, then the limit applies |
+
+For example, if Limit After is set to `2000`, the first 2 MB of each request transfers at full speed. After that, the Connection Speed limit kicks in.
+
+<Info>
+  This is useful for video delivery. It allows fast video skipping while
+  preventing the browser from downloading too much unnecessary data ahead of
+  playback.
+</Info>
+
+## Requests Per Second
+
+Limits the maximum number of requests per second a single IP can send to your Pull Zone.
+
+This helps prevent abuse and reduces the impact of simple DDoS attacks.
+
+## Allowed Burst
+
+Sets the number of extra burst requests allowed beyond the **Requests Per Second** limit for a short time.
+
+This allows users to briefly exceed the rate limit, which is useful when:
+
+- A webpage loads and makes many simultaneous asset requests
+- A user opens multiple tabs at once
+
+Additional requests beyond the burst allowance are slowed down to match the Requests Per Second setting.
+
+## Maximum Connections Per IP
+
+Limits the number of simultaneous connections each IP can have to Bunny's servers.
+
+Use this to:
+
+- Prevent users from downloading many files at the same time
+- Mitigate DDoS attacks
+
+<Note>
+  This limit is applied per server. If a user connects to multiple Bunny
+  locations or a location has multiple IPs, the limit applies separately to each
+  server.
+</Note>
+
+## Monthly Bandwidth Limit
+
+Sets the total amount of bandwidth the Pull Zone can serve in a calendar month.
+
+When the limit is reached:
+
+- The zone is disabled and stops serving data
+- You are no longer charged for requests to this zone
+
+<Warning>
+  Once the monthly limit is hit, your Pull Zone stops working until the next
+  billing cycle. Use this carefully to avoid unexpected downtime.
+</Warning>
