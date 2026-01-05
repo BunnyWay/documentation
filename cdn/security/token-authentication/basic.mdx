@@ -1,0 +1,115 @@
+---
+title: Basic Token Authentication
+sidebarTitle: Basic
+description: Generate expiring URLs using MD5-based token authentication.
+---
+
+Basic token authentication uses MD5 hashing to create signed URLs with expiration times and optional IP validation.
+
+## URL structure
+
+```
+https://myzone.b-cdn.net/video.mp4?token=m0EMEkV3pNAKFB33gZuv_Q&expires=1456761770
+```
+
+| Parameter | Description                                                       |
+| --------- | ----------------------------------------------------------------- |
+| `token`   | Base64-encoded MD5 hash of the security key, path, and expiration |
+| `expires` | UNIX timestamp when the URL becomes invalid                       |
+
+## Generate the token
+
+```
+token = Base64(MD5(security_key + path + expiration))
+```
+
+To validate against a specific IP address:
+
+```
+token = Base64(MD5(security_key + path + expiration + ip_address))
+```
+
+After Base64 encoding, replace `+` with `-`, `/` with `_`, and remove `=` characters.
+
+## Code examples
+
+<CodeGroup>
+
+```php PHP
+$securityKey = 'your_security_key';
+$path = '/path/to/file.mp4';
+$expires = time() + 3600;
+
+$hashableBase = $securityKey . $path . $expires;
+// Optional: $hashableBase .= '192.168.1.1';
+
+$token = md5($hashableBase, true);
+$token = base64_encode($token);
+$token = strtr($token, '+/', '-_');
+$token = str_replace('=', '', $token);
+
+$url = "https://myzone.b-cdn.net{$path}?token={$token}&expires={$expires}";
+```
+
+```csharp C#
+var securityKey = "your_security_key";
+var path = "/path/to/file.mp4";
+var expires = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 3600;
+
+var hashableBase = securityKey + path + expires;
+// Optional: hashableBase += "192.168.1.1";
+
+using var md5 = System.Security.Cryptography.MD5.Create();
+var hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(hashableBase));
+var token = Convert.ToBase64String(hashBytes);
+token = token.Replace("+", "-").Replace("/", "_").Replace("=", "");
+
+var url = $"https://myzone.b-cdn.net{path}?token={token}&expires={expires}";
+```
+
+```javascript JavaScript
+const crypto = require("crypto");
+
+const securityKey = "your_security_key";
+const path = "/path/to/file.mp4";
+const expires = Math.round(Date.now() / 1000) + 3600;
+
+let hashableBase = securityKey + path + expires;
+// Optional: hashableBase += '192.168.1.1';
+
+const md5Hash = crypto.createHash("md5").update(hashableBase).digest();
+let token = md5Hash.toString("base64");
+token = token.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+
+const url = `https://myzone.b-cdn.net${path}?token=${token}&expires=${expires}`;
+```
+
+```python Python
+import hashlib
+from base64 import b64encode
+from time import time
+
+security_key = 'your_security_key'
+path = '/path/to/file.mp4'
+expires = int(time()) + 3600
+
+hashable = f"{security_key}{path}{expires}"
+# Optional: hashable += '192.168.1.1'
+
+md5_hash = hashlib.md5(hashable.encode()).digest()
+token = b64encode(md5_hash).decode()
+token = token.replace('+', '-').replace('/', '_').replace('=', '')
+
+url = f"https://myzone.b-cdn.net{path}?token={token}&expires={expires}"
+```
+
+</CodeGroup>
+
+## IP validation
+
+IP validation binds the token to a specific IP address. Append the user's IP to the hash before generating the token. The IP is not included in the URL.
+
+<Note>
+  IP validation can cause issues for users behind proxies or with changing IP
+  addresses.
+</Note>

@@ -1,0 +1,46 @@
+---
+title: Token Authentication
+sidebarTitle: Overview
+description: Protect your content with signed URLs that expire and can be restricted by location or IP.
+---
+
+Token authentication blocks requests to your Pull Zone unless a valid signed token is included. Use it to protect premium content, create expiring download links, or restrict access by country or IP.
+
+## Choose a method
+
+| Method                                                  | Hash   | Features                                                                |
+| ------------------------------------------------------- | ------ | ----------------------------------------------------------------------- |
+| [Basic](/cdn/security/token-authentication/basic)       | MD5    | Expiry, optional IP validation                                          |
+| [Advanced](/cdn/security/token-authentication/advanced) | SHA256 | Expiry, IP validation, geo-restrictions, directory tokens, speed limits |
+
+Both methods can be used on the same Pull Zone. Start with Basic for simple expiring URLs. Use Advanced if you need geo-restrictions, directory-level access for video streaming, or speed limits.
+
+## Enable token authentication
+
+<Steps>
+  <Step title="Open your Pull Zone">
+    Go to **CDN** > **Pull Zones**, select your Pull Zone, then click **Security**.
+  </Step>
+  <Step title="Enable and copy your key">
+    Toggle **Token Authentication** on and copy the **URL Token Authentication Key**.
+  </Step>
+</Steps>
+
+<Warning>
+  Keep your security key secret. Anyone with access to this key can generate
+  valid tokens.
+</Warning>
+
+## How it works
+
+Your application signs each URL by creating a hash from your security key, the URL path, and an expiration time:
+
+```
+https://myzone.b-cdn.net/video.mp4?token=abc123&expires=1598024587
+```
+
+Bunny recalculates the hash on each request. If it matches and the expiration hasn't passed, the request succeeds.
+
+<Info>
+  IPv6 is automatically disabled when token authentication is enabled.
+</Info>

@@ -147,11 +147,15 @@
               {
                 "group": "Security",
                 "pages": [
-                  "cdn/security/index",
                   "cdn/security/hotlink-protection",
-                  "cdn/security/token-authentication",
-                  "cdn/security/token-authentication-advanced",
-                  "cdn/security/token-authentication-basic"
+                  {
+                    "group": "Token Authentication",
+                    "pages": [
+                      "cdn/security/token-authentication/index",
+                      "cdn/security/token-authentication/basic",
+                      "cdn/security/token-authentication/advanced"
+                    ]
+                  }
                 ]
               },
               {
@@ -1918,7 +1922,22 @@
     },
     {
       "source": "/docs/cdn-token-authentication-basic",
-      "destination": "/cdn/security/token-authentication-basic",
+      "destination": "/cdn/security/token-authentication/basic",
+      "permanent": true
+    },
+    {
+      "source": "/token-authentication",
+      "destination": "/cdn/security/token-authentication",
+      "permanent": true
+    },
+    {
+      "source": "/token-authentication-basic",
+      "destination": "/cdn/security/token-authentication/basic",
+      "permanent": true
+    },
+    {
+      "source": "/token-authentication-advanced",
+      "destination": "/cdn/security/token-authentication/advanced",
       "permanent": true
     },
     {

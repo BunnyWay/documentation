@@ -1,0 +1,249 @@
+---
+title: Advanced Token Authentication
+sidebarTitle: Advanced
+description: Generate secure URLs with SHA256 tokens, geo-restrictions, directory access, and speed limits.
+---
+
+Advanced token authentication uses SHA256 hashing and supports directory-level tokens for video streaming, country-based restrictions, and speed limits.
+
+## URL structure
+
+**Query parameter format:**
+
+```
+https://myzone.b-cdn.net/videos/playlist.m3u8?token=abc123&expires=1598024587&token_path=%2Fvideos%2F
+```
+
+**Path-based format** (useful for video delivery):
+
+```
+https://myzone.b-cdn.net/bcdn_token=abc123&expires=1598024587&token_path=%2Fvideos%2F/videos/playlist.m3u8
+```
+
+## Parameters
+
+| Parameter                 | Required | Description                                        |
+| ------------------------- | -------- | -------------------------------------------------- |
+| `token`                   | Yes      | Base64-encoded SHA256 hash                         |
+| `expires`                 | Yes      | UNIX timestamp when the URL becomes invalid        |
+| `token_path`              | No       | URL-encoded path prefix for directory-level access |
+| `token_countries`         | No       | Comma-separated allowed country codes (ISO 3166-1) |
+| `token_countries_blocked` | No       | Comma-separated blocked country codes              |
+| `limit`                   | No       | Download speed limit in kB/s                       |
+
+## Directory tokens
+
+By default, tokens are valid only for the exact URL path. Directory tokens allow access to any file within a path prefix—essential for video streaming where players request multiple segment files.
+
+Signing with `token_path=/videos/stream1/` allows access to all files in that directory:
+
+```
+/videos/stream1/playlist.m3u8
+/videos/stream1/segment1.ts
+/videos/stream1/segment2.ts
+```
+
+## Generate the token
+
+```
+token = Base64(SHA256(security_key + signed_path + expiration + user_ip + sorted_params))
+```
+
+Additional parameters must be sorted alphabetically and formatted as `param1=value1&param2=value2`. Do not include `token` or `expires` in the hash.
+
+After Base64 encoding, replace `+` with `-`, `/` with `_`, and remove `=` characters.
+
+## Code examples
+
+<CodeGroup>
+
+```php PHP
+function signUrl($url, $securityKey, $expirationTime = 3600, $userIp = '', $pathAllowed = '', $countriesAllowed = '', $countriesBlocked = '') {
+    $expires = time() + $expirationTime;
+    $parsedUrl = parse_url($url);
+    $parameters = [];
+
+    if (!empty($parsedUrl['query'])) {
+        parse_str($parsedUrl['query'], $parameters);
+    }
+
+    $signaturePath = !empty($pathAllowed) ? $pathAllowed : $parsedUrl['path'];
+    if (!empty($pathAllowed)) $parameters['token_path'] = $signaturePath;
+    if (!empty($countriesAllowed)) $parameters['token_countries'] = $countriesAllowed;
+    if (!empty($countriesBlocked)) $parameters['token_countries_blocked'] = $countriesBlocked;
+
+    ksort($parameters);
+    $parameterString = '';
+    foreach ($parameters as $key => $value) {
+        if ($key !== 'token' && $key !== 'expires') {
+            $parameterString .= '&' . $key . '=' . $value;
+        }
+    }
+    $parameterString = ltrim($parameterString, '&');
+
+    $hashableBase = $securityKey . $signaturePath . $expires . $userIp . $parameterString;
+    $token = hash('sha256', $hashableBase, true);
+    $token = base64_encode($token);
+    $token = strtr($token, '+/', '-_');
+    $token = rtrim($token, '=');
+
+    $parameters['token'] = $token;
+    $parameters['expires'] = $expires;
+
+    return $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $parsedUrl['path'] . '?' . http_build_query($parameters);
+}
+
+// Directory token for video streaming
+$url = signUrl(
+    'https://myzone.b-cdn.net/videos/stream1/playlist.m3u8',
+    'your_security_key',
+    3600,
+    '',
+    '/videos/stream1/'
+);
+```
+
+```javascript JavaScript
+const crypto = require("crypto");
+
+function signUrl(urlString, securityKey, options = {}) {
+  const {
+    expirationTime = 3600,
+    userIp = "",
+    pathAllowed = "",
+    countriesAllowed = "",
+    countriesBlocked = "",
+  } = options;
+
+  const expires = Math.floor(Date.now() / 1000) + expirationTime;
+  const parsedUrl = new URL(urlString);
+  const parameters = new URLSearchParams(parsedUrl.search);
+
+  const signaturePath = pathAllowed || decodeURIComponent(parsedUrl.pathname);
+  if (pathAllowed) parameters.set("token_path", signaturePath);
+  if (countriesAllowed) parameters.set("token_countries", countriesAllowed);
+  if (countriesBlocked)
+    parameters.set("token_countries_blocked", countriesBlocked);
+
+  const sortedParams = [...parameters.entries()]
+    .filter(([key]) => key !== "token" && key !== "expires")
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&");
+
+  const hashableBase =
+    securityKey + signaturePath + expires + userIp + sortedParams;
+  const hash = crypto.createHash("sha256").update(hashableBase).digest();
+  let token = hash
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+
+  parameters.set("token", token);
+  parameters.set("expires", expires.toString());
+
+  return `${parsedUrl.origin}${parsedUrl.pathname}?${parameters.toString()}`;
+}
+
+// Directory token for video streaming
+const url = signUrl(
+  "https://myzone.b-cdn.net/videos/stream1/playlist.m3u8",
+  "your_security_key",
+  {
+    pathAllowed: "/videos/stream1/",
+  },
+);
+```
+
+```python Python
+import hashlib
+from base64 import b64encode
+from time import time
+from urllib.parse import urlparse, parse_qs, urlencode
+
+def sign_url(url, security_key, expiration_time=3600, user_ip='', path_allowed='', countries_allowed='', countries_blocked=''):
+    expires = int(time()) + expiration_time
+    parsed = urlparse(url)
+    parameters = {k: v[0] for k, v in parse_qs(parsed.query).items()}
+
+    signature_path = path_allowed or parsed.path
+    if path_allowed: parameters['token_path'] = signature_path
+    if countries_allowed: parameters['token_countries'] = countries_allowed
+    if countries_blocked: parameters['token_countries_blocked'] = countries_blocked
+
+    sorted_params = sorted((k, v) for k, v in parameters.items() if k not in ('token', 'expires'))
+    param_string = '&'.join(f'{k}={v}' for k, v in sorted_params)
+
+    hashable = f"{security_key}{signature_path}{expires}{user_ip}{param_string}"
+    hash_bytes = hashlib.sha256(hashable.encode()).digest()
+    token = b64encode(hash_bytes).decode().replace('+', '-').replace('/', '_').rstrip('=')
+
+    parameters['token'] = token
+    parameters['expires'] = expires
+
+    return f"{parsed.scheme}://{parsed.netloc}{parsed.path}?{urlencode(parameters)}"
+
+# Directory token for video streaming
+url = sign_url('https://myzone.b-cdn.net/videos/stream1/playlist.m3u8', 'your_security_key', path_allowed='/videos/stream1/')
+```
+
+```go Go
+package main
+
+import (
+    "crypto/sha256"
+    "encoding/base64"
+    "fmt"
+    "net/url"
+    "sort"
+    "strings"
+    "time"
+)
+
+func signURL(rawURL, securityKey string, expirationTime int64, userIP, pathAllowed, countriesAllowed, countriesBlocked string) string {
+    expires := time.Now().Unix() + expirationTime
+    parsedURL, _ := url.Parse(rawURL)
+    parameters := parsedURL.Query()
+
+    signaturePath := pathAllowed
+    if signaturePath == "" {
+        signaturePath, _ = url.QueryUnescape(parsedURL.Path)
+    }
+    if pathAllowed != "" { parameters.Set("token_path", signaturePath) }
+    if countriesAllowed != "" { parameters.Set("token_countries", countriesAllowed) }
+    if countriesBlocked != "" { parameters.Set("token_countries_blocked", countriesBlocked) }
+
+    var keys []string
+    for k := range parameters {
+        if k != "token" && k != "expires" { keys = append(keys, k) }
+    }
+    sort.Strings(keys)
+
+    var paramParts []string
+    for _, k := range keys {
+        paramParts = append(paramParts, fmt.Sprintf("%s=%s", k, parameters.Get(k)))
+    }
+    paramString := strings.Join(paramParts, "&")
+
+    hashable := fmt.Sprintf("%s%s%d%s%s", securityKey, signaturePath, expires, userIP, paramString)
+    hash := sha256.Sum256([]byte(hashable))
+    token := base64.StdEncoding.EncodeToString(hash[:])
+    token = strings.NewReplacer("+", "-", "/", "_").Replace(strings.TrimRight(token, "="))
+
+    parameters.Set("token", token)
+    parameters.Set("expires", fmt.Sprintf("%d", expires))
+
+    return fmt.Sprintf("%s://%s%s?%s", parsedURL.Scheme, parsedURL.Host, parsedURL.Path, parameters.Encode())
+}
+```
+
+</CodeGroup>
+
+## Path-based tokens for video
+
+For HLS/DASH delivery, use path-based tokens so segment requests automatically include authentication:
+
+```
+https://myzone.b-cdn.net/bcdn_token=abc123&expires=1598024587&token_path=%2Fvideos%2F/videos/playlist.m3u8
+```
