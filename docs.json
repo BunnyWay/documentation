@@ -141,7 +141,6 @@
                   "cdn/performance/origin-shield",
                   "cdn/performance/smart-preloader",
                   "cdn/performance/routing-filters",
-                  "cdn/performance/video-delivery",
                   "cdn/performance/network-limits"
                 ]
               },

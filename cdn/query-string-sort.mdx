@@ -1,4 +1,50 @@
 ---
 title: Query String Sort
-url:
+description: Improve cache efficiency by normalizing query parameter order in cache keys.
 ---
+
+A caching proxy server treats each URL as a distinct file based on the path and query parameters. However, query parameters can often appear in different orders while producing the same output.
+
+For example, these two URLs return the exact same dynamically generated image:
+
+```bash
+image.jpg?width=300&height=200
+image.jpg?height=200&width=300
+```
+
+Without Query String Sort, both URLs are cached separately, wasting storage and reducing your cache HIT rate.
+
+## How it works
+
+Query String Sort automatically rearranges query parameters alphabetically when constructing the cache key. This means:
+
+- Both URLs above resolve to the same cached file
+- The cached file can be found regardless of parameter order
+- You avoid duplicate cache entries for identical content
+
+## Enable Query String Sort
+
+<Steps>
+  <Step title="Open your Pull Zone settings">
+    Go to **CDN** > **Pull Zones** and select your zone.
+  </Step>
+  <Step title="Navigate to Caching settings">
+    Click **Caching** in the left menu.
+  </Step>
+  <Step title="Enable Query String Sort">
+    Check the **Query String Sort** option and save.
+  </Step>
+</Steps>
+
+## When to use it
+
+Enable Query String Sort when:
+
+- Your application generates URLs with query parameters in varying orders
+- You use dynamic image transformations (width, height, quality, etc.)
+- You want to maximize cache efficiency for parameterized requests
+
+<Note>
+  This feature only affects how the cache key is constructed. The actual URL
+  sent to your origin remains unchanged.
+</Note>

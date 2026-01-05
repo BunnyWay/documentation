@@ -5,56 +5,58 @@ description: Control download speeds, request rates, and bandwidth usage per Pul
 
 Network Limits are settings that can be applied to a Pull Zone to control performance and improve security. These limits help prevent abuse, control bandwidth costs, and protect against DDoS attacks.
 
-Configure these options in your Pull Zone under **Limits**.
+Configure these options in your Pull Zone under **Limits**:
 
-## Connection Speed
+<Frame>![Network limits](/images/cdn/network-limits.png)</Frame>
 
-Limits the download speed for any file served by the Pull Zone, in kilobytes per second.
+## Download speed limits
 
-| Value | Behavior                                    |
-| ----- | ------------------------------------------- |
-| `0`   | No limit. Full download speed allowed.      |
-| `> 0` | Download speed capped at the specified KB/s |
+Limits the maximum transfer speed per network connection, in kB/s.
 
-This setting works together with **Limit After** (see below).
+Set to `0` for unlimited.
 
-## Limit After
+This setting works together with **Limit after** (see below).
 
-Sets the amount of data (in kilobytes) that can be transferred at full speed before the **Connection Speed** limit applies.
+## Limit after
 
-| Value | Behavior                                                         |
-| ----- | ---------------------------------------------------------------- |
-| `0`   | Connection Speed limit applies immediately                       |
-| `> 0` | First N kilobytes transfer at full speed, then the limit applies |
+The amount of data transferred in a single request after which the client will be rate limited, in kB.
 
-For example, if Limit After is set to `2000`, the first 2 MB of each request transfers at full speed. After that, the Connection Speed limit kicks in.
+Set to `0` for unlimited (rate limiting applies immediately if Download speed limits is set).
+
+For example, if Limit after is set to `2000`, the first 2 MB of each request transfers at full speed. After that, the Download speed limit kicks in.
 
 <Info>
-  This is useful for video delivery. It allows fast video skipping while
+  This is useful for video delivery. It allows fast video seeking while
   preventing the browser from downloading too much unnecessary data ahead of
   playback.
 </Info>
 
-## Requests Per Second
+## Requests limits
 
-Limits the maximum number of requests per second a single IP can send to your Pull Zone.
+Limits the maximum number of requests per second for a single IP.
+
+Set to `0` for unlimited.
 
 This helps prevent abuse and reduces the impact of simple DDoS attacks.
 
-## Allowed Burst
+## Burst requests
 
-Sets the number of extra burst requests allowed beyond the **Requests Per Second** limit for a short time.
+The number of requests per second allowed before the limit is applied.
+
+Set to `0` to disable burst.
 
 This allows users to briefly exceed the rate limit, which is useful when:
 
 - A webpage loads and makes many simultaneous asset requests
 - A user opens multiple tabs at once
 
-Additional requests beyond the burst allowance are slowed down to match the Requests Per Second setting.
+Additional requests beyond the burst allowance are slowed down to match the Requests limits setting.
 
-## Maximum Connections Per IP
+## Maximum connections per IP
 
-Limits the number of simultaneous connections each IP can have to Bunny's servers.
+Limits the maximum number of allowed connections to the zone per IP.
+
+Set to `0` for unlimited.
 
 Use this to:
 
@@ -67,14 +69,11 @@ Use this to:
   server.
 </Note>
 
-## Monthly Bandwidth Limit
+## Monthly bandwidth limit
 
-Sets the total amount of bandwidth the Pull Zone can serve in a calendar month.
+Limits the allowed bandwidth used in a month, in GB. If the limit is reached, the zone will be disabled.
 
-When the limit is reached:
-
-- The zone is disabled and stops serving data
-- You are no longer charged for requests to this zone
+Set to `0` for unlimited.
 
 <Warning>
   Once the monthly limit is hit, your Pull Zone stops working until the next
