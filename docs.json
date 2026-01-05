@@ -119,7 +119,6 @@
                 "pages": [
                   "cdn/custom-hostname",
                   "cdn/cdn-acceleration",
-                  "cdn/verify-configuration",
                   "cdn/ssl-setup"
                 ]
               },

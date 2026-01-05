@@ -1,4 +1,102 @@
 ---
 title: Smart Preloader
-url:
+description: Show a branded loading screen when your origin takes longer than expected to respond.
 ---
+
+Smart Preloader monitors dynamic HTML requests and displays a customizable loading screen when your origin is slow to respond. Instead of leaving users staring at a blank page, they see your branding with a loading animation while the request completes in the background.
+
+<Info>
+  Smart Preloader is part of the Bunny Optimizer suite and requires a
+  DNS-accelerated Pull Zone.
+</Info>
+
+## How it works
+
+1. A user requests a page from your site
+2. Bunny forwards the request to your origin immediately
+3. If your origin responds within the trigger delay, the response is returned normally (no preloader shown)
+4. If your origin exceeds the trigger delay, Bunny returns the preloader screen while keeping the original request alive
+5. The preloader automatically reconnects to the original request and displays your content when ready
+
+This approach adds near-zero overhead—the preloader only appears when your origin is already slow.
+
+## Trigger conditions
+
+The Smart Preloader only activates when all of these conditions are met:
+
+<AccordionGroup>
+  <Accordion title="Request type">
+    The request must be for dynamic HTML content. Static assets (images, CSS,
+    JS) don't trigger the preloader.
+  </Accordion>
+  <Accordion title="Trigger delay exceeded">
+    Your origin must take longer than the configured trigger delay to respond.
+  </Accordion>
+  <Accordion title="Browser request">
+    The request must come from a browser expecting an HTML response.
+  </Accordion>
+</AccordionGroup>
+
+## Configuration
+
+### Trigger delay
+
+Set the time threshold for when the preloader should appear. If your site typically responds in 700ms, set the trigger delay to 700ms—users only see the preloader when something is slower than usual.
+
+### Custom HTML
+
+You can replace the default preloader with your own HTML. Include the `{{preloader_script}}` tag in your HTML body to ensure the reconnection script is injected:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Loading...</title>
+  </head>
+  <body>
+    <div class="loader">
+      <img src="https://example.com/logo.png" alt="Loading" />
+      <p>Please wait...</p>
+    </div>
+    {{preloader_script}}
+  </body>
+</html>
+```
+
+<Warning>
+  Your custom HTML must not contain JavaScript or HTML errors that could prevent
+  the injected reconnection script from executing. If the script fails, the
+  request won't reconnect to your origin response.
+</Warning>
+
+## Technical details
+
+<CardGroup cols={2}>
+  <Card title="Status code">
+    The preloader returns HTTP status `529` to signal browsers not to cache the
+    temporary response.
+  </Card>
+  <Card title="Cookies">
+    Bunny may set cookies on preloader responses to reconnect users to their
+    original request. These are never used for tracking.
+  </Card>
+  <Card title="Error handling">
+    If your origin doesn't respond at all, users receive a standard `502` or
+    `504` error—not the preloader indefinitely.
+  </Card>
+  <Card title="Feature compatibility">
+    Works alongside Perma-Cache, SafeHop, and Origin Shield with no conflicts.
+  </Card>
+</CardGroup>
+
+## Performance impact
+
+Smart Preloader is designed to add minimal overhead:
+
+- When origin responds in time: **Zero overhead** (preloader never shown)
+- When origin is slow: **~150ms** additional load time in worst-case scenarios, primarily from the reconnection script
+
+<Note>
+  With Bunny's average global edge latency under 26ms, the reconnection process
+  is nearly instantaneous for most users.
+</Note>

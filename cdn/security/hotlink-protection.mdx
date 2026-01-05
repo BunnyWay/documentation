@@ -1,4 +1,46 @@
 ---
-title: Set up hotlinking protection
-url: 
+title: Hotlink Protection
+description: Prevent other websites from embedding your content and increasing your bandwidth costs.
 ---
+
+Hotlink protection stops external websites from directly embedding your images, videos, or other assets. Requests from domains not on your allowed list receive a `403 Forbidden` response.
+
+## Setup
+
+<Steps>
+  <Step title="Open your Pull Zone">
+    Go to your Pull Zone in the [dashboard](https://dash.bunny.net) and click **Security** in the side menu.
+
+  </Step>
+
+  <Step title="Add allowed referrers">
+    Enter a domain (e.g., `www.example.com`) and click **Add Allowed Referrer**. Repeat for each domain that should have access.
+
+    <Frame>
+      ![Allowed referrers](/images/cdn/modify-blocked-and-allowed-referrers.png)
+    </Frame>
+
+    <Note>
+      Use wildcards for subdomains: `*.example.com` allows all subdomains, but doesn't include the root domain. Add `example.com` separately if needed.
+    </Note>
+
+  </Step>
+</Steps>
+
+## Block direct URL access
+
+Once you have allowed referrers configured, an additional option appears: **Block Direct URL File Access**. When enabled, requests with an empty referrer header (e.g., someone typing the URL directly into their browser) are also blocked.
+
+<Warning>
+  Be careful with this option. Empty referrers can come from legitimate sources
+  like email clients, some mobile apps, or privacy-focused browsers.
+</Warning>
+
+## Common allowed referrers
+
+If you're using hotlink protection but want social media previews to work (for `og:image` tags), add referrers for the platforms you use:
+
+- `*.facebook.com`
+- `*.twitter.com`
+- `*.linkedin.com`
+- `*.pinterest.com`

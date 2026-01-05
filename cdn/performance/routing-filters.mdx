@@ -1,4 +1,60 @@
 ---
 title: Routing Filters
-url:
+description: Limit CDN routing to specific geographic regions for compliance and data residency requirements.
 ---
+
+Routing Filters allow you to control which CDN locations serve your content. When enabled, traffic is routed only to Points of Presence (PoPs) within the selected regions.
+
+This is primarily useful for GDPR compliance and data residency requirements where you need to ensure user data stays within specific geographic boundaries.
+
+## How it works
+
+When you enable a routing filter (such as European Union), all requests to your Pull Zone are routed exclusively to PoPs within that region. Users outside the filtered region are also routed to those same locations.
+
+<Info>
+  Combining multiple routing filters creates a cross-section. Traffic is only
+  routed to PoPs contained in **all** selected filters.
+</Info>
+
+## Available filters
+
+### European Union
+
+Routes all traffic exclusively through 24 PoPs within EU member states:
+
+<Accordion title="EU countries with PoPs">
+  Austria, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Finland, France,
+  Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg,
+  Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain, and Sweden.
+</Accordion>
+
+## Enabling Routing Filters
+
+1. Go to your Pull Zone in the [dashboard](https://dash.bunny.net)
+2. Navigate to **Pricing & Routing**
+3. Enable the desired routing filter
+
+The filter applies to both Standard and High Volume tier zones automatically.
+
+## Performance considerations
+
+<Warning>
+  Routing Filters significantly limit global coverage. Users outside the
+  filtered region will experience increased latency since their requests are
+  routed to the nearest PoP within the filter, not the nearest global PoP.
+</Warning>
+
+For example, with the EU filter enabled:
+
+- **EU users**: Excellent performance with 24 local PoPs
+- **Non-EU users**: Routed to EU PoPs, negating most CDN performance benefits
+
+Only enable Routing Filters if you have specific compliance requirements that outweigh the global performance trade-off.
+
+## Limitations
+
+<Note>
+  Routing Filters only apply to CDN Pull Zone traffic. DNS traffic continues to
+  use the global DNS network, but DNS requests generally don't contain
+  personally identifiable information.
+</Note>

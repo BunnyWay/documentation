@@ -1,4 +1,63 @@
 ---
 title: Request Coalescing
-url:
+description: Combine multiple simultaneous requests to the same resource into a single origin request.
 ---
+
+Request Coalescing combines multiple simultaneous requests for the same uncached resource into a single request to your origin. Instead of forwarding every request individually, Bunny holds subsequent requests and streams the response back to all waiting clients once the first request completes.
+
+## How it works
+
+1. Multiple users request the same uncached file at the same time
+2. Bunny sends a single request to your origin
+3. As the response streams back, it's simultaneously delivered to all waiting clients
+4. The file is cached for future requests
+
+<Frame caption="Without coalescing, each simultaneous request hits your origin. With coalescing, they're combined into one.">
+  ![Request coalescing
+  comparison](/images/cdn/bunnynet-cdn-request-coalescing-realtime-streaming-5.png)
+</Frame>
+
+This happens in real-time with near-zero added latency—waiting requests receive data as it arrives, not after the full response is cached.
+
+## When to use it
+
+Request Coalescing is ideal for:
+
+- **Live streaming**: Thousands of viewers requesting the same video segments simultaneously
+- **High-traffic public APIs**: Cacheable responses served to many users at once
+- **Traffic spikes**: Sudden bursts of requests for the same resources
+
+<Info>
+  Request Coalescing reduces origin load and can improve cache hit rates during
+  high-concurrency scenarios.
+</Info>
+
+## Enabling Request Coalescing
+
+1. Go to your Pull Zone in the [dashboard](https://dash.bunny.net)
+2. Navigate to **Caching**
+3. Enable **Request Coalescing**
+
+## Important limitations
+
+<Warning>
+  **Do not use Request Coalescing with user-specific dynamic content.** If your
+  origin returns different responses based on authentication or user context,
+  enabling this feature could cause personal information to be shared between
+  users making simultaneous requests.
+</Warning>
+
+Request Coalescing triggers on any uncached request—both static and dynamic resources. Only enable it for Pull Zones serving publicly cacheable content.
+
+### Not a guarantee of single requests
+
+<Note>
+  Request Coalescing does not guarantee only one request ever reaches your
+  origin. It only combines requests that arrive **simultaneously** for the same
+  resource.
+</Note>
+
+Your origin may still receive multiple requests if:
+
+- Requests arrive sequentially rather than at the same time
+- Requests come from different CDN PoPs (coalescing runs independently on each edge node)
