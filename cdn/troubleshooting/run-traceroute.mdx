@@ -1,4 +1,45 @@
 ---
-title: Run Traceroute
-url: 
+title: Find Your PoP and Run Diagnostics
+description: Identify which CDN edge server is handling your requests and run network diagnostics.
 ---
+
+## Find your PoP
+
+Every response from Bunny CDN includes a `Server` header that identifies which PoP and server handled the request:
+
+```
+Server: BunnyCDN-{PoP Code}-{Server-ID}
+```
+
+**To find this header:**
+
+1. Open your browser developer tools (`Ctrl + Shift + I` or `Cmd + Option + I`)
+2. Go to the **Network** tab
+3. Load a URL from your Pull Zone
+4. Click on the request and find the `Server` header in the response headers
+
+**Alternative:** Use the [Bunny Diagnostic Tool](https://tools.bunny.net/diagnostic-report) to automatically show your connection details and PoP routing.
+
+## Detect CDN requests on your origin
+
+When Bunny CDN fetches content from your origin, it includes identifying headers you can use for whitelisting or custom logic:
+
+| Header         | Value              |
+| -------------- | ------------------ |
+| `CDN-ServerId` | Internal server ID |
+| `Via`          | `BunnyCDN`         |
+
+### Other detection methods
+
+**Custom hostname:** Use a unique, hard-to-guess hostname as your Origin URL that only Bunny servers access.
+
+**Edge Server IP list:** Whitelist CDN IPs programmatically:
+
+- IPv4: `https://bunnycdn.com/api/system/edgeserverlist`
+- IPv6: `https://bunnycdn.com/api/system/edgeserverlist/IPv6`
+
+<Warning>
+  CDN IPs can change. Automate IP list updates to prevent connectivity issues.
+</Warning>
+
+**Custom header via Edge Rules:** Add a secret header in Edge Rules that your origin validates for authentication.

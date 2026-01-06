@@ -58,14 +58,37 @@ The next time any CDN node requests this file as part of a cache MISS, it will a
 
 ## Cache headers
 
-Perma-Cache adds a `Perma-Cache` response header:
+The CDN returns two headers that indicate where content was served from:
 
-| Header Value | Meaning                                  |
-| ------------ | ---------------------------------------- |
-| `HIT`        | File was loaded from Perma-Cache storage |
-| `MISS`       | Request was passed to the origin         |
+### CDN-Cache header
 
-In cases where a file is already cached on the CDN, the request won't reach the Perma-Cache system until a cache MISS happens.
+| Value  | Meaning                                                           |
+| ------ | ----------------------------------------------------------------- |
+| `HIT`  | Content was served from CDN edge cache                            |
+| `MISS` | Content was not in edge cache, fetched from Perma-Cache or origin |
+
+### Perma-Cache header
+
+| Value  | Meaning                                     |
+| ------ | ------------------------------------------- |
+| `HIT`  | Content was served from Perma-Cache storage |
+| `MISS` | Content was fetched from origin             |
+
+### Header combinations
+
+| CDN-Cache | Perma-Cache | What happened                                                                                                 |
+| --------- | ----------- | ------------------------------------------------------------------------------------------------------------- |
+| `MISS`    | `MISS`      | File not in CDN or Perma-Cache. Fetched from origin. Perma-Cache will store it in the background.             |
+| `HIT`     | `MISS`      | File served from CDN edge cache. Perma-Cache status is cached, so it may show `MISS` until CDN cache expires. |
+| `MISS`    | `HIT`       | File not in CDN edge cache but loaded from Perma-Cache.                                                       |
+| `HIT`     | `HIT`       | File available in both CDN cache and Perma-Cache.                                                             |
+
+<Note>
+  The CDN aims to cache files as long as possible, but cache duration depends on
+  available space at each PoP and how frequently the file is requested. Files
+  with low request rates may be evicted sooner. Use Perma-Cache to ensure
+  content is always served from Bunny infrastructure.
+</Note>
 
 ## Cache purging behavior
 
@@ -91,3 +114,31 @@ Perma-Cache integrates with the file purging API:
 - **Origin Shield conflict:** You cannot use Perma-Cache and Origin Shield simultaneously. These features are mutually exclusive.
 - **Storage-backed Pull Zones:** If your Pull Zone is directly connected to a Storage Zone as its origin, Perma-Cache is not available (you're already hosting content on Bunny storage).
 - **Geo-replication:** If enabled on your Storage Zone, files are replicated across the global storage network for improved availability and performance.
+
+## Folder structure
+
+Perma-Cache uses a special directory structure within your storage zone to support cache vary settings and purging.
+
+```
+/__bcdn_perma_cache__/
+  └── pullzone__<name>__<unique_id>/
+      └── path/to/my/file/
+          └── ___image.jpg___/
+              └── ___file___
+```
+
+| Component                       | Description                                                                            |
+| ------------------------------- | -------------------------------------------------------------------------------------- |
+| `__bcdn_perma_cache__`          | Root folder used by all Pull Zones connected to this storage zone                      |
+| `pullzone__<name>__<unique_id>` | Pull Zone folder. The `unique_id` increments on full zone purge                        |
+| `path/to/my/file/`              | Normalized request path (multiple slashes combined into one)                           |
+| `___image.jpg___/`              | File name enclosed in `___`                                                            |
+| `___file___`                    | The actual cached file. If Vary settings are used, variations are stored as MD5 hashes |
+
+**Full path example:**
+
+```
+/storage/__bcdn_perma_cache__/pullzone__mysite__20138242/assets/images/___logo.png___/___file___
+```
+
+When a full Pull Zone purge occurs, the `unique_id` increments and a new folder is used. Manually delete old folders to reclaim storage space.

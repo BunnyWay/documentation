@@ -1,4 +1,139 @@
 ---
-title: Trigger Path Setup
-url: 
+title: "Trigger Path Setup"
+sidebarTitle: "Trigger Paths"
+description: "Learn how to correctly configure Edge Rule trigger paths using wildcards and pattern matching."
 ---
+
+Edge Rules use a powerful wildcard matching system for trigger paths. Understanding how to properly configure these patterns helps you create precise rules that trigger only when needed.
+
+## Wildcard basics
+
+The `*` wildcard matches any sequence of characters. You can use it anywhere in the trigger path:
+
+| Pattern             | Matches                                                   | Does Not Match                 |
+| ------------------- | --------------------------------------------------------- | ------------------------------ |
+| `*.jpg`             | `/image.jpg`, `/photos/sunset.jpg`                        | `/image.png`, `/image.jpg.bak` |
+| `/images/*`         | `/images/logo.png`, `/images/photos/cat.jpg`              | `/img/logo.png`                |
+| `*://example.com/*` | `http://example.com/page`, `https://example.com/file.css` | `http://sub.example.com/page`  |
+
+## Common patterns
+
+### Matching by file extension
+
+To match all files with a specific extension, use `*.extension`:
+
+```
+*.mp4
+```
+
+This matches any `.mp4` file regardless of path depth.
+
+{/* Image: edge_rules_wildcard_extension_match.png */}
+
+### Matching subdomains
+
+Use wildcards to match all subdomains or exclude them:
+
+| Pattern               | Description                                 |
+| --------------------- | ------------------------------------------- |
+| `*://*.example.com/*` | Matches all subdomains                      |
+| `*://example.com/*`   | Matches only the root domain (no subdomain) |
+| `*://*example.com/*`  | Matches root domain and all subdomains      |
+
+{/* Image: edge_rules_wildcard_subdomain.png */}
+
+### Matching specific paths
+
+| Pattern       | Matches                                         |
+| ------------- | ----------------------------------------------- |
+| `/api/*`      | All paths starting with `/api/`                 |
+| `*/admin/*`   | Any URL containing `/admin/`                    |
+| `/v1/*/users` | Paths like `/v1/api/users`, `/v1/service/users` |
+
+## Important considerations
+
+### Query parameters are not matched
+
+<Warning>
+  Trigger paths do not match query strings or any data after the filename. Only
+  the absolute URL path is evaluated.
+</Warning>
+
+For example, if your trigger path is `*.jpg`, it will match:
+
+- `/image.jpg`
+- `/image.jpg?width=100`
+
+Both URLs match because the query string (`?width=100`) is ignored during pattern matching.
+
+### HTTP vs HTTPS scheme matters
+
+The trigger path is compared as a complete string, including the scheme. Make sure to account for both protocols:
+
+| Pattern                 | Matches                      |
+| ----------------------- | ---------------------------- |
+| `http://example.com/*`  | Only HTTP requests           |
+| `https://example.com/*` | Only HTTPS requests          |
+| `*://example.com/*`     | Both HTTP and HTTPS requests |
+
+<Note>
+  Use `*://` to match both HTTP and HTTPS if your rule should apply regardless
+  of protocol.
+</Note>
+
+### Trailing slashes are required for root paths
+
+Due to HTTP protocol design, the trigger path always contains a trailing slash when accessing a root path.
+
+<Warning>
+  A trigger path of `http://example.com` will **never** match because requests
+  to the root always include a trailing slash. Use `http://example.com/`
+  instead.
+</Warning>
+
+| Trigger Path          | Will Match Root? |
+| --------------------- | ---------------- |
+| `http://example.com`  | No               |
+| `http://example.com/` | Yes              |
+| `*://example.com/*`   | Yes              |
+
+## Examples
+
+<Accordion title="Block access to admin paths">
+**Trigger path:** `*/admin/*`
+
+This blocks access to any URL containing `/admin/` in the path, such as:
+
+- `https://example.com/admin/dashboard`
+- `https://example.com/app/admin/users`
+
+</Accordion>
+
+<Accordion title="Match all image files">
+**Trigger path:** `*.jpg` (repeat for each extension)
+
+Or use the **File Extension** condition type instead, which allows you to specify extensions like `jpg`, `png`, `gif` without wildcards.
+
+</Accordion>
+
+<Accordion title="Match a specific hostname">
+**Trigger path:** `*://cdn.example.com/*`
+
+This matches all requests to `cdn.example.com` regardless of protocol, path, or query string.
+
+</Accordion>
+
+<Accordion title="Match paths starting with /api but not /api/public">
+You'll need two rules:
+1. First rule (higher priority): Allow `/api/public/*` - use **Disable** action or skip
+2. Second rule (lower priority): Apply your action to `/api/*`
+
+See [Rule Ordering](/cdn/edge-rules/ordering) for more on rule priority.
+
+</Accordion>
+
+## Related
+
+- [Rule Ordering](/cdn/edge-rules/ordering) - Control which rules execute first
+- [Dynamic Variables](/cdn/edge-rules/dynamic-variables) - Use variables in your rule actions
+- [Custom Cache Time](/cdn/edge-rules/custom-cache-time) - Example using file extension matching

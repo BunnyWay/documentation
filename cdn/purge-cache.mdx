@@ -65,6 +65,52 @@ Useful for invalidating all assets related to a specific product, user, or categ
 
 To purge a specific URL across all pull zones, use the [Purge URL endpoint](/api-reference/core/purge/purge-url).
 
+## Rate limits
+
+To ensure platform stability, the Purge API is protected by rate limits. These limits are designed to keep normal purge workflows fast while preventing abuse or accidental overload.
+
+Purge requests are rate-limited using a token bucket mechanism:
+
+- Limits are applied per account
+- Limits are applied per purge type
+- Each purge item consumes 1 token
+- Tokens refill steadily over time
+
+If a request exceeds the available rate limit, the API returns a `429 Too Many Requests` response with guidance on when to retry.
+
+### Purge types
+
+Purge requests are classified into one of the following types:
+
+**Exact Purge**
+
+A single URL without wildcards where the path does not end with `/`.
+
+```
+https://example.com/image.png
+```
+
+**Prefix (Wildcard) Purge**
+
+The URL contains a `*`, or the path ends with `*` or `/`.
+
+```
+https://example.com/images/*
+https://example.com/assets/
+```
+
+### Default rate limits
+
+| Purge Type | Burst Capacity | Refill Rate    | Approx. Sustained Rate |
+| ---------- | -------------- | -------------- | ---------------------- |
+| Exact      | 120 tokens     | 5 tokens/sec   | ~300 per minute        |
+| Prefix     | 20 tokens      | 0.5 tokens/sec | ~30 per minute         |
+
+<Note>
+  If your workload requires higher purge throughput, please [contact
+  support](https://dash.bunny.net/support) to discuss custom rate limits.
+</Note>
+
 ## Perma-Cache behavior
 
 If you're using [Perma-Cache](/docs/perma-cache):

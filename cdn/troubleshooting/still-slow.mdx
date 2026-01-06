@@ -1,4 +1,48 @@
 ---
 title: Website Still Slow
-url: 
+description: Tools and techniques to diagnose and fix performance issues after CDN setup.
 ---
+
+If your website is still slow after setting up Bunny CDN, use these tools to identify bottlenecks.
+
+## Diagnostic tools
+
+### Pingdom Website Speed Test
+
+[tools.pingdom.com](https://tools.pingdom.com)
+
+Quick and easy performance testing from multiple global locations. Provides a performance grade, optimization suggestions, and a detailed request waterfall.
+
+### GTmetrix
+
+[gtmetrix.com](https://gtmetrix.com)
+
+Detailed PageSpeed and YSlow analysis with historic performance charts. Default tests run from Vancouver, Canada. Upgrade to GTmetrix PRO for additional test locations.
+
+### WebPagetest
+
+[webpagetest.org](https://www.webpagetest.org)
+
+The most powerful free benchmarking tool. Features include:
+
+- Tests from locations worldwide (including Asia, South America, Africa)
+- Video recording of page load
+- Repeat view testing
+- Connection throttling
+- Detailed waterfall analysis
+
+### Bunny Diagnostic Report
+
+[tools.bunny.net/diagnostic-report](https://tools.bunny.net/diagnostic-report)
+
+Bunny's built-in tool showing your connection metrics, PoP routing, and CDN configuration status.
+
+## Common issues
+
+**Low cache hit rate:** Check your [cache configuration](/cdn/smart-cache) and ensure cacheable content has appropriate headers.
+
+**Origin slow to respond:** Consider enabling [Origin Shield](/cdn/performance/origin-shield) to reduce origin load, or check your origin server performance.
+
+**Large assets:** Enable [Bunny Optimizer](/optimizer) for automatic image optimization, or compress assets before uploading.
+
+**Too many requests:** Combine CSS/JS files, use sprites for icons, and implement lazy loading for images.

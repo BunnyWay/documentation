@@ -1,4 +1,99 @@
 ---
-title: Direct IP Origin with Custom Hostname
-url: 
+title: "Direct IP Origin with Custom Hostname"
+sidebarTitle: "Direct IP Origin"
+description: "Connect your pull zone directly to a server IP address while serving content from a custom hostname using Edge Rules."
 ---
+
+This guide explains how to connect your pull zone to your server IP directly, bypassing intermediary services (such as firewalls or proxies) that might block CDN access to your origin.
+
+This is useful when:
+
+- Your origin is behind a firewall that blocks CDN requests
+- You need to bypass proxy services like Cloudflare
+- You want to connect directly to a specific server IP
+
+## Prerequisites
+
+- A pull zone configured in the bunny.net dashboard
+- Your origin server's IP address
+- A custom hostname you want to use for serving content
+
+## Configuration
+
+<Steps>
+  <Step title="Update your origin URL to the server IP">
+    Navigate to your pull zone and go to **General** → **Origin**.
+
+    Set the origin URL to point directly to your server's IP address:
+    - Select the correct scheme (`HTTP` or `HTTPS`) to prevent redirects
+    - If you have **Forward Host Header** enabled, disable it for this configuration
+
+    {/* Image: 1bb35764-5ac7-46d3-9de8-7cb1fd096d76.png - Origin URL configuration */}
+
+    <Note>
+      At this point, your pull zone will connect to the server directly. However, the server will return the default website configured for that IP. Step 2 configures bunny.net to send the correct hostname to your origin.
+    </Note>
+
+  </Step>
+
+  <Step title="Add the custom hostname to your pull zone">
+    Go to **General** → **Hostnames** and add your custom hostname:
+    
+    1. Enter your domain name in the **Add a custom hostname** field
+    2. Click **Add Hostname**
+
+    {/* Image: 5532f2ff-16c0-4fc3-abd7-99c0fd52ae5e.png - Add hostname */}
+
+  </Step>
+
+<Step title="Configure DNS">
+  Update your DNS provider to point your custom hostname to the bunny.net pull
+  zone: - Create a **CNAME** record pointing to your pull zone hostname (e.g.,
+  `your-zone.b-cdn.net`)
+  {/* Image: 3ad09898-b708-47fc-930d-1bb7f19d1294.png - DNS configuration */}
+</Step>
+
+  <Step title="Enable SSL (optional)">
+    After DNS propagation, you can enable SSL for your custom hostname:
+    
+    1. Click **Verify & Activate SSL** to get a free Let's Encrypt certificate
+    2. Alternatively, scroll to **Linked Hostnames** and click **Enable** to activate SSL later or upload your own certificate
+
+    {/* Image: d6ec2cba-60db-45be-8859-0f8b1e999a0a.png - SSL activation */}
+
+  </Step>
+
+  <Step title="Create an Edge Rule to set the Host header">
+    Navigate to **Edge Rules** and create a new rule to send the correct hostname to your origin:
+
+    | Setting | Value |
+    |---------|-------|
+    | **Action** | Set Request Header |
+    | **Header Name** | `Host` |
+    | **Header Value** | Your origin hostname (e.g., `example.com`) |
+    | **Condition** | Request URL |
+    | **Match Type** | Match Any |
+    | **Condition Value** | `*` |
+
+  </Step>
+
+  <Step title="Purge cache">
+    If you had cached content from a previous configuration, purge the cache to ensure fresh content is fetched from the new origin.
+  </Step>
+</Steps>
+
+## How it works
+
+When a request comes in:
+
+1. The client connects to your custom hostname (served by bunny.net)
+2. bunny.net connects directly to your origin server IP
+3. The Edge Rule sets the `Host` header so your origin knows which website to serve
+4. Your origin responds with the correct content
+
+This bypasses any intermediate proxies while maintaining proper hostname routing.
+
+## Related
+
+- [Variable Expansion](/cdn/edge-rules/variable-expansion) - Use dynamic values in your Edge Rules
+- [Rule Ordering](/cdn/edge-rules/ordering) - Understand how multiple rules interact

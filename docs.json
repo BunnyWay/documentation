@@ -112,76 +112,72 @@
             "groups": [
               {
                 "group": "Bunny CDN",
-                "pages": ["cdn/index", "cdn/quickstart"]
+                "pages": ["cdn/index", "cdn/quickstart", "cdn/pricing"]
               },
               {
-                "group": "CDN Basics",
+                "group": "Usage",
                 "pages": [
-                  "cdn/custom-hostname",
-                  "cdn/cdn-acceleration",
-                  "cdn/ssl-setup"
-                ]
-              },
-              {
-                "group": "Caching",
-                "pages": [
-                  "cdn/cache-duration",
-                  "cdn/smart-cache",
-                  "cdn/vary-cache",
-                  "cdn/perma-cache",
-                  "cdn/request-coalescing",
-                  "cdn/query-string-sort",
-                  "cdn/purge-cache"
-                ]
-              },
-              {
-                "group": "Performance",
-                "pages": [
-                  "cdn/performance/index",
-                  "cdn/performance/origin-shield",
-                  "cdn/performance/smart-preloader",
-                  "cdn/performance/routing-filters",
-                  "cdn/performance/network-limits"
-                ]
-              },
-              {
-                "group": "Security",
-                "pages": [
-                  "cdn/security/hotlink-protection",
                   {
-                    "group": "Token Authentication",
+                    "group": "Caching",
                     "pages": [
-                      "cdn/security/token-authentication/index",
-                      "cdn/security/token-authentication/basic",
-                      "cdn/security/token-authentication/advanced"
+                      "cdn/smart-cache",
+                      "cdn/vary-cache",
+                      "cdn/query-string-sort",
+                      "cdn/perma-cache",
+                      "cdn/request-coalescing",
+                      "cdn/purge-cache"
+                    ]
+                  },
+                  {
+                    "group": "Edge Rules",
+                    "pages": [
+                      "cdn/edge-rules/index",
+                      "cdn/edge-rules/trigger-path",
+                      "cdn/edge-rules/custom-cache-time",
+                      "cdn/edge-rules/redirect-hostname",
+                      "cdn/edge-rules/ip-origin",
+                      "cdn/edge-rules/dynamic-variables",
+                      "cdn/edge-rules/variable-expansion",
+                      "cdn/edge-rules/ordering"
+                    ]
+                  },
+                  {
+                    "group": "Performance",
+                    "pages": [
+                      "cdn/performance/index",
+                      "cdn/performance/origin-shield",
+                      "cdn/performance/smart-preloader",
+                      "cdn/performance/routing-filters",
+                      "cdn/performance/network-limits"
+                    ]
+                  },
+                  {
+                    "group": "Security",
+                    "pages": [
+                      "cdn/security/hotlink-protection",
+                      {
+                        "group": "Token Authentication",
+                        "pages": [
+                          "cdn/security/token-authentication/index",
+                          "cdn/security/token-authentication/basic",
+                          "cdn/security/token-authentication/advanced"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Logging",
+                    "pages": [
+                      "cdn/logging/index",
+                      "cdn/logging/permanent-storage",
+                      "cdn/logging/forwarding",
+                      "cdn/logging/origin-errors"
                     ]
                   }
                 ]
               },
               {
-                "group": "Edge Rules",
-                "pages": [
-                  "cdn/edge-rules/index",
-                  "cdn/edge-rules/trigger-path",
-                  "cdn/edge-rules/custom-cache-time",
-                  "cdn/edge-rules/redirect-hostname",
-                  "cdn/edge-rules/ip-origin",
-                  "cdn/edge-rules/dynamic-variables",
-                  "cdn/edge-rules/variable-expansion",
-                  "cdn/edge-rules/ordering"
-                ]
-              },
-              {
-                "group": "Logging",
-                "pages": [
-                  "cdn/logging/index",
-                  "cdn/logging/permanent-storage",
-                  "cdn/logging/forwarding",
-                  "cdn/logging/origin-errors"
-                ]
-              },
-              {
-                "group": "Integration Guides",
+                "group": "Integrations",
                 "pages": [
                   {
                     "group": "CMS",
@@ -210,38 +206,31 @@
                 ]
               },
               {
-                "group": "Technical Reference",
+                "group": "Reference",
                 "pages": [
-                  "cdn/response-codes",
-                  "cdn/status-code-499",
-                  "cdn/cache-headers",
-                  "cdn/perma-cache-structure",
-                  "cdn/mime-types-compression",
-                  "cdn/detect-pop-access",
-                  "cdn/find-pop-routing",
-                  "cdn/standard-vs-volume-tier",
-                  "cdn/cache-hit-rate-stats",
-                  "cdn/useful-tools",
+                  "cdn/custom-hostname",
+                  "cdn/cdn-acceleration",
+                  "cdn/ssl-setup",
                   "cdn/custom-404-page",
-                  "cdn/websockets"
-                ]
-              },
-              {
-                "group": "Troubleshooting",
-                "pages": [
-                  "cdn/troubleshooting/acceleration-not-enabled",
-                  "cdn/troubleshooting/turkey-delivery-issues",
-                  "cdn/troubleshooting/unexpected-redirects",
-                  "cdn/troubleshooting/wordpress-static-urls",
-                  "cdn/troubleshooting/cookies-still-sent",
-                  "cdn/troubleshooting/run-traceroute",
-                  "cdn/troubleshooting/still-slow",
-                  "cdn/troubleshooting/301-redirects",
-                  "cdn/troubleshooting/502-504-errors",
-                  "cdn/troubleshooting/low-cache-hit-rate",
-                  "cdn/troubleshooting/lets-encrypt-issues",
-                  "cdn/troubleshooting/wordpress-plugin-conflicts",
-                  "cdn/troubleshooting/video-skip-issues"
+                  "cdn/websockets",
+                  {
+                    "group": "Troubleshooting",
+                    "pages": [
+                      "cdn/troubleshooting/acceleration-not-enabled",
+                      "cdn/troubleshooting/turkey-delivery-issues",
+                      "cdn/troubleshooting/unexpected-redirects",
+                      "cdn/troubleshooting/wordpress-static-urls",
+                      "cdn/troubleshooting/cookies-still-sent",
+                      "cdn/troubleshooting/run-traceroute",
+                      "cdn/troubleshooting/still-slow",
+                      "cdn/troubleshooting/301-redirects",
+                      "cdn/troubleshooting/502-504-errors",
+                      "cdn/troubleshooting/low-cache-hit-rate",
+                      "cdn/troubleshooting/lets-encrypt-issues",
+                      "cdn/troubleshooting/wordpress-plugin-conflicts",
+                      "cdn/troubleshooting/video-skip-issues"
+                    ]
+                  }
                 ]
               }
             ]
@@ -2006,6 +1995,11 @@
     {
       "source": "/cdn/logging/format",
       "destination": "/cdn/logging",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cdn-api-purge-rate-limits",
+      "destination": "/cdn/purge-cache#rate-limits",
       "permanent": true
     }
   ]

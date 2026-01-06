@@ -80,3 +80,68 @@ Extended logging adds three additional fields (contact support to enable):
 | Body Bytes Sent      | Response body bytes (excluding headers) |
 | Range Header         | HTTP Range header value                 |
 | Authorization Header | Authorization header value              |
+
+## HTTP status codes
+
+### 2XX Success
+
+| Code | Description     | Explanation                                               |
+| ---- | --------------- | --------------------------------------------------------- |
+| 200  | OK              | Request successful, content served                        |
+| 201  | Created         | Request successful, new resource created                  |
+| 204  | No Content      | Request processed, no content to return                   |
+| 206  | Partial Content | Partial GET request fulfilled (e.g., video range request) |
+
+### 3XX Redirection
+
+| Code | Description       | Explanation                                    |
+| ---- | ----------------- | ---------------------------------------------- |
+| 301  | Moved Permanently | URL permanently changed, use new location      |
+| 302  | Found             | URL temporarily moved                          |
+| 303  | See Other         | Response available at different location       |
+| 304  | Not Modified      | Cached content still valid, no transfer needed |
+
+### 4XX Client Errors
+
+| Code | Description           | Explanation                                                        |
+| ---- | --------------------- | ------------------------------------------------------------------ |
+| 400  | Bad Request           | Server could not understand the request                            |
+| 401  | Unauthorized          | Authentication required                                            |
+| 403  | Forbidden             | Server refuses to fulfill request (hotlink protection, token auth) |
+| 404  | Not Found             | File not found                                                     |
+| 405  | Method Not Allowed    | Request method not supported                                       |
+| 410  | Gone                  | Resource no longer available                                       |
+| 429  | Too Many Requests     | Rate limit exceeded                                                |
+| 499  | Client Closed Request | Client terminated connection before response completed             |
+
+<Note>
+  A 499 status code appears in logs when a client closes the connection before
+  the server finishes responding. This commonly occurs due to mobile network
+  interruptions, ad blockers, or users navigating away. It's normal and doesn't
+  indicate a server problem.
+</Note>
+
+### 5XX Server Errors
+
+| Code | Description           | Explanation                                        |
+| ---- | --------------------- | -------------------------------------------------- |
+| 500  | Internal Server Error | Unexpected server error                            |
+| 502  | Bad Gateway           | Invalid response from upstream server              |
+| 503  | Service Unavailable   | Server temporarily overloaded or under maintenance |
+| 504  | Gateway Timeout       | Upstream server didn't respond in time             |
+
+<Warning>
+  502 and 504 errors typically indicate the CDN edge nodes cannot reach your
+  origin. Check if your origin firewall is blocking Bunny CDN IPs.
+</Warning>
+
+## Cache statistics
+
+The dashboard shows two important cache metrics:
+
+| Metric                 | Description                                                          |
+| ---------------------- | -------------------------------------------------------------------- |
+| Request Cache Hit Rate | Percentage of requests served directly from CDN edge cache           |
+| Bandwidth Hit Rate     | Percentage of bandwidth served from CDN cache vs fetched from origin |
+
+Higher percentages indicate better CDN efficiency—more content served from edge nodes without contacting your origin.

@@ -1,4 +1,97 @@
 ---
-title: Edge Rules
-url: 
+title: "Edge Rules"
+sidebarTitle: "Overview"
+description: "Create powerful custom behaviors for your CDN using Edge Rules to control redirects, headers, caching, and origin routing."
 ---
+
+Edge Rules allow you to create powerful custom behaviors for your pull zone, such as redirects, header modifications, cache time overrides, or origin changes based on incoming request data.
+
+## How to access Edge Rules
+
+<Steps>
+  <Step title="Navigate to your Pull Zone">
+    Go to **CDN** in the dashboard and select the pull zone you want to
+    configure.
+  </Step>
+  <Step title="Open Edge Rules">
+    Click on the **Edge Rules** tab in the pull zone settings.
+  </Step>
+  <Step title="Add a new rule">
+    Click **Add Edge Rule** to create a new rule with your desired action and
+    trigger conditions.
+  </Step>
+</Steps>
+
+## What can Edge Rules do?
+
+Edge Rules support a variety of actions that execute at different layers of the CDN:
+
+| Action                                  | Description                                     |
+| --------------------------------------- | ----------------------------------------------- |
+| **Force SSL**                           | Redirect HTTP requests to HTTPS                 |
+| **Redirect to URL**                     | Redirect requests to a different URL            |
+| **Change Origin URL**                   | Route requests to a different origin server     |
+| **Override Cache Time**                 | Set custom cache duration for matching requests |
+| **Block Request**                       | Block requests that match certain conditions    |
+| **Set Response Header**                 | Add or modify response headers                  |
+| **Set Request Header**                  | Add or modify headers sent to the origin        |
+| **Force Download**                      | Force the browser to download the file          |
+| **Disable/Enable Token Authentication** | Control token authentication per request        |
+| **Override Browser Cache Time**         | Set custom browser cache duration               |
+| **Set Network Rate Limit**              | Limit bandwidth for matching requests           |
+
+## Guides
+
+<CardGroup cols={2}>
+  <Card
+    title="Trigger Path Setup"
+    icon="crosshairs"
+    href="/cdn/edge-rules/trigger-path"
+  >
+    Learn how to correctly configure trigger paths with wildcards and pattern
+    matching.
+  </Card>
+  <Card
+    title="Custom Cache Time"
+    icon="clock"
+    href="/cdn/edge-rules/custom-cache-time"
+  >
+    Set custom cache durations for specific file extensions.
+  </Card>
+  <Card
+    title="Redirect Hostname"
+    icon="arrow-right"
+    href="/cdn/edge-rules/redirect-hostname"
+  >
+    Redirect your b-cdn.net hostname to a custom domain.
+  </Card>
+  <Card title="Direct IP Origin" icon="server" href="/cdn/edge-rules/ip-origin">
+    Connect directly to an origin IP with a custom hostname.
+  </Card>
+</CardGroup>
+
+## Reference
+
+<CardGroup cols={2}>
+  <Card
+    title="Dynamic Variables"
+    icon="code"
+    href="/cdn/edge-rules/dynamic-variables"
+  >
+    Complete list of variables available in Edge Rule actions.
+  </Card>
+  <Card
+    title="Variable Expansion"
+    icon="brackets-curly"
+    href="/cdn/edge-rules/variable-expansion"
+  >
+    Use variable expansion syntax to create dynamic rule values.
+  </Card>
+  <Card title="Rule Ordering" icon="list-ol" href="/cdn/edge-rules/ordering">
+    Control execution order and understand rule priority.
+  </Card>
+</CardGroup>
+
+## Need more power?
+
+For complex request and response transformations that go beyond what Edge Rules can offer, consider using [Middleware Scripts](/scripting/middleware/overview). Middleware scripts allow you to write custom code that executes at the edge, giving you full programmatic control over request handling, response modification, and routing logic.

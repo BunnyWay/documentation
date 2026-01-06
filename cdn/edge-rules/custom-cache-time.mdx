@@ -1,4 +1,132 @@
 ---
-title: Custom Cache Time for File Extensions
-url: 
+title: "Custom Cache Time for File Extensions"
+sidebarTitle: "Custom Cache Time"
+description: "Use Edge Rules to set custom cache durations for specific file types."
 ---
+
+Edge Rules make it easy to customize cache times based on file extensions. This is useful when different content types need different caching strategies—for example, caching video files longer than HTML pages.
+
+## Use cases
+
+- Cache static assets (images, CSS, JS) for longer periods
+- Set shorter cache times for dynamic content
+- Cache video files for extended periods to reduce origin load
+- Override default cache behavior for specific file types
+
+## Configuration
+
+<Steps>
+  <Step title="Open Edge Rules">
+    Navigate to your pull zone and select **Edge Rules** from the side menu.
+  </Step>
+
+<Step title="Add a new rule">
+  Click **Add Edge Rule** to create a new rule.
+</Step>
+
+  <Step title="Select the Override Cache Time action">
+    Choose **Override Cache Time** as the action.
+
+    Enter the desired cache time in seconds:
+
+    | Duration | Seconds |
+    |----------|---------|
+    | 1 hour | `3600` |
+    | 1 day | `86400` |
+    | 1 week | `604800` |
+    | 1 month | `2592000` |
+
+    {/* Image: bunnycdn-override-cache-time-edge-rule.png */}
+
+  </Step>
+
+  <Step title="Add a File Extension condition">
+    Click **Add Condition** and select **File Extension** as the condition type.
+
+    Enter the extension you want to match (without the dot). For example:
+    - `mp4` for video files
+    - `jpg` for JPEG images
+    - `css` for stylesheets
+
+    {/* Image: bunnycdn-override-cache-time-edge-rule-2.png */}
+
+  </Step>
+
+  <Step title="Save the rule">
+    Click **Save Edge Rule** to activate.
+  </Step>
+</Steps>
+
+## Examples
+
+### Cache video files for 30 days
+
+| Setting        | Value               |
+| -------------- | ------------------- |
+| **Action**     | Override Cache Time |
+| **Cache Time** | `2592000` (30 days) |
+| **Condition**  | File Extension      |
+| **Extension**  | `mp4`               |
+
+### Cache images for 1 week
+
+| Setting        | Value               |
+| -------------- | ------------------- |
+| **Action**     | Override Cache Time |
+| **Cache Time** | `604800` (7 days)   |
+| **Condition**  | File Extension      |
+| **Extension**  | `jpg`               |
+
+<Note>
+  Create separate rules for each file extension, or use multiple conditions with
+  **Match Any** to apply the same cache time to multiple extensions.
+</Note>
+
+### Bypass cache for HTML files
+
+To prevent caching of HTML files entirely:
+
+| Setting        | Value               |
+| -------------- | ------------------- |
+| **Action**     | Override Cache Time |
+| **Cache Time** | `0`                 |
+| **Condition**  | File Extension      |
+| **Extension**  | `html`              |
+
+<Warning>
+  Setting cache time to `0` will bypass the edge cache if the content is not
+  already cached. This increases origin load but ensures fresh content.
+</Warning>
+
+## Multiple extensions
+
+To apply the same cache time to multiple file types, you have two options:
+
+### Option 1: Multiple conditions (Match Any)
+
+Add multiple **File Extension** conditions to a single rule and set the match type to **Match Any**:
+
+- Condition 1: File Extension = `jpg`
+- Condition 2: File Extension = `png`
+- Condition 3: File Extension = `gif`
+
+### Option 2: Separate rules
+
+Create individual rules for each extension. This gives you more flexibility if you later need different cache times per extension.
+
+## Cache time vs Browser cache time
+
+Edge Rules offer two cache-related actions:
+
+| Action                          | Description                                                   |
+| ------------------------------- | ------------------------------------------------------------- |
+| **Override Cache Time**         | Controls how long content is cached on bunny.net edge servers |
+| **Override Browser Cache Time** | Controls the `Cache-Control` header sent to browsers          |
+
+You can use both together to have different cache durations at the edge vs in the browser.
+
+## Related
+
+- [Cache Duration](/cdn/cache-duration) - Default cache settings for your pull zone
+- [Trigger Path Setup](/cdn/edge-rules/trigger-path) - Alternative way to match files using wildcards
+- [Rule Ordering](/cdn/edge-rules/ordering) - Understand how multiple cache rules interact

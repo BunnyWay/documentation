@@ -1,80 +1,146 @@
 ---
-title: "Edge Rules variable expansion"
-description: "Edge Rules allow you to use variable expansion to dynamically configure the value of the result based on specific request parameters."
+title: "Variable Expansion"
+description: "Use variable expansion syntax to dynamically configure Edge Rule values based on request parameters."
 ---
 
-Variable expansion is supported by the following rules:
+Variable expansion allows Edge Rules to dynamically configure values based on specific request parameters. Instead of hardcoding URLs or header values, you can use variables that are replaced at runtime with actual request data.
 
-- Change Origin URL
-- Redirect to URL
-- Set Request Header
-- Set Response Header
+## Supported actions
 
-Variable expansion is performed through the following syntax **%\{Collection.Key}** where the collection is a super-set of variables that can be accessed with the specific key. Some collections such as request headers or query parameters are automatically populated based on the request data whereas others have a specific set of keys.
+Variable expansion works with the following Edge Rule actions:
 
-<Info>
-For more information, see [the list of dynamic variables in the Edge Rule redirect URL](https://support.bunny.net/hc/en-us/articles/360001576412-The-list-of-dynamic-variables-in-the-Edge-Rule-redirect-URL).
+- **Change Origin URL**
+- **Redirect to URL**
+- **Set Request Header**
+- **Set Response Header**
 
-</Info>
+## Syntax
 
-Supported variable collections:
+Variables are accessed using the following syntax:
+
+```
+%{Collection.Key}
+```
+
+Where `Collection` is a group of related variables, and `Key` is the specific value you want to access.
+
+<Note>
+  For a complete list of all available variables with examples, see [Dynamic
+  Variables](/cdn/edge-rules/dynamic-variables).
+</Note>
+
+---
+
+## Variable collections
 
 ### RequestHeaders
 
-The RequestHeaders collection is automatically populated with keys from the HTTP request. Request headers sent with the request are automatically mapped based on their key. For example **%\{RequestHeaders.Host}** will contain the Host header sent with the request.
+The `RequestHeaders` collection contains HTTP headers from the incoming request. Headers are automatically mapped based on their name.
 
-### **Query**
+| Example                             | Description                             |
+| ----------------------------------- | --------------------------------------- |
+| `%{RequestHeaders.Host}`            | The `Host` header sent with the request |
+| `%{RequestHeaders.User-Agent}`      | The `User-Agent` header                 |
+| `%{RequestHeaders.Accept-Language}` | The `Accept-Language` header            |
 
-The Query collection is automatically populated with keys from the HTTP request. Query parameters sent with the request are automatically mapped based on their key. For example **%\{Query.Value}** will be mapped with the URL parameter **?Value=hello**.
+### Query
 
-### **Request**
+The `Query` collection contains URL query parameters. Parameters are automatically mapped based on their key.
 
-The Request collection contains a set of variables from the list below:
+For a URL like `?token=abc123&user=42`:
 
-- **Method:** The HTTP method that was sent with the request (such as GET, POST, etc.)
-- **Path:** The full URL path and query of the HTTP request
-- **QueryString:** The full URL query string parameter of the HTTP request
+| Example          | Result   |
+| ---------------- | -------- |
+| `%{Query.token}` | `abc123` |
+| `%{Query.user}`  | `42`     |
 
-### **Path**
+### Request
 
-The Path collection is a special collection that allows you to dynamically extract parts of the URL request path. It uses an index as a key parameter to extract a specific part, or range of parts from the URL Path. For the examples, the following URL path will be used: /hello/world/bunny/eat/carrot.jpg
+The `Request` collection contains information about the HTTP request:
 
-- **0:** Extract the path of the part at the specified index
-  - `%{Path.0}` -> `hello`
-  - `%{Path.1}` -> `world`
+| Key           | Description             | Example                       |
+| ------------- | ----------------------- | ----------------------------- |
+| `Method`      | The HTTP method         | `GET`, `POST`                 |
+| `Path`        | Full URL path and query | `/videos/test.mp4?quality=hd` |
+| `QueryString` | Query string only       | `quality=hd`                  |
 
-- **0-2:** Extract the range of path parts from index 0 to 2
-  - `%{Path.0-2}` ->`hello/world/bunny`
-  - `%{Path.1-3}` ->`world/bunny/eat`
+### Path
 
-- **3-:** Extracts all parts of the path starting with index 3
-  - `%{Path.3-}` ->`eat/carrot.jpg`
-  - `%{Path.1-}` ->`world/bunny/eat/carrot.jpg`
+The `Path` collection allows you to extract specific segments from the URL path using index-based access.
 
-- **-3:** Extracts all parts of the path until index 3
-  - `%{Path.-3}` ->`hello/world/bunny`
-  - `%{Path.-1}` ->`hello/world`
+For the path `/hello/world/bunny/eat/carrot.jpg`:
 
-### **Url**
+| Syntax        | Result                       | Description              |
+| ------------- | ---------------------------- | ------------------------ |
+| `%{Path.0}`   | `hello`                      | Single segment at index  |
+| `%{Path.1}`   | `world`                      |                          |
+| `%{Path.0-2}` | `hello/world/bunny`          | Range from index 0 to 2  |
+| `%{Path.1-3}` | `world/bunny/eat`            | Range from index 1 to 3  |
+| `%{Path.3-}`  | `eat/carrot.jpg`             | From index 3 to end      |
+| `%{Path.1-}`  | `world/bunny/eat/carrot.jpg` | From index 1 to end      |
+| `%{Path.-1}`  | `hello`                      | From start up to index 1 |
+| `%{Path.-3}`  | `hello/world/bunny`          | From start up to index 3 |
 
-The Url collection contains a set of variables from the list below:
+### Url
 
-- **FileName:** The file name of the requested URL. If the request is to a folder, this will remain empty.
-- **Path:** The full URL path and query of the HTTP request
-- **Extension:** The extension of the requested filename
-- **Directory:** The directory of the requested URL without the file name
-- **Hostname:** The hostname that was sent with the HTTP request
+The `Url` collection provides parsed components of the request URL:
 
-### **User**
+| Key         | Description                               | Example                 |
+| ----------- | ----------------------------------------- | ----------------------- |
+| `FileName`  | Filename from the URL (empty for folders) | `video.mp4`             |
+| `Path`      | Full URL path and query                   | `/videos/video.mp4?x=1` |
+| `Extension` | File extension                            | `mp4`                   |
+| `Directory` | Directory path without filename           | `/videos/2024/`         |
+| `Hostname`  | Request hostname                          | `cdn.example.com`       |
 
-The User collection contains a set of variables from the list below:
+### User
 
-- **IP:** The IP of the end-user that initiated the request
-- **CountryCode:** The two-letter country code of the end-user that initiated the request
+The `User` collection contains information about the requesting user:
 
-### **Server**
+| Key           | Description             | Example          |
+| ------------- | ----------------------- | ---------------- |
+| `IP`          | End-user IP address     | `203.0.113.10`   |
+| `CountryCode` | Two-letter country code | `US`, `DE`, `JP` |
 
-The Server collection contains a set of variables from the list below:
+### Server
 
-- **ZoneCode:** The Zone Code of the server that is serving the request
-- **ID:** The unique ID of the server that is serving the request
+The `Server` collection contains information about the serving edge server:
+
+| Key        | Description                     | Example          |
+| ---------- | ------------------------------- | ---------------- |
+| `ZoneCode` | Zone code of the serving server | `NY`, `LA`, `DE` |
+| `ID`       | Unique server ID                | `9482`           |
+
+---
+
+## Examples
+
+### Dynamic origin routing
+
+Route requests to different origins based on the first path segment:
+
+**Origin URL:** `https://%{Path.0}.backend.example.com/%{Path.1-}`
+
+For a request to `/api/users/123`, this becomes `https://api.backend.example.com/users/123`.
+
+### Pass query parameter as header
+
+Forward a specific query parameter to your origin as a header:
+
+**Header Name:** `X-Auth-Token`  
+**Header Value:** `%{Query.token}`
+
+### Geo-based routing
+
+Add the user's country to the origin request:
+
+**Header Name:** `X-Country`  
+**Header Value:** `%{User.CountryCode}`
+
+---
+
+## Related
+
+- [Dynamic Variables](/cdn/edge-rules/dynamic-variables) - Complete variable reference with all examples
+- [Rule Ordering](/cdn/edge-rules/ordering) - Control execution order for complex rule sets
+- [Middleware Scripts](/scripting/middleware/overview) - For advanced request/response transformations

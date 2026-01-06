@@ -1,4 +1,223 @@
 ---
-title: Dynamic variables in the Edge Rule redirect URL
-url: 
+title: "Dynamic Variables"
+description: "Complete reference for dynamic variables available in Edge Rule actions like redirects, header modifications, and origin changes."
 ---
+
+Edge Rules support dynamic variables that automatically adapt based on request data. These variables allow you to create flexible rules for redirects, header modifications, and origin changes.
+
+## Supported actions
+
+Variable expansion works in the following Edge Rule actions:
+
+- **Redirect to URL**
+- **Change Origin URL**
+- **Set Request Header**
+- **Set Response Header**
+
+## Variable syntax
+
+There are two variable syntaxes available:
+
+| Syntax   | Format              | Example               |
+| -------- | ------------------- | --------------------- |
+| Basic    | `{{variable}}`      | `{{path}}`            |
+| Advanced | `%{Collection.Key}` | `%{User.CountryCode}` |
+
+<Note>
+  The `{{ variable }}` syntax automatically includes slashes where needed in
+  URLs. When using `%{Collection.Key}` syntax, you need to manually include
+  slashes in your URLs.
+</Note>
+
+## Basic variables
+
+These simple variables are commonly used for general redirection and header logic:
+
+| Variable             | Description                                 | Example Output            |
+| -------------------- | ------------------------------------------- | ------------------------- |
+| `{{path}}`           | Full request path including query string    | `/videos/test.mp4?user=1` |
+| `{{hostname}}`       | The hostname from the request               | `test.b-cdn.net`          |
+| `{{country_code}}`   | Two-letter country code of the user's IP    | `US`                      |
+| `{{query_string}}`   | Query string only (without the `?`)         | `user=1`                  |
+| `{{request_method}}` | HTTP method used                            | `GET`, `POST`             |
+| `{{file_name}}`      | Filename from the URL (last part after `/`) | `file.jpg`, `test.mp4`    |
+
+### Example: Redirect preserving path
+
+To redirect all requests from one domain to another while preserving the path:
+
+| Setting          | Value                             |
+| ---------------- | --------------------------------- |
+| **Action**       | Redirect to URL                   |
+| **Redirect URL** | `https://www.example.com{{path}}` |
+| **Status Code**  | 301                               |
+
+{/* Image: dd1be664-487a-489c-99c8-f195b6ca44a5.png - Basic variable redirect example */}
+
+---
+
+## Advanced variable collections
+
+The advanced variable system provides detailed access to request data using the `%{Collection.Key}` syntax.
+
+### RequestHeaders
+
+Access headers from the incoming HTTP request.
+
+| Example                        | Result                 |
+| ------------------------------ | ---------------------- |
+| `%{RequestHeaders.Host}`       | `videos.example.com`   |
+| `%{RequestHeaders.User-Agent}` | Browser or client info |
+
+{/* Image: 2fa64e45-f303-46c0-95ed-55898e1fb97b.png - RequestHeaders example */}
+
+---
+
+### Query
+
+Access specific query parameters from the URL.
+
+For a URL like `/video.mp4?user=123`:
+
+| Variable        | Result |
+| --------------- | ------ |
+| `%{Query.user}` | `123`  |
+
+<Note>
+  Replace `KeyName` with your actual query parameter name. For example, if your
+  query is `?Myhash=123`, use `%{Query.Myhash}` to get `123`.
+</Note>
+
+{/* Image: cbb9b1ed-858f-485f-8017-fdb163c54ca1.png - Query parameter example */}
+
+---
+
+### Path
+
+Extract specific segments of the URL path. This is useful for complex routing or origin overrides.
+
+For the example path `/hello/world/bunny/eat/carrot.jpg`:
+
+| Variable      | Output                       | Description                                  |
+| ------------- | ---------------------------- | -------------------------------------------- |
+| `%{Path.0}`   | `hello`                      | First segment                                |
+| `%{Path.1}`   | `world`                      | Second segment                               |
+| `%{Path.0-2}` | `hello/world/bunny`          | Range from index 0 to 2                      |
+| `%{Path.1-3}` | `world/bunny/eat`            | Range from index 1 to 3                      |
+| `%{Path.3-}`  | `eat/carrot.jpg`             | From index 3 to end                          |
+| `%{Path.1-}`  | `world/bunny/eat/carrot.jpg` | From index 1 to end                          |
+| `%{Path.-1}`  | `hello/world`                | From start up to (but not including) index 1 |
+
+<Note>
+If the URL includes a query string and the path you extract doesn't alter the filename, the query string remains intact. For example, with `/hello/world/bunny/eat/carrot.jpg?query=something`, using `%{Path.1-}` returns `world/bunny/eat/carrot.jpg?query=something`.
+</Note>
+
+{/* Image: 4e595ced-0544-4ece-9e89-7f7529b88ad4.png - Path extraction example */}
+
+---
+
+### Url
+
+Access parsed components of the full URL.
+
+| Variable           | Description                          | Example                 |
+| ------------------ | ------------------------------------ | ----------------------- |
+| `%{Url.Filename}`  | Last part of URL (empty for folders) | `video.mp4`             |
+| `%{Url.Extension}` | File extension                       | `mp4`                   |
+| `%{Url.Directory}` | Folder path only                     | `/videos/2024/`         |
+| `%{Url.Hostname}`  | Hostname from request                | `cdn.mysite.com`        |
+| `%{Url.Path}`      | Full path and query                  | `/videos/video.mp4?x=1` |
+
+{/* Image: 59b31af9-64b4-46fb-b9dd-6202683fae72.png - URL components example */}
+
+---
+
+### User
+
+Information about the user making the request.
+
+| Variable              | Description            | Example        |
+| --------------------- | ---------------------- | -------------- |
+| `%{User.IP}`          | End-user IP address    | `203.0.113.10` |
+| `%{User.CountryCode}` | Country of the request | `DE`           |
+
+{/* Image: 52689aa0-eca1-4c05-bae3-94ededcbb350.png - User info example */}
+
+---
+
+### Server
+
+Internal information about the server processing the request.
+
+| Variable             | Description              | Example |
+| -------------------- | ------------------------ | ------- |
+| `%{Server.ZoneCode}` | Code of the serving zone | `NY`    |
+| `%{Server.ID}`       | Server ID                | `9482`  |
+
+{/* Image: d076203e-dc17-40f1-bdce-9d8c08ffadb9.png - Server info example */}
+
+---
+
+### Request
+
+Information about the HTTP request.
+
+| Variable                 | Description             | Example                 |
+| ------------------------ | ----------------------- | ----------------------- |
+| `%{Request.Method}`      | HTTP method             | `GET`, `POST`           |
+| `%{Request.Path}`        | Full URL path and query | `/videos/video.mp4?x=1` |
+| `%{Request.QueryString}` | Query string only       | `x=1`                   |
+
+---
+
+## Practical examples
+
+### Redirect non-www to www
+
+Redirect all requests from `domain.com` to `www.domain.com` while preserving the path:
+
+| Setting             | Value                            |
+| ------------------- | -------------------------------- |
+| **Action**          | Redirect to URL                  |
+| **Redirect URL**    | `https://www.domain.com{{path}}` |
+| **Status Code**     | 301                              |
+| **Condition**       | Request URL                      |
+| **Condition Value** | `*`                              |
+
+<Warning>
+This rule must be added to the pull zone where `domain.com` is declared, not where `www.domain.com` is declared.
+
+If both hostnames are in the same pull zone, narrow the condition to `*://domain.com*` to only match the non-www version.
+
+</Warning>
+
+### Route requests based on path segment
+
+Route requests to different origins based on the first path segment:
+
+| Setting             | Value                                              |
+| ------------------- | -------------------------------------------------- |
+| **Action**          | Change Origin URL                                  |
+| **Origin URL**      | `https://%{Path.0}.example-backend.com/%{Path.1-}` |
+| **Condition**       | Request URL                                        |
+| **Condition Value** | `*/api/*`                                          |
+
+This would route `/api/users/123` to `https://api.example-backend.com/users/123`.
+
+### Add country code to request header
+
+Pass the user's country to your origin for geo-based logic:
+
+| Setting             | Value                 |
+| ------------------- | --------------------- |
+| **Action**          | Set Request Header    |
+| **Header Name**     | `X-User-Country`      |
+| **Header Value**    | `%{User.CountryCode}` |
+| **Condition**       | Request URL           |
+| **Condition Value** | `*`                   |
+
+## Related
+
+- [Variable Expansion](/cdn/edge-rules/variable-expansion) - Detailed syntax reference for variable collections
+- [Trigger Path Setup](/cdn/edge-rules/trigger-path) - Configure trigger conditions correctly
+- [Middleware Scripts](/scripting/middleware/overview) - For complex transformations beyond Edge Rules

@@ -1,4 +1,104 @@
 ---
-title: Redirect b-cdn.net to Custom Hostname
-url: 
+title: "Redirect b-cdn.net to Custom Hostname"
+sidebarTitle: "Redirect Hostname"
+description: "Use Edge Rules to redirect your default b-cdn.net hostname to your custom CDN hostname."
 ---
+
+Edge Rules allow you to redirect your default `b-cdn.net` hostname to your custom hostname, ensuring your content is only accessible through your own domain.
+
+This is useful for:
+
+- SEO purposes (avoiding duplicate content)
+- Brand consistency
+- Ensuring all traffic goes through your custom domain
+
+## Prerequisites
+
+- A pull zone with a [custom hostname](/cdn/custom-hostname) already configured
+- The custom hostname should have SSL enabled
+
+## Configuration
+
+<Steps>
+  <Step title="Open Edge Rules">
+    Navigate to your pull zone and select **Edge Rules** from the side menu.
+  </Step>
+
+<Step title="Add a new rule">
+  Click **Add Edge Rule** to open the rule configuration page.
+</Step>
+
+  <Step title="Configure the redirect action">
+    Select **Redirect To URL** as the action.
+
+    In the **Redirect URL** field, enter your custom URL with the `{{path}}` variable appended:
+
+    ```
+    https://cdn.yourdomain.com{{path}}
+    ```
+
+    <Note>
+    The `{{path}}` variable automatically includes the full request path and query string, ensuring all URLs redirect correctly.
+    </Note>
+
+    Set the status code to **301** for a permanent redirect, or **302** for a temporary redirect.
+
+  </Step>
+
+  <Step title="Add a trigger condition">
+    Click **Add Condition** and configure:
+
+    | Setting | Value |
+    |---------|-------|
+    | **Condition Type** | Request URL |
+    | **Match Type** | Match Any |
+    | **Condition Value** | `*://yourzone.b-cdn.net/*` |
+
+    Replace `yourzone` with the name of your pull zone.
+
+    <Warning>
+    Make sure to include both the scheme wildcard (`*://`) and the trailing wildcard (`/*`) to match all requests to your b-cdn.net hostname.
+    </Warning>
+
+  </Step>
+
+  <Step title="Save the rule">
+    Click **Save Edge Rule** to activate the redirect.
+  </Step>
+</Steps>
+
+## Example configuration
+
+For a pull zone named `mycdn` with a custom hostname `cdn.example.com`:
+
+| Setting             | Value                             |
+| ------------------- | --------------------------------- |
+| **Action**          | Redirect To URL                   |
+| **Redirect URL**    | `https://cdn.example.com{{path}}` |
+| **Status Code**     | 301                               |
+| **Condition Type**  | Request URL                       |
+| **Condition Value** | `*://mycdn.b-cdn.net/*`           |
+
+### Before and after
+
+| Original URL                                     | Redirected URL                                   |
+| ------------------------------------------------ | ------------------------------------------------ |
+| `https://mycdn.b-cdn.net/images/logo.png`        | `https://cdn.example.com/images/logo.png`        |
+| `https://mycdn.b-cdn.net/video.mp4?quality=high` | `https://cdn.example.com/video.mp4?quality=high` |
+| `http://mycdn.b-cdn.net/`                        | `https://cdn.example.com/`                       |
+
+## HTTP vs HTTPS
+
+Make sure to use the correct scheme in your redirect URL:
+
+- Use `https://` if your custom hostname has SSL enabled (recommended)
+- Use `http://` only if SSL is not configured
+
+Using the wrong scheme may cause redirect loops or connection errors.
+
+## Related
+
+- [Custom Hostname](/cdn/custom-hostname) - Set up a custom hostname for your pull zone
+- [SSL Setup](/cdn/ssl-setup) - Configure SSL for your custom hostname
+- [Trigger Path Setup](/cdn/edge-rules/trigger-path) - Learn more about configuring trigger conditions
+- [Dynamic Variables](/cdn/edge-rules/dynamic-variables) - Full list of variables available in Edge Rules
