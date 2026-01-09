@@ -1,3 +1,331 @@
 ---
-title: "Quickstart"
+title: Quickstart
+description: Create a database and run your first query in minutes
 ---
+
+<Steps>
+
+<Step title="Create a Database">
+
+From your Bunny dashboard, click **Add** in the left-hand sidebar and select **Database**.
+
+<Frame>![Add Database](/images/database/quickstart/add-new-database.png)</Frame>
+
+</Step>
+
+<Step title="Name your database">
+
+Enter a unique name for your database. This name will be used to identify your database in the dashboard and connection URLs.
+
+<Frame>![Database Name](/images/database/quickstart/database-name.png)</Frame>
+
+</Step>
+
+<Step title="Select a region">
+
+Choose how you want your database deployed:
+
+<Tabs>
+  <Tab title="Automatic">
+    **Automatic region selection**: We will choose the optimal regions for your
+    database based on your location and best performance.
+  </Tab>
+  <Tab title="Single region">
+    **Single region deployment**: Deploy your database to a single region
+    without any replication. Best for development or applications with users in
+    one geographic area.
+  </Tab>
+  <Tab title="Manual">
+    **Manual region selection**: Manually select your storage location along
+    with primary and replication regions. Best for applications with specific
+    latency or compliance requirements.
+  </Tab>
+</Tabs>
+
+<Frame>
+  ![Region Selection](/images/database/quickstart/region-selection.png)
+</Frame>
+
+</Step>
+
+<Step title="Create the database">
+
+Click **Add Database** to create your database.
+
+<Frame>
+  ![Add Database Button](/images/database/quickstart/add-database-button.png)
+</Frame>
+
+</Step>
+
+<Step title="Get your credentials">
+
+Once created, copy your connection credentials:
+
+- **Database URL**: Your database endpoint
+- **Access Token**: Choose between **Full Access** (read/write) or **Read Only** depending on your needs
+
+<Frame>
+  ![Database Credentials](/images/database/quickstart/database-credentials.png)
+</Frame>
+
+<Warning>
+  Keep your access tokens secure. Never commit them to version control or expose
+  them in client-side code.
+</Warning>
+
+</Step>
+
+<Step title="Connect from Edge Scripting or Magic Containers (Optional)">
+
+If you have an existing Edge Script or Magic Container, you can add your database credentials directly from this page:
+
+1. Click **Add Secrets to Edge Script** or **Add Secrets to Magic Container Apps**
+2. Select the script or app you want to connect
+3. The database URL and access token will be added as environment variables automatically
+
+<Frame>
+  ![Add
+  Secrets](/images/database/quickstart/add-database-secrets-to-scripts-or-apps.png)
+</Frame>
+
+</Step>
+
+<Step title="Install an SDK and connect">
+
+Install the official SDK for your language and connect to your database:
+
+<Tabs>
+  <Tab title="TypeScript">
+    Install the libSQL client:
+
+    ```bash
+    npm install @libsql/client
+    ```
+
+    Connect and run queries:
+
+    ```typescript
+    import { createClient } from "@libsql/client";
+
+    const client = createClient({
+      url: "libsql://your-database-id.lite.bunnydb.net",
+      authToken: "your-access-token",
+    });
+
+    // Create a table
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL
+      )
+    `);
+
+    // Insert data
+    await client.execute({
+      sql: "INSERT INTO users (name, email) VALUES (?, ?)",
+      args: ["Kit Hopkins", "kit@bunny.net"],
+    });
+
+    // Query data
+    const result = await client.execute("SELECT * FROM users");
+    console.log(result.rows);
+    ```
+
+  </Tab>
+  <Tab title="Rust">
+    Add the libSQL crate to your `Cargo.toml`:
+
+    ```toml
+    [dependencies]
+    libsql = "0.6"
+    tokio = { version = "1", features = ["full"] }
+    ```
+
+    Connect and run queries:
+
+    ```rust
+    use libsql::Builder;
+
+    #[tokio::main]
+    async fn main() -> Result<(), libsql::Error> {
+        let db = Builder::new_remote(
+            "libsql://your-database-id.lite.bunnydb.net".to_string(),
+            "your-access-token".to_string(),
+        )
+        .build()
+        .await?;
+
+        let conn = db.connect()?;
+
+        // Create a table
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL
+            )",
+            (),
+        )
+        .await?;
+
+        // Insert data
+        conn.execute(
+            "INSERT INTO users (name, email) VALUES (?1, ?2)",
+            ("Kit Hopkins", "kit@bunny.net"),
+        )
+        .await?;
+
+        // Query data
+        let mut rows = conn.query("SELECT * FROM users", ()).await?;
+        while let Some(row) = rows.next().await? {
+            let id: i64 = row.get(0)?;
+            let name: String = row.get(1)?;
+            let email: String = row.get(2)?;
+            println!("User: {} - {} ({})", id, name, email);
+        }
+
+        Ok(())
+    }
+    ```
+
+  </Tab>
+  <Tab title="Go">
+    Install the libSQL driver:
+
+    ```bash
+    go get github.com/tursodatabase/libsql-client-go/libsql
+    ```
+
+    Connect and run queries:
+
+    ```go
+    package main
+
+    import (
+        "database/sql"
+        "fmt"
+        "log"
+
+        _ "github.com/tursodatabase/libsql-client-go/libsql"
+    )
+
+    func main() {
+        url := "libsql://your-database-id.lite.bunnydb.net?authToken=your-access-token"
+
+        db, err := sql.Open("libsql", url)
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer db.Close()
+
+        // Create a table
+        _, err = db.Exec(`
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL
+            )
+        `)
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        // Insert data
+        _, err = db.Exec(
+            "INSERT INTO users (name, email) VALUES (?, ?)",
+            "Kit Hopkins", "kit@bunny.net",
+        )
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        // Query data
+        rows, err := db.Query("SELECT * FROM users")
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer rows.Close()
+
+        for rows.Next() {
+            var id int64
+            var name, email string
+            rows.Scan(&id, &name, &email)
+            fmt.Printf("User: %d - %s (%s)\n", id, name, email)
+        }
+    }
+    ```
+
+  </Tab>
+  <Tab title=".NET">
+    Install the libSQL client package:
+
+    ```bash
+    dotnet add package Libsql.Client
+    ```
+
+    Connect and run queries:
+
+    ```csharp
+    using Libsql.Client;
+
+    var client = DatabaseClient.Create(opts =>
+    {
+        opts.Url = "libsql://your-database-id.lite.bunnydb.net";
+        opts.AuthToken = "your-access-token";
+    });
+
+    // Create a table
+    await client.Execute(@"
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL
+        )
+    ");
+
+    // Insert data
+    await client.Execute(
+        "INSERT INTO users (name, email) VALUES (?, ?)",
+        "Kit Hopkins", "kit@bunny.net"
+    );
+
+    // Query data
+    var result = await client.Execute("SELECT * FROM users");
+    foreach (var row in result.Rows)
+    {
+        Console.WriteLine($"User: {row["id"]} - {row["name"]} ({row["email"]})");
+    }
+    ```
+
+  </Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Next steps">
+
+<CardGroup cols={2}>
+
+<Card title="SQL API" icon="code" href="/database/connect/sql-api">
+  Connect directly using the HTTP-based SQL API
+</Card>
+
+<Card title="SDKs" icon="puzzle" href="/database/connect/sdks">
+  Explore all available client libraries
+</Card>
+
+<Card title="ORMs" icon="plug" href="/database/connect/orms">
+  Integrate with Drizzle and other ORMs
+</Card>
+
+<Card title="Replication" icon="globe" href="/database/replication">
+  Learn about global database replication
+</Card>
+
+</CardGroup>
+
+</Step>
+
+</Steps>
