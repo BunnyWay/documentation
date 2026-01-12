@@ -112,7 +112,12 @@
             "groups": [
               {
                 "group": "Bunny CDN",
-                "pages": ["cdn/index", "cdn/quickstart", "cdn/pricing"]
+                "pages": [
+                  "cdn/index",
+                  "cdn/quickstart",
+                  "cdn/regions",
+                  "cdn/pricing"
+                ]
               },
               {
                 "group": "Usage",
@@ -553,6 +558,15 @@
                   {
                     "group": "WordPress",
                     "pages": ["storage/move-files-to-wordpress"]
+                  },
+                  {
+                    "group": "Static Site Hosting",
+                    "pages": [
+                      "storage/static-site-hosting/index",
+                      "storage/static-site-hosting/vite",
+                      "storage/static-site-hosting/react",
+                      "storage/static-site-hosting/vue"
+                    ]
                   }
                 ]
               },
@@ -716,24 +730,8 @@
         ]
       },
       {
-        "product": "Integrations",
-        "description": "Third-party integrations and plugins",
-        "icon": "puzzle",
-        "tabs": [
-          {
-            "tab": "WordPress",
-            "groups": [
-              {
-                "group": "WordPress",
-                "pages": ["docs/wordpress-plugin-support-policy"]
-              }
-            ]
-          }
-        ]
-      },
-      {
         "product": "Database",
-        "description": "Serverless SQLite",
+        "description": "Serverless SQLite over HTTP",
         "icon": "database",
         "tabs": [
           {
@@ -772,6 +770,22 @@
                   "database/durability-and-consistency",
                   "database/limits"
                 ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Integrations",
+        "description": "Third-party integrations and plugins",
+        "icon": "puzzle",
+        "tabs": [
+          {
+            "tab": "WordPress",
+            "groups": [
+              {
+                "group": "WordPress",
+                "pages": ["docs/wordpress-plugin-support-policy"]
               }
             ]
           }
@@ -880,6 +894,11 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/docs",
+      "destination": "/",
+      "permanent": true
+    },
     {
       "source": "/docs/bunny-shield-documentation",
       "destination": "/shield",

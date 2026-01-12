@@ -1,0 +1,189 @@
+---
+title: Deploy a Vue App
+sidebarTitle: Vue
+description: Deploy a Vue application to Bunny Storage with global CDN delivery
+---
+
+This guide walks through deploying a Vue application to Bunny Storage with a Pull Zone for global CDN delivery. This works with Vue CLI, Vite, and Nuxt (static export).
+
+## Deploy Your App
+
+<Steps>
+  <Step title="Build your app">
+    Run the build command for your Vue project:
+
+    <Tabs>
+      <Tab title="Vite (Vue 3)">
+        ```bash
+        npm run build
+        ```
+        This creates a `dist` folder with your production files.
+      </Tab>
+      <Tab title="Vue CLI">
+        ```bash
+        npm run build
+        ```
+        This creates a `dist` folder with your production files.
+      </Tab>
+      <Tab title="Nuxt (Static)">
+        ```bash
+        npm run generate
+        ```
+        This creates a `.output/public` folder with your static files.
+      </Tab>
+    </Tabs>
+
+  </Step>
+
+  <Step title="Create a Storage Zone">
+    1. In the Bunny dashboard, go to **Storage** → **Add Storage Zone**
+    2. Enter a name for your zone (e.g., `my-vue-app`)
+    3. Select a main storage region closest to your primary audience
+    4. Click **Add Storage Zone**
+
+    <Note>
+      Take note of your **Storage Zone Password** from the FTP & API Access section—you'll need this for uploads.
+    </Note>
+
+  </Step>
+
+  <Step title="Upload your files">
+    Open your Storage Zone and upload the contents of your build folder to the root of your storage zone:
+    
+    - **Vite/Vue CLI**: Upload contents of `dist`
+    - **Nuxt**: Upload contents of `.output/public`
+
+    <Accordion title="Automate uploads with the Storage API">
+      For CI/CD pipelines, use the Storage API:
+
+      ```bash
+      #!/bin/bash
+      STORAGE_ZONE="my-vue-app"
+      ACCESS_KEY="YOUR_STORAGE_ZONE_PASSWORD"
+      BUILD_DIR="dist"  # Use ".output/public" for Nuxt
+
+      find $BUILD_DIR -type f | while read file; do
+        remote_path="${file#$BUILD_DIR/}"
+        curl -X PUT "https://storage.bunnycdn.com/$STORAGE_ZONE/$remote_path" \
+          -H "AccessKey: $ACCESS_KEY" \
+          --data-binary "@$file"
+      done
+      ```
+    </Accordion>
+
+  </Step>
+
+  <Step title="Create a Pull Zone">
+    1. Go to **CDN** → **Add Pull Zone**
+    2. Enter a name for your Pull Zone
+    3. Set **Origin Type** to **Storage Zone**
+    4. Select the Storage Zone you created earlier
+    5. Click **Add Pull Zone**
+
+    Your app is now available at `https://your-pullzone-name.b-cdn.net`.
+
+  </Step>
+</Steps>
+
+## Configure Vue Router (History Mode)
+
+Vue apps using Vue Router in history mode need all routes to serve `index.html` so the client-side router can handle navigation.
+
+<Info>
+  If you're using Nuxt with `nuxt generate`, each route generates its own HTML
+  file, so you may not need this configuration unless you have dynamic routes.
+</Info>
+
+<Steps>
+  <Step title="Open Edge Rules">
+    In your Pull Zone settings, go to **Edge Rules** → **Add Edge Rule**
+  </Step>
+
+  <Step title="Create the fallback rule">
+    Configure the rule with:
+
+    | Setting | Value |
+    | ------- | ----- |
+    | **Condition** | If URL does not match (regex) |
+    | **Pattern** | `\.(js\|css\|png\|jpg\|jpeg\|gif\|svg\|ico\|woff\|woff2\|ttf\|eot\|json\|webp\|avif\|map)$` |
+    | **Action** | Override Origin URL |
+    | **Value** | `/index.html` |
+
+  </Step>
+
+  <Step title="Save and test">
+    Click **Save**, then test by navigating directly to a route in your app.
+  </Step>
+</Steps>
+
+<Warning>
+  Without this configuration, refreshing or directly accessing routes like
+  `/about` or `/products/123` will return a 404 error.
+</Warning>
+
+## Add a Custom Domain
+
+To serve your Vue app from your own domain, follow the [Custom Hostname](/cdn/custom-hostname) guide.
+
+## Environment Variables
+
+If your Vue app uses environment variables for API endpoints, ensure they're set correctly for production:
+
+<Tabs>
+  <Tab title="Vite">
+    Create a `.env.production` file:
+    ```bash
+    VITE_API_URL=https://api.example.com
+    ```
+    
+    Access in your code:
+    ```js
+    const apiUrl = import.meta.env.VITE_API_URL
+    ```
+  </Tab>
+  <Tab title="Vue CLI">
+    Create a `.env.production` file:
+    ```bash
+    VUE_APP_API_URL=https://api.example.com
+    ```
+    
+    Access in your code:
+    ```js
+    const apiUrl = process.env.VUE_APP_API_URL
+    ```
+  </Tab>
+  <Tab title="Nuxt">
+    Configure in `nuxt.config.ts`:
+    ```ts
+    export default defineNuxtConfig({
+      runtimeConfig: {
+        public: {
+          apiUrl: process.env.API_URL || 'https://api.example.com'
+        }
+      }
+    })
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Environment variables are embedded at build time. Rebuild and redeploy after
+  changing them.
+</Note>
+
+## Summary
+
+<Steps>
+  <Step title="Build">
+    Run your build command to generate production files.
+  </Step>
+  <Step title="Upload">
+    Upload your build folder contents to a Storage Zone.
+  </Step>
+  <Step title="Connect">Create a Pull Zone pointing to your Storage Zone.</Step>
+  <Step title="Configure routing">
+    Add an Edge Rule to serve `index.html` for Vue Router history mode.
+  </Step>
+</Steps>
+
+Your Vue app is now served globally through Bunny's CDN.

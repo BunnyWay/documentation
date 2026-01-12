@@ -1,0 +1,123 @@
+---
+title: Deploy a Vite Site
+sidebarTitle: Vite
+description: Deploy a Vite-built static site to Bunny Storage with global CDN delivery
+---
+
+This guide walks through deploying a Vite-built static site to Bunny Storage with a Pull Zone for global CDN delivery.
+
+## Deploy Your Site
+
+<Steps>
+  <Step title="Build your site">
+    Run the Vite build command to generate your static files:
+
+    ```bash
+    npm run build
+    ```
+
+    This creates a `dist` folder containing your production-ready site.
+
+  </Step>
+
+  <Step title="Create a Storage Zone">
+    1. In the Bunny dashboard, go to **Storage** → **Add Storage Zone**
+    2. Enter a name for your zone (e.g., `my-vite-site`)
+    3. Select a main storage region closest to your primary audience
+    4. Click **Add Storage Zone**
+
+    <Note>
+      Take note of your **Storage Zone Password** from the FTP & API Access section—you'll need this for uploads.
+    </Note>
+
+  </Step>
+
+  <Step title="Upload your files">
+    Open your Storage Zone and use the built-in file manager to upload the contents of your `dist` folder. Drag and drop all files and folders directly into the root of your storage zone.
+
+    <Accordion title="Automate uploads with the Storage API">
+      For automated deployments, use the Storage API to upload files programmatically:
+
+      ```bash
+      curl -X PUT "https://storage.bunnycdn.com/my-vite-site/index.html" \
+        -H "AccessKey: YOUR_STORAGE_ZONE_PASSWORD" \
+        --data-binary @dist/index.html
+      ```
+
+      You can script this to upload all files in your `dist` folder:
+
+      ```bash
+      #!/bin/bash
+      STORAGE_ZONE="my-vite-site"
+      ACCESS_KEY="YOUR_STORAGE_ZONE_PASSWORD"
+
+      find dist -type f | while read file; do
+        remote_path="${file#dist/}"
+        curl -X PUT "https://storage.bunnycdn.com/$STORAGE_ZONE/$remote_path" \
+          -H "AccessKey: $ACCESS_KEY" \
+          --data-binary "@$file"
+      done
+      ```
+    </Accordion>
+
+  </Step>
+
+  <Step title="Create a Pull Zone">
+    1. Go to **CDN** → **Add Pull Zone**
+    2. Enter a name for your Pull Zone
+    3. Set **Origin Type** to **Storage Zone**
+    4. Select the Storage Zone you created earlier
+    5. Click **Add Pull Zone**
+
+    Your site is now available at `https://your-pullzone-name.b-cdn.net`.
+
+  </Step>
+</Steps>
+
+## Configure for Single-Page Apps
+
+If your Vite app uses client-side routing (React Router, Vue Router, etc.), you need to configure a fallback to `index.html`.
+
+<Steps>
+  <Step title="Open Edge Rules">
+    In your Pull Zone settings, go to **Edge Rules** → **Add Edge Rule**
+  </Step>
+
+  <Step title="Create the fallback rule">
+    Configure the rule with:
+
+    | Setting | Value |
+    | ------- | ----- |
+    | **Condition** | If URL does not match (regex) |
+    | **Pattern** | `\.(js\|css\|png\|jpg\|jpeg\|gif\|svg\|ico\|woff\|woff2\|ttf\|eot\|json\|webp\|avif)$` |
+    | **Action** | Override Origin URL |
+    | **Value** | `/index.html` |
+
+  </Step>
+
+  <Step title="Save and test">
+    Click **Save**, then test by navigating directly to a route in your app (e.g., `https://your-site.b-cdn.net/about`).
+  </Step>
+</Steps>
+
+<Info>
+  See the [Frontend Deployment Overview](/storage/guides) for more details on
+  SPA routing configuration.
+</Info>
+
+## Add a Custom Domain
+
+To serve your Vite site from your own domain, follow the [Custom Hostname](/cdn/custom-hostname) guide.
+
+## Summary
+
+<Steps>
+  <Step title="Build">Run `npm run build` to generate your `dist` folder.</Step>
+  <Step title="Upload">Upload your `dist` contents to a Storage Zone.</Step>
+  <Step title="Connect">Create a Pull Zone pointing to your Storage Zone.</Step>
+  <Step title="Configure">
+    Add an Edge Rule for SPA routing if using client-side navigation.
+  </Step>
+</Steps>
+
+Your Vite site is now served globally through Bunny's CDN.
