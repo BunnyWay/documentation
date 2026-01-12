@@ -32,7 +32,11 @@ type UpgradeWebSocketOptions = {
   idleTimeout: number;
 }
 
+
 type Request = {
+  /**
+    * Upgrade an incoming [Request] to a [WebSocket].
+    */
   function upgradeWebSocket(options?: UpgradeWebSocketOptions): {
     /**
      * The [Response] to send back to the client to have the upgrade
@@ -49,10 +53,157 @@ type Request = {
 ```
 
 # Methods
-todo
+
+## close
+
+Closes the [WebSocket](#) connection, optionally using code ([WebSocket
+connection close code]) as the
+[WebSocket](#) connection close code and reason as the [WebSocket](#) connection close reason.
+
+### Parameters
+
+`code` <Badge color="green">optional</Badge>
+
+Indicate a standardized way to close a [WebSocket](#) connection, based on the
+[WebSocket Connection Close Code
+Specification]((https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.5)).
+
+In unset, will be set to `1000` for normal closure or between `1001-1015` for
+the actual reason in case of an error.
+
+- `reason` <Badge color="green">optional</Badge>
+
+A [string](#) giving a [WebSocket Connection Close
+Reason](https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.6).
+
+
+### Typescript
+
+```typescript
+interface WebSocket {
+  close(code?: number, reason?: string): void;
+  ...
+}
+```
+
+## send
+
+Transmits data using the [WebSocket](#) connection. data can be a [string](#), a
+[Blob](#), an [ArrayBuffer](#), or an [ArrayBufferView](#).
+
+### Typescript
+
+```typescript
+interface WebSocket {
+  send(data: string | ArrayBufferLike | Blob | ArrayBufferView): void;
+  ...
+}
+```
+
+## addEventListener
+
+Appends an event listener for events whose type attribute value is type.
+The callback argument sets the callback that will be invoked when the event
+is dispatched.
+
+On [WebSocket](#) you can have those event type:
+
+- open: When a [WebSocket](#) connection is openned.
+- close: When a [WebSocket](#) connection is closed.
+- error: When a [WebSocket](#) connection error.
+- message: When a [WebSocket](#) Connection new message is incoming into the
+  [WebSocket](#) received from the client.
+
+### Typescript
+
+```typescript
+interfact WebSocket {
+  addEventListener<K extends keyof WebSocketEventMap>(
+    type: K,
+    listener: (this: WebSocket, ev: WebSocketEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  ...
+}
+```
+
+### Example
+
+```typescript
+    socket.addEventListener("open", () => {
+      console.log("a client connected!");
+    });
+```
 
 # Events
-todo
 
-# Examples
-todo
+## Open
+
+```typescript
+type OpenEvent = Event;
+```
+
+## Close
+
+```typescript
+/**
+ * The `CloseEvent` interface represents an event that occurs when a `WebSocket` connection is closed.
+ *
+ * This event is sent to the client when the connection is closed, providing information about
+ * why the connection was closed through the `code`, `reason`, and `wasClean` properties.
+ */
+interface CloseEvent extends Event {
+  /**
+   * Returns the WebSocket connection close code provided by the server.
+   */
+  readonly code: number;
+  /**
+   * Returns the WebSocket connection close reason provided by the server.
+   */
+  readonly reason: string;
+  /**
+   * Returns true if the connection closed cleanly; false otherwise.
+   */
+  readonly wasClean: boolean;
+}
+```
+
+## Message
+
+```typescript
+interface MessageEvent<T = any> extends Event {
+  /**
+   * Returns the data of the message.
+   */
+  readonly data: T;
+  /**
+   * Returns the origin of the message, for server-sent events.
+   */
+  readonly origin: string;
+  /**
+   * Returns the last event ID string, for server-sent events.
+   */
+  readonly lastEventId: string;
+  readonly source: MessageEventSource | null;
+  /**
+   * Returns transferred ports.
+   */
+  readonly ports: ReadonlyArray<MessagePort>;
+}
+```
+
+## Error
+
+```typescript
+type ErrorEvent = Event;
+```
+
+# References
+
+- [WebSocket Protocol](https://www.rfc-editor.org/rfc/rfc6455.htm)
+- [WebSocket mdn Specification](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/)
