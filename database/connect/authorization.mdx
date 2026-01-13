@@ -7,7 +7,7 @@ To connect to your Bunny Database, you'll need your **Database URL** and an **Ac
 
 ## Accessing credentials
 
-Navigate to **Dashboard > Edge Platform > Database > Access** to view and manage your database connection details.
+Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access** to view and manage your database connection details.
 
 <Frame>
   ![Database Access](/images/database/access/database-access-tokens.png)
@@ -41,7 +41,7 @@ Access tokens authenticate your requests to the database. Bunny Database provide
 
 To create a new access token for an additional application while keeping existing tokens valid:
 
-1. Navigate to **Dashboard > Edge Platform > Database > Access**
+1. Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access**
 2. Click **Generate Tokens**
 3. New full-access and read-only tokens will be created
 4. Copy or download your tokens immediately
@@ -55,7 +55,7 @@ To create a new access token for an additional application while keeping existin
 
 If your tokens are exposed or compromised, regenerate them to invalidate all existing tokens:
 
-1. Navigate to **Dashboard > Edge Platform > Database > Access**
+1. Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access**
 2. Click **Regenerate Tokens**
 3. All previous tokens will be immediately invalidated
 4. New full-access and read-only tokens will be created
@@ -134,7 +134,7 @@ curl -X POST https://[your-database-id].lite.bunnydb.net/v2/pipeline \
 
 ## Using credentials with Magic Containers and Edge Scripting
 
-When you add database credentials to a Magic Container or Edge Script, they are automatically available as environment variables:
+When you add database credentials to a [Magic Container](/database/connect/magic-containers) or [Edge Script](/database/connect/scripting), they are automatically available as environment variables:
 
 - `DB_URL`: Your database URL
 - `DB_TOKEN`: Your access token
