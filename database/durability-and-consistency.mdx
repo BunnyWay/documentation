@@ -1,0 +1,73 @@
+---
+title: Durability and Consistency
+description: Understand how Bunny Database handles writes, replication, and data durability
+---
+
+Bunny Database uses a primary-replica architecture with durable storage to balance performance, consistency, and durability.
+
+## Database types
+
+### Primary
+
+The primary database accepts both reads and writes. All write operations are executed on the primary.
+
+### Replica
+
+Replicas accept reads and writes, but all writes are proxied to the primary. If a replica is not up to date with the latest changes, read requests may also be proxied to the primary until fresh data is available.
+
+## Write path
+
+All writes are executed on the primary database. Replicas forward write operations to the primary and do not execute writes locally.
+
+If the primary is changing during a write operation, the request may take longer to complete. A 60-second timeout applies, and the write should complete once the new primary is established.
+
+## Commit semantics
+
+A write is considered committed when it is appended to the primary's WAL (Write-Ahead Log). At this point, the write is durable on the primary but has not yet been uploaded to storage.
+
+## Durability
+
+Data is persisted to storage every 10 seconds or every 4096 frames (where a frame represents a single database page change), whichever comes first.
+
+<Warning>
+  Writes not yet included in the latest successfully uploaded WAL batch may be
+  lost during a primary failover. The maximum data loss window is 10 seconds or
+  4096 frames.
+</Warning>
+
+### Snapshots
+
+Bunny Database creates full snapshots of your data at specific points:
+
+- **Hourly**: While the database is online, a vacuum operation runs every hour
+- **On idle**: When a database becomes inactive, a full vacuum and snapshot is created and uploaded to storage
+
+When restoring, the system downloads the latest snapshot and replays any subsequent WAL segments.
+
+## Replica consistency
+
+The primary streams changes to all active replicas in real-time. Replica lag depends on network latency between regions.
+
+Replicas track their current version. If a replica knows it has version 3 but the primary has version 4, the replica will proxy requests to the primary until it receives the updated data.
+
+<Note>
+  Read-your-writes consistency is not guaranteed when reading from replicas. If
+  your application requires reading data immediately after writing, direct those
+  reads to the primary or account for potential replication lag.
+</Note>
+
+## Failover behavior
+
+### Primary failure
+
+When the primary fails, a new primary is automatically promoted and syncs any missing data from storage. All replicas are notified and begin syncing from the new primary.
+
+During failover, the system attempts to persist pending data to storage. If this cannot complete in time, writes not yet uploaded may be lost.
+
+### Replica failure
+
+If a replica fails, requests are automatically forwarded to another active replica.
+
+### Storage failure
+
+If the underlying storage becomes unavailable, data remains persisted on the primary database while it is running. However, if both storage and the primary fail simultaneously, data is unavailable until storage recovers.
