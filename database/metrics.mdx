@@ -1,3 +1,57 @@
 ---
-title: "Metrics"
+title: Metrics
+description: Monitor your database performance with real-time metrics and usage statistics
 ---
+
+Bunny Database provides detailed metrics to help you monitor performance, track usage, and optimize your queries. Access metrics from **Dashboard > Edge Platform > Database > [Select Database] > Metrics**.
+
+## Date range
+
+Use the date picker to filter all metrics by a specific time period. Select from preset ranges or define a custom date range to analyze historical performance.
+
+<Frame>
+  ![Date Range Picker](/images/database/metrics/date-range-picker.png)
+</Frame>
+
+## Available metrics
+
+### Rows read and written
+
+Track the number of database rows read and written over time. This metric helps you understand your database workload and identify usage patterns.
+
+<Frame>
+  ![Rows Read and Written](/images/database/metrics/rows-read-written.png)
+</Frame>
+
+| Metric       | Description                                                              |
+| ------------ | ------------------------------------------------------------------------ |
+| Rows Read    | Total number of rows retrieved by `SELECT` queries                       |
+| Rows Written | Total number of rows affected by `INSERT`, `UPDATE`, `DELETE` operations |
+
+High read counts may indicate opportunities for caching or query optimization. Sudden spikes in writes may indicate bulk operations or potential issues worth investigating.
+
+### Latency
+
+Monitor query response times across different percentiles to understand your database performance characteristics.
+
+<Frame>![Latency Metrics](/images/database/metrics/latency.png)</Frame>
+
+| Metric  | Description                                                             |
+| ------- | ----------------------------------------------------------------------- |
+| Average | Mean response time across all queries                                   |
+| P75     | 75th percentile latency (75% of queries complete faster than this time) |
+| P95     | 95th percentile latency (95% of queries complete faster than this time) |
+
+Average latency should remain consistent over time. Increases may indicate growing data volumes or query complexity. A large gap between P95 and average suggests some queries need optimization. Consider adding indexes or restructuring slow queries.
+
+### Query count
+
+View the total number of queries executed against your database over time. Correlate query volume with application traffic to ensure expected behavior and identify unusual patterns.
+
+<Frame>![Query Count](/images/database/metrics/query-count.png)</Frame>
+
+### Database size
+
+Monitor your database storage consumption over time. This metric shows the total size of your database including all tables, indexes, and metadata. Track growth trends to plan for scaling and identify unexpected increases.
+
+<Frame>![Database Size](/images/database/metrics/database-size.png)</Frame>

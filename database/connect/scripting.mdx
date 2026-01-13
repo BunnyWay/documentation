@@ -1,3 +1,62 @@
 ---
-title: "Scripting"
+title: Scripting
+description: Connect your Edge Scripts to Bunny Database using environment variables
 ---
+
+You can connect [Edge Scripts](/scripting) to your database by adding credentials as environment variables directly from the database dashboard.
+
+<Steps>
+
+<Step title="Go to the Access page">
+
+Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access**.
+
+</Step>
+
+<Step title="Generate tokens">
+
+Click **Generate Tokens** to create new access credentials for your database.
+
+<Frame>![Generate Tokens](/images/database/connect/generate-tokens.png)</Frame>
+
+</Step>
+
+<Step title="Add to script">
+
+Once the tokens are generated, click **Add Secrets to Edge Script**.
+
+<Frame>
+  ![Add to
+  Script](/images/database/connect/scripting/add-secrets-to-edge-script.png)
+</Frame>
+
+</Step>
+
+<Step title="Select your script">
+
+Choose the Edge Script you want to connect to your database.
+
+<Frame>
+  ![Select Script](/images/database/connect/scripting/select-edge-script.png)
+</Frame>
+
+</Step>
+
+<Step title="Access the environment variables">
+
+The database URL and access token are now available as environment variables in your script. Use them to connect to your database:
+
+```typescript
+import { createClient } from "@libsql/client";
+
+const client = createClient({
+  url: process.env.DB_URL,
+  authToken: process.env.DB_TOKEN,
+});
+
+const result = await client.execute("SELECT * FROM users");
+```
+
+</Step>
+
+</Steps>
