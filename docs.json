@@ -307,7 +307,8 @@
                 "pages": [
                   "magic-containers/limits",
                   "magic-containers/troubleshooting",
-                  "magic-containers/faqs"
+                  "magic-containers/faqs",
+                  "magic-containers/api-reference"
                 ]
               }
             ]
@@ -618,7 +619,8 @@
                 "pages": [
                   "shield/verified-bots",
                   "shield/metrics",
-                  "shield/cookies"
+                  "shield/cookies",
+                  "shield/api-reference"
                 ]
               }
             ]
