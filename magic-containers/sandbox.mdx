@@ -7,6 +7,18 @@ description: "Magic containers provide a powerful and flexible environment for d
 
 [Kata Containers](https://katacontainers.io/) introduces an additional layer of security by creating a virtual machine (VM) for each container. This VM encapsulates the container, adding an extra level of isolation. This sandboxing approach ensures that even in the presence of malicious activities within the container, the underlying system remains protected.
 
+# Container Runtime
+
+Magic Containers uses [gVisor](https://gvisor.dev/) as the container runtime, which provides an additional layer of security through application kernel isolation. gVisor intercepts application system calls and handles them in a user-space kernel, reducing the attack surface of the host kernel.
+
+## Syscall Compatibility
+
+gVisor implements a subset of Linux system calls. While most common applications work without modification, some workloads that rely on specialized or less common syscalls may experience compatibility issues.
+
+If your application depends on specific Linux syscalls, we recommend testing thoroughly before deployment. Applications using standard networking, file I/O, and process management typically work without issues.
+
+For a complete list of supported syscalls, see the [gVisor compatibility documentation](https://gvisor.dev/docs/user_guide/compatibility/linux/amd64/).
+
 # Understanding VXLAN
 
 In the context of container networking, Virtual Extensible LAN (VXLAN) is a crucial technology that facilitates the creation of virtual networks over a physical network infrastructure. 
