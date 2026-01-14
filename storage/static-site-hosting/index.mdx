@@ -20,15 +20,13 @@ Bunny Storage combined with a Pull Zone provides a simple, fast way to host stat
 Single-page applications (React, Vue, Angular, etc.) handle routing client-side. When a user navigates directly to a route like `/dashboard` or refreshes the page, the CDN needs to serve `index.html` instead of returning a 404.
 
 <Accordion title="Why SPAs need special configuration">
-  When your SPA loads, the JavaScript router takes over navigation. But if a user:
-  
-  - Bookmarks a deep link like `/products/123`
-  - Refreshes the page on `/settings`
-  - Shares a URL like `/about`
-  
-  The browser requests that exact path from the server. Since no file exists at that path (only `index.html` and your assets exist), the server returns a 404.
-  
-  The solution is to configure an Edge Rule that serves `index.html` for all non-asset requests, allowing your client-side router to handle the URL.
+  When your SPA loads, the JavaScript router takes over navigation. But if a
+  user: - Bookmarks a deep link like `/products/123` - Refreshes the page on
+  `/settings` - Shares a URL like `/about` The browser requests that exact path
+  from the server. Since no file exists at that path (only `index.html` and your
+  assets exist), the server returns a 404. The solution is to configure an Edge
+  Rule that serves `index.html` for all non-asset requests, allowing your
+  client-side router to handle the URL.
 </Accordion>
 
 ### Configure SPA Fallback
@@ -40,21 +38,15 @@ To enable client-side routing, create an Edge Rule in your Pull Zone:
     Go to **CDN** → select your Pull Zone → **Edge Rules** → **Add Edge Rule**
   </Step>
   <Step title="Set the condition">
-    Add a condition: **If URL does not match** with the regex pattern:
-    ```
+    Add a condition: **If URL does not match** with the regex pattern: ```
     \.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json|webp|avif|mp4|webm)$
-    ```
-    This matches all static asset extensions that should be served directly.
+    ``` This matches all static asset extensions that should be served directly.
   </Step>
   <Step title="Set the action">
-    Set the action to **Override Origin URL** with the value:
-    ```
-    /index.html
+    Set the action to **Override Origin URL** with the value: ``` /index.html
     ```
   </Step>
-  <Step title="Save the rule">
-    Click **Save** to activate the rule.
-  </Step>
+  <Step title="Save the rule">Click **Save** to activate the rule.</Step>
 </Steps>
 
 Now all requests that aren't for static assets will serve your `index.html`, and your client-side router will handle the path.
@@ -62,13 +54,13 @@ Now all requests that aren't for static assets will serve your `index.html`, and
 ## Framework Guides
 
 <CardGroup cols={2}>
-  <Card title="Vite" icon="bolt" href="/storage/guides/vite">
+  <Card title="Vite" icon="bolt" href="/storage/static-site-hosting/vite">
     Deploy a Vite-built static site with optimal configuration.
   </Card>
-  <Card title="React" icon="react" href="/storage/guides/react">
+  <Card title="React" icon="react" href="/storage/static-site-hosting/react">
     Deploy Create React App and other React builds.
   </Card>
-  <Card title="Vue" icon="vuejs" href="/storage/guides/vue">
+  <Card title="Vue" icon="vuejs" href="/storage/static-site-hosting/vue">
     Deploy Vue CLI and Vite-based Vue applications.
   </Card>
 </CardGroup>
@@ -88,13 +80,14 @@ Add your own domain to any frontend deployment:
 
 Static frontends benefit from aggressive caching. Consider these settings in your Pull Zone:
 
-| File Type | Recommended Cache Time |
-| --------- | ---------------------- |
-| HTML | Short (1 hour) or use cache busting |
-| JS/CSS (hashed) | Long (1 year) |
-| Images | Long (1 month+) |
-| Fonts | Long (1 year) |
+| File Type       | Recommended Cache Time              |
+| --------------- | ----------------------------------- |
+| HTML            | Short (1 hour) or use cache busting |
+| JS/CSS (hashed) | Long (1 year)                       |
+| Images          | Long (1 month+)                     |
+| Fonts           | Long (1 year)                       |
 
 <Note>
-  Modern build tools like Vite add content hashes to filenames (e.g., `main.a1b2c3.js`), making it safe to cache these files indefinitely.
+  Modern build tools like Vite add content hashes to filenames (e.g.,
+  `main.a1b2c3.js`), making it safe to cache these files indefinitely.
 </Note>
