@@ -57,7 +57,42 @@
               },
               {
                 "group": "Accounts & Billing",
-                "pages": ["accounts-and-billing/affiliate-program"]
+                "pages": [
+                  {
+                    "group": "Account Settings",
+                    "pages": [
+                      "account/index",
+                      "account/two-factor-authentication",
+                      "account/change-password",
+                      "account/appearance",
+                      "account/notification-settings",
+                      "account/api-keys",
+                      "account/integrations",
+                      "account/data-processing-agreement",
+                      "account/close-account"
+                    ]
+                  },
+                  {
+                    "group": "Team Management",
+                    "pages": [
+                      "account/team-management/index",
+                      "account/team-management/add-team-member",
+                      "account/team-management/remove-team-member",
+                      "account/team-management/permissions"
+                    ]
+                  },
+                  {
+                    "group": "Billing",
+                    "pages": [
+                      "billing/index",
+                      "billing/add-funds",
+                      "billing/auto-recharge",
+                      "billing/billing-history",
+                      "billing/sales-tax",
+                      "billing/affiliate-program"
+                    ]
+                  }
+                ]
               }
             ]
           }
@@ -1988,6 +2023,11 @@
     {
       "source": "/docs/cdn-api-purge-rate-limits",
       "destination": "/cdn/purge-cache#rate-limits",
+      "permanent": true
+    },
+    {
+      "source": "/docs/us-taxation",
+      "destination": "/billing/sales-tax",
       "permanent": true
     }
   ]
