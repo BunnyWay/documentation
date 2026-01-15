@@ -1,11 +1,7 @@
 ---
 title: "Sandboxing"
-description: "Magic containers provide a powerful and flexible environment for deploying applications, akin to virtual machines but with a unique approach. Traditional containers utilize Linux namespaces to establish resource limits, but in the event of a malicious deployment, there is a potential for exploitation and breaching of container boundaries. To fortify container security and prevent any escape from these limits, Magic Containers incorporates Kata Containers."
+description: "Magic containers provide a powerful and flexible environment for deploying applications, akin to virtual machines but with a unique approach. Traditional containers utilize Linux namespaces to establish resource limits, but in the event of a malicious deployment, there is a potential for exploitation and breaching of container boundaries. To fortify container security and prevent any escape from these limits, Magic Containers incorporates gVisor—an application kernel that intercepts and handles system calls in user space, creating a strong isolation layer between the application and the host kernel without the overhead of full virtualization."
 ---
-
-# Understanding Kata Containers
-
-[Kata Containers](https://katacontainers.io/) introduces an additional layer of security by creating a virtual machine (VM) for each container. This VM encapsulates the container, adding an extra level of isolation. This sandboxing approach ensures that even in the presence of malicious activities within the container, the underlying system remains protected.
 
 # Container Runtime
 
