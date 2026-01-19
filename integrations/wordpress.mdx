@@ -3,11 +3,11 @@ title: "Overview"
 description: "This document outlines the support policy for the  WordPress plugin and its core dependencies: WordPress and PHP."
 ---
 
-This policy is designed around a six-month maintenance window. If you install the plugin using supported versions of its dependencies today, you’re guaranteed support for at least the next six months.
+This policy is designed around a six-month maintenance window. If you install the plugin using supported versions of its dependencies today, you're guaranteed support for at least the next six months.
 
 ## Plugin
 
-The plugin’s support lifecycle is based on minor version releases. The current minor version of the plugin will receive full support until the release of the next minor version. The version immediately preceding the current release will continue to receive security and severe bug fixes for six months after the new release. After this window, that version will no longer receive updates or patches.
+The plugin's support lifecycle is based on minor version releases. The current minor version of the plugin will receive full support until the release of the next minor version. The version immediately preceding the current release will continue to receive security and severe bug fixes for six months after the new release. After this window, that version will no longer receive updates or patches.
 
 Although patch releases may still be issued for the previous minor version, it is important to note that WordPress does not offer automatic updates for older plugin branches. As a result, you will need to manually update your plugin to receive these fixes.
 
@@ -20,9 +20,9 @@ Although patch releases may still be issued for the previous minor version, it i
 
 ## PHP
 
-The plugin is supported on all PHP versions currently in either active support or security support, as defined by [The PHP Group](https://www.php.net/supported-versions). In addition, the plugin provides security issue support for PHP versions included under Ubuntu’s LTS standard security maintenance. Details about Ubuntu’s maintenance timelines are available [here](https://ubuntu.com/about/release-cycle).
+The plugin is supported on all PHP versions currently in either active support or security support, as defined by [The PHP Group](https://www.php.net/supported-versions). In addition, the plugin provides security issue support for PHP versions included under Ubuntu's LTS standard security maintenance. Details about Ubuntu's maintenance timelines are available [here](https://ubuntu.com/about/release-cycle).
 
-However, a new plugin minor version will not support a PHP version under the Ubuntu LTS scheme if that PHP version is scheduled to expire less than six months after the plugin’s release date. For example, if a plugin version is released in December 2026, it will not support PHP 8.1, even if PHP 8.1 is included in Ubuntu 22.04 LTS. This is because Ubuntu’s support for PHP 8.1 ends in April 2027, which is less than six months after the plugin release.
+However, a new plugin minor version will not support a PHP version under the Ubuntu LTS scheme if that PHP version is scheduled to expire less than six months after the plugin's release date. For example, if a plugin version is released in December 2026, it will not support PHP 8.1, even if PHP 8.1 is included in Ubuntu 22.04 LTS. This is because Ubuntu's support for PHP 8.1 ends in April 2027, which is less than six months after the plugin release.
 
 While bug reports related to pre-release PHP versions (e.g., PHP 8.5) are welcome, the plugin does not provide full support for such versions until they are officially released. Compatibility with major PHP releases cannot be guaranteed until official PHP changelogs are finalized.
 
@@ -38,7 +38,7 @@ While bug reports related to pre-release PHP versions (e.g., PHP 8.5) are welcom
 
 ## WordPress
 
-Each minor version supports WordPress versions released up to six months before the plugin’s own release. This ensures compatibility with reasonably recent WordPress updates without requiring immediate upgrades.
+Each minor version supports WordPress versions released up to six months before the plugin's own release. This ensures compatibility with reasonably recent WordPress updates without requiring immediate upgrades.
 
 For example, if a plugin version is released in May 2025, it will support all WordPress versions released from November 2024 onward. Older WordPress versions, even if they remain technically functional, are not officially supported beyond this six-month backward compatibility window.
 

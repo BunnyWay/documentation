@@ -47,7 +47,7 @@ Choose the Edge Script you want to connect to your database.
 The database URL and access token are now available as environment variables in your script. Use them to connect to your database:
 
 ```typescript
-import { createClient } from "@libsql/client";
+import { createClient } from "@libsql/client/web";
 
 const client = createClient({
   url: process.env.DB_URL,
