@@ -1,3 +1,252 @@
 ---
 title: "SQL API"
+description: "Execute SQL queries over HTTP using the libSQL remote protocol"
 ---
+
+<Warning>
+  The SQL API is currently in beta. APIs and behavior may change.
+</Warning>
+
+The SQL API allows you to execute SQL queries directly over HTTP without using an SDK. This is useful for environments where an SDK isn't available, or when you need to make simple queries from any HTTP client.
+
+Bunny Database uses the [libSQL remote protocol](https://github.com/tursodatabase/libsql/blob/main/docs/HRANA_3_SPEC.md#hrana-over-http) (Hrana over HTTP) for its SQL API.
+
+## Quickstart
+
+<Steps>
+
+<Step title="Get your Database URL">
+
+Your Database URL can be found in the Dashboard under **Edge Platform > Database > [Select Database] > Access**.
+
+The HTTP endpoint follows this format:
+
+```
+https://[your-database-id].lite.bunnydb.net/v2/pipeline
+```
+
+<Info>
+  Note the `/v2/pipeline` path — this is the endpoint that accepts SQL requests.
+</Info>
+
+</Step>
+
+<Step title="Get your Access Token">
+
+You'll need an access token to authenticate requests. Generate one from the same Access page in the Dashboard, or see [Database Access](/database/connect/authorization) for details.
+
+</Step>
+
+<Step title="Execute a query">
+
+Send a POST request to the pipeline endpoint with your SQL statement:
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://[your-database-id].lite.bunnydb.net/v2/pipeline \
+  -H "Authorization: Bearer your-access-token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "requests": [
+      { "type": "execute", "stmt": { "sql": "SELECT * FROM users" } },
+      { "type": "close" }
+    ]
+  }'
+```
+
+```ts JavaScript
+const url = "https://[your-database-id].lite.bunnydb.net/v2/pipeline";
+const authToken = "your-access-token";
+
+const response = await fetch(url, {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${authToken}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    requests: [
+      { type: "execute", stmt: { sql: "SELECT * FROM users" } },
+      { type: "close" },
+    ],
+  }),
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+url = "https://[your-database-id].lite.bunnydb.net/v2/pipeline"
+auth_token = "your-access-token"
+
+response = requests.post(
+    url,
+    headers={
+        "Authorization": f"Bearer {auth_token}",
+        "Content-Type": "application/json",
+    },
+    json={
+        "requests": [
+            {"type": "execute", "stmt": {"sql": "SELECT * FROM users"}},
+            {"type": "close"},
+        ]
+    },
+)
+
+print(response.json())
+```
+
+</CodeGroup>
+
+</Step>
+
+</Steps>
+
+## Request format
+
+Each request to `/v2/pipeline` contains an array of requests to execute. A typical request includes an `execute` statement followed by a `close`:
+
+```json
+{
+  "requests": [
+    { "type": "execute", "stmt": { "sql": "SELECT * FROM users" } },
+    { "type": "close" }
+  ]
+}
+```
+
+## Response format
+
+The response contains a `results` array with the outcome of each request:
+
+```json
+{
+  "baton": null,
+  "base_url": null,
+  "results": [
+    {
+      "type": "ok",
+      "response": {
+        "type": "execute",
+        "result": {
+          "cols": [
+            { "name": "id", "decltype": "INTEGER" },
+            { "name": "name", "decltype": "TEXT" }
+          ],
+          "rows": [
+            [
+              { "type": "integer", "value": "1" },
+              { "type": "text", "value": "Kit" }
+            ]
+          ],
+          "affected_row_count": 0,
+          "last_insert_rowid": null,
+          "replication_index": "1"
+        }
+      }
+    },
+    {
+      "type": "ok",
+      "response": {
+        "type": "close"
+      }
+    }
+  ]
+}
+```
+
+## Parameter binding
+
+Use parameter binding to safely pass values to your queries. This helps prevent SQL injection and handles proper escaping.
+
+### Positional parameters
+
+Use `?` placeholders and provide values in the `args` array:
+
+```json
+{
+  "requests": [
+    {
+      "type": "execute",
+      "stmt": {
+        "sql": "SELECT * FROM users WHERE id = ?",
+        "args": [{ "type": "integer", "value": "1" }]
+      }
+    },
+    { "type": "close" }
+  ]
+}
+```
+
+### Named parameters
+
+Use `:name`, `$name`, or `@name` placeholders with `named_args`:
+
+```json
+{
+  "requests": [
+    {
+      "type": "execute",
+      "stmt": {
+        "sql": "SELECT * FROM users WHERE name = :name",
+        "named_args": [
+          {
+            "name": "name",
+            "value": { "type": "text", "value": "Kit" }
+          }
+        ]
+      }
+    },
+    { "type": "close" }
+  ]
+}
+```
+
+## Value types
+
+The `type` field in parameter values must be one of:
+
+| Type      | Description                  |
+| --------- | ---------------------------- |
+| `null`    | NULL value                   |
+| `integer` | 64-bit signed integer        |
+| `float`   | 64-bit floating point        |
+| `text`    | UTF-8 string                 |
+| `blob`    | Binary data (base64 encoded) |
+
+<Note>
+  Values are passed as strings in JSON to avoid precision loss, since some JSON
+  implementations treat all numbers as 64-bit floats.
+</Note>
+
+## Multiple statements
+
+You can execute multiple statements in a single request:
+
+```json
+{
+  "requests": [
+    {
+      "type": "execute",
+      "stmt": { "sql": "INSERT INTO users (name) VALUES ('Kit')" }
+    },
+    { "type": "execute", "stmt": { "sql": "SELECT * FROM users" } },
+    { "type": "close" }
+  ]
+}
+```
+
+Each statement executes in order, and the results array contains the response for each.
+
+## Interactive sessions
+
+For most use cases, executing statements with a `close` request in a single HTTP call is sufficient. The API also supports interactive sessions using a `baton`, a token returned in responses that allows you to maintain state across multiple HTTP requests. This is useful for advanced scenarios like long-running transactions that span multiple roundtrips.
+
+<Info>
+  If you have a use case that requires interactive sessions with batons,
+  [contact us](https://bunny.net/contact) to discuss your requirements.
+</Info>
