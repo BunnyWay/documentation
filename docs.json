@@ -426,6 +426,7 @@
                   },
                   "stream/premium-encoding",
                   "stream/transcribing",
+                  "stream/smart-chapters",
                   {
                     "group": "MediaCage DRM",
                     "pages": [
@@ -745,15 +746,11 @@
                 "group": "Connect",
                 "pages": [
                   "database/connect/authorization",
-                  "database/connect/sql-api",
                   {
                     "group": "SDKs",
-                    "pages": ["database/connect/sdks"]
+                    "pages": ["database/connect/typescript"]
                   },
-                  {
-                    "group": "ORMs",
-                    "pages": ["database/connect/orms"]
-                  },
+                  "database/connect/sql-api",
                   "database/connect/scripting",
                   "database/connect/magic-containers"
                 ]
@@ -781,7 +778,12 @@
             "groups": [
               {
                 "group": "WordPress",
-                "pages": ["docs/wordpress-plugin-support-policy"]
+                "pages": ["integrations/wordpress"]
+              },
+              {
+                "group": "cPanel",
+                "hidden": true,
+                "pages": ["integrations/cpanel"]
               }
             ]
           }
@@ -2030,6 +2032,176 @@
     {
       "source": "/docs/us-taxation",
       "destination": "/billing/sales-tax",
+      "permanent": true
+    },
+    {
+      "source": "/docs/bunny-ai-image-generation",
+      "destination": "/ai-image-generation",
+      "permanent": true
+    },
+    {
+      "source": "/docs/connecting",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cpanel-plugin-installation",
+      "destination": "/integrations/cpanel",
+      "permanent": true
+    },
+    {
+      "source": "/docs/database-pricing",
+      "destination": "/database/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-documentation",
+      "destination": "/scripting",
+      "permanent": true
+    },
+    {
+      "source": "/docs/free-trial-overview",
+      "destination": "/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/frequently-asked-questions",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/getting-started-with-bunnynet",
+      "destination": "/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/http-sql-api",
+      "destination": "/database/connect/sql-api",
+      "permanent": true
+    },
+    {
+      "source": "/docs/http-sql-api-1",
+      "destination": "/database/connect/sql-api",
+      "permanent": true
+    },
+    {
+      "source": "/docs/limits",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-documentation",
+      "destination": "/magic-containers",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-persistent-volumes",
+      "destination": "/magic-containers/persistent-volumes",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-trial-limits",
+      "destination": "/magic-containers/limits",
+      "permanent": true
+    },
+    {
+      "source": "/docs/orms",
+      "destination": "/database",
+      "permanent": true
+    },
+    {
+      "source": "/docs/premium-encoding",
+      "destination": "/stream/premium-encoding",
+      "permanent": true
+    },
+    {
+      "source": "/docs/qp-api-overview-draft",
+      "destination": "/optimizer/dynamic-images/overview",
+      "permanent": true
+    },
+    {
+      "source": "/docs/sdks",
+      "destination": "/database",
+      "permanent": true
+    },
+    {
+      "source": "/docs/reference",
+      "destination": "/api-reference",
+      "permanent": true
+    },
+    {
+      "source": "/docs/quickstart",
+      "destination": "/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-captioning-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-changelog-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-free-encoding-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-just-in-time-encoding-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-live-streaming",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-moments-and-chapters_2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-player",
+      "destination": "/stream/player-settings",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-smart-chapters",
+      "destination": "/stream/smart-chapters",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-storage",
+      "destination": "/stream/storage-tiers",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-support-and-update-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-upload-and-playback-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/troubleshooting-and-faq-2",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/wordpress-plugin-support-policy",
+      "destination": "/integrations/wordpress",
+      "permanent": true
+    },
+    {
+      "source": "/integrations",
+      "destination": "/integrations/wordpress",
       "permanent": true
     }
   ]

@@ -1,5 +1,5 @@
 ---
-title: "Database Access"
+title: "Auth & Access"
 description: "Manage database URLs and access tokens for authentication"
 ---
 
@@ -73,7 +73,7 @@ Pass your Database URL and access token to the client library when creating a co
 <CodeGroup>
     
 ```ts TypeScript highlight={5}
-import { createClient } from "@libsql/client";
+import { createClient } from "@libsql/client/web";
 
 const client = createClient({
 url: "libsql://[your-database-id].lite.bunnydb.net",
