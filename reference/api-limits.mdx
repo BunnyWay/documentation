@@ -1,9 +1,0 @@
----
-title: "API Limits"
-description: "To maintain good performance, the Storage HTTP has a set of limits in place. These are applied on a per-server case on our side. Each of our storage locations runs multiple servers, meaning that if you connect to multiple of our servers, the limit will be applied separately on each of them."
----
-
-| Title                | Limit | Description                                                                                                                                                                      |
-| -------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Connections Per Zone | 100   | Up to 100 concurrent connections are allowed to upload to a single zone at the same time. If the limit is reached, further requests will be rejected with a **status code 429**. |
-| Connections Per IP   | 100   | Up to 200 connections will be allowed from a single IP. If the limit is reached, further requests will be rejected with a **status code 429**.                                   |

@@ -1,0 +1,148 @@
+---
+title: Deploy a React App
+sidebarTitle: React
+description: Deploy a React application to Bunny Storage with global CDN delivery
+---
+
+This guide walks through deploying a React application to Bunny Storage with a Pull Zone for global CDN delivery. This works with Vite and other React build tools.
+
+## Deploy Your App
+
+<Steps>
+  <Step title="Build your app">
+    Run the build command for your React project:
+
+    <Tabs>
+      <Tab title="Vite">
+        ```bash
+        npm run build
+        ```
+        This creates a `dist` folder with your production files.
+      </Tab>
+      <Tab title="Other Build Tools">
+        ```bash
+        npm run build
+        ```
+        Check your build tool's documentation for the output folder location.
+      </Tab>
+    </Tabs>
+
+  </Step>
+
+  <Step title="Create a Storage Zone">
+    1. In the Bunny dashboard, go to **Storage** → **Add Storage Zone**
+    2. Enter a name for your zone (e.g., `my-react-app`)
+    3. Select a main storage region closest to your primary audience
+    4. Click **Add Storage Zone**
+
+    <Note>
+      Take note of your **Storage Zone Password** from the FTP & API Access section—you'll need this for uploads.
+    </Note>
+
+  </Step>
+
+  <Step title="Upload your files">
+    Open your Storage Zone and upload the contents of your build folder (typically `dist`) to the root of your storage zone.
+
+    <Accordion title="Automate uploads with the Storage API">
+      For CI/CD pipelines, use the Storage API:
+
+      ```bash
+      #!/bin/bash
+      STORAGE_ZONE="my-react-app"
+      ACCESS_KEY="YOUR_STORAGE_ZONE_PASSWORD"
+      BUILD_DIR="dist"
+
+      find $BUILD_DIR -type f | while read file; do
+        remote_path="${file#$BUILD_DIR/}"
+        curl -X PUT "https://storage.bunnycdn.com/$STORAGE_ZONE/$remote_path" \
+          -H "AccessKey: $ACCESS_KEY" \
+          --data-binary "@$file"
+      done
+      ```
+    </Accordion>
+
+  </Step>
+
+  <Step title="Create a Pull Zone">
+    1. Go to **CDN** → **Add Pull Zone**
+    2. Enter a name for your Pull Zone
+    3. Set **Origin Type** to **Storage Zone**
+    4. Select the Storage Zone you created earlier
+    5. Click **Add Pull Zone**
+
+    Your app is now available at `https://your-pullzone-name.b-cdn.net`.
+
+  </Step>
+</Steps>
+
+## Configure Client-Side Routing
+
+React apps using React Router need all routes to serve `index.html` so the client-side router can handle navigation.
+
+<Steps>
+  <Step title="Open Edge Rules">
+    In your Pull Zone settings, go to **Edge Rules** → **Add Edge Rule**
+  </Step>
+
+  <Step title="Create the fallback rule">
+    Configure the rule with:
+
+    | Setting | Value |
+    | ------- | ----- |
+    | **Condition** | If URL does not match (regex) |
+    | **Pattern** | `\.(js\|css\|png\|jpg\|jpeg\|gif\|svg\|ico\|woff\|woff2\|ttf\|eot\|json\|webp\|avif\|map)$` |
+    | **Action** | Override Origin URL |
+    | **Value** | `/index.html` |
+
+  </Step>
+
+  <Step title="Save and test">
+    Click **Save**, then test by navigating directly to a route in your app.
+  </Step>
+</Steps>
+
+<Warning>
+  Without this configuration, refreshing or directly accessing routes like
+  `/dashboard` or `/users/123` will return a 404 error.
+</Warning>
+
+## Add a Custom Domain
+
+To serve your React app from your own domain, follow the [Custom Hostname](/cdn/custom-hostname) guide.
+
+## Environment Variables
+
+If your React app uses environment variables for API endpoints, ensure they're set correctly for production.
+
+Create a `.env.production` file:
+
+<Tabs>
+  <Tab title="Vite">```bash VITE_API_URL=https://api.example.com ```</Tab>
+  <Tab title="Other Build Tools">
+    Check your build tool's documentation for environment variable
+    configuration.
+  </Tab>
+</Tabs>
+
+<Note>
+  Environment variables are embedded at build time. Rebuild and redeploy after
+  changing them.
+</Note>
+
+## Summary
+
+<Steps>
+  <Step title="Build">
+    Run your build command to generate production files.
+  </Step>
+  <Step title="Upload">
+    Upload your build folder contents to a Storage Zone.
+  </Step>
+  <Step title="Connect">Create a Pull Zone pointing to your Storage Zone.</Step>
+  <Step title="Configure routing">
+    Add an Edge Rule to serve `index.html` for all non-asset requests.
+  </Step>
+</Steps>
+
+Your React app is now served globally through Bunny's CDN.

@@ -10,11 +10,11 @@ Edge Rules use a powerful wildcard matching system for trigger paths. Understand
 
 The `*` wildcard matches any sequence of characters. You can use it anywhere in the trigger path:
 
-| Pattern             | Matches                                                   | Does Not Match                 |
-| ------------------- | --------------------------------------------------------- | ------------------------------ |
-| `*.jpg`             | `/image.jpg`, `/photos/sunset.jpg`                        | `/image.png`, `/image.jpg.bak` |
-| `/images/*`         | `/images/logo.png`, `/images/photos/cat.jpg`              | `/img/logo.png`                |
-| `*://example.com/*` | `http://example.com/page`, `https://example.com/file.css` | `http://sub.example.com/page`  |
+| Pattern             | Matches                                                    | Does Not Match                 |
+| ------------------- | ---------------------------------------------------------- | ------------------------------ |
+| `*.jpg`             | `/image.jpg`, `/photos/sunset.jpg`                         | `/image.png`, `/image.jpg.bak` |
+| `/images/*`         | `/images/logo.png`, `/images/photos/cat.jpg`               | `/img/logo.png`                |
+| `*://example.com/*` | `https://example.com/page`, `https://example.com/file.css` | `https://sub.example.com/page` |
 
 ## Common patterns
 

@@ -1,0 +1,306 @@
+---
+title: ".NET"
+description: "Get started with Bunny Database and .NET using the Bunny.LibSQL.Client"
+---
+
+In this .NET quickstart you will learn how to:
+
+- Retrieve database credentials
+- Install the Bunny.LibSQL.Client package
+- Connect to a remote Bunny Database
+- Define models and run migrations
+- Execute queries using LINQ
+
+<Note>
+  While foundational ORM and querying features are available, several
+  enhancements are still in progress. You can report issues, contribute, or
+  learn more on [GitHub](https://github.com/BunnyWay/bunny-libsql-client).
+</Note>
+
+## Quickstart
+
+<Steps>
+
+<Step title="Retrieve database credentials">
+
+You will need an existing database to continue. If you don't have one, [create one](/database/quickstart).
+
+Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access** to find your database URL and generate an access token.
+
+<Info>
+  You should store these as environment variables to keep them secure.
+</Info>
+
+</Step>
+
+<Step title="Install Bunny.LibSQL.Client">
+
+Install the package via NuGet:
+
+```bash
+dotnet add package Bunny.LibSql.Client
+```
+
+</Step>
+
+<Step title="Define your database">
+
+Create a database context class that inherits from `LibSqlDbContext`:
+
+```csharp
+public class AppDb : LibSqlDbContext
+{
+    public AppDb(string dbUrl, string accessKey)
+        : base(new LibSqlClient(dbUrl, accessKey)) {}
+
+    public LibSqlTable<User> Users { get; set; }
+}
+```
+
+</Step>
+
+<Step title="Define your models">
+
+Create model classes with attributes to define the table structure:
+
+```csharp
+[Table("Users")]
+public class User
+{
+    [Key]
+    public int id { get; set; }
+
+    [Index]
+    public string name { get; set; }
+
+    public string email { get; set; }
+}
+```
+
+</Step>
+
+<Step title="Initialize and migrate">
+
+Create an instance of your database context and apply migrations:
+
+```csharp
+var db = new AppDb(
+    Environment.GetEnvironmentVariable("DB_URL"),
+    Environment.GetEnvironmentVariable("DB_TOKEN")
+);
+
+await db.ApplyMigrationsAsync();
+```
+
+</Step>
+
+<Step title="Execute a query">
+
+You can query your database using LINQ:
+
+```csharp
+var users = await db.Users.ToListAsync();
+
+foreach (var user in users)
+{
+    Console.WriteLine($"User: {user.name}");
+}
+```
+
+</Step>
+
+</Steps>
+
+## Managing Records
+
+### Insert
+
+Insert records using `InsertAsync`:
+
+```csharp
+await db.Users.InsertAsync(new User
+{
+    id = 1,
+    name = "Kit",
+    email = "kit@example.com"
+});
+```
+
+### Update
+
+Update records using `UpdateAsync`:
+
+```csharp
+var user = await db.Users.Where(u => u.id == 1).FirstOrDefaultAsync();
+user.name = "Kit Updated";
+await db.Users.UpdateAsync(user);
+```
+
+### Delete
+
+Delete records using `DeleteAsync`:
+
+```csharp
+var user = await db.Users.Where(u => u.id == 1).FirstOrDefaultAsync();
+await db.Users.DeleteAsync(user);
+```
+
+## Querying with LINQ
+
+### Basic Query
+
+```csharp
+var users = await db.Users
+    .Where(u => u.name.StartsWith("K"))
+    .ToListAsync();
+```
+
+### Eager Loading with Include
+
+Load related entities using `Include()`:
+
+```csharp
+var usersWithOrders = await db.Users
+    .Include(u => u.Orders)
+    .ToListAsync();
+```
+
+### Aggregates
+
+Perform aggregate queries with `CountAsync()` and `SumAsync()`:
+
+```csharp
+var userCount = await db.Users.CountAsync();
+var totalPrice = await db.Orders.SumAsync(o => o.price);
+```
+
+<Warning>
+  Always use the `Async` variants like `ToListAsync()`, `CountAsync()`, and
+  `SumAsync()` to execute queries. Skipping the async call will not run the
+  query.
+</Warning>
+
+## Transactions
+
+Use transactions to group multiple operations together:
+
+```csharp
+await db.Client.BeginTransactionAsync();
+
+try
+{
+    await db.Users.InsertAsync(new User
+    {
+        name = "Kit",
+        email = "kit@example.com"
+    });
+
+    await db.Users.InsertAsync(new User
+    {
+        name = "Sam",
+        email = "sam@example.com"
+    });
+
+    await db.Client.CommitTransactionAsync();
+}
+catch
+{
+    await db.Client.RollbackTransactionAsync();
+    throw;
+}
+```
+
+## Direct SQL Queries
+
+For raw SQL access, use the underlying client directly.
+
+### Run a command
+
+```csharp
+await db.Client.QueryAsync("DELETE FROM Users WHERE id = 1");
+```
+
+### Get a scalar value
+
+```csharp
+var count = await db.Client.QueryScalarAsync<int>("SELECT COUNT(*) FROM Users");
+```
+
+## Model Attributes
+
+| Attribute     | Description                                                                       |
+| ------------- | --------------------------------------------------------------------------------- |
+| `Table`       | Specifies a custom table name for the entity. If omitted, class name is used.     |
+| `Key`         | Marks the property as the primary key of the table.                               |
+| `Index`       | Creates an index on the annotated property for faster lookups.                    |
+| `ForeignKey`  | Defines a relationship to another table by specifying the foreign key property.   |
+| `AutoInclude` | Enables eager loading of the related property automatically during queries.       |
+| `Unique`      | Marks the field with the UNIQUE constraint, ensuring a unique value in every row. |
+| `ManyToMany`  | Defines a many-to-many relationship through a join table.                         |
+
+## Supported Data Types
+
+| C# Type    | Description                     | SQLite Type                |
+| ---------- | ------------------------------- | -------------------------- |
+| `string`   | Textual data                    | `TEXT`                     |
+| `int`      | 32-bit integer                  | `INTEGER`                  |
+| `long`     | 64-bit integer                  | `INTEGER`                  |
+| `double`   | Double-precision floating point | `REAL`                     |
+| `float`    | Single-precision floating point | `REAL`                     |
+| `decimal`  | Decimal number                  | `REAL`                     |
+| `DateTime` | Date and time                   | `INTEGER` (UNIX timestamp) |
+| `bool`     | Boolean value                   | `INTEGER` (`0` or `1`)     |
+| `byte[]`   | Binary data                     | `BLOB`                     |
+| `F32Blob`  | Vector F32 blob (AI embeddings) | `F32_BLOB`                 |
+
+<Info>
+  Nullable variants (e.g., `int?`, `bool?`) are also supported and will map to
+  nullable columns.
+</Info>
+
+## Relationships
+
+Define relationships between models using attributes:
+
+```csharp
+[Table("Users")]
+public class User
+{
+    [Key]
+    public int id { get; set; }
+
+    public string name { get; set; }
+
+    [AutoInclude]
+    public List<Order> Orders { get; set; } = new();
+}
+
+[Table("Orders")]
+public class Order
+{
+    [Key]
+    public int id { get; set; }
+
+    [ForeignKeyFor(typeof(User))]
+    public int user_id { get; set; }
+
+    public decimal price { get; set; }
+}
+```
+
+Query with relationships:
+
+```csharp
+var users = await db.Users
+    .Include(u => u.Orders)
+    .ToListAsync();
+
+foreach (var user in users)
+{
+    Console.WriteLine($"User: {user.name}");
+    foreach (var order in user.Orders)
+    {
+        Console.WriteLine($"  Order: {order.price}");
+    }
+}
+```

@@ -1,3 +1,146 @@
 ---
-title: "Authorization"
+title: "Auth & Access"
+description: "Manage database URLs and access tokens for authentication"
 ---
+
+To connect to your Bunny Database, you'll need your **Database URL** and an **Access Token**. Both can be obtained and managed from the Dashboard.
+
+## Accessing credentials
+
+Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access** to view and manage your database connection details.
+
+<Frame>
+  ![Database Access](/images/database/access/database-access-tokens.png)
+</Frame>
+
+From this page, you can:
+
+- View your Database URL
+- Generate new access tokens
+- Regenerate all access tokens
+- Copy or download existing tokens
+
+## Database URL
+
+Your Database URL is the endpoint used to connect to your database. It follows this format:
+
+```bash
+libsql://[your-database-id].lite.bunnydb.net
+```
+
+This URL is required by all client libraries and SDKs when establishing a connection to your database.
+
+## Access tokens
+
+Access tokens authenticate your requests to the database. Bunny Database provides two types of tokens:
+
+- **Full Access**: Read and write permissions for all database operations
+- **Read Only**: Limited to SELECT queries and read operations only
+
+### Generating new tokens
+
+To create a new access token for an additional application while keeping existing tokens valid:
+
+1. Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access**
+2. Click **Generate Tokens**
+3. New full-access and read-only tokens will be created
+4. Copy or download your tokens immediately
+
+<Warning>
+  Tokens are only displayed once. If you lose them, you'll need to generate
+  another.
+</Warning>
+
+### Regenerating tokens
+
+If your tokens are exposed or compromised, regenerate them to invalidate all existing tokens:
+
+1. Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access**
+2. Click **Regenerate Tokens**
+3. All previous tokens will be immediately invalidated
+4. New full-access and read-only tokens will be created
+5. Copy or download your new tokens immediately
+
+<Warning>
+  Regenerating tokens will invalidate **all** existing tokens for all databases.
+  Update all applications using the old tokens to prevent connection failures.
+</Warning>
+
+## Using credentials with client libraries
+
+Pass your Database URL and access token to the client library when creating a connection:
+
+<CodeGroup>
+    
+```ts TypeScript highlight={5}
+import { createClient } from "@libsql/client/web";
+
+const client = createClient({
+url: "libsql://[your-database-id].lite.bunnydb.net",
+authToken: "your-access-token",
+});
+
+````
+
+```rust Rust highlight={5}
+use libsql::Builder;
+
+let db = Builder::new_remote(
+    "libsql://[your-database-id].lite.bunnydb.net".to_string(),
+    "your-access-token".to_string(),
+)
+.build()
+.await?;
+````
+
+```go Go highlight={3}
+import _ "github.com/tursodatabase/libsql-client-go/libsql"
+
+url := "libsql://[your-database-id].lite.bunnydb.net?authToken=your-access-token"
+db, err := sql.Open("libsql", url)
+```
+
+```csharp .NET highlight={6}
+using Libsql.Client;
+
+var client = DatabaseClient.Create(opts =>
+{
+    opts.Url = "libsql://[your-database-id].lite.bunnydb.net";
+    opts.AuthToken = "your-access-token";
+});
+```
+
+</CodeGroup>
+
+## Using credentials with HTTP API
+
+When making direct HTTP requests to the database API endpoint (`/v2/pipeline`), include your access token as a Bearer token in the Authorization header:
+
+```bash highlight={2}
+curl -X POST https://[your-database-id].lite.bunnydb.net/v2/pipeline \
+  -H "Authorization: Bearer your-access-token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "requests": [
+      {
+        "type": "execute",
+        "stmt": {
+          "sql": "SELECT * FROM users"
+        }
+      }
+    ]
+  }'
+```
+
+## Using credentials with Magic Containers and Edge Scripting
+
+When you add database credentials to a [Magic Container](/database/connect/magic-containers) or [Edge Script](/database/connect/scripting), they are automatically available as environment variables:
+
+- `DB_URL`: Your database URL
+- `DB_TOKEN`: Your access token
+
+Access them in your code like any other environment variable:
+
+```bash
+process.env.DB_URL
+```

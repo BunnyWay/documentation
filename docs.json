@@ -53,55 +53,45 @@
             "groups": [
               {
                 "group": "bunny.net",
-                "pages": [
-                  "index",
-                  "quickstart"
-                ]
+                "pages": ["index", "quickstart"]
               },
               {
-                "group": "Account & Profile",
+                "group": "Accounts & Billing",
                 "pages": [
-                  "docs/profile-settings",
-                  "docs/two-factor-authentication",
-                  "docs/account-deletion"
-                ]
-              },
-              {
-                "group": "Team Management",
-                "pages": [
-                  "docs/users-and-permissions",
-                  "docs/manage-team-members",
-                  "docs/api-tokens",
-                  "docs/notifications"
-                ]
-              },
-              {
-                "group": "Billing",
-                "pages": [
-                  "docs/billing-overview",
-                  "docs/understanding-auto-recharge",
-                  "docs/understanding-pricing-module",
-                  "docs/credit-and-billing-system",
-                  "docs/payment-methods",
-                  "docs/invoices-and-payment-history",
-                  "docs/changing-pricing-tiers",
-                  "docs/refund-policy",
-                  "docs/account-limits"
-                ]
-              },
-              {
-                "group": "Logging & Observability",
-                "pages": [
-                  "docs/statistics-overview",
-                  "docs/understanding-logs"
-                ]
-              },
-              {
-                "group": "Affiliates",
-                "pages": [
-                  "docs/best-practices-manual",
-                  "docs/frequently-asked-questions",
-                  "docs/affiliate-guidelines"
+                  {
+                    "group": "Account Settings",
+                    "pages": [
+                      "account/index",
+                      "account/two-factor-authentication",
+                      "account/change-password",
+                      "account/appearance",
+                      "account/notification-settings",
+                      "account/api-keys",
+                      "account/integrations",
+                      "account/data-processing-agreement",
+                      "account/close-account"
+                    ]
+                  },
+                  {
+                    "group": "Team Management",
+                    "pages": [
+                      "account/team-management/index",
+                      "account/team-management/add-team-member",
+                      "account/team-management/remove-team-member",
+                      "account/team-management/permissions"
+                    ]
+                  },
+                  {
+                    "group": "Billing",
+                    "pages": [
+                      "billing/index",
+                      "billing/add-funds",
+                      "billing/auto-recharge",
+                      "billing/billing-history",
+                      "billing/sales-tax",
+                      "billing/affiliate-program"
+                    ]
+                  }
                 ]
               }
             ]
@@ -121,6 +111,7 @@
                 "pages": [
                   "cdn/index",
                   "cdn/quickstart",
+                  "cdn/regions",
                   "cdn/pricing"
                 ]
               },
@@ -236,9 +227,7 @@
                       "cdn/troubleshooting/301-redirects",
                       "cdn/troubleshooting/502-504-errors",
                       "cdn/troubleshooting/low-cache-hit-rate",
-                      "cdn/troubleshooting/lets-encrypt-issues",
-                      "cdn/troubleshooting/wordpress-plugin-conflicts",
-                      "cdn/troubleshooting/video-skip-issues"
+                      "cdn/troubleshooting/lets-encrypt-issues"
                     ]
                   }
                 ]
@@ -318,7 +307,8 @@
                 "pages": [
                   "magic-containers/limits",
                   "magic-containers/troubleshooting",
-                  "magic-containers/faqs"
+                  "magic-containers/faqs",
+                  "magic-containers/api-reference"
                 ]
               }
             ]
@@ -327,9 +317,7 @@
             "tab": "Guides",
             "groups": [
               {
-                "pages": [
-                  "magic-containers/guides/nextjs"
-                ]
+                "pages": ["magic-containers/guides/nextjs"]
               }
             ]
           }
@@ -396,24 +384,12 @@
                 ]
               },
               {
-                "group": "Runtime",
-                "pages": [
-                  "scripting/websockets"
-                ]
-              },
-              {
                 "group": "Observability",
-                "pages": [
-                  "scripting/statistics",
-                  "scripting/logs"
-                ]
+                "pages": ["scripting/statistics", "scripting/logs"]
               },
               {
                 "group": "Reference",
-                "pages": [
-                  "scripting/limits",
-                  "scripting/api-reference"
-                ]
+                "pages": ["scripting/websockets", "scripting/limits", "scripting/api-reference"]
               }
             ]
           }
@@ -450,6 +426,7 @@
                   },
                   "stream/premium-encoding",
                   "stream/transcribing",
+                  "stream/smart-chapters",
                   {
                     "group": "MediaCage DRM",
                     "pages": [
@@ -551,10 +528,7 @@
               },
               {
                 "group": "Features",
-                "pages": [
-                  "storage/storage-tiers",
-                  "storage/replication"
-                ]
+                "pages": ["storage/storage-tiers", "storage/replication"]
               },
               {
                 "group": "Manage Files & Objects",
@@ -579,8 +553,15 @@
                 "pages": [
                   {
                     "group": "WordPress",
+                    "pages": ["storage/move-files-to-wordpress"]
+                  },
+                  {
+                    "group": "Static Site Hosting",
                     "pages": [
-                      "storage/move-files-to-wordpress"
+                      "storage/static-site-hosting/index",
+                      "storage/static-site-hosting/vite",
+                      "storage/static-site-hosting/react",
+                      "storage/static-site-hosting/vue"
                     ]
                   }
                 ]
@@ -608,10 +589,7 @@
             "groups": [
               {
                 "group": "Bunny Shield",
-                "pages": [
-                  "shield/index",
-                  "shield/quickstart"
-                ]
+                "pages": ["shield/index", "shield/quickstart"]
               },
               {
                 "group": "Protection Features",
@@ -642,7 +620,8 @@
                 "pages": [
                   "shield/verified-bots",
                   "shield/metrics",
-                  "shield/cookies"
+                  "shield/cookies",
+                  "shield/api-reference"
                 ]
               }
             ]
@@ -712,10 +691,7 @@
             "groups": [
               {
                 "group": "Bunny DNS",
-                "pages": [
-                  "dns/index",
-                  "dns/dnssec"
-                ]
+                "pages": ["dns/index", "dns/dnssec"]
               },
               {
                 "group": "Scriptable DNS",
@@ -751,26 +727,8 @@
         ]
       },
       {
-        "product": "Integrations",
-        "description": "Third-party integrations and plugins",
-        "icon": "puzzle",
-        "tabs": [
-          {
-            "tab": "WordPress",
-            "groups": [
-              {
-                "group": "WordPress",
-                "pages": [
-                  "docs/wordpress-plugin-support-policy"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
         "product": "Database",
-        "description": "Serverless SQLite",
+        "description": "Serverless SQLite over HTTP",
         "icon": "database",
         "tabs": [
           {
@@ -788,19 +746,16 @@
                 "group": "Connect",
                 "pages": [
                   "database/connect/authorization",
-                  "database/connect/sql-api",
                   {
                     "group": "SDKs",
                     "pages": [
-                      "database/connect/sdks"
+                      "database/connect/typescript",
+                      "database/connect/go",
+                      "database/connect/rust",
+                      "database/connect/dotnet"
                     ]
                   },
-                  {
-                    "group": "ORMs",
-                    "pages": [
-                      "database/connect/orms"
-                    ]
-                  },
+                  "database/connect/sql-api",
                   "database/connect/scripting",
                   "database/connect/magic-containers"
                 ]
@@ -813,6 +768,27 @@
                   "database/durability-and-consistency",
                   "database/limits"
                 ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Integrations",
+        "description": "Third-party integrations and plugins",
+        "icon": "puzzle",
+        "tabs": [
+          {
+            "tab": "WordPress",
+            "groups": [
+              {
+                "group": "WordPress",
+                "pages": ["integrations/wordpress"]
+              },
+              {
+                "group": "cPanel",
+                "hidden": true,
+                "pages": ["integrations/cpanel"]
               }
             ]
           }
@@ -847,9 +823,7 @@
               },
               {
                 "group": "Origin Errors API",
-                "pages": [
-                  "api-reference/origin-errors/index"
-                ],
+                "pages": ["api-reference/origin-errors/index"],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/origin-errors-spec.json",
                   "directory": "api-reference/origin-errors"
@@ -857,9 +831,7 @@
               },
               {
                 "group": "Storage API",
-                "pages": [
-                  "api-reference/storage/index"
-                ],
+                "pages": ["api-reference/storage/index"],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/bunnynet-edge-storage-api.json",
                   "directory": "api-reference/storage"
@@ -867,9 +839,7 @@
               },
               {
                 "group": "Stream API",
-                "pages": [
-                  "api-reference/stream/index"
-                ],
+                "pages": ["api-reference/stream/index"],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/stream-api.json",
                   "directory": "api-reference/stream"
@@ -877,9 +847,7 @@
               },
               {
                 "group": "Shield API",
-                "pages": [
-                  "api-reference/shield/index"
-                ],
+                "pages": ["api-reference/shield/index"],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/bunny-shield-api.json",
                   "directory": "api-reference/shield"
@@ -887,9 +855,7 @@
               },
               {
                 "group": "Edge Scripting API",
-                "pages": [
-                  "api-reference/scripting/index"
-                ],
+                "pages": ["api-reference/scripting/index"],
                 "openapi": {
                   "source": "https://docs.bunny.net/openapi/edge-scripting-api.json",
                   "directory": "api-reference/scripting"
@@ -897,9 +863,7 @@
               },
               {
                 "group": "Magic Containers API",
-                "pages": [
-                  "api-reference/magic-containers/overview"
-                ],
+                "pages": ["api-reference/magic-containers/overview"],
                 "openapi": {
                   "source": "https://api-mc-stage.opsbunny.net/docs/v3-users-public/swagger.json",
                   "directory": "api-reference/magic-containers"
@@ -912,10 +876,7 @@
             "groups": [
               {
                 "group": "Terraform",
-                "pages": [
-                  "terraform/index",
-                  "terraform/quickstart"
-                ]
+                "pages": ["terraform/index", "terraform/quickstart"]
               },
               {
                 "group": "Reference",
@@ -927,9 +888,7 @@
               },
               {
                 "group": "Guides",
-                "pages": [
-                  "terraform/importing-stream-library"
-                ]
+                "pages": ["terraform/importing-stream-library"]
               }
             ]
           }
@@ -938,6 +897,11 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/docs",
+      "destination": "/",
+      "permanent": true
+    },
     {
       "source": "/docs/bunny-shield-documentation",
       "destination": "/shield",
@@ -1073,6 +1037,7 @@
       "destination": "/optimizer/dynamic-images/formats",
       "permanent": true
     },
+
     {
       "source": "/docs/edge-storage-overview",
       "destination": "/storage",
@@ -1813,6 +1778,7 @@
       "destination": "/stream/drm",
       "permanent": true
     },
+
     {
       "source": "/docs/stream-mediacage-basic-drm",
       "destination": "/stream/mediacage-basic",
@@ -2040,7 +2006,17 @@
     },
     {
       "source": "/docs/affiliate-competition-rules",
-      "destination": "/affiliates",
+      "destination": "/accounts-and-billing/affiliate-program",
+      "permanent": true
+    },
+    {
+      "source": "/docs/best-practices-manual",
+      "destination": "/accounts-and-billing/affiliate-program",
+      "permanent": true
+    },
+    {
+      "source": "/docs/affiliate-guidelines",
+      "destination": "/accounts-and-billing/affiliate-program",
       "permanent": true
     },
     {
@@ -2056,6 +2032,181 @@
     {
       "source": "/docs/cdn-api-purge-rate-limits",
       "destination": "/cdn/purge-cache#rate-limits",
+      "permanent": true
+    },
+    {
+      "source": "/docs/us-taxation",
+      "destination": "/billing/sales-tax",
+      "permanent": true
+    },
+    {
+      "source": "/docs/bunny-ai-image-generation",
+      "destination": "/ai-image-generation",
+      "permanent": true
+    },
+    {
+      "source": "/docs/connecting",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cpanel-plugin-installation",
+      "destination": "/integrations/cpanel",
+      "permanent": true
+    },
+    {
+      "source": "/docs/database-pricing",
+      "destination": "/database/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/docs/edge-scripting-documentation",
+      "destination": "/scripting",
+      "permanent": true
+    },
+    {
+      "source": "/docs/free-trial-overview",
+      "destination": "/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/frequently-asked-questions",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/getting-started-with-bunnynet",
+      "destination": "/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/http-sql-api",
+      "destination": "/database/connect/sql-api",
+      "permanent": true
+    },
+    {
+      "source": "/docs/http-sql-api-1",
+      "destination": "/database/connect/sql-api",
+      "permanent": true
+    },
+    {
+      "source": "/docs/limits",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-documentation",
+      "destination": "/magic-containers",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-persistent-volumes",
+      "destination": "/magic-containers/persistent-volumes",
+      "permanent": true
+    },
+    {
+      "source": "/docs/magic-containers-trial-limits",
+      "destination": "/magic-containers/limits",
+      "permanent": true
+    },
+    {
+      "source": "/docs/orms",
+      "destination": "/database",
+      "permanent": true
+    },
+    {
+      "source": "/docs/premium-encoding",
+      "destination": "/stream/premium-encoding",
+      "permanent": true
+    },
+    {
+      "source": "/docs/qp-api-overview-draft",
+      "destination": "/optimizer/dynamic-images/overview",
+      "permanent": true
+    },
+    {
+      "source": "/docs/sdks",
+      "destination": "/database",
+      "permanent": true
+    },
+    {
+      "source": "/docs/reference",
+      "destination": "/api-reference",
+      "permanent": true
+    },
+    {
+      "source": "/docs/quickstart",
+      "destination": "/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-captioning-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-changelog-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-free-encoding-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-just-in-time-encoding-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-live-streaming",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-moments-and-chapters_2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-player",
+      "destination": "/stream/player-settings",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-smart-chapters",
+      "destination": "/stream/smart-chapters",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-storage",
+      "destination": "/stream/storage-tiers",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-support-and-update-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/stream-upload-and-playback-2",
+      "destination": "/stream",
+      "permanent": true
+    },
+    {
+      "source": "/docs/troubleshooting-and-faq-2",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/wordpress-plugin-support-policy",
+      "destination": "/integrations/wordpress",
+      "permanent": true
+    },
+    {
+      "source": "/integrations",
+      "destination": "/integrations/wordpress",
       "permanent": true
     }
   ]

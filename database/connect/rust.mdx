@@ -1,0 +1,162 @@
+---
+title: "Rust"
+description: "Get started with Bunny Database and Rust using the libSQL crate"
+---
+
+In this Rust quickstart you will learn how to:
+
+- Retrieve database credentials
+- Install the libSQL crate
+- Connect to a remote Bunny Database
+- Execute a query using SQL
+
+## Quickstart
+
+<Steps>
+
+<Step title="Retrieve database credentials">
+
+You will need an existing database to continue. If you don't have one, [create one](/database/quickstart).
+
+Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access** to find your database URL and generate an access token.
+
+<Info>
+  You should store these as environment variables to keep them secure.
+</Info>
+
+</Step>
+
+<Step title="Install libsql">
+
+Install the libSQL crate:
+
+```bash
+cargo add libsql
+```
+
+</Step>
+
+<Step title="Initialize a new client">
+
+Create a database connection with your database URL and auth token:
+
+```rust
+use libsql::Builder;
+
+let url = std::env::var("DB_URL").expect("DB_URL must be set");
+let token = std::env::var("DB_TOKEN").expect("DB_TOKEN must be set");
+
+let db = Builder::new_remote(url, token)
+    .build()
+    .await?;
+let conn = db.connect()?;
+```
+
+</Step>
+
+<Step title="Execute a query using SQL">
+
+You can execute a SQL query against your database using `query()` for reads or `execute()` for writes:
+
+```rust
+let mut rows = conn.query("SELECT * FROM users", ()).await?;
+
+while let Some(row) = rows.next().await? {
+    let id: i64 = row.get(0)?;
+    let name: String = row.get(1)?;
+    println!("User: {} - {}", id, name);
+}
+```
+
+If you need to use placeholders for values, you can do that:
+
+<CodeGroup>
+
+```rust Positional
+conn.query("SELECT * FROM users WHERE id = ?1", libsql::params![1]).await?;
+```
+
+```rust Named
+conn.query("SELECT * FROM users WHERE id = :id", libsql::named_params! { ":id": 1 }).await?;
+```
+
+</CodeGroup>
+
+</Step>
+
+</Steps>
+
+## Placeholders
+
+libSQL supports the use of positional and named placeholders within SQL statements:
+
+<CodeGroup>
+
+```rust Positional
+conn.query("SELECT * FROM users WHERE id = ?1", libsql::params![1]).await?;
+```
+
+```rust Named
+conn.query("SELECT * FROM users WHERE id = :id", libsql::named_params! { ":id": 1 }).await?;
+```
+
+</CodeGroup>
+
+<Info>
+  libSQL supports the same named placeholder characters as SQLite — `:`, `@` and
+  `$`.
+</Info>
+
+## Executing Writes
+
+Use `execute()` for INSERT, UPDATE, and DELETE statements:
+
+```rust
+conn.execute("INSERT INTO users (name) VALUES (?1)", libsql::params!["Kit"]).await?;
+```
+
+You can also use named parameters:
+
+```rust
+conn.execute(
+    "INSERT INTO users (name) VALUES (:name)",
+    libsql::named_params! { ":name": "Kit" }
+).await?;
+```
+
+## Transactions
+
+You can use transactions to execute multiple statements atomically:
+
+```rust
+let tx = conn.transaction().await?;
+
+tx.execute("INSERT INTO users (name) VALUES (?1)", libsql::params!["Kit"]).await?;
+tx.execute("INSERT INTO users (name) VALUES (?1)", libsql::params!["Sam"]).await?;
+
+tx.commit().await?;
+```
+
+To roll back a transaction:
+
+```rust
+let tx = conn.transaction().await?;
+
+tx.execute("INSERT INTO users (name) VALUES (?1)", libsql::params!["Kit"]).await?;
+
+// Roll back the transaction
+tx.rollback().await?;
+```
+
+## Batch Execution
+
+You can execute multiple SQL statements in a single call:
+
+```rust
+conn.execute_batch(
+    "BEGIN;
+     INSERT INTO users (name) VALUES ('Kit');
+     INSERT INTO users (name) VALUES ('Sam');
+     COMMIT;"
+).await?;
+```

@@ -1,0 +1,39 @@
+---
+title: API Keys
+description: Manage your bunny.net API key for programmatic access.
+---
+
+Your API key lets you programmatically update your zones and account settings via the [bunny.net API](/api-reference).
+
+You can find your API key at [Account > API Key](https://dash.bunny.net/account/api-key).
+
+<Frame>![API key](/images/accounts-and-billing/api-key.png)</Frame>
+
+## Viewing your API key
+
+Your API key is hidden by default. Click the eye icon to reveal it, or the copy icon to copy it to your clipboard.
+
+<Frame>
+  ![Reveal API key](/images/accounts-and-billing/reveal-api-key.png)
+</Frame>
+
+## Regenerating your API key
+
+If your API key is compromised, click the refresh icon to generate a new one. You'll be asked to confirm before the key is reset.
+
+<Frame>![Reset API key](/images/accounts-and-billing/reset-api-key.png)</Frame>
+
+<Warning>
+  Resetting your API key will disable the old key immediately. Any applications
+  or scripts using the old key will stop working.
+</Warning>
+
+## Keep your API key safe
+
+Your API key has full access to your account. Never share it publicly or commit it to version control.
+
+<Note>
+  This is your account-level API key. Storage zones, Stream libraries, and
+  databases each have their own separate API keys for accessing those specific
+  services.
+</Note>

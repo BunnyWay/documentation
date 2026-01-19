@@ -32,8 +32,8 @@ Adjust the compression level to balance visual quality with file size. Higher qu
 https://yourzone.b-cdn.net/image.jpg?quality=80
 ```
 
-| quality=80                                                                              | quality=50                                                                              | quality=10                                                                              |
-| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| quality=80                                                                               | quality=50                                                                                | quality=10                                                                             |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | ![High quality (117KB)](https://bunny-optimizer-demo.b-cdn.net/bunnies_1.jpg?quality=80) | ![Medium quality (81KB)](https://bunny-optimizer-demo.b-cdn.net/bunnies_1.jpg?quality=50) | ![Low quality (35KB)](https://bunny-optimizer-demo.b-cdn.net/bunnies_1.jpg?quality=10) |
 
 As shown above, reducing quality from 80 to 50 cuts file size by nearly 30% with minimal visible impact. Extreme compression (`quality=10`) significantly reduces file size but introduces noticeable artifacts.
@@ -51,10 +51,6 @@ If you don't specify a quality parameter, Bunny Optimizer uses a default value b
 #### Smart Image Optimization
 
 Configure quality defaults in your Pull Zone settings at **Optimizer → Settings**. You can set different quality levels for desktop, mobile, and other device types.
-
-<Frame>
-  <img src="/images/optimizer/smart-image-optimization-settings.png" alt="Smart Image Optimization settings" />
-</Frame>
 
 With Smart Image Optimization enabled, desktop requests might use `quality=80` while mobile devices use `quality=70` to reduce bandwidth on slower connections.
 

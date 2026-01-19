@@ -41,7 +41,7 @@ You can purge the entire Pull Zone, or purge only files matching a specific tag.
 
 ## API
 
-You can also purge cache programmatically. See the [Purge Cache API reference](/api-reference/core/pull-zone/purge-cache) for full details.
+You can also purge cache programmatically. See the [Core API reference](/api-reference/core) for full details.
 
 ### Full Pull Zone purge
 
@@ -63,7 +63,7 @@ curl -X POST "https://api.bunny.net/pullzone/{id}/purgeCache" \
 
 Useful for invalidating all assets related to a specific product, user, or category without clearing your entire cache.
 
-To purge a specific URL across all pull zones, use the [Purge URL endpoint](/api-reference/core/purge/purge-url).
+To purge a specific URL across all pull zones, use the Purge URL endpoint in the [Core API](/api-reference/core).
 
 ## Rate limits
 
@@ -113,7 +113,7 @@ https://example.com/assets/
 
 ## Perma-Cache behavior
 
-If you're using [Perma-Cache](/docs/perma-cache):
+If you're using [Perma-Cache](/cdn/perma-cache):
 
 - **Full zone purge**: Clears CDN cache but Perma-Cache switches to a new directory (manually delete the old folder if needed)
 - **Tag-based purging**: Not supported with Perma-Cache enabled
