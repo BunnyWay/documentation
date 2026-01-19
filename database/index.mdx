@@ -28,8 +28,19 @@ Bunny Database is a fully managed relational database service built on libSQL, a
 
 Bunny Database integrates with other bunny.net developer platform services:
 
-- **Magic Containers**: Deploy any Docker workload without provisioning. When using Bunny Database with Magic Containers, both the databases and the connected containerized code are deployed to the same (or nearby) regions to minimize latency.
-- **Edge Scripting**: Run additional lightweight serverless JavaScript/TypeScript logic close to your users.
+<CardGroup cols={2}>
+  <Card
+    title="Magic Container Apps"
+    icon="docker"
+    href="/database/connect/magic-containers"
+  >
+    Deploy any Docker workload without provisioning. Databases and containers
+    are deployed to the same regions to minimize latency.
+  </Card>
+  <Card title="Edge Scripts" icon="bolt" href="/database/connect/scripting">
+    Run lightweight serverless JavaScript/TypeScript logic close to your users.
+  </Card>
+</CardGroup>
 
 ## Getting started
 
@@ -40,10 +51,16 @@ Bunny Database integrates with other bunny.net developer platform services:
   <Card title="SQL API" icon="code" href="/database/connect/sql-api">
     Connect directly using the HTTP-based SQL API
   </Card>
-  <Card title="SDKs" icon="puzzle" href="/database/connect/sdks">
-    Use official client libraries for your language
+  <Card title="TypeScript" icon="js" href="/database/connect/typescript">
+    Connect using the libSQL client for JS &amp; TypeScript
   </Card>
-  <Card title="ORMs" icon="plug" href="/database/connect/orms">
-    Integrate with Drizzle, and other ORMs
+  <Card title="Go" icon="golang" href="/database/connect/go">
+    Connect using the libSQL client for Go
+  </Card>
+  <Card title="Rust" icon="rust" href="/database/connect/rust">
+    Connect using the libSQL crate for Rust
+  </Card>
+  <Card title=".NET" icon="microsoft" href="/database/connect/dotnet">
+    Connect using the Bunny.LibSQL.Client for .NET
   </Card>
 </CardGroup>

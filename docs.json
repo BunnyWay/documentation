@@ -748,7 +748,12 @@
                   "database/connect/authorization",
                   {
                     "group": "SDKs",
-                    "pages": ["database/connect/typescript"]
+                    "pages": [
+                      "database/connect/typescript",
+                      "database/connect/go",
+                      "database/connect/rust",
+                      "database/connect/dotnet"
+                    ]
                   },
                   "database/connect/sql-api",
                   "database/connect/scripting",
