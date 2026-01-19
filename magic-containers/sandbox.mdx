@@ -1,11 +1,11 @@
 ---
 title: "Sandboxing"
-description: "Magic containers provide a powerful and flexible environment for deploying applications, akin to virtual machines but with a unique approach. Traditional containers utilize Linux namespaces to establish resource limits, but in the event of a malicious deployment, there is a potential for exploitation and breaching of container boundaries. To fortify container security and prevent any escape from these limits, Magic Containers incorporates gVisor—an application kernel that intercepts and handles system calls in user space, creating a strong isolation layer between the application and the host kernel without the overhead of full virtualization."
+description: "Learn how Magic Containers uses gVisor for application kernel isolation and enhanced container security."
 ---
 
-# Container Runtime
+Traditional containers use Linux namespaces to establish resource limits, but a malicious deployment could potentially breach container boundaries. Magic Containers addresses this by using [gVisor](https://gvisor.dev/) as the container runtime.
 
-Magic Containers uses [gVisor](https://gvisor.dev/) as the container runtime, which provides an additional layer of security through application kernel isolation. gVisor intercepts application system calls and handles them in a user-space kernel, reducing the attack surface of the host kernel.
+gVisor intercepts application system calls and handles them in a user-space kernel, creating strong isolation between the application and the host kernel without the overhead of full virtualization.
 
 ## Syscall Compatibility
 
@@ -13,10 +13,6 @@ gVisor implements a subset of Linux system calls. While most common applications
 
 For a complete list of supported syscalls, see the [gVisor compatibility documentation](https://gvisor.dev/docs/user_guide/compatibility/linux/amd64/).
 
-# Understanding VXLAN
+## Network Isolation
 
-In the context of container networking, Virtual Extensible LAN (VXLAN) is a crucial technology that facilitates the creation of virtual networks over a physical network infrastructure. 
-
-VXLANs are widely used in containerized environments to overcome limitations in traditional network architectures. They provide a scalable and flexible solution for connecting containers distributed across different hosts while maintaining isolation and segmentation. By using VxLANs, Magic Containers enhances the network connectivity and communication between containers, ensuring seamless and secure interactions in dynamic deployment scenarios.
-
-Understanding the interplay between container sandboxes and network technologies like VxLANs is essential for deploying robust and secure applications within the Magic Containers ecosystem. Together, these technologies contribute to a resilient and isolated environment for running applications with confidence.
+Magic Containers uses Virtual Extensible LAN (VXLAN) to create virtual networks over the physical infrastructure. This provides scalable connectivity between containers across different hosts while maintaining isolation and segmentation.
