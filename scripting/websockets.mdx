@@ -1,0 +1,275 @@
+---
+title: WebSockets
+description: Bunny.net supports WebSockets to deliver low-latency, bidirectional communication between your applications and users across the globe.
+---
+
+## Enabling WebSockets
+
+To use WebSockets in your scripts, you'll first need to [enable it for your Pull Zone](/cdn/websockets#enabling-websockets) in the Dashboard.
+
+1. Navigate to your Pull Zone -> General -> WebSockets
+2. Toggle the "WebSockets" switch
+3. Call `request.upgradeWebSocket()` in your script to upgrade incoming connections
+
+## Quickstart
+
+This example creates a WebSocket server that echoes messages back to the client.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(async (request: Request) => {
+  const { response, socket } = request.upgradeWebSocket();
+
+  socket.addEventListener("open", () => {
+    console.log("Client connected");
+  });
+
+  socket.addEventListener("message", (event) => {
+    console.log("Received:", event.data);
+    socket.send(`Echo: ${event.data}`);
+  });
+
+  socket.addEventListener("close", (event) => {
+    console.log("Client disconnected:", event.code, event.reason);
+  });
+
+  return response;
+});
+```
+
+## upgradeWebSocket
+
+Upgrades an incoming HTTP request to a WebSocket connection.
+
+```typescript
+const { response, socket } = request.upgradeWebSocket();
+
+// With options
+const { response, socket } = request.upgradeWebSocket({
+  protocol: "graphql-ws",
+  idleTimeout: 60,
+});
+```
+
+### Parameters
+
+<ParamField body="protocol" type="string">
+  The WebSocket subprotocol to use for the connection.
+</ParamField>
+
+<ParamField body="idleTimeout" type="number" default="30">
+  The number of seconds to wait for a pong response before closing the
+  connection. If the client does not respond within this timeout, the connection
+  is deemed unhealthy and closed, emitting the `close` and `error` events. If no
+  data is transmitted from the client for 2 minutes, the connection will be
+  closed regardless of this configuration.
+</ParamField>
+
+### Returns
+
+<ResponseField name="response" type="Response" required>
+  The response to send back to the client to establish the upgrade.
+</ResponseField>
+
+<ResponseField name="socket" type="WebSocket" required>
+  The WebSocket interface to communicate with the client.
+</ResponseField>
+
+## Methods
+
+### close
+
+Closes the WebSocket connection, optionally providing a close code and reason.
+
+```typescript
+// Close normally
+socket.close();
+
+// Close with a code
+socket.close(1000);
+
+// Close with a code and reason
+socket.close(1000, "Session ended");
+```
+
+#### Parameters
+
+<ParamField body="code" type="number">
+  A standardized [WebSocket close
+  code](https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.5). If unset,
+  defaults to `1000` for normal closure or `1001-1015` for error conditions.
+</ParamField>
+
+<ParamField body="reason" type="string">
+  A human-readable [close
+  reason](https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.6) explaining
+  why the connection was closed.
+</ParamField>
+
+### send
+
+Transmits data to the connected client.
+
+```typescript
+// Send a string
+socket.send("Hello, client!");
+
+// Send JSON
+socket.send(JSON.stringify({ type: "message", content: "Hello" }));
+
+// Send binary data
+const buffer = new ArrayBuffer(8);
+socket.send(buffer);
+
+// Send a Blob
+const blob = new Blob(["Hello"], { type: "text/plain" });
+socket.send(blob);
+```
+
+#### Parameters
+
+<ParamField
+  body="data"
+  type="string | ArrayBufferLike | Blob | ArrayBufferView"
+  required
+>
+  The data to transmit. Can be a string, ArrayBufferLike, Blob, or
+  ArrayBufferView.
+</ParamField>
+
+### addEventListener
+
+Registers an event listener for WebSocket events.
+
+```typescript
+socket.addEventListener("open", () => {
+  console.log("Connection established");
+});
+
+socket.addEventListener("message", (event) => {
+  console.log("Message received:", event.data);
+});
+
+socket.addEventListener("close", (event) => {
+  console.log("Connection closed:", event.code, event.reason);
+});
+
+socket.addEventListener("error", (event) => {
+  console.error("WebSocket error occurred");
+});
+```
+
+#### Parameters
+
+<ParamField body="type" type="string" required>
+  The event type to listen for. One of: `open`, `message`, `close`, or `error`.
+</ParamField>
+
+<ParamField body="listener" type="function" required>
+  The callback function invoked when the event is dispatched.
+</ParamField>
+
+<ParamField body="options" type="boolean | AddEventListenerOptions">
+  Optional configuration for the event listener.
+</ParamField>
+
+## Events
+
+### open
+
+Fired when the WebSocket connection is successfully established.
+
+```typescript
+socket.addEventListener("open", (event) => {
+  console.log("Connected to client");
+  socket.send("Welcome!");
+});
+```
+
+<ResponseField name="OpenEvent" type="Event">
+  A standard Event object with no additional properties.
+</ResponseField>
+
+### message
+
+Fired when a message is received from the client.
+
+```typescript
+socket.addEventListener("message", (event) => {
+  const data = event.data;
+
+  // Handle string messages
+  if (typeof data === "string") {
+    const parsed = JSON.parse(data);
+    console.log("Received:", parsed);
+  }
+});
+```
+
+<ResponseField name="MessageEvent" type="object">
+  <Expandable title="properties" defaultOpen>
+    <ResponseField name="data" type="any" required>
+      The message data sent by the client.
+    </ResponseField>
+    <ResponseField name="origin" type="string">
+      The origin of the message.
+    </ResponseField>
+    <ResponseField name="lastEventId" type="string">
+      The last event ID string.
+    </ResponseField>
+    <ResponseField name="source" type="MessageEventSource | null">
+      The message source.
+    </ResponseField>
+    <ResponseField name="ports" type="ReadonlyArray&lt;MessagePort&gt;">
+      Any transferred ports.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### close
+
+Fired when the WebSocket connection is closed.
+
+```typescript
+socket.addEventListener("close", (event) => {
+  if (event.wasClean) {
+    console.log(`Connection closed cleanly: ${event.code} ${event.reason}`);
+  } else {
+    console.log("Connection terminated unexpectedly");
+  }
+});
+```
+
+<ResponseField name="CloseEvent" type="object">
+  <Expandable title="properties" defaultOpen>
+    <ResponseField name="code" type="number" required>
+      The WebSocket close code provided by the server.
+    </ResponseField>
+    <ResponseField name="reason" type="string" required>
+      The close reason provided by the server.
+    </ResponseField>
+    <ResponseField name="wasClean" type="boolean" required>
+      Whether the connection closed cleanly.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### error
+
+Fired when an error occurs on the WebSocket connection.
+
+```typescript
+socket.addEventListener("error", (event) => {
+  console.error("WebSocket error occurred");
+});
+```
+
+<ResponseField name="ErrorEvent" type="Event">
+  A standard Event object with no additional properties.
+</ResponseField>
+
+## References
+
+- [WebSocket Protocol](https://www.rfc-editor.org/rfc/rfc6455.htm)
+- [WebSocket mdn Specification](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/)

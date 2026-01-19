@@ -389,7 +389,7 @@
               },
               {
                 "group": "Reference",
-                "pages": ["scripting/limits", "scripting/api-reference"]
+                "pages": ["scripting/websockets", "scripting/limits", "scripting/api-reference"]
               }
             ]
           }
