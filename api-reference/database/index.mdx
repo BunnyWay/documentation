@@ -1,0 +1,30 @@
+---
+title: Database API Reference
+sidebarTitle: Overview
+description: Manage your bunny.net databases programmatically.
+---
+
+The Database API allows you to manage your bunny.net databases. Create, configure, and manage databases that run at the edge for low-latency data access worldwide.
+
+For usage guides and tutorials, see the [Database documentation](/database).
+
+## Base URL
+
+```
+https://api.bunny.net/database/v1
+```
+
+## Authentication
+
+Authenticate using the `AccessKey` header with your account API key:
+
+```bash
+curl --request GET \
+  --url https://api.bunny.net/edgedb/v1/databases \
+  --header 'AccessKey: YOUR_API_KEY'
+```
+
+<Note>
+  Find your API key in the [account
+  settings](https://dash.bunny.net/account/settings) under **API Keys**.
+</Note>

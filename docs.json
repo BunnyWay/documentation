@@ -15,6 +15,9 @@
     "dark": "/logo/bunny-logo-light.svg",
     "light": "/logo/bunny-logo-dark.svg"
   },
+  "interaction": {
+    "drilldown": false
+  },
   "navbar": {
     "primary": {
       "type": "button",
@@ -774,12 +777,13 @@
                 ]
               },
               {
-                "group": "Platform",
+                "group": "Reference",
                 "pages": [
                   "database/replication",
                   "database/metrics",
                   "database/durability-and-consistency",
-                  "database/limits"
+                  "database/limits",
+                  "database/api-reference"
                 ]
               }
             ]
@@ -830,7 +834,7 @@
                   "api-reference/core/errors"
                 ],
                 "openapi": {
-                  "source": "https://docs.bunny.net/openapi/bunnynet-api-1.json",
+                  "source": "/api-reference/core/openapi.json",
                   "directory": "api-reference/core"
                 }
               },
@@ -838,7 +842,7 @@
                 "group": "Origin Errors API",
                 "pages": ["api-reference/origin-errors/index"],
                 "openapi": {
-                  "source": "https://docs.bunny.net/openapi/origin-errors-spec.json",
+                  "source": "/api-reference/origin-errors/openapi.json",
                   "directory": "api-reference/origin-errors"
                 }
               },
@@ -846,7 +850,7 @@
                 "group": "Storage API",
                 "pages": ["api-reference/storage/index"],
                 "openapi": {
-                  "source": "https://docs.bunny.net/openapi/bunnynet-edge-storage-api.json",
+                  "source": "/api-reference/storage/openapi.json",
                   "directory": "api-reference/storage"
                 }
               },
@@ -854,7 +858,7 @@
                 "group": "Stream API",
                 "pages": ["api-reference/stream/index"],
                 "openapi": {
-                  "source": "https://docs.bunny.net/openapi/stream-api.json",
+                  "source": "https://video.bunnycdn.com/openapi/bunnynet-video-api.public.json",
                   "directory": "api-reference/stream"
                 }
               },
@@ -862,7 +866,7 @@
                 "group": "Shield API",
                 "pages": ["api-reference/shield/index"],
                 "openapi": {
-                  "source": "https://docs.bunny.net/openapi/bunny-shield-api.json",
+                  "source": "https://api.bunny.net/shield/docs/v1/swagger.json",
                   "directory": "api-reference/shield"
                 }
               },
@@ -870,7 +874,7 @@
                 "group": "Edge Scripting API",
                 "pages": ["api-reference/scripting/index"],
                 "openapi": {
-                  "source": "https://docs.bunny.net/openapi/edge-scripting-api.json",
+                  "source": "/api-reference/scripting/openapi.json",
                   "directory": "api-reference/scripting"
                 }
               },
@@ -880,6 +884,14 @@
                 "openapi": {
                   "source": "https://api-mc-stage.opsbunny.net/docs/v3-users-public/swagger.json",
                   "directory": "api-reference/magic-containers"
+                }
+              },
+              {
+                "group": "Database API",
+                "pages": ["api-reference/database/index"],
+                "openapi": {
+                  "source": "https://api.bunny.net/database/docs/private/api.json",
+                  "directory": "api-reference/database"
                 }
               }
             ]
