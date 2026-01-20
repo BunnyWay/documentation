@@ -838,7 +838,7 @@
                 "group": "Stream API",
                 "pages": ["api-reference/stream/index"],
                 "openapi": {
-                  "source": "/api-reference/stream/openapi.json",
+                  "source": "https://video.bunnycdn.com/openapi/bunnynet-video-api.public.json",
                   "directory": "api-reference/stream"
                 }
               },
