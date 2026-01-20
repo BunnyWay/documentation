@@ -310,14 +310,23 @@
                   "magic-containers/faqs",
                   "magic-containers/api-reference"
                 ]
-              }
-            ]
-          },
-          {
-            "tab": "Guides",
-            "groups": [
+              },
               {
-                "pages": ["magic-containers/guides/nextjs"]
+                "group": "Tutorials",
+                "pages": [
+                  {
+                    "group": "Go",
+                    "pages": ["magic-containers/guides/simple-go-api"]
+                  },
+                  {
+                    "group": "Node.js",
+                    "pages": ["magic-containers/guides/node-hono-api"]
+                  },
+                  {
+                    "group": "Python",
+                    "pages": ["magic-containers/guides/python-fastapi"]
+                  }
+                ]
               }
             ]
           }
@@ -389,7 +398,11 @@
               },
               {
                 "group": "Reference",
-                "pages": ["scripting/websockets", "scripting/limits", "scripting/api-reference"]
+                "pages": [
+                  "scripting/websockets",
+                  "scripting/limits",
+                  "scripting/api-reference"
+                ]
               }
             ]
           }
