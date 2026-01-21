@@ -323,11 +323,21 @@
                   },
                   {
                     "group": "Node.js",
-                    "pages": ["magic-containers/guides/node-hono-api"]
+                    "pages": [
+                      "magic-containers/guides/node-hono-api",
+                      "magic-containers/guides/node-express-api"
+                    ]
                   },
                   {
                     "group": "Python",
                     "pages": ["magic-containers/guides/python-fastapi"]
+                  },
+                  {
+                    "group": "Web Frameworks",
+                    "pages": [
+                      "magic-containers/guides/astro",
+                      "magic-containers/guides/nextjs"
+                    ]
                   }
                 ]
               }

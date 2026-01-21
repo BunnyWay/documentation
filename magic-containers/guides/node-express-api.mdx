@@ -1,6 +1,6 @@
 ---
-title: "Node.js API with Hono"
-description: "Deploy a Node.js API with Hono to Magic Containers"
+title: "Node.js API with Express"
+description: "Deploy a Node.js API with Express to Magic Containers"
 ---
 
 import GitHubActionsWorkflow from "/snippets/magic-containers/github-actions-workflow.mdx";
@@ -10,71 +10,46 @@ import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-inf
 import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
 import NextSteps from "/snippets/magic-containers/next-steps.mdx";
 
-This guide walks you through building and deploying a Node.js API using Hono to Magic Containers with GitHub Container Registry. You'll need:
+This guide walks you through building and deploying a Node.js API using Express to Magic Containers with GitHub Container Registry. You'll need:
 
 - A GitHub account for source code and container registry
 - A bunny.net account with Magic Containers enabled
 
-## Create the Hono API
+## Create the Express API
 
 Create a new directory with the following files:
 
 <CodeGroup>
 
-```typescript src/index.ts
-import { serve } from "@hono/node-server";
-import { Hono } from "hono";
+```javascript src/index.js
+import express from "express";
 
-const app = new Hono();
+const app = express();
 
-app.get("/", (c) => {
-  return c.json({ message: "Hello from Bunny 🐰" });
+app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.json({ message: "Hello from Bunny 🐰" });
 });
 
 const port = Number(process.env.PORT) || 80;
 
-console.log(`Server starting on port ${port}`);
-
-serve({
-  fetch: app.fetch,
-  port,
+app.listen(port, () => {
+  console.log(`Server starting on port ${port}`);
 });
 ```
 
 ```json package.json
 {
-  "name": "bunny-hono-api",
+  "name": "bunny-express-api",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
   },
   "dependencies": {
-    "@hono/node-server": "^1.13.7",
-    "hono": "^4.6.16"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.5",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "express": "^4.21.2"
   }
-}
-```
-
-```json tsconfig.json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
-  },
-  "include": ["src/**/*"]
 }
 ```
 
@@ -88,17 +63,16 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
-RUN npm run build
 
 FROM node:22-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=dev
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY . .
 ENV PORT=80
 EXPOSE 80
-CMD ["node", "dist/index.js"]
+CMD ["node", "src/index.js"]
 ```
 
 ## Build and push to GitHub Container Registry
@@ -115,7 +89,7 @@ CMD ["node", "dist/index.js"]
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-hono-api.git
+    git remote add origin https://github.com/YOUR_USERNAME/bunny-express-api.git
     git push -u origin main
     ```
 
@@ -123,7 +97,7 @@ CMD ["node", "dist/index.js"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-hono-api" />
+    <DockerCliSteps imageName="bunny-express-api" />
 
   </Tab>
 </Tabs>
@@ -132,7 +106,7 @@ CMD ["node", "dist/index.js"]
 
 ## Deploy to Magic Containers
 
-<DeploySteps imageName="bunny-hono-api" />
+<DeploySteps imageName="bunny-express-api" />
 
 ## Test your API
 
@@ -157,7 +131,7 @@ You can connect your app to [Bunny Database](/database) directly from the dashbo
 
 The `DB_URL` and `DB_TOKEN` environment variables are now available in your app:
 
-```typescript
+```javascript
 import { createClient } from "@libsql/client/web";
 
 const client = createClient({

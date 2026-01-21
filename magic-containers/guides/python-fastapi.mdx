@@ -3,6 +3,13 @@ title: "Python API with FastAPI"
 description: "Deploy a Python API with FastAPI to Magic Containers"
 ---
 
+import GitHubActionsWorkflow from "/snippets/magic-containers/github-actions-workflow.mdx";
+import DockerCliSteps from "/snippets/magic-containers/docker-cli-steps.mdx";
+import DeploySteps from "/snippets/magic-containers/deploy-steps.mdx";
+import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-info.mdx";
+import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
+import NextSteps from "/snippets/magic-containers/next-steps.mdx";
+
 This guide walks you through building and deploying a Python API using FastAPI to Magic Containers with GitHub Container Registry. You'll need:
 
 - A GitHub account for source code and container registry
@@ -29,7 +36,7 @@ def read_root():
 if __name__ == "__main__":
     import uvicorn
 
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("PORT", 80))
     uvicorn.run(app, host="0.0.0.0", port=port)
 ```
 
@@ -49,8 +56,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY main.py .
-EXPOSE 8080
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+EXPOSE 80
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
 ```
 
 ## Build and push to GitHub Container Registry
@@ -59,41 +66,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
   <Tab title="GitHub Actions">
     Create `.github/workflows/build.yml` to automatically build and push on every commit to `main`:
 
-    ```yaml .github/workflows/build.yml
-    name: Build and Push
-
-    on:
-      push:
-        branches: [main]
-
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}
-
-    jobs:
-      build-and-push:
-        runs-on: ubuntu-latest
-        permissions:
-          contents: read
-          packages: write
-
-        steps:
-          - uses: actions/checkout@v4
-
-          - name: Log in to GitHub Container Registry
-            uses: docker/login-action@v3
-            with:
-              registry: ${{ env.REGISTRY }}
-              username: ${{ github.actor }}
-              password: ${{ secrets.GITHUB_TOKEN }}
-
-          - name: Build and push
-            uses: docker/build-push-action@v5
-            with:
-              context: .
-              push: true
-              tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-    ```
+    <GitHubActionsWorkflow />
 
     Push your code to trigger the workflow:
 
@@ -109,72 +82,28 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <Steps>
-      <Step title="Create a Personal Access Token">
-        Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) and create a token with `write:packages` scope.
-      </Step>
-      <Step title="Log in to GitHub Container Registry">
-        ```bash
-        export CR_PAT=your_personal_access_token
-        echo $CR_PAT | docker login ghcr.io -u YOUR_USERNAME --password-stdin
-        ```
-      </Step>
-      <Step title="Build the image">
-        ```bash
-        docker build -t ghcr.io/YOUR_USERNAME/bunny-fastapi:latest .
-        ```
-      </Step>
-      <Step title="Push to registry">
-        ```bash
-        docker push ghcr.io/YOUR_USERNAME/bunny-fastapi:latest
-        ```
-      </Step>
-    </Steps>
+    <DockerCliSteps imageName="bunny-fastapi" />
 
   </Tab>
 </Tabs>
 
-<Info>
-  If your package is private, set the visibility to **Public** in GitHub or
-  [configure Magic Containers with registry
-  credentials](/magic-containers/image-registries).
-</Info>
+<PrivateRegistryInfo />
 
 ## Deploy to Magic Containers
 
-<Steps>
-  <Step title="Create a new app">
-    In the bunny.net dashboard, go to **Magic Containers** and click **Add App**. Enter a name and select your deployment option.
-  </Step>
-  <Step title="Add a container">
-    Click **Add Container**, then configure:
-
-    | Field | Value |
-    | --- | --- |
-    | Registry | GitHub Container Registry |
-    | Image | `YOUR_USERNAME/bunny-fastapi` |
-    | Tag | `latest` |
-
-  </Step>
-  <Step title="Add an endpoint">
-    Go to the **Endpoints** tab, click **Add New Endpoint**, and set the container port to `8080`.
-  </Step>
-  <Step title="Deploy">
-    Click **Add Container**, then **Next Step**, and **Confirm and Create**.
-  </Step>
-</Steps>
-
-For more details, see the [quickstart guide](/magic-containers/quickstart).
+<DeploySteps imageName="bunny-fastapi" />
 
 ## Test your API
 
 ```bash
-curl https://your-container-url.b-cdn.net/
+curl https://mc-xxx.bunny.run/
 ```
 
 ```json Response
 { "message": "Hello from Bunny 🐰" }
 ```
+
+<CustomHostnameInfo />
 
 ## Connect a database
 
@@ -201,8 +130,4 @@ result = conn.execute("SELECT * FROM users").fetchall()
 
 See the [Bunny Database documentation](/database) for more details.
 
-## Next steps
-
-1. [Automate deploys with GitHub Actions](/magic-containers/deploy-with-github-actions)
-2. [Add a custom hostname](/magic-containers/endpoints)
-3. [Add a persistent volume](/magic-containers/persistent-volumes)
+<NextSteps />

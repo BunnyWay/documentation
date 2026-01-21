@@ -1,0 +1,21 @@
+<Steps>
+  <Step title="Create a Personal Access Token">
+    Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) and create a token with `write:packages` scope.
+  </Step>
+  <Step title="Log in to GitHub Container Registry">
+    ```bash
+    export CR_PAT=your_personal_access_token
+    echo $CR_PAT | docker login ghcr.io -u YOUR_USERNAME --password-stdin
+    ```
+  </Step>
+  <Step title="Build the image">
+    ```bash
+    docker build -t ghcr.io/YOUR_USERNAME/{imageName}:latest .
+    ```
+  </Step>
+  <Step title="Push to registry">
+    ```bash
+    docker push ghcr.io/YOUR_USERNAME/{imageName}:latest
+    ```
+  </Step>
+</Steps>

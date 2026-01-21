@@ -1,6 +1,6 @@
 ---
-title: "Node.js API with Hono"
-description: "Deploy a Node.js API with Hono to Magic Containers"
+title: "Astro"
+description: "Deploy an Astro application to Magic Containers"
 ---
 
 import GitHubActionsWorkflow from "/snippets/magic-containers/github-actions-workflow.mdx";
@@ -10,95 +10,78 @@ import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-inf
 import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
 import NextSteps from "/snippets/magic-containers/next-steps.mdx";
 
-This guide walks you through building and deploying a Node.js API using Hono to Magic Containers with GitHub Container Registry. You'll need:
+This guide walks you through building and deploying an Astro application to Magic Containers with GitHub Container Registry. You'll need:
 
 - A GitHub account for source code and container registry
 - A bunny.net account with Magic Containers enabled
 
-## Create the Hono API
+## Create the Astro app
 
-Create a new directory with the following files:
+Create a new Astro project:
 
-<CodeGroup>
+```bash
+npm create astro@latest bunny-astro-app
+cd bunny-astro-app
+```
 
-```typescript src/index.ts
-import { serve } from "@hono/node-server";
-import { Hono } from "hono";
+### Add the Node adapter
 
-const app = new Hono();
+Astro requires an adapter for server-side rendering. Install the Node adapter:
 
-app.get("/", (c) => {
-  return c.json({ message: "Hello from Bunny 🐰" });
+```bash
+npx astro add node
+```
+
+This updates your `astro.config.mjs` to include the adapter:
+
+```javascript astro.config.mjs
+import { defineConfig } from "astro/config";
+import node from "@astrojs/node";
+
+export default defineConfig({
+  output: "server",
+  adapter: node({
+    mode: "standalone",
+  }),
 });
-
-const port = Number(process.env.PORT) || 80;
-
-console.log(`Server starting on port ${port}`);
-
-serve({
-  fetch: app.fetch,
-  port,
-});
 ```
 
-```json package.json
-{
-  "name": "bunny-hono-api",
-  "type": "module",
-  "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
-  },
-  "dependencies": {
-    "@hono/node-server": "^1.13.7",
-    "hono": "^4.6.16"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.5",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
-  }
-}
-```
+### Create an API route
 
-```json tsconfig.json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
-  },
-  "include": ["src/**/*"]
-}
-```
+Create a simple endpoint to test the deployment:
 
-</CodeGroup>
+```typescript src/pages/index.json.ts
+import type { APIRoute } from "astro";
+
+export const GET: APIRoute = () => {
+  return new Response(JSON.stringify({ message: "Hello from Bunny 🐰" }));
+};
+```
 
 ## Create the Dockerfile
 
 ```dockerfile Dockerfile
-FROM node:22-alpine AS builder
-
+FROM node:22-alpine AS base
 WORKDIR /app
 COPY package*.json ./
+
+FROM base AS deps
 RUN npm install
+
+FROM deps AS build
 COPY . .
 RUN npm run build
 
-FROM node:22-alpine
-WORKDIR /app
+FROM base AS runtime
 COPY package*.json ./
 RUN npm install --omit=dev
-COPY --from=builder /app/dist ./dist
+COPY --from=build /app/dist ./dist
+
+ENV HOST=0.0.0.0
 ENV PORT=80
 EXPOSE 80
-CMD ["node", "dist/index.js"]
+
+CMD ["node", "./dist/server/entry.mjs"]
 ```
 
 ## Build and push to GitHub Container Registry
@@ -115,7 +98,7 @@ CMD ["node", "dist/index.js"]
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-hono-api.git
+    git remote add origin https://github.com/YOUR_USERNAME/bunny-astro-app.git
     git push -u origin main
     ```
 
@@ -123,7 +106,7 @@ CMD ["node", "dist/index.js"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-hono-api" />
+    <DockerCliSteps imageName="bunny-astro-app" />
 
   </Tab>
 </Tabs>
@@ -132,12 +115,14 @@ CMD ["node", "dist/index.js"]
 
 ## Deploy to Magic Containers
 
-<DeploySteps imageName="bunny-hono-api" />
+<DeploySteps imageName="bunny-astro-app" />
 
-## Test your API
+## Test your app
+
+Visit your container URL in the browser to see your Astro site, or test the API route:
 
 ```bash
-curl https://mc-xxx.bunny.run/
+curl https://mc-xxx.bunny.run/index.json
 ```
 
 ```json Response
@@ -157,15 +142,25 @@ You can connect your app to [Bunny Database](/database) directly from the dashbo
 
 The `DB_URL` and `DB_TOKEN` environment variables are now available in your app:
 
-```typescript
+```typescript src/pages/api/users.ts
+import type { APIRoute } from "astro";
 import { createClient } from "@libsql/client/web";
 
 const client = createClient({
-  url: process.env.DB_URL,
-  authToken: process.env.DB_TOKEN,
+  url: import.meta.env.DB_URL,
+  authToken: import.meta.env.DB_TOKEN,
 });
 
-const result = await client.execute("SELECT * FROM users");
+export const GET: APIRoute = async () => {
+  const result = await client.execute("SELECT * FROM users");
+
+  return new Response(JSON.stringify(result.rows), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
 ```
 
 See the [TypeScript SDK documentation](/database/connect/typescript) for more details.
