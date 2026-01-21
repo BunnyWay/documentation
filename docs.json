@@ -56,7 +56,7 @@
             "groups": [
               {
                 "group": "bunny.net",
-                "pages": ["index", "quickstart"]
+                "pages": ["index", "quickstart", "faq"]
               },
               {
                 "group": "Accounts & Billing",
