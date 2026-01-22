@@ -1,0 +1,187 @@
+---
+title: "PHP API with Slim"
+description: "Deploy a PHP API with Slim Framework to Magic Containers"
+---
+
+import GitHubActionsWorkflow from "/snippets/magic-containers/github-actions-workflow.mdx";
+import DockerCliSteps from "/snippets/magic-containers/docker-cli-steps.mdx";
+import DeploySteps from "/snippets/magic-containers/deploy-steps.mdx";
+import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-info.mdx";
+import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
+import NextSteps from "/snippets/magic-containers/next-steps.mdx";
+
+This guide walks you through building and deploying a PHP API using Slim Framework to Magic Containers with GitHub Container Registry. You'll need:
+
+- A GitHub account for source code and container registry
+- A bunny.net account with Magic Containers enabled
+
+## Create the Slim app
+
+Create a new directory and initialize the project:
+
+```bash
+mkdir app-slim-api
+cd app-slim-api
+composer require slim/slim slim/psr7
+```
+
+Create the following files:
+
+<CodeGroup>
+
+```php public/index.php
+<?php
+
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Factory\AppFactory;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$app = AppFactory::create();
+
+$app->get('/', function (Request $request, Response $response) {
+    $response->getBody()->write(json_encode(['message' => 'Hello from Bunny 🐰']));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->run();
+```
+
+```json composer.json
+{
+  "require": {
+    "slim/slim": "^4.0",
+    "slim/psr7": "^1.0"
+  }
+}
+```
+
+</CodeGroup>
+
+## Run locally
+
+Start the PHP development server:
+
+```bash
+php -S localhost:8080 -t public
+```
+
+Test the API:
+
+```bash
+curl http://localhost:8080/
+```
+
+## Create the Dockerfile
+
+```dockerfile Dockerfile
+FROM php:8.3-apache
+
+RUN a2enmod rewrite
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+COPY composer.json .
+RUN composer install --no-dev --optimize-autoloader
+
+COPY public/ public/
+
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+RUN echo '<Directory /var/www/html/public>\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' >> /etc/apache2/apache2.conf
+
+RUN echo 'RewriteEngine On\n\
+RewriteCond %{REQUEST_FILENAME} !-f\n\
+RewriteCond %{REQUEST_FILENAME} !-d\n\
+RewriteRule ^ index.php [QSA,L]' > public/.htaccess
+
+EXPOSE 80
+```
+
+## Build and push to GitHub Container Registry
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    Create `.github/workflows/build.yml` to automatically build and push on every commit to `main`:
+
+    <GitHubActionsWorkflow />
+
+    Push your code to trigger the workflow:
+
+    ```bash
+    git init
+    git add .
+    git commit -m "Initial commit"
+    git remote add origin https://github.com/YOUR_USERNAME/app-slim-api.git
+    git push -u origin main
+    ```
+
+  </Tab>
+  <Tab title="Docker CLI">
+    Build and push manually from your local machine.
+
+    <DockerCliSteps imageName="app-slim-api" />
+
+  </Tab>
+</Tabs>
+
+<PrivateRegistryInfo />
+
+## Deploy to Magic Containers
+
+<DeploySteps imageName="app-slim-api" />
+
+## Test your API
+
+```bash
+curl https://mc-xxx.bunny.run/
+```
+
+```json Response
+{ "message": "Hello from Bunny 🐰" }
+```
+
+<CustomHostnameInfo />
+
+## Connect a database
+
+You can connect your app to [Bunny Database](/database) directly from the dashboard:
+
+1. Go to **Database > [Your Database] > Access**
+2. Click **Generate Tokens**
+3. Click **Add Secrets to Magic Container App**
+4. Select your app
+
+The `DB_URL` and `DB_TOKEN` environment variables are now available in your app. Install the libSQL PHP extension or use HTTP requests to connect:
+
+```php
+<?php
+
+$dbUrl = getenv('DB_URL');
+$dbToken = getenv('DB_TOKEN');
+
+$ch = curl_init($dbUrl);
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_POST => true,
+    CURLOPT_HTTPHEADER => [
+        'Authorization: Bearer ' . $dbToken,
+        'Content-Type: application/json',
+    ],
+    CURLOPT_POSTFIELDS => json_encode([
+        'statements' => ['SELECT * FROM users']
+    ]),
+]);
+
+$result = json_decode(curl_exec($ch), true);
+curl_close($ch);
+```
+
+See the [Bunny Database documentation](/database) for more details.
+
+<NextSteps />
