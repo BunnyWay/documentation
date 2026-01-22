@@ -329,6 +329,10 @@
                     ]
                   },
                   {
+                    "group": "PHP",
+                    "pages": ["magic-containers/guides/php-slim"]
+                  },
+                  {
                     "group": "Python",
                     "pages": ["magic-containers/guides/python-fastapi"]
                   },
@@ -336,7 +340,9 @@
                     "group": "Web Frameworks",
                     "pages": [
                       "magic-containers/guides/astro",
-                      "magic-containers/guides/nextjs"
+                      "magic-containers/guides/nextjs",
+                      "magic-containers/guides/nuxt",
+                      "magic-containers/guides/ruby-on-rails"
                     ]
                   }
                 ]
