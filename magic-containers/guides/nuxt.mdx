@@ -20,8 +20,8 @@ This guide walks you through building and deploying a Nuxt application to Magic 
 Create a new Nuxt project:
 
 ```bash
-npx nuxi@latest init bunny-nuxt-app
-cd bunny-nuxt-app
+npx nuxi@latest init app-nuxt
+cd app-nuxt
 ```
 
 ### Create an API route
@@ -32,6 +32,21 @@ Create a simple API route to test the deployment:
 export default defineEventHandler(() => {
   return { message: "Hello from Bunny 🐰" };
 });
+```
+
+## Run locally
+
+Install dependencies and start the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000) in your browser, or test the API route:
+
+```bash
+curl http://localhost:3000/api
 ```
 
 ## Create the Dockerfile
@@ -68,7 +83,7 @@ CMD ["node", "server/index.mjs"]
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-nuxt-app.git
+    git remote add origin https://github.com/YOUR_USERNAME/app-nuxt.git
     git push -u origin main
     ```
 
@@ -76,7 +91,7 @@ CMD ["node", "server/index.mjs"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-nuxt-app" />
+    <DockerCliSteps imageName="app-nuxt" />
 
   </Tab>
 </Tabs>
@@ -85,7 +100,7 @@ CMD ["node", "server/index.mjs"]
 
 ## Deploy to Magic Containers
 
-<DeploySteps imageName="bunny-nuxt-app" />
+<DeploySteps imageName="app-nuxt" />
 
 ## Test your app
 

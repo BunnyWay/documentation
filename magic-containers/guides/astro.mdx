@@ -20,8 +20,8 @@ This guide walks you through building and deploying an Astro application to Magi
 Create a new Astro project:
 
 ```bash
-npm create astro@latest bunny-astro-app
-cd bunny-astro-app
+npm create astro@latest app-astro
+cd app-astro
 ```
 
 ### Add the Node adapter
@@ -56,6 +56,20 @@ import type { APIRoute } from "astro";
 export const GET: APIRoute = () => {
   return new Response(JSON.stringify({ message: "Hello from Bunny 🐰" }));
 };
+```
+
+## Run locally
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Visit [http://localhost:4321](http://localhost:4321) in your browser, or test the API route:
+
+```bash
+curl http://localhost:4321/index.json
 ```
 
 ## Create the Dockerfile
@@ -98,7 +112,7 @@ CMD ["node", "./dist/server/entry.mjs"]
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-astro-app.git
+    git remote add origin https://github.com/YOUR_USERNAME/app-astro.git
     git push -u origin main
     ```
 
@@ -106,7 +120,7 @@ CMD ["node", "./dist/server/entry.mjs"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-astro-app" />
+    <DockerCliSteps imageName="app-astro" />
 
   </Tab>
 </Tabs>
@@ -115,7 +129,7 @@ CMD ["node", "./dist/server/entry.mjs"]
 
 ## Deploy to Magic Containers
 
-<DeploySteps imageName="bunny-astro-app" />
+<DeploySteps imageName="app-astro" />
 
 ## Test your app
 

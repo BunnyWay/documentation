@@ -47,6 +47,21 @@ uvicorn==0.34.0
 
 </CodeGroup>
 
+## Run locally
+
+Install dependencies and start the development server:
+
+```bash
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+Test the API:
+
+```bash
+curl http://localhost:8000/
+```
+
 ## Create the Dockerfile
 
 ```dockerfile Dockerfile
@@ -74,7 +89,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-fastapi.git
+    git remote add origin https://github.com/YOUR_USERNAME/app-fastapi.git
     git push -u origin main
     ```
 
@@ -82,7 +97,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-fastapi" />
+    <DockerCliSteps imageName="app-fastapi" />
 
   </Tab>
 </Tabs>
@@ -91,7 +106,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
 
 ## Deploy to Magic Containers
 
-<DeploySteps imageName="bunny-fastapi" />
+<DeploySteps imageName="app-fastapi" />
 
 ## Test your API
 
