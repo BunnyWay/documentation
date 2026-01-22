@@ -850,7 +850,7 @@
                   "api-reference/core/errors"
                 ],
                 "openapi": {
-                  "source": "/api-reference/core/openapi.json",
+                  "source": "https://core-api-public-docs.b-cdn.net/docs/v3/public.json",
                   "directory": "api-reference/core"
                 }
               },
@@ -890,7 +890,7 @@
                 "group": "Edge Scripting API",
                 "pages": ["api-reference/scripting/index"],
                 "openapi": {
-                  "source": "/api-reference/scripting/openapi.json",
+                  "source": "https://core-api-public-docs.b-cdn.net/docs/v3/compute.json",
                   "directory": "api-reference/scripting"
                 }
               },
