@@ -28,9 +28,8 @@ To ensure a clean shutdown, your application should:
 - **Flush data** - Write any buffered data to persistent storage.
 - **Exit cleanly** - Terminate the process with a zero exit code.
 
-## Best practices
+## Tips
 
-- **Design for graceful shutdown** - Stateful applications like databases should handle signals to ensure data integrity. Complete any pending writes and close connections before exiting.
 - **Keep shutdown fast** - While you have 30 seconds, aim to shut down as quickly as possible. Faster shutdowns reduce deployment times during rolling updates.
 - **Use health checks** - Configure readiness health checks so traffic stops flowing to your container before the shutdown signal is sent.
 - **Test your shutdown logic** - Send `SIGTERM` to your container locally to verify it handles the signal correctly and exits within the grace period.
