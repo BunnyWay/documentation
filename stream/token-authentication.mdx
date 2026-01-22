@@ -8,7 +8,7 @@ The Embed View Token Authentication allows you to secure your iframe to prevent 
 
 # Signing procedure
 
-To create a secure URL, you must add a **token** and **expires** query parameters to the URL that you want to access. The expires parameter is the UNIX timestamp marking until when the URL is accessible. After this passes, the URL will no longer be accessible.
+To create a secure URL, you must add a **token** and **expires** query parameters to the URL that you want to access. The expires parameter is the UNIX timestamp in seconds marking until when the URL is accessible. Milliseconds and nanoseconds are not supported. After this passes, the URL will no longer be accessible.
 
 The token parameter is a HEX value of the SHA256 hash based on the key, video ID and expiration time. To generate the token, you can use the following algorithm.
 
