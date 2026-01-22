@@ -20,8 +20,8 @@ This guide walks you through building and deploying a Next.js application to Mag
 Create a new Next.js project:
 
 ```bash
-npx create-next-app@latest bunny-nextjs-app
-cd bunny-nextjs-app
+npx create-next-app@latest app-nextjs
+cd app-nextjs
 ```
 
 ### Configure standalone output
@@ -48,6 +48,20 @@ import { NextResponse } from "next/server";
 export async function GET() {
   return NextResponse.json({ message: "Hello from Bunny 🐰" });
 }
+```
+
+## Run locally
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000) in your browser, or test the API route:
+
+```bash
+curl http://localhost:3000/api
 ```
 
 ## Create the Dockerfile
@@ -93,7 +107,7 @@ CMD ["node", "server.js"]
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-nextjs-app.git
+    git remote add origin https://github.com/YOUR_USERNAME/app-nextjs.git
     git push -u origin main
     ```
 
@@ -101,7 +115,7 @@ CMD ["node", "server.js"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-nextjs-app" />
+    <DockerCliSteps imageName="app-nextjs" />
 
   </Tab>
 </Tabs>
@@ -110,7 +124,7 @@ CMD ["node", "server.js"]
 
 ## Deploy to Magic Containers
 
-<DeploySteps imageName="bunny-nextjs-app" />
+<DeploySteps imageName="app-nextjs" />
 
 ## Test your app
 

@@ -43,7 +43,7 @@ serve({
 
 ```json package.json
 {
-  "name": "bunny-hono-api",
+  "name": "app-hono-api",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -80,6 +80,21 @@ serve({
 
 </CodeGroup>
 
+## Run locally
+
+Install dependencies and start the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+Test the API:
+
+```bash
+curl http://localhost:80/
+```
+
 ## Create the Dockerfile
 
 ```dockerfile Dockerfile
@@ -115,7 +130,7 @@ CMD ["node", "dist/index.js"]
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-hono-api.git
+    git remote add origin https://github.com/YOUR_USERNAME/app-hono-api.git
     git push -u origin main
     ```
 
@@ -123,7 +138,7 @@ CMD ["node", "dist/index.js"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-hono-api" />
+    <DockerCliSteps imageName="app-hono-api" />
 
   </Tab>
 </Tabs>
@@ -132,7 +147,7 @@ CMD ["node", "dist/index.js"]
 
 ## Deploy to Magic Containers
 
-<DeploySteps imageName="bunny-hono-api" />
+<DeploySteps imageName="app-hono-api" />
 
 ## Test your API
 

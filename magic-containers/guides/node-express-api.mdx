@@ -41,7 +41,7 @@ app.listen(port, () => {
 
 ```json package.json
 {
-  "name": "bunny-express-api",
+  "name": "app-express-api",
   "type": "module",
   "scripts": {
     "dev": "node --watch src/index.js",
@@ -54,6 +54,21 @@ app.listen(port, () => {
 ```
 
 </CodeGroup>
+
+## Run locally
+
+Install dependencies and start the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+Test the API:
+
+```bash
+curl http://localhost:80/
+```
 
 ## Create the Dockerfile
 
@@ -89,7 +104,7 @@ CMD ["node", "src/index.js"]
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-express-api.git
+    git remote add origin https://github.com/YOUR_USERNAME/app-express-api.git
     git push -u origin main
     ```
 
@@ -97,7 +112,7 @@ CMD ["node", "src/index.js"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-express-api" />
+    <DockerCliSteps imageName="app-express-api" />
 
   </Tab>
 </Tabs>
@@ -106,7 +121,7 @@ CMD ["node", "src/index.js"]
 
 ## Deploy to Magic Containers
 
-<DeploySteps imageName="bunny-express-api" />
+<DeploySteps imageName="app-express-api" />
 
 ## Test your API
 

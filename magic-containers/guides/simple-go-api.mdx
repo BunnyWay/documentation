@@ -52,12 +52,26 @@ func main() {
 ```
 
 ```go go.mod
-module bunny-go-api
+module app-go-api
 
 go 1.23
 ```
 
 </CodeGroup>
+
+## Run locally
+
+Start the development server:
+
+```bash
+go run main.go
+```
+
+Test the API:
+
+```bash
+curl http://localhost:80/
+```
 
 ## Create the Dockerfile
 
@@ -91,7 +105,7 @@ CMD ["./server"]
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-go-api.git
+    git remote add origin https://github.com/YOUR_USERNAME/app-go-api.git
     git push -u origin main
     ```
 
@@ -99,7 +113,7 @@ CMD ["./server"]
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-go-api" />
+    <DockerCliSteps imageName="app-go-api" />
 
   </Tab>
 </Tabs>
@@ -108,7 +122,7 @@ CMD ["./server"]
 
 ## Deploy to Magic Containers
 
-<DeploySteps imageName="bunny-go-api" />
+<DeploySteps imageName="app-go-api" />
 
 ## Test your API
 
