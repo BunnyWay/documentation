@@ -21,8 +21,8 @@ This guide walks you through building and deploying a Ruby on Rails application 
     Create a new Rails application with views and assets:
 
     ```bash
-    rails new bunny-rails-app
-    cd bunny-rails-app
+    rails new app-rails
+    cd app-rails
     ```
 
     Generate a controller with a view:
@@ -51,8 +51,8 @@ This guide walks you through building and deploying a Ruby on Rails application 
     Create a new Rails API application:
 
     ```bash
-    rails new bunny-rails-app --api
-    cd bunny-rails-app
+    rails new app-rails --api
+    cd app-rails
     ```
 
     Generate a controller with a simple endpoint:
@@ -82,6 +82,22 @@ This guide walks you through building and deploying a Ruby on Rails application 
 
   </Tab>
 </Tabs>
+
+## Run locally
+
+Start the Rails development server:
+
+```bash
+bin/rails server
+```
+
+Test the app at [http://localhost:3000](http://localhost:3000), or with curl:
+
+```bash
+curl http://localhost:3000/
+```
+
+## Prepare for production
 
 Rails 7.1+ automatically generates a production-ready `Dockerfile` in your project root.
 
@@ -123,7 +139,7 @@ Rails 7.1+ generates a production-ready, multi-stage Dockerfile that includes:
     git init
     git add .
     git commit -m "Initial commit"
-    git remote add origin https://github.com/YOUR_USERNAME/bunny-rails-app.git
+    git remote add origin https://github.com/YOUR_USERNAME/app-rails.git
     git push -u origin main
     ```
 
@@ -131,7 +147,7 @@ Rails 7.1+ generates a production-ready, multi-stage Dockerfile that includes:
   <Tab title="Docker CLI">
     Build and push manually from your local machine.
 
-    <DockerCliSteps imageName="bunny-rails-app" />
+    <DockerCliSteps imageName="app-rails" />
 
   </Tab>
 </Tabs>
@@ -151,7 +167,7 @@ Rails 7.1+ generates a production-ready, multi-stage Dockerfile that includes:
     | Field | Value |
     | --- | --- |
     | Registry | GitHub Container Registry |
-    | Image | `YOUR_USERNAME/bunny-rails-app` |
+    | Image | `YOUR_USERNAME/app-rails` |
     | Tag | `latest` |
 
   </Step>
