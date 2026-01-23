@@ -1,0 +1,35 @@
+---
+title: Graceful Shutdown
+description: "Understand how Magic Containers handles container shutdown with SIGTERM signals and grace periods."
+---
+
+When Magic Containers needs to stop a container, whether during a rolling update, scaling down, or app deletion, it follows a graceful shutdown process to give your application time to clean up resources and complete in-flight requests.
+
+## How it works
+
+The shutdown process follows these steps:
+
+1. **SIGTERM signal** - Magic Containers sends a `SIGTERM` signal to your container's main process (PID 1), notifying it to begin a graceful shutdown.
+2. **Grace period** - Your application has 30 seconds to handle the signal, close connections, flush data, and exit cleanly.
+3. **SIGKILL signal** - If the process is still running after the grace period, Magic Containers sends a `SIGKILL` signal to forcefully terminate the container.
+
+<Info>
+The 30-second grace period matches Kubernetes' default termination behavior, allowing applications designed for Kubernetes to work seamlessly on Magic Containers.
+</Info>
+
+## Handling SIGTERM in your application
+
+To ensure a clean shutdown, your application should:
+
+- **Listen for SIGTERM** - Register a signal handler to catch the termination signal.
+- **Stop accepting new requests** - Prevent new work from starting during shutdown.
+- **Complete in-flight work** - Finish processing active requests or transactions.
+- **Close connections** - Gracefully close database connections, file handles, and network sockets.
+- **Flush data** - Write any buffered data to persistent storage.
+- **Exit cleanly** - Terminate the process with a zero exit code.
+
+## Tips
+
+- **Keep shutdown fast** - While you have 30 seconds, aim to shut down as quickly as possible. Faster shutdowns reduce deployment times during rolling updates.
+- **Use health checks** - Configure readiness health checks so traffic stops flowing to your container before the shutdown signal is sent.
+- **Test your shutdown logic** - Send `SIGTERM` to your container locally to verify it handles the signal correctly and exits within the grace period.

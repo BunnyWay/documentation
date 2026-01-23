@@ -300,6 +300,7 @@
                 "pages": [
                   "magic-containers/autoscaling",
                   "magic-containers/rolling-updates",
+                  "magic-containers/graceful-shutdown",
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
                   "magic-containers/app-metadata"
@@ -850,7 +851,7 @@
                   "api-reference/core/errors"
                 ],
                 "openapi": {
-                  "source": "/api-reference/core/openapi.json",
+                  "source": "https://core-api-public-docs.b-cdn.net/docs/v3/public.json",
                   "directory": "api-reference/core"
                 }
               },
@@ -890,7 +891,7 @@
                 "group": "Edge Scripting API",
                 "pages": ["api-reference/scripting/index"],
                 "openapi": {
-                  "source": "/api-reference/scripting/openapi.json",
+                  "source": "https://core-api-public-docs.b-cdn.net/docs/v3/compute.json",
                   "directory": "api-reference/scripting"
                 }
               },
@@ -898,7 +899,7 @@
                 "group": "Magic Containers API",
                 "pages": ["api-reference/magic-containers/overview"],
                 "openapi": {
-                  "source": "https://api-mc-stage.opsbunny.net/docs/v3-users-public/swagger.json",
+                  "source": "https://api-mc.opsbunny.net/docs/public/swagger.json",
                   "directory": "api-reference/magic-containers"
                 }
               },
