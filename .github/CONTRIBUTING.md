@@ -1,15 +1,16 @@
-# Contributing Guidelines
+# Contributing
 
-## Local Development
+Anyone is welcome to contribute to this repository to improve the bunny.net developer experience.
 
-Install the `Mint CLI` to preview and build the documentation locally:
+## External Contributors
 
-```bash
-npm i -g mint
-```
+1. Fork the repo
+2. Create a branch for your changes
+3. Open a PR against `main`
+4. Wait for review and approval
 
-Run the following at the root of the repo to start the server:
+## Staff
 
-```bash
-mint dev
-```
+1. Create a branch from `main`
+2. Open a PR
+3. Get team approval, then merge when ready
