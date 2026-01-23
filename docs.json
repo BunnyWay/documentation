@@ -898,7 +898,7 @@
                 "group": "Magic Containers API",
                 "pages": ["api-reference/magic-containers/overview"],
                 "openapi": {
-                  "source": "https://api-mc-stage.opsbunny.net/docs/v3-users-public/swagger.json",
+                  "source": "https://api-mc.opsbunny.net/docs/public/swagger.json",
                   "directory": "api-reference/magic-containers"
                 }
               },
