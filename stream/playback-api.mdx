@@ -15,7 +15,8 @@ Player.js library is hosted on Bunny.net CDN so you can easily integrate it in y
   <script
     type="text/javascript"
     src="//assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
-  ></script>
+  >
+  </script>
   ```
 </CodeGroup>
 
@@ -49,96 +50,123 @@ console.log('play');
 
 The Bunny Stream Player provides the following methods for controlling playback:
 
-`play`: void - Play the media. Example:
+`play`: Play the media. Example:
 
 <CodeGroup>
 ```bash bash
 player.play();
-````
-
+```
 </CodeGroup>
 
-`pause`: void - Pause the media. Example:
-
-<CodeGroup>```bash bash player.pause(); ```</CodeGroup>
+`pause`: Pause the media. Example:
+<CodeGroup>
+```bash bash 
+player.pause(); 
+```
+</CodeGroup>
 
 `getPaused`: boolean - Determine if the media is paused. Example:
 
 <CodeGroup>
-  ```bash bash
-  player.getPaused(function(value){
-    console.log('paused:', value);
-  });
-  ```
+```bash bash
+player.getPaused(function(value){console.log('paused:', value);
+});
+```
 </CodeGroup>
 
-`mute`: void - Mute the media. Example:
+`mute`: Mute the media. Example:
 
-<CodeGroup>```bash bash player.mute(); ```</CodeGroup>
+<CodeGroup>
 
-`unmute`: void - Unmute the media. Example:
+```bash bash 
+player.mute();
+```
+</CodeGroup>
 
-<CodeGroup>```bash bash player.unmute(); ```</CodeGroup>
+`unmute`: Unmute the media. Example:
+
+<CodeGroup>
+
+```bash bash 
+player.unmute(); 
+```
+</CodeGroup>
 
 `getMuted`: boolean - Determine if the media is muted. Example:
 
 <CodeGroup>
-  ```bash bash player.getMuted(value => console.log('muted:', value)); ```
+```bash bash 
+player.getMuted(value => console.log('muted:', value)); 
+```
 </CodeGroup>
 
-`setVolume`: void - Set the volume. Value needs to be between 0-100. Example:
+`setVolume`: Set the volume. Value needs to be between 0-100. Example:
 
-<CodeGroup>```bash bash player.setVolume(50); ```</CodeGroup>
+<CodeGroup>
+```bash bash 
+player.setVolume(50); 
+```
+</CodeGroup>
 
 `getVolume`: number - Get the volume. Value will be between 0-100. Example:
 
 <CodeGroup>
-  ```bash bash player.getVolume(value => console.log('getVolume:', value)); ```
+```bash bash 
+player.getVolume(value => console.log('getVolume:', value)); 
+```
 </CodeGroup>
 
 `getDuration`: number - Get the duration of the media is seconds. Example:
 
 <CodeGroup>
-  ```bash bash player.getDuration(value => console.log('getDuration:', value));
-  ```
+```bash bash 
+player.getDuration(value => console.log('getDuration:', value));
+```
 </CodeGroup>
 
 `setCurrentTime`: number - Perform a seek to a particular time in seconds. Example:
 
-<CodeGroup>```bash bash player.setCurrentTime(50); ```</CodeGroup>
+<CodeGroup>
+```bash bash 
+player.setCurrentTime(50); 
+```
+</CodeGroup>
 
 `getCurrentTime`: number - Get the current time in seconds of the video. Example:
 
 <CodeGroup>
-  ```bash bash player.getCurrentTime(value => console.log('getCurrentTime:',
-  value)); ```
+```bash bash 
+player.getCurrentTime(value => console.log('getCurrentTime:',
+value)); 
+```
 </CodeGroup>
 
-`off`: void - Remove an event listener. If the listener is specified it should remove only that listener, otherwise remove all listeners. Example:
+`off`: Remove an event listener. If the listener is specified it should remove only that listener, otherwise remove all listeners. Example:
 
 <CodeGroup>
-  ```bash bash
-  player.off('play');
+```bash bash
+player.off('play');
 
 player.off('play', playCallback);
 
-````
+```
 </CodeGroup>
 
-`on`: void - Add an event listener. Example:
+`on`: Add an event listener. Example:
 
 <CodeGroup>
 ```bash bash
 player.on('play', () => console.log('play'));
-````
-
+```
 </CodeGroup>
 
 `supports`: \['method', 'event'], methodOrEventName - Determines if the player supports a given event or method. Example:
 
 <CodeGroup>
-  ```bash bash player.supports('method', 'getDuration');
-  player.supports('event', 'ended'); ```
+```bash bash 
+player.supports('method', 'getDuration');
+player.supports('event', 'ended'); 
+```
 </CodeGroup>
 
 ## Events
@@ -161,21 +189,23 @@ fired when the media is ready to receive commands. This is fired regardless of l
 `progress`- Fires when the media is loading additional media for playback. Example:
 
 <CodeGroup>
-  ```bash bash
-  {
-    percent: 0.8,
-  }
-  ```
+```bash bash
+{
+percent: 0.8,
+}
+```
 </CodeGroup>
 
 `timeupdate` - Fires during playback. Example:
 
-```bash
+<CodeGroup>
+```bash bash
 data: {
-  seconds: 10,
-  duration: 40
+seconds: 10,
+duration: 40
 }
 ```
+</CodeGroup>
 
 `play`- Fires when the video starts to play.
 
