@@ -8,7 +8,7 @@ Welcome to the [bunny.net docs](https://docs.bunny.net) repository. You'll find 
 | -------------------- | -------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------- |
 | **CDN**              | Accelerate and protect your content globally | [docs.bunny.net/cdn](https://docs.bunny.net/cdn)                           | [`/cdn`](/cdn)                           |
 | **Stream**           | Video streaming and delivery platform        | [docs.bunny.net/stream](https://docs.bunny.net/stream)                     | [`/stream`](/stream)                     |
-| **Storage**          | Global object storage with S3 compatibility  | [docs.bunny.net/storage](https://docs.bunny.net/storage)                   | [`/storage`](/storage)                   |
+| **Storage**          | Global object storage                        | [docs.bunny.net/storage](https://docs.bunny.net/storage)                   | [`/storage`](/storage)                   |
 | **Optimizer**        | Automatic image and web optimization         | [docs.bunny.net/optimizer](https://docs.bunny.net/optimizer)               | [`/optimizer`](/optimizer)               |
 | **Magic Containers** | Deploy any app anywhere with Docker          | [docs.bunny.net/magic-containers](https://docs.bunny.net/magic-containers) | [`/magic-containers`](/magic-containers) |
 | **Scripting**        | Deploy serverless code at the edge           | [docs.bunny.net/scripting](https://docs.bunny.net/scripting)               | [`/scripting`](/scripting)               |

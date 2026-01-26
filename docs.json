@@ -538,7 +538,7 @@
       },
       {
         "product": "Storage",
-        "description": "Global object storage with S3 compatibility",
+        "description": "Global object storage",
         "icon": "hard-drive",
         "tabs": [
           {
