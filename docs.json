@@ -298,7 +298,11 @@
                 "pages": [
                   "magic-containers/autoscaling",
                   "magic-containers/rolling-updates",
-                  "magic-containers/graceful-shutdown",
+                  {
+                    "group": "Hidden",
+                    "hidden": true,
+                    "pages": ["magic-containers/graceful-shutdown"]
+                  },
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
                   "magic-containers/app-metadata"
