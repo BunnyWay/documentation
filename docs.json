@@ -836,7 +836,8 @@
                 "pages": [
                   "api-reference/index",
                   "api-reference/quickstart",
-                  "api-reference/authentication"
+                  "api-reference/authentication",
+                  "openapi"
                 ]
               },
               {
