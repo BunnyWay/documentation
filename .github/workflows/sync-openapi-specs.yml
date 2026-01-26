@@ -1,0 +1,55 @@
+name: Sync OpenAPI Specs
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Run daily at 6 AM UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch OpenAPI specs
+        run: |
+          mkdir -p openapi
+
+          # Shield API
+          curl -fsSL "https://api.bunny.net/shield/docs/v1/swagger.json" \
+            -o openapi/bunny-shield-api.json
+
+          # Core Platform API
+          curl -fsSL "https://core-api-public-docs.b-cdn.net/docs/v3/public.json" \
+            -o openapi/bunnynet-api-1.json
+
+          # Edge Scripting API
+          curl -fsSL "https://core-api-public-docs.b-cdn.net/docs/v3/compute.json" \
+            -o openapi/edge-scripting-api.json
+
+          # Stream API
+          curl -fsSL "https://video.bunnycdn.com/openapi/bunnynet-video-api.public.json" \
+            -o openapi/stream-api.json
+
+          # Copy local specs
+          cp api-reference/storage/openapi.json openapi/bunnynet-edge-storage-api.json
+          cp api-reference/origin-errors/openapi.json openapi/origin-errors-spec.json
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git add openapi/
+          if git diff --staged --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: sync OpenAPI specs"
+          git push

@@ -1,0 +1,6544 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Bunny Shield API",
+    "description": "Bunny.net API for Bunny Shield (WAF, DDoS, Rate Limiting).",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://api.bunny.net"
+    }
+  ],
+  "paths": {
+    "/shield/shield-zone/{shieldZoneId}/access-lists": {
+      "get": {
+        "tags": [
+          "AccessLists"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone to which the Access Lists belong.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone to which the Access Lists belong.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessListsDetailsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessListsDetailsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessListsDetailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AccessLists"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone to which the Custom Access List will be associated.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone to which the Custom Access List will be associated.",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomAccessListRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomAccessListRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomAccessListRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/shield-zone/{shieldZoneId}/access-lists/configurations/{id}": {
+      "patch": {
+        "tags": [
+          "AccessLists"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Access List Configuration to update.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Access List Configuration to update.",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone to which the Access List Configuration belongs.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone to which the Access List Configuration belongs.",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccessListConfigurationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccessListConfigurationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccessListConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAccessListConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAccessListConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAccessListConfigurationResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAccessListConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAccessListConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAccessListConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAccessListConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAccessListConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAccessListConfigurationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/shield-zone/{shieldZoneId}/access-lists/{id}": {
+      "get": {
+        "tags": [
+          "AccessLists"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Custom Access List to retrieve.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Custom Access List to retrieve.",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone to which the Custom Access List belongs.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone to which the Custom Access List belongs.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "AccessLists"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Custom Access List to update.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Custom Access List to update.",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone to which the Custom Access List belongs.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone to which the Custom Access List belongs.",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomAccessListRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomAccessListRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomAccessListRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAccessListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AccessLists"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Custom Access List to delete.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Custom Access List to delete.",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone to which the Custom Access List belongs.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone to which the Custom Access List belongs.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/shield-zone/{shieldZoneId}/access-lists/enums": {
+      "get": {
+        "tags": [
+          "AccessLists"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Represents a response with the list of enumeration types and their values exposed by the Access Lists API."
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Represents a response with the list of enumeration types and their values exposed by the Access Lists API."
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Represents a response with the list of enumeration types and their values exposed by the Access Lists API."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shield/shield-zone/{shieldZoneId}/bot-detection": {
+      "get": {
+        "tags": [
+          "BotDetection"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotDetectionConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotDetectionConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotDetectionConfigurationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotDetectionConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotDetectionConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotDetectionConfigurationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotDetectionConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotDetectionConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotDetectionConfigurationResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "BotDetection"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBotDetectionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBotDetectionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBotDetectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBotDetectionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBotDetectionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBotDetectionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBotDetectionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBotDetectionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBotDetectionResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBotDetectionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBotDetectionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBotDetectionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/ddos/enums": {
+      "get": {
+        "tags": [
+          "DDoS"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafEnumsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafEnumsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafEnumsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/event-logs/{shieldZoneId}/{date}/{continuationToken}": {
+      "get": {
+        "tags": [
+          "EventLogs"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone.",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "date",
+            "in": "path",
+            "description": "The Date (MM-dd-yyyy) of returned Event Logs.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The Date (MM-dd-yyyy) of returned Event Logs."
+            }
+          },
+          {
+            "name": "continuationToken",
+            "in": "path",
+            "description": "The Continuation Token for the next page of Event Logs",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The Continuation Token for the next page of Event Logs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WafLoggingResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WafLoggingResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WafLoggingResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/metrics/overview/{shieldZoneId}": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneMetricsOverviewResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneMetricsOverviewResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneMetricsOverviewResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/metrics/overview/{shieldZoneId}/detailed": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone.",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "StartDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "EndDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "Resolution",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/MetricsOverviewResolution"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShieldOverviewMetrics"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShieldOverviewMetrics"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShieldOverviewMetrics"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/metrics/rate-limits/{shieldZoneId}": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneRatelimitMetricsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneRatelimitMetricsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneRatelimitMetricsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/metrics/rate-limit/{id}": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Rate limit.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Rate limit.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRatelimitMetricsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRatelimitMetricsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRatelimitMetricsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/metrics/shield-zone/{shieldZoneId}/waf-rule/{ruleId}": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone.",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ruleId",
+            "in": "path",
+            "description": "The ID of the WAF Rule.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The ID of the WAF Rule."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafRuleMetricsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafRuleMetricsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafRuleMetricsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/metrics/shield-zone/{shieldZoneId}/bot-detection": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneBotDetectionMetricsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneBotDetectionMetricsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneBotDetectionMetricsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/metrics/shield-zone/{shieldZoneId}/upload-scanning": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneUploadScanningMetricsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneUploadScanningMetricsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneUploadScanningMetricsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/promo/state": {
+      "get": {
+        "tags": [
+          "Promo"
+        ],
+        "summary": "Gives a breakdown of promo data",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/shield/rate-limits/{shieldZoneId}": {
+      "get": {
+        "tags": [
+          "RateLimits"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone associated with the Rate Limits",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone associated with the Rate Limits",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "(Optional) The page number of results.",
+            "schema": {
+              "type": "integer",
+              "description": "(Optional) The page number of results.",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "description": "(Optional) (Default: 10) The amount of results returned on one page.",
+            "schema": {
+              "type": "integer",
+              "description": "(Optional) (Default: 10) The amount of results returned on one page.",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCustomWafRulesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCustomWafRulesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCustomWafRulesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/rate-limit/{id}": {
+      "get": {
+        "tags": [
+          "RateLimits"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Rate Limit",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Rate Limit",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "RateLimits"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Rate Limit you would like to update.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Rate Limit you would like to update.",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWafRateLimitRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWafRateLimitRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWafRateLimitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitRule"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitRule"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitRule"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "RateLimits"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Rate Limit that should be deleted.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Rate Limit that should be deleted.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/rate-limit": {
+      "post": {
+        "tags": [
+          "RateLimits"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWafRateLimitRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWafRateLimitRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWafRateLimitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitRule"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitRule"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitRule"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/shield-zones": {
+      "get": {
+        "tags": [
+          "ShieldZone"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "(Optional) The page number of results.",
+            "schema": {
+              "type": "integer",
+              "description": "(Optional) The page number of results.",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "description": "(Optional) (Default: 10) The amount of results returned on one page.",
+            "schema": {
+              "type": "integer",
+              "description": "(Optional) (Default: 10) The amount of results returned on one page.",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZonesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZonesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZonesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/shield-zones/pullzone-mapping": {
+      "get": {
+        "tags": [
+          "ShieldZone"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZonePullzoneMappingResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZonePullzoneMappingResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZonePullzoneMappingResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/shield-zone/{shieldZoneId}": {
+      "get": {
+        "tags": [
+          "ShieldZone"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/shield-zone/get-by-pullzone/{pullZoneId}": {
+      "get": {
+        "tags": [
+          "ShieldZone"
+        ],
+        "parameters": [
+          {
+            "name": "pullZoneId",
+            "in": "path",
+            "description": "The ID of the PullZone.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the PullZone.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShieldZoneResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/shield-zone": {
+      "post": {
+        "tags": [
+          "ShieldZone"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShieldZoneRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShieldZoneRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShieldZoneRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "ShieldZone"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateShieldZoneRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateShieldZoneRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateShieldZoneRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateShieldZoneResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateShieldZoneResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateShieldZoneResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShieldZoneResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/shield-zone/{shieldZoneId}/upload-scanning": {
+      "get": {
+        "tags": [
+          "UploadScanning"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadScanningConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadScanningConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadScanningConfigurationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadScanningConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadScanningConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadScanningConfigurationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadScanningConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadScanningConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadScanningConfigurationResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "UploadScanning"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUploadScanningConfigurationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUploadScanningConfigurationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUploadScanningConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUploadScanningConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUploadScanningConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUploadScanningConfigurationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUploadScanningConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUploadScanningConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUploadScanningConfigurationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUploadScanningConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUploadScanningConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUploadScanningConfigurationResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/rules/{shieldZoneId}": {
+      "get": {
+        "tags": [
+          "Waf"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone for the WAF Rules.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone for the WAF Rules.",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WafRuleMainGroupModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WafRuleMainGroupModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WafRuleMainGroupModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/rules/plan-segmentation": {
+      "get": {
+        "tags": [
+          "Waf"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafRulesSegmentedByPlanResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafRulesSegmentedByPlanResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafRulesSegmentedByPlanResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/rules/review-triggered/{shieldZoneId}": {
+      "get": {
+        "tags": [
+          "Waf"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone for the Triggered Rules.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone for the Triggered Rules.",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTriggeredRulesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTriggeredRulesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTriggeredRulesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Waf"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone for the Triggered Rule.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone for the Triggered Rule.",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReviewTriggeredRuleRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReviewTriggeredRuleRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReviewTriggeredRuleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateReviewTriggeredRuleResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateReviewTriggeredRuleResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateReviewTriggeredRuleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/rules/review-triggered/ai-recommendation/{shieldZoneId}/{ruleId}": {
+      "get": {
+        "tags": [
+          "Waf"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone for the Triggered Rule.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone for the Triggered Rule.",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "ruleId",
+            "in": "path",
+            "description": "The ID of the Triggered Rule.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The ID of the Triggered Rule."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TriggeredRuleRecommendationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TriggeredRuleRecommendationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TriggeredRuleRecommendationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/custom-rules/{shieldZoneId}": {
+      "get": {
+        "tags": [
+          "Waf"
+        ],
+        "parameters": [
+          {
+            "name": "shieldZoneId",
+            "in": "path",
+            "description": "The ID of the Shield Zone associated with the Custom WAF Rules.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Shield Zone associated with the Custom WAF Rules.",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "(Optional) The page number of results.",
+            "schema": {
+              "type": "integer",
+              "description": "(Optional) The page number of results.",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "description": "(Optional) (Default: 10) The amount of results returned on one page.",
+            "schema": {
+              "type": "integer",
+              "description": "(Optional) (Default: 10) The amount of results returned on one page.",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCustomWafRulesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCustomWafRulesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCustomWafRulesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/custom-rule/{id}": {
+      "get": {
+        "tags": [
+          "Waf"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Custom WAF Rule.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Custom WAF Rule.",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Waf"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Custom WAF Rule you would like to update.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Custom WAF Rule you would like to update.",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomWafRuleRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomWafRuleRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomWafRuleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Waf"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Custom WAF Rule you would like to update.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Custom WAF Rule you would like to update.",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomWafRuleRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomWafRuleRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomWafRuleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Waf"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the Custom WAF Rule that should be deleted.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the Custom WAF Rule that should be deleted.",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericRequestResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/custom-rule": {
+      "post": {
+        "tags": [
+          "Waf"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomWafRuleRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomWafRuleRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomWafRuleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomWafRule"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/profiles": {
+      "get": {
+        "tags": [
+          "Waf"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafProfilesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafProfilesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafProfilesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/enums": {
+      "get": {
+        "tags": [
+          "Waf"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafEnumsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafEnumsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafEnumsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/shield/waf/engine-config": {
+      "get": {
+        "tags": [
+          "Waf"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafEngineConfigResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafEngineConfigResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWafEngineConfigResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AcceptedResult": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "nullable": true
+          },
+          "formatters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IOutputFormatter"
+            },
+            "nullable": true
+          },
+          "contentTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "declaredType": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AccessList": {
+        "type": "object",
+        "properties": {
+          "totalActions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loggedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengedRequests": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AccessListAction": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "AccessListCategory": {
+        "enum": [
+          0,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048,
+          4096,
+          8192
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "AccessListDetails": {
+        "required": [
+          "action",
+          "configurationId",
+          "entryCount",
+          "isEnabled",
+          "lastUpdated",
+          "listId",
+          "name",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "listId": {
+            "type": "integer",
+            "description": "The unique identifier of the access list.",
+            "format": "int64"
+          },
+          "configurationId": {
+            "type": "integer",
+            "description": "The unique identifier of the access list configuration.",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "description": "The display name of the access list.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of the access list's purpose or contents.",
+            "nullable": true
+          },
+          "isEnabled": {
+            "type": "boolean",
+            "description": "Indicates whether the access list is currently enabled and active."
+          },
+          "type": {
+            "$ref": "#/components/schemas/AccessListType"
+          },
+          "category": {
+            "$ref": "#/components/schemas/AccessListCategory"
+          },
+          "action": {
+            "$ref": "#/components/schemas/AccessListAction"
+          },
+          "requiredPlan": {
+            "$ref": "#/components/schemas/ShieldPlanType"
+          },
+          "entryCount": {
+            "type": "integer",
+            "description": "The total number of entries currently in the access list.",
+            "format": "int64"
+          },
+          "updateFrequency": {
+            "type": "string",
+            "description": "How frequently the list is updated from its source. Only applicable to managed lists.",
+            "format": "date-span",
+            "nullable": true
+          },
+          "lastUpdated": {
+            "type": "string",
+            "description": "The timestamp when the access list was last updated.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents detailed information about an access list and its configuration."
+      },
+      "AccessListType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "AccessListsDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "managedLists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessListDetails"
+            },
+            "description": "List of curated threat lists maintained by Bunny Shield with automatic updates.",
+            "nullable": true
+          },
+          "customLists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessListDetails"
+            },
+            "description": "List of custom access lists created and maintained by the user.",
+            "nullable": true
+          },
+          "customEntryCount": {
+            "type": "integer",
+            "description": "Total number of entries across all custom access lists for this Shield Zone.",
+            "format": "int32",
+            "nullable": true
+          },
+          "customEntryLimit": {
+            "type": "integer",
+            "description": "Maximum number of entries allowed across all custom access lists based on the Shield plan.",
+            "format": "int32",
+            "nullable": true
+          },
+          "customListCount": {
+            "type": "integer",
+            "description": "Current number of custom access lists for this Shield Zone.",
+            "format": "int32",
+            "nullable": true
+          },
+          "customListLimit": {
+            "type": "integer",
+            "description": "Maximum number of custom access lists allowed based on the Shield plan.",
+            "format": "int32",
+            "nullable": true
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response containing comprehensive access list information for a Shield Zone, including both managed and custom lists."
+      },
+      "BotDetectionConfigurationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BotDetectionConfigurationState"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BotDetectionConfigurationState": {
+        "required": [
+          "browserFingerprint",
+          "ipAddress",
+          "requestIntegrity"
+        ],
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requestIntegrity": {
+            "$ref": "#/components/schemas/RequestIntegrityConfiguration"
+          },
+          "ipAddress": {
+            "$ref": "#/components/schemas/IpAddressConfiguration"
+          },
+          "browserFingerprint": {
+            "$ref": "#/components/schemas/BrowserFingerprintConfiguration"
+          },
+          "executionMode": {
+            "$ref": "#/components/schemas/BotDetectionExecutionMode"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BotDetectionData": {
+        "type": "object",
+        "properties": {
+          "loggedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengedRequests": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BotDetectionExecutionMode": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "BotDetectionSensitivity": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "BrowserFingerprintAggression": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "BrowserFingerprintConfiguration": {
+        "type": "object",
+        "properties": {
+          "sensitivity": {
+            "$ref": "#/components/schemas/BotDetectionSensitivity"
+          },
+          "aggression": {
+            "$ref": "#/components/schemas/BrowserFingerprintAggression"
+          },
+          "complexEnabled": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConfigVariableValueMinimal": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "valueEncoded": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateCustomAccessListRequest": {
+        "required": [
+          "content",
+          "name",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The display name for the new access list.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of the access list's purpose or contents.",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/AccessListType"
+          },
+          "content": {
+            "type": "string",
+            "description": "The initial content for the access list with entries separated by newlines.",
+            "nullable": true
+          },
+          "checksum": {
+            "type": "string",
+            "description": "SHA-256 checksum of the content for integrity verification. If null, it will be automatically calculated.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request model for creating a new custom access list."
+      },
+      "CreateCustomWafRuleModel": {
+        "type": "object",
+        "properties": {
+          "actionType": {
+            "$ref": "#/components/schemas/WafRuleActionType"
+          },
+          "variableTypes": {
+            "type": "object",
+            "properties": {
+              "REQUEST_URI": {
+                "type": "string"
+              },
+              "REQUEST_URI_RAW": {
+                "type": "string"
+              },
+              "ARGS": {
+                "type": "string"
+              },
+              "ARGS_COMBINED_SIZE": {
+                "type": "string"
+              },
+              "ARGS_GET": {
+                "type": "string"
+              },
+              "ARGS_GET_NAMES": {
+                "type": "string"
+              },
+              "ARGS_POST": {
+                "type": "string"
+              },
+              "ARGS_POST_NAMES": {
+                "type": "string"
+              },
+              "FILES_NAMES": {
+                "type": "string"
+              },
+              "GEO": {
+                "type": "string"
+              },
+              "REMOTE_ADDR": {
+                "type": "string"
+              },
+              "QUERY_STRING": {
+                "type": "string"
+              },
+              "REQUEST_BASENAME": {
+                "type": "string"
+              },
+              "REQUEST_BODY": {
+                "type": "string"
+              },
+              "REQUEST_COOKIES_NAMES": {
+                "type": "string"
+              },
+              "REQUEST_COOKIES": {
+                "type": "string"
+              },
+              "REQUEST_FILENAME": {
+                "type": "string"
+              },
+              "REQUEST_HEADERS_NAMES": {
+                "type": "string"
+              },
+              "REQUEST_HEADERS": {
+                "type": "string"
+              },
+              "REQUEST_LINE": {
+                "type": "string"
+              },
+              "REQUEST_METHOD": {
+                "type": "string"
+              },
+              "REQUEST_PROTOCOL": {
+                "type": "string"
+              },
+              "RESPONSE_BODY": {
+                "type": "string"
+              },
+              "RESPONSE_HEADERS": {
+                "type": "string"
+              },
+              "RESPONSE_STATUS": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true
+          },
+          "operatorType": {
+            "$ref": "#/components/schemas/WafRuleOperatorType"
+          },
+          "severityType": {
+            "$ref": "#/components/schemas/WafRuleSeverityType"
+          },
+          "transformationTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafRuleTransformationType"
+            },
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "chainedRuleConditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafChainedRuleConditionItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateCustomWafRuleRequest": {
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ruleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleConfiguration": {
+            "$ref": "#/components/schemas/CreateCustomWafRuleModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateShieldZoneRequest": {
+        "required": [
+          "pullZoneId"
+        ],
+        "type": "object",
+        "properties": {
+          "shieldZone": {
+            "$ref": "#/components/schemas/ShieldZoneRequest"
+          },
+          "pullZoneId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateShieldZoneResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateShieldZoneRequest"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateWafRateLimitRequest": {
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ruleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleConfiguration": {
+            "$ref": "#/components/schemas/CreateWafRateLimitRuleModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateWafRateLimitRuleModel": {
+        "type": "object",
+        "properties": {
+          "actionType": {
+            "$ref": "#/components/schemas/RatelimitRuleActionType"
+          },
+          "variableTypes": {
+            "type": "object",
+            "properties": {
+              "REQUEST_URI": {
+                "type": "string"
+              },
+              "REQUEST_URI_RAW": {
+                "type": "string"
+              },
+              "ARGS": {
+                "type": "string"
+              },
+              "ARGS_COMBINED_SIZE": {
+                "type": "string"
+              },
+              "ARGS_GET": {
+                "type": "string"
+              },
+              "ARGS_GET_NAMES": {
+                "type": "string"
+              },
+              "ARGS_POST": {
+                "type": "string"
+              },
+              "ARGS_POST_NAMES": {
+                "type": "string"
+              },
+              "FILES_NAMES": {
+                "type": "string"
+              },
+              "GEO": {
+                "type": "string"
+              },
+              "REMOTE_ADDR": {
+                "type": "string"
+              },
+              "QUERY_STRING": {
+                "type": "string"
+              },
+              "REQUEST_BASENAME": {
+                "type": "string"
+              },
+              "REQUEST_BODY": {
+                "type": "string"
+              },
+              "REQUEST_COOKIES_NAMES": {
+                "type": "string"
+              },
+              "REQUEST_COOKIES": {
+                "type": "string"
+              },
+              "REQUEST_FILENAME": {
+                "type": "string"
+              },
+              "REQUEST_HEADERS_NAMES": {
+                "type": "string"
+              },
+              "REQUEST_HEADERS": {
+                "type": "string"
+              },
+              "REQUEST_LINE": {
+                "type": "string"
+              },
+              "REQUEST_METHOD": {
+                "type": "string"
+              },
+              "REQUEST_PROTOCOL": {
+                "type": "string"
+              },
+              "RESPONSE_BODY": {
+                "type": "string"
+              },
+              "RESPONSE_HEADERS": {
+                "type": "string"
+              },
+              "RESPONSE_STATUS": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true
+          },
+          "operatorType": {
+            "$ref": "#/components/schemas/WafRuleOperatorType"
+          },
+          "severityType": {
+            "$ref": "#/components/schemas/WafRuleSeverityType"
+          },
+          "transformationTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafRuleTransformationType"
+            },
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "counterKeyType": {
+            "$ref": "#/components/schemas/WafRatelimitCounterKeyType"
+          },
+          "timeframe": {
+            "$ref": "#/components/schemas/WafRateLimitTimeframeType"
+          },
+          "blockTime": {
+            "$ref": "#/components/schemas/WafRatelimitBlockType"
+          },
+          "chainedRuleConditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafChainedRuleConditionItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomAccessList": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique identifier of the custom access list.",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "description": "The display name of the custom access list.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of the access list's purpose or contents.",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/AccessListType"
+          },
+          "content": {
+            "type": "string",
+            "description": "The raw content of the access list with entries separated by newlines.",
+            "nullable": true
+          },
+          "checksum": {
+            "type": "string",
+            "description": "SHA-256 checksum of the content for integrity verification.",
+            "nullable": true
+          },
+          "entryCount": {
+            "type": "integer",
+            "description": "The total number of entries in the access list.",
+            "format": "int64",
+            "nullable": true
+          },
+          "lastModified": {
+            "type": "string",
+            "description": "The timestamp when the access list was last modified.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a custom access list associated with a shield zone."
+      },
+      "CustomAccessListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CustomAccessList"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response containing custom access list data or error information."
+      },
+      "CustomWafRule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleConfiguration": {
+            "$ref": "#/components/schemas/CreateCustomWafRuleModel"
+          },
+          "errorResponse": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DDoS": {
+        "type": "object",
+        "properties": {
+          "loggedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "verifiedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengedRequests": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DDoSExecutionMode": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DDoSShieldSensitivity": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "GenericRequestResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "$ref": "#/components/schemas/HttpStatusCode"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the operation was successful."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable message describing the result of the operation.",
+            "nullable": true
+          },
+          "errorKey": {
+            "type": "string",
+            "description": "Unique error key for programmatic error handling, if applicable.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic response object containing status information for API operations."
+      },
+      "GetCustomWafRulesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomWafRule"
+            },
+            "nullable": true
+          },
+          "page": {
+            "$ref": "#/components/schemas/PaginationResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetRatelimitMetricsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/RatelimitMetrics"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetShieldZoneBotDetectionMetricsResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ShieldZoneBotDetectionMetrics"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetShieldZoneMetricsOverviewResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ShieldZoneMetrics"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetShieldZonePullzoneMappingResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShieldZonePullZoneMapping"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetShieldZoneRatelimitMetricsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShieldZoneRatelimitMetrics"
+            },
+            "nullable": true
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetShieldZoneResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ShieldZoneResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetShieldZoneUploadScanningMetricsResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ShieldZoneUploadScanningMetrics"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetShieldZonesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShieldZoneResponse"
+            },
+            "nullable": true
+          },
+          "page": {
+            "$ref": "#/components/schemas/PaginationResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetTriggeredRulesResponse": {
+        "type": "object",
+        "properties": {
+          "errorResponse": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          },
+          "triggeredRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TriggeredRuleItem"
+            },
+            "nullable": true
+          },
+          "totalTriggeredRules": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetWafEngineConfigResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConfigVariableValueMinimal"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetWafEnumsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafMappedEnumList"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetWafProfilesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/WafProfileMinimal"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetWafRuleMetricsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/WafRuleMetrics"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetWafRulesSegmentedByPlanResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafRulesByPlanModel"
+            },
+            "nullable": true
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HttpStatusCode": {
+        "enum": [
+          100,
+          101,
+          102,
+          103,
+          200,
+          201,
+          202,
+          203,
+          204,
+          205,
+          206,
+          207,
+          208,
+          226,
+          300,
+          301,
+          302,
+          303,
+          304,
+          305,
+          306,
+          307,
+          308,
+          400,
+          401,
+          402,
+          403,
+          404,
+          405,
+          406,
+          407,
+          408,
+          409,
+          410,
+          411,
+          412,
+          413,
+          414,
+          415,
+          416,
+          417,
+          421,
+          422,
+          423,
+          424,
+          426,
+          428,
+          429,
+          431,
+          451,
+          500,
+          501,
+          502,
+          503,
+          504,
+          505,
+          506,
+          507,
+          508,
+          510,
+          511
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "IOutputFormatter": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "IndividualRatelimit": {
+        "type": "object",
+        "properties": {
+          "totalBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loggedBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengedBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedBreaches": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "IpAddressConfiguration": {
+        "type": "object",
+        "properties": {
+          "sensitivity": {
+            "$ref": "#/components/schemas/BotDetectionSensitivity"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Labels": {
+        "type": "object",
+        "properties": {
+          "asn": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleId": {
+            "type": "string",
+            "nullable": true
+          },
+          "severity": {
+            "type": "string",
+            "nullable": true
+          },
+          "method": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleGroup": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "serverZone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Log": {
+        "type": "object",
+        "properties": {
+          "logId": {
+            "type": "string",
+            "nullable": true
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "log": {
+            "type": "string",
+            "nullable": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetricsOverviewResolution": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "OverviewMetric": {
+        "type": "object",
+        "properties": {
+          "metrics": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "format": "int64"
+              }
+            },
+            "nullable": true
+          },
+          "totals": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaginationResponse": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nextPage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "PullZoneWafConfigVariableModel": {
+        "required": [
+          "name",
+          "valueEncoded"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "valueEncoded": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RateLimitRule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleConfiguration": {
+            "$ref": "#/components/schemas/CreateWafRateLimitRuleModel"
+          },
+          "errorResponse": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Ratelimit": {
+        "type": "object",
+        "properties": {
+          "totalBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loggedBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengedBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedBreaches": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RatelimitMetrics": {
+        "type": "object",
+        "properties": {
+          "overview": {
+            "$ref": "#/components/schemas/IndividualRatelimit"
+          },
+          "ratelimitOverviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/IndividualRatelimit"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RatelimitRuleActionType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "RequestIntegrityConfiguration": {
+        "type": "object",
+        "properties": {
+          "sensitivity": {
+            "$ref": "#/components/schemas/BotDetectionSensitivity"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReviewActionType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ShieldOverview": {
+        "type": "object",
+        "properties": {
+          "dDoSMitigated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wafTriggeredRules": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ratelimitBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "botDetectionChallenged": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accessListActions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uploadScanningBlocks": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldOverviewMetrics": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ShieldOverviewMetricsData"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldOverviewMetricsData": {
+        "type": "object",
+        "properties": {
+          "waf": {
+            "$ref": "#/components/schemas/OverviewMetric"
+          },
+          "ddos": {
+            "$ref": "#/components/schemas/OverviewMetric"
+          },
+          "rateLimit": {
+            "$ref": "#/components/schemas/OverviewMetric"
+          },
+          "accessLists": {
+            "$ref": "#/components/schemas/OverviewMetric"
+          },
+          "botDetection": {
+            "$ref": "#/components/schemas/OverviewMetric"
+          },
+          "uploadScanning": {
+            "$ref": "#/components/schemas/OverviewMetric"
+          },
+          "totalCleanRequestsLimit": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalBillableRequestsThisMonth": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "resolution": {
+            "$ref": "#/components/schemas/MetricsOverviewResolution"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldPlanType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ShieldZoneBotDetectionMetrics": {
+        "type": "object",
+        "properties": {
+          "overviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BotDetectionData"
+            },
+            "nullable": true
+          },
+          "totalLoggedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalChallengedRequests": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldZoneMetrics": {
+        "type": "object",
+        "properties": {
+          "overview": {
+            "$ref": "#/components/schemas/ShieldOverview"
+          },
+          "waf": {
+            "$ref": "#/components/schemas/Waf"
+          },
+          "overviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ShieldOverview"
+            },
+            "nullable": true
+          },
+          "dDoS": {
+            "$ref": "#/components/schemas/DDoS"
+          },
+          "dDoSOverviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DDoS"
+            },
+            "nullable": true
+          },
+          "ratelimit": {
+            "$ref": "#/components/schemas/Ratelimit"
+          },
+          "ratelimitOverviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Ratelimit"
+            },
+            "nullable": true
+          },
+          "botDetection": {
+            "$ref": "#/components/schemas/BotDetectionData"
+          },
+          "botDetectionOverviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BotDetectionData"
+            },
+            "nullable": true
+          },
+          "accessList": {
+            "$ref": "#/components/schemas/AccessList"
+          },
+          "accessListOverviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AccessList"
+            },
+            "nullable": true
+          },
+          "uploadScanningOverviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/UploadScanning"
+            },
+            "nullable": true
+          },
+          "totalCleanRequestsLimit": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalBillableRequests": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uploadScanning": {
+            "$ref": "#/components/schemas/UploadScanning"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldZonePullZoneMapping": {
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pullZoneId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldZoneRatelimit": {
+        "type": "object",
+        "properties": {
+          "totalBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loggedBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengedBreaches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedBreaches": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldZoneRatelimitMetrics": {
+        "type": "object",
+        "properties": {
+          "ratelimitId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "overview": {
+            "$ref": "#/components/schemas/ShieldZoneRatelimit"
+          },
+          "ratelimitOverviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ShieldZoneRatelimit"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldZoneRequest": {
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "premiumPlan": {
+            "type": "boolean",
+            "nullable": true,
+            "deprecated": true
+          },
+          "planType": {
+            "$ref": "#/components/schemas/ShieldPlanType"
+          },
+          "learningMode": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "learningModeUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "wafEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "wafExecutionMode": {
+            "$ref": "#/components/schemas/WAFExecutionMode"
+          },
+          "wafDisabledRules": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "wafLogOnlyRules": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "wafRequestHeaderLoggingEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "wafRequestIgnoredHeaders": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "wafRealtimeThreatIntelligenceEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "wafProfileId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "wafEngineConfig": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PullZoneWafConfigVariableModel"
+            },
+            "nullable": true
+          },
+          "wafRequestBodyLimitAction": {
+            "$ref": "#/components/schemas/WAFPayloadLimitAction"
+          },
+          "wafResponseBodyLimitAction": {
+            "$ref": "#/components/schemas/WAFPayloadLimitAction"
+          },
+          "dDoSShieldSensitivity": {
+            "$ref": "#/components/schemas/DDoSShieldSensitivity"
+          },
+          "dDoSExecutionMode": {
+            "$ref": "#/components/schemas/DDoSExecutionMode"
+          },
+          "dDoSChallengeWindow": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "blockVpn": {
+            "type": "boolean",
+            "nullable": true,
+            "deprecated": true
+          },
+          "blockTor": {
+            "type": "boolean",
+            "nullable": true,
+            "deprecated": true
+          },
+          "blockDatacentre": {
+            "type": "boolean",
+            "nullable": true,
+            "deprecated": true
+          },
+          "whitelabelResponsePages": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldZoneResponse": {
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pullZoneId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "learningMode": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "learningModeUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "wafEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "wafExecutionMode": {
+            "$ref": "#/components/schemas/WAFExecutionMode"
+          },
+          "wafDisabledRules": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "wafLogOnlyRules": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "wafRequestHeaderLoggingEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "wafRequestIgnoredHeaders": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "wafRealtimeThreatIntelligenceEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "wafProfileId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "wafEngineConfig": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PullZoneWafConfigVariableModel"
+            },
+            "nullable": true
+          },
+          "wafRequestBodyLimitAction": {
+            "$ref": "#/components/schemas/WAFPayloadLimitAction"
+          },
+          "wafResponseBodyLimitAction": {
+            "$ref": "#/components/schemas/WAFPayloadLimitAction"
+          },
+          "rateLimitRulesLimit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "customWafRulesLimit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "planType": {
+            "$ref": "#/components/schemas/ShieldPlanType"
+          },
+          "dDoSShieldSensitivity": {
+            "$ref": "#/components/schemas/DDoSShieldSensitivity"
+          },
+          "dDoSExecutionMode": {
+            "$ref": "#/components/schemas/DDoSExecutionMode"
+          },
+          "dDoSChallengeWindow": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "blockVpn": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "blockTor": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "blockDatacentre": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "whitelabelResponsePages": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShieldZoneUploadScanningMetrics": {
+        "type": "object",
+        "properties": {
+          "overviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/UploadScanning"
+            },
+            "nullable": true
+          },
+          "totalLoggedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalBlockedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalFilesScanned": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TriggeredRuleItem": {
+        "type": "object",
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "topTargetedUrls": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "totalTriggeredRequests": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "ruleLogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Log"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TriggeredRuleRecommendationResponse": {
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ruleId": {
+            "type": "string",
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "recommendation": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorResponse": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnauthorizedResult": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateAccessListConfigurationRequest": {
+        "type": "object",
+        "properties": {
+          "isEnabled": {
+            "type": "boolean",
+            "description": "Whether the access list should be enabled or disabled. If null, the current state is preserved.",
+            "nullable": true
+          },
+          "action": {
+            "$ref": "#/components/schemas/AccessListAction"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request model for updating an access list configuration."
+      },
+      "UpdateAccessListConfigurationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UpdateAccessListConfigurationRequest"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response containing the updated access list configuration data or error information."
+      },
+      "UpdateBotDetectionRequest": {
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "executionMode": {
+            "$ref": "#/components/schemas/BotDetectionExecutionMode"
+          },
+          "requestIntegrity": {
+            "$ref": "#/components/schemas/RequestIntegrityConfiguration"
+          },
+          "ipAddress": {
+            "$ref": "#/components/schemas/IpAddressConfiguration"
+          },
+          "browserFingerprint": {
+            "$ref": "#/components/schemas/BrowserFingerprintConfiguration"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateBotDetectionResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          },
+          "data": {
+            "$ref": "#/components/schemas/BotDetectionConfigurationState"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateCustomAccessListRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The new display name for the access list. If null, the current name is preserved.",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "description": "The new content for the access list with entries separated by newlines. If null, the current content is preserved.",
+            "nullable": true
+          },
+          "checksum": {
+            "type": "string",
+            "description": "SHA-256 checksum of the new content for integrity verification. If null, it will be automatically calculated.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request model for updating a custom access list."
+      },
+      "UpdateCustomWafRuleRequest": {
+        "type": "object",
+        "properties": {
+          "ruleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleConfiguration": {
+            "$ref": "#/components/schemas/CreateCustomWafRuleModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateReviewTriggeredRuleRequest": {
+        "type": "object",
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "nullable": true
+          },
+          "action": {
+            "$ref": "#/components/schemas/ReviewActionType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateReviewTriggeredRuleResponse": {
+        "type": "object",
+        "properties": {
+          "errorResponse": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateShieldZoneRequest": {
+        "required": [
+          "shieldZoneId"
+        ],
+        "type": "object",
+        "properties": {
+          "shieldZone": {
+            "$ref": "#/components/schemas/ShieldZoneRequest"
+          },
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateShieldZoneResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UpdateShieldZoneRequest"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateUploadScanningConfigurationRequest": {
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "csamScanningMode": {
+            "$ref": "#/components/schemas/UploadScanningScannerMode"
+          },
+          "antivirusScanningMode": {
+            "$ref": "#/components/schemas/UploadScanningScannerMode"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateUploadScanningConfigurationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UploadScanningConfigurationState"
+          },
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateWafRateLimitRequest": {
+        "type": "object",
+        "properties": {
+          "ruleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleConfiguration": {
+            "$ref": "#/components/schemas/CreateWafRateLimitRuleModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadScanning": {
+        "type": "object",
+        "properties": {
+          "loggedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "filesScanned": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadScanningConfigurationResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          },
+          "data": {
+            "$ref": "#/components/schemas/UploadScanningConfigurationState"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadScanningConfigurationState": {
+        "type": "object",
+        "properties": {
+          "shieldZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "csamScanningMode": {
+            "$ref": "#/components/schemas/UploadScanningScannerMode"
+          },
+          "antivirusScanningMode": {
+            "$ref": "#/components/schemas/UploadScanningScannerMode"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadScanningScannerMode": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "WAFExecutionMode": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "WAFPayloadLimitAction": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Waf": {
+        "type": "object",
+        "properties": {
+          "totalTriggeredRules": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loggedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengedRequests": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafChainedRuleConditionItem": {
+        "type": "object",
+        "properties": {
+          "variableTypes": {
+            "type": "object",
+            "properties": {
+              "REQUEST_URI": {
+                "type": "string"
+              },
+              "REQUEST_URI_RAW": {
+                "type": "string"
+              },
+              "ARGS": {
+                "type": "string"
+              },
+              "ARGS_COMBINED_SIZE": {
+                "type": "string"
+              },
+              "ARGS_GET": {
+                "type": "string"
+              },
+              "ARGS_GET_NAMES": {
+                "type": "string"
+              },
+              "ARGS_POST": {
+                "type": "string"
+              },
+              "ARGS_POST_NAMES": {
+                "type": "string"
+              },
+              "FILES_NAMES": {
+                "type": "string"
+              },
+              "GEO": {
+                "type": "string"
+              },
+              "REMOTE_ADDR": {
+                "type": "string"
+              },
+              "QUERY_STRING": {
+                "type": "string"
+              },
+              "REQUEST_BASENAME": {
+                "type": "string"
+              },
+              "REQUEST_BODY": {
+                "type": "string"
+              },
+              "REQUEST_COOKIES_NAMES": {
+                "type": "string"
+              },
+              "REQUEST_COOKIES": {
+                "type": "string"
+              },
+              "REQUEST_FILENAME": {
+                "type": "string"
+              },
+              "REQUEST_HEADERS_NAMES": {
+                "type": "string"
+              },
+              "REQUEST_HEADERS": {
+                "type": "string"
+              },
+              "REQUEST_LINE": {
+                "type": "string"
+              },
+              "REQUEST_METHOD": {
+                "type": "string"
+              },
+              "REQUEST_PROTOCOL": {
+                "type": "string"
+              },
+              "RESPONSE_BODY": {
+                "type": "string"
+              },
+              "RESPONSE_HEADERS": {
+                "type": "string"
+              },
+              "RESPONSE_STATUS": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true
+          },
+          "operatorType": {
+            "$ref": "#/components/schemas/WafRuleOperatorType"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafLoggingResponse": {
+        "type": "object",
+        "properties": {
+          "logs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Log"
+            },
+            "nullable": true
+          },
+          "hasMoreData": {
+            "type": "boolean"
+          },
+          "continuationToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "startToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorResponse": {
+            "$ref": "#/components/schemas/GenericRequestResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafMappedEnum": {
+        "type": "object",
+        "properties": {
+          "optionalInput": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isPremium": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafMappedEnumList": {
+        "type": "object",
+        "properties": {
+          "enumName": {
+            "type": "string",
+            "nullable": true
+          },
+          "enumValues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafMappedEnum"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafProfileMinimal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPremium": {
+            "type": "boolean"
+          },
+          "profileCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "features": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafRateLimitTimeframeType": {
+        "enum": [
+          1,
+          10
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "WafRatelimitBlockType": {
+        "enum": [
+          30,
+          60,
+          300,
+          900,
+          1800,
+          3600
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "WafRatelimitCounterKeyType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "WafRule": {
+        "type": "object",
+        "properties": {
+          "totalTriggers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loggedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengedRequests": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafRuleActionType": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "WafRuleGroupModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "mainGroup": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleset": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafRuleModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafRuleMainGroupModel": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleset": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruleGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafRuleGroupModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafRuleMetrics": {
+        "type": "object",
+        "properties": {
+          "totalTriggers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loggedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challengedRequests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overviewPastTwentyEightDays": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WafRule"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafRuleModel": {
+        "type": "object",
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WafRuleOperatorType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          12,
+          14,
+          15,
+          17,
+          18
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "WafRuleSeverityType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "WafRuleTransformationType": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "WafRulesByPlanModel": {
+        "type": "object",
+        "properties": {
+          "planValue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "planName": {
+            "type": "string",
+            "nullable": true
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WafRuleMainGroupModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "AccessKey": {
+        "type": "apiKey",
+        "description": "API key passed through the AccessKey header",
+        "name": "AccessKey",
+        "in": "header"
+      }
+    }
+  }
+}
