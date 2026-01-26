@@ -87,7 +87,6 @@
                   {
                     "group": "Billing",
                     "pages": [
-                      "billing/index",
                       "billing/add-funds",
                       "billing/auto-recharge",
                       "billing/billing-history",
@@ -110,7 +109,7 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny CDN",
+                "group": "Documentation",
                 "pages": [
                   "cdn/index",
                   "cdn/quickstart",
@@ -248,7 +247,7 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny Magic Containers",
+                "group": "Documentation",
                 "pages": [
                   "magic-containers/index",
                   "magic-containers/quickstart",
@@ -361,7 +360,7 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny Edge Scripting",
+                "group": "Documentation",
                 "pages": [
                   "scripting/index",
                   "scripting/quickstart",
@@ -433,7 +432,7 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny Stream",
+                "group": "Documentation",
                 "pages": [
                   "stream/index",
                   "stream/quickstart",
@@ -548,7 +547,7 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny Storage",
+                "group": "Documentation",
                 "pages": [
                   "storage/index",
                   "storage/quickstart",
@@ -617,7 +616,7 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny Shield",
+                "group": "Documentation",
                 "pages": ["shield/index", "shield/quickstart"]
               },
               {
@@ -666,7 +665,7 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny Optimizer",
+                "group": "Documentation",
                 "pages": [
                   "optimizer/index",
                   "optimizer/quickstart",
@@ -719,7 +718,7 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny DNS",
+                "group": "Documentation",
                 "pages": ["dns/index", "dns/dnssec"]
               },
               {
@@ -743,7 +742,7 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny AI",
+                "group": "Documentation",
                 "pages": [
                   "ai-image-generation/index",
                   "ai-image-generation/quickstart",
@@ -764,12 +763,8 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Bunny Database",
-                "pages": [
-                  "database/index",
-                  "database/quickstart",
-                  "database/pricing"
-                ]
+                "group": "Documentation",
+                "pages": ["database/index", "database/quickstart"]
               },
               {
                 "group": "Connect",
@@ -794,9 +789,7 @@
                 "pages": [
                   "database/replication",
                   "database/metrics",
-                  "database/durability-and-consistency",
-                  "database/limits",
-                  "database/api-reference"
+                  "database/durability-and-consistency"
                 ]
               }
             ]
@@ -814,11 +807,20 @@
               {
                 "group": "WordPress",
                 "pages": ["integrations/wordpress"]
-              },
+              }
+            ]
+          },
+          {
+            "tab": "cPanel",
+            "groups": [
               {
                 "group": "cPanel",
-                "hidden": true,
-                "pages": ["integrations/cpanel"]
+                "pages": [
+                  "integrations/cpanel/index",
+                  "integrations/cpanel/quickstart",
+                  "integrations/cpanel/configuration",
+                  "integrations/cpanel/custom-nameservers"
+                ]
               }
             ]
           }
@@ -2089,11 +2091,6 @@
       "permanent": true
     },
     {
-      "source": "/docs/cpanel-plugin-installation",
-      "destination": "/integrations/cpanel",
-      "permanent": true
-    },
-    {
       "source": "/docs/database-pricing",
       "destination": "/database/pricing",
       "permanent": true
@@ -2246,6 +2243,26 @@
     {
       "source": "/integrations",
       "destination": "/integrations/wordpress",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cpanel-plugin-installation",
+      "destination": "/integrations/cpanel/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/docs/configuration-file-and-available-configs",
+      "destination": "/integrations/cpanel/configuration",
+      "permanent": true
+    },
+    {
+      "source": "/docs/enabling-custom-nameservers",
+      "destination": "/integrations/cpanel/custom-nameservers",
+      "permanent": true
+    },
+    {
+      "source": "/docs/taxation-vat-and-sales-tax",
+      "destination": "/billing/taxation",
       "permanent": true
     }
   ]

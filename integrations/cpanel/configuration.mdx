@@ -1,0 +1,24 @@
+---
+title: "Configuration"
+description: "Learn about the bunny.net cPanel plugin configuration file and available options."
+---
+
+The bunny.net cPanel plugin uses a configuration file located at `/etc/bunnynet.conf`. Some values are required and others are optional. The list below shows all available configuration options.
+
+## Required
+
+| Key                | Description                                                                                              |
+| :----------------- | :------------------------------------------------------------------------------------------------------- |
+| `BUNNYNET_API_KEY` | The API key for your bunny.net account                                                                   |
+| `WHM_API_KEY`      | The API key for WHM (automatically generated on setup, managed in WHM > Development > Manage API Tokens) |
+
+## Optional
+
+| Key               | Description                                       | Default value           |
+| :---------------- | :------------------------------------------------ | :---------------------- |
+| `NS1`             | Primary custom nameserver                         | `kiki.bunny.net`        |
+| `NS2`             | Secondary custom nameserver                       | `coco.bunny.net`        |
+| `SOA_EMAIL`       | The SOA e-mail address                            | `hostmaster@bunny.net`  |
+| `DOH_RESOLVER`    | The DNS over HTTPS resolver                       | `https://dns.quad9.net` |
+| `LOG_LEVEL`       | The log level                                     | `warn`                  |
+| `URL_PURGE_WORKERS` | The number of workers to handle URL cache purging | `2`                     |
