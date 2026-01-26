@@ -220,7 +220,6 @@
                     "group": "Troubleshooting",
                     "pages": [
                       "cdn/troubleshooting/acceleration-not-enabled",
-                      "cdn/troubleshooting/turkey-delivery-issues",
                       "cdn/troubleshooting/unexpected-redirects",
                       "cdn/troubleshooting/wordpress-static-urls",
                       "cdn/troubleshooting/cookies-still-sent",
@@ -561,7 +560,6 @@
                 "group": "Manage Files & Objects",
                 "pages": [
                   "storage/dashboard",
-                  "storage/s3",
                   "storage/http",
                   {
                     "group": "SDKs",
