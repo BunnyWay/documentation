@@ -48,6 +48,7 @@ The database URL and access token are now available as environment variables in 
 
 ```typescript
 import { createClient } from "@libsql/client/web";
+import process from "node:process";
 
 const client = createClient({
   url: process.env.DB_URL,
