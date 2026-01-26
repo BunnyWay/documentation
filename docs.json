@@ -938,6 +938,36 @@
   },
   "redirects": [
     {
+      "source": "/openapi/bunny-shield-api.json",
+      "destination": "https://api.bunny.net/shield/docs/v1/swagger.json",
+      "permanent": true
+    },
+    {
+      "source": "/openapi/bunnynet-api-1.json",
+      "destination": "https://core-api-public-docs.b-cdn.net/docs/v3/public.json",
+      "permanent": true
+    },
+    {
+      "source": "/openapi/bunnynet-edge-storage-api.json",
+      "destination": "/api-reference/storage/openapi.json",
+      "permanent": true
+    },
+    {
+      "source": "/openapi/edge-scripting-api.json",
+      "destination": "https://core-api-public-docs.b-cdn.net/docs/v3/compute.json",
+      "permanent": true
+    },
+    {
+      "source": "/openapi/origin-errors-spec.json",
+      "destination": "/api-reference/origin-errors/openapi.json",
+      "permanent": true
+    },
+    {
+      "source": "/openapi/stream-api.json",
+      "destination": "https://video.bunnycdn.com/openapi/bunnynet-video-api.public.json",
+      "permanent": true
+    },
+    {
       "source": "/docs",
       "destination": "/",
       "permanent": true
