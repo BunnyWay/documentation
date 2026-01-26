@@ -310,8 +310,7 @@
                 "pages": [
                   "magic-containers/limits",
                   "magic-containers/troubleshooting",
-                  "magic-containers/faqs",
-                  "magic-containers/api-reference"
+                  "magic-containers/faqs"
                 ]
               },
               {
@@ -894,6 +893,7 @@
                 }
               },
               {
+                "hidden": true,
                 "group": "Magic Containers API",
                 "pages": ["api-reference/magic-containers/overview"],
                 "openapi": {
