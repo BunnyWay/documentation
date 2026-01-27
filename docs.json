@@ -2263,6 +2263,11 @@
       "source": "/docs/taxation-vat-and-sales-tax",
       "destination": "/billing/taxation",
       "permanent": true
+    },
+    {
+      "source": "/docs/s3",
+      "destination": "/storage/s3",
+      "permanent": true
     }
   ]
 }
