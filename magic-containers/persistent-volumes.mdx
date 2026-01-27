@@ -8,9 +8,11 @@ Persistent Volumes provide durable storage that persists across restarts and red
 
 - **Auto-scaling** - Volumes automatically scale up with regional pod deployments and detach when scaling down
 - **Encrypted by default** - All persistent data is AES encrypted
-- **Flexible storage** - Each volume can expand up to 100GB
+- **Flexible storage** - Each volume can expand up to 100GB (standard accounts) or 30GB (trial accounts), but can only be extended, never reduced
 - **Dedicated volumes** - Each pod generates its own unique blank volume with no data duplication
-- **Resource efficiency** - Containers within the same pod can share the same volume
+- **Shared access** - Containers within the same pod can share the same volume
+- **Automatic reattachment** - Detached volumes reattach automatically if your app scales up regionally
+- **Unique mount paths** - Mount paths are unique to the application
 
 ## Quickstart
 
@@ -26,23 +28,19 @@ Persistent Volumes provide durable storage that persists across restarts and red
 
 Your application now has scalable persistent volumes attached to each container. Manage your volumes from the dedicated **Volumes** tab.
 
-## Key features
+## Limits
 
-- Maximum volume size of 100GB per volume
-- All volumes are AES encrypted by default
-- Maximum of 2 volumes per application
-- Volumes can only be extended in size, never reduced
-- Detached volumes remain billable until deleted
-- Detached volumes reattach automatically if your app scales up regionally
-- Volumes can be shared between containers on the same pod
-- Mount paths are unique to the application
+| Feature                 | Standard account | Trial account |
+| ----------------------- | ---------------- | ------------- |
+| Volumes per application | 2                | 1             |
+| Maximum volume size     | 100GB            | 30GB          |
 
 ## FAQ
 
 <AccordionGroup>
   <Accordion title="Will I still be charged while my volume is detached from the container?">
     Yes, you will still be charged while the volume exists, even if it's
-    detached from a container.
+    detached from a container. The volume still reserves storage capacity.
   </Accordion>
   <Accordion title="How do volumes scale down?">
     The default behavior means the volume will detach when scaling down.
@@ -55,4 +53,4 @@ Your application now has scalable persistent volumes attached to each container.
 
 ## Pricing
 
-\$0.10 per GB/month, charged based on volume size.
+\$0.10 per GB/month, charged based on the allocated (provisioned) volume size, not the actual used space.
