@@ -812,6 +812,7 @@
             ]
           },
           {
+            "hidden": true,
             "tab": "cPanel",
             "groups": [
               {
@@ -1305,11 +1306,6 @@
     {
       "source": "/magic-containers/expose-app",
       "destination": "/magic-containers/endpoints",
-      "permanent": true
-    },
-    {
-      "source": "/magic-containers/health-checks",
-      "destination": "/magic-containers/health-checks-overview",
       "permanent": true
     },
     {
@@ -2266,6 +2262,11 @@
     {
       "source": "/docs/taxation-vat-and-sales-tax",
       "destination": "/billing/taxation",
+      "permanent": true
+    },
+    {
+      "source": "/docs/s3",
+      "destination": "/storage/s3",
       "permanent": true
     }
   ]

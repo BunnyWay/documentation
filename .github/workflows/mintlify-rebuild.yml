@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Trigger Mintlify rebuild
         run: |
-          curl -X POST "https://api.mintlify.com/v1/project/update/${{ secrets.MINTLIFY_PROJECT_ID }}" \
+          curl -X POST "https://api.mintlify.com/v1/project/update/${{ vars.MINTLIFY_PROJECT_ID }}" \
             -H "Authorization: Bearer ${{ secrets.MINTLIFY_API_KEY }}" \
             -H "Content-Type: application/json" \
             --fail
