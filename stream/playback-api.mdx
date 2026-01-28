@@ -10,136 +10,125 @@ For more information, see detailed documentation available at [player.js website
 
 Player.js library is hosted on Bunny.net CDN so you can easily integrate it in your website by including the following script block in your HTML:
 
-<CodeGroup>
-  ```bash bash
-  <script
-    type="text/javascript"
-    src="//assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
-  ></script>
-  ```
-</CodeGroup>
+```bash
+<script
+  type="text/javascript"
+  src="//assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
+>
+</script>
+```
 
 ## Quickstart
 
 After loading the library and embedding the Player iframe, you can create a player object and interact with it using various events and methods. The following example illustrates the basic usage:
 
-<CodeGroup>
-  ```bash bash
-  const player = new playerjs.Player('iframe');
+```js
+const player = new playerjs.Player("iframe");
 
-player.on('ready', () => {
-player.on('play', () => {
-console.log('play');
+player.on("ready", () => {
+  player.on("play", () => {
+    console.log("play");
+  });
+
+  player.getDuration((duration) => console.log(duration));
+
+  if (player.supports("method", "mute")) {
+    player.mute();
+  }
+
+  player.play();
 });
-
-    player.getDuration(duration => console.log(duration));
-
-    if (player.supports('method', 'mute')) {
-      player.mute();
-    }
-
-    player.play();
-
-});
-
-````
-</CodeGroup>
+```
 
 ## Methods
 
 The Bunny Stream Player provides the following methods for controlling playback:
 
-`play`: void - Play the media. Example:
+`play`: Play the media. Example:
 
-<CodeGroup>
-```bash bash
+```js
 player.play();
-````
+```
 
-</CodeGroup>
+`pause`: Pause the media. Example:
 
-`pause`: void - Pause the media. Example:
-
-<CodeGroup>```bash bash player.pause(); ```</CodeGroup>
+```js
+player.pause();
+```
 
 `getPaused`: boolean - Determine if the media is paused. Example:
 
-<CodeGroup>
-  ```bash bash
-  player.getPaused(function(value){
-    console.log('paused:', value);
-  });
-  ```
-</CodeGroup>
+```js
+player.getPaused((value) => console.log("paused", value));
+```
 
-`mute`: void - Mute the media. Example:
+`mute`: Mute the media. Example:
 
-<CodeGroup>```bash bash player.mute(); ```</CodeGroup>
+```js
+player.mute();
+```
 
-`unmute`: void - Unmute the media. Example:
+`unmute`: Unmute the media. Example:
 
-<CodeGroup>```bash bash player.unmute(); ```</CodeGroup>
+```js
+player.unmute();
+```
 
 `getMuted`: boolean - Determine if the media is muted. Example:
 
-<CodeGroup>
-  ```bash bash player.getMuted(value => console.log('muted:', value)); ```
-</CodeGroup>
+```js
+player.getMuted((value) => console.log("muted", value));
+```
 
-`setVolume`: void - Set the volume. Value needs to be between 0-100. Example:
+`setVolume`: Set the volume. Value needs to be between 0-100. Example:
 
-<CodeGroup>```bash bash player.setVolume(50); ```</CodeGroup>
+```js
+player.setVolume(50);
+```
 
 `getVolume`: number - Get the volume. Value will be between 0-100. Example:
 
-<CodeGroup>
-  ```bash bash player.getVolume(value => console.log('getVolume:', value)); ```
-</CodeGroup>
+```js
+player.getVolume((value) => console.log("getVolume", value));
+```
 
 `getDuration`: number - Get the duration of the media is seconds. Example:
 
-<CodeGroup>
-  ```bash bash player.getDuration(value => console.log('getDuration:', value));
-  ```
-</CodeGroup>
+```js
+player.getDuration((value) => console.log("getDuration", value));
+```
 
 `setCurrentTime`: number - Perform a seek to a particular time in seconds. Example:
 
-<CodeGroup>```bash bash player.setCurrentTime(50); ```</CodeGroup>
+```js
+player.setCurrentTime(50);
+```
 
 `getCurrentTime`: number - Get the current time in seconds of the video. Example:
 
-<CodeGroup>
-  ```bash bash player.getCurrentTime(value => console.log('getCurrentTime:',
-  value)); ```
-</CodeGroup>
+```js
+player.getCurrentTime((value) => console.log("getCurrentTime", value));
+```
 
-`off`: void - Remove an event listener. If the listener is specified it should remove only that listener, otherwise remove all listeners. Example:
+`off`: Remove an event listener. If the listener is specified it should remove only that listener, otherwise remove all listeners. Example:
 
-<CodeGroup>
-  ```bash bash
-  player.off('play');
+```js
+player.off("play");
+player.off("play", playCallback);
+```
 
-player.off('play', playCallback);
+`on`: Add an event listener. Example:
 
-````
-</CodeGroup>
-
-`on`: void - Add an event listener. Example:
-
-<CodeGroup>
-```bash bash
-player.on('play', () => console.log('play'));
-````
-
-</CodeGroup>
+```js
+player.on("play", () => console.log("play"));
+```
 
 `supports`: \['method', 'event'], methodOrEventName - Determines if the player supports a given event or method. Example:
 
-<CodeGroup>
-  ```bash bash player.supports('method', 'getDuration');
-  player.supports('event', 'ended'); ```
-</CodeGroup>
+```js
+player.supports("method", "getDuration");
+player.supports("event", "ended");
+```
 
 ## Events
 
@@ -152,6 +141,7 @@ The Bunny Stream Player emits the following player.js events that can be attache
 `ready`- Fired when the media is ready to receive commands.
 
 <Info>
+
 As outlined in the PlayerJs Spec, there may be inconsistencies if multiple players on the page have the same source `src`. To address this, append a UUID or a timestamp to the iframe's `src`to ensure all players on the page have a unique source.
 
 </Info>
@@ -160,17 +150,15 @@ fired when the media is ready to receive commands. This is fired regardless of l
 
 `progress`- Fires when the media is loading additional media for playback. Example:
 
-<CodeGroup>
-  ```bash bash
-  {
-    percent: 0.8,
-  }
-  ```
-</CodeGroup>
+```js
+{
+  "percent": 0.8
+}
+```
 
 `timeupdate` - Fires during playback. Example:
 
-```bash
+```js
 data: {
   seconds: 10,
   duration: 40
