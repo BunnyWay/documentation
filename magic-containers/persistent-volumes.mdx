@@ -14,6 +14,15 @@ Persistent Volumes provide durable storage that persists across restarts and red
 - **Automatic reattachment** - Detached volumes reattach automatically if your app scales up regionally
 - **Unique mount paths** - Mount paths are unique to the application
 
+## Regional behavior
+
+Volumes are tied to specific regions. This means:
+
+- If your app runs in multiple regions (e.g., EU, US, APAC), each region gets its own independent volumes
+- A pod in one region cannot access volumes from another region
+- When scaling to a new region, new volumes are automatically provisioned in that region
+- Each pod within the same region gets its own dedicated blank volume (no data duplication between pods)
+
 ## Quickstart
 
 <Steps>
