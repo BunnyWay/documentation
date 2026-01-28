@@ -1,0 +1,77 @@
+---
+title: Import and Export
+description: Import and export DNS records using BIND zone files.
+---
+
+Bunny DNS supports importing and exporting DNS records using the universal BIND zone file format. This lets you migrate between DNS providers or backup your configuration.
+
+## Import records
+
+To import DNS records from a BIND-compatible zone file:
+
+1. Go to **DNS** and select your DNS Zone
+2. Click **Import/Export**
+3. Upload your zone file or paste the contents
+4. Review the imported records
+5. Click to confirm the import
+
+### Supported record types for import
+
+| Type  | Supported |
+| ----- | --------- |
+| A     | Yes       |
+| AAAA  | Yes       |
+| CNAME | Yes       |
+| MX    | Yes       |
+| TXT   | Yes       |
+| SRV   | Yes       |
+| CAA   | Yes       |
+| PTR   | Yes       |
+
+<Info>
+  Record types not listed above are skipped during import. Bunny-specific
+  records (Pull Zone, Redirect, Script) cannot be imported automatically.
+</Info>
+
+## Export records
+
+To export your DNS records to a BIND-compatible zone file:
+
+1. Go to **DNS** and select your DNS Zone
+2. Click **Import/Export**
+3. Click **Export Zone File**
+4. Save the downloaded file
+
+### Supported record types for export
+
+| Type  | Supported |
+| ----- | --------- |
+| A     | Yes       |
+| AAAA  | Yes       |
+| CNAME | Yes       |
+| MX    | Yes       |
+| TXT   | Yes       |
+| SRV   | Yes       |
+| CAA   | Yes       |
+| PTR   | Yes       |
+
+<Info>
+  Bunny-specific records such as Pull Zone, Redirect, and Script records are not
+  included in the export.
+</Info>
+
+## Zone file format
+
+The exported BIND file follows the standard format:
+
+```dns
+;A records
+myothersite.example.com.    IN    5m    A    1.1.2.2
+maindomain.example.com.     IN    5m    A    1.2.3.4
+
+;MX records
+mailexchange.example.com.   IN    5m    MX   0    mxexchange.host.com.
+
+;TXT records
+example.com.    IN    1m    TXT    "_acme-challenge.example.com= D-52Wm4V7xoUpGax-F8FrPO45cQRcbRj-XoblaY4uYM"
+```

@@ -1,0 +1,66 @@
+---
+title: Nameservers
+description: Configure nameservers for your DNS Zone.
+---
+
+After creating a DNS Zone, you need to update your domain's nameservers at your registrar to point to Bunny DNS. This page shows you where to find your nameserver details and how to configure custom nameservers.
+
+## Default nameservers
+
+Bunny DNS uses the following nameservers:
+
+- `kiki.bunny.net`
+- `coco.bunny.net`
+
+To view your nameservers, go to **DNS**, select your DNS Zone, then click **Nameservers** in the zone menu.
+
+## Update nameservers at your registrar
+
+To activate Bunny DNS for your domain, update the nameserver records at your domain registrar:
+
+1. Log in to your domain registrar
+2. Find the domain management or DNS settings
+3. Replace existing nameservers with `kiki.bunny.net` and `coco.bunny.net`
+4. Save the changes
+
+<Info>
+  DNS propagation can take up to 48 hours, though changes typically take effect
+  within a few hours.
+</Info>
+
+## Custom nameservers
+
+Custom nameservers let you use your own domain for nameservers instead of the default `bunny.net` domain. This is useful for white-labeling or branding purposes.
+
+To configure custom nameservers:
+
+1. Go to **DNS** and select your DNS Zone
+2. Click **Nameservers**
+3. Enable **Custom nameservers**
+4. Enter your custom nameserver hostnames
+5. Click **Save Configuration**
+
+### Glue records
+
+When using custom nameservers, you need to create glue records at your domain registrar. Glue records provide the IP addresses for your nameservers, preventing circular dependencies.
+
+The nameserver IP addresses are displayed in the configuration panel:
+
+| Nameserver   | IPv4            | IPv6                |
+| ------------ | --------------- | ------------------- |
+| Nameserver 1 | `91.200.176.1`  | `2400:52e0:fff0::1` |
+| Nameserver 2 | `109.104.147.1` | `2400:52e0:fff2::1` |
+
+<Info>
+  Before changing nameservers, make sure the appropriate DNS or glue records
+  have been set correctly on the domain. Without correct records, your domain
+  might become unavailable.
+</Info>
+
+## SOA configuration
+
+The SOA (Start of Authority) record contains administrative information about your zone. You can configure the contact email address in the nameserver settings.
+
+| Field     | Description                                                                     |
+| --------- | ------------------------------------------------------------------------------- |
+| **Email** | The administrative contact email for the zone (default: `hostmaster@bunny.net`) |

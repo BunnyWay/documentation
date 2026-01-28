@@ -1,0 +1,43 @@
+---
+title: Logging
+description: Enable and configure DNS query logging for your zone.
+---
+
+DNS logging records raw access logs of all queries to your zone. This is useful for debugging, security analysis, and traffic monitoring.
+
+## Enable logging
+
+To enable DNS logging:
+
+1. Go to **DNS** and select your DNS Zone
+2. Click **Logging** in the zone menu
+3. Click **Settings**
+4. Enable logging
+5. Save your configuration
+
+When enabled, the zone records and stores raw access logs of all queries for up to 3 days.
+
+## View logs
+
+Once logging is enabled, the Logging page displays query logs with the following information:
+
+| Field               | Description                                          |
+| ------------------- | ---------------------------------------------------- |
+| **Query Type**      | The DNS record type requested (A, AAAA, CNAME, etc.) |
+| **Hostname**        | The queried hostname                                 |
+| **Remote IP**       | The IP address that made the query                   |
+| **EDNS IP**         | The EDNS client subnet IP, if provided               |
+| **Response Values** | The DNS response returned                            |
+
+## Privacy settings
+
+### Anonymize log IPs
+
+Enabled by default, this setting anonymizes IP addresses in DNS logs to ensure compliance with GDPR privacy regulations.
+
+### Log anonymization type
+
+Choose how IP addresses are anonymized:
+
+- **Remove one octet**: Masks the last segment of the IP address
+- **Drop IP completely**: Removes the IP address entirely from logs

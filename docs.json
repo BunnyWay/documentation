@@ -720,7 +720,18 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["dns/index", "dns/dnssec"]
+                "pages": ["dns/index", "dns/quickstart"]
+              },
+              {
+                "group": "DNS Management",
+                "pages": [
+                  "dns/records",
+                  "dns/nameservers",
+                  "dns/import-export",
+                  "dns/dnssec",
+                  "dns/logging",
+                  "dns/statistics"
+                ]
               },
               {
                 "group": "Scriptable DNS",

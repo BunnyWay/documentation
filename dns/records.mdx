@@ -1,0 +1,166 @@
+---
+title: DNS Records
+description: Add, edit, and manage DNS records for your zone.
+---
+
+DNS records map domain names to IP addresses and other resources. Bunny DNS supports all standard record types and provides advanced features like weighted load balancing, smart routing, and health monitoring through record sets.
+
+## Add a record
+
+<Steps>
+  <Step title="Open your DNS Zone">
+    In the bunny.net dashboard, go to **DNS** and select your DNS Zone, then click **Add Record**.
+  </Step>
+
+  <Step title="Configure the record">
+    Fill in the record details:
+
+    | Field | Description |
+    |-------|-------------|
+    | **Hostname** | The subdomain for this record. Leave empty for the root domain. |
+    | **Type** | The record type (A, AAAA, CNAME, MX, TXT, etc.) |
+    | **TTL** | Time to live. How long resolvers cache the record. |
+    | **Value** | The record value (IP address, hostname, or text depending on type). |
+
+    Expand **Advanced Settings** to configure additional options:
+
+    | Setting | Description |
+    |---------|-------------|
+    | **Routing Weight** | Value between 0-100 that controls how often this record is returned relative to others in a record set. |
+    | **Monitoring** | Enable health monitoring to automatically remove offline records from responses. |
+    | **Smart Record Type** | Configure geographic or latency-based routing for A and AAAA records. |
+    | **Record Enabled** | Toggle to disable a record without deleting it. Disabled records remain visible but don't respond to queries. |
+
+    Click **Add Record** to save.
+
+  </Step>
+</Steps>
+
+## Edit a record
+
+To modify an existing record:
+
+1. Locate the record in your DNS Zone
+2. Click the **...** menu on the record row
+3. Select **Edit**
+4. Modify the record settings
+5. Click **Save Record**
+
+<Info>
+  The record type cannot be changed when editing. Delete and recreate the record
+  if you need a different type.
+</Info>
+
+## Delete a record
+
+To remove a record:
+
+1. Locate the record in your DNS Zone
+2. Click the **...** menu on the record row
+3. Select **Delete**
+4. Click **Delete** to confirm
+
+<Info>
+  Deleting a record takes effect immediately. Make sure the record is no longer
+  needed before deleting.
+</Info>
+
+## Quick edit TTL
+
+You can change a record's TTL directly from the record list without opening the full edit dialog. Click the **TTL** value and select a new option:
+
+- 15m
+- 30m
+- 1h
+- 5h
+- 12h
+- 1D
+
+## CDN Acceleration
+
+CDN Acceleration routes traffic through Bunny CDN for improved performance and caching. Click the **CDN Acceleration** field in the record list to toggle it on or off.
+
+When enabled:
+
+- TTL automatically changes to **Auto**
+- Click the settings icon to configure the connected Pull Zone
+- Bunny CDN handles caching, optimization, and DDoS protection
+
+## Record sets
+
+A record set groups multiple DNS records of the same type that share the same name. Record sets enable advanced features like load balancing and failover.
+
+### A and AAAA record sets
+
+Record sets for A (IPv4) and AAAA (IPv6) records support:
+
+- **Weighting**: Assign different weights to control how often each record is returned
+- **Smart routing**: Route traffic based on geographic location or latency
+- **Health monitoring**: Automatically remove unhealthy endpoints from responses
+
+These features make A and AAAA record sets ideal for global load balancing and CDN configurations.
+
+### Other record sets
+
+For record types other than A and AAAA (such as TXT, CNAME, MX), all records in the set are returned together when queried.
+
+## Smart records
+
+A and AAAA records can be configured as Smart Records for dynamic routing based on user location.
+
+### Geographic routing
+
+Routes queries based on the end user's geographical location. The record closest to the user is returned. Location is determined using:
+
+- Bunny DNS resolver location
+- Query remote IP
+- EDNS0 client subnet IP
+
+### Latency routing
+
+Routes queries based on estimated latency to bunny.net datacenter regions. Select the region closest to your server for accurate matching.
+
+<Info>
+  Latency routing may be more accurate than geographic routing since physical
+  distance doesn't always correlate with network latency.
+</Info>
+
+## Load balancing
+
+Bunny DNS supports DNS-based load balancing through weighted record sets and health monitoring.
+
+### Weights
+
+Every A and AAAA record has a **Routing Weight** (0-100) that controls how often it's returned relative to other records in the set.
+
+For example, with two records where one has weight 100 and another has weight 50:
+
+- First record returned approximately 66% of the time
+- Second record returned approximately 33% of the time
+
+If all records have equal weights, up to 3 records are randomly returned from the set.
+
+### Health monitoring
+
+When monitoring is enabled on a record set:
+
+- Offline records are automatically removed from DNS responses
+- If all records in a group are offline, filtering is disabled to prevent false positives
+- Single-value records continue to be returned regardless of health status
+
+## Supported record types
+
+| Type          | Description                                                    |
+| ------------- | -------------------------------------------------------------- |
+| **A**         | Maps a domain to an IPv4 address                               |
+| **AAAA**      | Maps a domain to an IPv6 address                               |
+| **CNAME**     | Creates an alias pointing to another domain                    |
+| **MX**        | Specifies mail servers for the domain                          |
+| **TXT**       | Stores text data (SPF, DKIM, verification records)             |
+| **SRV**       | Defines service locations                                      |
+| **CAA**       | Specifies which certificate authorities can issue certificates |
+| **PTR**       | Reverse DNS lookup                                             |
+| **NS**        | Delegates a subdomain to other nameservers                     |
+| **Redirect**  | Bunny-specific record for URL redirects                        |
+| **Pull Zone** | Bunny-specific record linking to a CDN Pull Zone               |
+| **Script**    | Bunny-specific record for scriptable DNS responses             |

@@ -8,6 +8,8 @@ description: "Hop on an ultra-fast DNS platform designed to power the next gener
 
 Bunny DNS is an authoritative DNS service that runs on a dual-stack anycast network, natively supporting both IPv4 and IPv6 for global performance and reliability. Powered by our nameservers, we've built a resilient foundation designed to handle anything the internet throws at it.
 
+<Card title="DNS Quickstart" href="/dns/quickstart" icon="rocket" horizontal />
+
 ## DNS platform for next-gen apps
 
 Make intelligent routing decisions and build smart network services with just a few lines of code. Interconnect your applications and get complete control of your network behavior.
@@ -19,6 +21,25 @@ Make intelligent routing decisions and build smart network services with just a 
 - Multi-cloud solutions
 - Geographical routing
 
+## Easy migration
+
+Migrating to Bunny DNS is simple. When adding a new DNS Zone, you can:
+
+- **Auto-scan existing records**: Bunny DNS automatically detects and imports your current DNS records. Review and edit them before switching.
+- **Upload zone files**: Import a BIND-compatible zone file to migrate all records at once.
+
+Both options let you verify everything before making the switch, so you can migrate with confidence.
+
+## DNS management
+
+Manage your DNS zones with a full suite of tools:
+
+- **Records**: Add, edit, and delete DNS records with support for all standard types plus Bunny-specific records like Pull Zone and Script records.
+- **CDN Acceleration**: Route traffic through Bunny CDN with a single click for improved performance and caching.
+- **Record sets**: Group multiple records of the same type for load balancing, weighted routing, and automatic failover.
+- **Smart records**: Configure geographic or latency-based routing to direct users to the closest or fastest endpoint.
+- **Health monitoring**: Automatically remove offline endpoints from DNS responses.
+
 ## Security
 
 We mitigate large-scale L3/L4 DDoS attacks right at the edge, and apply smart L7 protections with per-IP DNS rate limiting to keep your domains safe and responsive.
@@ -27,7 +48,7 @@ Set up [DNSSEC](/dns/dnssec) in just a few clicks and keep your records safe fro
 
 ## Scriptable DNS
 
-Bunny DNS is scriptable with [Edge Scripting](/dns/scriptable/introduction)! Write JavaScript to dynamically respond to DNS queries, enabling advanced use cases like:
+Bunny DNS is scriptable with [Edge Scripting](/dns/scriptable/introduction). Write JavaScript to dynamically respond to DNS queries, enabling advanced use cases like:
 
 - Health-based routing with automatic failover
 - Weighted load balancing
