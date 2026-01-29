@@ -9,12 +9,21 @@ This guide walks you through adding a DNS Zone to bunny.net and configuring your
   <Step title="Create a new DNS Zone">
     In the bunny.net dashboard, go to **DNS** and click **Add DNS Zone**, or select it from the **+ Add** sidebar launcher.
 
-    <Frame>![](/images/dns/add-dns-zone.png)</Frame>
+    <Frame>![Add DNS Zone](/images/dns/add-dns-zone.png)</Frame>
 
   </Step>
 
   <Step title="Enter your domain">
     Type your domain name (e.g., `mywebsite.com`) to start the setup process.
+  
+    <Frame>![Enter domain](/images/dns/enter-domain.png)</Frame>
+  
+  </Step>
+  
+  <Step title="Import records">
+      Now that you've entered your domain, you can import any existing DNS records.
+
+      <Frame>![Scan or upload](/images/dns/scan-or-upload.png)</Frame>
 
     <Tabs>
       <Tab title="Auto-import or add manually">
@@ -43,7 +52,7 @@ This guide walks you through adding a DNS Zone to bunny.net and configuring your
     - Remove or modify records as needed
     - Check that critical records like MX (email) and CNAME entries are correct
 
-    <Info>Some records may not be detected automatically or could fail to import. Always verify against your current DNS provider before proceeding.</Info>
+    <Frame>![Review records](/images/dns/review-dns-records.png)</Frame>
 
   </Step>
 
@@ -52,6 +61,8 @@ This guide walks you through adding a DNS Zone to bunny.net and configuring your
 
     - **Confirm and add** creates the DNS Zone with your imported or configured records
     - **Add DNS Zone without records** creates an empty DNS Zone that you can populate manually
+
+    <Frame>![Confirm and add](/images/dns/confirm-and-add.png)</Frame>
 
     Click your preferred option to create the zone.
 
