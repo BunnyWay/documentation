@@ -3,18 +3,53 @@ title: "Update App"
 description: "Update your container to a new image version."
 ---
 
-To update a [deployed container](/magic-containers/quickstart) to a new image version, make sure the new version is available in your container registry, then:
+To update a [deployed container](/magic-containers/quickstart) to a new image version, make sure the new version is available in your container registry, then follow these steps.
 
-1. Go to **Magic Containers** and select the container you want to update.
+<Steps>
+  <Step title="Open container settings">
+    Go to **Magic Containers** and select the container you want to update. Click **Container Settings**, then click **Edit**.
 
-2. Click **Container Settings**, then click **Edit**.
+    <Frame>
+      ![Edit container settings](/images/magic-containers/edit-container-settings.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/78520bc0c71f7abcae3b4b337cb5d555eaf8f1e05c56f1dafb1f46191747305e-image.png)
-</Frame>
+  </Step>
+  <Step title="Select new image version">
+    Select the new version from the image dropdown.
 
-3. Select the new version from the image dropdown and click **Update Container**.
+    <Frame>
+      ![Select image and tag](/images/magic-containers/select-image-and-tag.png)
+    </Frame>
 
-<Frame>
-  ![](/images/docs/b027eeb48ed941ddb96c1f4546b7180563962203c528bfe53638fe8728d53356-image.png)
-</Frame>
+  </Step>
+  <Step title="Update container">
+    Click **Update Container** to deploy the new version.
+
+    <Frame>
+      ![Update container](/images/magic-containers/update-container.png)
+    </Frame>
+
+  </Step>
+  <Step title="Save changes">
+    If there are no other changes to make to the app, click **Save Changes** to trigger a new deployment.
+
+    <Frame>
+      ![Save changes](/images/magic-containers/save-changes.png)
+    </Frame>
+
+    Confirm the changes in the modal that pops up.
+
+    <Frame>
+      ![Confirm changes](/images/magic-containers/confirm-changes.png)
+    </Frame>
+
+    Once saved, you'll see a **Processing** indicator while the app restarts with the new image version.
+
+  </Step>
+</Steps>
+
+<Info>
+  To automate deployments, you can use a [GitHub
+  Action](/magic-containers/deploy-with-github-actions) to update your container
+  whenever you push changes to your repository.
+</Info>
