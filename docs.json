@@ -313,7 +313,8 @@
                 "pages": [
                   "magic-containers/limits",
                   "magic-containers/troubleshooting",
-                  "magic-containers/faqs"
+                  "magic-containers/faqs",
+                  "magic-containers/api-reference"
                 ]
               },
               {
