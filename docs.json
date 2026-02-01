@@ -2650,7 +2650,7 @@
     },
     {
       "source": "/reference/get_shield-shield-zone-get-by-pullzone-pullzoneid",
-      "destination": "/api-reference/shield/shieldzone/get-shieldshield-zone-get-by-pullzone-pullzoneid",
+      "destination": "/api-reference/shield/shieldzone/get-shieldshield-zoneget-by-pullzone",
       "permanent": true
     },
     {
@@ -2675,37 +2675,37 @@
     },
     {
       "source": "/reference/get_shield-shield-zone-shieldzoneid-access-lists-id",
-      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-accesslists",
+      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-access-lists-1",
       "permanent": true
     },
     {
       "source": "/reference/patch_shield-shield-zone-shieldzoneid-access-lists-id",
-      "destination": "/api-reference/shield/accesslists/patch-shieldshield-zone-accesslists",
+      "destination": "/api-reference/shield/accesslists/patch-shieldshield-zone-access-lists",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-shield-zone-shieldzoneid-access-lists-enums",
-      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-accesslistsenums",
+      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-access-listsenums",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-shield-zone-shieldzoneid-access-lists",
-      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-accesslists",
+      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-access-lists-1",
       "permanent": true
     },
     {
       "source": "/reference/delete_shield-shield-zone-shieldzoneid-access-lists-id",
-      "destination": "/api-reference/shield/accesslists/delete-shieldshield-zone-accesslists",
+      "destination": "/api-reference/shield/accesslists/delete-shieldshield-zone-access-lists",
       "permanent": true
     },
     {
       "source": "/reference/patch_shield-shield-zone-shieldzoneid-access-lists-configurations-id",
-      "destination": "/api-reference/shield/accesslists/patch-shieldshield-zone-accesslistsconfigurations",
+      "destination": "/api-reference/shield/accesslists/patch-shieldshield-zone-access-listsconfigurationsc",
       "permanent": true
     },
     {
       "source": "/reference/post_shield-shield-zone-shieldzoneid-access-lists",
-      "destination": "/api-reference/shield/accesslists/post-shieldshield-zone-accesslists",
+      "destination": "/api-reference/shield/accesslists/post-shieldshield-zone-access-lists",
       "permanent": true
     },
     {
@@ -2750,72 +2750,72 @@
     },
     {
       "source": "/reference/get_shield-waf-rules-shieldzoneid",
-      "destination": "/api-reference/shield/waf/get-shieldwaf-rules",
+      "destination": "/api-reference/shield/metrics/get-shieldmetricsshield-zone-waf-rule",
       "permanent": true
     },
     {
       "source": "/reference/post_shield-waf-custom-rule",
-      "destination": "/api-reference/shield/waf/post-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/post-shieldwafcustom-rule",
       "permanent": true
     },
     {
       "source": "/reference/delete_shield-waf-custom-rule-id",
-      "destination": "/api-reference/shield/waf/delete-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/delete-shieldwafcustom-rule",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-waf-rules-review-triggered-ai-recommendation-shieldzoneid-ruleid",
-      "destination": "/api-reference/shield/waf/get-shieldwaf-rules-review-triggered-ai-recommendation",
+      "destination": "/api-reference/shield/waf/get-shieldwafrulesreview-triggeredai-recommendation-",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-waf-custom-rule-id",
-      "destination": "/api-reference/shield/waf/get-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/get-shieldwafcustom-rule",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-waf-custom-rules-shieldzoneid",
-      "destination": "/api-reference/shield/waf/get-shieldwaf-custom-rules",
+      "destination": "/api-reference/shield/waf/get-shieldwafcustom-rules",
       "permanent": true
     },
     {
       "source": "/reference/post_shield-waf-rules-review-triggered-shieldzoneid",
-      "destination": "/api-reference/shield/waf/post-shieldwaf-rules-review-triggered",
+      "destination": "/api-reference/shield/waf/post-shieldwafrulesreview-triggered",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-waf-enums",
-      "destination": "/api-reference/shield/waf/get-shieldwaf-enums",
+      "destination": "/api-reference/shield/waf/get-shieldwafenums",
       "permanent": true
     },
     {
       "source": "/reference/patch_shield-waf-custom-rule-id",
-      "destination": "/api-reference/shield/waf/patch-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/patch-shieldwafcustom-rule",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-waf-profiles",
-      "destination": "/api-reference/shield/waf/get-shieldwaf-profiles",
+      "destination": "/api-reference/shield/waf/get-shieldwafprofiles",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-waf-engine-config",
-      "destination": "/api-reference/shield/waf/get-shieldwaf-engine-config",
+      "destination": "/api-reference/shield/waf/get-shieldwafengine-config",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-waf-rules-review-triggered-shieldzoneid",
-      "destination": "/api-reference/shield/waf/get-shieldwaf-rules-review-triggered",
+      "destination": "/api-reference/shield/waf/get-shieldwafrulesreview-triggered",
       "permanent": true
     },
     {
       "source": "/reference/get_shield-waf-rules-plan-segmentation",
-      "destination": "/api-reference/shield/waf/get-shieldwaf-rules-plan-segmentation",
+      "destination": "/api-reference/shield/waf/get-shieldwafrulesplan-segmentation",
       "permanent": true
     },
     {
       "source": "/reference/put_shield-waf-custom-rule-id",
-      "destination": "/api-reference/shield/waf/put-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/put-shieldwafcustom-rule",
       "permanent": true
     },
     {
@@ -2981,6 +2981,121 @@
     {
       "source": "/reference/video_createvideo",
       "destination": "/api-reference/stream/manage-videos/create-video",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/storage/api-overview",
+      "destination": "/api-reference/storage",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/core/stream-video-library/reset-password",
+      "destination": "/api-reference/core/stream-video-library/reset-api-key",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/get-shieldwaf-enums",
+      "destination": "/api-reference/shield/waf/get-shieldwafenums",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/get-shieldwaf-rules",
+      "destination": "/api-reference/shield/metrics/get-shieldmetricsshield-zone-waf-rule",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/get-shieldwaf-engine-config",
+      "destination": "/api-reference/shield/waf/get-shieldwafengine-config",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/post-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/post-shieldwafcustom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/delete-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/delete-shieldwafcustom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/get-shieldwaf-rules-review-triggered-ai-recommendation",
+      "destination": "/api-reference/shield/waf/get-shieldwafrulesreview-triggeredai-recommendation-",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/get-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/get-shieldwafcustom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/get-shieldwaf-custom-rules",
+      "destination": "/api-reference/shield/waf/get-shieldwafcustom-rules",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/post-shieldwaf-rules-review-triggered",
+      "destination": "/api-reference/shield/waf/post-shieldwafrulesreview-triggered",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/patch-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/patch-shieldwafcustom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/get-shieldwaf-profiles",
+      "destination": "/api-reference/shield/waf/get-shieldwafprofiles",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/get-shieldwaf-rules-review-triggered",
+      "destination": "/api-reference/shield/waf/get-shieldwafrulesreview-triggered",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/get-shieldwaf-rules-plan-segmentation",
+      "destination": "/api-reference/shield/waf/get-shieldwafrulesplan-segmentation",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/waf/put-shieldwaf-custom-rule",
+      "destination": "/api-reference/shield/waf/put-shieldwafcustom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/shieldzone/get-shieldshield-zone-get-by-pullzone-pullzoneid",
+      "destination": "/api-reference/shield/shieldzone/get-shieldshield-zoneget-by-pullzone",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/accesslists/get-shieldshield-zone-accesslists",
+      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-access-lists-1",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/accesslists/patch-shieldshield-zone-accesslists",
+      "destination": "/api-reference/shield/accesslists/patch-shieldshield-zone-access-lists",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/accesslists/get-shieldshield-zone-accesslistsenums",
+      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-access-listsenums",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/accesslists/delete-shieldshield-zone-accesslists",
+      "destination": "/api-reference/shield/accesslists/delete-shieldshield-zone-access-lists",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/accesslists/patch-shieldshield-zone-accesslistsconfigurations",
+      "destination": "/api-reference/shield/accesslists/patch-shieldshield-zone-access-listsconfigurationsc",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/shield/accesslists/post-shieldshield-zone-accesslists",
+      "destination": "/api-reference/shield/accesslists/post-shieldshield-zone-access-lists",
       "permanent": true
     }
   ]
