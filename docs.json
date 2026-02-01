@@ -1093,7 +1093,6 @@
       "destination": "/optimizer/dynamic-images/formats",
       "permanent": true
     },
-
     {
       "source": "/docs/edge-storage-overview",
       "destination": "/storage",
@@ -1102,21 +1101,6 @@
     {
       "source": "/docs/edge-storage-ftp",
       "destination": "/storage/ftp",
-      "permanent": true
-    },
-    {
-      "source": "/reference/edge-storage-api-limits",
-      "destination": "/storage/limits",
-      "permanent": true
-    },
-    {
-      "source": "/reference/api-limits",
-      "destination": "/storage/limits",
-      "permanent": true
-    },
-    {
-      "source": "/reference/storage-api",
-      "destination": "/storage/http",
       "permanent": true
     },
     {
@@ -1141,7 +1125,7 @@
     },
     {
       "source": "/docs/magic-containers-github-action",
-      "destination": "/magic-containers/github-action",
+      "destination": "/magic-containers/deploy-with-github-actions",
       "permanent": true
     },
     {
@@ -1151,7 +1135,7 @@
     },
     {
       "source": "/docs/magic-containers-global-deployment",
-      "destination": "/magic-containers/global-deployment",
+      "destination": "/magic-containers/regions",
       "permanent": true
     },
     {
@@ -1161,12 +1145,12 @@
     },
     {
       "source": "/docs/magic-containers-list-of-nodes-to-whitelist",
-      "destination": "/magic-containers/node-whitelist",
+      "destination": "/magic-containers/ip-addresses",
       "permanent": true
     },
     {
       "source": "/docs/magic-containers-how-to-update-an-existing-app",
-      "destination": "/magic-containers/update-app",
+      "destination": "/magic-containers/update",
       "permanent": true
     },
     {
@@ -1176,7 +1160,7 @@
     },
     {
       "source": "/docs/magic-containers-how-to-edit-app-configuration",
-      "destination": "/magic-containers/edit-configuration",
+      "destination": "/magic-containers/configuration",
       "permanent": true
     },
     {
@@ -1191,7 +1175,7 @@
     },
     {
       "source": "/docs/magic-containers-how-to-expose-your-app-to-the-internet",
-      "destination": "/magic-containers/expose-app",
+      "destination": "/magic-containers/endpoints",
       "permanent": true
     },
     {
@@ -1201,7 +1185,7 @@
     },
     {
       "source": "/docs/magic-containers-how-to-delete-your-app",
-      "destination": "/magic-containers/delete-app",
+      "destination": "/magic-containers/delete",
       "permanent": true
     },
     {
@@ -1221,7 +1205,7 @@
     },
     {
       "source": "/docs/magic-containers-how-to-define-health-checks",
-      "destination": "/magic-containers/define-health-checks",
+      "destination": "/magic-containers/health-checks",
       "permanent": true
     },
     {
@@ -1236,12 +1220,12 @@
     },
     {
       "source": "/docs/magic-containers-sandboxing-containers",
-      "destination": "/magic-containers/sandboxing",
+      "destination": "/magic-containers/sandbox",
       "permanent": true
     },
     {
       "source": "/docs/magic-containers-integrating-containers",
-      "destination": "/magic-containers/integrating",
+      "destination": "/magic-containers/multi-container",
       "permanent": true
     },
     {
@@ -1301,7 +1285,7 @@
     },
     {
       "source": "/magic-containers/define-health-checks",
-      "destination": "/magic-containers/health-checks-setup",
+      "destination": "/magic-containers/health-checks",
       "permanent": true
     },
     {
@@ -1495,188 +1479,8 @@
       "permanent": true
     },
     {
-      "source": "/reference/bunnynet-api-overview",
-      "destination": "/api-reference",
-      "permanent": true
-    },
-    {
-      "source": "/reference/api-overview",
-      "destination": "/api-reference",
-      "permanent": true
-    },
-    {
-      "source": "/reference/countriespublic_getcountrylist",
-      "destination": "/api-reference/core/countries/get-country-list",
-      "permanent": true
-    },
-    {
-      "source": "/reference/dnszonepublic_index",
-      "destination": "/api-reference/core/dns-zone/list-dns-zones",
-      "permanent": true
-    },
-    {
-      "source": "/reference/pullzonepublic_index",
-      "destination": "/api-reference/core/pull-zone/list-pull-zones",
-      "permanent": true
-    },
-    {
-      "source": "/reference/videolibrarypublic_index",
-      "destination": "/api-reference/core/stream-video-library/list-video-libraries",
-      "permanent": true
-    },
-    {
-      "source": "/reference/storagezonepublic_index",
-      "destination": "/api-reference/core/storage-zone/list-storage-zones",
-      "permanent": true
-    },
-    {
-      "source": "/reference/regionpublic_index",
-      "destination": "/api-reference/core/region/region-list",
-      "permanent": true
-    },
-    {
-      "source": "/reference/purgepublic_indexpost",
-      "destination": "/api-reference/core/purge/purge-url",
-      "permanent": true
-    },
-    {
-      "source": "/reference/statisticspublic_index",
-      "destination": "/api-reference/core/statistics/get-statistics",
-      "permanent": true
-    },
-    {
-      "source": "/reference/apikeypublic_listapikeys",
-      "destination": "/api-reference/core/api-keys/list-api-keys",
-      "permanent": true
-    },
-    {
-      "source": "/reference/getuserauditlog_getuserauditlog",
-      "destination": "/api-reference/core/user/getuserauditlog",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_-storagezonename-path-filename",
-      "destination": "/api-reference/storage/manage-files/download-file",
-      "permanent": true
-    },
-    {
-      "source": "/reference/put_-storagezonename-path-filename",
-      "destination": "/api-reference/storage/manage-files/upload-file",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_-storagezonename-path-",
-      "destination": "/api-reference/storage/browse-files/list-files",
-      "permanent": true
-    },
-    {
-      "source": "/reference/stream-api-overview",
-      "destination": "/api-reference/stream",
-      "permanent": true
-    },
-    {
-      "source": "/reference/tus-resumable-uploads",
-      "destination": "/stream/tus-resumable-uploads",
-      "permanent": true
-    },
-    {
       "source": "/api-reference/stream/tus-resumable-uploads",
       "destination": "/stream/tus-resumable-uploads",
-      "permanent": true
-    },
-    {
-      "source": "/reference/collection_getcollection",
-      "destination": "/api-reference/stream/manage-collections/get-collection",
-      "permanent": true
-    },
-    {
-      "source": "/reference/video_getvideo",
-      "destination": "/api-reference/stream/manage-videos/get-video",
-      "permanent": true
-    },
-    {
-      "source": "/reference/oembed_getoembed",
-      "destination": "/api-reference/stream/oembed/get-oembed",
-      "permanent": true
-    },
-    {
-      "source": "/reference/getedgescriptcodeendpoint_getcode",
-      "destination": "/api-reference/scripting/code/get-code",
-      "permanent": true
-    },
-    {
-      "source": "/reference/deleteedgescriptendpoint_delete",
-      "destination": "/api-reference/scripting/edge-script/delete-edge-script",
-      "permanent": true
-    },
-    {
-      "source": "/reference/addedgescriptvariableendpoint_addedgescriptvariable",
-      "destination": "/api-reference/scripting/variable/add-variable",
-      "permanent": true
-    },
-    {
-      "source": "/reference/addedgescriptsecretendpoint_addedgescriptsecret",
-      "destination": "/api-reference/scripting/secret/add-secret",
-      "permanent": true
-    },
-    {
-      "source": "/reference/getedgescriptactivereleaseendpoint_getcurrentlyactivereleaseendpoint",
-      "destination": "/api-reference/scripting/release/get-active-release",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-shield-zones",
-      "destination": "/api-reference/shield/shieldzone/get-shieldshield-zones",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-waf-rules-review-triggered-shieldzoneid",
-      "destination": "/api-reference/shield/waf/get-shieldwafrulesreview-triggered",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-ddos-enums",
-      "destination": "/api-reference/shield/ddos/get-shieldddosenums",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-rate-limits-shieldzoneid",
-      "destination": "/api-reference/shield/ratelimits/get-shieldrate-limits",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-metrics-overview-shieldzoneid",
-      "destination": "/api-reference/shield/metrics/get-shieldmetricsoverview",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-event-logs-shieldzoneid-date-continuationtoken",
-      "destination": "/api-reference/shield/eventlogs/get-shieldevent-logs-",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-shield-zone-shieldzoneid-access-lists",
-      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-access-lists",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-shield-zone-shieldzoneid-bot-detection",
-      "destination": "/api-reference/shield/botdetection/get-shieldshield-zone-bot-detection",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-promo-state",
-      "destination": "/api-reference/shield/promo/gives-a-breakdown-of-promo-data",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get_shield-shield-zone-shieldzoneid-upload-scanning",
-      "destination": "/api-reference/shield/uploadscanning/get-shieldshield-zone-upload-scanning",
-      "permanent": true
-    },
-    {
-      "source": "/reference/get-cdn-origin-errors",
-      "destination": "/api-reference/origin-errors/get-origin-error-logs-for-a-specific-pull-zone-and-date",
       "permanent": true
     },
     {
@@ -1834,7 +1638,6 @@
       "destination": "/stream/drm",
       "permanent": true
     },
-
     {
       "source": "/docs/stream-mediacage-basic-drm",
       "destination": "/stream/mediacage-basic",
@@ -1962,12 +1765,12 @@
     },
     {
       "source": "/docs/cdn-logging-api",
-      "destination": "/cdn/logging/api",
+      "destination": "/cdn/logging",
       "permanent": true
     },
     {
       "source": "/docs/cdn-log-format",
-      "destination": "/cdn/logging/format",
+      "destination": "/cdn/logging",
       "permanent": true
     },
     {
@@ -2283,6 +2086,901 @@
     {
       "source": "/docs/s3",
       "destination": "/storage/s3",
+      "permanent": true
+    },
+    {
+      "source": "/reference/addedgescriptvariableendpoint_addedgescriptvariable",
+      "destination": "/api-reference/scripting/variable/add-variable",
+      "permanent": true
+    },
+    {
+      "source": "/reference/upsertedgescriptvariableendpoint_upsertedgescriptvariable",
+      "destination": "/api-reference/scripting/variable/upsert-variable",
+      "permanent": true
+    },
+    {
+      "source": "/reference/updateedgescriptvariableendpoint_updatevariable",
+      "destination": "/api-reference/scripting/variable/update-variable",
+      "permanent": true
+    },
+    {
+      "source": "/reference/deleteedgescriptvariableendpoint_deletevariable",
+      "destination": "/api-reference/scripting/variable/delete-variable",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getedgescriptvariableendpoint_getvariable",
+      "destination": "/api-reference/scripting/variable/get-variable",
+      "permanent": true
+    },
+    {
+      "source": "/reference/uploadedgescriptcodeendpoint_setcode",
+      "destination": "/api-reference/scripting/code/set-code",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getedgescriptcodeendpoint_getcode",
+      "destination": "/api-reference/scripting/code/get-code",
+      "permanent": true
+    },
+    {
+      "source": "/reference/publishedgescriptreleaseendpoint_publish",
+      "destination": "/api-reference/scripting/release/publish-release",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getedgescriptreleaseendpoint_getreleases",
+      "destination": "/api-reference/scripting/release/get-releases",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getedgescriptactivereleaseendpoint_getcurrentlyactivereleaseendpoint",
+      "destination": "/api-reference/scripting/release/get-active-release",
+      "permanent": true
+    },
+    {
+      "source": "/reference/publishedgescriptreleaseendpoint_publish2",
+      "destination": "/api-reference/scripting/release/publish-release",
+      "permanent": true
+    },
+    {
+      "source": "/reference/deleteedgescriptsecretendpoint_deletesecret",
+      "destination": "/api-reference/scripting/secret/delete-secret",
+      "permanent": true
+    },
+    {
+      "source": "/reference/listedgescriptsecretsendpoint_listedgescriptsecrets",
+      "destination": "/api-reference/scripting/secret/list-secrets",
+      "permanent": true
+    },
+    {
+      "source": "/reference/addedgescriptsecretendpoint_addedgescriptsecret",
+      "destination": "/api-reference/scripting/secret/add-secret",
+      "permanent": true
+    },
+    {
+      "source": "/reference/updateedgescriptsecretendpoint_updateedgescriptsecret",
+      "destination": "/api-reference/scripting/secret/update-secret",
+      "permanent": true
+    },
+    {
+      "source": "/reference/upsertedgescriptsecretendpoint_upsertedgescriptsecret",
+      "destination": "/api-reference/scripting/secret/upsert-secret",
+      "permanent": true
+    },
+    {
+      "source": "/reference/edgescriptstatisticsendpoint_getedgescriptstatisticsendpoint",
+      "destination": "/api-reference/scripting/edge-script/get-edge-script-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getedgescriptbyidendpoint_getedgescriptbyid",
+      "destination": "/api-reference/scripting/edge-script/get-edge-script",
+      "permanent": true
+    },
+    {
+      "source": "/reference/deleteedgescriptendpoint_delete",
+      "destination": "/api-reference/scripting/edge-script/delete-edge-script",
+      "permanent": true
+    },
+    {
+      "source": "/reference/listedgescriptsendpoint_listedgescriptsbyaccount",
+      "destination": "/api-reference/scripting/edge-script/list-edge-scripts",
+      "permanent": true
+    },
+    {
+      "source": "/reference/createedgescriptendpoint_addscript",
+      "destination": "/api-reference/scripting/edge-script/add-edge-script",
+      "permanent": true
+    },
+    {
+      "source": "/reference/updateedgescriptendpoint_update",
+      "destination": "/api-reference/scripting/edge-script/update-edge-script",
+      "permanent": true
+    },
+    {
+      "source": "/reference/rotateedgescriptdeploymentkeyendpoint_rotateedgescriptdeploymentkey",
+      "destination": "/api-reference/scripting/edge-script/rotate-deployment-key",
+      "permanent": true
+    },
+    {
+      "source": "/reference/bunnynet-api-overview",
+      "destination": "/api-reference/core",
+      "permanent": true
+    },
+    {
+      "source": "/reference/countriespublic_getcountrylist",
+      "destination": "/api-reference/core/countries/get-country-list",
+      "permanent": true
+    },
+    {
+      "source": "/reference/apikeypublic_listapikeys",
+      "destination": "/api-reference/core/api-keys/list-api-keys",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getuserauditlog_getuserauditlog",
+      "destination": "/api-reference/core/user/getuserauditlog",
+      "permanent": true
+    },
+    {
+      "source": "/reference/gettranscribingstatistics_statistics",
+      "destination": "/api-reference/core/stream-video-library/get-video-library-transcribing-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_addallowedreferrer",
+      "destination": "/api-reference/core/stream-video-library/add-allowed-referer",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_resetpassword",
+      "destination": "/api-reference/core/stream-video-library/reset-password",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_deletewatermark",
+      "destination": "/api-reference/core/stream-video-library/delete-watermark",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_addwatermark",
+      "destination": "/api-reference/core/stream-video-library/add-watermark",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_removeallowedreferrer",
+      "destination": "/api-reference/core/stream-video-library/remove-allowed-referer",
+      "permanent": true
+    },
+    {
+      "source": "/reference/getdrmstatisticsendpoint_statistics",
+      "destination": "/api-reference/core/stream-video-library/get-video-library-drm-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_add",
+      "destination": "/api-reference/core/stream-video-library/add-video-library",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_index",
+      "destination": "/api-reference/core/stream-video-library/list-video-libraries",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_removeblockedreferrer",
+      "destination": "/api-reference/core/stream-video-library/remove-blocked-referer",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_resetpassword2",
+      "destination": "/api-reference/core/stream-video-library/reset-password",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_index2",
+      "destination": "/api-reference/core/stream-video-library/get-video-library",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_addblockedreferrer",
+      "destination": "/api-reference/core/stream-video-library/add-blocked-referer",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_delete",
+      "destination": "/api-reference/core/stream-video-library/delete-video-library",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_update",
+      "destination": "/api-reference/core/stream-video-library/update-video-library",
+      "permanent": true
+    },
+    {
+      "source": "/reference/videolibrarypublic_index3",
+      "destination": "/api-reference/core/stream-video-library/get-languages",
+      "permanent": true
+    },
+    {
+      "source": "/reference/statisticspublic_index",
+      "destination": "/api-reference/core/statistics/get-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/regionpublic_index",
+      "destination": "/api-reference/core/region/region-list",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_deleteedgerule",
+      "destination": "/api-reference/core/pull-zone/delete-edge-rule",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_loadfreecertificate",
+      "destination": "/api-reference/core/pull-zone/load-free-certificate",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_optimizerstatistics",
+      "destination": "/api-reference/core/pull-zone/get-optimizer-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_removeblockedreferrer",
+      "destination": "/api-reference/core/pull-zone/remove-blocked-referer",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_addblockedip",
+      "destination": "/api-reference/core/pull-zone/add-blocked-ip",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_index2",
+      "destination": "/api-reference/core/pull-zone/get-pull-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_setedgeruleenabled",
+      "destination": "/api-reference/core/pull-zone/set-edge-rule-enabled",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_removecertificate",
+      "destination": "/api-reference/core/pull-zone/remove-certificate",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_delete",
+      "destination": "/api-reference/core/pull-zone/delete-pull-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_purgecachepostbytag",
+      "destination": "/api-reference/core/pull-zone/purge-cache",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_resetsecuritykey",
+      "destination": "/api-reference/core/pull-zone/reset-token-key",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_safehopstatistics",
+      "destination": "/api-reference/core/pull-zone/get-safehop-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_originshieldconcurrencystatistics",
+      "destination": "/api-reference/core/pull-zone/get-origin-shield-queue-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_addblockedreferrer",
+      "destination": "/api-reference/core/pull-zone/add-blocked-referer",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_index",
+      "destination": "/api-reference/core/pull-zone/list-pull-zones",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_addhostname",
+      "destination": "/api-reference/core/pull-zone/add-custom-hostname",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_removehostname",
+      "destination": "/api-reference/core/pull-zone/remove-custom-hostname",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_add",
+      "destination": "/api-reference/core/pull-zone/add-pull-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_updatepullzone",
+      "destination": "/api-reference/core/pull-zone/update-pull-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_setforcessl",
+      "destination": "/api-reference/core/pull-zone/set-force-ssl",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_checkavailability",
+      "destination": "/api-reference/core/pull-zone/check-the-pull-zone-availability",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_addallowedreferrer",
+      "destination": "/api-reference/core/pull-zone/add-allowed-referer",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_addcertificate",
+      "destination": "/api-reference/core/pull-zone/add-custom-certificate",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_addedgerule",
+      "destination": "/api-reference/core/pull-zone/addupdate-edge-rule",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_removeblockedip",
+      "destination": "/api-reference/core/pull-zone/remove-blocked-ip",
+      "permanent": true
+    },
+    {
+      "source": "/reference/pullzonepublic_removeallowedreferrer",
+      "destination": "/api-reference/core/pull-zone/remove-allowed-referer",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_updaterecord",
+      "destination": "/api-reference/core/dns-zone/update-dns-record",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_statistics",
+      "destination": "/api-reference/core/dns-zone/get-dns-query-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/managednszonednssecendpoint_enablednssecdnszone",
+      "destination": "/api-reference/core/dns-zone/enable-dnssec-on-a-dns-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/managednszonednssecendpoint_disablednssecdnszone",
+      "destination": "/api-reference/core/dns-zone/disable-dnssec-on-a-dns-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_checkavailability",
+      "destination": "/api-reference/core/dns-zone/check-the-dns-zone-availability",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_deleterecord",
+      "destination": "/api-reference/core/dns-zone/delete-dns-record",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_export",
+      "destination": "/api-reference/core/dns-zone/export",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_add",
+      "destination": "/api-reference/core/dns-zone/add-dns-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_addrecord",
+      "destination": "/api-reference/core/dns-zone/add-dns-record",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_index2",
+      "destination": "/api-reference/core/dns-zone/get-dns-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_index",
+      "destination": "/api-reference/core/dns-zone/list-dns-zones",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_delete",
+      "destination": "/api-reference/core/dns-zone/delete-dns-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_update",
+      "destination": "/api-reference/core/dns-zone/update-dns-zones",
+      "permanent": true
+    },
+    {
+      "source": "/reference/dnszonepublic_import",
+      "destination": "/api-reference/core/dns-zone/import-dns-records",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_resetreadonlypassword",
+      "destination": "/api-reference/core/storage-zone/reset-read-only-password",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_index2",
+      "destination": "/api-reference/core/storage-zone/get-storage-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_storagezonestatistics",
+      "destination": "/api-reference/core/storage-zone/get-storage-zone-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_update",
+      "destination": "/api-reference/core/storage-zone/update-storage-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_delete",
+      "destination": "/api-reference/core/storage-zone/delete-storage-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_index",
+      "destination": "/api-reference/core/storage-zone/list-storage-zones",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_checkavailability",
+      "destination": "/api-reference/core/storage-zone/check-the-storage-zone-availability",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_resetpassword",
+      "destination": "/api-reference/core/storage-zone/reset-password",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storagezonepublic_add",
+      "destination": "/api-reference/core/storage-zone/add-storage-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/purgepublic_indexpost",
+      "destination": "/api-reference/core/purge/purge-url",
+      "permanent": true
+    },
+    {
+      "source": "/reference/upload-file-20",
+      "destination": "/api-reference/storage/manage-files/upload-file-20",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_-storagezonename-path-filename",
+      "destination": "/api-reference/storage/manage-files/download-file",
+      "permanent": true
+    },
+    {
+      "source": "/reference/delete_-storagezonename-path-filename",
+      "destination": "/api-reference/storage/manage-files/delete-file",
+      "permanent": true
+    },
+    {
+      "source": "/reference/put_-storagezonename-path-filename",
+      "destination": "/api-reference/storage/manage-files/upload-file",
+      "permanent": true
+    },
+    {
+      "source": "/reference/api-limits",
+      "destination": "/api-reference/storage/api-limits",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_-storagezonename-path-",
+      "destination": "/api-reference/storage/browse-files/list-files",
+      "permanent": true
+    },
+    {
+      "source": "/reference/storage-api",
+      "destination": "/api-reference/storage",
+      "permanent": true
+    },
+    {
+      "source": "/reference/edge-storage-api-limits",
+      "destination": "/api-reference/storage/limits",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get-cdn-origin-errors",
+      "destination": "/api-reference/origin-errors/get-origin-errors-for-pullzone-id-and-date",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-metrics-rate-limits-shieldzoneid",
+      "destination": "/api-reference/shield/metrics/get-shieldmetricsrate-limits",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-metrics-overview-shieldzoneid",
+      "destination": "/api-reference/shield/metrics/get-shieldmetricsoverview",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-metrics-shield-zone-shieldzoneid-bot-detection",
+      "destination": "/api-reference/shield/metrics/get-shieldmetricsshield-zone-bot-detection",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-metrics-shield-zone-shieldzoneid-upload-scanning",
+      "destination": "/api-reference/shield/metrics/get-shieldmetricsshield-zone-upload-scanning",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-metrics-shield-zone-shieldzoneid-waf-rule-ruleid",
+      "destination": "/api-reference/shield/metrics/get-shieldmetricsshield-zone-waf-rule",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-metrics-rate-limit-id",
+      "destination": "/api-reference/shield/metrics/get-shieldmetricsrate-limit",
+      "permanent": true
+    },
+    {
+      "source": "/reference/post_shield-shield-zone",
+      "destination": "/api-reference/shield/shieldzone/post-shieldshield-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zones",
+      "destination": "/api-reference/shield/shieldzone/get-shieldshield-zones",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-get-by-pullzone-pullzoneid",
+      "destination": "/api-reference/shield/shieldzone/get-shieldshield-zone-get-by-pullzone-pullzoneid",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-shieldzoneid",
+      "destination": "/api-reference/shield/shieldzone/get-shieldshield-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zones-pullzone-mapping",
+      "destination": "/api-reference/shield/shieldzone/get-shieldshield-zonespullzone-mapping",
+      "permanent": true
+    },
+    {
+      "source": "/reference/patch_shield-shield-zone",
+      "destination": "/api-reference/shield/shieldzone/patch-shieldshield-zone",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-ddos-enums",
+      "destination": "/api-reference/shield/ddos/get-shieldddosenums",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-shieldzoneid-access-lists-id",
+      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-accesslists",
+      "permanent": true
+    },
+    {
+      "source": "/reference/patch_shield-shield-zone-shieldzoneid-access-lists-id",
+      "destination": "/api-reference/shield/accesslists/patch-shieldshield-zone-accesslists",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-shieldzoneid-access-lists-enums",
+      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-accesslistsenums",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-shieldzoneid-access-lists",
+      "destination": "/api-reference/shield/accesslists/get-shieldshield-zone-accesslists",
+      "permanent": true
+    },
+    {
+      "source": "/reference/delete_shield-shield-zone-shieldzoneid-access-lists-id",
+      "destination": "/api-reference/shield/accesslists/delete-shieldshield-zone-accesslists",
+      "permanent": true
+    },
+    {
+      "source": "/reference/patch_shield-shield-zone-shieldzoneid-access-lists-configurations-id",
+      "destination": "/api-reference/shield/accesslists/patch-shieldshield-zone-accesslistsconfigurations",
+      "permanent": true
+    },
+    {
+      "source": "/reference/post_shield-shield-zone-shieldzoneid-access-lists",
+      "destination": "/api-reference/shield/accesslists/post-shieldshield-zone-accesslists",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-rate-limit-id",
+      "destination": "/api-reference/shield/ratelimits/get-shieldrate-limit",
+      "permanent": true
+    },
+    {
+      "source": "/reference/delete_shield-rate-limit-id",
+      "destination": "/api-reference/shield/ratelimits/delete-shieldrate-limit",
+      "permanent": true
+    },
+    {
+      "source": "/reference/post_shield-rate-limit",
+      "destination": "/api-reference/shield/ratelimits/post-shieldrate-limit",
+      "permanent": true
+    },
+    {
+      "source": "/reference/patch_shield-rate-limit-id",
+      "destination": "/api-reference/shield/ratelimits/patch-shieldrate-limit",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-rate-limits-shieldzoneid",
+      "destination": "/api-reference/shield/ratelimits/get-shieldrate-limits",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-shieldzoneid-upload-scanning",
+      "destination": "/api-reference/shield/uploadscanning/get-shieldshield-zone-upload-scanning",
+      "permanent": true
+    },
+    {
+      "source": "/reference/patch_shield-shield-zone-shieldzoneid-upload-scanning",
+      "destination": "/api-reference/shield/uploadscanning/patch-shieldshield-zone-upload-scanning",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-event-logs-shieldzoneid-date-continuationtoken",
+      "destination": "/api-reference/shield/eventlogs/get-shieldevent-logs-",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-rules-shieldzoneid",
+      "destination": "/api-reference/shield/waf/get-shieldwaf-rules",
+      "permanent": true
+    },
+    {
+      "source": "/reference/post_shield-waf-custom-rule",
+      "destination": "/api-reference/shield/waf/post-shieldwaf-custom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/reference/delete_shield-waf-custom-rule-id",
+      "destination": "/api-reference/shield/waf/delete-shieldwaf-custom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-rules-review-triggered-ai-recommendation-shieldzoneid-ruleid",
+      "destination": "/api-reference/shield/waf/get-shieldwaf-rules-review-triggered-ai-recommendation",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-custom-rule-id",
+      "destination": "/api-reference/shield/waf/get-shieldwaf-custom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-custom-rules-shieldzoneid",
+      "destination": "/api-reference/shield/waf/get-shieldwaf-custom-rules",
+      "permanent": true
+    },
+    {
+      "source": "/reference/post_shield-waf-rules-review-triggered-shieldzoneid",
+      "destination": "/api-reference/shield/waf/post-shieldwaf-rules-review-triggered",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-enums",
+      "destination": "/api-reference/shield/waf/get-shieldwaf-enums",
+      "permanent": true
+    },
+    {
+      "source": "/reference/patch_shield-waf-custom-rule-id",
+      "destination": "/api-reference/shield/waf/patch-shieldwaf-custom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-profiles",
+      "destination": "/api-reference/shield/waf/get-shieldwaf-profiles",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-engine-config",
+      "destination": "/api-reference/shield/waf/get-shieldwaf-engine-config",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-rules-review-triggered-shieldzoneid",
+      "destination": "/api-reference/shield/waf/get-shieldwaf-rules-review-triggered",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-waf-rules-plan-segmentation",
+      "destination": "/api-reference/shield/waf/get-shieldwaf-rules-plan-segmentation",
+      "permanent": true
+    },
+    {
+      "source": "/reference/put_shield-waf-custom-rule-id",
+      "destination": "/api-reference/shield/waf/put-shieldwaf-custom-rule",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-shield-zone-shieldzoneid-bot-detection",
+      "destination": "/api-reference/shield/botdetection/get-shieldshield-zone-bot-detection",
+      "permanent": true
+    },
+    {
+      "source": "/reference/patch_shield-shield-zone-shieldzoneid-bot-detection",
+      "destination": "/api-reference/shield/botdetection/patch-shieldshield-zone-bot-detection",
+      "permanent": true
+    },
+    {
+      "source": "/reference/get_shield-promo-state",
+      "destination": "/api-reference/shield/promo/gives-a-breakdown-of-promo-data",
+      "permanent": true
+    },
+    {
+      "source": "/reference/oembed_getoembed",
+      "destination": "/api-reference/stream/oembed/oembed",
+      "permanent": true
+    },
+    {
+      "source": "/reference/stream-api-overview",
+      "destination": "/api-reference/stream",
+      "permanent": true
+    },
+    {
+      "source": "/reference/api-overview",
+      "destination": "/api-reference/stream",
+      "permanent": true
+    },
+    {
+      "source": "/reference/collection_list",
+      "destination": "/api-reference/stream/manage-collections/get-collection-list",
+      "permanent": true
+    },
+    {
+      "source": "/reference/collection_getcollection",
+      "destination": "/api-reference/stream/manage-collections/get-collection",
+      "permanent": true
+    },
+    {
+      "source": "/reference/collection_deletecollection",
+      "destination": "/api-reference/stream/manage-collections/delete-collection",
+      "permanent": true
+    },
+    {
+      "source": "/reference/collection_updatecollection",
+      "destination": "/api-reference/stream/manage-collections/update-collection",
+      "permanent": true
+    },
+    {
+      "source": "/reference/collection_createcollection",
+      "destination": "/api-reference/stream/manage-collections/create-collection",
+      "permanent": true
+    },
+    {
+      "source": "/reference/tus-resumable-uploads",
+      "destination": "/stream/tus-resumable-uploads",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_getvideoplaydata",
+      "destination": "/api-reference/stream/manage-videos/get-video-play-data",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_getvideostatistics",
+      "destination": "/api-reference/stream/manage-videos/get-video-statistics",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_transcribevideo",
+      "destination": "/api-reference/stream/manage-videos/transcribe-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_reencodeusingcodec",
+      "destination": "/api-reference/stream/manage-videos/add-output-codec-to-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_updatevideo",
+      "destination": "/api-reference/stream/manage-videos/update-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_deletecaption",
+      "destination": "/api-reference/stream/manage-videos/delete-caption",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_reencodevideo",
+      "destination": "/api-reference/stream/manage-videos/reencode-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_smartgenerate",
+      "destination": "/api-reference/stream/manage-videos/trigger-smart-actions",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_deletevideo",
+      "destination": "/api-reference/stream/manage-videos/delete-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_deleteresolutions",
+      "destination": "/api-reference/stream/manage-videos/cleanup-unconfigured-resolutions",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_fetchnewvideo",
+      "destination": "/api-reference/stream/manage-videos/fetch-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_getvideoheatmapdata",
+      "destination": "/api-reference/stream/manage-videos/get-video-heatmap-data",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_getvideoresolutions",
+      "destination": "/api-reference/stream/manage-videos/video-resolutions-info",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_repackage",
+      "destination": "/api-reference/stream/manage-videos/repackage-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_getvideo",
+      "destination": "/api-reference/stream/manage-videos/get-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_uploadvideo",
+      "destination": "/api-reference/stream/manage-videos/upload-video",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_setthumbnail",
+      "destination": "/api-reference/stream/manage-videos/set-thumbnail",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_list",
+      "destination": "/api-reference/stream/manage-videos/list-videos",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_addcaption",
+      "destination": "/api-reference/stream/manage-videos/add-caption",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_getvideoheatmap",
+      "destination": "/api-reference/stream/manage-videos/get-video-heatmap",
+      "permanent": true
+    },
+    {
+      "source": "/reference/video_createvideo",
+      "destination": "/api-reference/stream/manage-videos/create-video",
       "permanent": true
     }
   ]
