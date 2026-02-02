@@ -3097,10 +3097,11 @@
     {
       "source": "/api-reference/shield/accesslists/post-shieldshield-zone-accesslists",
       "destination": "/api-reference/shield/accesslists/post-shieldshield-zone-access-lists",
-=======
+      "permanent": true
+    },
+    {
       "source": "/stream/beta-player",
       "destination": "/stream/player",
->>>>>>> ac71129 (update player preview page)
       "permanent": true
     }
   ]
