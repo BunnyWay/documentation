@@ -510,7 +510,7 @@
                     "group": "Bunny Player",
                     "pages": [
                       "stream/player-settings",
-                      "stream/beta-player",
+                      "stream/player",
                       "stream/playback-api"
                     ]
                   },
@@ -1545,7 +1545,7 @@
     },
     {
       "source": "/docs/stream-beta-video-player",
-      "destination": "/stream/beta-player",
+      "destination": "/stream/player",
       "permanent": true
     },
     {
@@ -2089,6 +2089,7 @@
       "permanent": true
     },
     {
+<<<<<<< HEAD
       "source": "/reference/addedgescriptvariableendpoint_addedgescriptvariable",
       "destination": "/api-reference/scripting/variable/add-variable",
       "permanent": true
@@ -3096,6 +3097,10 @@
     {
       "source": "/api-reference/shield/accesslists/post-shieldshield-zone-accesslists",
       "destination": "/api-reference/shield/accesslists/post-shieldshield-zone-access-lists",
+=======
+      "source": "/stream/beta-player",
+      "destination": "/stream/player",
+>>>>>>> ac71129 (update player preview page)
       "permanent": true
     }
   ]
