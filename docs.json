@@ -1549,6 +1549,11 @@
       "permanent": true
     },
     {
+      "source": "/docs/new-video-player",
+      "destination": "/stream/beta-player",
+      "permanent": true
+    },
+    {
       "source": "/docs/adaptive-bitrate-streaming",
       "destination": "/stream/adaptive-bitrate",
       "permanent": true
