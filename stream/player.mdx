@@ -1,0 +1,85 @@
+---
+title: Player 2
+description: Enable the new Bunny Stream video player with modern interface and improved performance.
+tag: Preview
+---
+
+# Introduction
+
+The new Bunny Stream video player is ready to power your video experiences!
+
+<Note>
+  This feature is currently in Preview. Please report any issues to support.
+</Note>
+
+# Quickstart guide
+
+**How to enable the video player** from your Bunny Stream dashboard:
+
+**Existing video libraries**
+
+1. Log into your **Bunny.net** account
+
+2. Navigate to **Stream** from the side bar
+
+3. Select the **Video Library** you would like to utilize the new player on
+
+4. Click on **Player Settings**
+
+5. Toggle on **'Upgrade video player'**
+
+   <Frame>
+     ![Upgrade video player toggle in Player
+     Settings](/images/stream/upgrade-video-player.png)
+   </Frame>
+
+6. Click **Enable** on the pop-up modal
+
+7. Your video library **Videos and embed codes** will now reflect the new video player
+
+8. **Enjoy!**
+
+# API
+
+You can also activate the new player over API on your video library using the following **cURL commands** via the [Update Video Library](/api-reference/core/stream-video-library/update-video-library) endpoint.
+
+```bash
+curl https://api.bunny.net/videolibrary/<library_id> \
+  -X POST \
+  -H 'authorization: <token>' \
+  -H 'content-type: application/json' \
+  -d '{"PlayerVersion": <version>}'
+```
+
+| Value | Description                               |
+| ----- | ----------------------------------------- |
+| `2`   | Enable the new video player               |
+| `1`   | Disable and revert to the previous player |
+
+# About
+
+**Why we built the new video player**
+
+The player uses a modern and flexible technology that helps us deliver a better video experience for you. Here’s what that means:
+
+**A custom, modern Interface**
+
+The player offers a clean, intuitive interface that works seamlessly across desktops, tablets, and mobile devices. It’s fully customizable, allowing us to deliver a user experience that matches the quality of our content
+
+**Fast and responsive performance**
+
+The player is optimized for performance. Video controls feel smooth and responsive, and playback starts quickly without delays or glitches.
+
+**A consistent experience across browsers**
+
+No matter what browser you use; whether it’s Chrome, Safari, Firefox, or Edge you’ll get a consistent and reliable experience. The interface and functionality remain the same everywhere
+
+**Designed for accessibility**
+
+The player is built to be inclusive. It supports screen readers, keyboard navigation, and other accessibility features so that everyone can enjoy our content with ease
+
+# Notes
+
+- The new video player uses a new player URL for both embed iframe and direct play URLs [https://player.mediadelivery.net](https://player.mediadelivery.net) 
+- Your pre-existing player embed iframe and direct play URLs will still work [https://iframe.mediadelivery.net](https://iframe.mediadelivery.net)
+- You can still swap your video library back to the previous player by disabling the video player toggle
