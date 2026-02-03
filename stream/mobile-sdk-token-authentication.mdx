@@ -44,10 +44,7 @@ The backend (or Edge Script) must:
 
 - Authenticate the mobile app user with custom business logic
 
-- Generate signed tokens by from a string formed by concatenating:
-  - `VideoLibraryApiKey`
-  - `videoId`
-  - `expires` (Unix timestamp)
+- Generate embed view token by following the [token authentication signing procedure](/stream/token-authentication#signing-procedure) (token security key is your Video Library API Key)
 
 - Return a `token` and `expires` values in response:
 
@@ -58,7 +55,7 @@ The backend (or Edge Script) must:
 }
 ```
 
-Tokens should be **short-lived** (1–5 minutes recommended).
+Tokens should be **short-lived** (1–5 minutes recommended), unless you have a specific use-case for which longer expiration could be used.
 
 ### Edge Script Example
 
@@ -70,7 +67,7 @@ BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
 
   const apiKey = BunnySDK.env.VIDEO_LIBRARY_API_KEY;
   const videoId = url.searchParams.get("videoId");
-  const expires = Math.floor(Date.now() / 1000) + 300; // 5 minutes
+  const expires = Math.floor(Date.now() / 1000) + 300; // 5 minutes or adjust if needed
 
   if (!videoId) {
     return new Response(JSON.stringify({ error: "Missing videoId" }), {
@@ -84,7 +81,7 @@ BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
    * Custom authentication / authorization logic
    * ------------------------------------------------------------
    * Perform your business checks here:
-   * - Validate user identity
+   * - Validate user identity (e.g. by using JWT, API key, or some other auth headers)
    * - Verify entitlement to this video
    * - Apply subscription / access rules
    *
@@ -180,5 +177,5 @@ BunnyStreamPlayer(
 ## Important Notes
 
 - The **Video Library API Key** must **never** be included in mobile apps
-- Embed View Token Authentication is **mandatory** for private videos
-- CDN Token Authentication is applied automatically by the SDK if turned on in the video library
+- Embed View Token Authentication is **required** if you don't want to publicly expose your videos
+- CDN Token Authentication is applied to CDN URLs automatically if turned on in the video library
