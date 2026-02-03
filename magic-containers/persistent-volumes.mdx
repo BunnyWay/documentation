@@ -37,15 +37,19 @@ When a node becomes unavailable and your pod is not running, you have two option
 
 <CardGroup cols={2}>
   <Card title="Wait for node recovery" icon="clock">
-    If your data is important, wait for the node to return to service. Once the node is available again, your pod will automatically resume with the existing volume and all data intact.
+    If your data is important and the node's disk has not been replaced, wait for the node to return to service. Once the node is available again, your pod will automatically resume with the existing volume and all data intact.
   </Card>
   <Card title="Delete the volume" icon="trash">
     If the data can be discarded, manually delete the detached volume from the **Volumes** tab. This allows the pod to be rescheduled to a healthy node in the same region, where a new empty volume will be created.
   </Card>
 </CardGroup>
 
+### Hardware failure
+
+If a node experiences hardware failure that requires disk replacement, any persistent volumes stored on that disk will be lost. The volume will be recreated as a new empty volume once the node is restored.
+
 <Warning>
-  Deleting a volume permanently removes all data stored on it. This action cannot be undone. Only delete a volume if you are certain the data is not needed or can be recreated.
+  Persistent volumes do not currently support backups or replication. If the underlying disk is replaced due to hardware failure, all data on that volume will be permanently lost. For critical data, implement your own backup strategy within your application.
 </Warning>
 
 ## Quickstart
@@ -89,6 +93,12 @@ Your application now has scalable persistent volumes attached to each container.
     another node because it remains bound to the volume on the unavailable node.
     You can either wait for the node to recover, or delete the volume to allow
     the pod to reschedule with a new volume.
+  </Accordion>
+  <Accordion title="Are persistent volumes backed up?">
+    No, persistent volumes do not currently support automatic backups or
+    replication. If the underlying hardware fails and the disk is replaced,
+    all data on that volume will be lost. For critical data, you should
+    implement your own backup strategy within your application.
   </Accordion>
 </AccordionGroup>
 
