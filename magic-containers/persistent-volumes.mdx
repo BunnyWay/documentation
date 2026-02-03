@@ -23,6 +23,31 @@ Volumes are tied to specific regions. This means:
 - When scaling to a new region, new volumes are automatically provisioned in that region
 - Each pod within the same region gets its own dedicated blank volume (no data duplication between pods)
 
+## Node unavailability
+
+Persistent volumes are bound to specific nodes within a region. If a node becomes unavailable (for example, due to maintenance or infrastructure changes), the following behavior applies:
+
+- **Volume retention** - The persistent volume remains on the unavailable node and cannot be moved to a different node
+- **Pod scheduling** - The pod cannot be rescheduled to another node while it is bound to a volume on the unavailable node
+- **No automatic failover** - The platform will not automatically migrate your volume or reschedule your pod to a healthy node
+
+### Recovery options
+
+When a node becomes unavailable and your pod is not running, you have two options:
+
+<CardGroup cols={2}>
+  <Card title="Wait for node recovery" icon="clock">
+    If your data is important, wait for the node to return to service. Once the node is available again, your pod will automatically resume with the existing volume and all data intact.
+  </Card>
+  <Card title="Delete the volume" icon="trash">
+    If the data can be discarded, manually delete the detached volume from the **Volumes** tab. This allows the pod to be rescheduled to a healthy node in the same region, where a new empty volume will be created.
+  </Card>
+</CardGroup>
+
+<Warning>
+  Deleting a volume permanently removes all data stored on it. This action cannot be undone. Only delete a volume if you are certain the data is not needed or can be recreated.
+</Warning>
+
 ## Quickstart
 
 <Steps>
@@ -57,6 +82,13 @@ Your application now has scalable persistent volumes attached to each container.
   <Accordion title="Can I reduce the size of my volume?">
     No, you cannot reduce the size of your volume. You can only extend it to
     make it larger.
+  </Accordion>
+  <Accordion title="Why is my pod not running when a node is unavailable?">
+    Persistent volumes are bound to specific nodes. If a node becomes unavailable
+    (due to maintenance or other issues), your pod cannot be rescheduled to
+    another node because it remains bound to the volume on the unavailable node.
+    You can either wait for the node to recover, or delete the volume to allow
+    the pod to reschedule with a new volume.
   </Accordion>
 </AccordionGroup>
 
