@@ -524,6 +524,7 @@
                       "stream/players/fairplay"
                     ]
                   },
+                  "stream/mobile-sdk",
                   "stream/embedding",
                   "stream/mp4-downloads"
                 ]
