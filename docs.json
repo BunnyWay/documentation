@@ -524,13 +524,6 @@
                       "stream/players/fairplay"
                     ]
                   },
-                  {
-                    "group": "Mobile SDK",
-                    "pages": [
-                      "stream/mobile-sdk",
-                      "stream/mobile-sdk-token-authentication"
-                    ]
-                  },
                   "stream/embedding",
                   "stream/mp4-downloads"
                 ]
