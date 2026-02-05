@@ -72,10 +72,16 @@ The next step is to create FPS certificate. Follow the steps below:
 2. After logging in, locate and click on the **Certificate, IDs & Profiles** menu.
 3. On the **Certificate, IDs & Profiles** menu, click the "+" button. This will take you to the **Create a New Certificate** screen.
 4. In the **Create a New Certificate** screen, select **FairPlay Streaming Certificate** from the available options, and click the **Continue** button to proceed.
-5. Click on the **Choose File** button and select the certreq.csr file that was created in the previous step, and click **Continue**.
-6. The screen will display the Application Secret Key (ASK) string. Copy this key, pase it in a secure location for future reference, and click **Continue**.
-7. A pop-up will appear to confirm that you have recorded the ASK string separately. Confirm that you have recorded the ASK string, and then click the **Generate** button.
-8. Once the generation is complete, the FairPlay Streaming certificate will be displayed in the Certificate list. Locate the certificate and click the **Download** button to save the FPS certificate file (fairplay.cer) to your computer.
+5. When prompted to select the FairPlay Streaming SDK version, choose **SDK 4.x**. 
+
+<Warning>
+You must select **SDK 4.x** for compatibility with BunnyWay services. While Apple labels SDK 4.x as the "previous version," it is the only version currently supported. SDK 26.x uses newer certificate formats that are not yet compatible with our platform.
+</Warning>
+
+6. Click on the **Choose File** button and select the certreq.csr file that was created in the previous step, and click **Continue**.
+7. The screen will display the Application Secret Key (ASK) string. Copy this key, pase it in a secure location for future reference, and click **Continue**.
+8. A pop-up will appear to confirm that you have recorded the ASK string separately. Confirm that you have recorded the ASK string, and then click the **Generate** button.
+9. Once the generation is complete, the FairPlay Streaming certificate will be displayed in the Certificate list. Locate the certificate and click the **Download** button to save the FPS certificate file (fairplay.cer) to your computer.
 
 <Info>
 If you encounter any errors during this process, please reach out to Apple support for assistance.
