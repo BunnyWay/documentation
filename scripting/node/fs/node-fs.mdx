@@ -6,7 +6,8 @@ tag: Preview
 ---
 
 <Warning>
-No breaking changes will be implemented soon.
+No breaking changes are expected, but additional features will be implemented soon.
+The File System memory limit will also be increased after preview.
 </Warning>
 
 
@@ -25,7 +26,7 @@ We recommend using the Promise-based API for cleaner async/await syntax.
 
 ## Virtual File System
 
-Each script has now access to a Virtual File System that allow t to handle
+Each script has now access to a Virtual File System that allow to handle
 file based operations.
 
 This file system lives on the Virtual Memory available of the worker.
@@ -44,6 +45,7 @@ Currently the file directory is composed of two folder:
 ```
 
 You can create directories where you want as permissions are not enforced yet.
+All files are opened in `w+`.
 
 <Info>
 We suggest you to avoid creating directory in root directory `/` as we are going
@@ -149,7 +151,8 @@ console.log(stats.isFile()); // Reliable
 ### File and Directory Permissions
 
 All files and directories effectively have read/write permissions in the
-sandboxed environment.
+sandboxed environment (`644`) and are owned by the current (non root) user 
+(uid=1000, gid=1000).
 
 <Info>
 Permission-related operations have limited effect:
