@@ -438,6 +438,7 @@
                 "pages": [
                   {
                     "group": "Nodes API",
+                    "hidden": true,
                     "pages": [
                       "scripting/node/fs/node-fs"
                     ]
