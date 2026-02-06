@@ -6,14 +6,13 @@ tag: Preview
 ---
 
 <Warning>
-The node:fs api integration is in preview. No breaking changes will be 
-shipped but new additions are going to be implemented soon.
+No breaking changes will be implemented soon.
 </Warning>
 
 
 ## Overview
 
-EdgeScripting provides support for the Node.js file system API through the
+Edge Scripting provides support for the Node.js file system API through the
 `node:fs` and `node:fs/promises` modules. This allows you to read, write, and
 manipulate files and directories within your Edge Scripts.
 
@@ -26,7 +25,7 @@ We recommend using the Promise-based API for cleaner async/await syntax.
 
 ## Virtual File System
 
-Each script has now access to a Virtual File System that allow him to handle
+Each script has now access to a Virtual File System that allow t to handle
 file based operations.
 
 This file system lives on the Virtual Memory available of the worker.
@@ -40,11 +39,11 @@ Currently the file directory is composed of two folder:
 ```
 / # Root directory
 ├── home/
-│   └── user/ # Your current working directy, R/W access
+│   └── user/ # Your current working directory, R/W access
 └── tmp/ # Temporary directory, R/W access
 ```
 
-You can create directory where you want as permissions are not enforced yet.
+You can create directories where you want as permissions are not enforced yet.
 
 <Info>
 We suggest you to avoid creating directory in root directory `/` as we are going
@@ -53,10 +52,10 @@ only directories.
 </Info>
 
 In the Virtual File System, paths are limited to **4096 chars**, for instance
-`foo/bar` is 7 char. It's also limited to **48 segments** (`a/b/c` is 3
+`foo/bar` is 7 characters. It's also limited to **48 segments** (`a/b/c` is 3
 segments).
 
-We do capacity checks for creating / copying / moving are done before the
+Capacity checks for creating, copying and moving are done before the
 operation. This can result in trying to copy a large file resulting in an out of
 memory error, even though there is space left to create new files or
 directories.
@@ -182,7 +181,7 @@ be mindful of performance implications and CPU time limits.
 
 <Note>
 **Memory limits:** The whole Virtual FileSystem lives inside your script memory.
-The current memory limits of your script is set up to 64MB.
+The current file system limits of your script is set up to 64MB.
 Reading large files may cause memory exhaustion if you store it in memory.
 Leverage streaming to avoid allocating too much memory at a time.
 
