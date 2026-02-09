@@ -87,7 +87,7 @@ This guide walks through deploying a Vue application to Bunny Storage with a Pul
 
 ## Configure Vue Router (History Mode)
 
-Vue apps using Vue Router in history mode need all routes to serve `index.html` so the client-side router can handle navigation.
+Vue apps using Vue Router in history mode need all routes to serve `index.html` so the client-side router can handle navigation. Configure this using your Storage Zone's error handling settings.
 
 <Info>
   If you're using Nuxt with `nuxt generate`, each route generates its own HTML
@@ -95,24 +95,24 @@ Vue apps using Vue Router in history mode need all routes to serve `index.html` 
 </Info>
 
 <Steps>
-  <Step title="Open Edge Rules">
-    In your Pull Zone settings, go to **Edge Rules** → **Add Edge Rule**
+  <Step title="Navigate to your storage zone">
+    Log in to your Bunny dashboard, go to **Storage** in the left navigation, and select your storage zone.
   </Step>
 
-  <Step title="Create the fallback rule">
-    Configure the rule with:
+<Step title="Open Error handling settings">
+  Open the **Error handling** page.
+</Step>
 
-    | Setting | Value |
-    | ------- | ----- |
-    | **Condition** | If URL does not match (regex) |
-    | **Pattern** | `\.(js\|css\|png\|jpg\|jpeg\|gif\|svg\|ico\|woff\|woff2\|ttf\|eot\|json\|webp\|avif\|map)$` |
-    | **Action** | Override Origin URL |
-    | **Value** | `/index.html` |
+<Step title="Set the 404 file path">
+  Enter `/index.html` in the **404 File path** field.
+</Step>
 
-  </Step>
+<Step title="Enable 404 to 200 rewrite">
+  Check the box for **Rewrite 404 to 200 status code** and click **Save**.
+</Step>
 
-  <Step title="Save and test">
-    Click **Save**, then test by navigating directly to a route in your app.
+  <Step title="Test">
+    Navigate directly to a route in your app (e.g., `/about`) to confirm it loads correctly.
   </Step>
 </Steps>
 
@@ -182,7 +182,7 @@ If your Vue app uses environment variables for API endpoints, ensure they're set
   </Step>
   <Step title="Connect">Create a Pull Zone pointing to your Storage Zone.</Step>
   <Step title="Configure routing">
-    Add an Edge Rule to serve `index.html` for Vue Router history mode.
+    Set up error handling to serve `index.html` for Vue Router history mode.
   </Step>
 </Steps>
 
