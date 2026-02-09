@@ -302,13 +302,7 @@
                 "pages": [
                   "magic-containers/autoscaling",
                   "magic-containers/rolling-updates",
-                  {
-                    "group": "Hidden",
-                    "hidden": true,
-                    "pages": [
-                      "magic-containers/graceful-shutdown"
-                    ]
-                  },
+                  "magic-containers/graceful-shutdown",
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
                   "magic-containers/app-metadata"
