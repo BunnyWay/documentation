@@ -119,7 +119,7 @@ This response indicates that the video was uploaded successfully.
 
 **File Format Requirements:**
 
-When uploading your video file, it must be sent as r**aw binary data,** not encoded or wrapped in JSON.
+When uploading your video file, it must be sent as **raw binary data,** not encoded or wrapped in JSON.
 
 Don’t base64 encode the file
 
@@ -137,10 +137,12 @@ If this step is skipped or misconfigured, the upload may silently fail or the vi
 
 # Fetching Videos from a Remote URL (Optional)
 
-If you already have a video file hosted on another platform or server, [Bunny.net](https://bunny.net/) allows you to fetch it directly using a remote URL, saving you the trouble of downloading and re-uploading manually.
+If you already have a video file hosted on another platform or server, [bunny.net](https://bunny.net/) allows you to fetch it directly using a remote URL, saving you the trouble of downloading and re-uploading manually.
+
+The documentation link to this can be found in the [Stream API Reference](/api-reference/stream).
 
 <Info>
-  The URL you provide must be accessible by Bunny.net's fetch system. You can use the optional `headers` parameter to include custom HTTP headers with the fetch request, enabling authentication methods such as:
+  The URL you provide must be accessible by bunny.net's fetch system. You can use the optional `headers` parameter to include custom HTTP headers with the fetch request, enabling authentication methods such as:
 
   - **Basic Authentication** (via the `Authorization` header)
   - **Static API keys** (via custom headers like `X-API-Key` or `Authorization: Bearer <token>`)
@@ -149,8 +151,6 @@ If you already have a video file hosted on another platform or server, [Bunny.ne
 
   See the [Fetch Video API Reference](/api-reference/stream/manage-videos/fetch-video) for details on the `headers` parameter.
 </Info>
-
-The documentation link to this can be found in the [Stream API Reference](/api-reference/stream).
 
 **Endpoint:**
 
