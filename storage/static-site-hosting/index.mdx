@@ -13,43 +13,48 @@ Bunny Storage combined with a Pull Zone provides a simple, fast way to host stat
 1. **Build** your application locally
 2. **Upload** the build output to a Storage Zone
 3. **Connect** a Pull Zone for global CDN delivery
-4. **Configure** edge rules for SPA routing (if needed)
+4. **Configure** error handling for SPA routing (if needed)
 
 ## Single-Page Application Routing
 
-Single-page applications (React, Vue, Angular, etc.) handle routing client-side. When a user navigates directly to a route like `/dashboard` or refreshes the page, the CDN needs to serve `index.html` instead of returning a 404.
+Single-page applications (React, Vue, Angular, etc.) handle routing client-side. When a user navigates directly to a route like `/dashboard` or refreshes the page, the server needs to serve `index.html` instead of returning a 404.
 
 <Accordion title="Why SPAs need special configuration">
   When your SPA loads, the JavaScript router takes over navigation. But if a
   user: - Bookmarks a deep link like `/products/123` - Refreshes the page on
   `/settings` - Shares a URL like `/about` The browser requests that exact path
   from the server. Since no file exists at that path (only `index.html` and your
-  assets exist), the server returns a 404. The solution is to configure an Edge
-  Rule that serves `index.html` for all non-asset requests, allowing your
-  client-side router to handle the URL.
+  assets exist), the server returns a 404. The solution is to configure your
+  Storage Zone's error handling to serve `index.html` for missing paths,
+  allowing your client-side router to handle the URL.
 </Accordion>
 
 ### Configure SPA Fallback
 
-To enable client-side routing, create an Edge Rule in your Pull Zone:
+To enable client-side routing, configure the error handling settings on your Storage Zone:
 
 <Steps>
-  <Step title="Open Edge Rules">
-    Go to **CDN** → select your Pull Zone → **Edge Rules** → **Add Edge Rule**
+  <Step title="Navigate to your storage zone">
+    Log in to your Bunny dashboard, go to **Storage** in the left navigation,
+    and select your storage zone.
   </Step>
-  <Step title="Set the condition">
-    Add a condition: **If URL does not match** with the regex pattern: ```
-    \.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json|webp|avif|mp4|webm)$
-    ``` This matches all static asset extensions that should be served directly.
+  <Step title="Open Error handling settings">
+    Open the **Error handling** page.
   </Step>
-  <Step title="Set the action">
-    Set the action to **Override Origin URL** with the value: ``` /index.html
-    ```
+  <Step title="Set the 404 file path">
+    Enter `/index.html` in the **404 File path** field.
   </Step>
-  <Step title="Save the rule">Click **Save** to activate the rule.</Step>
+  <Step title="Enable 404 to 200 rewrite">
+    Check the box for **Rewrite 404 to 200 status code** and click **Save**.
+  </Step>
 </Steps>
 
-Now all requests that aren't for static assets will serve your `index.html`, and your client-side router will handle the path.
+This serves your `index.html` for all missing paths, and your client-side router will handle the URL. Requests for files with extensions (like `.js`, `.css`, or images) that don't exist will still return a 404.
+
+<Info>
+  See the [Storage Zone Settings](/storage/settings) page for more details on
+  error handling configuration.
+</Info>
 
 ## Framework Guides
 
