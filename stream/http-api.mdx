@@ -140,10 +140,14 @@ If this step is skipped or misconfigured, the upload may silently fail or the vi
 If you already have a video file hosted on another platform or server, [Bunny.net](https://bunny.net/) allows you to fetch it directly using a remote URL, saving you the trouble of downloading and re-uploading manually.
 
 <Info>
-  The URL you provide must be publicly accessible. Protected URLs (e.g., those
-  requiring authentication, signed tokens, or expiring links) may not work
-  correctly, as Bunny.net’s fetch system cannot access content behind security
-  gates.
+  The URL you provide must be accessible by Bunny.net's fetch system. You can use the optional `headers` parameter to include custom HTTP headers with the fetch request, enabling authentication methods such as:
+
+  - **Basic Authentication** (via the `Authorization` header)
+  - **Static API keys** (via custom headers like `X-API-Key` or `Authorization: Bearer <token>`)
+
+  However, more advanced authentication mechanisms such as signed URLs, expiring tokens, or time-limited access links are not supported, as the fetch is performed as a single server-side request and cannot handle dynamic token generation or multi-step authentication flows.
+
+  See the [Fetch Video API Reference](/api-reference/stream/manage-videos/fetch-video) for details on the `headers` parameter.
 </Info>
 
 The documentation link to this can be found in the [Stream API Reference](/api-reference/stream).
