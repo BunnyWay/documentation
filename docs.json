@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "theme": "mint",
   "name": "bunny.net Documentation",
   "colors": {
     "primary": "#EF6126",
@@ -8,6 +8,11 @@
     "dark": "#EF6126"
   },
   "favicon": "/favicon.png",
+  "background": {
+    "color": {
+      "dark": "#191A23"
+    }
+  },
   "icons": {
     "library": "lucide"
   },
@@ -56,11 +61,7 @@
             "groups": [
               {
                 "group": "bunny.net",
-                "pages": [
-                  "index",
-                  "quickstart",
-                  "faq"
-                ]
+                "pages": ["index", "quickstart", "faq"]
               },
               {
                 "group": "Accounts & Billing",
@@ -322,9 +323,7 @@
                 "pages": [
                   {
                     "group": "Go",
-                    "pages": [
-                      "magic-containers/guides/simple-go-api"
-                    ]
+                    "pages": ["magic-containers/guides/simple-go-api"]
                   },
                   {
                     "group": "Node.js",
@@ -335,15 +334,11 @@
                   },
                   {
                     "group": "PHP",
-                    "pages": [
-                      "magic-containers/guides/php-slim"
-                    ]
+                    "pages": ["magic-containers/guides/php-slim"]
                   },
                   {
                     "group": "Python",
-                    "pages": [
-                      "magic-containers/guides/python-fastapi"
-                    ]
+                    "pages": ["magic-containers/guides/python-fastapi"]
                   },
                   {
                     "group": "Web Frameworks",
@@ -422,10 +417,7 @@
               },
               {
                 "group": "Observability",
-                "pages": [
-                  "scripting/statistics",
-                  "scripting/logs"
-                ]
+                "pages": ["scripting/statistics", "scripting/logs"]
               },
               {
                 "group": "Runtime APIs",
@@ -433,19 +425,14 @@
                   {
                     "group": "Nodes API",
                     "hidden": true,
-                    "pages": [
-                      "scripting/node/fs/node-fs"
-                    ]
+                    "pages": ["scripting/node/fs/node-fs"]
                   },
                   "scripting/websockets"
                 ]
               },
               {
                 "group": "Reference",
-                "pages": [
-                  "scripting/limits",
-                  "scripting/api-reference"
-                ]
+                "pages": ["scripting/limits", "scripting/api-reference"]
               }
             ]
           }
@@ -584,10 +571,7 @@
               },
               {
                 "group": "Features",
-                "pages": [
-                  "storage/storage-tiers",
-                  "storage/replication"
-                ]
+                "pages": ["storage/storage-tiers", "storage/replication"]
               },
               {
                 "group": "Manage Files & Objects",
@@ -611,9 +595,7 @@
                 "pages": [
                   {
                     "group": "WordPress",
-                    "pages": [
-                      "storage/move-files-to-wordpress"
-                    ]
+                    "pages": ["storage/move-files-to-wordpress"]
                   },
                   {
                     "group": "Static Site Hosting",
@@ -649,10 +631,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": [
-                  "shield/index",
-                  "shield/quickstart"
-                ]
+                "pages": ["shield/index", "shield/quickstart"]
               },
               {
                 "group": "Protection Features",
@@ -754,10 +733,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": [
-                  "dns/index",
-                  "dns/quickstart"
-                ]
+                "pages": ["dns/index", "dns/quickstart"]
               },
               {
                 "group": "DNS Management",
@@ -813,10 +789,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": [
-                  "database/index",
-                  "database/quickstart"
-                ]
+                "pages": ["database/index", "database/quickstart"]
               },
               {
                 "group": "Connect",
@@ -858,9 +831,7 @@
             "groups": [
               {
                 "group": "WordPress",
-                "pages": [
-                  "integrations/wordpress"
-                ]
+                "pages": ["integrations/wordpress"]
               }
             ]
           },
@@ -911,9 +882,7 @@
               },
               {
                 "group": "Origin Errors API",
-                "pages": [
-                  "api-reference/origin-errors/index"
-                ],
+                "pages": ["api-reference/origin-errors/index"],
                 "openapi": {
                   "source": "/api-reference/origin-errors/openapi.json",
                   "directory": "api-reference/origin-errors"
@@ -921,9 +890,7 @@
               },
               {
                 "group": "Storage API",
-                "pages": [
-                  "api-reference/storage/index"
-                ],
+                "pages": ["api-reference/storage/index"],
                 "openapi": {
                   "source": "/api-reference/storage/openapi.json",
                   "directory": "api-reference/storage"
@@ -931,9 +898,7 @@
               },
               {
                 "group": "Stream API",
-                "pages": [
-                  "api-reference/stream/index"
-                ],
+                "pages": ["api-reference/stream/index"],
                 "openapi": {
                   "source": "https://video.bunnycdn.com/openapi/bunnynet-video-api.public.json",
                   "directory": "api-reference/stream"
@@ -941,9 +906,7 @@
               },
               {
                 "group": "Shield API",
-                "pages": [
-                  "api-reference/shield/index"
-                ],
+                "pages": ["api-reference/shield/index"],
                 "openapi": {
                   "source": "https://api.bunny.net/shield/docs/v1/swagger.json",
                   "directory": "api-reference/shield"
@@ -951,9 +914,7 @@
               },
               {
                 "group": "Edge Scripting API",
-                "pages": [
-                  "api-reference/scripting/index"
-                ],
+                "pages": ["api-reference/scripting/index"],
                 "openapi": {
                   "source": "https://core-api-public-docs.b-cdn.net/docs/v3/compute.json",
                   "directory": "api-reference/scripting"
@@ -961,9 +922,7 @@
               },
               {
                 "group": "Magic Containers API",
-                "pages": [
-                  "api-reference/magic-containers/overview"
-                ],
+                "pages": ["api-reference/magic-containers/overview"],
                 "openapi": {
                   "source": "https://api-mc.opsbunny.net/docs/public/swagger.json",
                   "directory": "api-reference/magic-containers"
@@ -971,9 +930,7 @@
               },
               {
                 "group": "Database API",
-                "pages": [
-                  "api-reference/database/index"
-                ],
+                "pages": ["api-reference/database/index"],
                 "openapi": {
                   "source": "https://api.bunny.net/database/docs/private/api.json",
                   "directory": "api-reference/database"
@@ -987,10 +944,7 @@
             "groups": [
               {
                 "group": "Terraform",
-                "pages": [
-                  "terraform/index",
-                  "terraform/quickstart"
-                ]
+                "pages": ["terraform/index", "terraform/quickstart"]
               },
               {
                 "group": "Reference",
@@ -1002,9 +956,7 @@
               },
               {
                 "group": "Guides",
-                "pages": [
-                  "terraform/importing-stream-library"
-                ]
+                "pages": ["terraform/importing-stream-library"]
               }
             ]
           }
