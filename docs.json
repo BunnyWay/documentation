@@ -430,13 +430,7 @@
               {
                 "group": "Runtime APIs",
                 "pages": [
-                  {
-                    "group": "Nodes API",
-                    "hidden": true,
-                    "pages": [
-                      "scripting/node/fs/node-fs"
-                    ]
-                  },
+                  "scripting/node/fs/node-fs",
                   "scripting/websockets"
                 ]
               },
