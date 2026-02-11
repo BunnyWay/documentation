@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "almond",
   "name": "bunny.net Documentation",
   "colors": {
     "primary": "#EF6126",
@@ -8,11 +8,6 @@
     "dark": "#EF6126"
   },
   "favicon": "/favicon.png",
-  "background": {
-    "color": {
-      "dark": "#191A23"
-    }
-  },
   "icons": {
     "library": "lucide"
   },
