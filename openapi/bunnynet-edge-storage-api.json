@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "bunny.net Edge Storage API",
-    "description": "![bunny.net Logo](https://bunny.net/v2/images/bunnynet-logo-dark.png \"bunny.net Logo\")\n\nLearn how to use the [bunny.net](https://bunny.net \"bunny.net - The content delivery platform that truly hops\") Edge Storage API. It allows you to easily upload, download and delete files with just a few lines of code.\n<h2>API libraries:</h2> \nThese libraries allow quick integration for bunny.net Edge Storage.\n\n<ul>\n  <li><a rel=\"nofollow\" href=\"https://github.com/BunnyWay/BunnyCDN.PHP.Storage\">BunnyCDN.PHP.Storage</a> - Official PHP storage library</li>\n  <li><a rel=\"nofollow\" href=\"https://github.com/BunnyWay/BunnyCDN.Net.Storage\">BunnyCDN.Net.Storage</a> - Official .NET storage library</li>\n  <li><a rel=\"nofollow\" href=\"https://github.com/BunnyWay/BunnyCDN.Java.Storage\">BunnyCDN.Java.Storage</a> - Official Java storage library</li>\n  \n  <li><a rel=\"nofollow\" href=\"https://github.com/NiveditJain/BunnyCDNStorageLib\">Python Storage Library</a> - (Unofficial)</li>\n</ul>\n\n<h2>Storage Endpoints:</h2> \n\nThe storage API endpoint depends on the primary storage region of your storage zone. You can also find this in the FTP & HTTP API Information of your storage zone.\n<ul>\n  <li><strong>Falkenstein</strong>: storage.bunnycdn.com</li>\n  <li><strong>New York</strong>: la.storage.bunnycdn.com</li>\n  <li><strong>Los Angeles</strong>: la.storage.bunnycdn.com</li>\n  <li><strong>Singapore</strong>: sg.storage.bunnycdn.com</li>\n  <li><strong>Sydney</strong>: syd.storage.bunnycdn.com</li>\n</ul>\n",
+    "description": "![bunny.net Logo](https://bunny.net/v2/images/bunnynet-logo-dark.png \"bunny.net Logo\")\n\nLearn how to use the [bunny.net](https://bunny.net \"bunny.net - The content delivery platform that truly hops\") Edge Storage API. It allows you to easily upload, download and delete files with just a few lines of code.\n<h2>API libraries:</h2> \nThese libraries allow quick integration for bunny.net Edge Storage.\n\n<ul>\n  <li><a rel=\"nofollow\" href=\"https://github.com/BunnyWay/BunnyCDN.PHP.Storage\">BunnyCDN.PHP.Storage</a> - Official PHP storage library</li>\n  <li><a rel=\"nofollow\" href=\"https://github.com/BunnyWay/BunnyCDN.Net.Storage\">BunnyCDN.Net.Storage</a> - Official .NET storage library</li>\n  <li><a rel=\"nofollow\" href=\"https://github.com/BunnyWay/BunnyCDN.Java.Storage\">BunnyCDN.Java.Storage</a> - Official Java storage library</li>\n  \n  <li><a rel=\"nofollow\" href=\"https://github.com/NiveditJain/BunnyCDNStorageLib\">Python Storage Library</a> - (Unofficial)</li>\n</ul>\n\n<h2>Storage Endpoints:</h2> \n\nThe storage API endpoint depends on the primary storage region of your storage zone. You can also find this in the FTP & HTTP API Information of your storage zone.\n<ul>\n  <li><strong>Frankfurt, DE</strong>: storage.bunnycdn.com</li>\n  <li><strong>London, UK</strong>: uk.storage.bunnycdn.com</li>\n  <li><strong>New York, US</strong>: ny.storage.bunnycdn.com</li>\n  <li><strong>Los Angeles, US</strong>: la.storage.bunnycdn.com</li>\n  <li><strong>Singapore, SG</strong>: sg.storage.bunnycdn.com</li>\n  <li><strong>Stockholm, SE</strong>: se.storage.bunnycdn.com</li>\n  <li><strong>São Paulo, BR</strong>: br.storage.bunnycdn.com</li>\n  <li><strong>Johannesburg, SA</strong>: jh.storage.bunnycdn.com</li>\n  <li><strong>Sydney, SYD</strong>: syd.storage.bunnycdn.com</li>\n</ul>\n",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "name": "bunny.net API Team",
@@ -235,7 +235,17 @@
       }
     }
   },
-  "servers": [{ "url": "https://storage.bunnycdn.com/" }],
+  "servers": [
+    { "url": "https://storage.bunnycdn.com", "description": "Frankfurt, DE" },
+    { "url": "https://uk.storage.bunnycdn.com", "description": "London, UK" },
+    { "url": "https://ny.storage.bunnycdn.com", "description": "New York, US" },
+    { "url": "https://la.storage.bunnycdn.com", "description": "Los Angeles, US" },
+    { "url": "https://sg.storage.bunnycdn.com", "description": "Singapore, SG" },
+    { "url": "https://se.storage.bunnycdn.com", "description": "Stockholm, SE" },
+    { "url": "https://br.storage.bunnycdn.com", "description": "São Paulo, BR" },
+    { "url": "https://jh.storage.bunnycdn.com", "description": "Johannesburg, SA" },
+    { "url": "https://syd.storage.bunnycdn.com", "description": "Sydney, SYD" }
+  ],
   "components": {
     "securitySchemes": {
       "AccessKeyAuthentication": {
