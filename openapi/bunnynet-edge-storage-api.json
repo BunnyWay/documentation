@@ -73,6 +73,23 @@
         "tags": ["Manage Files"],
         "summary": "Upload File",
         "description": "Upload a file to a storage zone based on the URL path. If the directory tree does not exist, it will be created automatically. **The file content should be sent as the body of the request without any type of encoding.**",
+        "x-codeSamples": [
+          {
+            "lang": "curl",
+            "label": "cURL",
+            "source": "curl --request PUT \\\n  --url https://storage.bunnycdn.com/{storageZoneName}/{path}/{fileName} \\\n  --header 'AccessKey: YOUR_STORAGE_ZONE_PASSWORD' \\\n  --header 'Content-Type: application/octet-stream' \\\n  --header 'Checksum: SHA256_CHECKSUM_IN_UPPERCASE' \\\n  --upload-file /path/to/your/file.jpg"
+          },
+          {
+            "lang": "javascript",
+            "label": "JavaScript",
+            "source": "const fs = require('fs');\n\nconst fileContent = fs.readFileSync('/path/to/your/file.jpg');\n\nfetch('https://storage.bunnycdn.com/{storageZoneName}/{path}/{fileName}', {\n  method: 'PUT',\n  headers: {\n    'AccessKey': 'YOUR_STORAGE_ZONE_PASSWORD',\n    'Content-Type': 'application/octet-stream'\n  },\n  body: fileContent\n});"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import requests\n\nwith open('/path/to/your/file.jpg', 'rb') as f:\n    file_content = f.read()\n\nresponse = requests.put(\n    'https://storage.bunnycdn.com/{storageZoneName}/{path}/{fileName}',\n    headers={\n        'AccessKey': 'YOUR_STORAGE_ZONE_PASSWORD',\n        'Content-Type': 'application/octet-stream'\n    },\n    data=file_content\n)"
+          }
+        ],
         "responses": {
           "201": { "description": "The file upload was successful." },
           "400": { "description": "Upload failed." }
