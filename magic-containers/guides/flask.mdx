@@ -1,0 +1,140 @@
+---
+title: "Flask"
+description: "Deploy a Flask application to Magic Containers"
+---
+
+import GitHubActionsWorkflow from "/snippets/magic-containers/github-actions-workflow.mdx";
+import DockerCliSteps from "/snippets/magic-containers/docker-cli-steps.mdx";
+import DeploySteps from "/snippets/magic-containers/deploy-steps.mdx";
+import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-info.mdx";
+import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
+import NextSteps from "/snippets/magic-containers/next-steps.mdx";
+
+This guide walks you through building and deploying a Flask application to Magic Containers with GitHub Container Registry. You'll need:
+
+- A GitHub account for source code and container registry
+- A bunny.net account with Magic Containers enabled
+
+## Create the Flask app
+
+Create a new directory with the following files:
+
+<CodeGroup>
+
+```python app.py
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+
+@app.get("/")
+def index():
+    return jsonify(message="Hello from Bunny 🐰")
+```
+
+```txt requirements.txt
+flask==3.1.0
+gunicorn==23.0.0
+```
+
+</CodeGroup>
+
+## Run locally
+
+Install dependencies and start the development server:
+
+```bash
+pip install -r requirements.txt
+flask run
+```
+
+Test the API:
+
+```bash
+curl http://localhost:5000/
+```
+
+## Create the Dockerfile
+
+```dockerfile Dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 80
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:80"]
+```
+
+## Build and push to GitHub Container Registry
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    Create `.github/workflows/build.yml` to automatically build and push on every commit to `main`:
+
+    <GitHubActionsWorkflow />
+
+    Push your code to trigger the workflow:
+
+    ```bash
+    git init
+    git add .
+    git commit -m "Initial commit"
+    git remote add origin https://github.com/YOUR_USERNAME/app-flask.git
+    git push -u origin main
+    ```
+
+  </Tab>
+  <Tab title="Docker CLI">
+    Build and push manually from your local machine.
+
+    <DockerCliSteps imageName="app-flask" />
+
+  </Tab>
+</Tabs>
+
+<PrivateRegistryInfo />
+
+## Deploy to Magic Containers
+
+<DeploySteps imageName="app-flask" />
+
+## Test your app
+
+```bash
+curl https://mc-xxx.bunny.run/
+```
+
+```json Response
+{ "message": "Hello from Bunny 🐰" }
+```
+
+<CustomHostnameInfo />
+
+## Connect a database
+
+You can connect your app to [Bunny Database](/database) directly from the dashboard:
+
+1. Go to **Database > [Your Database] > Access**
+2. Click **Generate Tokens**
+3. Click **Add Secrets to Magic Container App**
+4. Select your app
+
+The `DB_URL` and `DB_TOKEN` environment variables are now available in your app:
+
+```python
+import libsql_experimental as libsql
+import os
+
+conn = libsql.connect(
+    database=os.environ["DB_URL"],
+    auth_token=os.environ["DB_TOKEN"]
+)
+
+result = conn.execute("SELECT * FROM users").fetchall()
+```
+
+See the [Bunny Database documentation](/database) for more details.
+
+<NextSteps />

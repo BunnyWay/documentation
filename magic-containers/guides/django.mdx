@@ -1,0 +1,160 @@
+---
+title: "Django"
+description: "Deploy a Django application to Magic Containers"
+---
+
+import GitHubActionsWorkflow from "/snippets/magic-containers/github-actions-workflow.mdx";
+import DockerCliSteps from "/snippets/magic-containers/docker-cli-steps.mdx";
+import DeploySteps from "/snippets/magic-containers/deploy-steps.mdx";
+import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-info.mdx";
+import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
+import NextSteps from "/snippets/magic-containers/next-steps.mdx";
+
+This guide walks you through building and deploying a Django application to Magic Containers with GitHub Container Registry. You'll need:
+
+- A GitHub account for source code and container registry
+- A bunny.net account with Magic Containers enabled
+
+## Create the Django app
+
+Create a new directory and set up the project:
+
+```bash
+mkdir app-django && cd app-django
+pip install django gunicorn
+django-admin startproject myproject .
+```
+
+Add a simple view to confirm the deployment works. Create `myproject/views.py`:
+
+```python myproject/views.py
+from django.http import JsonResponse
+
+
+def index(request):
+    return JsonResponse({"message": "Hello from Bunny 🐰"})
+```
+
+Update `myproject/urls.py` to include the new view:
+
+```python myproject/urls.py
+from django.urls import path
+from myproject.views import index
+
+urlpatterns = [
+    path("", index),
+]
+```
+
+Update `myproject/settings.py` to allow all hosts and configure static files:
+
+```python myproject/settings.py
+ALLOWED_HOSTS = ["*"]
+STATIC_ROOT = "staticfiles"
+```
+
+Generate the requirements file:
+
+```bash
+pip freeze > requirements.txt
+```
+
+## Run locally
+
+Start the development server:
+
+```bash
+python manage.py runserver
+```
+
+Test the API:
+
+```bash
+curl http://localhost:8000/
+```
+
+## Create the Dockerfile
+
+```dockerfile Dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+RUN python manage.py collectstatic --noinput
+EXPOSE 80
+CMD ["gunicorn", "myproject.wsgi:application", "--bind", "0.0.0.0:80"]
+```
+
+## Build and push to GitHub Container Registry
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    Create `.github/workflows/build.yml` to automatically build and push on every commit to `main`:
+
+    <GitHubActionsWorkflow />
+
+    Push your code to trigger the workflow:
+
+    ```bash
+    git init
+    git add .
+    git commit -m "Initial commit"
+    git remote add origin https://github.com/YOUR_USERNAME/app-django.git
+    git push -u origin main
+    ```
+
+  </Tab>
+  <Tab title="Docker CLI">
+    Build and push manually from your local machine.
+
+    <DockerCliSteps imageName="app-django" />
+
+  </Tab>
+</Tabs>
+
+<PrivateRegistryInfo />
+
+## Deploy to Magic Containers
+
+<DeploySteps imageName="app-django" />
+
+## Test your app
+
+```bash
+curl https://mc-xxx.bunny.run/
+```
+
+```json Response
+{ "message": "Hello from Bunny 🐰" }
+```
+
+<CustomHostnameInfo />
+
+## Connect a database
+
+You can connect your app to [Bunny Database](/database) directly from the dashboard:
+
+1. Go to **Database > [Your Database] > Access**
+2. Click **Generate Tokens**
+3. Click **Add Secrets to Magic Container App**
+4. Select your app
+
+The `DB_URL` and `DB_TOKEN` environment variables are now available in your app:
+
+```python
+import libsql_experimental as libsql
+import os
+
+conn = libsql.connect(
+    database=os.environ["DB_URL"],
+    auth_token=os.environ["DB_TOKEN"]
+)
+
+result = conn.execute("SELECT * FROM users").fetchall()
+```
+
+See the [Bunny Database documentation](/database) for more details.
+
+<NextSteps />
