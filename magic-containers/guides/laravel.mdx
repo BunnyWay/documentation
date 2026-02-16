@@ -1,0 +1,132 @@
+---
+title: "Laravel"
+description: "Deploy a Laravel application to Magic Containers"
+---
+
+import GitHubActionsWorkflow from "/snippets/magic-containers/github-actions-workflow.mdx";
+import DockerCliSteps from "/snippets/magic-containers/docker-cli-steps.mdx";
+import DeploySteps from "/snippets/magic-containers/deploy-steps.mdx";
+import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-info.mdx";
+import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
+import NextSteps from "/snippets/magic-containers/next-steps.mdx";
+
+This guide walks you through building and deploying a Laravel application to Magic Containers with GitHub Container Registry. You'll need:
+
+- A GitHub account for source code and container registry
+- A bunny.net account with Magic Containers enabled
+
+## Create the Laravel app
+
+Create a new Laravel project:
+
+```bash
+composer create-project laravel/laravel app-laravel
+cd app-laravel
+```
+
+Add a simple route to confirm the deployment works. Update `routes/web.php`:
+
+```php routes/web.php
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return response()->json(['message' => 'Hello from Bunny 🐰']);
+});
+```
+
+## Run locally
+
+Start the development server:
+
+```bash
+php artisan serve
+```
+
+Test the API:
+
+```bash
+curl http://localhost:8000/
+```
+
+## Create the Dockerfile
+
+```dockerfile Dockerfile
+FROM php:8.3-apache
+
+RUN a2enmod rewrite
+RUN docker-php-ext-install pdo pdo_mysql
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+COPY . .
+RUN composer install --no-dev --optimize-autoloader
+
+RUN chown -R www-data:www-data storage bootstrap/cache
+RUN php artisan config:cache && php artisan route:cache
+
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+RUN echo '<Directory /var/www/html/public>\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' >> /etc/apache2/apache2.conf
+
+ENV APP_KEY=base64:YOUR_APP_KEY
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+
+EXPOSE 80
+```
+
+<Note>
+  Generate an app key with `php artisan key:generate --show` and replace `YOUR_APP_KEY` in the Dockerfile, or set it as an [environment variable](/magic-containers/environment-variables) in the dashboard.
+</Note>
+
+## Build and push to GitHub Container Registry
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    Create `.github/workflows/build.yml` to automatically build and push on every commit to `main`:
+
+    <GitHubActionsWorkflow />
+
+    Push your code to trigger the workflow:
+
+    ```bash
+    git init
+    git add .
+    git commit -m "Initial commit"
+    git remote add origin https://github.com/YOUR_USERNAME/app-laravel.git
+    git push -u origin main
+    ```
+
+  </Tab>
+  <Tab title="Docker CLI">
+    Build and push manually from your local machine.
+
+    <DockerCliSteps imageName="app-laravel" />
+
+  </Tab>
+</Tabs>
+
+<PrivateRegistryInfo />
+
+## Deploy to Magic Containers
+
+<DeploySteps imageName="app-laravel" />
+
+## Test your app
+
+```bash
+curl https://mc-xxx.bunny.run/
+```
+
+```json Response
+{ "message": "Hello from Bunny 🐰" }
+```
+
+<CustomHostnameInfo />
+
+<NextSteps />
