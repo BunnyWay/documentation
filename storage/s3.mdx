@@ -37,8 +37,8 @@ Once you've created your S3-compatible storage zone, you're ready to connect.
 
 The credentials you need to connect via S3 are located in the **FTP & API Access** tab:
 
-- **Access Key ID**: Your unique identifier (Storage Zone Read Only Password)
-- **Secret Access Key**: Your authentication credential (Storage Zone Password)
+- **Access Key ID**: Your Storage Zone name (bucket name)
+- **Secret Access Key**: Your Storage Zone Password
 - **Endpoint URL**: `https://[region]-s3.storage.bunnycdn.com`
 - **Region**: `de` (Frankfurt), `ny` (New York), or `sg` (Singapore)
 
@@ -75,7 +75,7 @@ SHA256 checksum validation is available using the `x-amz-checksum-sha256` header
 ```bash
 # Configure AWS CLI with your storage zone credentials
 aws configure --profile bunny
-# AWS Access Key ID: your-access-key-id
+# AWS Access Key ID: your-storage-zone-name
 # AWS Secret Access Key: your-storage-password
 # Default region name: your-region (e.g., de, ny, sg)
 # Default output format: json
@@ -124,7 +124,7 @@ You can use rclone with Bunny Storage:
 # Configure rclone
 rclone config create bunnycdn s3 \
   provider=Other \
-  access_key_id=your-access-key-id \
+  access_key_id=your-storage-zone-name \
   secret_access_key=your-storage-password \
   endpoint=https://[region]-s3.storage.bunnycdn.com
 

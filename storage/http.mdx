@@ -74,7 +74,7 @@ curl -X PUT \
   https://storage.bunnycdn.com/your-zone-name/path/to/file.jpg \
   -H "AccessKey: your-storage-password" \
   -H "Content-Type: image/jpeg" \
-  --data-binary "@/path/to/local/file.jpg"
+  --upload-file /path/to/local/file.jpg
 ```
 
 ### With checksum
@@ -84,8 +84,8 @@ curl -X PUT \
   https://storage.bunnycdn.com/your-zone-name/path/to/file.jpg \
   -H "AccessKey: your-storage-password" \
   -H "Content-Type: image/jpeg" \
-  -H "Checksum: SHA256_HASH_IN_UPPERCASE" \
-  --data-binary "@/path/to/local/file.jpg"
+  -H "Checksum: D7A8FBB307D7809469CA9ABCB0082E4F8D5651E46D3CDB762D02D0BF37C9E592" \
+  --upload-file /path/to/local/file.jpg
 ```
 
 ### Response codes
@@ -105,7 +105,7 @@ curl -X PUT \
 
 - Use the correct regional endpoint for your storage zone's primary region
 - Checksum hashes must be SHA256 in HEX format and UPPERCASE
-- Always use `--data-binary` with curl to preserve binary data
+- Use `--upload-file` with curl to send file contents as raw binary
 - The `Content-Type` header helps with proper file serving but is optional
 
 ## Download a file
