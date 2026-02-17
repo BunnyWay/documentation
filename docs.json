@@ -348,7 +348,8 @@
                     "group": "Databases",
                     "pages": [
                       "magic-containers/guides/mariadb",
-                      "magic-containers/guides/postgresql"
+                      "magic-containers/guides/postgresql",
+                      "magic-containers/guides/redis"
                     ]
                   }
                 ]
