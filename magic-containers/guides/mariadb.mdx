@@ -1,0 +1,188 @@
+---
+title: "MariaDB"
+description: "Deploy MariaDB to Magic Containers"
+---
+
+This guide walks you through deploying MariaDB to Magic Containers, either as a standalone container or as part of a [multi-container](/magic-containers/multi-container) app alongside your application.
+
+You'll need a bunny.net account with Magic Containers enabled.
+
+## Quickstart
+
+<Steps>
+  <Step title="Create a new app">
+    Go to the [bunny.net dashboard](https://dash.bunny.net), select **Magic Containers**, and click **Add App**. Select **Single region deployment**.
+
+    Databases should use single region deployment with a single instance. Each pod gets its own dedicated volume with no data replication — this applies both across regions and within the same region. Scaling to multiple pods or regions would result in separate, isolated databases each with their own data.
+
+  </Step>
+  <Step title="Add the MariaDB container">
+    Click **Add Container** and configure the image:
+
+    - **Registry**: Docker Hub
+    - **Image**: `library/mariadb`
+    - **Tag**: `11`
+
+    Magic Containers will automatically detect the required endpoint and environment variables for the image. Configure the environment variables as needed:
+
+      - `MARIADB_ROOT_PASSWORD` = a strong root password
+      - `MARIADB_USER` = `app`
+      - `MARIADB_PASSWORD` = a strong password
+      - `MARIADB_DATABASE` = `app`
+
+  </Step>
+  <Step title="Add a persistent volume">
+    In the **Volumes** section of the container settings, add a volume:
+
+    - **Name**: `mariadb-data`
+    - **Mount path**: `/var/lib/mysql`
+
+    This ensures your database files persist across restarts and redeployments. Without a volume, all data is lost when the container stops.
+
+    See [persistent volumes](/magic-containers/persistent-volumes) for more details on volume behavior and pricing.
+
+  </Step>
+  <Step title="Deploy">
+    Review your settings and click **Confirm and Create**.
+  </Step>
+</Steps>
+
+## Environment variables
+
+The official MariaDB image supports these environment variables:
+
+| Variable                | Description                             | Default |
+| ----------------------- | --------------------------------------- | ------- |
+| `MARIADB_ROOT_PASSWORD` | Root user password (required)           | -       |
+| `MARIADB_USER`          | Additional user to create               | -       |
+| `MARIADB_PASSWORD`      | Password for the additional user        | -       |
+| `MARIADB_DATABASE`      | Default database created on first start | -       |
+
+## Connect from your app
+
+In a [multi-container](/magic-containers/multi-container) setup, your app and MariaDB share the same localhost network. Connect using `127.0.0.1` and the default port `3306`.
+
+<Tabs>
+  <Tab title="Connection string">
+    ```
+    mysql://app:YOUR_PASSWORD@127.0.0.1:3306/app
+    ```
+  </Tab>
+  <Tab title="Node.js">
+    ```javascript
+    import mysql from "mysql2/promise";
+
+    const connection = await mysql.createConnection(
+      process.env.DATABASE_URL
+    );
+
+    const [rows] = await connection.execute("SELECT NOW()");
+    ```
+
+  </Tab>
+  <Tab title="Go">
+    ```go
+    import (
+    	"database/sql"
+    	"os"
+
+    	_ "github.com/go-sql-driver/mysql"
+    )
+
+    db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
+    if err != nil {
+    	log.Fatal(err)
+    }
+    defer db.Close()
+    ```
+
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import MySQLdb
+    import os
+
+    conn = MySQLdb.connect(
+      host="127.0.0.1",
+      user="app",
+      passwd=os.environ["MARIADB_PASSWORD"],
+      db="app",
+    )
+    cur = conn.cursor()
+    cur.execute("SELECT NOW()")
+    ```
+
+  </Tab>
+  <Tab title="PHP">
+    ```php
+    <?php
+
+    $dsn = "mysql:host=127.0.0.1;port=3306;dbname=app";
+    $pdo = new PDO($dsn, 'app', getenv('MARIADB_PASSWORD'));
+
+    $result = $pdo->query('SELECT NOW()')->fetch();
+    ```
+
+  </Tab>
+</Tabs>
+
+<Warning>
+  Use `127.0.0.1` instead of `localhost` for the database host. Some clients
+  (including PHP/PDO) interpret `localhost` as a Unix socket connection, which
+  will fail in a container environment. Using `127.0.0.1` forces a TCP
+  connection.
+</Warning>
+
+## Multi-container example
+
+A typical setup pairs MariaDB with your application. When configuring the app, add two containers:
+
+### App container
+
+- **Image**: your app image (e.g. `ghcr.io/<your-username>/my-app:latest`)
+- **Endpoint**: the port your app listens on
+- **Environment variables**:
+  - `DATABASE_URL` = `mysql://app:YOUR_PASSWORD@127.0.0.1:3306/app`
+
+### MariaDB container
+
+- **Image**: `library/mariadb:11`
+- **Volume**: mount path `/var/lib/mysql`
+- **Environment variables**:
+  - `MARIADB_ROOT_PASSWORD` = a strong root password
+  - `MARIADB_USER` = `app`
+  - `MARIADB_PASSWORD` = a strong password
+  - `MARIADB_DATABASE` = `app`
+
+<Note>
+  Both containers share the same localhost network, so your app connects to
+  MariaDB at `127.0.0.1:3306`. See [multi-container
+  apps](/magic-containers/multi-container) for more details.
+</Note>
+
+## External access
+
+To connect to MariaDB from outside Magic Containers (e.g. from your local terminal), add an [Anycast endpoint](/magic-containers/endpoints):
+
+1. Go to your app's **Endpoints** tab and click **Add New Endpoint**
+2. Select **Anycast** as the type
+3. Set **Container Port** to `3306`
+4. Set **Exposed Port** to `3306`
+5. Click **Add Endpoint**
+
+Then connect using the Anycast IP and the **exposed port**:
+
+```bash
+mariadb -h <anycast-ip> -P <exposed-port> -u app -p --database app
+```
+
+<Note>
+  The exposed port and container port may differ. When connecting externally,
+  always use the exposed port shown in your endpoint configuration.
+</Note>
+
+<Warning>
+  Exposing your database to the internet means anyone with the credentials can
+  connect. Use a strong password and consider removing the Anycast endpoint when
+  external access is no longer needed.
+</Warning>
