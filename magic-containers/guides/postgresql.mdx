@@ -13,7 +13,9 @@ You'll need a bunny.net account with Magic Containers enabled.
   <Step title="Create a new app">
     Go to the [bunny.net dashboard](https://dash.bunny.net), select **Magic Containers**, and click **Add App**. Select **Single region deployment**.
 
-    Databases should use single region deployment with a single instance. Each pod gets its own dedicated volume with no data replication — this applies both across regions and within the same region. Scaling to multiple pods or regions would result in separate, isolated databases each with their own data.
+    <Warning>
+      Databases should use single region deployment with a single instance. Each pod gets its own dedicated volume with no data replication — this applies both across regions and within the same region. Scaling to multiple pods or regions would result in separate, isolated databases each with their own data.
+    </Warning>
 
   </Step>
   <Step title="Add the PostgreSQL container">
@@ -46,6 +48,12 @@ You'll need a bunny.net account with Magic Containers enabled.
     Review your settings and click **Confirm and Create**.
   </Step>
 </Steps>
+
+<Info>
+  Always set a strong `POSTGRES_PASSWORD`, even if the database is not exposed
+  externally. Other containers in the same pod can access the network, and a
+  password protects against accidental or unauthorized access.
+</Info>
 
 <Warning>
   You must set `PGDATA` to a subdirectory of the volume mount (e.g.
