@@ -76,27 +76,27 @@ This guide walks through deploying a Vite-built static site to Bunny Storage wit
 
 ## Configure for Single-Page Apps
 
-If your Vite app uses client-side routing (React Router, Vue Router, etc.), you need to configure a fallback to `index.html`.
+If your Vite app uses client-side routing (React Router, Vue Router, etc.), you need to configure a fallback to `index.html`. Configure this using your Storage Zone's [error handling settings](/storage/settings#error-handling).
 
 <Steps>
-  <Step title="Open Edge Rules">
-    In your Pull Zone settings, go to **Edge Rules** → **Add Edge Rule**
+  <Step title="Navigate to your storage zone">
+    Log in to your Bunny dashboard, go to **Storage** in the left navigation, and select your storage zone.
   </Step>
 
-  <Step title="Create the fallback rule">
-    Configure the rule with:
+<Step title="Open Error handling settings">
+  Open the **Error handling** page.
+</Step>
 
-    | Setting | Value |
-    | ------- | ----- |
-    | **Condition** | If URL does not match (regex) |
-    | **Pattern** | `\.(js\|css\|png\|jpg\|jpeg\|gif\|svg\|ico\|woff\|woff2\|ttf\|eot\|json\|webp\|avif)$` |
-    | **Action** | Override Origin URL |
-    | **Value** | `/index.html` |
+<Step title="Set the 404 file path">
+  Enter `/index.html` in the **404 File path** field.
+</Step>
 
-  </Step>
+<Step title="Enable 404 to 200 rewrite">
+  Check the box for **Rewrite 404 to 200 status code** and click **Save**.
+</Step>
 
-  <Step title="Save and test">
-    Click **Save**, then test by navigating directly to a route in your app (e.g., `https://your-site.b-cdn.net/about`).
+  <Step title="Test">
+    Navigate directly to a route in your app (e.g., `https://your-site.b-cdn.net/about`) to confirm it loads correctly.
   </Step>
 </Steps>
 
@@ -116,7 +116,7 @@ To serve your Vite site from your own domain, follow the [Custom Hostname](/cdn/
   <Step title="Upload">Upload your `dist` contents to a Storage Zone.</Step>
   <Step title="Connect">Create a Pull Zone pointing to your Storage Zone.</Step>
   <Step title="Configure">
-    Add an Edge Rule for SPA routing if using client-side navigation.
+    Set up error handling for SPA routing if using client-side navigation.
   </Step>
 </Steps>
 

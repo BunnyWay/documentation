@@ -17,8 +17,8 @@ description: "Send emails from the edge using popular email providers like SendG
     BunnySDK.net.http.serve(async (req) => {
       try {
         await resend.emails.send({
-          from: "[email protected]",
-          to: "[email protected]",
+          from: "sender@yourdomain.com",
+          to: "recipient@example.com",
           subject: "Welcome to Bunny Edge Scripting!",
           text: "This email was sent directly from the edge.",
         });
@@ -36,15 +36,15 @@ description: "Send emails from the edge using popular email providers like SendG
 
     ```ts
     import * as BunnySDK from "@bunny.net/edgescript-sdk";
-    import sgMail from "https://esm.sh/@sendgrid/[email protected]";
+    import sgMail from "https://esm.sh/@sendgrid/mail";
     import process from "node:process";
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     BunnySDK.net.http.serve(async (req) => {
       const msg = {
-        to: "[email protected]",
-        from: "[email protected]",
+        to: "recipient@example.com",
+        from: "sender@yourdomain.com",
         subject: "Welcome to Bunny Edge Scripting!",
         text: "This email was sent directly from the edge.",
       };

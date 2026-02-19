@@ -112,8 +112,9 @@
             "name": "Checksum",
             "in": "header",
             "required": false,
-            "description": "The SHA256 checksum of the uploaded content. The server will compare the final SHA256 to the checksum and reject the request in case the checksums do not match.",
-            "schema": { "type": "string" }
+            "description": "The SHA256 checksum of the uploaded content in HEX format (UPPERCASE). The server will compare the final SHA256 to the checksum and reject the request in case the checksums do not match.",
+            "schema": { "type": "string" },
+            "example": "D7A8FBB307D7809469CA9ABCB0082E4F8D5651E46D3CDB762D02D0BF37C9E592"
           },
           {
             "name": "AccessKey",

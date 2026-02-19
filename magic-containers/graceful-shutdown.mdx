@@ -18,7 +18,7 @@ The 30-second grace period matches Kubernetes' default termination behavior, all
 </Info>
 
 <Warning>
-Applications created before this default was introduced may have a 1-second grace period. To check or update your application's grace period, use the `terminationGracePeriodSeconds` field via the API (`PUT /apps/APP_ID/`).
+Applications created before February 1st, 2026 have a 1-second grace period. Applications created after this date have a 30-second grace period. To check or update your application's grace period, use the `terminationGracePeriodSeconds` field via the API (`PUT /apps/APP_ID/`).
 </Warning>
 
 ## Handling SIGTERM in your application
