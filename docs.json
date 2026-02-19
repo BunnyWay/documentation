@@ -959,7 +959,10 @@
               },
               {
                 "group": "Guides",
-                "pages": ["terraform/importing-stream-library"]
+                "pages": [
+                  "terraform/importing-stream-library",
+                  "terraform/edgescript-pullzone"
+                ]
               }
             ]
           }
