@@ -1,0 +1,73 @@
+---
+title: "Managing Pullzones for Edge Scripting"
+description: "Learn how to manage the association between Edge Scripts and Pullzones via Terraform"
+---
+
+Edge Scripts are required to be attached to a Pullzone in order to be executed. Here's how you can manage this association via Terraform.
+
+## Terraform-managed Scripts
+
+If you already have a Pullzone managed via Terraform and you want to attach an Edge Script to it, you'll need the following attributes on your resource:
+
+<Tabs>
+    <Tab title="Standalone Script">
+        ```hcl
+        resource "bunnynet_pullzone" "my-app" {
+            name = "my-app"
+
+            origin {
+                type   = "ComputeScript"
+                url    = "https://bunnycdn.com"
+                script = bunnynet_compute_script.my-script.id
+            }
+
+            routing {
+                filters = ["scripting"]
+            }
+        }
+        ```
+    </Tab>
+    <Tab title="Middleware Script">
+        ```hcl
+        resource "bunnynet_pullzone" "my-app" {
+            name = "my-app"
+
+            origin {
+                type   = "OriginUrl"
+                url    = "https://my-origin.example.com"
+                middleware_script = bunnynet_compute_script.my-script.id
+            }
+
+            routing {
+                filters = ["scripting"]
+            }
+        }
+        ```
+    </Tab>
+</Tabs>
+
+## Edge Script created via Dashboard
+
+Edge Scripts created via the bunny.net Dashboard already are attached to a Pullzone, so you need to import it into your Terraform configuration:
+
+1. Define the resource
+
+```hcl
+resource "bunnynet_pullzone" "my-app" {
+    name = "my-app"
+
+    origin {
+        type   = "ComputeScript"
+        script = bunnynet_compute_script.my-script.id
+        url    = "https://bunnycdn.com"
+    }
+
+    routing {
+        filters = ["scripting"]
+    }
+}
+```
+
+2. Import the pullzone
+
+Run `terraform import bunnynet_pullozne.my-app PZID`, where `PZID` is the ID of the Pullzone created alongside the Edge Script.
