@@ -166,3 +166,7 @@ curl --request POST
 ```
 
 Once fetched, the video will be automatically added to your library and begin processing like a normal upload.
+
+## Queued Fetch Limit
+
+The fetch API supports a limited number of queued fetch requests per user at a time; this limit may vary by region, time, current load, and other factors. If you exceed the limit before previous fetches complete, the API will return **HTTP 429 (Too Many Requests)**. To avoid this, either wait for in-progress fetches to finish before submitting new ones, or implement retry logic with backoff when you receive a 429 response.
