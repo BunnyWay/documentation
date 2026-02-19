@@ -1,0 +1,177 @@
+---
+title: "Redis"
+description: "Deploy Redis to Magic Containers"
+---
+
+This guide walks you through deploying Redis to Magic Containers, either as a standalone container or as part of a [multi-container](/magic-containers/multi-container) app alongside your application.
+
+You'll need a bunny.net account with Magic Containers enabled.
+
+## Quickstart
+
+<Steps>
+  <Step title="Create a new app">
+    Go to the [bunny.net dashboard](https://dash.bunny.net), select **Magic Containers**, and click **Add App**. Select **Single region deployment**.
+
+    <Warning>
+      Databases should use single region deployment with a single instance. Each pod gets its own dedicated volume with no data replication — this applies both across regions and within the same region. Scaling to multiple pods or regions would result in separate, isolated databases each with their own data.
+    </Warning>
+
+  </Step>
+  <Step title="Add the Redis container">
+    Click **Add Container** and configure the image:
+
+    - **Registry**: Docker Hub
+    - **Image**: `library/redis`
+    - **Tag**: `7-alpine`
+
+    Magic Containers will automatically detect the required endpoint and environment variables for the image.
+
+  </Step>
+  <Step title="Add a persistent volume">
+    In the **Volumes** section of the container settings, add a volume:
+
+    - **Name**: `redis-data`
+    - **Mount path**: `/data`
+
+    This ensures your data persists across restarts and redeployments. Without a volume, all data is lost when the container stops.
+
+    See [persistent volumes](/magic-containers/persistent-volumes) for more details on volume behavior and pricing.
+
+  </Step>
+  <Step title="Deploy">
+    Review your settings and click **Confirm and Create**.
+  </Step>
+</Steps>
+
+<Info>
+  Redis has no authentication enabled by default. It's recommended to set a
+  password even if Redis is not exposed externally. Other containers in the same
+  pod can access the network. Set a password by configuring the container
+  command to `redis-server --requirepass YOUR_PASSWORD`, and update your
+  connection string to `redis://:YOUR_PASSWORD@127.0.0.1:6379`.
+</Info>
+
+<Note>
+  Redis uses `/data` as its default data directory. The official image is
+  configured to use append-only file (AOF) persistence by default, which writes
+  every operation to disk in the mounted volume.
+</Note>
+
+## Connect from your app
+
+In a [multi-container](/magic-containers/multi-container) setup, your app and Redis share the same localhost network. Connect using `127.0.0.1` and the default port `6379`.
+
+<Tabs>
+  <Tab title="Connection string">
+    ```
+    redis://127.0.0.1:6379
+    ```
+  </Tab>
+  <Tab title="Node.js">
+    ```javascript
+    import { createClient } from "redis";
+
+    const client = createClient({
+      url: process.env.REDIS_URL,
+    });
+
+    await client.connect();
+    await client.set("key", "value");
+    const value = await client.get("key");
+    ```
+
+  </Tab>
+  <Tab title="Go">
+    ```go
+    import (
+    	"context"
+    	"os"
+
+    	"github.com/redis/go-redis/v9"
+    )
+
+    client := redis.NewClient(&redis.Options{
+    	Addr: "127.0.0.1:6379",
+    })
+
+    ctx := context.Background()
+    client.Set(ctx, "key", "value", 0)
+    val, err := client.Get(ctx, "key").Result()
+    ```
+
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import redis
+
+    r = redis.Redis(host="127.0.0.1", port=6379)
+
+    r.set("key", "value")
+    value = r.get("key")
+    ```
+
+  </Tab>
+  <Tab title="PHP">
+    ```php
+    <?php
+
+    $redis = new Redis();
+    $redis->connect('127.0.0.1', 6379);
+
+    $redis->set('key', 'value');
+    $value = $redis->get('key');
+    ```
+
+  </Tab>
+</Tabs>
+
+## Multi-container example
+
+A typical setup pairs Redis with your application. When configuring the app, add two containers:
+
+### App container
+
+- **Image**: your app image (e.g. `ghcr.io/<your-username>/my-app:latest`)
+- **Endpoint**: the port your app listens on
+- **Environment variables**:
+  - `REDIS_URL` = `redis://127.0.0.1:6379`
+
+### Redis container
+
+- **Image**: `library/redis:7-alpine`
+- **Volume**: mount path `/data`
+
+<Note>
+  Both containers share the same localhost network, so your app connects to
+  Redis at `127.0.0.1:6379`. See [multi-container
+  apps](/magic-containers/multi-container) for more details.
+</Note>
+
+## External access
+
+To connect to Redis from outside Magic Containers (e.g. from your local terminal), add an [Anycast endpoint](/magic-containers/endpoints):
+
+1. Go to your app's **Endpoints** tab and click **Add New Endpoint**
+2. Select **Anycast** as the type
+3. Set **Container Port** to `6379`
+4. Set **Exposed Port** to `6379`
+5. Click **Add Endpoint**
+
+Then connect using the Anycast IP and the **exposed port**:
+
+```bash
+redis-cli -h <anycast-ip> -p <exposed-port>
+```
+
+<Note>
+  The exposed port and container port may differ. When connecting externally,
+  always use the exposed port shown in your endpoint configuration.
+</Note>
+
+<Warning>
+  Redis has no authentication enabled by default. Exposing it to the internet
+  without a password is a serious security risk. Consider setting a password by
+  using the container command `redis-server --requirepass YOUR_PASSWORD`, and
+  removing the Anycast endpoint when external access is no longer needed.
+</Warning>
