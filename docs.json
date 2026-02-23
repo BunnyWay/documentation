@@ -96,8 +96,8 @@
                         "group": "Affiliate Program",
                         "hidden": true,
                         "pages": [
-                          "billing/frequently-asked-questions",
-                          "billing/best-practices-manual",
+                          "billing/affiliate-faq",
+                          "billing/affiliate-best-practices",
                           "billing/affiliate-guidelines"
                         ]
                       }
@@ -1902,7 +1902,7 @@
     },
     {
       "source": "/docs/best-practices-manual",
-      "destination": "/accounts-and-billing/best-practices-manual",
+      "destination": "/accounts-and-billing/affiliate-best-practices",
       "permanent": true
     },
     {
@@ -1957,7 +1957,7 @@
     },
     {
       "source": "/docs/frequently-asked-questions",
-      "destination": "/accounts-and-billing/frequently-asked-questions",
+      "destination": "/accounts-and-billing/affiliate-faq",
       "permanent": true
     },
     {
