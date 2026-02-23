@@ -25,32 +25,32 @@ Volumes are tied to specific regions. This means:
 
 ## Node unavailability
 
-Persistent volumes are bound to specific nodes within a region. If a node becomes unavailable (for example, due to maintenance or infrastructure changes), the following behavior applies:
+Persistent volumes are bound to specific nodes within a region. If a node becomes temporarily unavailable (for example, due to maintenance or infrastructure changes), the platform preserves your volume and pod association so data remains intact when the node returns:
 
-- **Volume retention** - The persistent volume remains on the unavailable node and cannot be moved to a different node
-- **Pod scheduling** - The pod cannot be rescheduled to another node while it is bound to a volume on the unavailable node
-- **No automatic failover** - The platform will not automatically migrate your volume or reschedule your pod to a healthy node
+- **Volume retention** - The persistent volume stays safely on its node, preserving all data during the outage
+- **Pod association** - The pod remains associated with its volume, ensuring it resumes exactly where it left off once the node recovers
+- **Automatic resumption** - When the node returns to service, your pod restarts automatically with the existing volume and all data intact
 
 ### Recovery options
 
-When a node becomes unavailable and your pod is not running, you have two options:
+If you need your pod running sooner, you have two paths forward:
 
 <CardGroup cols={2}>
   <Card title="Wait for node recovery" icon="clock">
-    If your data is important and the node's disk has not been replaced, wait for the node to return to service. Once the node is available again, your pod will automatically resume with the existing volume and all data intact.
+    The recommended option when your data matters. Once the node is back, your pod resumes automatically with the existing volume and all data intact — no action required.
   </Card>
-  <Card title="Delete the volume" icon="trash">
-    If the data can be discarded, manually delete the detached volume from the **Volumes** tab. This allows the pod to be rescheduled to a healthy node in the same region, where a new empty volume will be created.
+  <Card title="Redeploy with a fresh volume" icon="refresh">
+    If the data is not needed, delete the detached volume from the **Volumes** tab. The pod will be scheduled to a healthy node in the same region and start fresh with a new empty volume.
   </Card>
 </CardGroup>
 
 ### Hardware failure
 
-If a node experiences hardware failure that requires disk replacement, any persistent volumes stored on that disk will be lost. The volume will be recreated as a new empty volume once the node is restored.
+In the rare event that a node requires a disk replacement, the affected volume is recreated as a new empty volume once the node is restored.
 
-<Warning>
-  Persistent volumes do not currently support backups or replication. If the underlying disk is replaced due to hardware failure, all data on that volume will be permanently lost. For critical data, implement your own backup strategy within your application.
-</Warning>
+<Note>
+  Persistent volumes do not currently support automatic backups or replication. For critical data, implement a backup strategy within your application (for example, periodic exports to object storage) so you can restore quickly if needed.
+</Note>
 
 ## Quickstart
 
