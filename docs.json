@@ -91,16 +91,16 @@
                       "billing/auto-recharge",
                       "billing/billing-history",
                       "billing/sales-tax",
-                      "billing/affiliate-program",
-                      {
-                        "group": "Affiliate Program",
-                        "hidden": true,
-                        "pages": [
-                          "billing/affiliate-faq",
-                          "billing/affiliate-best-practices",
-                          "billing/affiliate-guidelines"
-                        ]
-                      }
+                      "billing/affiliate-program"
+                    ]
+                  },
+                  {
+                    "group": "Affiliate Program",
+                    "hidden": true,
+                    "pages": [
+                      "billing/affiliate-faq",
+                      "billing/affiliate-best-practices",
+                      "billing/affiliate-guidelines"
                     ]
                   }
                 ]
