@@ -93,6 +93,15 @@
                       "billing/sales-tax",
                       "billing/affiliate-program"
                     ]
+                  },
+                  {
+                    "group": "Affiliate Program",
+                    "hidden": true,
+                    "pages": [
+                      "billing/frequently-asked-questions",
+                      "billing/best-practices-manual",
+                      "billing/affiliate-guidelines"
+                    ]
                   }
                 ]
               }
@@ -1893,12 +1902,12 @@
     },
     {
       "source": "/docs/best-practices-manual",
-      "destination": "/accounts-and-billing/affiliate-program",
+      "destination": "/accounts-and-billing/best-practices-manual",
       "permanent": true
     },
     {
       "source": "/docs/affiliate-guidelines",
-      "destination": "/accounts-and-billing/affiliate-program",
+      "destination": "/accounts-and-billing/affiliate-guidelines",
       "permanent": true
     },
     {
@@ -1948,7 +1957,7 @@
     },
     {
       "source": "/docs/frequently-asked-questions",
-      "destination": "/",
+      "destination": "/accounts-and-billing/frequently-asked-questions",
       "permanent": true
     },
     {
