@@ -90,8 +90,16 @@
                       "billing/add-funds",
                       "billing/auto-recharge",
                       "billing/billing-history",
-                      "billing/sales-tax",
-                      "billing/affiliate-program"
+                      "billing/sales-tax"
+                    ]
+                  },
+                  {
+                    "group": "Affiliate Program",
+                    "pages": [
+                      "billing/affiliate-program",
+                      "billing/affiliate-faq",
+                      "billing/affiliate-best-practices",
+                      "billing/affiliate-guidelines"
                     ]
                   }
                 ]
@@ -713,14 +721,6 @@
                   "optimizer/burrow-smart-routing",
                   "optimizer/html-prerender"
                 ]
-              },
-              {
-                "group": "Reference",
-                "pages": [
-                  "optimizer/statistics",
-                  "optimizer/faq",
-                  "optimizer/limits"
-                ]
               }
             ]
           }
@@ -959,7 +959,10 @@
               },
               {
                 "group": "Guides",
-                "pages": ["terraform/importing-stream-library"]
+                "pages": [
+                  "terraform/importing-stream-library",
+                  "terraform/edgescript-pullzone"
+                ]
               }
             ]
           }
@@ -1885,17 +1888,17 @@
     },
     {
       "source": "/docs/affiliate-competition-rules",
-      "destination": "/accounts-and-billing/affiliate-program",
+      "destination": "/billing/affiliate-program",
       "permanent": true
     },
     {
       "source": "/docs/best-practices-manual",
-      "destination": "/accounts-and-billing/affiliate-program",
+      "destination": "/billing/affiliate-best-practices",
       "permanent": true
     },
     {
       "source": "/docs/affiliate-guidelines",
-      "destination": "/accounts-and-billing/affiliate-program",
+      "destination": "/billing/affiliate-guidelines",
       "permanent": true
     },
     {
@@ -1945,7 +1948,7 @@
     },
     {
       "source": "/docs/frequently-asked-questions",
-      "destination": "/",
+      "destination": "/billing/affiliate-faq",
       "permanent": true
     },
     {
