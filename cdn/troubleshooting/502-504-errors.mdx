@@ -1,5 +1,113 @@
 ---
 title: 502 and 504 Errors
 description: Troubleshoot and resolve 502 Bad Gateway and 504 Gateway Timeout errors on your CDN.
-url: https://support.bunny.net/hc/en-us/articles/115001131172-I-am-seeing-a-lot-of-502-and-504-errors
 ---
+
+502 and 504 errors indicate the CDN couldn't get a valid response from your origin server. These are typically caused by origin timeouts, connection failures, or server-side issues.
+
+## CDN timeout limits
+
+Bunny CDN enforces a **60-second timeout** for origin requests. If your origin doesn't respond within this window, the CDN returns a 504 Gateway Timeout error to the client.
+
+| Timeout type | Duration |
+|--------------|----------|
+| Origin response timeout | 60 seconds |
+
+This timeout applies to the total time waiting for a response from your origin server after a connection is established.
+
+<Info>
+  The 60-second timeout is a platform-wide limit and cannot be changed per Pull Zone. If your origin consistently needs more than 60 seconds to respond, consider optimizing your backend or using [Smart Preloader](/cdn/performance/smart-preloader) to show a loading screen while processing.
+</Info>
+
+## Error codes explained
+
+**502 Bad Gateway** — The CDN connected to your origin but received an invalid response. Common causes:
+
+- Origin server crashed or restarted
+- Origin returned malformed HTTP headers
+- DNS resolution failed
+- SSL/TLS handshake errors
+
+**504 Gateway Timeout** — The CDN didn't receive a response from your origin within the 60-second timeout. Common causes:
+
+- Origin server overloaded or unresponsive
+- Long-running backend processes (database queries, API calls)
+- Network issues between CDN and origin
+- Firewall blocking CDN requests
+
+## Diagnosing the issue
+
+### Check Origin Errors monitoring
+
+Use [Origin Errors](/cdn/logging/origin-errors) to see exactly why requests failed. Look for these error codes:
+
+- `http_timeout` — Origin didn't respond within 60 seconds
+- `dns_lookup` — DNS resolution for your origin failed
+- `http_request_exception` — Connection or request error
+- `network_socket_exception` — Network-level connection failure
+
+### Test your origin directly
+
+Bypass the CDN and test your origin server directly:
+
+```bash
+curl -I -w "Time: %{time_total}s\n" https://your-origin-server.com/path
+```
+
+If this takes more than a few seconds, your origin is the bottleneck.
+
+### Check origin server logs
+
+Review your origin server's access and error logs for:
+
+- High response times
+- Error responses (5xx codes)
+- Resource exhaustion (memory, CPU, connections)
+
+## Solutions
+
+### For slow origins (causing 504 errors)
+
+<Accordion title="Enable Origin Shield">
+  [Origin Shield](/cdn/performance/origin-shield) consolidates cache misses through a single location, reducing the number of requests hitting your origin. This helps when your origin struggles under load.
+</Accordion>
+
+<Accordion title="Use Smart Preloader">
+  [Smart Preloader](/cdn/performance/smart-preloader) displays a loading screen when origin response times exceed a threshold. This prevents users from seeing raw 502/504 errors while your origin processes requests.
+</Accordion>
+
+<Accordion title="Enable Request Coalescing">
+  [Request Coalescing](/cdn/request-coalescing) combines multiple simultaneous requests for the same uncached file into a single origin request. This prevents origin overload during cache misses.
+</Accordion>
+
+<Accordion title="Optimize your backend">
+  - Add caching at your origin (Redis, Memcached)
+  - Optimize slow database queries
+  - Increase server resources or scale horizontally
+  - Move long-running tasks to background jobs
+</Accordion>
+
+### For connection failures (causing 502 errors)
+
+<Accordion title="Verify DNS configuration">
+  Ensure your origin hostname resolves correctly and DNS TTLs aren't too low.
+</Accordion>
+
+<Accordion title="Check SSL certificates">
+  If using HTTPS origins, verify your SSL certificate is valid and not expired. Enable **Verify Origin SSL** in Pull Zone settings to catch certificate issues.
+</Accordion>
+
+<Accordion title="Whitelist CDN IPs">
+  If your origin has firewall rules, ensure Bunny CDN's IP ranges are allowed. See [CDN IP ranges](https://bunny.net/blog/important-notice-bunnycdn-ip-address-change/) for current addresses.
+</Accordion>
+
+<Accordion title="Check origin availability">
+  Verify your origin server is running and accepting connections on the configured port.
+</Accordion>
+
+## Related resources
+
+- [Origin Errors monitoring](/cdn/logging/origin-errors) — View detailed error logs
+- [Origin Shield](/cdn/performance/origin-shield) — Reduce origin load
+- [Smart Preloader](/cdn/performance/smart-preloader) — Show loading screens for slow origins
+- [Request Coalescing](/cdn/request-coalescing) — Combine duplicate requests

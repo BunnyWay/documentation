@@ -20,17 +20,19 @@ Available for all users at no extra cost.
 
 ## Error Codes
 
-- http_request_exception
-- http_invalid_range
-- http_request_failure
-- http_timeout
-- http_loop_detected
-- http_invalid_compression
-- network_socket_exception
-- network_io_error
-- dns_lookup
-- notfound_localdb
-- error
+| Error Code | Description |
+|------------|-------------|
+| `http_timeout` | Origin didn't respond within 60 seconds. See [502 and 504 Errors](/cdn/troubleshooting/502-504-errors) for solutions. |
+| `http_request_exception` | Connection or request error when contacting origin. |
+| `http_request_failure` | Origin returned an error response. |
+| `http_invalid_range` | Invalid byte range request. |
+| `http_loop_detected` | Request loop detected (origin pointing back to CDN). |
+| `http_invalid_compression` | Origin returned invalid compressed content. |
+| `network_socket_exception` | Network-level connection failure. |
+| `network_io_error` | Network I/O error during data transfer. |
+| `dns_lookup` | DNS resolution for origin hostname failed. |
+| `notfound_localdb` | Internal lookup failure. |
+| `error` | General error. |
 
 ## Dashboard
 
