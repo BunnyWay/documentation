@@ -1,0 +1,181 @@
+---
+title: Token authentication with Mobile SDKs
+sidebarTitle: "Mobile Auth"
+metadata:
+  robots: index
+---
+
+## Overview
+
+When using the Stream Mobile SDKs, **two authentication layers exist**:
+
+- **Embed View Token Authentication**: controls access to the video
+- **CDN Token Authentication**: protects delivery from Bunny CDN and is handled automatically by the SDK
+
+This document focuses on **Embed View Token Authentication**, which must be handled by a **customer-managed backend or Edge Script** containing custom business logic that decides whether a certain client is allowed to play back a video by returning an embedded view token.
+
+## Embed View Token Authentication
+
+### Purpose
+
+- Authorizes a viewer to play a specific video
+- Enforced at the **Stream API level**
+- Required for private or restricted videos
+
+### Mobile SDK Responsibility
+
+- **The customer backend generates the token**
+- The mobile app requests the token and passes it to the SDK player element
+- The SDK uses the token for playback; **CDN token signing happens automatically**
+
+## Supported Authentication Methods
+
+| Method                          | Mobile SDK                     |
+| ------------------------------- | ------------------------------ |
+| Embed View Token Authentication | Supported via customer backend |
+| CDN Token Authentication        | Automatic                      |
+| Client-side token signing       | Not supported                  |
+
+## Backend Requirements
+
+The backend (or Edge Script) must:
+
+- Securely store the **Video Library API Key** as it serves as a secret that must not be stored in the mobile app
+
+- Authenticate the mobile app user with custom business logic
+
+- Generate embed view token by following the [token authentication signing procedure](/stream/token-authentication#signing-procedure) (token security key is your Video Library API Key)
+
+- Return a `token` and `expires` values in response:
+
+```json
+{
+  "token": "SIGNED_EMBED_VIEW_TOKEN",
+  "expires": 1710000000
+}
+```
+
+Tokens should be **short-lived** (1–5 minutes recommended), unless you have a specific use-case for which longer expiration could be used.
+
+### Edge Script Example
+
+Below is an example Edge Script that generates embed view tokens. Store `VIDEO_LIBRARY_API_KEY` as an **Edge Script Secret**.
+
+```typescript
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const url = new URL(request.url);
+
+  const apiKey = BunnySDK.env.VIDEO_LIBRARY_API_KEY;
+  const videoId = url.searchParams.get("videoId");
+  const expires = Math.floor(Date.now() / 1000) + 300; // 5 minutes or adjust if needed
+
+  if (!videoId) {
+    return new Response(JSON.stringify({ error: "Missing videoId" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  /*
+   * ============================================================
+   * Custom authentication / authorization logic
+   * ------------------------------------------------------------
+   * Perform your business checks here:
+   * - Validate user identity (e.g. by using JWT, API key, or some other auth headers)
+   * - Verify entitlement to this video
+   * - Apply subscription / access rules
+   *
+   * Only generate a token if access is allowed.
+   * ============================================================
+   */
+
+  // Example:
+  // if (!isUserAuthorized(request, videoId)) {
+  //   return new Response(
+  //     JSON.stringify({ error: "Unauthorized" }),
+  //     { status: 403, headers: { "Content-Type": "application/json" } }
+  //   );
+  // }
+
+  const token = generateEmbedViewToken(apiKey, videoId, expires);
+
+  return new Response(JSON.stringify({ token, expires }), {
+    headers: { "Content-Type": "application/json" },
+  });
+});
+
+/**
+ * Embed View Token generation (per Bunny Stream docs):
+ *
+ * Token data sequence:
+ *   Video Library API Key + videoId + expires
+ *
+ * Steps:
+ * 1. Concatenate the values in the order above (no separators)
+ * 2. Generate HMAC-SHA256 using the Video Library API Key
+ * 3. Base64 encode: <signature>:<expires>
+ */
+function generateEmbedViewToken(
+  apiKey: string,
+  videoId: string,
+  expires: number,
+): string {
+  // @ts-ignore - crypto is available in the Edge runtime
+  const crypto = require("crypto");
+
+  const data = apiKey + videoId + expires;
+  const signature = crypto
+    .createHmac("sha256", apiKey)
+    .update(data)
+    .digest("hex");
+
+  return Buffer.from(`${signature}:${expires}`).toString("base64");
+}
+```
+
+## Android SDK Usage
+
+The `PlayVideo` call supports token parameters:
+
+```kotlin
+PlayVideo(
+    ...
+    videoId = "abc123",
+    token = token,
+    expires = expires
+    ...
+)
+```
+
+**Flow:**
+
+1. Request embed token from backend
+2. Receive `{ token, expires }`
+3. Pass values to `PlayVideo`
+
+## iOS SDK Usage
+
+The `BunnyStreamPlayer` initializer supports token parameters:
+
+```swift
+BunnyStreamPlayer(
+    ...
+    videoId: "abc123",
+    token: token,
+    expires: expires
+    ...
+
+)
+```
+
+**Flow:**
+
+1. Request embed token from backend
+2. Receive `{ token, expires }`
+3. Initialize player with token data
+
+## Important Notes
+
+- The **Video Library API Key** must **never** be included in mobile apps
+- Embed View Token Authentication is **required** if you don't want to publicly expose your videos
+- CDN Token Authentication is applied to CDN URLs automatically if turned on in the video library
