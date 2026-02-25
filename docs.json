@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "theme": "mint",
   "name": "bunny.net Documentation",
   "colors": {
     "primary": "#EF6126",
@@ -14,6 +14,11 @@
   "logo": {
     "dark": "/logo/bunny-logo-light.svg",
     "light": "/logo/bunny-logo-dark.svg"
+  },
+  "background": {
+    "color": {
+      "dark": "#191A23"
+    }
   },
   "interaction": {
     "drilldown": false
@@ -56,7 +61,12 @@
             "groups": [
               {
                 "group": "bunny.net",
-                "pages": ["index", "quickstart", "faq"]
+                "pages": [
+                  "index",
+                  "quickstart",
+                  "faq",
+                  "product-release-stages"
+                ]
               },
               {
                 "group": "Accounts & Billing",
