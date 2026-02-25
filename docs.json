@@ -61,12 +61,7 @@
             "groups": [
               {
                 "group": "bunny.net",
-                "pages": [
-                  "index",
-                  "quickstart",
-                  "faq",
-                  "product-release-stages"
-                ]
+                "pages": ["index", "quickstart", "faq"]
               },
               {
                 "group": "Accounts & Billing",
@@ -113,6 +108,10 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "Product",
+                "pages": ["product-release-stages"]
               }
             ]
           }
