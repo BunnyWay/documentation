@@ -50,8 +50,8 @@ The database URL and access token are now available as environment variables in 
 import { createClient } from "@libsql/client/web";
 
 const client = createClient({
-  url: process.env.DB_URL,
-  authToken: process.env.DB_TOKEN,
+  url: process.env.BUNNY_DATABASE_URL,
+  authToken: process.env.BUNNY_DATABASE_AUTH_TOKEN,
 });
 
 const result = await client.execute("SELECT * FROM users");
