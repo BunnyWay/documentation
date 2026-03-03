@@ -136,11 +136,11 @@ curl -X POST https://[your-database-id].lite.bunnydb.net/v2/pipeline \
 
 When you add database credentials to a [Magic Container](/database/connect/magic-containers) or [Edge Script](/database/connect/scripting), they are automatically available as environment variables:
 
-- `DB_URL`: Your database URL
-- `DB_TOKEN`: Your access token
+- `BUNNY_DATABASE_URL`: Your database URL
+- `BUNNY_DATABASE_AUTH_TOKEN`: Your access token
 
 Access them in your code like any other environment variable:
 
 ```bash
-process.env.DB_URL
+process.env.BUNNY_DATABASE_URL
 ```

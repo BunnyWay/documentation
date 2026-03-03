@@ -23,6 +23,35 @@ Volumes are tied to specific regions. This means:
 - When scaling to a new region, new volumes are automatically provisioned in that region
 - Each pod within the same region gets its own dedicated blank volume (no data duplication between pods)
 
+## Node unavailability
+
+Persistent volumes are bound to specific nodes within a region. If a node becomes temporarily unavailable (for example, due to maintenance or infrastructure changes), the platform preserves your volume and pod association so data remains intact when the node returns:
+
+- **Volume retention** - The persistent volume stays safely on its node, preserving all data during the outage
+- **Pod association** - The pod remains associated with its volume, ensuring it resumes exactly where it left off once the node recovers
+- **Automatic resumption** - When the node returns to service, your pod restarts automatically with the existing volume and all data intact
+
+### Recovery options
+
+If you need your pod running sooner, you have two paths forward:
+
+<CardGroup cols={2}>
+  <Card title="Wait for node recovery" icon="clock">
+    The recommended option when your data matters. Once the node is back, your pod resumes automatically with the existing volume and all data intact — no action required.
+  </Card>
+  <Card title="Redeploy with a fresh volume" icon="refresh">
+    If the data is not needed, delete the detached volume from the **Volumes** tab. The pod will be scheduled to a healthy node in the same region and start fresh with a new empty volume.
+  </Card>
+</CardGroup>
+
+### Hardware failure
+
+In the rare event that a node requires a disk replacement, the affected volume is recreated as a new empty volume once the node is restored.
+
+<Note>
+  Persistent volumes do not currently support automatic backups or replication. For critical data, implement a backup strategy within your application (for example, periodic exports to object storage) so you can restore quickly if needed.
+</Note>
+
 ## Quickstart
 
 <Steps>
@@ -57,6 +86,19 @@ Your application now has scalable persistent volumes attached to each container.
   <Accordion title="Can I reduce the size of my volume?">
     No, you cannot reduce the size of your volume. You can only extend it to
     make it larger.
+  </Accordion>
+  <Accordion title="Why is my pod not running when a node is unavailable?">
+    Persistent volumes are bound to specific nodes. If a node becomes unavailable
+    (due to maintenance or other issues), your pod cannot be rescheduled to
+    another node because it remains bound to the volume on the unavailable node.
+    You can either wait for the node to recover, or delete the volume to allow
+    the pod to reschedule with a new volume.
+  </Accordion>
+  <Accordion title="Are persistent volumes backed up?">
+    No, persistent volumes do not currently support automatic backups or
+    replication. If the underlying hardware fails and the disk is replaced,
+    all data on that volume will be lost. For critical data, you should
+    implement your own backup strategy within your application.
   </Accordion>
 </AccordionGroup>
 

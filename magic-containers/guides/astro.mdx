@@ -154,15 +154,15 @@ You can connect your app to [Bunny Database](/database) directly from the dashbo
 3. Click **Add Secrets to Magic Container App**
 4. Select your app
 
-The `DB_URL` and `DB_TOKEN` environment variables are now available in your app:
+The `BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN` environment variables are now available in your app:
 
 ```typescript src/pages/api/users.ts
 import type { APIRoute } from "astro";
 import { createClient } from "@libsql/client/web";
 
 const client = createClient({
-  url: import.meta.env.DB_URL,
-  authToken: import.meta.env.DB_TOKEN,
+  url: import.meta.env.BUNNY_DATABASE_URL,
+  authToken: import.meta.env.BUNNY_DATABASE_AUTH_TOKEN,
 });
 
 export const GET: APIRoute = async () => {

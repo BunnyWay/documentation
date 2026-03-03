@@ -129,15 +129,15 @@ You can connect your app to [Bunny Database](/database) directly from the dashbo
 3. Click **Add Secrets to Magic Container App**
 4. Select your app
 
-The `DB_URL` and `DB_TOKEN` environment variables are now available in your app:
+The `BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN` environment variables are now available in your app:
 
 ```python
 import libsql_experimental as libsql
 import os
 
 conn = libsql.connect(
-    database=os.environ["DB_URL"],
-    auth_token=os.environ["DB_TOKEN"]
+    database=os.environ["BUNNY_DATABASE_URL"],
+    auth_token=os.environ["BUNNY_DATABASE_AUTH_TOKEN"]
 )
 
 result = conn.execute("SELECT * FROM users").fetchall()

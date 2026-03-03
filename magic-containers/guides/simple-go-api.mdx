@@ -145,7 +145,7 @@ You can connect your app to [Bunny Database](/database) directly from the dashbo
 3. Click **Add Secrets to Magic Container App**
 4. Select your app
 
-The `DB_URL` and `DB_TOKEN` environment variables are now available in your app:
+The `BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN` environment variables are now available in your app:
 
 ```go
 import (
@@ -157,8 +157,8 @@ import (
 )
 
 url := fmt.Sprintf("%s?authToken=%s",
-	os.Getenv("DB_URL"),
-	os.Getenv("DB_TOKEN"),
+	os.Getenv("BUNNY_DATABASE_URL"),
+	os.Getenv("BUNNY_DATABASE_AUTH_TOKEN"),
 )
 
 db, err := sql.Open("libsql", url)
