@@ -1566,9 +1566,14 @@
       "destination": "/stream/player",
       "permanent": true
     },
+     {
+      "source": "/stream/beta-player",
+      "destination": "/stream/player",
+      "permanent": true
+    },
     {
       "source": "/docs/new-video-player",
-      "destination": "/stream/beta-player",
+      "destination": "/stream/player",
       "permanent": true
     },
     {
