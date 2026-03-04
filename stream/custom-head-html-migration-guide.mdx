@@ -7,7 +7,7 @@ It is based on typical customization patterns seen across customer integrations.
 
 ## **Introduction**
 
-The new Bunny Stream Player uses a modern Web Components architecture (`media-chrome` + `bunny-*` components) instead of legacy Plyr internals.
+The new Bunny Stream Player uses a modern Web Components architecture `media-chrome` + `bunny-*` instead of legacy Plyr internals.
 
 In practice, this means:
 
@@ -36,7 +36,7 @@ Customers who are using custom CSS and/or JavaScript in Bunny Stream `Player Set
 Legacy player:
 
 - Included Plyr, jQuery, and legacy player scripts in `<head>`.
-- Exposed a Plyr-driven DOM (`.plyr`, `.plyr__*`, `[data-plyr="..."]`).
+- Exposed a Plyr-driven DOM `.plyr`, `.plyr__*`, `[data-plyr="..."]`.
 - Many snippets depended on those classes and globally available jQuery.
 
 New Bunny Stream Player:
@@ -59,10 +59,10 @@ New Bunny Stream Player:
 | :--------------------------- | :------------------------------------------------------------------------------ |
 | `.plyr`                      | `media-controller`                                                              |
 | `.plyr__controls`            | `media-control-bar`, `bunny-media-control-bar`                                  |
-| `.plyr__control`             | Specific elements (`media-play-button`, `media-mute-button`, etc.)              |
+| `.plyr__control`             | `Specific elements` (`media-play-button`, `media-mute-button`, `etc`.)          |
 | `.plyr__control--overlaid`   | `media-play-button.large-play`                                                  |
 | `.plyr__poster`              | `bunny-poster-image::part(img)`, `bunny-poster-video::part(video)`              |
-| `.plyr__captions`            | `bunny-captions-display` and cue parts (`[part='cue-display']`, `[part='cue']`) |
+| `.plyr__captions`            | `bunny-captions-display` , `cue parts `(`[part='cue-display']`, `[part='cue']`) |
 | `.plyr__progress`            | `bunny-media-time-range`                                                        |
 | `.plyr__volume`              | `media-volume-range`                                                            |
 | `[data-plyr="play"]`         | `media-play-button`                                                             |
@@ -81,7 +81,7 @@ New Bunny Stream Player:
 
 Legacy (Plyr):
 
-```js
+```html
 \<style\>\\
 :root {\\
   --plyr-color-main: #1870c6;\\
@@ -89,10 +89,11 @@ Legacy (Plyr):
 }\\
 \</style\>
 ```
+
 New (Bunny Stream Player):
 
-```js
-`<style>\
+```html
+<style>\
 media-controller {\
   --media-secondary-color: #1870c6;\
   --media-font-family: Lato, sans-serif;\
@@ -100,13 +101,14 @@ media-controller {\
 bunny-media-time-range {\
   --media-range-bar-color: #1870c6;\
 }\
-</style>`
+</style>
 ```
 
 ### 2) Rounded player and poster styling
 
 Legacy (Plyr):
-```js
+
+```html
 <style>\
 .plyr { border-radius: 10px !important; overflow: hidden; }\
 .plyr__poster { border-radius: 10px; background-size: cover !important; }\
@@ -114,7 +116,8 @@ Legacy (Plyr):
 ```
 
 New (Bunny Stream Player):
-```js
+
+```html
 <style>\
 media-controller {\
   border-radius: 10px;\
@@ -131,40 +134,44 @@ bunny-poster-video::part(video) {\
 ### 3) Hide specific controls (PiP and seek)
 
 Legacy (Plyr):
-
-`<style>\
+```html
+<style>\
 [data-plyr="pip"],\
 [data-plyr="fast-forward"],\
 [data-plyr="rewind"] {\
   display: none !important;\
 }\
-</style>`
+</style>
+```
 
 New (Bunny Stream Player):
-
-`<style>\
+```html
+<style>\
 media-pip-button,\
 media-seek-forward-button,\
 media-seek-backward-button {\
   display: none !important;\
 }\
-</style>`
+</style>
+```
 
 ### 4) Captions styling
 
 Legacy (Plyr):
 
-`<style>\
+```html
+<style>\
 .plyr__captions { font-size: 20px; }\
 :root {\
   --plyr-captions-background: rgba(0,0,0,.7);\
   --plyr-captions-text-color: #fff;\
 }\
-</style>`
+</style>
+```
 
 New (Bunny Stream Player):
-
-`<style>\
+```html
+<style>\
 bunny-captions-display {\
   --captions-font-size: 20px;\
   --captions-background: rgba(0,0,0,.7);\
@@ -176,7 +183,8 @@ bunny-captions-display {\
 [part='cue'] {\
   border-radius: 4px;\
 }\
-</style>`
+</style>
+```
 
 ## **Migration checklist**
 
