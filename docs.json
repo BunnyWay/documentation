@@ -2112,7 +2112,6 @@
       "permanent": true
     },
     {
-<<<<<<< HEAD
       "source": "/reference/addedgescriptvariableendpoint_addedgescriptvariable",
       "destination": "/api-reference/scripting/variable/add-variable",
       "permanent": true
