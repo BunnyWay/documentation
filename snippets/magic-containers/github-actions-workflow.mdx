@@ -31,5 +31,13 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Update container image on Magic Containers
+        uses: BunnyWay/actions/container-update-image@main
+        with:
+          app_id: ${{ vars.APP_ID }}
+          api_key: ${{ secrets.BUNNYNET_API_KEY }}
+          container: app
+          image_tag: "${{ github.sha }}"
 ```
