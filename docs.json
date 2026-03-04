@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "theme": "mint",
   "name": "bunny.net Documentation",
   "colors": {
     "primary": "#EF6126",
@@ -14,6 +14,11 @@
   "logo": {
     "dark": "/logo/bunny-logo-light.svg",
     "light": "/logo/bunny-logo-dark.svg"
+  },
+  "background": {
+    "color": {
+      "dark": "#191A23"
+    }
   },
   "interaction": {
     "drilldown": false
@@ -103,6 +108,10 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "Product",
+                "pages": ["product-release-stages"]
               }
             ]
           }
