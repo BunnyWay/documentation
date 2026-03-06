@@ -22,7 +22,7 @@ Magic Containers automatically attempts to restart a container if it detects a f
 
 ## CPU core detection
 
-While Magic Containers allocates 8 CPUs worth of CPU time to each container, applications running inside the container may still detect the total number of CPU cores available on the host machine (which can be 32 or more cores). This can lead to suboptimal performance because many applications automatically spawn threads based on the detected CPU count, resulting in excessive thread contention when only 8 CPUs worth of processing time is actually available.
+While Magic Containers allocates 8 CPUs worth of CPU time to each pod, applications running inside the container may still detect the total number of CPU cores available on the host machine (which can be 32 or more cores). This can lead to suboptimal performance because many applications automatically spawn threads based on the detected CPU count, resulting in excessive thread contention when only 8 CPUs worth of processing time is actually available.
 
 ### Symptoms of incorrect CPU detection
 
