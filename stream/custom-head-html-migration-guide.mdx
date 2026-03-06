@@ -82,25 +82,25 @@ New Bunny Stream Player:
 Legacy (Plyr):
 
 ```html
-<style>\
-:root {\
-  --plyr-color-main: #1870c6;\
-  --plyr-font-family: Lato;\
-}\
+<style>
+:root {
+  --plyr-color-main: #1870c6;
+  --plyr-font-family: Lato;
+}
 </style>
 ```
 
 New (Bunny Stream Player):
 
 ```html
-<style>\
-media-controller {\
-  --media-secondary-color: #1870c6;\
-  --media-font-family: Lato, sans-serif;\
-}\
-bunny-media-time-range {\
-  --media-range-bar-color: #1870c6;\
-}\
+<style>
+media-controller {
+  --media-secondary-color: #1870c6;
+  --media-font-family: Lato, sans-serif;
+}
+bunny-media-time-range {
+  --media-range-bar-color: #1870c6;
+}
 </style>
 ```
 
@@ -109,25 +109,25 @@ bunny-media-time-range {\
 Legacy (Plyr):
 
 ```html
-<style>\
-.plyr { border-radius: 10px !important; overflow: hidden; }\
-.plyr__poster { border-radius: 10px; background-size: cover !important; }\
+<style>
+.plyr { border-radius: 10px !important; overflow: hidden; }
+.plyr__poster { border-radius: 10px; background-size: cover !important; }
 </style>
 ```
 
 New (Bunny Stream Player):
 
 ```html
-<style>\
-media-controller {\
-  border-radius: 10px;\
-  overflow: hidden;\
-}\
-bunny-poster-image::part(img),\
-bunny-poster-video::part(video) {\
-  border-radius: 10px;\
-  object-fit: cover;\
-}\
+<style>
+media-controller {
+  border-radius: 10px;
+  overflow: hidden;
+}
+bunny-poster-image::part(img),
+bunny-poster-video::part(video) {
+  border-radius: 10px;
+  object-fit: cover;
+}
 </style>
 ```
 
@@ -135,23 +135,23 @@ bunny-poster-video::part(video) {\
 
 Legacy (Plyr):
 ```html
-<style>\
-[data-plyr="pip"],\
-[data-plyr="fast-forward"],\
-[data-plyr="rewind"] {\
-  display: none !important;\
-}\
+<style>
+[data-plyr="pip"],
+[data-plyr="fast-forward"],
+[data-plyr="rewind"] {
+  display: none !important;
+}
 </style>
 ```
 
 New (Bunny Stream Player):
 ```html
-<style>\
-media-pip-button,\
-media-seek-forward-button,\
-media-seek-backward-button {\
-  display: none !important;\
-}\
+<style>
+media-pip-button,
+media-seek-forward-button,
+media-seek-backward-button {
+  display: none !important;
+}
 </style>
 ```
 
@@ -160,29 +160,29 @@ media-seek-backward-button {\
 Legacy (Plyr):
 
 ```html
-<style>\
-.plyr__captions { font-size: 20px; }\
-:root {\
-  --plyr-captions-background: rgba(0,0,0,.7);\
-  --plyr-captions-text-color: #fff;\
-}\
+<style>
+.plyr__captions { font-size: 20px; }
+:root {
+  --plyr-captions-background: rgba(0,0,0,.7);
+  --plyr-captions-text-color: #fff;
+}
 </style>
 ```
 
 New (Bunny Stream Player):
 ```html
-<style>\
-bunny-captions-display {\
-  --captions-font-size: 20px;\
-  --captions-background: rgba(0,0,0,.7);\
-  --captions-text-color: #fff;\
-}\
-[part='cue-display'] {\
-  transition: transform .3s ease;\
-}\
-[part='cue'] {\
-  border-radius: 4px;\
-}\
+<style>
+bunny-captions-display {
+  --captions-font-size: 20px;
+  --captions-background: rgba(0,0,0,.7);
+  --captions-text-color: #fff;
+}
+[part='cue-display'] {
+  transition: transform .3s ease;
+}
+[part='cue'] {
+  border-radius: 4px;
+}
 </style>
 ```
 
