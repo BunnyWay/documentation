@@ -18,7 +18,78 @@ Once an application consumes 10 GB of ephemeral storage, the container/pod will 
 
 </Info>
 
-Magic Containers automatically attempts to restart a container if it detects a failure. The system will attempt to restart the container up to 10 times before giving up.
+Magic Containers automatically attempts to restart a container if it detects a failure.
+
+## CPU core detection
+
+While Magic Containers allocates 8 CPUs worth of CPU time to each container, applications running inside the container may still detect the total number of CPU cores available on the host machine (which can be 32 or more cores). This can lead to suboptimal performance because many applications automatically spawn threads based on the detected CPU count, resulting in excessive thread contention when only 8 CPUs worth of processing time is actually available.
+
+### Symptoms of incorrect CPU detection
+
+- Application performance is significantly slower than expected
+- CPU utilization appears low despite the application being busy
+- Multi-threaded workloads (encoding, compilation, etc.) perform worse than on less powerful machines
+
+### Optimizing multi-threaded applications
+
+To achieve optimal performance, configure your applications to use 8 threads or fewer. Below are examples for common use cases.
+
+#### FFmpeg video encoding
+
+FFmpeg and its video encoders may auto-detect the host's CPU count and spawn too many threads. Here's how to configure different encoders for optimal performance on Magic Containers:
+
+**x265 (HEVC) encoding**
+
+Create a wrapper script `/usr/local/bin/ffmpeg-x265-optimized`:
+
+```bash
+#!/bin/sh
+X265_THREADS="${X265_THREADS:-pools=8:frame-threads=3}"
+exec ffmpeg "$@" -x265-params "${X265_THREADS}:log-level=error"
+```
+
+Or set the environment variable in your Dockerfile:
+
+```dockerfile
+ENV X265_THREADS="pools=8:frame-threads=3"
+```
+
+Then use it in your ffmpeg command:
+
+```bash
+ffmpeg -i input.mp4 -c:v libx265 -x265-params "pools=8:frame-threads=3" output.mp4
+```
+
+**x264 (H.264) encoding**
+
+```bash
+ffmpeg -i input.mp4 -c:v libx264 -threads 8 output.mp4
+```
+
+**VP9 and AV1 encoding**
+
+```bash
+# VP9
+ffmpeg -i input.mp4 -c:v libvpx-vp9 -threads 8 output.webm
+
+# AV1 (libaom)
+ffmpeg -i input.mp4 -c:v libaom-av1 -threads 8 output.mp4
+```
+
+#### General thread configuration
+
+For other applications, look for thread or worker count configuration options and set them to 8 or fewer. Common environment variables and settings include:
+
+- `OMP_NUM_THREADS=8` - OpenMP applications
+- `GOMAXPROCS=8` - Go applications
+- `UV_THREADPOOL_SIZE=8` - Node.js applications
+- `--workers=8` or `-j8` - Various CLI tools
+
+<Tip>
+When in doubt, explicitly set thread counts to 8 in your application configuration rather than relying on auto-detection. This ensures consistent and optimal performance on Magic Containers.
+</Tip>
+
+The system will attempt to restart the container up to 10 times before giving up.
 
 # Port Limits
 
