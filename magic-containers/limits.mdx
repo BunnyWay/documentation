@@ -13,6 +13,13 @@ The following resource limits apply to each Magic Containers application running
 - **Network egress**: 1 Gbps
 - **Ephemeral storage**: 10 GB
 
+# Persistent volume limits
+
+The following I/O limits are defined in the pod cgroup and apply to each [persistent volume](/magic-containers/persistent-volumes) individually. If a pod has multiple volumes attached, each volume receives these limits:
+
+- **Read throughput**: 10 MB/s
+- **Write throughput**: 10 MB/s
+
 <Info>
 Once an application consumes 10 GB of ephemeral storage, the container/pod will be evicted and automatically restarted. Any data stored in ephemeral storage is lost during this process.
 
