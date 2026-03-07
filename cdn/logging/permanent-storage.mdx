@@ -18,13 +18,13 @@ Because the pipeline runs on multiple log processing worker nodes, each worker w
 The logs are stored in the selected Edge Storage zone under the following path format:
 
 ```bash
-pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<serverId>-<part-index>.gzip
+pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<workerId>-<part-index>.gzip
 ```
 
 - **&lt;pullzone-name&gt;** — The pull zone’s bucket name (storage location).  
 - **&lt;YYYY&gt;/&lt;MM&gt;/&lt;dd&gt;** — UTC date of the log data.  
-- **&lt;serverId&gt;** — ID of the edge server that wrote the file.  
-- **&lt;part-index&gt;** — Zero-based index for that server on that day (0, 1, 2, …).
+- **&lt;workerId&gt;** — ID of the log processing worker node that wrote the file.  
+- **&lt;part-index&gt;** — Zero-based index for that worker node on that day (0, 1, 2, …).
 
 Example: `pullzone-logs/myzone/2026/03/07_100-0.gzip` is the first part for March 7, 2026 from log processing worker 100.
 
