@@ -1,15 +1,32 @@
 ---
 title: "Permanent Log Storage"
-description: "Permanent Log Storage allows you to permanently store logs inside of an Edge Storage zone. The logs are uploaded at the end of each day for the previous day. These logs are not searchable through our web interface."
+description: "Permanent Log Storage allows you to permanently store access logs inside of an Edge Storage zone. Parts are uploaded when they are closed (by size, time, or at midnight UTC). These logs are not searchable through our web interface."
 ---
 
-The stored log files are compressed using **GZip** and must be decompressed before opening. The stored log files are split into multiple smaller chunks, each containing up to 10 million logs. These are appended as a `<part-index>`, starting with index 1.
+The stored log files are compressed using **GZip** and must be decompressed before opening.
+
+**Part rotation:** Logs are written into parts that are closed and uploaded when any of the following occurs:
+
+- The part reaches **5 GB** in size, or  
+- **288 minutes** (4.8 hours) have passed since the part was opened, or  
+- **Midnight UTC** (the current part is closed and a new day starts).
+
+So multiple parts per day are possible, and each part is uploaded shortly after it is closed. The first part of each UTC day has index `0`; subsequent parts that day use index `1`, `2`, and so on.
+
+Because the pipeline runs on multiple log processing worker nodes, each worker writes and uploads its own parts. The filename includes a **worker ID** so you can tell which log processing worker produced which file.
 
 The logs are stored in the selected Edge Storage zone under the following path format:
 
 ```bash
-/pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<part-index>.gzip
+pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<serverId>-<part-index>.gzip
 ```
+
+- **&lt;pullzone-name&gt;** — The pull zone’s bucket name (storage location).  
+- **&lt;YYYY&gt;/&lt;MM&gt;/&lt;dd&gt;** — UTC date of the log data.  
+- **&lt;serverId&gt;** — ID of the edge server that wrote the file.  
+- **&lt;part-index&gt;** — Zero-based index for that server on that day (0, 1, 2, …).
+
+Example: `pullzone-logs/myzone/2026/03/07_100-0.gzip` is the first part for March 7, 2026 from log processing worker 100.
 
 <Warning>
   ### Security Warning
