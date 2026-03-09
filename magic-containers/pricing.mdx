@@ -87,6 +87,19 @@ Persistent storage (coming soon) is billed per 1 GB block, prorated hourly, ensu
 - Cost for (31 - 8) = 23 days for 10 GB = 23 x 10 x \$0.003225806451613 = **\$0.741935483870968**
 - Total cost: **\~\$0.77**
 
+### Persistent volumes
+
+[Persistent volumes](/magic-containers/persistent-volumes) are billed based on the **allocated (provisioned)** volume size, not the actual used space.
+
+**Calculation example:**
+
+- Storage cost: **\$0.10 per GB per month**
+- Daily cost per 1 GB (31 days): \$0.10 / 31 = **\$0.003225806451613 per GB per day**
+
+**Practical scenario:** If you allocate a 20 GB volume for 15 days:
+
+- Cost = 20 x 15 x \$0.003225806451613 = **\$0.97**
+
 ### Network traffic usage
 
 Network traffic is charged based on the total data transferred each month. The prices vary by region. The MC costs include the following traffic:
