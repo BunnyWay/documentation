@@ -1,13 +1,9 @@
 ---
 title: "Pricing"
-description: "Magic Containers provides two pricing models designed to match your workload characteristics and usage needs. The dynamic (shared) instances model offers flexible, pay-as-you-go pricing, making it ideal for workloads that experience fluctuations. Alternatively, the reserved instances model provides a cost-efficient and predictable pricing structure with fixed resource allocations, catering to workloads with consistent and stable demands."
+description: "Magic Containers uses a pay-as-you-go pricing model, charging you based on your actual consumption of CPU, RAM, storage, and bandwidth."
 ---
 
-# Dynamic (shared) instances
-
-Dynamic Instances provide on-demand scaling and charge you based on your actual consumption of CPU, RAM, disk, and bandwidth. This flexible model ensures you only pay for what you use, making it ideal for deployments where resource usage is not constant or easily forecasted.
-
-Dynamic instances are particularly well-suited for developers conducting experiments or proofs of concept, as they provide a cost-effective and scalable testing environment. They are also ideal for applications with unpredictable traffic patterns or workloads that experience occasional spikes and periods of low activity. By aligning costs directly with resource utilization, dynamic instances deliver an adaptable and efficient solution for scenarios requiring flexibility.
+Magic Containers is ideal for any type of workload, from small experiments to large-scale production applications.
 
 ## Cost components and rates
 
@@ -17,7 +13,8 @@ There are two types of cost components: based only on amount or on amount and ti
   - CPU
   - RAM
   - Anycast IP
-  - Disk usage
+  - Ephemeral storage
+  - Persistent volumes
 
 - Cost components based on amount only
   - Egress traffic
@@ -71,9 +68,9 @@ The cost for Anycast IP (IPv4) is \$2 for per month. If you use Anycast IP (IP i
 - Anycast IP Cost per day: \$0.002688172043011 x 24 = **\$0.064516129032258**
 - Total Anycast cost: 10 \* \$0.064516129032258 + 7 x \$0.002688172043011 + 15 x \$0.000044802867384 = **\$0.664650537634417**
 
-### Disk usage
+### Ephemeral storage
 
-Persistent storage (coming soon) is billed per 1 GB block, prorated hourly, ensuring you only pay for the exact disk space you consume.
+Ephemeral storage is billed per 1 GB block, prorated hourly, ensuring you only pay for the exact disk space you consume.
 
 **Calculation example:**
 
@@ -121,9 +118,3 @@ If your application served 15 GB of traffic from Europe, 10 GB of traffic from t
 - Middle East traffic cost: \$0.06 x 10 = **\$0.6**
 - South America traffic cost: \$0.045 x 3 = **\$0.135**
 - Total: **\$0.885**
-
-# Reserved instances (coming soon)
-
-Reserved Instances, coming soon to Magic Containers, provide a fixed monthly cost for predefined resources. With this model, you pay a fixed amount every month, regardless of usage, making it easier to forecast expenses and maintain a stable budget. Reserved Instances are specifically designed for businesses with stable and predictable workloads, making them ideal for scenarios where cost predictability, consistent performance, and well-defined resource requirements are crucial.
-
-These instances will be available in multiple standardized configurations, each bundling vCPUs, memory, and NVMe storage to accommodate a variety of application needs. If you have questions or would like more information, feel free to contact our sales team for assistance.
