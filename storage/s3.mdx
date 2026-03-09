@@ -1,6 +1,6 @@
 ---
-title: S3-compatible API
-description: Use S3-compatible tools and libraries to manage your Bunny Storage zones
+title: "S3-compatible API"
+description: "Use S3-compatible tools and libraries to manage your Bunny Storage zones"
 tag: "Beta"
 noindex: true
 ---
@@ -8,8 +8,7 @@ noindex: true
 Bunny Storage supports an S3-compatible API (currently in beta), allowing you to use familiar S3 tools, libraries, and workflows with your storage zones. Use existing S3 tools and scripts, leverage popular S3 libraries across all programming languages, migrate from AWS S3 with minimal code changes, and work with S3 GUI tools.
 
 <Info>
-  S3 compatibility is currently in beta. S3 compatibility must be enabled during
-  storage zone creation and cannot be changed afterward.
+  S3 compatibility is currently in beta. S3 compatibility must be enabled during storage zone creation and cannot be changed afterward.
 </Info>
 
 ## Creating a storage zone with S3 compatibility
@@ -25,8 +24,7 @@ To create an S3-compatible storage zone:
 7. Confirm and **Add Storage Zone**
 
 <Note>
-  S3 compatibility is currently only supported in Frankfurt, New York, and
-  Singapore. Additional regions will be added later.
+  S3 compatibility is currently only supported in Frankfurt, New York, and Singapore. Additional regions will be added later.
 </Note>
 
 ## Quickstart
@@ -43,10 +41,7 @@ The credentials you need to connect via S3 are located in the **FTP & API Access
 - **Region**: `de` (Frankfurt), `ny` (New York), or `sg` (Singapore)
 
 <Note>
-  Bunny Storage only supports path-style URLs (e.g.,
-  `https://[region]-s3.storage.bunnycdn.com/bucket-name/key`). Virtual
-  hosted-style URLs (e.g., `bucket-name.s3.region.amazonaws.com`) are not
-  supported.
+  Bunny Storage only supports path-style URLs (e.g., `https://[region]-s3.storage.bunnycdn.com/bucket-name/key`). Virtual hosted-style URLs (e.g., `bucket-name.s3.region.amazonaws.com`) are not supported.
 </Note>
 
 ### Content Type Detection
@@ -66,10 +61,8 @@ SHA256 checksum validation is available using the `x-amz-checksum-sha256` header
 ### AWS CLI
 
 <Note>
-  You must use `--endpoint-url https://[region]-s3.storage.bunnycdn.com` with
-  each command or set up an [AWS CLI
-  profile](https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-files.html#cli-configure-files-methods)
-  with the endpoint configured.
+  You must use `--endpoint-url https://[region]-s3.storage.bunnycdn.com` with each command or set up an [AWS CLI
+  profile](https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-files.html#cli-configure-files-methods) with the endpoint configured.
 </Note>
 
 ```bash
@@ -90,7 +83,7 @@ aws s3 cp s3://bucket-name/path/to/object /path/to/local/destination/ \
   --profile bunny \
   --endpoint-url https://[region]-s3.storage.bunnycdn.com
 
-# List objects (LIST Objects)
+# List objects (LIST Objects) - V2 only
 aws s3 ls s3://bucket-name/ --recursive \
   --profile bunny \
   --endpoint-url https://[region]-s3.storage.bunnycdn.com
@@ -182,49 +175,48 @@ Bunny Storage provides comprehensive S3 API compatibility for all your storage n
 
 Bunny Storage provides full support for S3 multipart uploads, enabling efficient upload of large objects. Recommended for objects over 100MB.
 
-| API Name                                                                                                         | Feature                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| API Name                                                                                                        | Feature                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | ✅ [`CreateMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html)     | ✅ Multipart session creation<br />✅ Returns UploadId<br />✅ System Metadata:<br />✅ Content-Type (with automatic detection from file extension)<br />✅ Content-Type stored in session for final object<br />✅ Automatic replication session creation<br />❌ Storage class selection<br />❌ Cache-Control, Content-Disposition, etc.<br />❌ SSE/SSE-C encryption<br />❌ Object tagging<br />❌ Object locking<br />❌ ACL headers |
-| ✅ [`UploadPart`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html)                           | ✅ Part upload (up to 10,000 parts)<br />✅ Returns ETag (part checksum)<br />✅ Automatic replication of parts<br />❌ Content-MD5 validation<br />❌ SSE/SSE-C encryption                                                                                                                                                                                                                                                                |
-| ✅ [`ListParts`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html)                             | ✅ Query Parameters:<br />✅ max-parts (default 1000)<br />✅ part-number-marker<br />✅ Returns part ETag and size<br />✅ Pagination support<br />✅ IsTruncated flag                                                                                                                                                                                                                                                                    |
-| ✅ [`CompleteMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html) | ✅ Finalizes multipart upload<br />✅ Validates all parts present<br />✅ Validates part ETags<br />✅ Creates final object with combined checksum<br />✅ Final checksum format: `MD5(part1+part2+...)-{partCount}`<br />✅ Applies Content-Type from session<br />✅ Automatic replication of completed object<br />✅ Cleanup of part files<br />✅ Returns ETag, Location, Bucket, Key<br />❌ Checksums in response                   |
-| ✅ [`AbortMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html)       | ✅ Cancels multipart upload<br />✅ Deletes all uploaded parts<br />                                                                                                                                                                                                                                                                                                                                                                       |
-| ✅ [`ListMultipartUploads`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html)       | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ key-marker<br />✅ upload-id-marker<br />✅ max-uploads (default 1000)<br />✅ Pagination support<br />✅ Returns UploadId, Key, Initiated date                                                                                                                                                                                                                              |
+| ✅ [`UploadPart`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html)                           | ✅ Part upload (up to 10,000 parts)<br />✅ Returns ETag (part checksum)<br />✅ Automatic replication of parts<br />❌ Content-MD5 validation<br />❌ SSE/SSE-C encryption                                                                                                                                                                                                                                                         |
+| ✅ [`ListParts`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html)                             | ✅ Query Parameters:<br />✅ max-parts (default 1000)<br />✅ part-number-marker<br />✅ Returns part ETag and size<br />✅ Pagination support<br />✅ IsTruncated flag                                                                                                                                                                                                                                                              |
+| ✅ [`CompleteMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html) | ✅ Finalizes multipart upload<br />✅ Validates all parts present<br />✅ Validates part ETags<br />✅ Creates final object with combined checksum<br />✅ Final checksum format: `MD5(part1+part2+...)-{partCount}`<br />✅ Applies Content-Type from session<br />✅ Automatic replication of completed object<br />✅ Cleanup of part files<br />✅ Returns ETag, Location, Bucket, Key<br />❌ Checksums in response                 |
+| ✅ [`AbortMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html)       | ✅ Cancels multipart upload<br />✅ Deletes all uploaded parts                                                                                                                                                                                                                                                                                                                                                                   |
+| ✅ [`ListMultipartUploads`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html)       | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ key-marker<br />✅ upload-id-marker<br />✅ max-uploads (default 1000)<br />✅ Pagination support<br />✅ Returns UploadId, Key, Initiated date                                                                                                                                                                                                                          |
 
 ### S3 API compatibility matrix
 
 Below is a detailed list of implemented object-level operations with their supported features:
 
-| API Name                                                                                     | Feature                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ✅ [`HeadObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html)       | ✅ Basic metadata retrieval<br />✅ Content-Type header<br />✅ Content-Length header<br />✅ Last-Modified header<br />❌ ETag<br />❌ Conditional Operations (If-Match, If-Modified-Since, etc.)<br />❌ Range queries<br />❌ SSE-C encryption headers                                                                                                                                                                                                                                                                                   |
-| ✅ [`GetObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)         | ✅ Full object download<br />✅ Content-Type header<br />✅ Content-Length header<br />✅ Range requests (byte ranges)<br />✅ Multipart object download<br />❌ Conditional Operations (If-Match, If-Modified-Since, etc.)<br />❌ SSE-C encryption<br />❌ Versioning support                                                                                                                                                                                                                                                             |
+| API Name                                                                                    | Feature                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ✅ [`HeadObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html)       | ✅ Basic metadata retrieval<br />✅ Content-Type header<br />✅ Content-Length header<br />✅ Last-Modified header<br />❌ ETag<br />❌ Conditional Operations (If-Match, If-Modified-Since, etc.)<br />❌ Range queries<br />❌ SSE-C encryption headers                                                                                                                                                                                                                                                                            |
+| ✅ [`GetObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)         | ✅ Full object download<br />✅ Content-Type header<br />✅ Content-Length header<br />✅ Range requests (byte ranges)<br />✅ Multipart object download<br />❌ Conditional Operations (If-Match, If-Modified-Since, etc.)<br />❌ SSE-C encryption<br />❌ Versioning support                                                                                                                                                                                                                                                      |
 | ✅ [`PutObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)         | ✅ Object upload<br />✅ System Metadata:<br />✅ Content-Type (with automatic detection)<br />✅ Content-Length<br />✅ Checksum validation:<br />✅ x-amz-checksum-sha256 (Base64 encoded)<br />✅ Automatic replication to configured zones<br />❌ Storage Class selection<br />❌ Cache-Control, Content-Disposition, Content-Encoding<br />❌ Expires, Content-Language<br />❌ SSE encryption<br />❌ SSE-C encryption<br />❌ Object tagging (x-amz-tagging)<br />❌ Object locking<br />❌ ACL headers (x-amz-acl, x-amz-grant-\*) |
-| ✅ [`DeleteObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html)   | ✅ Single object deletion<br />❌ Multi-factor authentication<br />❌ Object Locking<br />❌ Request Payer                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ✅ [`CopyObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html)       | ✅ Object copy within same storage zone<br />✅ LastModified in response<br />✅ ChecksumSHA256 in response (Base64 encoded)<br />✅ Source object checksum validation<br />❌ Content-Type preservation<br />❌ ETag in response<br />❌ Cross-zone copying<br />❌ Metadata directive (x-amz-metadata-directive)<br />❌ Conditional copy operations<br />❌ Storage class selection<br />❌ SSE/SSE-C encryption<br />❌ Tagging                                                                                                         |
-| ✅ [`ListObjectsV2`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html) | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ max-keys<br />✅ continuation-token<br />✅ Common prefix support<br />❌ fetch-owner                                                                                                                                                                                                                                                                                                                                                                                         |
+| ✅ [`DeleteObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html)   | ✅ Single object deletion<br />❌ Multi-factor authentication<br />❌ Object Locking<br />❌ Request Payer                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ✅ [`CopyObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html)       | ✅ Object copy within same storage zone<br />✅ LastModified in response<br />✅ ChecksumSHA256 in response (Base64 encoded)<br />✅ Source object checksum validation<br />❌ Content-Type preservation<br />❌ ETag in response<br />❌ Cross-zone copying<br />❌ Metadata directive (x-amz-metadata-directive)<br />❌ Conditional copy operations<br />❌ Storage class selection<br />❌ SSE/SSE-C encryption<br />❌ Tagging                                                                                                      |
+| ✅ [`ListObjectsV2`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html) | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ max-keys<br />✅ continuation-token<br />✅ Common prefix support<br />❌ fetch-owner                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ### Unsupported operations
 
 <Accordion title="View unsupported S3 operations">
   The following S3 operations are not currently supported:
 
-| API Name                                                                                               | Feature                             |
-| ------------------------------------------------------------------------------------------------------ | ----------------------------------- |
-| ❌ [GetObjectAcl](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html)               | ❌ ACLs not supported               |
-| ❌ [PutObjectAcl](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectAcl.html)               | ❌ ACLs not supported               |
-| ❌ [GetObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectTagging.html)       | ❌ Object tagging not supported     |
-| ❌ [PutObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html)       | ❌ Object tagging not supported     |
-| ❌ [DeleteObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html) | ❌ Object tagging not supported     |
-| ❌ [GetObjectAttributes](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAttributes.html) | ❌ Not implemented                  |
-| ❌ [GetObjectLegalHold](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLegalHold.html)   | ❌ Object locking not supported     |
-| ❌ [PutObjectLegalHold](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectLegalHold.html)   | ❌ Object locking not supported     |
-| ❌ [GetObjectRetention](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectRetention.html)   | ❌ Object retention not supported   |
-| ❌ [PutObjectRetention](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectRetention.html)   | ❌ Object retention not supported   |
-| ❌ [SelectObjectContent](https://docs.aws.amazon.com/AmazonS3/latest/API/API_SelectObjectContent.html) | ❌ S3 Select not supported          |
-| ❌ [RestoreObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_RestoreObject.html)             | ❌ Glacier operations not supported |
-| ❌ [DeleteObjects](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjects.html)             | ❌ Batch delete not supported       |
-
+  | API Name                                                                                              | Feature                            |
+  | ----------------------------------------------------------------------------------------------------- | ---------------------------------- |
+  | ❌ [GetObjectAcl](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html)               | ❌ ACLs not supported               |
+  | ❌ [PutObjectAcl](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectAcl.html)               | ❌ ACLs not supported               |
+  | ❌ [GetObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectTagging.html)       | ❌ Object tagging not supported     |
+  | ❌ [PutObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html)       | ❌ Object tagging not supported     |
+  | ❌ [DeleteObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html) | ❌ Object tagging not supported     |
+  | ❌ [GetObjectAttributes](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAttributes.html) | ❌ Not implemented                  |
+  | ❌ [GetObjectLegalHold](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectLegalHold.html)   | ❌ Object locking not supported     |
+  | ❌ [PutObjectLegalHold](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectLegalHold.html)   | ❌ Object locking not supported     |
+  | ❌ [GetObjectRetention](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectRetention.html)   | ❌ Object retention not supported   |
+  | ❌ [PutObjectRetention](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectRetention.html)   | ❌ Object retention not supported   |
+  | ❌ [SelectObjectContent](https://docs.aws.amazon.com/AmazonS3/latest/API/API_SelectObjectContent.html) | ❌ S3 Select not supported          |
+  | ❌ [RestoreObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_RestoreObject.html)             | ❌ Glacier operations not supported |
+  | ❌ [DeleteObjects](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjects.html)             | ❌ Batch delete not supported       |
 </Accordion>
 
 ## Limits
@@ -243,7 +235,9 @@ S3 compatibility is currently only available in the following regions:
 
 Additional regions will be added in the future.
 
-<Note>S3 compatibility cannot be changed after storage zone creation.</Note>
+<Note>
+  S3 compatibility cannot be changed after storage zone creation.
+</Note>
 
 ### Known limitations
 
@@ -265,8 +259,7 @@ The following S3 features are not currently supported:
 Bunny Storage returns standard S3 error codes:
 
 <Note>
-  Some error codes may differ from standard AWS S3 behavior. See the notes below
-  for Bunny-specific details.
+  Some error codes may differ from standard AWS S3 behavior. See the notes below for Bunny-specific details.
 </Note>
 
 | Error Code           | HTTP Status | Description                                                                    |
@@ -279,7 +272,7 @@ Bunny Storage returns standard S3 error codes:
 
 ## Best Practices
 
-1. **Use an [SDK](https://docs.aws.amazon.com/AmazonS3/latest/API/sdk-general-information-section.html)** to interact with the S3 api
+1. [**Use an SDK**](https://docs.aws.amazon.com/AmazonS3/latest/API/sdk-general-information-section.html) to interact with the S3 api
 2. **Enable Replication** for at least one additional region
 3. **Implement retry logic** for transient failures
 4. **Use multipart uploads** for objects larger than 100MB
