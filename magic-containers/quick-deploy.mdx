@@ -1,0 +1,63 @@
+---
+title: Quick Deploy
+description: Deploy containerized applications globally in seconds with a streamlined, single-form flow.
+---
+
+**Quick Deploy** is a streamlined alternative to the standard deployment flow. Instead of stepping through multiple configuration screens, everything is presented in a single form, from picking your image to setting environment variables, so you can go from zero to deployed in seconds.
+
+<Steps>
+  <Step title="Select a container image">
+    From the **Quick Deploy** page, use the search field to find a container image. The search pulls from all registries connected to your dashboard, including DockerHub Public, GitHub Public, and any private registries you've added.
+
+    Once you select an image, its available tags are displayed. If a `latest` tag exists, it is selected automatically. You can switch to any other tag before deploying.
+  </Step>
+
+  <Step title="Choose or create an app">
+    Under **App**, decide whether to deploy into a new app or add this container to an existing one:
+
+    - **New**: enter a name for your new app. The image name is pre-filled as a sensible default.
+    - **Existing**: select an app you've already created to add this container alongside its current containers.
+  </Step>
+
+  <Step title="Configure endpoints">
+    Endpoints define how your container is reachable from the internet. Two endpoint types are available:
+
+    - **CDN**: routes traffic through bunny.net's CDN edge network. Best for HTTP/HTTPS services that benefit from caching and global distribution.
+    - **Anycast IP**: exposes your container directly via a globally anycast IP. Better suited for non-HTTP protocols or latency-sensitive TCP/UDP services.
+
+    When an image exposes known ports, Quick Deploy will attempt to auto-populate an endpoint for you. Review these carefully before deploying.
+
+    <Warning>
+      Endpoints make your container publicly accessible. Only create endpoints for services that are meant to be public-facing, such as web servers or APIs. **Do not expose private services** (databases, caches, internal APIs, etc.) through an endpoint.
+    </Warning>
+
+    Click **+ CDN** or **+ Anycast IP** to add additional endpoints if your app needs to expose multiple ports.
+  </Step>
+
+  <Step title="Add persistent volumes (optional)">
+    If your container needs to write data that should survive restarts or redeployments, add a persistent volume under **Persistent Volumes**. Click **+ Add** and specify the mount path inside the container.
+
+    Leave this section empty if your container is stateless.
+  </Step>
+
+  <Step title="Set environment variables">
+    Under **Environment Variables**, configure any runtime settings your container needs. Quick Deploy inspects the image metadata and pre-fills known environment variables with common default values. Review each one before deploying.
+
+    Pay special attention to:
+
+    - **Passwords and secrets**: replace any placeholder values with strong, unique secrets. Never leave default or example passwords in production.
+    - **Paths and ports**: confirm that pre-filled values match your actual container configuration.
+
+    Click **+ Add** to include any additional variables not detected automatically.
+  </Step>
+
+  <Step title="Pick a region">
+    Under **Region**, Quick Deploy automatically selects the region geographically closest to you. You can change this to any available region using the dropdown if you need to deploy closer to your users or a specific data source.
+  </Step>
+
+  <Step title="Deploy">
+    Once everything looks good, click **Deploy**. Quick Deploy hands off to the same provisioning pipeline as a standard deployment. Your app will be created (or updated), the container scheduled, and endpoints activated.
+
+    You'll be taken to the app overview where you can monitor the deployment status.
+  </Step>
+</Steps>
