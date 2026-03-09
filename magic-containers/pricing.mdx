@@ -13,7 +13,6 @@ There are two types of cost components: based only on amount or on amount and ti
   - CPU
   - RAM
   - Anycast IP
-  - Ephemeral storage
   - Persistent volumes
 
 - Cost components based on amount only
@@ -67,22 +66,6 @@ The cost for Anycast IP (IPv4) is \$2 for per month. If you use Anycast IP (IP i
 - Anycast IP Cost per hour: \$0.000044802867384 x 60 = **\$0.002688172043011**
 - Anycast IP Cost per day: \$0.002688172043011 x 24 = **\$0.064516129032258**
 - Total Anycast cost: 10 \* \$0.064516129032258 + 7 x \$0.002688172043011 + 15 x \$0.000044802867384 = **\$0.664650537634417**
-
-### Ephemeral storage
-
-Ephemeral storage is billed per 1 GB block, prorated hourly, ensuring you only pay for the exact disk space you consume.
-
-**Calculation example:**
-
-- Storage cost: **\$0.10 per GB per month**
-- Daily cost per 1 GB (31 days): \$0.10 / 31 = **\$0.003225806451613 per GB per day**
-
-**Practical scenario:** Let’s use the following scenario: your application uses 3 GB of storage for 3 days. Then you upload an additional 2 GB (5 GB total) and keep it for 5 days. After that, upload another 5 GB (now 10 GB total) and keep it for the rest of the month. The cost will be calculated as follows:
-
-- Cost for 3 days for 3 GB = 3 x 3 x \$0.003225806451613 = **\$0.029032258064516**
-- Cost for 5 days for 5 GB = 5 x 5 x \$0.003225806451613 = **\$0.080645161290323**
-- Cost for (31 - 8) = 23 days for 10 GB = 23 x 10 x \$0.003225806451613 = **\$0.741935483870968**
-- Total cost: **\~\$0.77**
 
 ### Persistent volumes
 
