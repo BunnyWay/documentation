@@ -1,0 +1,98 @@
+---
+title: JA4 Fingerprinting
+description: Identify clients using TLS fingerprinting and access the JA4 fingerprint via request headers.
+---
+
+JA4 fingerprinting identifies clients based on characteristics of their TLS handshake. Unlike IP addresses or User-Agent strings, which can be easily changed or spoofed, TLS fingerprints reflect how a client actually implements the TLS protocol.
+
+This makes JA4 a powerful signal for identifying automated traffic, detecting bot frameworks, and improving security decisions across the CDN.
+
+bunny.net automatically computes a JA4 fingerprint for incoming HTTPS requests and exposes it to your origin server via the `CDN-JA4` request header. The same signal is also used internally to strengthen DDoS mitigation, bot detection, and other security protections.
+
+## What is JA4?
+
+JA4 is a modern TLS fingerprinting method that improves on earlier techniques such as **JA3**. While JA3 fingerprints TLS clients based on the raw TLS handshake values, JA4 introduces normalization and better handling of modern TLS features to produce more consistent and reliable fingerprints.
+
+The fingerprint is derived from the **ClientHello** message sent during the TLS handshake. This message advertises the cryptographic capabilities of the client and varies depending on the TLS library, operating system, and application making the connection.
+
+Key characteristics used in the fingerprint include:
+
+- TLS protocol version
+- Cipher suites
+- TLS extensions
+- Supported elliptic curves
+- Signature algorithms
+- Application Layer Protocol Negotiation (ALPN)
+
+Because these values are determined by the client's TLS stack, they tend to remain stable for a given browser, operating system, or automation framework.
+
+## How a JA4 fingerprint is formed
+
+During the TLS handshake, the client sends a **ClientHello** message containing a structured list of supported cryptographic features.
+
+JA4 processes and normalizes this data to generate a compact fingerprint string that represents the TLS client implementation.
+
+The fingerprint incorporates multiple normalized components of the handshake, including:
+
+- TLS version
+- Cipher suite ordering
+- TLS extension set
+- Supported elliptic curves
+- Signature algorithm preferences
+- ALPN protocol negotiation
+
+These components are normalized and hashed into a deterministic fingerprint.
+
+Example JA4 fingerprint:
+
+```
+t13d1516h2_8daaf6152771_02713d6af862
+```
+
+Clients using the same TLS stack and configuration will typically produce the same JA4 fingerprint across connections.
+
+## Accessing the JA4 fingerprint
+
+bunny.net forwards the computed JA4 fingerprint to your origin server via the following request header:
+
+```
+CDN-JA4
+```
+
+Example request header:
+
+```
+CDN-JA4: t13d1516h2_8daaf6152771_02713d6af862
+```
+
+You can use this value at your origin to:
+
+- Identify automated traffic
+- Detect suspicious clients
+- Correlate requests across sessions
+- Implement custom security or rate-limiting logic
+
+## Security and DDoS mitigation
+
+JA4 fingerprints are also used internally by bunny.net as part of our security infrastructure.
+
+Because TLS fingerprints are significantly harder to spoof than IP addresses or User-Agent headers, they provide an additional signal for identifying malicious clients and coordinated bot activity.
+
+This signal contributes to multiple protection mechanisms, including:
+
+- DDoS mitigation
+- Bot detection
+- Abuse prevention
+- Traffic anomaly detection
+
+By combining JA4 fingerprints with other network and behavioral signals, bunny.net can more accurately detect malicious traffic while minimizing the impact on legitimate users.
+
+## Best practices
+
+When using JA4 fingerprints in your own systems:
+
+- Treat JA4 as **one signal among many**, not a unique identifier.
+- Combine it with IP reputation, request patterns, and behavioral analysis.
+- Monitor for unusual spikes or changes in fingerprint distribution.
+
+JA4 fingerprints are most effective when used as part of a broader traffic analysis and security strategy.
