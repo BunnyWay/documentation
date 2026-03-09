@@ -5,28 +5,31 @@ description: "Permanent Log Storage allows you to permanently store access logs 
 
 The stored log files are compressed using **GZip** and must be decompressed before opening.
 
-**Part rotation:** Logs are written into parts that are closed and uploaded when any of the following occurs:
+**Part rotation:** Logs are written into part files that are closed and uploaded when any of the following occurs:
 
-- The part reaches **5 GB** in size, or  
-- **288 minutes** (4.8 hours) have passed since the part was opened, or  
+- The part reaches **2 GB** in size, or
+- The part reaches **5,000,000 lines**, or
+- **120 minutes** (2 hours) have passed since the part was opened, or
+- The part has had **no writes for 1 hour**, or
 - **Midnight UTC** (the current part is closed and a new day starts).
 
-So multiple parts per day are possible, and each part is uploaded shortly after it is closed. The first part of each UTC day has index `0`; subsequent parts that day use index `1`, `2`, and so on.
+So multiple parts per day are possible, and each part is uploaded shortly after it is closed. The first part of each UTC day has index `0`; subsequent parts that day use index `1`, `2`, and so on. Each filename includes a unique **random suffix** (8 hex characters) so every part is distinct in storage and uploads never overwrite each other.
 
-Because the pipeline runs on multiple log processing worker nodes, each worker writes and uploads its own parts. The filename includes a **worker ID** so you can tell which log processing worker produced which file.
+Because the pipeline can run on multiple log processing worker nodes, each worker writes and uploads its own parts. The filename includes a **worker ID** (server ID) so you can tell which log processing worker produced which file.
 
 The logs are stored in the selected Edge Storage zone under the following path format:
 
 ```bash
-pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<workerId>-<part-index>.gzip
+pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<workerId>-<part-index>-<rand>.gzip
 ```
 
-- **&lt;pullzone-name&gt;** — The pull zone’s bucket name (storage location).  
-- **&lt;YYYY&gt;/&lt;MM&gt;/&lt;dd&gt;** — UTC date of the log data.  
-- **&lt;workerId&gt;** — ID of the log processing worker node that wrote the file.  
-- **&lt;part-index&gt;** — Zero-based index for that worker node on that day (0, 1, 2, …).
+- **<pullzone-name>** — The pull zone's bucket name (storage location).
+- **<YYYY>/<MM>/<dd>** — UTC date of the log data.
+- **<workerId>** — ID of the log processing worker node (server) that wrote the file.
+- **<part-index>** — Zero-based index for that worker on that day (0, 1, 2, …).
+- **<rand>** — 8-character hex suffix that uniquely identifies the part file and ensures uploads never overwrite each other in storage.
 
-Example: `pullzone-logs/myzone/2026/03/07_100-0.gzip` is the first part for March 7, 2026 from log processing worker 100.
+**Example:** `pullzone-logs/myzone/2026/03/07_100-0-a1b2c3d4.gzip` is the first part for March 7, 2026 from worker 100.
 
 <Warning>
   ### Security Warning
