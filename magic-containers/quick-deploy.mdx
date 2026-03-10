@@ -3,13 +3,21 @@ title: Quick Deploy
 description: Deploy containerized applications globally in seconds with a streamlined, single-form flow.
 ---
 
-**Quick Deploy** is a streamlined alternative to the standard deployment flow. Instead of stepping through multiple configuration screens, everything is presented in a single form, from picking your image to setting environment variables, so you can go from zero to deployed in seconds.
+**Quick Deploy** is a streamlined alternative to **Advanced Deploy**. Instead of stepping through multiple configuration screens, everything is presented in a single form, from picking your image to setting environment variables, so you can go from zero to deployed in seconds.
 
 <Steps>
   <Step title="Select a container image">
     From the **Quick Deploy** page, use the search field to find a container image. The search pulls from all registries connected to your dashboard, including DockerHub Public, GitHub Public, and any private registries you've added.
 
+    <Frame>
+      ![Select an image from quick deploy](/images/magic-containers/quick-deploy.png)
+    </Frame>
+
     Once you select an image, its available tags are displayed. If a `latest` tag exists, it is selected automatically. You can switch to any other tag before deploying.
+
+    <Frame>
+      ![Quick deploy form](/images/magic-containers/quick-deploy-form.png)
+    </Frame>
   </Step>
 
   <Step title="Choose or create an app">
@@ -56,8 +64,12 @@ description: Deploy containerized applications globally in seconds with a stream
   </Step>
 
   <Step title="Deploy">
-    Once everything looks good, click **Deploy**. Quick Deploy hands off to the same provisioning pipeline as a standard deployment. Your app will be created (or updated), the container scheduled, and endpoints activated.
+    Once everything looks good, click **Deploy**. Quick Deploy hands off to the same provisioning pipeline as Advanced Deploy. Your app will be created (or updated), the container scheduled, and endpoints activated.
 
     You'll be taken to the app overview where you can monitor the deployment status.
+
+    <Frame>
+      ![App overview page](/images/docs/088796ede6fd82ee1b4a899568fcb21b77a13c6f394f40ae0a5b1b5e4f1cedab-image.png)
+    </Frame>
   </Step>
 </Steps>
