@@ -268,6 +268,7 @@
                 "pages": [
                   "magic-containers/index",
                   "magic-containers/quickstart",
+                  "magic-containers/templates",
                   {
                     "group": "Use Cases",
                     "hidden": true,

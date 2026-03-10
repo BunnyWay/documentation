@@ -23,16 +23,15 @@ The logs are stored in the selected Edge Storage zone under the following path f
 pullzone-logs/<pullzone-name>/<YYYY>/<MM>/<dd>_<workerId>-<part-index>-<rand>.gzip
 ```
 
-- **<pullzone-name>** — The pull zone's bucket name (storage location).
-- **<YYYY>/<MM>/<dd>** — UTC date of the log data.
-- **<workerId>** — ID of the log processing worker node (server) that wrote the file.
-- **<part-index>** — Zero-based index for that worker on that day (0, 1, 2, …).
-- **<rand>** — 8-character hex suffix that uniquely identifies the part file and ensures uploads never overwrite each other in storage.
+- `<pullzone-name>` — The pull zone's bucket name (storage location).
+- `<YYYY>/<MM>/<dd>` — UTC date of the log data.
+- `<workerId>` — ID of the log processing worker node (server) that wrote the file.
+- `<part-index>` — Zero-based index for that worker on that day (0, 1, 2, …).
+- `<rand>` — 8-character hex suffix that uniquely identifies the part file and ensures uploads never overwrite each other in storage.
 
 **Example:** `pullzone-logs/myzone/2026/03/07_100-0-a1b2c3d4.gzip` is the first part for March 7, 2026 from worker 100.
 
 <Warning>
-  ### Security Warning
 
 The Pull Zone logs are stored in the Edge Storage which might be exposed to the world through any connected Pull Zone. We strongly recommend using a separate Edge Storage zone to keep the log files to prevent any unauthorized access.
 

@@ -3,7 +3,25 @@ title: Quickstart
 description: Learn how to deploy your first application with Magic Containers.
 ---
 
-This guide walks you through deploying your first application with Magic Containers.
+Magic Containers lets you deploy any Docker container. Bring your own image, pick a pre-built template, or connect a GitHub Action for continuous deployment.
+
+To create a new app, select **Add > App** from the sidebar, or go to **Magic Containers > Deploy**.
+
+From here, choose how you want to deploy:
+
+<CardGroup cols={3}>
+
+    <Card title="Quick Deploy" icon="zap" href="/magic-containers/quick-deploy" />
+
+    <Card
+    title="Templates"
+    icon="layout-template"
+    href="/magic-containers/templates"
+    />
+
+    <Card title="Advanced Deploy" icon="settings" href="/magic-containers/deploy" />
+
+</CardGroup>
 
 <Info>
 If you are using a trial account:
@@ -12,101 +30,3 @@ If you are using a trial account:
 - Trial accounts are limited to five regions, with up to two instances per region.
 
 </Info>
-
-## Before you begin
-
-If you're deploying from a private registry, [connect your image registry](/magic-containers/image-registries) first. Public Docker Hub and GitHub images work without additional setup.
-
-## Deploy your application
-
-<Steps>
-  <Step title="Create a new app">
-    In the bunny.net dashboard, go to **Magic Containers** and click **Add App**.
-
-    <Frame>
-      ![](/images/docs/7c23cfd96b446b8deab0096c5c9d2c8e07449b954653436cd35f93ab91112b23-image.png)
-    </Frame>
-
-  </Step>
-  <Step title="Configure deployment settings">
-    Define the name of your app and select the deployment option (**Magic deployment**, **Single region deployment** or **Advanced deployment**), then click **Next Step**.
-
-    <Frame>
-      ![](/images/docs/1a494e346f15d00d6bc158d19c64c70e5a07ec8dbd55d5df48a73b52cf9ce3b9-MC_Deploy_page.png)
-    </Frame>
-
-  </Step>
-  <Step title="Add a container">
-    Click **Add Container**.
-
-    <Frame>
-      ![](/images/docs/185a1e9579a90115450467c9bf2e76caf88ac5cd8e8083d07149b6810484824e-image.png)
-    </Frame>
-
-    Name your container (ensure each container has a unique name within the application).
-
-    <Frame>
-      ![](/images/docs/d7aac2b139e515f46873646144a6b73e5dc39b6af69b2d6d959eb816e0f4e302-image.png)
-    </Frame>
-
-    Select the container registry, image (only `linux/amd64` images are supported), and tag.
-
-  </Step>
-  <Step title="Configure an endpoint">
-    To make your app available on the internet, go to the **Endpoints** tab and click **Add New Endpoint**.
-
-    <Frame>
-      ![](/images/docs/ff6201592ea4228a118dc628ac90e566fda918a7fcb6111f5858e7595c701de5-image.png)
-    </Frame>
-
-    Fill in the required information:
-
-    <Frame>
-      ![](/images/docs/b123e4e93b2f164c151e61212f6051efa53523a2c26d7d2b399abb30a09ae709-image.png)
-    </Frame>
-
-    - **Name** - A unique name for the endpoint
-    - **Expose via** - CDN or Anycast
-    - **Container port** - The port your application listens on inside the container
-    - **SSL for origin** - Whether your container uses SSL (CDN only)
-
-    <Info>
-    For more information on exposing your app to the internet, see the [endpoints guide](/magic-containers/endpoints).
-    </Info>
-
-    Click **Add endpoint**, then click **Add Container**.
-
-  </Step>
-  <Step title="Review and deploy">
-    Review your settings and click **Next Step**.
-
-    <Frame>
-      ![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
-    </Frame>
-
-    Click **Confirm and Create**.
-
-    <Frame>
-      ![](/images/docs/29094b8b92f25885168fd137ec1367f678b14b71a88d0ed18f18192abcf04800-image.png)
-    </Frame>
-
-  </Step>
-</Steps>
-
-You will be navigated to your app's overview screen. The processing button should turn green, indicating that your app is being deployed.
-
-<Frame>
-  ![](/images/docs/088796ede6fd82ee1b4a899568fcb21b77a13c6f394f40ae0a5b1b5e4f1cedab-image.png)
-</Frame>
-
-Your application is now deployed and can be accessed by clicking the endpoint URL:
-
-<Frame>
-  ![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
-</Frame>
-
-Use the menu on the right side of the screen to restart, deploy, rename, or delete the app:
-
-<Frame>
-  ![](/images/docs/aca5804b3c52f1ce670cf53406257c143b9185b8faa1857da651b1bfd2cbb3cc-image.png)
-</Frame>
