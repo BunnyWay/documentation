@@ -4,7 +4,7 @@ description: Attach persistent storage to your Magic Containers applications.
 tag: "Beta"
 ---
 
-Persistent Volumes provide durable storage that persists across restarts and redeployments. Attach a volume directly to your Magic Containers application for \$0.10 per GB/month to keep your data safe, secure, and accessible as your application scales globally.
+Persistent Volumes provide durable storage that persists across restarts and redeployments. Attach a volume directly to your Magic Containers application to keep your data safe, secure, and accessible as your application scales globally.
 
 - **Auto-scaling** - Volumes automatically scale up with regional pod deployments and detach when scaling down
 - **Encrypted by default** - All persistent data is AES encrypted
@@ -77,8 +77,9 @@ Your application now has scalable persistent volumes attached to each container.
 
 <AccordionGroup>
   <Accordion title="Will I still be charged while my volume is detached from the container?">
-    Yes, you will still be charged while the volume exists, even if it's
-    detached from a container. The volume still reserves storage capacity.
+    Persistent volume pricing has not yet taken effect, so you are not currently
+    charged for any volumes. Once billing begins, you will be charged while the
+    volume exists even if it's detached, as it still reserves storage capacity.
   </Accordion>
   <Accordion title="How do volumes scale down?">
     The default behavior means the volume will detach when scaling down.
@@ -104,4 +105,6 @@ Your application now has scalable persistent volumes attached to each container.
 
 ## Pricing
 
-\$0.10 per GB/month, charged based on the allocated (provisioned) volume size, not the actual used space.
+<Tip>Persistent volume pricing has not yet taken effect. You will not be charged for using persistent volumes while we gather feedback.</Tip>
+
+When billing begins, pricing will be \$0.10 per GB/month, charged based on the allocated (provisioned) volume size, not the actual used space.
