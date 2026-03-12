@@ -1,42 +1,37 @@
 ---
-title: Player
-description: Enable the new Bunny Stream video player with modern interface and improved performance.
-tag: Preview
+title: "Player"
+description: " Welcome to our Bunny Stream video player with modern interface and improved performance."
 ---
 
 # Introduction
 
-The new Bunny Stream video player is ready to power your video experiences!
-
-<Note>
-  This feature is currently in Preview. Please report any issues to support.
-</Note>
+The new Bunny Stream video player is ready to power your video experiences! It's enabled by default for all new video libraries.
 
 # Quickstart guide
 
-**How to enable the video player** from your Bunny Stream dashboard:
-
-**Existing video libraries**
+**How to enable the video player** for existing video libraries from your Bunny Stream dashboard:
 
 1. Log into your **Bunny.net** account
-
 2. Navigate to **Stream** from the side bar
-
 3. Select the **Video Library** you would like to utilize the new player on
-
 4. Click on **Player Settings**
-
-5. Toggle on **'Upgrade video player'**
+5. Toggle off **'Enable legacy player'**
 
    <Frame>
-     ![Upgrade video player toggle in Player
-     Settings](/images/stream/upgrade-video-player.png)
+     <img
+       src="/images/Screenshot2026-03-12at10.52.17-1.png"
+       alt="Enable legacy player toggle in PlayerSettings"
+       className="hidden dark:block"
+     />
+     <img
+       src="/images/Screenshot2026-03-12at10.52.17.png"
+       alt="Enable legacy player toggle in PlayerSettings"
+       className="dark:hidden"
+     />
    </Frame>
-
-6. Click **Enable** on the pop-up modal
-
 7. Your video library **Videos and embed codes** will now reflect the new video player
-
+8. **Update your embed URLs to use the new player endpoint:**\
+   player.mediadelivery.net/embed/
 8. **Enjoy!**
 
 # API
@@ -51,10 +46,12 @@ curl https://api.bunny.net/videolibrary/<library_id> \
   -d '{"PlayerVersion": <version>}'
 ```
 
-| Value | Description                               |
-| ----- | ----------------------------------------- |
-| `2`   | Enable the new video player               |
-| `1`   | Disable and revert to the previous player |
+| Value | Description                             |
+| ----- | --------------------------------------- |
+| `2`   | Enable the new video player             |
+| `1`   | Disable and revert to the legacy player |
+
+**Note:** Updating the video library via the dashboard or API does not automatically update your existing embed URLs. To use the new player endpoint, update your embed URLs to:  player.mediadelivery.net/embed/ 
 
 # About
 
@@ -80,6 +77,10 @@ The player is built to be inclusive. It supports screen readers, keyboard naviga
 
 # Notes
 
-- The new video player uses a new player URL for both embed iframe and direct play URLs [https://player.mediadelivery.net](https://player.mediadelivery.net) 
-- Your pre-existing player embed iframe and direct play URLs will still work [https://iframe.mediadelivery.net](https://iframe.mediadelivery.net)
-- You can still swap your video library back to the previous player by disabling the video player toggle
+- The new video player uses a new player URL for both Embed URL iframe and Direct Play URLs https://player.mediadelivery.net 
+- Your pre-existing player Embed URL iframe and Direct Play URLs will still work https://iframe.mediadelivery.net
+- You can still swap your video library back to the previous player by enabling the legacy player within player settings 
+
+<Note>
+  If you use [Custom Head HTML within the legacy player - check out our guide for migrating.](https://docs.bunny.net/stream/custom-head-html-migration-guide)
+</Note>
