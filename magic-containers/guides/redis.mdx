@@ -44,6 +44,32 @@ You'll need a bunny.net account with Magic Containers enabled.
   </Step>
 </Steps>
 
+## Redis 8+ volume permissions
+
+Redis 8 changed its default user from `root` to a non-root user (`uid 999`, group `redis`). When Magic Containers mounts a persistent volume at `/data`, the directory is owned by `root`. This means the Redis process cannot write its RDB/AOF persistence files to this directory, causing the container to fail on startup with an error like:
+
+```
+Failed opening the temp RDB file temp-26.rdb (in server root dir /data) for saving: Permission denied
+```
+
+To fix this, configure a **Startup Command** that changes the ownership of the `/data` directory before starting Redis. In your container settings, set the startup command as a JSON array:
+
+```json
+["sh", "-c", "chown -R 999:999 /data && exec /usr/local/bin/docker-entrypoint.sh redis-server"]
+```
+
+<Warning>
+  The startup command must be specified as a JSON array, not a string. This ensures proper argument parsing and execution.
+</Warning>
+
+This command:
+1. Changes ownership of `/data` to the `redis` user (uid 999)
+2. Executes the standard Redis entrypoint script
+
+<Note>
+  Redis 7 and earlier versions run as `root` by default and do not have this issue. If you're using Redis 7 (e.g., `redis:7-alpine`), no startup command is needed.
+</Note>
+
 <Info>
   Redis has no authentication enabled by default. It's recommended to set a
   password even if Redis is not exposed externally. Other containers in the same
