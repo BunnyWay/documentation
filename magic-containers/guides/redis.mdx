@@ -52,14 +52,14 @@ Redis 8 changed its default user from `root` to a non-root user (`uid 999`, grou
 Failed opening the temp RDB file temp-26.rdb (in server root dir /data) for saving: Permission denied
 ```
 
-To fix this, configure a **Startup Command** that changes the ownership of the `/data` directory before starting Redis. In your container settings, set the startup command as a JSON array:
+To fix this, configure a **Startup Command** that changes the ownership of the `/data` directory before starting Redis. In your container settings, set the startup command as:
 
 ```json
 ["sh", "-c", "chown -R 999:999 /data && exec /usr/local/bin/docker-entrypoint.sh redis-server"]
 ```
 
 <Warning>
-  The startup command must be specified as a JSON array, not a string. This ensures proper argument parsing and execution.
+  The startup command must be specified as a array, not a string. This ensures proper argument parsing and execution.
 </Warning>
 
 This command:
