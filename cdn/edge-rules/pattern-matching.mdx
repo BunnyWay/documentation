@@ -1,0 +1,263 @@
+---
+description: Use Lua-based pattern matching in Edge Rule conditions to
+  match structured request values such as URLs, headers, cookies, and
+  query strings.
+title: Pattern Matching in Edge Rules
+---
+
+# Pattern Matching in Edge Rules
+
+Edge Rules allow you to define logic that runs directly on bunny.net's
+edge servers before a request reaches your origin. Rules can modify
+caching behavior, redirect traffic, route requests to different origins,
+apply security actions, and more based on request conditions.
+
+Edge Rule conditions often evaluate values such as:
+
+-   Cookie Value
+-   Country Code (2 letter)
+-   Country State Code
+-   File Extension
+-   Origin Retry Attempt Count
+-   Query String
+-   Random Chance (%)
+-   Remote IP
+-   Request Header
+-   Request Method
+-   Request URL
+-   Response Header
+-   Response Status Code
+
+In many cases, simple string or wildcard matching is sufficient.
+However, modern applications frequently generate URLs and request values
+that follow predictable patterns rather than fixed strings.
+
+Examples include:
+
+-   Streaming manifests
+-   Versioned build assets
+-   Dynamically generated API routes
+
+To make these scenarios easier to handle, Edge Rules support **pattern
+matching using Lua patterns**.
+
+------------------------------------------------------------------------
+
+# Using Pattern Matching
+
+Pattern matching can be used in any Edge Rule condition that evaluates a
+request value.
+
+To enable pattern matching, prefix the value with:
+
+``` text
+pattern:^...$
+```
+
+Example:
+
+``` text
+pattern:^.*/video_chunk%-[^%-]+%-[^%-]+%.dash$
+```
+
+The `pattern:` prefix instructs the Edge Rule engine to evaluate the
+value using **Lua pattern matching** instead of a standard string
+comparison.
+
+Lua patterns are similar to regular expressions but intentionally
+simpler and optimized for performance.
+
+## Anchoring the Pattern
+
+Patterns should normally be wrapped with:
+
+``` text
+^
+$
+```
+
+This ensures the **entire value is matched**, rather than matching a
+substring.
+
+If the `pattern:` prefix is not used, the condition behaves as a normal
+string comparison.
+
+------------------------------------------------------------------------
+
+# Example
+
+Pattern:
+
+``` text
+pattern:^.*/video_chunk%-[^%-]+%-[^%-]+%.dash$
+```
+
+Matches URLs such as:
+
+``` text
+/live/video_chunk-us-12345.dash
+/live/video_chunk-es-54321.dash
+```
+
+Internally, Edge Rules evaluate patterns using Lua's `string.find`
+function. This provides efficient pattern matching without requiring a
+full regular expression engine.
+
+------------------------------------------------------------------------
+
+# Availability
+
+Pattern matching is currently supported only for **Edge Rule actions
+that execute at the Cache Layer**.
+
+In the Edge Rules interface, these actions are marked with a **Cache**
+badge.
+
+Support for **Origin Layer actions** will be added in a future update.
+
+------------------------------------------------------------------------
+
+# Example Use Cases
+
+## Matching Streaming Manifests
+
+Streaming platforms often generate manifest files containing region
+identifiers or session identifiers in the filename.
+
+Example URLs:
+
+``` text
+/live/video_chunk-us-12345.dash
+/live/video_chunk-es-54321.dash
+```
+
+A pattern condition can match these files and apply actions such as:
+
+-   Custom cache control
+-   Edge redirects
+-   Request routing
+
+------------------------------------------------------------------------
+
+## Targeting Versioned Assets
+
+Many build systems generate versioned assets:
+
+``` text
+/assets/app-1.4.7.js
+/assets/app-1.4.8.js
+/assets/app-1.5.0.js
+```
+
+A pattern condition allows matching all versions using a single rule.
+
+Common use cases include:
+
+-   Cache rules
+-   Rate limiting
+-   Header modification
+
+------------------------------------------------------------------------
+
+## Security Filtering
+
+Pattern matching can also be used in security rules.
+
+Example scenarios:
+
+-   Blocking administrative endpoints
+-   Detecting suspicious request patterns
+-   Filtering specific URL structures
+
+These rules can be combined with conditions such as cookie presence or
+header values.
+
+------------------------------------------------------------------------
+
+# Lua Pattern Cheat Sheet
+
+Edge Rules use **Lua patterns**, which are simpler than full regular
+expressions.
+
+### Format
+
+``` text
+pattern:^...$
+```
+
+Edge Rules evaluate patterns using Lua's `string.find`.
+
+### Anchors
+
+  Symbol   Meaning
+  -------- -----------------
+  \^       Start of string
+  \$       End of string
+
+### Character Classes
+
+  Pattern     Meaning
+  ----------- ---------------------------------------
+  %d          Digit
+  %a          Letter
+  %w          Alphanumeric + \_
+  .           Any character
+  \[abc\]     Match a, b, or c
+  \[\^abc\]   Match any character except a, b, or c
+
+### Repeaters
+
+  Pattern   Meaning
+  --------- ------------------------
+  \+        1 or more
+  \*        0 or more (greedy)
+  \-        0 or more (non-greedy)
+
+### Escaping Characters
+
+Use `%` to escape special characters.
+
+Examples:
+
+``` text
+%.   # literal dot
+%-   # literal hyphen
+```
+
+### Limitations
+
+Lua patterns are intentionally simpler than full regular expressions.
+
+Unsupported features include:
+
+-   Alternation (`|`)
+-   Lookaheads / lookbehinds
+-   Full PCRE syntax
+
+These limitations help ensure pattern evaluation remains fast and
+predictable across the edge network.
+
+------------------------------------------------------------------------
+
+# Why Lua Patterns?
+
+Lua patterns provide a balance between expressive matching and
+predictable performance.
+
+Unlike full regular expressions, Lua patterns are implemented directly
+in Lua's standard library and do not require a separate regex engine.
+This reduces processing overhead and keeps rule evaluation fast.
+
+Since Edge Rules are evaluated on every request at the edge, lightweight
+matching is important to maintain performance across high request
+volumes.
+
+------------------------------------------------------------------------
+
+# Additional Resources
+
+For more details on Lua patterns, see:
+
+https://www.lua.org/pil/20.2.html
+https://www.lua.org/pil/20.3.html
+https://www.lua.org/pil/20.4.html
