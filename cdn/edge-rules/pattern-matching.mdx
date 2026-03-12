@@ -5,8 +5,6 @@ description: Use Lua-based pattern matching in Edge Rule conditions to
 title: Pattern Matching in Edge Rules
 ---
 
-# Pattern Matching in Edge Rules
-
 Edge Rules allow you to define logic that runs directly on bunny.net's
 edge servers before a request reaches your origin. Rules can modify
 caching behavior, redirect traffic, route requests to different origins,
@@ -189,29 +187,29 @@ Edge Rules evaluate patterns using Lua's `string.find`.
 
 ### Anchors
 
-  Symbol   Meaning
-  -------- -----------------
-  \^       Start of string
-  \$       End of string
+|  Symbol  | Meaning          |
+|  ------- | ---------------- |
+|  \^      | Start of string  |
+|  \$      | End of string    |
 
 ### Character Classes
 
-  Pattern     Meaning
-  ----------- ---------------------------------------
-  %d          Digit
-  %a          Letter
-  %w          Alphanumeric + \_
-  .           Any character
-  \[abc\]     Match a, b, or c
-  \[\^abc\]   Match any character except a, b, or c
+|  Pattern   |  Meaning                                |
+|  --------- | --------------------------------------- |
+|  %d        |  Digit                                  |
+|  %a        |  Letter                                 |
+|  %w        |  Alphanumeric + \_                      |
+|  .         |  Any character                          |
+|  \[abc\]   |  Match a, b, or c                       |
+|  \[\^abc\] |  Match any character except a, b, or c  |
 
 ### Repeaters
 
-  Pattern   Meaning
-  --------- ------------------------
-  \+        1 or more
-  \*        0 or more (greedy)
-  \-        0 or more (non-greedy)
+|  Pattern  |  Meaning                 |
+|  -------- | ------------------------ |
+|  \+       |  1 or more               |
+|  \*       |  0 or more (greedy)      |
+|  \-       |  0 or more (non-greedy)  |
 
 ### Escaping Characters
 
@@ -258,6 +256,6 @@ volumes.
 
 For more details on Lua patterns, see:
 
-https://www.lua.org/pil/20.2.html
-https://www.lua.org/pil/20.3.html
-https://www.lua.org/pil/20.4.html
+-   https://www.lua.org/pil/20.2.html
+-   https://www.lua.org/pil/20.3.html
+-   https://www.lua.org/pil/20.4.html
