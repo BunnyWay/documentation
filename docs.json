@@ -359,6 +359,10 @@
                     ]
                   },
                   {
+                    "group": "Apps",
+                    "pages": ["magic-containers/guides/wordpress"]
+                  },
+                  {
                     "group": "Databases",
                     "pages": [
                       "magic-containers/guides/clickhouse",
