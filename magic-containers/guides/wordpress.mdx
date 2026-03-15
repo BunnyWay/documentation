@@ -110,11 +110,30 @@ If you prefer to configure everything yourself, follow these steps.
   <Step title="Deploy">
     Review your settings and click **Confirm and Create**.
   </Step>
+  <Step title="Set the site URL">
+    After deploying, copy the WordPress endpoint URL from the **Endpoints** tab (e.g. `https://mc-xxx.bunny.run`). Go to the WordPress container's **Environment Variables** and add:
+
+    | Variable | Value |
+    | --- | --- |
+    | `WP_HOME` | your WordPress endpoint URL |
+    | `WP_SITEURL` | same as `WP_HOME` |
+
+    This prevents WordPress from auto-detecting the wrong URL, which can happen in multi-container setups where multiple endpoints exist. Redeploy after adding these variables.
+
+  </Step>
 </Steps>
 
 ## Complete the installation
 
-Once your app is running, open the endpoint URL in your browser. WordPress will display the installation wizard where you can:
+<Info>
+  If you plan to use a custom domain, add it to your WordPress endpoint and
+  update `WP_HOME` and `WP_SITEURL` **before** running the installation wizard.
+  WordPress stores the site URL during installation, and completing setup on the
+  default `mc-xxx.bunny.run` URL means you'll need to update it later. See [Add
+  a custom hostname](#add-a-custom-hostname) for details.
+</Info>
+
+Once your app is running, open the WordPress endpoint URL in your browser. WordPress will display the installation wizard where you can:
 
 1. Select your language
 2. Set the site title
@@ -127,14 +146,16 @@ After setup, your WordPress site is live and accessible at the endpoint URL.
 
 The WordPress container supports these key environment variables:
 
-| Variable | Description |
-| --- | --- |
-| `WORDPRESS_DB_HOST` | Database host (use `127.0.0.1` for multi-container) |
-| `WORDPRESS_DB_USER` | Database username |
-| `WORDPRESS_DB_PASSWORD` | Database password |
-| `WORDPRESS_DB_NAME` | Database name |
-| `WORDPRESS_TABLE_PREFIX` | Table prefix (default: `wp_`) |
-| `WORDPRESS_DEBUG` | Enable debug mode (`1` or `0`) |
+| Variable                 | Description                                                       |
+| ------------------------ | ----------------------------------------------------------------- |
+| `WORDPRESS_DB_HOST`      | Database host (use `127.0.0.1` for multi-container)               |
+| `WORDPRESS_DB_USER`      | Database username                                                 |
+| `WORDPRESS_DB_PASSWORD`  | Database password                                                 |
+| `WORDPRESS_DB_NAME`      | Database name                                                     |
+| `WORDPRESS_TABLE_PREFIX` | Table prefix (default: `wp_`)                                     |
+| `WORDPRESS_DEBUG`        | Enable debug mode (`1` or `0`)                                    |
+| `WP_HOME`                | Full URL of the site (e.g. `https://mc-xxx.bunny.run`)            |
+| `WP_SITEURL`             | Full URL where WordPress is installed (usually same as `WP_HOME`) |
 
 <Warning>
   Use `127.0.0.1` instead of `localhost` for the database host. Some clients
@@ -146,10 +167,10 @@ The WordPress container supports these key environment variables:
 
 The WordPress template uses two persistent volumes:
 
-| Volume | Mount path | Purpose |
-| --- | --- | --- |
-| `wp-content` | `/var/www/html/wp-content` | Themes, plugins, and uploads |
-| `mariadb-data` | `/var/lib/mysql` | Database files |
+| Volume         | Mount path                 | Purpose                      |
+| -------------- | -------------------------- | ---------------------------- |
+| `wp-content`   | `/var/www/html/wp-content` | Themes, plugins, and uploads |
+| `mariadb-data` | `/var/lib/mysql`           | Database files               |
 
 Without these volumes, all data is lost when containers restart. See [persistent volumes](/magic-containers/persistent-volumes) for more details.
 
@@ -213,6 +234,13 @@ To use your own domain with WordPress:
 
 1. Go to your app's **Endpoints** tab
 2. Add a custom hostname to your CDN endpoint
-3. Update the WordPress **Site URL** and **Home** settings under **Settings > General** to match your custom domain
+3. Update the `WP_HOME` and `WP_SITEURL` environment variables to your custom domain (e.g. `https://example.com`)
+
+<Warning>
+  If you installed WordPress using the default `mc-xxx.bunny.run` URL, you must
+  update `WP_HOME` and `WP_SITEURL` to match your custom domain. Without this,
+  WordPress will continue redirecting to the old URL for login, admin pages, and
+  internal links.
+</Warning>
 
 See [endpoints](/magic-containers/endpoints) for more details on configuring custom hostnames.
