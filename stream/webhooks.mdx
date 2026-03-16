@@ -1,6 +1,6 @@
 ---
 title: "Webhooks"
-description: "Bunny Stream allows you to configure a webhook URL. Our system will automatically send notifications back to this URL once a video status changes. This allows you to track the updates and progress of the video processing cycles on your side."
+description: "Bunny Stream allows you to configure a secure webhook URL. Our system will automatically send notifications back to this URL once a video status changes. This allows you to track the updates and progress of the video processing cycles on your side."
 ---
 
 # Callback
@@ -8,13 +8,15 @@ description: "Bunny Stream allows you to configure a webhook URL. Our system wil
 When the video state changes, a JSON callback will be sent back to your URL as a POST request. Below is an example object that will be sent.
 
 <CodeGroup>
-  ```bash bash
-  {
-  	"VideoLibraryId": 133,
-  	"VideoGuid": "657bb740-a71b-4529-a012-528021c31a92",
-  	"Status": 3
-  }
-  ```
+
+```json JSON
+{
+	"VideoLibraryId": 133,
+	"VideoGuid": "657bb740-a71b-4529-a012-528021c31a92",
+	"Status": 3
+}
+```
+
 </CodeGroup>
 
 # Status list
@@ -41,11 +43,11 @@ Verify that an incoming webhook request was sent by Bunny Stream and has not bee
 
 Signed webhook POSTs use signature version **`v1`**. Each signed request includes the following headers:
 
-| Header | Value |
-|---|---|
-| `X-BunnyStream-Signature-Version` | `v1` |
-| `X-BunnyStream-Signature-Algorithm` | `hmac-sha256` |
-| `X-BunnyStream-Signature` | Lowercase hex HMAC-SHA256 (64 characters) |
+| Header                              | Value                                     |
+| ----------------------------------- | ----------------------------------------- |
+| `X-BunnyStream-Signature-Version`   | `v1`                                      |
+| `X-BunnyStream-Signature-Algorithm` | `hmac-sha256`                             |
+| `X-BunnyStream-Signature`           | Lowercase hex HMAC-SHA256 (64 characters) |
 
 The signature is an **HMAC-SHA256** of the exact raw request body, using the webhook signing secret as the key, encoded as a **lowercase hex string**.
 
@@ -55,7 +57,7 @@ The signature is an **HMAC-SHA256** of the exact raw request body, using the web
 
 ## How the signature is built
 
-```
+```text
 version    = "v1"
 algorithm  = "hmac-sha256"
 signature  = lowercase_hex( HMAC-SHA256( utf8(body), utf8(signatureSecret) ) )
@@ -92,120 +94,124 @@ signature  = lowercase_hex( HMAC-SHA256( utf8(body), utf8(signatureSecret) ) )
 ## Code examples
 
 <CodeGroup>
-  ```javascript Node.js
-  const crypto = require('crypto');
 
-  function validateWebhookSignature(rawBody, signatureHeader, signatureVersion, signatureAlgorithm, signatureSecret) {
-    if (signatureVersion !== 'v1') {
-      return false;
-    }
+```javascript Node.js
+const crypto = require('crypto');
 
-    if (signatureAlgorithm !== 'hmac-sha256') {
-      return false;
-    }
-
-    const expectedHex = crypto
-      .createHmac('sha256', signatureSecret)
-      .update(rawBody, 'utf8')
-      .digest('hex');
-
-    if (
-      typeof signatureHeader !== 'string' ||
-      signatureHeader.length !== expectedHex.length ||
-      !/^[0-9a-f]+$/.test(signatureHeader)
-    ) {
-      return false;
-    }
-
-    return crypto.timingSafeEqual(
-      Buffer.from(expectedHex, 'utf8'),
-      Buffer.from(signatureHeader, 'utf8')
-    );
+function validateWebhookSignature(rawBody, signatureHeader, signatureVersion, signatureAlgorithm, signatureSecret) {
+  if (signatureVersion !== 'v1') {
+    return false;
   }
 
-  // Express: use body parser that keeps raw body
-  app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
-    const signature = req.headers['x-bunnystream-signature'];
-    const version = req.headers['x-bunnystream-signature-version'];
-    const algorithm = req.headers['x-bunnystream-signature-algorithm'];
-    const rawBody = req.body.toString('utf8');
-    if (!validateWebhookSignature(rawBody, signature, version, algorithm, process.env.READ_ONLY_API_KEY)) {
-      return res.status(401).send('Invalid signature');
-    }
-    const data = JSON.parse(rawBody);
-    // ... handle webhook
-  });
-  ```
-
-  ```python Python
-  import os
-  import hmac
-  import hashlib
-  from flask import request
-
-  def validate_webhook_signature(
-      raw_body: bytes,
-      signature_header: str,
-      signature_version: str,
-      signature_algorithm: str,
-      signature_secret: str,
-  ) -> bool:
-      if signature_version != "v1":
-          return False
-
-      if signature_algorithm != "hmac-sha256":
-          return False
-
-      expected = hmac.new(
-          signature_secret.encode('utf-8'),
-          raw_body,
-          hashlib.sha256
-      ).hexdigest()
-      return hmac.compare_digest(expected, signature_header)
-
-  @app.route('/webhook', methods=['POST'])
-  def webhook():
-      raw_body = request.get_data()
-      signature = request.headers.get('X-BunnyStream-Signature', '')
-      signature_version = request.headers.get('X-BunnyStream-Signature-Version', '')
-      signature_algorithm = request.headers.get('X-BunnyStream-Signature-Algorithm', '')
-      if not validate_webhook_signature(raw_body, signature, signature_version, signature_algorithm, os.environ['READ_ONLY_API_KEY']):
-          return '', 401
-      data = request.get_json()
-      # ... handle webhook
-  ```
-
-  ```csharp C#
-  using System.Security.Cryptography;
-  using System.Text;
-
-  bool ValidateWebhookSignature(
-      string rawBody,
-      string signatureHeader,
-      string signatureVersion,
-      string signatureAlgorithm,
-      string signatureSecret)
-  {
-      if (!string.Equals(signatureVersion, "v1", StringComparison.Ordinal))
-      {
-          return false;
-      }
-
-      if (!string.Equals(signatureAlgorithm, "hmac-sha256", StringComparison.Ordinal))
-      {
-          return false;
-      }
-
-      byte[] keyBytes = Encoding.UTF8.GetBytes(signatureSecret);
-      byte[] bodyBytes = Encoding.UTF8.GetBytes(rawBody);
-      using var hmac = new HMACSHA256(keyBytes);
-      byte[] hash = hmac.ComputeHash(bodyBytes);
-      string expected = Convert.ToHexString(hash).ToLowerInvariant();
-      return CryptographicOperations.FixedTimeEquals(
-          Encoding.UTF8.GetBytes(expected),
-          Encoding.UTF8.GetBytes(signatureHeader));
+  if (signatureAlgorithm !== 'hmac-sha256') {
+    return false;
   }
-  ```
+
+  const expectedHex = crypto
+    .createHmac('sha256', signatureSecret)
+    .update(rawBody, 'utf8')
+    .digest('hex');
+
+  if (
+    typeof signatureHeader !== 'string' ||
+    signatureHeader.length !== expectedHex.length ||
+    !/^[0-9a-f]+$/.test(signatureHeader)
+  ) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(
+    Buffer.from(expectedHex, 'utf8'),
+    Buffer.from(signatureHeader, 'utf8')
+  );
+}
+
+// Express: use body parser that keeps raw body
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  const signature = req.headers['x-bunnystream-signature'];
+  const version = req.headers['x-bunnystream-signature-version'];
+  const algorithm = req.headers['x-bunnystream-signature-algorithm'];
+  const rawBody = req.body.toString('utf8');
+  if (!validateWebhookSignature(rawBody, signature, version, algorithm, process.env.READ_ONLY_API_KEY)) {
+    return res.status(401).send('Invalid signature');
+  }
+  const data = JSON.parse(rawBody);
+  // ... handle webhook
+});
+```
+
+
+```python Python
+import os
+import hmac
+import hashlib
+from flask import request
+
+def validate_webhook_signature(
+    raw_body: bytes,
+    signature_header: str,
+    signature_version: str,
+    signature_algorithm: str,
+    signature_secret: str,
+) -> bool:
+    if signature_version != "v1":
+        return False
+
+    if signature_algorithm != "hmac-sha256":
+        return False
+
+    expected = hmac.new(
+        signature_secret.encode('utf-8'),
+        raw_body,
+        hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(expected, signature_header)
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    raw_body = request.get_data()
+    signature = request.headers.get('X-BunnyStream-Signature', '')
+    signature_version = request.headers.get('X-BunnyStream-Signature-Version', '')
+    signature_algorithm = request.headers.get('X-BunnyStream-Signature-Algorithm', '')
+    if not validate_webhook_signature(raw_body, signature, signature_version, signature_algorithm, os.environ['READ_ONLY_API_KEY']):
+        return '', 401
+    data = request.get_json()
+    # ... handle webhook
+```
+
+
+```csharp C#
+using System.Security.Cryptography;
+using System.Text;
+
+bool ValidateWebhookSignature(
+    string rawBody,
+    string signatureHeader,
+    string signatureVersion,
+    string signatureAlgorithm,
+    string signatureSecret)
+{
+    if (!string.Equals(signatureVersion, "v1", StringComparison.Ordinal))
+    {
+        return false;
+    }
+
+    if (!string.Equals(signatureAlgorithm, "hmac-sha256", StringComparison.Ordinal))
+    {
+        return false;
+    }
+
+    byte[] keyBytes = Encoding.UTF8.GetBytes(signatureSecret);
+    byte[] bodyBytes = Encoding.UTF8.GetBytes(rawBody);
+    using var hmac = new HMACSHA256(keyBytes);
+    byte[] hash = hmac.ComputeHash(bodyBytes);
+    string expected = Convert.ToHexString(hash).ToLowerInvariant();
+    return CryptographicOperations.FixedTimeEquals(
+        Encoding.UTF8.GetBytes(expected),
+        Encoding.UTF8.GetBytes(signatureHeader));
+}
+```
+
 </CodeGroup>
 
 ## Important notes
