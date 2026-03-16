@@ -439,7 +439,11 @@
               },
               {
                 "group": "Runtime APIs",
-                "pages": ["scripting/node/fs/node-fs", "scripting/websockets"]
+                "pages": [
+                  "scripting/cache-api",
+                  "scripting/node/fs/node-fs",
+                  "scripting/websockets"
+                ]
               },
               {
                 "group": "Reference",

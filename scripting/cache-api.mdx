@@ -1,0 +1,252 @@
+---
+title: Cache
+sidebarTitle: Cache API
+description: Allows fine grained control of reading and writing from the Bunny network cache.
+tag: Preview
+---
+
+<Warning>
+    Currently the Edge Scripting runners happen after the HTTP cache layer. This means the whole Edge Scripting response can be cached. To avoid this:
+    - always return a response from the script with the `Cache-Control: no-cache` header set
+    - disable `Smart Cache` for your PullZone
+    - set `Cache expiration time` for your PullZone to `Respect origin Cache-Control`
+    - set `Browser cache expiration time` for your PullZone to `Match server cache expiration`
+</Warning>
+
+<Warning>
+    No breaking changes are expected, but additional features may be implemented soon.
+</Warning>
+
+## Overview
+
+The Cache API is an implementation of the [MSDN Cache Interface](https://developer.mozilla.org/en-US/docs/Web/API/Cache) to provide a persistent storage mechanism for Request / Response object pairs that are cached in long lived memory.
+
+The Cache API is available globally but the contents of the cache do not replicate outside of the originating region. A GET `/users` response can be cached in the originating region, but will not exist in another region unless it has been explicitly created.
+
+An origin can have multiple, named Cache objects. You are responsible for implementing how your script handles Cache updates. Items in a Cache respect the `Cache-Control` request header, it is expected that you will use this to control the life cycle of your caches. Cache entries will automatically be purged a short time after they expire. Make sure to version caches by name and use the caches only from the version of the script that they can safely operate on.
+
+The cache instances are shared across all domains associated with your PullZone, however they **must** be accessed via the currently requesting host name. For this reason we either recommend using the current `Request` object as they key or constructing the key using the current request url e.g. `const key = new URL(req.url).origin + "/img/example.png";`. This will ensure your caches work reliably across all domains associated with your PullZone.
+
+<Info>
+    **Note:** There is a hard limit of `100MB` per cache file.
+</Info>
+<Info>
+    **Note:** The caching API requires the use of the `Cache-Control` the HTTP header to determine the life of a cache entry e.g. `Cache-Control: max-age=600` (cache for 10min).
+</Info>
+<Info>
+    **Note:** The caching API respects the following HTTP caching headers:
+    - Cache-Control
+    - If-None-Match
+</Info>
+
+## Instance Methods
+
+### Delete
+The delete() method of the Cache finds the Cache entry whose key is the request, and if found, deletes the Cache entry and returns a Promise that resolves to true.
+
+#### Syntax
+```js
+delete(request)
+delete(request, options)
+```
+
+#### Parameters
+`request`
+The Request you are looking to delete. This can be a Request object or a URL.
+
+`options` optional
+- ignoreSearch
+    - A boolean value that specifies whether the matching process should ignore the query string in the URL. If set to true, the ?value=bar part of `https://example.com/?value=bar` would be ignored when performing a match. It defaults to false.
+- ignoreMethod
+    - A boolean value that, when set to true, prevents matching operations from validating the Request HTTP method (normally only GET and HEAD are allowed.) It defaults to false.
+- ignoreVary
+    - A boolean value that, when set to true, tells the matching operation not to perform VARY header matching. In other words, if the URL matches you will get a match regardless of whether the Response object has a VARY header. It defaults to false.
+
+#### Examples
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
+  const url = new URL(request.url);
+
+  try {
+    await caches
+      .open("cache:v1")
+      .then((cache) => cache.delete(`${url.origin}/example.html`));
+    
+    return new Response("Cache File Removed", {
+      headers: { "Cache-Control": "no-cache" }
+    });
+  } catch (error) {
+    return new Response(`Error deleting cache file: ${error.message}`, {
+      status: 500
+    });
+  }
+});
+```
+
+### Match
+The match() method of the Cache returns a Promise that resolves to the Response associated with the first matching request in the Cache object. If no match is found, the Promise resolves to undefined.
+
+#### Syntax
+```js
+match(request)
+match(request, options)
+```
+
+#### Parameters
+`request`
+The Request for which you are attempting to find responses in the Cache. This can be a Request object or a URL.
+
+`options` optional
+- ignoreSearch
+    - A boolean value that specifies whether the matching process should ignore the query string in the URL. If set to true, the ?value=bar part of `https://example.com/?value=bar` would be ignored when performing a match. It defaults to false.
+- ignoreMethod
+    - A boolean value that, when set to true, prevents matching operations from validating the Request HTTP method (normally only GET and HEAD are allowed.) It defaults to false.
+- ignoreVary
+    - A boolean value that, when set to true, tells the matching operation not to perform VARY header matching. In other words, if the URL matches you will get a match regardless of whether the Response object has a VARY header. It defaults to false.
+
+#### Examples
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
+  const url = new URL(request.url);
+
+  try {
+    const res = await caches
+      .open("cache:v1")
+      .then((cache) => cache.match(`${url.origin}/example.html`));
+    
+    if (res) {
+      return res;
+    } else {
+      return new Response("Cache Miss", {
+        headers: { "Cache-Control": "no-cache" }
+      });
+    }
+    
+  } catch (error) {
+    return new Response(`Error matching cache file: ${error.message}`, {
+      status: 500
+    });
+  }
+});
+```
+
+### Put
+The put() method of the Cache allows key/value pairs to be added to the current Cache object.
+
+#### Syntax
+```js
+put(request, response)
+```
+
+#### Parameters
+`request`
+The Request object or URL that you want to add to the cache.
+
+`response`
+The Response you want to match up to the request.
+
+#### Examples
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
+  const url = new URL(request.url);
+  const now = new Date().toISOString();
+
+  try {
+    const cache = await caches.open("cache:v3");
+    
+    const cachedResponse = await cache.match(`${url.origin}/example.html`);
+    
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    const response = new Response(`<!DOCTYPE html><html><body><p>Hello World at: ${now}</p></body></html>`, {
+      headers: { "Cache-Control": "max-age=10", "Content-Type": "text/html; charset=utf-8" }
+    });
+    await cache.put(`${url.origin}/example.html`, response.clone());
+    
+    return response;
+  } catch (error) {
+    return new Response(`Error putting cache: ${error.message}`, {
+      status: 500
+    });
+  }
+});
+```
+
+## Limitations
+Only CacheStorage open methods are currently supported. We recommend versioning your cache names to ensure that a cache is completely purged when updating scripts.
+
+<Warning>
+    The following CacheStorage operations will throw errors:
+    - `CacheStorage.match()` - Checks if a given Request is a key in any of the Cache objects that the CacheStorage object tracks, and returns a Promise that resolves to that match.
+    - `CacheStorage.has()` - Returns a Promise that resolves to true if a Cache object matching the cacheName exists.
+    - `CacheStorage.delete()` - Finds the Cache object matching the cacheName, and if found, deletes the Cache object and returns a Promise that resolves to true. If no Cache object is found, it resolves to false.
+    - `CacheStorage.keys()` - Returns a Promise that will resolve with an array containing strings corresponding to all of the named Cache objects tracked by the CacheStorage. Use this method to iterate over a list of all the Cache objects.
+</Warning>
+
+Currently we only support Cache match, put, delete.
+
+<Warning>
+    The following Cache operations will throw errors:
+    - `Cache.matchAll()` - Returns a Promise that resolves to an array of all matching responses in the Cache object.
+    - `Cache.add()` - Takes a URL, retrieves it and adds the resulting response object to the given cache. This is functionally equivalent to calling fetch(), then using put() to add the results to the cache.
+    - `Cache.addAll()` - Takes an array of URLs, retrieves them, and adds the resulting response objects to the given cache.
+    - `Cache.keys()` - Returns a Promise that resolves to an array of Cache keys.
+</Warning>
+
+## Quickstart
+
+Here are practical examples of caching a HTML page on the edge, but updating the content based on a query parameter.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> => {
+  const url = new URL(request.url);
+  const now = new Date();
+  const expires = new Date(now.getTime() + 60 * 1000); // + 1min
+
+  try {
+    const cache = await caches.open("cache:v1");
+    
+    // 1. check to see if we already have a cache entry
+    let res = await cache.match(`${url.origin}/example.html`);
+    
+    // 2. if we don't, create one and put it into the cache for 60 seconds
+    if (!res) {
+      res = new Response(`<!DOCTYPE html><html><body><p>Hello <span id="name">aa</span></p><ul><li>created at: ${now.toISOString()}</li><li>expires at: ${expires.toISOString()}</li></ul></body></html>`, {
+        headers: { "Cache-Control": "max-age=60", "Content-Type": "text/html; charset=utf-8" }
+      });
+      await cache.put(`${url.origin}/example.html`, res.clone());
+    }
+    
+    // 3. modify the contents
+    const content = new ExperimentalHTMLRewriter()
+      .on("span", {
+        element(el) {
+          el.setInnerContent(url.searchParams.get("name") ?? "Nameless User (use ?name= to define this)");
+        },
+      })
+      .transform(res);
+    
+    // 3. return modified contents to the user
+    return new Response(await content.text(), {
+      headers: { "Cache-Control": "no-cache", "Content-Type": "text/html; charset=utf-8" }
+    });
+  } catch (error) {
+    return new Response(`Error: ${error.message}`, {
+      status: 500
+    });
+  }
+});
+```
