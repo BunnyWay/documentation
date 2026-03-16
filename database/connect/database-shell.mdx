@@ -3,9 +3,7 @@ title: "Database Shell"
 description: "Connect to Bunny Database using the interactive SQL shell"
 ---
 
-<Note>
-  Bunny Database is currently in [Public Preview](/product-release-stages#stage-2-public-preview). Features and APIs may evolve during this period.
-</Note>
+![bunny.net Database Shell](/images/database/bunny-database-shell.png)
 
 The Bunny Database Shell (`bsql`) is a standalone, interactive SQL shell for querying and managing your database from the terminal. It supports dot-commands, multiple output formats, sensitive column masking, and persistent history.
 
@@ -14,6 +12,12 @@ In this quickstart you will learn how to:
 - Install the Database Shell
 - Connect to a remote Bunny Database
 - Execute queries interactively and non-interactively
+
+<Note>
+  Bunny Database is currently in [Public
+  Preview](/product-release-stages#stage-2-public-preview). Features and APIs
+  may evolve during this period.
+</Note>
 
 ## Quickstart
 
@@ -91,13 +95,13 @@ bsql libsql://<your-database>.lite.bunnydb.net --token <your-token> "SELECT * FR
 
 ## CLI Flags
 
-| Flag | Description |
-| --- | --- |
-| `--token <token>` | Auth token for the database |
-| `--mode <mode>` | Output mode: `default`, `table`, `json`, `csv`, `markdown` |
-| `--unmask` | Show sensitive column values unmasked |
-| `--timing` | Show query execution timing |
-| `--help` | Show help |
+| Flag              | Description                                                |
+| ----------------- | ---------------------------------------------------------- |
+| `--token <token>` | Auth token for the database                                |
+| `--mode <mode>`   | Output mode: `default`, `table`, `json`, `csv`, `markdown` |
+| `--unmask`        | Show sensitive column values unmasked                      |
+| `--timing`        | Show query execution timing                                |
+| `--help`          | Show help                                                  |
 
 ## Execute a SQL file
 
@@ -111,13 +115,13 @@ bsql libsql://<your-database>.lite.bunnydb.net --token <your-token> seed.sql
 
 Change the output format using the `--mode` flag or the `.mode` dot-command inside an interactive session:
 
-| Mode | Description |
-| --- | --- |
-| `default` | Borderless table with headers |
-| `table` | Bordered ASCII table |
-| `json` | JSON array of row objects |
-| `csv` | Comma-separated values |
-| `markdown` | GitHub-flavored pipe table |
+| Mode       | Description                   |
+| ---------- | ----------------------------- |
+| `default`  | Borderless table with headers |
+| `table`    | Bordered ASCII table          |
+| `json`     | JSON array of row objects     |
+| `csv`      | Comma-separated values        |
+| `markdown` | GitHub-flavored pipe table    |
 
 ```bash
 bsql libsql://<your-database>.lite.bunnydb.net --token <your-token> "SELECT * FROM users" --mode json
@@ -127,30 +131,30 @@ bsql libsql://<your-database>.lite.bunnydb.net --token <your-token> "SELECT * FR
 
 The following dot-commands are available inside an interactive session:
 
-| Command | Description |
-| --- | --- |
-| `.tables` | List all tables |
-| `.describe TABLE` | Show column details |
-| `.schema [TABLE]` | Show CREATE statements |
-| `.indexes [TABLE]` | List indexes |
-| `.fk TABLE` | Show foreign keys for a table |
-| `.er` | Show entity-relationship overview |
-| `.count TABLE` | Count rows |
-| `.size TABLE` | Show table stats |
-| `.truncate TABLE` | Delete all rows from a table |
-| `.dump [TABLE]` | Dump schema and data as SQL |
-| `.read FILE` | Execute SQL from a file |
-| `.mode [MODE]` | Set output mode |
-| `.timing` | Toggle query timing |
-| `.mask` | Enable sensitive column masking |
-| `.unmask` | Disable sensitive column masking |
-| `.save NAME` | Save the last query as a named view |
-| `.view NAME` | Execute a saved view |
-| `.views` | List all saved views |
-| `.unsave NAME` | Delete a saved view |
-| `.clear-history` | Clear command history |
-| `.help` | Show available commands |
-| `.quit` / `.exit` | Exit the shell |
+| Command            | Description                         |
+| ------------------ | ----------------------------------- |
+| `.tables`          | List all tables                     |
+| `.describe TABLE`  | Show column details                 |
+| `.schema [TABLE]`  | Show CREATE statements              |
+| `.indexes [TABLE]` | List indexes                        |
+| `.fk TABLE`        | Show foreign keys for a table       |
+| `.er`              | Show entity-relationship overview   |
+| `.count TABLE`     | Count rows                          |
+| `.size TABLE`      | Show table stats                    |
+| `.truncate TABLE`  | Delete all rows from a table        |
+| `.dump [TABLE]`    | Dump schema and data as SQL         |
+| `.read FILE`       | Execute SQL from a file             |
+| `.mode [MODE]`     | Set output mode                     |
+| `.timing`          | Toggle query timing                 |
+| `.mask`            | Enable sensitive column masking     |
+| `.unmask`          | Disable sensitive column masking    |
+| `.save NAME`       | Save the last query as a named view |
+| `.view NAME`       | Execute a saved view                |
+| `.views`           | List all saved views                |
+| `.unsave NAME`     | Delete a saved view                 |
+| `.clear-history`   | Clear command history               |
+| `.help`            | Show available commands             |
+| `.quit` / `.exit`  | Exit the shell                      |
 
 ## Sensitive column masking
 
