@@ -4,15 +4,9 @@ sidebarTitle: Cache API
 description: Allows fine grained control of reading and writing from the Bunny network cache.
 tag: Preview
 ---
-
 <Warning>
-    Currently the Edge Scripting runners happen after the HTTP cache layer. This means the whole Edge Scripting response can be cached. To avoid this:
-    - always return a response from the script with the `Cache-Control: no-cache` header set
-    - disable `Smart Cache` for your PullZone
-    - set `Cache expiration time` for your PullZone to `Respect origin Cache-Control`
-    - set `Browser cache expiration time` for your PullZone to `Match server cache expiration`
+    Currently the Edge Scripting runners happen after the HTTP cache layer. See [Limitations](#limitations) for details.
 </Warning>
-
 <Warning>
     No breaking changes are expected, but additional features may be implemented soon.
 </Warning>
@@ -21,7 +15,7 @@ tag: Preview
 
 The Cache API is an implementation of the [MSDN Cache Interface](https://developer.mozilla.org/en-US/docs/Web/API/Cache) to provide a persistent storage mechanism for Request / Response object pairs that are cached in long lived memory.
 
-The Cache API is available globally but the contents of the cache do not replicate outside of the originating region. A GET `/users` response can be cached in the originating region, but will not exist in another region unless it has been explicitly created.
+The Cache API is available globally but the contents of the cache do not replicate outside of the originating region. A GET `/users` response can be cached in the originating region, but will not exist in another region until a request for the resources is made from there.
 
 An origin can have multiple, named Cache objects. You are responsible for implementing how your script handles Cache updates. Items in a Cache respect the `Cache-Control` request header, it is expected that you will use this to control the life cycle of your caches. Cache entries will automatically be purged a short time after they expire. Make sure to version caches by name and use the caches only from the version of the script that they can safely operate on.
 
@@ -38,6 +32,23 @@ The cache instances are shared across all domains associated with your PullZone,
     - Cache-Control
     - If-None-Match
 </Info>
+
+### Cache Control
+
+Caches are controlled via the `Cache-Control` response header when putting resources into the cache. Response resources will be cached based on how this header is defined. For more information please see: [Cache Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control).
+
+#### Examples
+
+```js
+await cache.put(
+    `${url.origin}/example.html`,
+    new Response("content", {
+      headers: { "Cache-Control": "max-age=600" }
+    })
+);
+```
+
+will cache the string `content` under the key of `"${url.origin}/example.html"` for 10min.
 
 ## Instance Methods
 
@@ -172,6 +183,7 @@ BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> =
     const response = new Response(`<!DOCTYPE html><html><body><p>Hello World at: ${now}</p></body></html>`, {
       headers: { "Cache-Control": "max-age=10", "Content-Type": "text/html; charset=utf-8" }
     });
+    // we clone the resource as this will consume the request body
     await cache.put(`${url.origin}/example.html`, response.clone());
     
     return response;
@@ -184,6 +196,12 @@ BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> =
 ```
 
 ## Limitations
+Currently the Edge Scripting runners happen after the HTTP cache layer. This means the whole Edge Scripting response can be cached. To avoid this:
+ - always return a response from the script with the `Cache-Control: no-cache` header set
+ - disable `Smart Cache` for your PullZone
+ - set `Cache expiration time` for your PullZone to `Respect origin Cache-Control`
+ - set `Browser cache expiration time` for your PullZone to `Match server cache expiration`
+
 Only CacheStorage open methods are currently supported. We recommend versioning your cache names to ensure that a cache is completely purged when updating scripts.
 
 <Warning>
