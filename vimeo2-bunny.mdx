@@ -1,0 +1,426 @@
+---
+title: "Vimeo2Bunny"
+---
+
+Migrate videos from Vimeo to [**bunny.net**](http://bunny.net)\*\* \*\*[Stream](https://bunny.net/stream/). Videos transfer directly from Vimeo to [bunny.net](http://bunny.net) via URL fetch — nothing is downloaded to your machine.
+
+---
+
+## Quick Start
+
+<CodeGroup>
+
+```bash Terminal / Command line
+npx vimeo2bunny config
+npx vimeo2bunny migrate
+```
+
+</CodeGroup>
+
+<Info>
+  [Follow our npx installation guide below.](#How-to-install-npx)
+</Info>
+
+---
+
+## Installation
+
+<Tabs>
+  <Tab title="npx (Recommended)">
+    Zero install required. Just prefix any command with `npx`:
+
+    ```bash
+    npx vimeo2bunny <command>
+    ```
+  </Tab>
+  <Tab title="npm Global Install">
+    ```bash
+    npm install -g vimeo2bunny
+    vimeo2bunny <command>
+    ```
+  </Tab>
+  <Tab title="From Source">
+    ```bash
+    git clone https://github.com/BunnyWay/vimeo2bunny.git
+    cd vimeo2bunny
+    npm install
+    npm run build
+    npm link  # makes `vimeo2bunny` available globally
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Setup
+
+You need API credentials from both Vimeo and bunny.net.
+
+### 1. Get your Vimeo Access Token
+
+1. Go to the [Vimeo Developer Portal](https://developer.vimeo.com) and log in.
+2. Click **Create an app** (or select an existing one).
+3. Enter any app name — avoid including "Vimeo" in the name as it will be rejected.
+4. Add a brief description (e.g. `Video migration tool`).
+5. Select **No** for "Will people besides you be able to access your app?"
+6. Accept the terms and click **Create App**.
+7. On your app's page, go to the **Authentication** section in the left sidebar.
+8. Under **Generate an access token**, select **Authenticated (you)** and check these scopes:
+
+| Scope       | Required                  |
+| ----------- | ------------------------- |
+| Public      | ✅ Required (pre-selected) |
+| Private     | ✅ Required                |
+| Video Files | ✅ Required                |
+
+ 9. Click **Generate** — your personal access token will appear under **Personal Access Tokens**.
+10. Copy the token immediately; you won't be able to see it again.
+
+<Warning>
+  The **Video Files** scope requires a paid Vimeo plan (Standard or above). Without it, the tool cannot access download links.
+</Warning>
+
+---
+
+### 2. Get your bunny.net Stream Credentials
+
+1. Log in to [bunny.net](https://bunny.net).
+2. Open your **Stream library** → **API** section.
+3. Copy the **Library ID** and **Library API Key**.
+
+<Info>
+  This uses the library-specific API key, not the account-level key.
+</Info>
+
+---
+
+### 3. Configure the CLI
+
+```bash
+vimeo2bunny config
+```
+
+You'll be prompted for your Vimeo token, bunny.net Library ID, and bunny.net API key.
+
+Alternatively, set environment variables (or use a `.env` file):
+
+```bash
+export VIMEO_ACCESS_TOKEN=your_token
+export BUNNY_LIBRARY_ID=your_library_id
+export BUNNY_LIBRARY_API_KEY=your_api_key
+```
+
+---
+
+## Usage
+
+### List your Vimeo content
+
+```bash
+vimeo2bunny list             # everything
+vimeo2bunny list --folders   # folders only
+vimeo2bunny list --videos    # videos only
+```
+
+### Migrate videos
+
+```bash
+# Preview what will happen (no changes made)
+vimeo2bunny migrate --dry-run
+
+# Run the migration
+vimeo2bunny migrate
+
+# Migrate a specific folder
+vimeo2bunny migrate --folder <vimeo-folder-id>
+
+# Adjust parallel transfers (default: 3, max: 20)
+vimeo2bunny migrate --concurrency 5
+
+# Resume an interrupted migration
+vimeo2bunny migrate --resume
+```
+
+### Check migration status
+
+```bash
+vimeo2bunny status
+```
+
+---
+
+## How It Works
+
+<Steps>
+  <Step title="Discover">
+    Fetches all videos and folders from your Vimeo account.
+  </Step>
+  <Step title="Map Folders">
+    Creates bunny.net collections matching your Vimeo folder structure.
+  </Step>
+  <Step title="Transfer">
+    For each video, gets a download URL from Vimeo and sends it to bunny.net's fetch endpoint. bunny.net downloads directly from Vimeo.
+  </Step>
+  <Step title="Metadata">
+    Copies title, description, and tags to the bunny.net video.
+  </Step>
+  <Step title="Track">
+    Saves progress to `~/.vimeo2bunny/migration-state.json` so migrations can be resumed.
+  </Step>
+</Steps>
+
+---
+
+## What Gets Migrated
+
+| Vimeo         | bunny.net               | Notes               |
+| ------------- | ----------------------- | ------------------- |
+| `name`        | `title`                 | Direct mapping      |
+| `description` | `metaTags[description]` | Stored as meta tag  |
+| `tags`        | `metaTags[keywords]`    | Comma-separated     |
+| Folder        | Collection              | Folder → Collection |
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title='"No download link available"'>
+    Your Vimeo plan must be **Standard or above** to access download links.
+  </Accordion>
+  <Accordion title='"URL expired"'>
+    Vimeo download URLs expire after 24 hours. The tool fetches fresh URLs, but very long pauses may require restarting the migration.
+  </Accordion>
+  <Accordion title='"Rate limited"'>
+    Handled automatically with exponential backoff. No action needed.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Legal Notice
+
+<Warning>
+  This tool is provided as-is under the **MIT License**. It is not affiliated with, endorsed by, or sponsored by Vimeo, Inc. "Vimeo" is a registered trademark of Vimeo, Inc. Use of the name is purely descriptive.
+</Warning>
+
+### Your Responsibilities
+
+By using this tool, you acknowledge and agree that:
+
+- **You are migrating your own content.** You must have the legal right to download and transfer any videos you migrate. Do not use this tool to access or transfer content you do not own or have authorisation to move.
+- **You are responsible for compliance with Vimeo's terms.** This includes Vimeo's Terms of Service, API License Addendum, and any plan-specific restrictions. You are using your own Vimeo API credentials and acting on your own behalf.
+- **You are responsible for compliance with all applicable laws**, including copyright and data protection regulations in your jurisdiction.
+
+bunny.net provides this tool for convenience only and makes no representations regarding its compatibility with Vimeo's terms of service, which may change at any time. bunny.net assumes no liability for any consequences arising from your use of this tool, including but not limited to account suspension or termination by Vimeo.
+
+<Info>
+  If you are unsure whether your use case complies with Vimeo's terms, consult Vimeo's documentation or seek legal advice before proceeding.
+</Info>
+
+## License
+
+MIT — see [LICENSE](https://github.com/BunnyWay/vimeo2bunny/blob/main/LICENSE)
+
+---
+
+# How to install npx
+
+\
+A step-by-step guide to installing npx on macOS and Windows.
+
+import { Tabs, Tab } from 'mintlify/components'
+
+## Overview
+
+`npx` is a package runner that ships with **Node.js** (via npm). It lets you execute Node packages without installing them globally. Because `npx` is bundled with npm 5.2+, the installation process simply involves installing Node.js.
+
+<Info>
+  If you already have Node.js installed, run `npx --version` in your terminal to confirm `npx` is available. If a version number is returned, you're all set.
+</Info>
+
+---
+
+## Prerequisites
+
+| Requirement | Minimum Version |
+| ----------- | --------------- |
+| Node.js     | 14.x or higher  |
+| npm         | 5.2 or higher   |
+
+---
+
+## Installation
+
+<Tabs>
+  <Tab title="macOS">
+    ### Option 1: Official Installer (Recommended)
+
+    1. Visit the [Node.js Downloads page](https://nodejs.org/en/download).
+    2. Download the **macOS Installer** (`.pkg` file) for the **LTS** version.
+    3. Open the downloaded `.pkg` file and follow the installation wizard.
+    4. Once complete, verify your installation:
+
+    ```bash
+    node --version
+    npm --version
+    npx --version
+    ```
+
+    All three commands should return version numbers.
+
+    ---
+
+    ### Option 2: Homebrew
+
+    If you have [Homebrew](https://brew.sh/) installed, you can install Node.js with a single command:
+
+    ```bash
+    brew install node
+    ```
+
+    Then verify:
+
+    ```bash
+    npx --version
+    ```
+
+    ---
+
+    ### Option 3: Node Version Manager (nvm)
+
+    `nvm` is recommended if you need to manage multiple Node.js versions.
+
+    **Step 1 — Install nvm:**
+
+    ```bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    ```
+
+    **Step 2 — Restart your terminal**, then install the latest LTS version of Node.js:
+
+    ```bash
+    nvm install --lts
+    nvm use --lts
+    ```
+
+    **Step 3 — Verify:**
+
+    ```bash
+    npx --version
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ### Option 1: Official Installer (Recommended)
+
+    1. Visit the [Node.js Downloads page](https://nodejs.org/en/download).
+    2. Download the **Windows Installer** (`.msi` file) for the **LTS** version.
+    3. Run the installer and follow the setup wizard.
+       - Ensure **"Add to PATH"** is checked during installation.
+    4. Open **Command Prompt** or **PowerShell** and verify:
+
+    ```powershell
+    node --version
+    npm --version
+    npx --version
+    ```
+
+    All three commands should return version numbers.
+
+    ---
+
+    ### Option 2: Winget (Windows Package Manager)
+
+    If you have [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/) available, run:
+
+    ```powershell
+    winget install OpenJS.NodeJS.LTS
+    ```
+
+    Then restart your terminal and verify:
+
+    ```powershell
+    npx --version
+    ```
+
+    ---
+
+    ### Option 3: Node Version Manager for Windows (nvm-windows)
+
+    1. Download the latest `nvm-setup.exe` from the [nvm-windows releases page](https://github.com/coreybutler/nvm-windows/releases).
+    2. Run the installer.
+    3. Open a **new** PowerShell or Command Prompt window and install Node.js:
+
+    ```powershell
+    nvm install lts
+    nvm use lts
+    ```
+
+    4. Verify the installation:
+
+    ```powershell
+    npx --version
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Updating npx
+
+Since `npx` is bundled with npm, updating npm will also update `npx`.
+
+<Tabs>
+  <Tab title="macOS">
+    ```bash
+    npm install -g npm@latest
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    npm install -g npm@latest
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="'npx' is not recognized as a command">
+    Node.js may not be added to your system `PATH`. Try reinstalling Node.js and ensure the **"Add to PATH"** option is selected. On macOS, if using `nvm`, make sure your shell profile (`.zshrc`, `.bashrc`, etc.) contains the `nvm` init script.
+  </Accordion>
+  <Accordion title="Permission errors on macOS">
+    Avoid using `sudo` with npm. Instead, fix npm permissions by configuring a local prefix directory:
+
+    ```bash
+    mkdir ~/.npm-global
+    npm config set prefix '~/.npm-global'
+    export PATH=~/.npm-global/bin:$PATH
+    ```
+
+    Add the `export` line to your `~/.zshrc` or `~/.bashrc` to make it permanent.
+  </Accordion>
+  <Accordion title="Multiple Node versions causing conflicts">
+    Use a version manager (`nvm` on macOS, `nvm-windows` on Windows) to switch between versions cleanly and avoid global conflicts.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Next Steps
+
+Now that `npx` is installed, you can run packages on demand. For example:
+
+```bash
+# Scaffold a new React app without a global install
+npx create-react-app my-app
+
+# Run a local package binary
+npx prettier --write .
+```
+
+<Card icon="book" href="https://docs.npmjs.com/cli/v10/commands/npx" title="npm Documentation">
+  Learn more about what you can do with npx in the official npm docs.
+</Card>
