@@ -24,9 +24,35 @@ The cache instances are shared across all domains associated with your PullZone,
 <Info>
     **Note:** There is a hard limit of `100MB` per cache file.
 </Info>
+
+## Accessing Cache
+The `caches.default()` API is strongly influenced by the web browsers’ Cache API Interface.
+
+```js
+let cache = caches.default();
+await cache.match(request);
+```
+
+You may create and manage additional Cache instances via the `caches.open` method.
+
+```js
+let cache = await caches.open("cache:v1");
+await cache.match(request);
+```
+
 <Info>
-    **Note:** The caching API requires the use of the `Cache-Control` the HTTP header to determine the life of a cache entry e.g. `Cache-Control: max-age=600` (cache for 10min).
+    **Note:** When using the Cache API, avoid overriding the hostname in cache requests, as this can lead to unexpected behaviour when using multiple domains associated with a PullZone.
+
+    ```js
+    // recommended approach: use current request url
+    const url = new URL(request.url);
+
+    const cache = await caches.open("cache:v1");
+    const response = await cache.match(`${url.origin}/example.html`);
+    ```
 </Info>
+
+## Headers
 
 ### Cache Control
 
@@ -43,7 +69,7 @@ await cache.put(
 );
 ```
 
-will cache the string `content` under the key of `"${url.origin}/example.html"` for 10min.
+This will cache the string `content` under the key of `/example.html` for 10min.
 
 ## Instance Methods
 
