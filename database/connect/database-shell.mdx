@@ -1,0 +1,178 @@
+---
+title: "Database Shell"
+description: "Connect to Bunny Database using the interactive SQL shell"
+---
+
+![bunny.net Database Shell](/images/database/bunny-database-shell.png)
+
+The Bunny Database Shell (`bsql`) is a standalone, interactive SQL shell for querying and managing your database from the terminal. It supports dot-commands, multiple output formats, sensitive column masking, and persistent history.
+
+In this quickstart you will learn how to:
+
+- Install the Database Shell
+- Connect to a remote Bunny Database
+- Execute queries interactively and non-interactively
+
+<Note>
+  Bunny Database is currently in [Public
+  Preview](/product-release-stages#stage-2-public-preview). Features and APIs
+  may evolve during this period.
+</Note>
+
+## Quickstart
+
+<Steps>
+
+<Step title="Retrieve database credentials">
+
+You will need an existing database to continue. If you don't have one, [create one](/database/quickstart).
+
+Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access** to find your database URL and generate an access token.
+
+<Info>
+  You should store these as environment variables to keep them secure.
+</Info>
+
+</Step>
+
+<Step title="Install the Database Shell">
+
+Install the Database Shell globally using npm:
+
+<CodeGroup>
+
+```bash npm
+npm install -g @bunny.net/database-shell
+```
+
+```bash pnpm
+pnpm add -g @bunny.net/database-shell
+```
+
+```bash yarn
+yarn global add @bunny.net/database-shell
+```
+
+</CodeGroup>
+
+</Step>
+
+<Step title="Connect to your database">
+
+Start an interactive shell session:
+
+```bash
+bsql libsql://<your-database>.lite.bunnydb.net --token <your-token>
+```
+
+If you store your credentials in a `.env` file as `BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN`, you can connect without passing any flags:
+
+```bash
+bsql
+```
+
+See [Authorization](/database/connect/authorization) for more on environment variables.
+
+</Step>
+
+<Step title="Execute a query">
+
+Run a SQL query directly in the shell:
+
+```sql
+SELECT * FROM users;
+```
+
+You can also execute a query without entering interactive mode:
+
+```bash
+bsql libsql://<your-database>.lite.bunnydb.net --token <your-token> "SELECT * FROM users"
+```
+
+</Step>
+
+</Steps>
+
+## CLI Flags
+
+| Flag              | Description                                                |
+| ----------------- | ---------------------------------------------------------- |
+| `--token <token>` | Auth token for the database                                |
+| `--mode <mode>`   | Output mode: `default`, `table`, `json`, `csv`, `markdown` |
+| `--unmask`        | Show sensitive column values unmasked                      |
+| `--timing`        | Show query execution timing                                |
+| `--help`          | Show help                                                  |
+
+## Execute a SQL file
+
+You can execute a `.sql` file directly from the command line:
+
+```bash
+bsql libsql://<your-database>.lite.bunnydb.net --token <your-token> seed.sql
+```
+
+## Output modes
+
+Change the output format using the `--mode` flag or the `.mode` dot-command inside an interactive session:
+
+| Mode       | Description                   |
+| ---------- | ----------------------------- |
+| `default`  | Borderless table with headers |
+| `table`    | Bordered ASCII table          |
+| `json`     | JSON array of row objects     |
+| `csv`      | Comma-separated values        |
+| `markdown` | GitHub-flavored pipe table    |
+
+```bash
+bsql libsql://<your-database>.lite.bunnydb.net --token <your-token> "SELECT * FROM users" --mode json
+```
+
+## Dot-commands
+
+The following dot-commands are available inside an interactive session:
+
+| Command            | Description                         |
+| ------------------ | ----------------------------------- |
+| `.tables`          | List all tables                     |
+| `.describe TABLE`  | Show column details                 |
+| `.schema [TABLE]`  | Show CREATE statements              |
+| `.indexes [TABLE]` | List indexes                        |
+| `.fk TABLE`        | Show foreign keys for a table       |
+| `.er`              | Show entity-relationship overview   |
+| `.count TABLE`     | Count rows                          |
+| `.size TABLE`      | Show table stats                    |
+| `.truncate TABLE`  | Delete all rows from a table        |
+| `.dump [TABLE]`    | Dump schema and data as SQL         |
+| `.read FILE`       | Execute SQL from a file             |
+| `.mode [MODE]`     | Set output mode                     |
+| `.timing`          | Toggle query timing                 |
+| `.mask`            | Enable sensitive column masking     |
+| `.unmask`          | Disable sensitive column masking    |
+| `.save NAME`       | Save the last query as a named view |
+| `.view NAME`       | Execute a saved view                |
+| `.views`           | List all saved views                |
+| `.unsave NAME`     | Delete a saved view                 |
+| `.clear-history`   | Clear command history               |
+| `.help`            | Show available commands             |
+| `.quit` / `.exit`  | Exit the shell                      |
+
+## Sensitive column masking
+
+Columns matching patterns like `password`, `secret`, `api_key`, `auth_token`, and `ssn` are masked by default. Email columns are partially masked (e.g. `a****e@example.com`).
+
+Toggle masking with `.mask` / `.unmask` in interactive mode, or pass `--unmask` as a CLI flag.
+
+## Saved views
+
+Save frequently used queries as named views to recall them later:
+
+```sql
+→  SELECT name, count(*) as orders FROM users JOIN orders USING (user_id) GROUP BY name ORDER BY orders DESC LIMIT 10;
+
+→  .save top-customers
+✓ View "top-customers" saved.
+
+→  .view top-customers
+```
+
+Manage saved views with `.views`, `.view NAME`, and `.unsave NAME`.

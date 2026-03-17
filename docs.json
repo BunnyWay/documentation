@@ -822,6 +822,7 @@
                       "database/connect/dotnet"
                     ]
                   },
+                  "database/connect/database-shell",
                   "database/connect/sql-api",
                   "database/connect/scripting",
                   "database/connect/magic-containers"
