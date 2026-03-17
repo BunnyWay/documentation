@@ -26,11 +26,10 @@ The cache instances are shared across all domains associated with your PullZone,
 </Info>
 
 ## Accessing Cache
-The `caches.default()` API is strongly influenced by the web browsers’ Cache API Interface.
+The `caches.default` API is strongly influenced by the web browsers’ Cache API Interface.
 
 ```js
-let cache = caches.default();
-await cache.match(request);
+await caches.default.match(request);
 ```
 
 You may create and manage additional Cache instances via the `caches.open` method.
