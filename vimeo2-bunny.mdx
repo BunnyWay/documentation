@@ -2,10 +2,9 @@
 title: "Vimeo2Bunny CLI"
 ---
 
-Migrate videos from Vimeo to [**bunny.net**](http://bunny.net) [**Stream**](https://bunny.net/stream/)** with our 
-**Vimeo2Bunny** Command Line Interace tool. Videos transfer directly from Vimeo to [bunny.net](http://bunny.net) via Fetch Video URL — nothing is downloaded to your machine.\
+Migrate videos from Vimeo to [**bunny.net**](http://bunny.net) [**Stream**](https://bunny.net/stream/) with our 
+[**Vimeo2Bunny** Command Line Interface tool](https://www.npmjs.com/package/vimeo2bunny). Videos transfer directly from Vimeo to [bunny.net](http://bunny.net) via Fetch Video URL, nothing is downloaded to your machine.\
 \
-https://www.npmjs.com/package/vimeo2bunny
 
 ---
 
@@ -21,7 +20,7 @@ npx vimeo2bunny migrate
 </CodeGroup>
 
 <Info>
-  [If you don't have npx installed, follow our npx installation guide below.](#how-to-install-npx)
+  [If you don't have npx installed, follow this installation guide for node.js/npm.](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm$0)
 </Info>
 
 ---
@@ -76,7 +75,7 @@ You need API credentials from both Vimeo and bunny.net.
 | Private     | ✅ Required                |
 | Video Files | ✅ Required                |
 
- 9. Click **Generate** — your personal access token will appear under **Personal Access Tokens**.
+ 9. Click **Generate** your personal access token will appear under **Personal Access Tokens**.
 10. Copy the token immediately; you won't be able to see it again.
 
 <Warning>
@@ -201,12 +200,6 @@ vimeo2bunny status
 
 ---
 
-## Legal Notice
-
-<Warning>
-  This tool is provided as-is under the **MIT License**. It is not affiliated with, endorsed by, or sponsored by Vimeo, Inc. "Vimeo" is a registered trademark of Vimeo, Inc. Use of the name is purely descriptive.
-</Warning>
-
 ### Your Responsibilities
 
 By using this tool, you acknowledge and agree that:
@@ -221,209 +214,8 @@ bunny.net provides this tool for convenience only and makes no representations r
   If you are unsure whether your use case complies with Vimeo's terms, consult Vimeo's documentation or seek legal advice before proceeding.
 </Info>
 
-## License
+## Legal Notice
 
-MIT — see [LICENSE](https://github.com/BunnyWay/vimeo2bunny/blob/main/LICENSE)
-
----
-
-## How to install npx
-
-\
-A step-by-step guide to installing npx on macOS and Windows.
-
-import { Tabs, Tab } from 'mintlify/components'
-
-## Overview
-
-`npx` is a package runner that ships with **Node.js** (via npm). It lets you execute Node packages without installing them globally. Because `npx` is bundled with npm 5.2+, the installation process simply involves installing Node.js.
-
-<Info>
-  If you already have Node.js installed, run `npx --version` in your terminal to confirm `npx` is available. If a version number is returned, you're all set.
-</Info>
-
----
-
-## Prerequisites
-
-| Requirement | Minimum Version |
-| ----------- | --------------- |
-| Node.js     | 14.x or higher  |
-| npm         | 5.2 or higher   |
-
----
-
-## Installation
-
-<Tabs>
-  <Tab title="macOS">
-    ### Option 1: Official Installer (Recommended)
-
-    1. Visit the [Node.js Downloads page](https://nodejs.org/en/download).
-    2. Download the **macOS Installer** (`.pkg` file) for the **LTS** version.
-    3. Open the downloaded `.pkg` file and follow the installation wizard.
-    4. Once complete, verify your installation:
-
-    ```bash
-    node --version
-    npm --version
-    npx --version
-    ```
-
-    All three commands should return version numbers.
-
-    ---
-
-    ### Option 2: Homebrew
-
-    If you have [Homebrew](https://brew.sh/) installed, you can install Node.js with a single command:
-
-    ```bash
-    brew install node
-    ```
-
-    Then verify:
-
-    ```bash
-    npx --version
-    ```
-
-    ---
-
-    ### Option 3: Node Version Manager (nvm)
-
-    `nvm` is recommended if you need to manage multiple Node.js versions.
-
-    **Step 1 — Install nvm:**
-
-    ```bash
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-    ```
-
-    **Step 2 — Restart your terminal**, then install the latest LTS version of Node.js:
-
-    ```bash
-    nvm install --lts
-    nvm use --lts
-    ```
-
-    **Step 3 — Verify:**
-
-    ```bash
-    npx --version
-    ```
-  </Tab>
-  <Tab title="Windows">
-    ### Option 1: Official Installer (Recommended)
-
-    1. Visit the [Node.js Downloads page](https://nodejs.org/en/download).
-    2. Download the **Windows Installer** (`.msi` file) for the **LTS** version.
-    3. Run the installer and follow the setup wizard.
-       - Ensure **"Add to PATH"** is checked during installation.
-    4. Open **Command Prompt** or **PowerShell** and verify:
-
-    ```powershell
-    node --version
-    npm --version
-    npx --version
-    ```
-
-    All three commands should return version numbers.
-
-    ---
-
-    ### Option 2: Winget (Windows Package Manager)
-
-    If you have [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/) available, run:
-
-    ```powershell
-    winget install OpenJS.NodeJS.LTS
-    ```
-
-    Then restart your terminal and verify:
-
-    ```powershell
-    npx --version
-    ```
-
-    ---
-
-    ### Option 3: Node Version Manager for Windows (nvm-windows)
-
-    1. Download the latest `nvm-setup.exe` from the [nvm-windows releases page](https://github.com/coreybutler/nvm-windows/releases).
-    2. Run the installer.
-    3. Open a **new** PowerShell or Command Prompt window and install Node.js:
-
-    ```powershell
-    nvm install lts
-    nvm use lts
-    ```
-
-    4. Verify the installation:
-
-    ```powershell
-    npx --version
-    ```
-  </Tab>
-</Tabs>
-
----
-
-## Updating npx
-
-Since `npx` is bundled with npm, updating npm will also update `npx`.
-
-<Tabs>
-  <Tab title="macOS">
-    ```bash
-    npm install -g npm@latest
-    ```
-  </Tab>
-  <Tab title="Windows">
-    ```powershell
-    npm install -g npm@latest
-    ```
-  </Tab>
-</Tabs>
-
----
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="'npx' is not recognized as a command">
-    Node.js may not be added to your system `PATH`. Try reinstalling Node.js and ensure the **"Add to PATH"** option is selected. On macOS, if using `nvm`, make sure your shell profile (`.zshrc`, `.bashrc`, etc.) contains the `nvm` init script.
-  </Accordion>
-  <Accordion title="Permission errors on macOS">
-    Avoid using `sudo` with npm. Instead, fix npm permissions by configuring a local prefix directory:
-
-    ```bash
-    mkdir ~/.npm-global
-    npm config set prefix '~/.npm-global'
-    export PATH=~/.npm-global/bin:$PATH
-    ```
-
-    Add the `export` line to your `~/.zshrc` or `~/.bashrc` to make it permanent.
-  </Accordion>
-  <Accordion title="Multiple Node versions causing conflicts">
-    Use a version manager (`nvm` on macOS, `nvm-windows` on Windows) to switch between versions cleanly and avoid global conflicts.
-  </Accordion>
-</AccordionGroup>
-
----
-
-## Next Steps
-
-Now that `npx` is installed, you can run packages on demand. For example:
-
-```bash
-# Scaffold a new React app without a global install
-npx create-react-app my-app
-
-# Run a local package binary
-npx prettier --write .
-```
-
-<Card icon="book" href="https://docs.npmjs.com/cli/v10/commands/npx" title="npm Documentation">
-  Learn more about what you can do with npx in the official npm docs.
-</Card>
+<Warning>
+  This tool is provided as-is under the **MIT License**. It is not affiliated with, endorsed by, or sponsored by Vimeo, Inc. "Vimeo" is a registered trademark of Vimeo, Inc. Use of the name is purely descriptive.
+</Warning>
