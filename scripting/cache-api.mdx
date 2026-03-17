@@ -69,9 +69,7 @@ The Request you are looking to delete. This can be a Request object or a URL.
 - ignoreSearch
     - A boolean value that specifies whether the matching process should ignore the query string in the URL. If set to true, the ?value=bar part of `https://example.com/?value=bar` would be ignored when performing a match. It defaults to false.
 - ignoreMethod
-    - A boolean value that, when set to true, prevents matching operations from validating the Request HTTP method (normally only GET and HEAD are allowed.) It defaults to false.
-- ignoreVary
-    - A boolean value that, when set to true, tells the matching operation not to perform VARY header matching. In other words, if the URL matches you will get a match regardless of whether the Response object has a VARY header. It defaults to false.
+    - When true, the request is considered to be a GET request regardless of its actual value.
 
 #### Examples
 
@@ -114,9 +112,7 @@ The Request for which you are attempting to find responses in the Cache. This ca
 - ignoreSearch
     - A boolean value that specifies whether the matching process should ignore the query string in the URL. If set to true, the ?value=bar part of `https://example.com/?value=bar` would be ignored when performing a match. It defaults to false.
 - ignoreMethod
-    - A boolean value that, when set to true, prevents matching operations from validating the Request HTTP method (normally only GET and HEAD are allowed.) It defaults to false.
-- ignoreVary
-    - A boolean value that, when set to true, tells the matching operation not to perform VARY header matching. In other words, if the URL matches you will get a match regardless of whether the Response object has a VARY header. It defaults to false.
+    - When true, the request is considered to be a GET request regardless of its actual value.
 
 #### Examples
 
