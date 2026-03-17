@@ -27,11 +27,6 @@ The cache instances are shared across all domains associated with your PullZone,
 <Info>
     **Note:** The caching API requires the use of the `Cache-Control` the HTTP header to determine the life of a cache entry e.g. `Cache-Control: max-age=600` (cache for 10min).
 </Info>
-<Info>
-    **Note:** The caching API respects the following HTTP caching headers:
-    - Cache-Control
-    - If-None-Match
-</Info>
 
 ### Cache Control
 
@@ -53,23 +48,18 @@ will cache the string `content` under the key of `"${url.origin}/example.html"` 
 ## Instance Methods
 
 ### Delete
-The delete() method of the Cache finds the Cache entry whose key is the request, and if found, deletes the Cache entry and returns a Promise that resolves to true.
+The `delete()` method of the Cache finds the Cache entry whose key is the request, and if found, deletes the Cache entry and returns a Promise that resolves to `true`.
 
 #### Syntax
 ```js
 delete(request)
-delete(request, options)
 ```
+
+Unlike the browser Cache API, Bunny Edge Scripting does not support options on `delete()`.
 
 #### Parameters
 `request`
 The Request you are looking to delete. This can be a Request object or a URL.
-
-`options` optional
-- ignoreSearch
-    - A boolean value that specifies whether the matching process should ignore the query string in the URL. If set to true, the ?value=bar part of `https://example.com/?value=bar` would be ignored when performing a match. It defaults to false.
-- ignoreMethod
-    - When true, the request is considered to be a GET request regardless of its actual value.
 
 #### Examples
 
@@ -96,23 +86,22 @@ BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> =
 ```
 
 ### Match
-The match() method of the Cache returns a Promise that resolves to the Response associated with the first matching request in the Cache object. If no match is found, the Promise resolves to undefined.
+The `match()` method of the Cache returns a Promise that resolves to the Response associated with the first matching request in the Cache object. If no match is found, the Promise resolves to `undefined`.
 
 #### Syntax
 ```js
 match(request)
-match(request, options)
 ```
+
+Unlike the browser Cache API, Bunny Edge Scripting does not support options on `match()`. You can accomplish this behavior by removing query strings or HTTP headers at `put()` time.
+
+Our implementation of the Cache API respects the following HTTP headers on the request passed to match():
+- `Range` - Results in a 206 response if a matching response with a Content-Length header is found.
+- `If-None-Match` - Results in a 304 response if a matching response is found with an ETag header with a value that matches a value in If-None-Match.
 
 #### Parameters
 `request`
 The Request for which you are attempting to find responses in the Cache. This can be a Request object or a URL.
-
-`options` optional
-- ignoreSearch
-    - A boolean value that specifies whether the matching process should ignore the query string in the URL. If set to true, the ?value=bar part of `https://example.com/?value=bar` would be ignored when performing a match. It defaults to false.
-- ignoreMethod
-    - When true, the request is considered to be a GET request regardless of its actual value.
 
 #### Examples
 
@@ -144,7 +133,7 @@ BunnySDK.net.http.serve(async (request: Request): Response | Promise<Response> =
 ```
 
 ### Put
-The put() method of the Cache allows key/value pairs to be added to the current Cache object.
+The `put()` method of the Cache allows key/value pairs to be added to the current Cache object.
 
 #### Syntax
 ```js
@@ -203,8 +192,8 @@ Only CacheStorage open methods are currently supported. We recommend versioning 
 <Warning>
     The following CacheStorage operations will throw errors:
     - `CacheStorage.match()` - Checks if a given Request is a key in any of the Cache objects that the CacheStorage object tracks, and returns a Promise that resolves to that match.
-    - `CacheStorage.has()` - Returns a Promise that resolves to true if a Cache object matching the cacheName exists.
-    - `CacheStorage.delete()` - Finds the Cache object matching the cacheName, and if found, deletes the Cache object and returns a Promise that resolves to true. If no Cache object is found, it resolves to false.
+    - `CacheStorage.has()` - Returns a Promise that resolves to `true` if a Cache object matching the cacheName exists.
+    - `CacheStorage.delete()` - Finds the Cache object matching the cacheName, and if found, deletes the Cache object and returns a Promise that resolves to `true`. If no Cache object is found, it resolves to `false`.
     - `CacheStorage.keys()` - Returns a Promise that will resolve with an array containing strings corresponding to all of the named Cache objects tracked by the CacheStorage. Use this method to iterate over a list of all the Cache objects.
 </Warning>
 
