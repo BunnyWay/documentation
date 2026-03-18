@@ -159,7 +159,8 @@
                       "cdn/edge-rules/ip-origin",
                       "cdn/edge-rules/dynamic-variables",
                       "cdn/edge-rules/variable-expansion",
-                      "cdn/edge-rules/ordering"
+                      "cdn/edge-rules/ordering",
+                      "cdn/edge-rules/pattern-matching"
                     ]
                   },
                   {
@@ -183,7 +184,8 @@
                           "cdn/security/token-authentication/basic",
                           "cdn/security/token-authentication/advanced"
                         ]
-                      }
+                      },
+                      "cdn/security/ja4-fingerprinting"
                     ]
                   },
                   {
