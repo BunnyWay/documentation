@@ -103,18 +103,6 @@ full regular expression engine.
 
 ------------------------------------------------------------------------
 
-# Availability
-
-Pattern matching is currently supported only for **Edge Rule actions
-that execute at the Cache Layer**.
-
-In the Edge Rules interface, these actions are marked with a **Cache**
-badge.
-
-Support for **Origin Layer actions** will be added in a future update.
-
-------------------------------------------------------------------------
-
 # Example Use Cases
 
 ## Matching Streaming Manifests
@@ -234,28 +222,3 @@ Unsupported features include:
 
 These limitations help ensure pattern evaluation remains fast and
 predictable across the edge network.
-
-------------------------------------------------------------------------
-
-# Why Lua Patterns?
-
-Lua patterns provide a balance between expressive matching and
-predictable performance.
-
-Unlike full regular expressions, Lua patterns are implemented directly
-in Lua's standard library and do not require a separate regex engine.
-This reduces processing overhead and keeps rule evaluation fast.
-
-Since Edge Rules are evaluated on every request at the edge, lightweight
-matching is important to maintain performance across high request
-volumes.
-
-------------------------------------------------------------------------
-
-# Additional Resources
-
-For more details on Lua patterns, see:
-
--   https://www.lua.org/pil/20.2.html
--   https://www.lua.org/pil/20.3.html
--   https://www.lua.org/pil/20.4.html
