@@ -1,5 +1,5 @@
 ---
-title: HTTP
+title: "HTTP"
 description: "Upload videos to Bunny Stream using the HTTP API."
 ---
 
@@ -41,17 +41,13 @@ POST https://video.bunnycdn.com/library/:libraryId/videos
 **Headers:**
 
 - `AccessKey`: Your **Stream API key**
-
 - `Accept: application/json`
-
 - `Content-Type: application/json`
 
 **Body Parameters:**
 
 - `title`: The name of your video. This will appear in the library UI.
-
 - `collectionId` (optional): The ID of a collection in your library where this video should be placed.
-
 - `thumbnailTime` (optional): The time (in milliseconds) to use when extracting the main video thumbnail.
 
 **Example request:**
@@ -70,9 +66,7 @@ curl --request POST
 The response will return a new video object, including:
 
 - A unique videoId (guid)
-
 - The libraryId
-
 - Basic metadata such as title and creation date
 
 At this stage, most fields (like encoding status or view count) will be empty or zero since the file hasn’t been uploaded yet.
@@ -174,3 +168,7 @@ Once fetched, the video will be automatically added to your library and begin pr
 ## Queued Fetch Limit
 
 The fetch API supports a limited number of queued fetch requests per user at a time; this limit may vary by region, time, current load, and other factors. If you exceed the limit before previous fetches complete, the API will return **HTTP 429 (Too Many Requests)**. To avoid this, either wait for in-progress fetches to finish before submitting new ones, or implement retry logic with backoff when you receive a 429 response.
+
+<Info>
+  Ensure any `AuthorizationExpire` timestamp is at least 1 hour (3600 seconds) or longer to make sure uploads are completed before authorization expires.
+</Info>
