@@ -1,0 +1,31 @@
+---
+title: Changelog
+description: "The latest updates and improvements to bunny.net products."
+---
+
+<Update label="2026-03-19" description="Week of March 19, 2026" tags={["Stream", "CDN", "Magic Containers", "Database"]}>
+## New
+
+- **Bunny Player 2.0** — The new Bunny Stream video player is now available for all video libraries. It's enabled by default on new libraries and can be activated on existing ones by toggling off the legacy player in your [Player Settings](/stream/player). Updated embed URLs use `player.mediadelivery.net/embed/`.
+
+- **Vimeo2Bunny CLI** — A new command-line tool to migrate videos from Vimeo to Bunny Stream. Videos transfer directly from Vimeo to bunny.net — nothing is downloaded to your machine. [Learn more](/vimeo2-bunny).
+
+- **Stream webhook signature validation** — You can now verify that incoming webhook requests were sent by Bunny Stream and haven't been tampered with. Signed webhooks use HMAC-SHA256 with your library's Read-Only API key. [See the validation guide](/stream/webhooks#signature-validation).
+
+- **CDN Edge Rule pattern matching** — Edge Rules now support Lua-based pattern matching for conditions like Request URL, headers, cookies, and query strings. This makes it easier to target dynamic URLs such as streaming manifests, versioned assets, and API routes. [View the docs](/cdn/edge-rules/pattern-matching).
+
+- **CDN JA4 fingerprinting** — bunny.net now computes a JA4 TLS fingerprint for every HTTPS request and exposes it via the `CDN-JA4` request header. Use it to identify automated traffic, detect bot frameworks, and strengthen security decisions. [Learn more](/cdn/security/ja4-fingerprinting).
+
+- **Bunny Database Shell** — A new interactive SQL shell (`bsql`) for querying and managing your Bunny Database from the terminal. Supports multiple output formats, dot-commands, sensitive column masking, and saved views. [Get started](/database/connect/database-shell).
+
+- **Magic Containers templates** — Deploy pre-built application templates with a few clicks. Templates include frameworks like Django, Next.js, Rails, Flask, and more — some with sidecar databases included. [Browse templates](/magic-containers/templates).
+
+- **Magic Containers Quick Deploy** — A streamlined single-form deployment flow. Pick an image, configure endpoints and environment variables, and go from zero to deployed in seconds. [Try it out](/magic-containers/quick-deploy).
+
+## Updated
+
+- **CDN permanent log storage** — Improved documentation on how log part rotation works, including rotation triggers (size, line count, time), worker IDs, and the filename format. [Read more](/cdn/logging/permanent-storage).
+
+- **TUS resumable uploads** — Added a note clarifying that the `AuthorizationExpire` timestamp should be set to at least 1 hour to ensure uploads complete before authorization expires. [View the docs](/stream/tus-resumable-uploads).
+
+</Update>

@@ -111,7 +111,8 @@
               {
                 "group": "Product",
                 "pages": [
-                  "product-release-stages"
+                  "product-release-stages",
+                  "changelog"
                 ]
               }
             ]
