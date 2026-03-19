@@ -10,8 +10,12 @@
   </Step>
   <Step title="Build the image">
     ```bash
-    docker build -t ghcr.io/YOUR_USERNAME/{imageName}:latest .
+    docker build --platform linux/amd64 -t ghcr.io/YOUR_USERNAME/{imageName}:latest .
     ```
+
+    <Info>
+    Magic Containers only supports images built for the **linux/amd64** architecture. The `--platform` flag ensures compatibility regardless of your local machine's architecture.
+    </Info>
   </Step>
   <Step title="Push to registry">
     ```bash
