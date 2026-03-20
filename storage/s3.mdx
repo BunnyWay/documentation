@@ -54,16 +54,18 @@ When uploading objects, Content-Type is determined in the following order:
 
 ### Checksum Validation
 
-SHA256 checksum validation is available using the `x-amz-checksum-sha256` header (Base64 encoded).\
+SHA256 checksum validation is available using the `x-amz-checksum-sha256` header (Base64 encoded).\\
 
-### Presigned URLs Validation
+### Presigned URL Validation\
+
+Presigned URLs require authentication. For publicly available presigned URLs without authentication please use [bunny.net](http://bunny.net) CDN by adding a pullzone to your storagezone. 
 
 | Parameter | Description |
 | --- | --- |
 | `X-Amz-Algorithm` | Signing algorithm type (AWS4-HMAC-SHA256) |
 | `X-Amz-Credential` | Access key \+ date \+ region \+ service \+ aws4\_request |
 | `X-Amz-Date` | Timestamp URL signed in 'YYYYMMDDTHHMMSSZ' format |
-| `X-Amz-Expires` | Validity duration in seconds from X-Amz-Date |
+| `X-Amz-Expires` | Validity duration in seconds from X-Amz-Date (default 1hour) |
 | `X-Amz-SignedHeaders` | Headers included in the signature |
 | `X-Amz-Signature   ` | The HMAC-SHA256 signature |
 
@@ -219,7 +221,7 @@ Below is a detailed list of implemented object-level operations with their suppo
 | ✅ [`DeleteObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html) | ✅ Single object deletion<br />❌ Multi-factor authentication<br />❌ Object Locking<br />❌ Request Payer |
 | ✅ [`CopyObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html) | ✅ Object copy within same storage zone<br />✅ LastModified in response<br />✅ ChecksumSHA256 in response (Base64 encoded)<br />✅ Source object checksum validation<br />❌ Content-Type preservation<br />❌ ETag in response<br />❌ Cross-zone copying<br />❌ Metadata directive (x-amz-metadata-directive)<br />❌ Conditional copy operations<br />❌ Storage class selection<br />❌ SSE/SSE-C encryption<br />❌ Tagging |
 | ✅ [`ListObjectsV2`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html) | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ max-keys<br />✅ continuation-token<br />✅ Common prefix support<br />❌ fetch-owner |
-| ✅ `Presign` | ✅ expires-in |
+| ✅ `Presign` | ✅ expires-in<br />✅ Signing algorithm AWS4-HMAC-SHA256 |
 
 ### Unsupported operations
 
@@ -265,7 +267,7 @@ Additional regions will be added in the future.
 
 ### Known limitations
 
-The following S3 features are not currently supported:
+The following S3 features are limited by:
 
 - **CORS Configuration**: Cross-Origin Resource Sharing settings (must be handled at the CDN level)
 - **Versioning**: Object versioning is not supported
@@ -276,6 +278,7 @@ The following S3 features are not currently supported:
 - **Conditional Requests**: If-Match, If-Modified-Since headers not yet supported for GET/HEAD
 - **Multipart Limits**: Maximum 10,000 parts per upload
 - **Multipart Session Expiry**: Sessions expire after 10 days
+- **Presigned URLs**: Minimum time: 1 second | Maximum time: 7 days (604800 seconds)
 
 ## Error Codes
 
