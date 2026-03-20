@@ -1,0 +1,28 @@
+---
+title: Changelog
+description: Latest updates and improvements to Bunny CDN.
+---
+
+<Update label="March 18, 2026" tags={["New"]}>
+## Edge Rule pattern matching
+
+Edge Rules now support Lua-based pattern matching for conditions, allowing you to match structured request values like URLs, headers, cookies, and query strings using powerful Lua patterns instead of simple string comparisons.
+
+[Learn more](/cdn/edge-rules/pattern-matching)
+</Update>
+
+<Update label="March 9, 2026" tags={["New"]}>
+## JA4 TLS fingerprinting
+
+bunny.net now automatically computes a JA4 fingerprint for incoming HTTPS requests and exposes it via the `CDN-JA4` request header. Use it to identify automated traffic, detect bots, or build custom security logic at your origin.
+
+[Learn more](/cdn/security/ja4-fingerprinting)
+</Update>
+
+<Update label="March 9, 2026" tags={["Improvement"]}>
+## Logging documentation updates
+
+The CDN logging documentation has been expanded with detailed part rotation rules, file naming format, multi-worker pipeline details, and a comprehensive HTTP status code reference table.
+
+[Learn more](/cdn/logging)
+</Update>

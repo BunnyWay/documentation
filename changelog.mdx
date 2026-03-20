@@ -1,0 +1,196 @@
+---
+title: Changelog
+description: Latest updates and improvements across bunny.net products.
+---
+
+<Update label="March 18, 2026" tags={["Stream", "New"]}>
+## Vimeo2Bunny migration tool
+
+Migrate your video library from Vimeo to Bunny Stream using the new Vimeo2Bunny CLI tool with direct transfers, folder mapping, and resumable migrations.
+
+[Learn more](/stream/vimeo2bunny)
+</Update>
+
+<Update label="March 18, 2026" tags={["CDN", "New"]}>
+## Edge Rule pattern matching
+
+Edge Rules now support Lua-based pattern matching for conditions, enabling powerful matching against URLs, headers, cookies, and query strings.
+
+[Learn more](/cdn/edge-rules/pattern-matching)
+</Update>
+
+<Update label="March 17, 2026" tags={["Database", "New"]}>
+## Database Shell
+
+The Bunny Database Shell (`bsql`) is an interactive SQL shell for querying and managing your databases from the terminal with multiple output formats and saved views.
+
+[Learn more](/database/connect/database-shell)
+</Update>
+
+<Update label="March 16, 2026" tags={["Stream", "New"]}>
+## Webhook signature validation
+
+Stream webhooks now support HMAC-SHA256 signature verification to ensure incoming webhook requests are authentic and untampered.
+
+[Learn more](/stream/webhooks#signature-validation)
+</Update>
+
+<Update label="March 16, 2026" tags={["Magic Containers", "New"]}>
+## WordPress deployment guide
+
+Deploy WordPress with MariaDB on Magic Containers using one-click templates or manual multi-container setup with persistent volumes.
+
+[Learn more](/magic-containers/guides/wordpress)
+</Update>
+
+<Update label="March 12, 2026" tags={["Stream", "New"]}>
+## Player 2.0
+
+The new Bunny Stream Player 2.0 brings a modern Web Components architecture, improved performance, cross-browser consistency, and accessibility features.
+
+[Learn more](/stream/player)
+</Update>
+
+<Update label="March 10, 2026" tags={["Magic Containers", "New"]}>
+## Templates gallery and Quick Deploy
+
+Magic Containers now offers pre-built application templates for one-click deployment and a streamlined Quick Deploy flow that gets your app running in seconds.
+
+[Learn more](/magic-containers/templates)
+</Update>
+
+<Update label="March 9, 2026" tags={["CDN", "New"]}>
+## JA4 TLS fingerprinting
+
+bunny.net now computes a JA4 fingerprint for incoming HTTPS requests, exposed via the `CDN-JA4` header for bot detection and custom security logic.
+
+[Learn more](/cdn/security/ja4-fingerprinting)
+</Update>
+
+<Update label="March 9, 2026" tags={["CDN", "Improvement"]}>
+## Logging documentation updates
+
+Expanded CDN logging documentation with detailed rotation rules, file naming format, and a comprehensive HTTP status code reference.
+
+[Learn more](/cdn/logging)
+</Update>
+
+<Update label="March 5, 2026" tags={["Stream", "New"]}>
+## Player 2.0 migration guide
+
+A migration guide is now available for transitioning custom styling from the legacy player to Player 2.0, with a full selector mapping table.
+
+[Learn more](/stream/custom-head-html-migration-guide)
+</Update>
+
+<Update label="February 25, 2026" tags={["Magic Containers", "Improvement"]}>
+## Persistent volume node unavailability
+
+Documentation now covers persistent volume behavior during node unavailability, including volume retention and recovery options.
+
+[Learn more](/magic-containers/persistent-volumes)
+</Update>
+
+<Update label="February 19, 2026" tags={["Magic Containers", "New"]}>
+## Database deployment guides
+
+New guides for deploying PostgreSQL, MariaDB, Redis, and ClickHouse on Magic Containers with persistent volumes.
+
+[Learn more](/magic-containers/guides/postgresql)
+</Update>
+
+<Update label="February 19, 2026" tags={["Edge Scripting", "New"]}>
+## Terraform support for Edge Script pull zones
+
+Manage Edge Script and pull zone associations via Terraform for both standalone and middleware configurations.
+
+[Learn more](/terraform/edgescript-pullzone)
+</Update>
+
+<Update label="February 13, 2026" tags={["Storage", "Improvement"]}>
+## Regional storage endpoints
+
+All nine regional storage server endpoints are now documented in the Storage API reference.
+
+[Learn more](/storage/api-reference)
+</Update>
+
+<Update label="February 11, 2026" tags={["Stream", "New"]}>
+## Mobile SDK token authentication
+
+Secure embed playback with time-limited tokens on Android and iOS using the Bunny Stream Mobile SDKs.
+
+[Learn more](/stream/mobile-sdk-token-authentication)
+</Update>
+
+<Update label="February 11, 2026" tags={["Edge Scripting", "New"]}>
+## Node.js file system API
+
+Edge Scripts now support the `node:fs` file system API with a 64 MB virtual file system for file and directory operations.
+
+[Learn more](/scripting/node/fs/node-fs)
+</Update>
+
+<Update label="February 10, 2026" tags={["Storage", "Improvement"]}>
+## Simplified SPA fallback routing
+
+Static site hosting now uses Storage Zone error handling for SPA fallback routing, simplifying configuration.
+
+[Learn more](/storage/static-site-hosting)
+</Update>
+
+<Update label="February 9, 2026" tags={["Magic Containers", "New"]}>
+## Graceful shutdown
+
+Magic Containers now supports configurable graceful shutdown with SIGTERM/SIGKILL lifecycle management and a 30-second default grace period.
+
+[Learn more](/magic-containers/graceful-shutdown)
+</Update>
+
+<Update label="January 30, 2026" tags={["Magic Containers", "New"]}>
+## Public API reference
+
+The Magic Containers API reference is now publicly available for full programmatic access to manage containerized applications.
+
+[Learn more](/magic-containers/api-reference)
+</Update>
+
+<Update label="January 29, 2026" tags={["DNS", "New"]}>
+## DNS documentation
+
+Comprehensive DNS documentation is now available, covering record management, nameservers, zone import/export, query logging, and statistics.
+
+[Learn more](/dns/quickstart)
+</Update>
+
+<Update label="January 28, 2026" tags={["Stream", "Improvement"]}>
+## MP4 fallback now supports 1080p
+
+MP4 fallback downloads now support up to 1080p resolution, up from the previous 720p limit.
+
+[Learn more](/stream/mp4-downloads)
+</Update>
+
+<Update label="January 23, 2026" tags={["Stream", "New"]}>
+## Smart Chapters
+
+AI-powered automatic chapter generation from your video's caption track is now available in Bunny Stream.
+
+[Learn more](/stream/smart-chapters)
+</Update>
+
+<Update label="January 21, 2026" tags={["Magic Containers", "New"]}>
+## Framework deployment guides
+
+New step-by-step guides for deploying Astro, Next.js, Nuxt, Node Express, Ruby on Rails, PHP Slim, Go, Hono, and Python FastAPI.
+
+[Learn more](/magic-containers/guides/astro)
+</Update>
+
+<Update label="January 20, 2026" tags={["Database", "New"]}>
+## SQL API
+
+Execute SQL queries over HTTP using the SQL API without requiring an SDK, using the libSQL remote protocol.
+
+[Learn more](/database/connect/sql-api)
+</Update>

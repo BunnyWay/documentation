@@ -1,0 +1,76 @@
+---
+title: Changelog
+description: Latest updates and improvements to Bunny Stream.
+---
+
+<Update label="March 18, 2026" tags={["New"]}>
+## Vimeo2Bunny migration tool
+
+You can now migrate your video library from Vimeo to Bunny Stream using the Vimeo2Bunny CLI tool. It transfers videos directly without downloading to your machine and supports folder mapping, metadata migration, concurrent transfers, and resumable migrations.
+
+[Learn more](/stream/vimeo2bunny)
+</Update>
+
+<Update label="March 16, 2026" tags={["New"]}>
+## Webhook signature validation
+
+Stream webhooks now support HMAC-SHA256 signature verification, allowing you to verify that incoming webhook requests are authentic and untampered.
+
+[Learn more](/stream/webhooks#signature-validation)
+</Update>
+
+<Update label="March 12, 2026" tags={["New"]}>
+## Player 2.0
+
+The new Bunny Stream Player 2.0 is here with a modern Web Components architecture, improved performance, cross-browser consistency, and accessibility features. It is enabled by default for new libraries, and existing libraries can switch by disabling the legacy player toggle.
+
+[Learn more](/stream/player)
+</Update>
+
+<Update label="March 5, 2026" tags={["New"]}>
+## Custom head HTML migration guide
+
+A migration guide is now available for customers transitioning custom styling from the legacy Plyr-based player to the new Player 2.0. It includes a full selector mapping table and code examples for themes, controls, and captions.
+
+[Learn more](/stream/custom-head-html-migration-guide)
+</Update>
+
+<Update label="February 23, 2026" tags={["Improvement"]}>
+## Remote video fetch authentication
+
+The remote video fetch documentation now covers supported authentication options, including custom HTTP headers for Basic auth and static API keys.
+
+[Learn more](/stream/http-api)
+</Update>
+
+<Update label="February 19, 2026" tags={["Improvement"]}>
+## Fetch API rate limit
+
+The Stream Fetch Video API now documents the queued fetch request rate limit. Requests exceeding the limit return HTTP 429, and you should implement retry logic with backoff.
+
+[Learn more](/stream/http-api)
+</Update>
+
+<Update label="February 11, 2026" tags={["New"]}>
+## Mobile SDK token authentication
+
+You can now use token authentication with the Bunny Stream Mobile SDKs on Android and iOS, enabling secure embed playback with time-limited tokens.
+
+[Learn more](/stream/mobile-sdk-token-authentication)
+</Update>
+
+<Update label="January 28, 2026" tags={["Improvement"]}>
+## MP4 fallback now supports 1080p
+
+MP4 fallback downloads now support up to 1080p resolution, up from the previous 720p limit.
+
+[Learn more](/stream/mp4-downloads)
+</Update>
+
+<Update label="January 23, 2026" tags={["New"]}>
+## Smart Chapters
+
+Smart Chapters uses AI to automatically generate chapter markers from your video's caption track. You can enable it at the library level and generate chapters for individual videos.
+
+[Learn more](/stream/smart-chapters)
+</Update>

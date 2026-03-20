@@ -59,7 +59,8 @@
                 "pages": [
                   "index",
                   "quickstart",
-                  "faq"
+                  "faq",
+                  "changelog"
                 ]
               },
               {
@@ -236,6 +237,7 @@
                   "cdn/ssl-setup",
                   "cdn/custom-404-page",
                   "cdn/websockets",
+                  "cdn/changelog",
                   {
                     "group": "Troubleshooting",
                     "pages": [
@@ -332,7 +334,8 @@
                   "magic-containers/limits",
                   "magic-containers/troubleshooting",
                   "magic-containers/faqs",
-                  "magic-containers/api-reference"
+                  "magic-containers/api-reference",
+                  "magic-containers/changelog"
                 ]
               },
               {
@@ -471,7 +474,8 @@
                 "group": "Reference",
                 "pages": [
                   "scripting/limits",
-                  "scripting/api-reference"
+                  "scripting/api-reference",
+                  "scripting/changelog"
                 ]
               }
             ]
@@ -599,7 +603,8 @@
                   },
                   "stream/statistics",
                   "stream/webhooks",
-                  "stream/api-reference"
+                  "stream/api-reference",
+                  "stream/changelog"
                 ]
               }
             ]
@@ -672,7 +677,8 @@
                   "storage/settings",
                   "storage/limits",
                   "storage/durability",
-                  "storage/api-reference"
+                  "storage/api-reference",
+                  "storage/changelog"
                 ]
               }
             ]
@@ -809,6 +815,12 @@
                   "dns/scriptable/query-response-object-types",
                   "dns/scriptable/helper-objects"
                 ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "dns/changelog"
+                ]
               }
             ]
           }
@@ -874,7 +886,8 @@
                 "pages": [
                   "database/replication",
                   "database/metrics",
-                  "database/durability-and-consistency"
+                  "database/durability-and-consistency",
+                  "database/changelog"
                 ]
               }
             ]
