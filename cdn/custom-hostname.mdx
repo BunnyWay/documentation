@@ -73,8 +73,7 @@ Use a custom hostname to serve CDN content from your own domain instead of the d
 CNAME records cannot be created at the apex level (`yourdomain.com`) per the DNS specification. Most DNS providers don't support non-standard record types like ALIAS or ANAME that work around this limitation.
 
 <Warning>
-  Pull Zones do not support direct IP address connections. There is no stable
-  anycast IP that can be used with A records to point a domain to a Pull Zone.
+  Pull Zones do not support direct IP address connections. There is no stable anycast IP that can be used with A records to point a domain to a Pull Zone. You can use a direct IP as the origin with a custom Host header, but pointing an A record to a specific Bunny IP is not supported. See [How to set up a direct IP origin URL](https://support.bunny.net/hc/en-us/articles/360004592932-How-to-set-up-a-direct-IP-origin-URL-with-a-custom-hostname-using-Edge-Rules) for more information.
 </Warning>
 
 To use a root domain with your Pull Zone, you have two options:
