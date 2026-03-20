@@ -111,7 +111,8 @@
               {
                 "group": "Product",
                 "pages": [
-                  "product-release-stages"
+                  "product-release-stages",
+                  "changelog"
                 ]
               }
             ]
@@ -250,7 +251,8 @@
                       "cdn/troubleshooting/low-cache-hit-rate",
                       "cdn/troubleshooting/lets-encrypt-issues"
                     ]
-                  }
+                  },
+                  "cdn/changelog"
                 ]
               }
             ]
@@ -332,7 +334,8 @@
                   "magic-containers/limits",
                   "magic-containers/troubleshooting",
                   "magic-containers/faqs",
-                  "magic-containers/api-reference"
+                  "magic-containers/api-reference",
+                  "magic-containers/changelog"
                 ]
               },
               {
@@ -599,7 +602,8 @@
                   },
                   "stream/statistics",
                   "stream/webhooks",
-                  "stream/api-reference"
+                  "stream/api-reference",
+                  "stream/changelog"
                 ]
               }
             ]
@@ -672,7 +676,8 @@
                   "storage/settings",
                   "storage/limits",
                   "storage/durability",
-                  "storage/api-reference"
+                  "storage/api-reference",
+                  "storage/changelog"
                 ]
               }
             ]
@@ -809,6 +814,12 @@
                   "dns/scriptable/query-response-object-types",
                   "dns/scriptable/helper-objects"
                 ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "dns/changelog"
+                ]
               }
             ]
           }
@@ -874,7 +885,8 @@
                 "pages": [
                   "database/replication",
                   "database/metrics",
-                  "database/durability-and-consistency"
+                  "database/durability-and-consistency",
+                  "database/changelog"
                 ]
               }
             ]
