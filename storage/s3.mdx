@@ -8,7 +8,7 @@ noindex: true
 Bunny Storage supports an S3-compatible API (currently in beta), allowing you to use familiar S3 tools, libraries, and workflows with your storage zones. Use existing S3 tools and scripts, leverage popular S3 libraries across all programming languages, migrate from AWS S3 with minimal code changes, and work with S3 GUI tools.
 
 <Info>
-  S3 compatibility is currently in beta. S3 compatibility must be enabled during storage zone creation and cannot be changed afterward.
+  S3 compatibility is currently in closed preview. S3 compatibility must be enabled during storage zone creation and cannot be changed afterward.
 </Info>
 
 ## Creating a storage zone with S3 compatibility
@@ -54,7 +54,21 @@ When uploading objects, Content-Type is determined in the following order:
 
 ### Checksum Validation
 
-SHA256 checksum validation is available using the `x-amz-checksum-sha256` header (Base64 encoded).
+SHA256 checksum validation is available using the `x-amz-checksum-sha256` header (Base64 encoded).\
+
+### Presigned URLs Validation
+
+| Parameter | Description |
+| --- | --- |
+| `X-Amz-Algorithm` | Signing algorithm type (AWS4-HMAC-SHA256) |
+| `X-Amz-Credential` | Access key \+ date \+ region \+ service \+ aws4\_request |
+| `X-Amz-Date` | Timestamp URL signed in 'YYYYMMDDTHHMMSSZ' format |
+| `X-Amz-Expires` | Validity duration in seconds from X-Amz-Date |
+| `X-Amz-SignedHeaders` | Headers included in the signature |
+| `X-Amz-Signature   ` | The HMAC-SHA256 signature |
+
+**Presigned URL example (1hour):**\
+https://\[region\]-s3.storage.bunnycdn.com/bucket-name/path/to/object/?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=\[AccessKeyID\+Date\+region\+servicerequest\]&X-Amz-Date=20260320T160912Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=\[HMAC-SHA256Signature\]/
 
 ## Examples
 
@@ -154,6 +168,9 @@ rclone sync ./local-dir bunnycdn:bucket-name/remote-dir/
 
 # Move objects
 rclone move /path/to/local/file bunnycdn:bucket-name/destination/
+
+# Copy object from URL
+rclone copyurl URL bunnycdn:bucket-name/destination/
 ```
 
 ## Supported S3 operations
@@ -285,4 +302,4 @@ Bunny Storage returns standard S3 error codes:
 5. **Include Content-Type headers** when uploading, or rely on automatic detection
 6. **Handle pagination properly** when listing objects or parts (max 1000 per request)
 7. **Monitor multipart sessions** and abort abandoned uploads to free storage
-8. **Set presigned URL expiry time** in seconds i.e 
+8. **Set presigned URL expiry time** in seconds i.e
