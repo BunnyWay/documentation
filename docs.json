@@ -595,7 +595,7 @@
                   {
                     "group": "Tools",
                     "pages": [
-                      "vimeo2-bunny"
+                      "stream/vimeo2bunny"
                     ]
                   },
                   "stream/statistics",
