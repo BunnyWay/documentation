@@ -464,6 +464,7 @@
                 "group": "Runtime APIs",
                 "pages": [
                   "scripting/node/fs/node-fs",
+                  "scripting/cache-api",
                   "scripting/websockets"
                 ]
               },
