@@ -67,7 +67,7 @@ Presigned URLs require authentication. For publicly available presigned URLs wit
 | `X-Amz-Date` | Timestamp URL signed in 'YYYYMMDDTHHMMSSZ' format |
 | `X-Amz-Expires` | Validity duration in seconds from X-Amz-Date (default 1hour) |
 | `X-Amz-SignedHeaders` | Headers included in the signature |
-| `X-Amz-Signature   ` | The HMAC-SHA256 signature |
+| `X-Amz-Signature` | The HMAC-SHA256 signature |
 
 **Presigned URL example (1hour):**\
 https://\[region\]-s3.storage.bunnycdn.com/bucket-name/path/to/object/?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=\[AccessKeyID\+Date\+region\+servicerequest\]&X-Amz-Date=20260320T160912Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=\[HMAC-SHA256Signature\]/
