@@ -1,0 +1,88 @@
+---
+title: Changelog
+description: Latest updates and improvements across bunny.net products.
+---
+
+<Update label="March 2026" tags={["Stream", "New"]}>
+  ## Vimeo2Bunny CLI
+
+  A new CLI tool that migrates videos directly from Vimeo to Bunny Stream without downloading to your local machine. [Learn more](/stream/vimeo2bunny).
+</Update>
+
+<Update label="March 2026" tags={["Stream", "New"]}>
+  ## Webhook signature validation
+
+  Verify the authenticity of incoming Stream webhook requests using HMAC-SHA256 signatures. [Learn more](/stream/webhooks).
+</Update>
+
+<Update label="March 2026" tags={["Stream", "New"]}>
+  ## Bunny Stream Player
+
+  A completely rebuilt video player with a modern interface, improved performance, and better accessibility. [Learn more](/stream/player).
+</Update>
+
+<Update label="March 2026" tags={["CDN", "New"]}>
+  ## Edge Rule pattern matching
+
+  Edge Rule conditions now support Lua-based pattern matching for evaluating structured request values such as URLs, headers, cookies, and query strings. [Learn more](/cdn/edge-rules/pattern-matching).
+</Update>
+
+<Update label="March 2026" tags={["CDN", "New"]}>
+  ## JA4 TLS Fingerprinting
+
+  Incoming HTTPS requests now include a JA4 TLS fingerprint via the `CDN-JA4` header, enabling bot detection and security decisions based on client characteristics. [Learn more](/cdn/security/ja4-fingerprinting).
+</Update>
+
+<Update label="March 2026" tags={["Magic Containers", "New"]}>
+  ## Templates
+
+  Deploy pre-built application templates with a few clicks. Choose from frameworks, CMS platforms, databases, and tools — some with sidecar databases included. [Learn more](/magic-containers/templates).
+</Update>
+
+<Update label="March 2026" tags={["Magic Containers", "New"]}>
+  ## Quick Deploy
+
+  A streamlined single-form deployment flow that lets you go from image selection to a running container in seconds. [Learn more](/magic-containers/quick-deploy).
+</Update>
+
+<Update label="March 2026" tags={["Database", "New"]}>
+  ## Database Shell
+
+  A new interactive SQL shell for querying and managing Bunny Database from the terminal, with dot-commands, multiple output formats, and persistent history. [Learn more](/database/connect/database-shell).
+</Update>
+
+<Update label="February 2026" tags={["Stream", "Improvement"]}>
+  ## Authenticated remote video fetch
+
+  The Fetch Video API now supports custom HTTP headers, letting you fetch videos from authenticated remote URLs using Basic Auth, API keys, or Bearer tokens. [Learn more](/stream/url-fetch).
+</Update>
+
+<Update label="February 2026" tags={["Stream", "New"]}>
+  ## Smart Moments
+
+  AI-powered automatic generation of video moments and key highlights, extending the Smart Chapters capability. [Learn more](/stream/smart-chapters).
+</Update>
+
+<Update label="February 2026" tags={["Edge Scripting", "New"]}>
+  ## Node.js File System API
+
+  Edge Scripts now support the `node:fs` and `node:fs/promises` modules, providing a sandboxed virtual file system for reading, writing, and manipulating files. [Learn more](/scripting/node/fs/node-fs).
+</Update>
+
+<Update label="January 2026" tags={["Stream", "Improvement"]}>
+  ## MP4 fallback now supports 1080p
+
+  MP4 fallback downloads now support resolutions up to 1080p. [Learn more](/stream/mp4-downloads).
+</Update>
+
+<Update label="January 2026" tags={["Stream", "New"]}>
+  ## Smart Chapters
+
+  AI-powered automatic chapter generation from video captions, available per-library or per-video. [Learn more](/stream/smart-chapters).
+</Update>
+
+<Update label="January 2026" tags={["Edge Scripting", "New"]}>
+  ## WebSocket support
+
+  Edge Scripts can now upgrade HTTP connections to WebSockets for real-time bidirectional communication at the edge. [Learn more](/scripting/websockets).
+</Update>
