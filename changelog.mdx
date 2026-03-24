@@ -1,0 +1,124 @@
+---
+title: Changelog
+description: Latest updates and improvements across bunny.net products.
+---
+
+<Update label="2026-03-20" tags={["Stream", "Improvement"]}>
+  ## Transcription language detection
+
+  Bunny Stream now automatically detects the spoken language in your videos based on the first 30 seconds of audio, making transcription setup even easier.
+
+  [Learn more](/stream/transcribing)
+</Update>
+
+<Update label="2026-03-18" tags={["CDN", "New"]}>
+  ## Edge rule pattern matching
+
+  You can now use Lua-based pattern matching in CDN Edge Rule conditions to match structured request values such as URLs, headers, cookies, and query strings for advanced traffic routing and security logic.
+
+  [Learn more](/cdn/edge-rules/pattern-matching)
+</Update>
+
+<Update label="2026-03-18" tags={["Stream", "New"]}>
+  ## Vimeo2Bunny migration tool
+
+  A new CLI tool makes it easy to migrate your video library from Vimeo to Bunny Stream. Videos are transferred directly without downloading to your local machine.
+
+  [Learn more](/stream/vimeo2bunny)
+</Update>
+
+<Update label="2026-03-17" tags={["Database", "New"]}>
+  ## Database Shell (bsql)
+
+  An interactive SQL terminal client is now available for querying and managing your Bunny Database with dot-commands, multiple output formats, and persistent history.
+
+  [Learn more](/database/connect/database-shell)
+</Update>
+
+<Update label="2026-03-16" tags={["Stream", "New"]}>
+  ## Webhook signature validation
+
+  You can now verify the authenticity of incoming Bunny Stream webhook requests using HMAC-SHA256 signature validation, ensuring your webhook payloads haven't been tampered with.
+
+  [Learn more](/stream/webhooks)
+</Update>
+
+<Update label="2026-03-12" tags={["Stream", "New"]}>
+  ## Player 2.0
+
+  The new Bunny Stream player is here with a modern interface, improved performance, and enhanced customization options.
+
+  [Learn more](/stream/player)
+</Update>
+
+<Update label="2026-03-10" tags={["Magic Containers", "New"]}>
+  ## Quick Deploy
+
+  Deploy containerized applications globally in seconds with the new Quick Deploy flow. Select an image, configure endpoints and environment variables, and deploy all from a single screen.
+
+  [Learn more](/magic-containers/quick-deploy)
+</Update>
+
+<Update label="2026-03-10" tags={["Magic Containers", "New"]}>
+  ## Application templates
+
+  Pre-built templates are now available for popular frameworks and applications including Django, Flask, Next.js, Rails, WordPress, n8n, and more.
+
+  [Learn more](/magic-containers/templates)
+</Update>
+
+<Update label="2026-03-09" tags={["CDN", "New"]}>
+  ## JA4 TLS fingerprinting
+
+  JA4 fingerprinting is now available for CDN Pull Zones. Identify clients by their TLS handshake characteristics to detect bots and automated traffic.
+
+  [Learn more](/cdn/security/ja4-fingerprinting)
+</Update>
+
+<Update label="2026-03-09" tags={["CDN", "Improvement"]}>
+  ## Updated logging and permanent log storage
+
+  The CDN logging overview and permanent log storage documentation have been refreshed with clearer configuration details and improved guidance.
+
+  [Learn more](/cdn/logging)
+</Update>
+
+<Update label="2026-02-11" tags={["Edge Scripting", "New"]}>
+  ## Node.js file system API
+
+  Edge Scripts now support the Node.js-compatible file system API for reading, writing, and manipulating files within a sandboxed virtual file system at the edge.
+
+  [Learn more](/scripting/node/fs/node-fs)
+</Update>
+
+<Update label="2026-02-11" tags={["Stream", "New"]}>
+  ## Mobile SDKs
+
+  Native Mobile SDKs are now available for iOS (Swift) and Android (Kotlin), featuring a full video player, TUS-based resumable uploads, and token authentication.
+
+  [Learn more](/stream/mobile-sdk)
+</Update>
+
+<Update label="2026-02-09" tags={["Magic Containers", "New"]}>
+  ## Graceful shutdown
+
+  Magic Containers now supports graceful shutdown with configurable grace periods, giving your application time to clean up connections and finish in-progress work.
+
+  [Learn more](/magic-containers/graceful-shutdown)
+</Update>
+
+<Update label="2026-01-23" tags={["Stream", "New"]}>
+  ## Smart chapters
+
+  Bunny Stream can now use AI to automatically generate chapters and moments from your video's caption track.
+
+  [Learn more](/stream/smart-chapters)
+</Update>
+
+<Update label="2026-01-19" tags={["Edge Scripting", "New"]}>
+  ## WebSocket support
+
+  Edge Scripts now support WebSockets for low-latency, bidirectional real-time communication across the bunny.net CDN.
+
+  [Learn more](/scripting/websockets)
+</Update>
