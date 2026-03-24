@@ -59,6 +59,7 @@
                 "pages": [
                   "index",
                   "quickstart",
+                  "changelog",
                   "faq"
                 ]
               },
@@ -131,6 +132,7 @@
                 "pages": [
                   "cdn/index",
                   "cdn/quickstart",
+                  "cdn/changelog",
                   "cdn/regions",
                   "cdn/pricing"
                 ]
@@ -270,6 +272,7 @@
                 "pages": [
                   "magic-containers/index",
                   "magic-containers/quickstart",
+                  "magic-containers/changelog",
                   "magic-containers/templates",
                   "magic-containers/quick-deploy",
                   {
@@ -491,6 +494,7 @@
                 "pages": [
                   "stream/index",
                   "stream/quickstart",
+                  "stream/changelog",
                   "stream/authentication",
                   "stream/pricing"
                 ]
@@ -619,6 +623,7 @@
                 "pages": [
                   "storage/index",
                   "storage/quickstart",
+                  "storage/changelog",
                   "storage/pricing"
                 ]
               },
@@ -788,7 +793,8 @@
                 "group": "Documentation",
                 "pages": [
                   "dns/index",
-                  "dns/quickstart"
+                  "dns/quickstart",
+                  "dns/changelog"
                 ]
               },
               {
@@ -847,7 +853,8 @@
                 "group": "Documentation",
                 "pages": [
                   "database/index",
-                  "database/quickstart"
+                  "database/quickstart",
+                  "database/changelog"
                 ]
               },
               {
