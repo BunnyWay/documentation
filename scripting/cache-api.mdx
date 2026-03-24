@@ -83,6 +83,12 @@ Unlike the browser Cache API, Bunny Edge Scripting does not support options on `
 `request`
 The Request you are looking to delete. This can be a Request object or a URL.
 
+#### Return Value
+A `Promise` that resolves to `true` if the cache entry is scheduled to be deleted, or `false` otherwise.
+
+#### Exceptions
+Can throw an exception if there is an issue accessing the underlying cache storage.
+
 #### Examples
 
 ```typescript
@@ -124,6 +130,12 @@ Our implementation of the Cache API respects the following HTTP headers on the r
 #### Parameters
 `request`
 The Request for which you are attempting to find responses in the Cache. This can be a Request object or a URL.
+
+#### Return Value
+A `Promise` that resolves to the first `Response` that matches the request or to `undefined` if no match is found.
+
+#### Exceptions
+Can throw an exception if there is an issue accessing the underlying cache storage.
 
 #### Examples
 
@@ -168,6 +180,12 @@ The Request object or URL that you want to add to the cache.
 
 `response`
 The Response you want to match up to the request.
+
+#### Return Value
+A `Promise` that resolves with `undefined`.
+
+#### Exceptions
+Can throw an exception if there is an issue accessing the underlying cache storage.
 
 #### Examples
 
