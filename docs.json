@@ -56,7 +56,7 @@
             "groups": [
               {
                 "group": "bunny.net",
-                "pages": ["index", "quickstart", "faq"]
+                "pages": ["index", "quickstart", "faq", "changelog"]
               },
               {
                 "group": "Accounts & Billing",
@@ -126,7 +126,8 @@
                   "cdn/index",
                   "cdn/quickstart",
                   "cdn/regions",
-                  "cdn/pricing"
+                  "cdn/pricing",
+                  "cdn/changelog"
                 ]
               },
               {
@@ -275,7 +276,8 @@
                       "magic-containers/image-optimizer"
                     ]
                   },
-                  "magic-containers/pricing"
+                  "magic-containers/pricing",
+                  "magic-containers/changelog"
                 ]
               },
               {
@@ -470,7 +472,8 @@
                   "stream/index",
                   "stream/quickstart",
                   "stream/authentication",
-                  "stream/pricing"
+                  "stream/pricing",
+                  "stream/changelog"
                 ]
               },
               {
@@ -810,7 +813,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["database/index", "database/quickstart"]
+                "pages": ["database/index", "database/quickstart", "database/changelog"]
               },
               {
                 "group": "Connect",
