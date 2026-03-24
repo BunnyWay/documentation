@@ -1,0 +1,76 @@
+---
+title: Changelog
+description: Latest updates and improvements across the bunny.net platform.
+---
+
+<Update label="2026-03-18" tags={["New", "CDN"]}>
+  ## Edge rule pattern matching
+
+  Edge Rules now support Lua-based pattern matching for more precise control over request routing. Match structured values like URLs, headers, cookies, and query strings using advanced pattern syntax. [Learn more](/cdn/edge-rules/pattern-matching)
+</Update>
+
+<Update label="2026-03-18" tags={["New", "Stream"]}>
+  ## Vimeo2Bunny migration tool
+
+  Migrate your video library from Vimeo to bunny.net Stream using the Vimeo2Bunny CLI. Videos transfer directly from Vimeo to bunny.net without downloading to your machine. [Learn more](/stream/vimeo2bunny)
+</Update>
+
+<Update label="2026-03-17" tags={["New", "Database"]}>
+  ## Database Shell
+
+  Connect to Bunny Database from your terminal using the interactive SQL shell (`bsql`). It supports dot-commands, multiple output formats, sensitive column masking, and persistent history. [Learn more](/database/connect/database-shell)
+</Update>
+
+<Update label="2026-03-16" tags={["New", "Stream"]}>
+  ## Webhook signature validation
+
+  Verify the authenticity of Stream webhook callbacks using HMAC-SHA256 signature validation. This ensures webhook payloads are genuinely from bunny.net and haven't been tampered with. [Learn more](/stream/webhooks)
+</Update>
+
+<Update label="2026-03-12" tags={["New", "Stream"]}>
+  ## Player 2.0
+
+  The new Bunny Stream video player is here with a modern interface and improved performance. Player 2.0 is enabled by default for all new video libraries and can be activated for existing libraries in your player settings. [Learn more](/stream/player)
+</Update>
+
+<Update label="2026-03-10" tags={["New", "Magic Containers"]}>
+  ## Quick Deploy
+
+  Deploy containerized applications globally in seconds with a streamlined, single-form flow. Go from selecting an image to a running deployment without stepping through multiple configuration screens. [Learn more](/magic-containers/quick-deploy)
+</Update>
+
+<Update label="2026-03-10" tags={["New", "Magic Containers"]}>
+  ## Templates
+
+  Deploy pre-built application templates with just a few clicks. Templates include ready-to-run container images for popular frameworks and stacks, with some including sidecar databases. [Learn more](/magic-containers/templates)
+</Update>
+
+<Update label="2026-03-09" tags={["New", "CDN"]}>
+  ## JA4 fingerprinting
+
+  Identify clients based on TLS handshake characteristics with JA4 fingerprinting. The `CDN-JA4` request header is now available on all HTTPS requests, providing a reliable signal for detecting bots, automated traffic, and improving security decisions. [Learn more](/cdn/security/ja4-fingerprinting)
+</Update>
+
+<Update label="2026-02-19" tags={["New", "Magic Containers"]}>
+  ## Database tutorial guides
+
+  Step-by-step guides for running PostgreSQL, MariaDB, Redis, and ClickHouse on Magic Containers with persistent storage. [Learn more](/magic-containers/guides/postgresql)
+</Update>
+
+<Update label="2026-02-11" tags={["New", "Edge Scripting"]}>
+  ## Node.js file system API
+
+  Read and write files in Edge Scripts using the Node.js-compatible `node:fs` API. This brings familiar file system operations to the edge runtime. [Learn more](/scripting/node/fs/node-fs)
+</Update>
+
+<Update label="2026-02-11" tags={["New", "Stream"]}>
+  ## Mobile SDK token authentication
+
+  Secure video playback in mobile apps with embed view token authentication. Use a customer-managed backend or Edge Script to control which clients can play videos through the Stream Mobile SDKs. [Learn more](/stream/mobile-sdk-token-authentication)
+</Update>
+
+<Update label="2026-02-09" tags={["New", "Magic Containers"]}>
+  ## Graceful shutdown
+
+  Magic Containers now supports configurable graceful shutdown with SIGTERM signals and grace periods, giving your applications time to clean up resources and complete in-flight requests during rolling updates and scaling events. [Learn more](/magic-containers/graceful-shutdown)
+</Update>
