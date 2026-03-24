@@ -10,3 +10,5 @@ All containers run within a single pod. Because they share the same network name
 Containers can communicate via `localhost`. This improves the performance of the . For example, if you have an application with two containers: one running an API and another running Redis, the API container can access the Redis container through `localhost:<redis-port>`.
 
 Multiple containers cannot use the same port. Since the network namespace is shared, different containers cannot use the same port as they will collide and the pod will not start.
+
+[Persistent volumes](/magic-containers/persistent-volumes) can be shared between containers in the same pod. This allows containers to read and write to the same storage, which is useful for sharing files, caches, or other data across services.
