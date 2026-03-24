@@ -565,6 +565,7 @@
                       "stream/mobile-sdk-token-authentication"
                     ]
                   },
+                  "stream/expo-video",
                   "stream/embedding",
                   "stream/mp4-downloads"
                 ]
@@ -813,7 +814,11 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["database/index", "database/quickstart", "database/changelog"]
+                "pages": [
+                  "database/index",
+                  "database/quickstart",
+                  "database/changelog"
+                ]
               },
               {
                 "group": "Connect",
