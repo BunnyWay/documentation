@@ -59,7 +59,8 @@
                 "pages": [
                   "index",
                   "quickstart",
-                  "faq"
+                  "faq",
+                  "changelog"
                 ]
               },
               {
@@ -132,7 +133,8 @@
                   "cdn/index",
                   "cdn/quickstart",
                   "cdn/regions",
-                  "cdn/pricing"
+                  "cdn/pricing",
+                  "cdn/changelog"
                 ]
               },
               {
@@ -281,7 +283,8 @@
                       "magic-containers/image-optimizer"
                     ]
                   },
-                  "magic-containers/pricing"
+                  "magic-containers/pricing",
+                  "magic-containers/changelog"
                 ]
               },
               {
@@ -406,7 +409,8 @@
                 "pages": [
                   "scripting/index",
                   "scripting/quickstart",
-                  "scripting/pricing"
+                  "scripting/pricing",
+                  "scripting/changelog"
                 ]
               },
               {
@@ -492,7 +496,8 @@
                   "stream/index",
                   "stream/quickstart",
                   "stream/authentication",
-                  "stream/pricing"
+                  "stream/pricing",
+                  "stream/changelog"
                 ]
               },
               {
@@ -847,7 +852,8 @@
                 "group": "Documentation",
                 "pages": [
                   "database/index",
-                  "database/quickstart"
+                  "database/quickstart",
+                  "database/changelog"
                 ]
               },
               {
