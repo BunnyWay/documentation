@@ -75,6 +75,9 @@ CNAME records cannot be created at the apex level (`yourdomain.com`) per the DNS
 <Warning>
   Pull Zones do not support direct IP address connections. There is no stable
   anycast IP that can be used with A records to point a domain to a Pull Zone.
+  You can use a direct IP as the origin with a custom Host header, but pointing
+  an A record to a specific Bunny IP is not supported. See [How to set up a
+  direct IP origin URL](/cdn/edge-rules/ip-origin) for more information.
 </Warning>
 
 To use a root domain with your Pull Zone, you have two options:
