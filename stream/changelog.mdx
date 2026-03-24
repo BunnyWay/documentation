@@ -1,0 +1,60 @@
+---
+title: Changelog
+description: Latest updates and improvements to Bunny Stream.
+---
+
+<Update label="2026-03-18" tags={["New"]}>
+  ## Vimeo2Bunny migration tool
+
+  A new CLI tool is now available to help you migrate your video library from Vimeo to Bunny Stream. Vimeo2Bunny handles bulk transfers while preserving your video metadata.
+
+  [Learn more](/stream/vimeo2bunny)
+</Update>
+
+<Update label="2026-03-16" tags={["New"]}>
+  ## Webhook signature validation
+
+  Stream webhooks now support HMAC-SHA256 signature validation, allowing you to verify that webhook payloads are authentic and haven't been tampered with.
+
+  [Learn more](/stream/webhooks)
+</Update>
+
+<Update label="2026-03-12" tags={["New"]}>
+  ## Player 2.0
+
+  The new Bunny Player 2.0 is now generally available and enabled by default for all new libraries. It features a modern design, improved performance, and better customization options.
+
+  [Learn more](/stream/player)
+</Update>
+
+<Update label="2026-02-23" tags={["Improvement"]}>
+  ## Remote video fetch authentication
+
+  You can now include custom HTTP headers when fetching remote videos via the HTTP API, enabling authentication with protected sources using Basic Auth, API keys, or bearer tokens.
+
+  [Learn more](/stream/http-api)
+</Update>
+
+<Update label="2026-02-19" tags={["Improvement"]}>
+  ## HTTP fetch API rate limiting
+
+  The video fetch API now enforces rate limits and returns HTTP 429 responses when thresholds are exceeded, helping ensure reliable and fair usage across all accounts.
+
+  [Learn more](/stream/http-api)
+</Update>
+
+<Update label="2026-02-11" tags={["New"]}>
+  ## Mobile SDK token authentication
+
+  Token authentication is now available for the Bunny Stream Mobile SDK, allowing you to secure video playback in your mobile applications.
+
+  [Learn more](/stream/mobile-sdk-token-authentication)
+</Update>
+
+<Update label="2026-01-28" tags={["Improvement"]}>
+  ## MP4 fallback now supports 1080p
+
+  MP4 fallback downloads now support resolutions up to 1080p, up from the previous 720p maximum.
+
+  [Learn more](/stream/mp4-downloads)
+</Update>

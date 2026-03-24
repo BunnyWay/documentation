@@ -1,0 +1,28 @@
+---
+title: Changelog
+description: Latest updates and improvements to bunny.net CDN.
+---
+
+<Update label="2026-03-09" tags={["New"]}>
+  ## JA4 fingerprinting
+
+  You can now use JA4 TLS fingerprinting to identify and classify client connections. The JA4 fingerprint is available via the `CDN-JA4` request header, enabling advanced bot detection and security use cases.
+
+  [Learn more](/cdn/security/ja4-fingerprinting)
+</Update>
+
+<Update label="2026-03-09" tags={["Improvement"]}>
+  ## Logging API query parameters
+
+  The logging API now supports additional query parameters including `status`, `search`, and `download`, giving you more control over how you retrieve and filter your CDN logs.
+
+  [Learn more](/cdn/logging)
+</Update>
+
+<Update label="2026-03-09" tags={["Improvement"]}>
+  ## Permanent log storage updates
+
+  Permanent log storage now features improved part rotation with configurable thresholds, worker IDs in filenames, and zero-based part indexing for more predictable log file management.
+
+  [Learn more](/cdn/logging/permanent-storage)
+</Update>
