@@ -1,0 +1,58 @@
+---
+title: Changelog
+description: Latest updates and improvements to Bunny Stream.
+---
+
+<Update label="2026-03-20" tags={["Improvement"]}>
+  ## Transcribing language detection
+
+  Transcribing now includes details on how automatic language detection works, helping you understand how audio is analyzed during the first 30 seconds of your video. [Learn more](/stream/transcribing)
+</Update>
+
+<Update label="2026-03-18" tags={["New"]}>
+  ## Vimeo2Bunny migration tool
+
+  A new CLI tool that lets you migrate videos directly from Vimeo to Bunny Stream without downloading files locally. [Learn more](/stream/vimeo2bunny)
+</Update>
+
+<Update label="2026-03-16" tags={["New"]}>
+  ## Webhook signature validation
+
+  You can now verify the authenticity of webhook payloads using HMAC-SHA256 signatures sent in the `X-BunnyStream-Signature` header. [Learn more](/stream/webhooks)
+</Update>
+
+<Update label="2026-03-12" tags={["New"]}>
+  ## Player 2.0
+
+  The new Bunny Stream video player is now the default, featuring a modern interface and improved performance across all video libraries. [Learn more](/stream/player)
+</Update>
+
+<Update label="2026-02-25" tags={["Improvement"]}>
+  ## FairPlay SDK 4.x support
+
+  The Apple FairPlay Streaming deployment guide now includes SDK version 4.x configuration options. [Learn more](/stream/fairplay-deployment)
+</Update>
+
+<Update label="2026-02-23" tags={["Improvement"]}>
+  ## Remote video fetch authentication
+
+  Video fetch via URL now supports authentication, allowing you to import videos from protected sources. [Learn more](/stream/http-api)
+</Update>
+
+<Update label="2026-02-19" tags={["Improvement"]}>
+  ## Smart Moments
+
+  Smart Chapters now also supports generating moments automatically using AI and your video's caption track. [Learn more](/stream/smart-chapters)
+</Update>
+
+<Update label="2026-02-11" tags={["New"]}>
+  ## Mobile SDK token authentication
+
+  Token authentication documentation for Mobile SDKs is now available, covering the two authentication layers required for secure playback. [Learn more](/stream/mobile-sdk-token-authentication)
+</Update>
+
+<Update label="2026-01-28" tags={["Improvement"]}>
+  ## MP4 fallback now supports 1080p
+
+  MP4 fallback files now support up to 1080p quality, giving you higher-resolution downloads for environments where HLS is not available. [Learn more](/stream/mp4-downloads)
+</Update>

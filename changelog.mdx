@@ -1,0 +1,112 @@
+---
+title: Changelog
+description: The latest updates and improvements across all bunny.net products.
+---
+
+<Update label="2026-03-20" tags={["Improvement", "Stream"]}>
+  ## Transcribing language detection
+
+  Transcribing now includes details on how automatic language detection works, helping you understand how audio is analyzed during the first 30 seconds of your video. [Learn more](/stream/transcribing)
+</Update>
+
+<Update label="2026-03-18" tags={["New", "CDN"]}>
+  ## Edge Rule pattern matching
+
+  You can now use Lua-based pattern matching in Edge Rule conditions to match structured request values such as URLs, headers, cookies, and query strings. [Learn more](/cdn/edge-rules/pattern-matching)
+</Update>
+
+<Update label="2026-03-18" tags={["New", "Stream"]}>
+  ## Vimeo2Bunny migration tool
+
+  A new CLI tool that lets you migrate videos directly from Vimeo to Bunny Stream without downloading files locally. [Learn more](/stream/vimeo2bunny)
+</Update>
+
+<Update label="2026-03-17" tags={["New", "Database"]}>
+  ## Database Shell
+
+  Connect to your Bunny Database using `bsql`, a standalone interactive SQL shell with dot-commands, multiple output formats, and persistent history. [Learn more](/database/connect/database-shell)
+</Update>
+
+<Update label="2026-03-16" tags={["New", "Stream"]}>
+  ## Webhook signature validation
+
+  You can now verify the authenticity of Stream webhook payloads using HMAC-SHA256 signatures sent in the `X-BunnyStream-Signature` header. [Learn more](/stream/webhooks)
+</Update>
+
+<Update label="2026-03-12" tags={["New", "Stream"]}>
+  ## Player 2.0
+
+  The new Bunny Stream video player is now the default, featuring a modern interface and improved performance across all video libraries. [Learn more](/stream/player)
+</Update>
+
+<Update label="2026-03-10" tags={["New", "Magic Containers"]}>
+  ## Templates
+
+  Deploy pre-built application templates with a single click in Magic Containers, including options with sidecar databases for common stacks. [Learn more](/magic-containers/templates)
+</Update>
+
+<Update label="2026-03-10" tags={["New", "Magic Containers"]}>
+  ## Quick Deploy
+
+  A streamlined single-form deployment flow that lets you deploy containerized applications globally in seconds. [Learn more](/magic-containers/quick-deploy)
+</Update>
+
+<Update label="2026-03-09" tags={["New", "CDN"]}>
+  ## JA4 fingerprinting
+
+  Identify clients using TLS fingerprinting with JA4 support. Access the JA4 fingerprint through the `CDN-JA4` request header for bot detection, DDoS mitigation, and advanced security decisions. [Learn more](/cdn/security/ja4-fingerprinting)
+</Update>
+
+<Update label="2026-03-09" tags={["Improvement", "CDN"]}>
+  ## Logging updates
+
+  The CDN logging overview and permanent log storage documentation have been refreshed with improved clarity on log retention, archival workflows, and storage configuration. [Learn more](/cdn/logging)
+</Update>
+
+<Update label="2026-02-25" tags={["Improvement", "Stream"]}>
+  ## FairPlay SDK 4.x support
+
+  The Apple FairPlay Streaming deployment guide now includes SDK version 4.x configuration options. [Learn more](/stream/fairplay-deployment)
+</Update>
+
+<Update label="2026-02-23" tags={["New", "Terraform"]}>
+  ## Managing Pullzones for Edge Scripting
+
+  You can now manage the association between Edge Scripts and Pull Zones using Terraform. [Learn more](/terraform/edgescript-pullzone)
+</Update>
+
+<Update label="2026-02-23" tags={["Improvement", "Stream"]}>
+  ## Remote video fetch authentication
+
+  Video fetch via URL now supports authentication, allowing you to import videos from protected sources. [Learn more](/stream/http-api)
+</Update>
+
+<Update label="2026-02-19" tags={["Improvement", "Stream"]}>
+  ## Smart Moments
+
+  Smart Chapters now also supports generating moments automatically using AI and your video's caption track. [Learn more](/stream/smart-chapters)
+</Update>
+
+<Update label="2026-02-11" tags={["New", "Stream"]}>
+  ## Mobile SDK token authentication
+
+  Token authentication documentation for Stream Mobile SDKs is now available, covering the two authentication layers required for secure playback. [Learn more](/stream/mobile-sdk-token-authentication)
+</Update>
+
+<Update label="2026-02-09" tags={["New", "Magic Containers"]}>
+  ## Graceful shutdown
+
+  Magic Containers now supports graceful shutdown with SIGTERM signals and configurable grace periods during rolling updates, scale-down, and deletion. [Learn more](/magic-containers/graceful-shutdown)
+</Update>
+
+<Update label="2026-01-28" tags={["Improvement", "Stream"]}>
+  ## MP4 fallback now supports 1080p
+
+  MP4 fallback files now support up to 1080p quality, giving you higher-resolution downloads for environments where HLS is not available. [Learn more](/stream/mp4-downloads)
+</Update>
+
+<Update label="2026-01-19" tags={["New", "Edge Scripting"]}>
+  ## WebSocket support
+
+  Edge Scripts now support WebSockets for low-latency, bidirectional communication between your applications and users across the globe. [Learn more](/scripting/websockets)
+</Update>
