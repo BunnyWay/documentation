@@ -1,0 +1,204 @@
+---
+title: "Custom head HTML migration guide"
+---
+
+This guide explains how to migrate custom `<head>` markup from the legacy Bunny Stream player (Plyr-based) to the new Bunny Stream Player.\
+It is based on typical customization patterns seen across customer integrations.
+
+## **Introduction**
+
+The new Bunny Stream Player uses a modern Web Components architecture `media-chrome` + `bunny-*` instead of legacy Plyr internals.
+
+In practice, this means:
+
+- More explicit and readable player elements.
+- Easier CSS targeting through semantic element names and CSS variables.
+- Better long-term maintainability than deep framework-specific class selectors.
+
+Most migrations are straightforward:
+
+- Replace legacy `.plyr` and `[data-plyr="..."]` selectors.
+- Move styling to media-chrome and `bunny-*` element hooks.
+- Update any jQuery-dependent snippets to standard browser APIs.
+
+## **Before you start**
+
+- Make sure your Video Library is using the new Bunny Stream Player in `Stream > Video Library > Player Settings`.
+- Keep a copy of your current custom snippet so you can test changes incrementally.
+- Validate migrated changes in your embedded iframe on desktop and mobile.
+
+## **Who this is for**
+
+Customers who are using custom CSS and/or JavaScript in Bunny Stream `Player Settings` (custom head HTML/custom CSS snippet).
+
+## **What changed**
+
+Legacy player:
+
+- Included Plyr, jQuery, and legacy player scripts in `<head>`.
+- Exposed a Plyr-driven DOM `.plyr`, `.plyr__*`, `[data-plyr="..."]`.
+- Many snippets depended on those classes and globally available jQuery.
+
+New Bunny Stream Player:
+
+- Uses Web Components + media-chrome (`media-controller`, `media-*` controls, `bunny-*` components).
+- Does not render Plyr DOM/classes.
+- Does not bundle jQuery.
+- Still renders your custom head HTML (through the existing custom CSS field), but selectors and script hooks should be updated.
+
+## **How to migrate custom markup**
+
+1. Replace `.plyr` / `.plyr__*` selectors with media-chrome or `bunny-*` element selectors.
+2. Replace `[data-plyr="..."]` control targeting with concrete elements like `media-pip-button`, `media-fullscreen-button`, etc.
+3. Use CSS variables on `media-controller` and specific controls instead of deep, brittle selectors.
+4. Replace jQuery-dependent scripts with vanilla JavaScript.
+
+## **Legacy to new selector mapping**
+
+| Legacy selector              | New selector                                                                    |
+| :--------------------------- | :------------------------------------------------------------------------------ |
+| `.plyr`                      | `media-controller`                                                              |
+| `.plyr__controls`            | `media-control-bar`, `bunny-media-control-bar`                                  |
+| `.plyr__control`             | `Specific elements` (`media-play-button`, `media-mute-button`, `etc`.)          |
+| `.plyr__control--overlaid`   | `media-play-button.large-play`                                                  |
+| `.plyr__poster`              | `bunny-poster-image::part(img)`, `bunny-poster-video::part(video)`              |
+| `.plyr__captions`            | `bunny-captions-display` , `cue parts `(`[part='cue-display']`, `[part='cue']`) |
+| `.plyr__progress`            | `bunny-media-time-range`                                                        |
+| `.plyr__volume`              | `media-volume-range`                                                            |
+| `[data-plyr="play"]`         | `media-play-button`                                                             |
+| `[data-plyr="mute"]`         | `media-mute-button`                                                             |
+| `[data-plyr="captions"]`     | `media-captions-button`                                                         |
+| `[data-plyr="pip"]`          | `media-pip-button`                                                              |
+| `[data-plyr="fullscreen"]`   | `media-fullscreen-button`                                                       |
+| `[data-plyr="airplay"]`      | `media-airplay-button`                                                          |
+| `[data-plyr="settings"]`     | `bunny-settings-menu-button`                                                    |
+| `[data-plyr="rewind"]`       | `media-seek-backward-button`                                                    |
+| `[data-plyr="fast-forward"]` | `media-seek-forward-button`                                                     |
+
+## **Migration examples**
+
+### 1) Theme color and typography
+
+Legacy (Plyr):
+
+```html
+<style>
+:root {
+  --plyr-color-main: #1870c6;
+  --plyr-font-family: Lato;
+}
+</style>
+```
+
+New (Bunny Stream Player):
+
+```html
+<style>
+media-controller {
+  --media-secondary-color: #1870c6;
+  --media-font-family: Lato, sans-serif;
+}
+bunny-media-time-range {
+  --media-range-bar-color: #1870c6;
+}
+</style>
+```
+
+### 2) Rounded player and poster styling
+
+Legacy (Plyr):
+
+```html
+<style>
+.plyr { border-radius: 10px !important; overflow: hidden; }
+.plyr__poster { border-radius: 10px; background-size: cover !important; }
+</style>
+```
+
+New (Bunny Stream Player):
+
+```html
+<style>
+media-controller {
+  border-radius: 10px;
+  overflow: hidden;
+}
+bunny-poster-image::part(img),
+bunny-poster-video::part(video) {
+  border-radius: 10px;
+  object-fit: cover;
+}
+</style>
+```
+
+### 3) Hide specific controls (PiP and seek)
+
+Legacy (Plyr):
+```html
+<style>
+[data-plyr="pip"],
+[data-plyr="fast-forward"],
+[data-plyr="rewind"] {
+  display: none !important;
+}
+</style>
+```
+
+New (Bunny Stream Player):
+```html
+<style>
+media-pip-button,
+media-seek-forward-button,
+media-seek-backward-button {
+  display: none !important;
+}
+</style>
+```
+
+### 4) Captions styling
+
+Legacy (Plyr):
+
+```html
+<style>
+.plyr__captions { font-size: 20px; }
+:root {
+  --plyr-captions-background: rgba(0,0,0,.7);
+  --plyr-captions-text-color: #fff;
+}
+</style>
+```
+
+New (Bunny Stream Player):
+```html
+<style>
+bunny-captions-display {
+  --captions-font-size: 20px;
+  --captions-background: rgba(0,0,0,.7);
+  --captions-text-color: #fff;
+}
+[part='cue-display'] {
+  transition: transform .3s ease;
+}
+[part='cue'] {
+  border-radius: 4px;
+}
+</style>
+```
+
+## **Migration checklist**
+
+1. Search your custom snippet for `plyr`, `.plyr__`, and `data-plyr`.
+2. Replace selectors using the mapping table.
+3. Search for jQuery usage `($(, jQuery) `and rewrite to vanilla JavaScript.
+4. Verify on desktop and mobile, especially controls and captions.
+
+ 
+
+Migrating from Plyr-specific customizations to media-chrome element-based styling gives you a cleaner and more future-friendly setup.
+
+For the best results during migration:
+
+- Use your browser’s standard developer tools (Inspect Element, computed styles, and DOM viewer) to explore the current player structure.
+- Use stable element selectors and CSS variables over deep internal hooks.
+- Validate each customization incrementally so you can quickly isolate issues.

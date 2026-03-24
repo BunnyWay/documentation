@@ -1,5 +1,5 @@
 ---
-title: HTTP
+title: "HTTP"
 description: "Upload videos to Bunny Stream using the HTTP API."
 ---
 
@@ -41,17 +41,13 @@ POST https://video.bunnycdn.com/library/:libraryId/videos
 **Headers:**
 
 - `AccessKey`: Your **Stream API key**
-
 - `Accept: application/json`
-
 - `Content-Type: application/json`
 
 **Body Parameters:**
 
 - `title`: The name of your video. This will appear in the library UI.
-
 - `collectionId` (optional): The ID of a collection in your library where this video should be placed.
-
 - `thumbnailTime` (optional): The time (in milliseconds) to use when extracting the main video thumbnail.
 
 **Example request:**
@@ -70,9 +66,7 @@ curl --request POST
 The response will return a new video object, including:
 
 - A unique videoId (guid)
-
 - The libraryId
-
 - Basic metadata such as title and creation date
 
 At this stage, most fields (like encoding status or view count) will be empty or zero since the file hasn’t been uploaded yet.
@@ -119,7 +113,7 @@ This response indicates that the video was uploaded successfully.
 
 **File Format Requirements:**
 
-When uploading your video file, it must be sent as r**aw binary data,** not encoded or wrapped in JSON.
+When uploading your video file, it must be sent as **raw binary data,** not encoded or wrapped in JSON.
 
 Don’t base64 encode the file
 
@@ -137,16 +131,20 @@ If this step is skipped or misconfigured, the upload may silently fail or the vi
 
 # Fetching Videos from a Remote URL (Optional)
 
-If you already have a video file hosted on another platform or server, [Bunny.net](https://bunny.net/) allows you to fetch it directly using a remote URL, saving you the trouble of downloading and re-uploading manually.
-
-<Info>
-  The URL you provide must be publicly accessible. Protected URLs (e.g., those
-  requiring authentication, signed tokens, or expiring links) may not work
-  correctly, as Bunny.net’s fetch system cannot access content behind security
-  gates.
-</Info>
+If you already have a video file hosted on another platform or server, [bunny.net](https://bunny.net/) allows you to fetch it directly using a remote URL, saving you the trouble of downloading and re-uploading manually.
 
 The documentation link to this can be found in the [Stream API Reference](/api-reference/stream).
+
+<Info>
+  The URL you provide must be accessible by bunny.net's fetch system. You can use the optional `headers` parameter to include custom HTTP headers with the fetch request, enabling authentication methods such as:
+
+  - **Basic Authentication** (via the `Authorization` header)
+  - **Static API keys** (via custom headers like `X-API-Key` or `Authorization: Bearer <token>`)
+
+  However, more advanced authentication mechanisms such as signed URLs, expiring tokens, or time-limited access links are not supported, as the fetch is performed as a single server-side request and cannot handle dynamic token generation or multi-step authentication flows.
+
+  See the [Fetch Video API Reference](/api-reference/stream/manage-videos/fetch-video) for details on the `headers` parameter.
+</Info>
 
 **Endpoint:**
 
@@ -166,3 +164,11 @@ curl --request POST
 ```
 
 Once fetched, the video will be automatically added to your library and begin processing like a normal upload.
+
+## Queued Fetch Limit
+
+The fetch API supports a limited number of queued fetch requests per user at a time; this limit may vary by region, time, current load, and other factors. If you exceed the limit before previous fetches complete, the API will return **HTTP 429 (Too Many Requests)**. To avoid this, either wait for in-progress fetches to finish before submitting new ones, or implement retry logic with backoff when you receive a 429 response.
+
+<Info>
+  Ensure any `AuthorizationExpire` timestamp is at least 1 hour (3600 seconds) or longer to make sure uploads are completed before authorization expires.
+</Info>

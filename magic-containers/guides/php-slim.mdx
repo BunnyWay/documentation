@@ -9,11 +9,13 @@ import DeploySteps from "/snippets/magic-containers/deploy-steps.mdx";
 import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-info.mdx";
 import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
 import NextSteps from "/snippets/magic-containers/next-steps.mdx";
+import SignupInfo from "/snippets/magic-containers/signup-info.mdx";
 
 This guide walks you through building and deploying a PHP API using Slim Framework to Magic Containers with GitHub Container Registry. You'll need:
 
 - A GitHub account for source code and container registry
-- A bunny.net account with Magic Containers enabled
+
+<SignupInfo />
 
 ## Create the Slim app
 
@@ -157,13 +159,13 @@ You can connect your app to [Bunny Database](/database) directly from the dashbo
 3. Click **Add Secrets to Magic Container App**
 4. Select your app
 
-The `DB_URL` and `DB_TOKEN` environment variables are now available in your app. Install the libSQL PHP extension or use HTTP requests to connect:
+The `BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN` environment variables are now available in your app. Install the libSQL PHP extension or use HTTP requests to connect:
 
 ```php
 <?php
 
-$dbUrl = getenv('DB_URL');
-$dbToken = getenv('DB_TOKEN');
+$dbUrl = getenv('BUNNY_DATABASE_URL');
+$dbToken = getenv('BUNNY_DATABASE_AUTH_TOKEN');
 
 $ch = curl_init($dbUrl);
 curl_setopt_array($ch, [

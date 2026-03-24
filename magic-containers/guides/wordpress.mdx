@@ -1,0 +1,245 @@
+---
+title: "WordPress"
+description: "Deploy WordPress to Magic Containers"
+---
+
+import SignupInfo from "/snippets/magic-containers/signup-info.mdx";
+
+This guide walks you through deploying WordPress with MariaDB to Magic Containers. You can deploy using a one-click template or configure the containers manually.
+
+<SignupInfo />
+
+## Deploy with a template
+
+The fastest way to get WordPress running is to use the built-in template, which pre-configures WordPress and MariaDB with persistent volumes.
+
+<Steps>
+  <Step title="Open the WordPress template">
+    In the bunny.net dashboard, go to **Magic Containers** and open the [**WordPress template**](https://dash.bunny.net/magic-containers/templates/wordpress-0).
+  </Step>
+  <Step title="Name your app">
+    Give your application a name.
+  </Step>
+  <Step title="Configure environment variables">
+    The template includes pre-configured environment variables for WordPress and MariaDB. Review and update passwords as needed before deploying.
+  </Step>
+  <Step title="Choose a region">
+    Select the region where you want to deploy your application.
+
+    <Warning>
+      WordPress with MariaDB should use single region deployment with a single instance. Each pod gets its own dedicated volume with no data replication — this applies both across regions and within the same region.
+    </Warning>
+
+  </Step>
+  <Step title="Deploy">
+    Click **Deploy** to launch your WordPress site.
+  </Step>
+</Steps>
+
+Once deployed, open the endpoint URL to complete the WordPress installation wizard.
+
+## Deploy manually
+
+If you prefer to configure everything yourself, follow these steps.
+
+<Steps>
+  <Step title="Create a new app">
+    Go to the [bunny.net dashboard](https://dash.bunny.net), select **Magic Containers**, and click **Add App**. Select **Single region deployment**.
+
+    <Warning>
+      WordPress with a database should use single region deployment with a single instance. Each pod gets its own dedicated volume with no data replication — scaling to multiple pods or regions would result in separate, isolated databases each with their own data.
+    </Warning>
+
+  </Step>
+  <Step title="Add the WordPress container">
+    Click **Add Container** and configure the image:
+
+    - **Registry**: Docker Hub
+    - **Image**: `library/wordpress`
+    - **Tag**: `apache`
+
+    Configure the following environment variables:
+
+    | Variable | Value |
+    | --- | --- |
+    | `WORDPRESS_DB_HOST` | `127.0.0.1` |
+    | `WORDPRESS_DB_USER` | `wordpress` |
+    | `WORDPRESS_DB_PASSWORD` | a strong password |
+    | `WORDPRESS_DB_NAME` | `wordpress` |
+
+  </Step>
+  <Step title="Add a volume for WordPress content">
+    In the **Volumes** section of the WordPress container, add a volume:
+
+    - **Name**: `wp-content`
+    - **Mount path**: `/var/www/html/wp-content`
+
+    This persists your themes, plugins, and uploads across restarts.
+
+  </Step>
+  <Step title="Add the MariaDB container">
+    Click **Add Container** and configure a second container:
+
+    - **Registry**: Docker Hub
+    - **Image**: `library/mariadb`
+    - **Tag**: `latest`
+
+    Configure the following environment variables:
+
+    | Variable | Value |
+    | --- | --- |
+    | `MARIADB_ROOT_PASSWORD` | a strong root password |
+    | `MARIADB_USER` | `wordpress` |
+    | `MARIADB_PASSWORD` | same password as `WORDPRESS_DB_PASSWORD` |
+    | `MARIADB_DATABASE` | `wordpress` |
+
+  </Step>
+  <Step title="Add a volume for MariaDB">
+    In the **Volumes** section of the MariaDB container, add a volume:
+
+    - **Name**: `mariadb-data`
+    - **Mount path**: `/var/lib/mysql`
+
+    This ensures your database files persist across restarts and redeployments.
+
+  </Step>
+  <Step title="Add an endpoint">
+    Go to the **Endpoints** tab, click **Add New Endpoint**, and set the container port to `80`. Select the **WordPress** container.
+  </Step>
+  <Step title="Deploy">
+    Review your settings and click **Confirm and Create**.
+  </Step>
+  <Step title="Set the site URL">
+    After deploying, copy the WordPress endpoint URL from the **Endpoints** tab (e.g. `https://mc-xxx.bunny.run`). Go to the WordPress container's **Environment Variables** and add:
+
+    | Variable | Value |
+    | --- | --- |
+    | `WP_HOME` | your WordPress endpoint URL |
+    | `WP_SITEURL` | same as `WP_HOME` |
+
+    This prevents WordPress from auto-detecting the wrong URL, which can happen in multi-container setups where multiple endpoints exist. Redeploy after adding these variables.
+
+  </Step>
+</Steps>
+
+## Complete the installation
+
+<Info>
+  If you plan to use a custom domain, add it to your WordPress endpoint and
+  update `WP_HOME` and `WP_SITEURL` **before** running the installation wizard.
+  WordPress stores the site URL during installation, and completing setup on the
+  default `mc-xxx.bunny.run` URL means you'll need to update it later. See [Add
+  a custom hostname](#add-a-custom-hostname) for details.
+</Info>
+
+Once your app is running, open the WordPress endpoint URL in your browser. WordPress will display the installation wizard where you can:
+
+1. Select your language
+2. Set the site title
+3. Create an admin account
+4. Complete the installation
+
+After setup, your WordPress site is live and accessible at the endpoint URL.
+
+## Environment variables
+
+The WordPress container supports these key environment variables:
+
+| Variable                 | Description                                                       |
+| ------------------------ | ----------------------------------------------------------------- |
+| `WORDPRESS_DB_HOST`      | Database host (use `127.0.0.1` for multi-container)               |
+| `WORDPRESS_DB_USER`      | Database username                                                 |
+| `WORDPRESS_DB_PASSWORD`  | Database password                                                 |
+| `WORDPRESS_DB_NAME`      | Database name                                                     |
+| `WORDPRESS_TABLE_PREFIX` | Table prefix (default: `wp_`)                                     |
+| `WORDPRESS_DEBUG`        | Enable debug mode (`1` or `0`)                                    |
+| `WP_HOME`                | Full URL of the site (e.g. `https://mc-xxx.bunny.run`)            |
+| `WP_SITEURL`             | Full URL where WordPress is installed (usually same as `WP_HOME`) |
+
+<Warning>
+  Use `127.0.0.1` instead of `localhost` for the database host. Some clients
+  interpret `localhost` as a Unix socket connection, which will fail in a
+  container environment. Using `127.0.0.1` forces a TCP connection.
+</Warning>
+
+## Persistent volumes
+
+The WordPress template uses two persistent volumes:
+
+| Volume         | Mount path                 | Purpose                      |
+| -------------- | -------------------------- | ---------------------------- |
+| `wp-content`   | `/var/www/html/wp-content` | Themes, plugins, and uploads |
+| `mariadb-data` | `/var/lib/mysql`           | Database files               |
+
+Without these volumes, all data is lost when containers restart. See [persistent volumes](/magic-containers/persistent-volumes) for more details.
+
+<Info>
+  Always set strong passwords for database credentials, even if the database is
+  not exposed externally. Other containers in the same pod can access the
+  network, and a password protects against accidental or unauthorized access.
+</Info>
+
+## Manage files with File Browser
+
+Since Magic Containers don't provide SSH access, you can add [File Browser](https://filebrowser.org) as a sidecar container to manage themes, plugins, and uploads through a web UI.
+
+<Steps>
+  <Step title="Add the File Browser container">
+    In your app settings, click **Add Container** and configure:
+
+    - **Registry**: Docker Hub
+    - **Image**: `filebrowser/filebrowser`
+    - **Tag**: `latest`
+
+    Since WordPress already uses port `80`, configure File Browser to listen on a different port by setting the following environment variable:
+
+    | Variable | Value |
+    | --- | --- |
+    | `FB_PORT` | `8085` |
+
+  </Step>
+  <Step title="Mount the wp-content volume">
+    In the **Volumes** section, mount the same `wp-content` volume used by the WordPress container:
+
+    - **Name**: `wp-content`
+    - **Mount path**: `/srv`
+
+    File Browser serves files from `/srv` by default, so this gives it access to your WordPress themes, plugins, and uploads.
+
+  </Step>
+  <Step title="Add an endpoint">
+    Go to the **Endpoints** tab and add a new endpoint for the File Browser container on port `8085`.
+  </Step>
+  <Step title="Log in">
+    Open the File Browser endpoint URL in your browser. The default credentials are:
+
+    - **Username**: `admin`
+    - **Password**: `admin`
+
+    Change the password immediately after your first login under **Settings > User Management**.
+
+  </Step>
+</Steps>
+
+<Warning>
+  File Browser has its own authentication, but anyone with the endpoint URL can
+  reach the login page. Change the default password immediately and consider
+  removing the endpoint when you don't need file access.
+</Warning>
+
+## Add a custom hostname
+
+To use your own domain with WordPress:
+
+1. Go to your app's **Endpoints** tab
+2. Add a custom hostname to your CDN endpoint
+3. Update the `WP_HOME` and `WP_SITEURL` environment variables to your custom domain (e.g. `https://example.com`)
+
+<Warning>
+  If you installed WordPress using the default `mc-xxx.bunny.run` URL, you must
+  update `WP_HOME` and `WP_SITEURL` to match your custom domain. Without this,
+  WordPress will continue redirecting to the old URL for login, admin pages, and
+  internal links.
+</Warning>
+
+See [endpoints](/magic-containers/endpoints) for more details on configuring custom hostnames.

@@ -1,0 +1,197 @@
+---
+title: "Vimeo2Bunny CLI"
+---
+
+Migrate videos from Vimeo to [**bunny.net**](http://bunny.net) [**Stream**](https://bunny.net/stream/) with our [**Vimeo2Bunny Command Line Interface tool**](https://www.npmjs.com/package/vimeo2bunny). Videos transfer directly from Vimeo to [bunny.net](http://bunny.net) via Fetch Video URL, nothing is downloaded to your machine.
+
+<Info>
+  [If you don't have npx installed follow this installation guide for node.js / npm.](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+</Info>
+
+## Installation
+
+<Tabs>
+  <Tab title="npx (Recommended)">
+    Zero install required. Just prefix any command with `npx`:
+
+    ```bash
+    npx vimeo2bunny <command>
+    ```
+  </Tab>
+  <Tab title="npm Global Install">
+    ```bash
+    npm install -g vimeo2bunny
+    vimeo2bunny <command>
+    ```
+  </Tab>
+  <Tab title="From Source">
+    ```bash
+    git clone https://github.com/BunnyWay/vimeo2bunny.git
+    cd vimeo2bunny
+    npm install
+    npm run build
+    npm link  # makes `vimeo2bunny` available globally
+    ```
+  </Tab>
+</Tabs>
+
+## Quickstart
+
+<CodeGroup>
+
+```bash Terminal / Command line
+npx vimeo2bunny config
+npx vimeo2bunny migrate
+```
+
+</CodeGroup>
+
+## Setup
+
+You need API credentials from both Vimeo and bunny.net.
+
+### 1. Get your Vimeo Access Token
+
+1. Go to the [Vimeo Developer Portal](https://developer.vimeo.com) and log in.
+2. Click **Create an app** (or select an existing one).
+3. Enter any app name — avoid including "Vimeo" in the name as it will be rejected.
+4. Add a brief description (e.g. `Video migration tool`).
+5. Select **No** for "Will people besides you be able to access your app?"
+6. Accept the terms and click **Create App**.
+7. On your app's page, go to the **Authentication** section in the left sidebar.
+8. Under **Generate an access token**, select **Authenticated (you)** and check these scopes:
+
+| Scope | Required |
+| --- | --- |
+| Public | ✅ Required (pre-selected) |
+| Private | ✅ Required |
+| Video Files | ✅ Required |
+
+9. Click **Generate** your personal access token will appear under **Personal Access Tokens**.
+10. Copy the token immediately; you won't be able to see it again.
+
+<Warning>
+  The **Video Files** scope requires a paid Vimeo plan (Standard or above). Without it, the tool cannot access download links.
+</Warning>
+
+### 2. Get your bunny.net Stream Credentials
+
+1. Log in to [bunny.net](https://bunny.net).
+2. Open your **Stream library** → **API** section.
+3. Copy the **Library ID** and **Library API Key**.
+
+<Info>
+  This uses the library-specific API key, not the account-level key.
+</Info>
+
+### 3. Configure the CLI
+
+```bash
+vimeo2bunny config
+```
+
+You'll be prompted for your Vimeo token, bunny.net Library ID, and bunny.net API key.
+
+Alternatively, set environment variables (or use a `.env` file):
+
+```bash
+export VIMEO_ACCESS_TOKEN=your_token
+export BUNNY_LIBRARY_ID=your_library_id
+export BUNNY_LIBRARY_API_KEY=your_api_key
+```
+
+## Usage
+
+### List your Vimeo content
+
+```bash
+vimeo2bunny list             # everything
+vimeo2bunny list --folders   # folders only
+vimeo2bunny list --videos    # videos only
+```
+
+### Migrate videos
+
+```bash
+# Preview what will happen (no changes made)
+vimeo2bunny migrate --dry-run
+
+# Run the migration
+vimeo2bunny migrate
+
+# Migrate a specific folder
+vimeo2bunny migrate --folder <vimeo-folder-id>
+
+# Adjust parallel transfers (default: 3, max: 20)
+vimeo2bunny migrate --concurrency 5
+
+# Resume an interrupted migration
+vimeo2bunny migrate --resume
+```
+
+### Check migration status
+
+```bash
+vimeo2bunny status
+```
+
+## How It Works
+
+<Steps>
+  <Step title="Discover">
+    Fetches all videos and folders from your Vimeo account.
+  </Step>
+  <Step title="Map Folders">
+    Creates bunny.net collections matching your Vimeo folder structure.
+  </Step>
+  <Step title="Transfer">
+    For each video, gets a download URL from Vimeo and sends it to bunny.net's fetch endpoint. bunny.net downloads directly from Vimeo.
+  </Step>
+  <Step title="Metadata">
+    Copies title, description, and tags to the bunny.net video.
+  </Step>
+  <Step title="Track">
+    Saves progress to `~/.vimeo2bunny/migration-state.json` so migrations can be resumed.
+  </Step>
+</Steps>
+
+## What Gets Migrated
+
+| Vimeo | bunny.net | Notes |
+| --- | --- | --- |
+| `name` | `title` | Direct mapping |
+| `description` | `metaTags[description]` | Stored as meta tag |
+| `tags` | `metaTags[keywords]` | Comma-separated |
+| `Folder` | `Collection` | Folder → Collection |
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title='"No download link available"'>
+    Your Vimeo plan must be **Standard or above** to access download links.
+  </Accordion>
+
+  <Accordion title='"URL expired"'>
+    Vimeo download URLs expire after 24 hours. The tool fetches fresh URLs, but very long pauses may require restarting the migration.
+  </Accordion>
+
+  <Accordion title='"Rate limited"'>
+    Handled automatically with exponential backoff. No action needed.
+  </Accordion>
+</AccordionGroup>
+
+### Your Responsibilities
+
+By using this tool, you acknowledge and agree that:
+
+- **You are migrating your own content.** You must not use this tool to access, download, or transfer content you do not own or have permission to use, or to circumvent Vimeo's terms or technical restrictions.
+- **You are responsible for compliance with Vimeo's terms.** You are using your own Vimeo credentials and acting on your own behalf. To the fullest extent permitted by law, bunny.net shall not be liable for any indirect or consequential damages, loss of data, loss of business, or any actions taken by Vimeo or other third parties as a result of your use of this tool.
+- **You are solely responsible** for how you use this tool and for ensuring that your use does not violate any third-party terms or laws.
+
+bunny.net provides this tool for convenience only and makes no representations regarding its compatibility with Vimeo's terms of service, which may change at any time. bunny.net assumes no liability for any consequences arising from your use or misuse of this tool, including but not limited to account suspension or termination by Vimeo.
+
+If you are unsure whether your use case complies with Vimeo's terms, consult Vimeo's documentation or seek legal advice before proceeding.
+
+## Legal Notice
+
+This tool is provided as-is under the [MIT License](https://opensource.org/licenses/MIT). It is not affiliated with, endorsed by, or sponsored by Vimeo, Inc. "Vimeo" is a registered trademark of Vimeo, Inc. Use of the name is purely descriptive.

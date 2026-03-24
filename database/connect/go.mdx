@@ -53,8 +53,8 @@ import (
 
 func main() {
 	url := fmt.Sprintf("%s?authToken=%s",
-		os.Getenv("DB_URL"),
-		os.Getenv("DB_TOKEN"),
+		os.Getenv("BUNNY_DATABASE_URL"),
+		os.Getenv("BUNNY_DATABASE_AUTH_TOKEN"),
 	)
 
 	db, err := sql.Open("libsql", url)

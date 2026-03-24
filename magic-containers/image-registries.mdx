@@ -5,6 +5,10 @@ description: "Connect public or private container registries to Magic Containers
 
 Magic Containers supports both public and private container registries from Docker Hub and GitHub.
 
+<Info>
+Magic Containers only supports images built for the **linux/amd64** architecture. When building your container image, ensure you target this platform using `--platform linux/amd64`.
+</Info>
+
 ## Public registries
 
 Public Docker Hub and GitHub container registries are already connected to Magic Containers. You can deploy any public image without additional configuration.

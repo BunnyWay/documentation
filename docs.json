@@ -90,11 +90,23 @@
                       "billing/add-funds",
                       "billing/auto-recharge",
                       "billing/billing-history",
-                      "billing/sales-tax",
-                      "billing/affiliate-program"
+                      "billing/sales-tax"
+                    ]
+                  },
+                  {
+                    "group": "Affiliate Program",
+                    "pages": [
+                      "billing/affiliate-program",
+                      "billing/affiliate-faq",
+                      "billing/affiliate-best-practices",
+                      "billing/affiliate-guidelines"
                     ]
                   }
                 ]
+              },
+              {
+                "group": "Product",
+                "pages": ["product-release-stages"]
               }
             ]
           }
@@ -102,8 +114,8 @@
       },
       {
         "product": "CDN",
-        "description": "Accelerate and protect your content globally",
         "icon": "zap",
+        "description": "Accelerate and protect your content globally",
         "tabs": [
           {
             "tab": "Documentation",
@@ -141,7 +153,8 @@
                       "cdn/edge-rules/ip-origin",
                       "cdn/edge-rules/dynamic-variables",
                       "cdn/edge-rules/variable-expansion",
-                      "cdn/edge-rules/ordering"
+                      "cdn/edge-rules/ordering",
+                      "cdn/edge-rules/pattern-matching"
                     ]
                   },
                   {
@@ -165,7 +178,8 @@
                           "cdn/security/token-authentication/basic",
                           "cdn/security/token-authentication/advanced"
                         ]
-                      }
+                      },
+                      "cdn/security/ja4-fingerprinting"
                     ]
                   },
                   {
@@ -239,8 +253,8 @@
       },
       {
         "product": "Magic Containers",
-        "description": "Deploy any app anywhere with Docker",
         "icon": "box",
+        "description": "Deploy any app anywhere with Docker",
         "tabs": [
           {
             "tab": "Documentation",
@@ -250,6 +264,8 @@
                 "pages": [
                   "magic-containers/index",
                   "magic-containers/quickstart",
+                  "magic-containers/templates",
+                  "magic-containers/quick-deploy",
                   {
                     "group": "Use Cases",
                     "hidden": true,
@@ -329,10 +345,7 @@
                   },
                   {
                     "group": "PHP",
-                    "pages": [
-                      "magic-containers/guides/laravel",
-                      "magic-containers/guides/php-slim"
-                    ]
+                    "pages": ["magic-containers/guides/php-slim"]
                   },
                   {
                     "group": "Python",
@@ -344,7 +357,21 @@
                       "magic-containers/guides/astro",
                       "magic-containers/guides/nextjs",
                       "magic-containers/guides/nuxt",
-                      "magic-containers/guides/ruby-on-rails"
+                      "magic-containers/guides/ruby-on-rails",
+                      "magic-containers/guides/laravel"
+                    ]
+                  },
+                  {
+                    "group": "Apps",
+                    "pages": ["magic-containers/guides/wordpress"]
+                  },
+                  {
+                    "group": "Databases",
+                    "pages": [
+                      "magic-containers/guides/clickhouse",
+                      "magic-containers/guides/mariadb",
+                      "magic-containers/guides/postgresql",
+                      "magic-containers/guides/redis"
                     ]
                   }
                 ]
@@ -355,8 +382,8 @@
       },
       {
         "product": "Edge Scripting",
-        "description": "Deploy serverless code at the edge",
         "icon": "code",
+        "description": "Deploy serverless code at the edge",
         "tabs": [
           {
             "tab": "Documentation",
@@ -431,8 +458,8 @@
       },
       {
         "product": "Stream",
-        "description": "Video streaming and delivery platform",
         "icon": "video",
+        "description": "Video streaming and delivery platform",
         "tabs": [
           {
             "tab": "Documentation",
@@ -513,8 +540,9 @@
                     "group": "Bunny Player",
                     "pages": [
                       "stream/player-settings",
-                      "stream/beta-player",
-                      "stream/playback-api"
+                      "stream/player",
+                      "stream/playback-api",
+                      "stream/custom-head-html-migration-guide"
                     ]
                   },
                   {
@@ -541,6 +569,10 @@
               {
                 "group": "Reference",
                 "pages": [
+                  {
+                    "group": "Tools",
+                    "pages": ["stream/vimeo2bunny"]
+                  },
                   "stream/statistics",
                   "stream/webhooks",
                   "stream/api-reference"
@@ -552,8 +584,8 @@
       },
       {
         "product": "Storage",
-        "description": "Global object storage",
         "icon": "hard-drive",
+        "description": "Global object storage",
         "tabs": [
           {
             "tab": "Documentation",
@@ -620,8 +652,8 @@
       },
       {
         "product": "Shield",
-        "description": "Stay protected and online no matter what",
         "icon": "shield",
+        "description": "Stay protected and online no matter what",
         "tabs": [
           {
             "tab": "Documentation",
@@ -669,8 +701,8 @@
       },
       {
         "product": "Optimizer",
-        "description": "Automatic image and web optimization.",
         "icon": "sparkles",
+        "description": "Automatic image and web optimization.",
         "tabs": [
           {
             "tab": "Documentation",
@@ -707,14 +739,6 @@
                   "optimizer/burrow-smart-routing",
                   "optimizer/html-prerender"
                 ]
-              },
-              {
-                "group": "Reference",
-                "pages": [
-                  "optimizer/statistics",
-                  "optimizer/faq",
-                  "optimizer/limits"
-                ]
               }
             ]
           }
@@ -722,8 +746,8 @@
       },
       {
         "product": "DNS",
-        "description": "Unlock the true power of DNS with an ultra-fast scriptable platform",
         "icon": "globe",
+        "description": "Unlock the true power of DNS with an ultra-fast scriptable platform",
         "tabs": [
           {
             "tab": "Documentation",
@@ -757,8 +781,8 @@
       },
       {
         "product": "AI Image Generation",
-        "description": "Generate unique images on the fly using AI",
         "icon": "wand-sparkles",
+        "description": "Generate unique images on the fly using AI",
         "tabs": [
           {
             "tab": "Documentation",
@@ -778,8 +802,8 @@
       },
       {
         "product": "Database",
-        "description": "Serverless SQLite over HTTP",
         "icon": "database",
+        "description": "Serverless SQLite over HTTP",
         "tabs": [
           {
             "tab": "Documentation",
@@ -801,6 +825,7 @@
                       "database/connect/dotnet"
                     ]
                   },
+                  "database/connect/database-shell",
                   "database/connect/sql-api",
                   "database/connect/scripting",
                   "database/connect/magic-containers"
@@ -820,8 +845,8 @@
       },
       {
         "product": "Integrations",
-        "description": "Third-party integrations and plugins",
         "icon": "puzzle",
+        "description": "Third-party integrations and plugins",
         "tabs": [
           {
             "tab": "WordPress",
@@ -833,8 +858,8 @@
             ]
           },
           {
-            "hidden": true,
             "tab": "cPanel",
+            "hidden": true,
             "groups": [
               {
                 "group": "cPanel",
@@ -851,8 +876,8 @@
       },
       {
         "product": "API Reference",
-        "description": "Build & Integrate with the Platform API",
         "icon": "square-terminal",
+        "description": "Build & Integrate with the Platform API",
         "tabs": [
           {
             "tab": "Documentation",
@@ -868,71 +893,71 @@
               },
               {
                 "group": "Core Platform API",
-                "pages": [
-                  "api-reference/core/index",
-                  "api-reference/core/errors"
-                ],
                 "openapi": {
                   "source": "https://core-api-public-docs.b-cdn.net/docs/v3/public.json",
                   "directory": "api-reference/core"
-                }
+                },
+                "pages": [
+                  "api-reference/core/index",
+                  "api-reference/core/errors"
+                ]
               },
               {
                 "group": "Origin Errors API",
-                "pages": ["api-reference/origin-errors/index"],
                 "openapi": {
                   "source": "/api-reference/origin-errors/openapi.json",
                   "directory": "api-reference/origin-errors"
-                }
+                },
+                "pages": ["api-reference/origin-errors/index"]
               },
               {
                 "group": "Storage API",
-                "pages": ["api-reference/storage/index"],
                 "openapi": {
                   "source": "/api-reference/storage/openapi.json",
                   "directory": "api-reference/storage"
-                }
+                },
+                "pages": ["api-reference/storage/index"]
               },
               {
                 "group": "Stream API",
-                "pages": ["api-reference/stream/index"],
                 "openapi": {
                   "source": "https://video.bunnycdn.com/openapi/bunnynet-video-api.public.json",
                   "directory": "api-reference/stream"
-                }
+                },
+                "pages": ["api-reference/stream/index"]
               },
               {
                 "group": "Shield API",
-                "pages": ["api-reference/shield/index"],
                 "openapi": {
                   "source": "https://api.bunny.net/shield/docs/v1/swagger.json",
                   "directory": "api-reference/shield"
-                }
+                },
+                "pages": ["api-reference/shield/index"]
               },
               {
                 "group": "Edge Scripting API",
-                "pages": ["api-reference/scripting/index"],
                 "openapi": {
                   "source": "https://core-api-public-docs.b-cdn.net/docs/v3/compute.json",
                   "directory": "api-reference/scripting"
-                }
+                },
+                "pages": ["api-reference/scripting/index"]
               },
               {
                 "group": "Magic Containers API",
-                "pages": ["api-reference/magic-containers/overview"],
                 "openapi": {
                   "source": "https://api-mc.opsbunny.net/docs/public/swagger.json",
                   "directory": "api-reference/magic-containers"
-                }
+                },
+                "pages": ["api-reference/magic-containers/overview"]
               },
               {
                 "group": "Database API",
-                "pages": ["api-reference/database/index"],
+                "hidden": true,
                 "openapi": {
                   "source": "https://api.bunny.net/database/docs/private/api.json",
                   "directory": "api-reference/database"
                 },
-                "hidden": true
+                "pages": ["api-reference/database/index"]
               }
             ]
           },
@@ -953,7 +978,10 @@
               },
               {
                 "group": "Guides",
-                "pages": ["terraform/importing-stream-library"]
+                "pages": [
+                  "terraform/importing-stream-library",
+                  "terraform/edgescript-pullzone"
+                ]
               }
             ]
           }
@@ -1554,12 +1582,12 @@
     },
     {
       "source": "/docs/stream-beta-video-player",
-      "destination": "/stream/beta-player",
+      "destination": "/stream/player",
       "permanent": true
     },
     {
       "source": "/docs/new-video-player",
-      "destination": "/stream/beta-player",
+      "destination": "/stream/player",
       "permanent": true
     },
     {
@@ -1879,17 +1907,17 @@
     },
     {
       "source": "/docs/affiliate-competition-rules",
-      "destination": "/accounts-and-billing/affiliate-program",
+      "destination": "/billing/affiliate-program",
       "permanent": true
     },
     {
       "source": "/docs/best-practices-manual",
-      "destination": "/accounts-and-billing/affiliate-program",
+      "destination": "/billing/affiliate-best-practices",
       "permanent": true
     },
     {
       "source": "/docs/affiliate-guidelines",
-      "destination": "/accounts-and-billing/affiliate-program",
+      "destination": "/billing/affiliate-guidelines",
       "permanent": true
     },
     {
@@ -1939,7 +1967,7 @@
     },
     {
       "source": "/docs/frequently-asked-questions",
-      "destination": "/",
+      "destination": "/billing/affiliate-faq",
       "permanent": true
     },
     {
@@ -3110,6 +3138,11 @@
     {
       "source": "/api-reference/shield/accesslists/post-shieldshield-zone-accesslists",
       "destination": "/api-reference/shield/accesslists/post-shieldshield-zone-access-lists",
+      "permanent": true
+    },
+    {
+      "source": "/stream/beta-player",
+      "destination": "/stream/player",
       "permanent": true
     }
   ]

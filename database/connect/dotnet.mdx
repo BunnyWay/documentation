@@ -85,8 +85,8 @@ Create an instance of your database context and apply migrations:
 
 ```csharp
 var db = new AppDb(
-    Environment.GetEnvironmentVariable("DB_URL"),
-    Environment.GetEnvironmentVariable("DB_TOKEN")
+    Environment.GetEnvironmentVariable("BUNNY_DATABASE_URL"),
+    Environment.GetEnvironmentVariable("BUNNY_DATABASE_AUTH_TOKEN")
 );
 
 await db.ApplyMigrationsAsync();

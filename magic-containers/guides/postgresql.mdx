@@ -1,0 +1,193 @@
+---
+title: "PostgreSQL"
+description: "Deploy PostgreSQL to Magic Containers"
+---
+
+import SignupInfo from "/snippets/magic-containers/signup-info.mdx";
+
+This guide walks you through deploying PostgreSQL to Magic Containers, either as a standalone container or as part of a [multi-container](/magic-containers/multi-container) app alongside your application.
+
+<SignupInfo />
+
+## Quickstart
+
+<Steps>
+  <Step title="Create a new app">
+    Go to the [bunny.net dashboard](https://dash.bunny.net), select **Magic Containers**, and click **Add App**. Select **Single region deployment**.
+
+    <Warning>
+      Databases should use single region deployment with a single instance. Each pod gets its own dedicated volume with no data replication — this applies both across regions and within the same region. Scaling to multiple pods or regions would result in separate, isolated databases each with their own data.
+    </Warning>
+
+  </Step>
+  <Step title="Add the PostgreSQL container">
+    Click **Add Container** and configure the image:
+
+    - **Registry**: Docker Hub
+    - **Image**: `library/postgres`
+    - **Tag**: `17-alpine`
+
+    Magic Containers will automatically detect the required endpoint and environment variables for the image. Configure the environment variables as needed:
+
+      - `POSTGRES_USER` = `postgres`
+      - `POSTGRES_PASSWORD` = a strong password
+      - `POSTGRES_DB` = `app`
+      - `PGDATA` = `/var/lib/postgresql/data/pgdata`
+
+  </Step>
+  <Step title="Add a persistent volume">
+    In the **Volumes** section of the container settings, add a volume:
+
+    - **Name**: `postgres-data`
+    - **Mount path**: `/var/lib/postgresql/data`
+
+    This ensures your database files persist across restarts and redeployments. Without a volume, all data is lost when the container stops.
+
+    See [persistent volumes](/magic-containers/persistent-volumes) for more details on volume behavior and pricing.
+
+  </Step>
+  <Step title="Deploy">
+    Review your settings and click **Confirm and Create**.
+  </Step>
+</Steps>
+
+<Info>
+  Always set a strong `POSTGRES_PASSWORD`, even if the database is not exposed
+  externally. Other containers in the same pod can access the network, and a
+  password protects against accidental or unauthorized access.
+</Info>
+
+<Warning>
+  You must set `PGDATA` to a subdirectory of the volume mount (e.g.
+  `/var/lib/postgresql/data/pgdata`). PostgreSQL requires the data directory to
+  be empty on first initialization, and the volume mount point itself may
+  contain system files.
+</Warning>
+
+## Environment variables
+
+The official PostgreSQL image supports these environment variables:
+
+| Variable            | Description                             | Default                    |
+| ------------------- | --------------------------------------- | -------------------------- |
+| `POSTGRES_USER`     | Superuser name                          | `postgres`                 |
+| `POSTGRES_PASSWORD` | Superuser password (required)           | -                          |
+| `POSTGRES_DB`       | Default database created on first start | `postgres`                 |
+| `PGDATA`            | Data directory inside the container     | `/var/lib/postgresql/data` |
+
+## Connect from your app
+
+In a [multi-container](/magic-containers/multi-container) setup, your app and PostgreSQL share the same localhost network. Connect using `127.0.0.1` and the default port `5432`.
+
+<Tabs>
+  <Tab title="Connection string">
+    ```
+    postgresql://postgres:YOUR_PASSWORD@127.0.0.1:5432/app
+    ```
+  </Tab>
+  <Tab title="Node.js">
+    ```javascript
+    import pg from "pg";
+
+    const pool = new pg.Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
+
+    const result = await pool.query("SELECT NOW()");
+    ```
+
+  </Tab>
+  <Tab title="Go">
+    ```go
+    import (
+    	"database/sql"
+    	"os"
+
+    	_ "github.com/lib/pq"
+    )
+
+    db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+    if err != nil {
+    	log.Fatal(err)
+    }
+    defer db.Close()
+    ```
+
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import psycopg2
+    import os
+
+    conn = psycopg2.connect(os.environ["DATABASE_URL"])
+    cur = conn.cursor()
+    cur.execute("SELECT NOW()")
+    ```
+
+  </Tab>
+  <Tab title="PHP">
+    ```php
+    <?php
+
+    $dsn = "pgsql:host=127.0.0.1;port=5432;dbname=app";
+    $pdo = new PDO($dsn, 'postgres', getenv('POSTGRES_PASSWORD'));
+
+    $result = $pdo->query('SELECT NOW()')->fetch();
+    ```
+
+  </Tab>
+</Tabs>
+
+## Multi-container example
+
+A typical setup pairs PostgreSQL with your application. When configuring the app, add two containers:
+
+### App container
+
+- **Image**: your app image (e.g. `ghcr.io/<your-username>/my-app:latest`)
+- **Endpoint**: the port your app listens on
+- **Environment variables**:
+  - `DATABASE_URL` = `postgresql://postgres:YOUR_PASSWORD@127.0.0.1:5432/app`
+
+### PostgreSQL container
+
+- **Image**: `postgres:17-alpine`
+- **Volume**: mount path `/var/lib/postgresql/data`
+- **Environment variables**:
+  - `POSTGRES_USER` = `postgres`
+  - `POSTGRES_PASSWORD` = a strong password
+  - `POSTGRES_DB` = `app`
+  - `PGDATA` = `/var/lib/postgresql/data/pgdata`
+
+<Note>
+  Both containers share the same localhost network, so your app connects to
+  PostgreSQL at `127.0.0.1:5432`. See [multi-container
+  apps](/magic-containers/multi-container) for more details.
+</Note>
+
+## External access
+
+To connect to PostgreSQL from outside Magic Containers (e.g. from your local terminal), add an [Anycast endpoint](/magic-containers/endpoints):
+
+1. Go to your app's **Endpoints** tab and click **Add New Endpoint**
+2. Select **Anycast** as the type
+3. Set **Container Port** to `5432`
+4. Set **Exposed Port** to `5432`
+5. Click **Add Endpoint**
+
+Then connect using the Anycast IP and the **exposed port**:
+
+```bash
+psql -h <anycast-ip> -p <exposed-port> -U postgres -d app
+```
+
+<Note>
+  The exposed port and container port may differ. When connecting externally,
+  always use the exposed port shown in your endpoint configuration.
+</Note>
+
+<Warning>
+  Exposing your database to the internet means anyone with the credentials can
+  connect. Use a strong password and consider removing the Anycast endpoint when
+  external access is no longer needed.
+</Warning>

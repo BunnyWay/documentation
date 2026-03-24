@@ -1,10 +1,10 @@
 ---
 title: Logging
 sidebarTitle: Overview
-description: "Access raw request logs via API or dashboard with up to 3 days retention."
+description: "Access raw request logs via API or dashboard with a 3 day log retention policy."
 ---
 
-Bunny CDN provides raw request logs for all Pull Zones. Logs appear in near real-time for high-traffic zones, with up to a 5-minute delay for quieter zones. Searchable logs are retained for 3 days.
+bunny.net provides raw request logs for all Pull Zones with Logging Enabled. Logs appear in near real-time and they're retained for 3 days.
 
 For longer retention, use [Permanent Log Storage](/cdn/logging/permanent-storage) to automatically archive logs to Edge Storage.
 
@@ -37,23 +37,26 @@ Accept-Encoding: gzip
 ```bash
 curl -H "AccessKey: your-api-key" \
      -H "Accept-Encoding: gzip" \
-     "https://logging.bunnycdn.com/03-13-24/60367.log"
+     "https://logging.bunnycdn.com/03-07-26/1337.log"
 ```
 
 ### Query parameters
 
-| Parameter | Description                                    |
-| --------- | ---------------------------------------------- |
-| `start`   | Number of log lines to skip from the beginning |
-| `end`     | End index of log lines to return               |
-| `order`   | Sort order: `asc` or `desc` (default)          |
+| Parameter  | Description                                                                  |
+| ---------- | ---------------------------------------------------------------------------- |
+| `start`    | Number of log lines to skip from the beginning                               |
+| `end`      | End index of log lines to return                                             |
+| `sort`     | Sort order: `asc` or `desc` (default)                                        |
+| `status`   | Filter by status codes: `2`, `3`, `4`, `5` (e.g. `2,3,4,5` (default) or `2`) |
+| `search`   | Filter log lines by string match                                             |
+| `download` | Whether to return logs as a downloadable file (default: `true`)              |
 
 ## Log format
 
 Each request is stored as a pipe-separated line:
 
 ```
-HIT|200|1507167062421|412|390|163.172.53.229|-|https://example.b-cdn.net/video.mp4|WA|Mozilla/5.0...|322b688bd63fb63f2babe9de30a5d262|DE
+HIT|200|1507167062421|412|390|163.172.53.0|-|https://example.b-cdn.net/video.mp4|WA|Mozilla/5.0...|322b688bd63fb63f2babe9de30a5d262|DE
 ```
 
 | Field         | Description                       |
@@ -75,11 +78,11 @@ HIT|200|1507167062421|412|390|163.172.53.229|-|https://example.b-cdn.net/video.m
 
 Extended logging adds three additional fields (contact support to enable):
 
-| Field                | Description                             |
-| -------------------- | --------------------------------------- |
-| Body Bytes Sent      | Response body bytes (excluding headers) |
-| Range Header         | HTTP Range header value                 |
-| Authorization Header | Authorization header value              |
+| Field                | Description                                    |
+| -------------------- | ---------------------------------------------- |
+| Body Bytes Sent      | Response body bytes (excluding headers)        |
+| Range Header         | HTTP Range header value                        |
+| Authorization Header | Authorization header value (Encrypted at rest) |
 
 ## HTTP status codes
 
@@ -132,16 +135,5 @@ Extended logging adds three additional fields (contact support to enable):
 
 <Warning>
   502 and 504 errors typically indicate the CDN edge nodes cannot reach your
-  origin. Check if your origin firewall is blocking Bunny CDN IPs.
+  origin. Check if your origin firewall is blocking bunny.net IPs.
 </Warning>
-
-## Cache statistics
-
-The dashboard shows two important cache metrics:
-
-| Metric                 | Description                                                          |
-| ---------------------- | -------------------------------------------------------------------- |
-| Request Cache Hit Rate | Percentage of requests served directly from CDN edge cache           |
-| Bandwidth Hit Rate     | Percentage of bandwidth served from CDN cache vs fetched from origin |
-
-Higher percentages indicate better CDN efficiency—more content served from edge nodes without contacting your origin.
