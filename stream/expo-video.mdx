@@ -1,0 +1,265 @@
+---
+title: "Expo Video"
+description: "Play Bunny Stream videos natively in Expo apps using expo-video."
+hidden: true
+---
+
+For most Expo apps, [Bunny Player](/docs/stream-embedding-videos) is the recommended way to play Bunny Stream videos. Embed it in a WebView and you get adaptive playback, analytics, captions, chapters, and dashboard branding out of the box.
+
+Bunny Player supports features like Picture-in-Picture and background audio on the web, but when you embed it inside a native app, the WebView becomes the bottleneck. The OS won't float a WebView for PiP, won't let it play audio in the background, and won't show it on the lock screen. Those are platform-level features that require a native player.
+
+[`expo-video`](https://docs.expo.dev/versions/latest/sdk/video/) plays Bunny Stream's HLS URLs directly through the native video stack (AVPlayer on iOS, ExoPlayer on Android), giving your app full access to the platform APIs that a WebView can't reach.
+
+<Info>
+  `expo-video` requires a development build. It won't work in Expo Go. Run `npx
+  expo run:ios` or `npx expo run:android`, or build with EAS.
+</Info>
+
+## Quickstart
+
+<Steps>
+  <Step title="Install expo-video">
+    ```bash
+    npx expo install expo-video
+    ```
+  </Step>
+  <Step title="Configure the plugin">
+    Add the `expo-video` config plugin to your `app.json` to enable Picture-in-Picture and background playback:
+
+    ```json
+    {
+      "expo": {
+        "plugins": [
+          [
+            "expo-video",
+            {
+              "supportsBackgroundPlayback": true,
+              "supportsPictureInPicture": true
+            }
+          ]
+        ]
+      }
+    }
+    ```
+
+  </Step>
+  <Step title="Play a video">
+    Every processed Bunny Stream video has an HLS playlist at a predictable URL:
+
+    ```
+    https://{pullZone}/{videoId}/playlist.m3u8
+    ```
+
+    Find your Pull Zone hostname under **Stream > API** in the bunny.net dashboard.
+
+    Pass the HLS URL to `useVideoPlayer` and render a `VideoView`:
+
+    ```tsx
+    import { useVideoPlayer, VideoView } from "expo-video";
+    import { useWindowDimensions } from "react-native";
+
+    const PULL_ZONE = "vz-abc123-456.b-cdn.net";
+    const VIDEO_ID = "your-video-guid";
+
+    export default function VideoScreen() {
+      const { width } = useWindowDimensions();
+
+      const player = useVideoPlayer(
+        `https://${PULL_ZONE}/${VIDEO_ID}/playlist.m3u8`,
+        (p) => {
+          p.loop = false;
+        }
+      );
+
+      return (
+        <VideoView
+          player={player}
+          style={{ width, height: width * (9 / 16) }}
+          contentFit="contain"
+          allowsPictureInPicture
+          fullscreenOptions={{ enable: true }}
+        />
+      );
+    }
+    ```
+
+    That's it. The player handles adaptive bitrate selection automatically, choosing the best quality for the device's connection.
+
+  </Step>
+</Steps>
+
+<Note>
+  A complete working example with a video list screen, detail screen, chapter
+  navigation, and caption picker is available at
+  [bunny-stream-expo](https://github.com/jamie-at-bunny/bunny-stream-expo).
+</Note>
+
+## URL structure
+
+Every processed video is accessible via predictable URLs built from your Pull Zone hostname and the video's GUID:
+
+| Resource         | URL pattern                                        |
+| ---------------- | -------------------------------------------------- |
+| HLS playlist     | `https://{pullZone}/{videoId}/playlist.m3u8`       |
+| Thumbnail        | `https://{pullZone}/{videoId}/{thumbnailFileName}` |
+| Animated preview | `https://{pullZone}/{videoId}/preview.webp`        |
+| MP4 fallback     | `https://{pullZone}/{videoId}/play_{height}p.mp4`  |
+| Captions         | `https://{pullZone}/{videoId}/captions/{lang}.vtt` |
+
+## Fetching video metadata
+
+The [Get Video](/api-reference/stream/manage-videos/get-video) endpoint returns metadata including title, dimensions, chapters, captions, and available resolutions. Use this to build your UI around the player:
+
+```ts
+const LIBRARY_ID = "12345";
+const API_KEY = "your-library-api-key";
+
+async function getVideo(videoId: string) {
+  const res = await fetch(
+    `https://video.bunnycdn.com/library/${LIBRARY_ID}/videos/${videoId}`,
+    { headers: { AccessKey: API_KEY } },
+  );
+  if (!res.ok) throw new Error(`Bunny API error: ${res.status}`);
+  return res.json();
+}
+```
+
+<Warning>
+  The `AccessKey` is a secret. In a production app, proxy API calls through your
+  backend so the key never reaches the client.
+</Warning>
+
+The response includes fields you can pass directly to the player:
+
+```ts
+const source = {
+  uri: `https://${PULL_ZONE}/${videoId}/playlist.m3u8`,
+  contentType: "hls",
+  metadata: {
+    title: video.title,
+    artwork: video.thumbnailFileName
+      ? `https://${PULL_ZONE}/${videoId}/${video.thumbnailFileName}`
+      : undefined,
+  },
+};
+
+const player = useVideoPlayer(source, (p) => {
+  p.staysActiveInBackground = true;
+  p.showNowPlayingNotification = true;
+});
+```
+
+Setting `metadata.title` and `metadata.artwork` populates the lock screen and now playing notification on both iOS and Android.
+
+## Playback controls
+
+`useEvent` from `expo` tracks playback state reactively:
+
+```tsx
+import { useEvent } from "expo";
+
+const { isPlaying } = useEvent(player, "playingChange", {
+  isPlaying: player.playing,
+});
+
+<Pressable onPress={() => (isPlaying ? player.pause() : player.play())}>
+  <Text>{isPlaying ? "Pause" : "Play"}</Text>
+</Pressable>;
+```
+
+## Progress tracking
+
+Set `timeUpdateEventInterval` on the player and listen for `timeUpdate` events using `useEventListener` from `expo`:
+
+```tsx
+import { useEventListener } from "expo";
+
+// During player setup
+const player = useVideoPlayer(source, (p) => {
+  p.timeUpdateEventInterval = 1; // fire every second
+});
+
+// In your component
+useEventListener(player, "timeUpdate", ({ currentTime }) => {
+  // Save to your backend
+  // e.g. saveProgress(videoId, currentTime, player.duration)
+});
+```
+
+## Chapter navigation
+
+The [Get Video](/api-reference/stream/manage-videos/get-video) response includes a `chapters` array with `title`, `start`, and `end` times in seconds. Since `expo-video` exposes a writable `currentTime` property, chapter navigation is straightforward:
+
+```tsx
+<Pressable
+  onPress={() => {
+    player.currentTime = chapter.start;
+    if (!player.playing) player.play();
+  }}
+>
+  <Text>{chapter.title}</Text>
+</Pressable>
+```
+
+The same pattern works for `moments`. Use `moment.timestamp` instead of `chapter.start`.
+
+## Captions
+
+Bunny Stream includes subtitle tracks in the HLS manifest. After the source loads, `expo-video` exposes `availableSubtitleTracks` and a settable `subtitleTrack` property:
+
+```tsx
+import { useEventListener } from "expo";
+import { type SubtitleTrack } from "expo-video";
+
+const [tracks, setTracks] = useState<SubtitleTrack[]>([]);
+
+useEventListener(player, "sourceLoad", ({ availableSubtitleTracks }) => {
+  setTracks(availableSubtitleTracks);
+});
+
+// Set the active subtitle track (or null to disable)
+const selectTrack = (track: SubtitleTrack | null) => {
+  player.subtitleTrack = track;
+};
+```
+
+## DRM
+
+If your library has [MediaCage Enterprise DRM](/stream/quickstart-mediacage-enterprise) enabled, `expo-video` can request play licenses directly from Bunny's license servers using the `drm` source option.
+
+<Info>
+  The license endpoints apply the same referrer protection and token
+  authentication as the player embed view. If either is enabled in your library
+  settings, include the corresponding headers or query parameters in your
+  requests. See [Embedded view token auth](/stream/token-authentication) for
+  details.
+</Info>
+
+On iOS, use FairPlay with Bunny's certificate and license endpoints:
+
+```ts
+const LIBRARY_ID = "12345";
+
+const source = {
+  uri: `https://${PULL_ZONE}/${videoId}/playlist.m3u8`,
+  contentType: "hls",
+  drm: {
+    type: "fairplay",
+    licenseServer: `https://video.bunnycdn.com/FairPlay/${LIBRARY_ID}/license/?videoId=${videoId}`,
+    certificateUrl: `https://video.bunnycdn.com/FairPlay/${LIBRARY_ID}/certificate`,
+  },
+};
+```
+
+On Android, use Widevine:
+
+```ts
+const source = {
+  uri: `https://${PULL_ZONE}/${videoId}/playlist.m3u8`,
+  contentType: "hls",
+  drm: {
+    type: "widevine",
+    licenseServer: `https://video.bunnycdn.com/WidevineLicense/${LIBRARY_ID}/${videoId}`,
+  },
+};
+```
