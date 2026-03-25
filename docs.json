@@ -395,7 +395,8 @@
                 "pages": [
                   "scripting/index",
                   "scripting/quickstart",
-                  "scripting/pricing"
+                  "scripting/pricing",
+                  "scripting/changelog"
                 ]
               },
               {
