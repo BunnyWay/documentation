@@ -207,7 +207,14 @@ ${firstEntry}
   writeFileSync(filePath, content);
 }
 
+// Map product names to their actual folder prefixes in the repo.
+// Built from docs.json where the folder prefix doesn't match a naive slugify.
+const PRODUCT_FOLDER_MAP = {
+  "Edge Scripting": "scripting",
+};
+
 function slugifyProduct(name) {
+  if (PRODUCT_FOLDER_MAP[name]) return PRODUCT_FOLDER_MAP[name];
   return name.toLowerCase().replace(/\s+/g, "-");
 }
 
