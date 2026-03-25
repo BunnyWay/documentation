@@ -1,0 +1,32 @@
+---
+title: W3 Total Cache
+description: Set up bunny.net CDN with WordPress using the W3 Total Cache plugin.
+mode: "wide"
+---
+
+This guide walks you through configuring bunny.net CDN on your WordPress site using W3 Total Cache.
+
+<Steps>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net), create a new Pull Zone, and set the origin URL to your WordPress site. For more details, see [How to create your first Pull Zone](/cdn/quickstart).
+  </Step>
+  <Step title="Install W3 Total Cache">
+    In your WordPress admin, go to **Plugins → Add New**. Search for **W3 Total Cache**, click **Install Now**, then **Activate**.
+  </Step>
+  <Step title="Enable the CDN module">
+    Go to **Performance → General Settings** and scroll down to the **CDN** section. Set the CDN Type to **Generic Mirror**, check the **Enable** checkbox, and click **Save all settings**.
+
+    <Frame>
+      ![W3 Total Cache General Settings CDN section](/images/integrations/wordpress/w3tc-general-settings.jpg)
+    </Frame>
+  </Step>
+  <Step title="Configure the CDN hostname">
+    Go to **Performance → CDN** in the sidebar. Scroll down to the configuration section and enter your Pull Zone hostname in the **Replace site's hostname with** field. Click **Save all settings**.
+
+    <Frame>
+      ![W3 Total Cache CDN hostname configuration](/images/integrations/wordpress/w3tc-cdn-hostname.jpg)
+    </Frame>
+  </Step>
+</Steps>
+
+Your WordPress site is now serving static assets through bunny.net CDN.

@@ -234,9 +234,7 @@
                   {
                     "group": "Troubleshooting",
                     "pages": [
-                      "cdn/troubleshooting/acceleration-not-enabled",
                       "cdn/troubleshooting/unexpected-redirects",
-                      "cdn/troubleshooting/wordpress-static-urls",
                       "cdn/troubleshooting/cookies-still-sent",
                       "cdn/troubleshooting/run-traceroute",
                       "cdn/troubleshooting/still-slow",
@@ -626,10 +624,6 @@
                 "group": "Guides",
                 "pages": [
                   {
-                    "group": "WordPress",
-                    "pages": ["storage/move-files-to-wordpress"]
-                  },
-                  {
                     "group": "Static Site Hosting",
                     "pages": [
                       "storage/static-site-hosting/index",
@@ -849,14 +843,35 @@
       {
         "product": "Integrations",
         "icon": "puzzle",
-        "description": "Third-party integrations and plugins",
+        "description": "Official and third-party plugins and integrations",
         "tabs": [
           {
             "tab": "WordPress",
             "groups": [
               {
                 "group": "WordPress",
-                "pages": ["integrations/wordpress"]
+                "pages": [
+                  "integrations/wordpress/index",
+                  "integrations/wordpress/quickstart",
+                  "integrations/wordpress/content-offloading",
+                  "integrations/wordpress/move-files-to-wordpress",
+                  "integrations/wordpress/support-policy"
+                ]
+              },
+              {
+                "group": "Third-Party Plugins",
+                "pages": [
+                  "integrations/wordpress/wp-rocket",
+                  "integrations/wordpress/w3-total-cache"
+                ]
+              },
+              {
+                "group": "Troubleshooting",
+                "pages": [
+                  "integrations/wordpress/troubleshooting-static-urls",
+                  "integrations/wordpress/troubleshooting-plugin-conflicts",
+                  "integrations/wordpress/troubleshooting-acceleration-not-enabled"
+                ]
               }
             ]
           },
@@ -2100,7 +2115,12 @@
     },
     {
       "source": "/docs/wordpress-plugin-support-policy",
-      "destination": "/integrations/wordpress",
+      "destination": "/integrations/wordpress/support-policy",
+      "permanent": true
+    },
+    {
+      "source": "/storage/move-files-to-wordpress",
+      "destination": "/integrations/wordpress/move-files-to-wordpress",
       "permanent": true
     },
     {
