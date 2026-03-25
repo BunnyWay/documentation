@@ -43,16 +43,16 @@ Verify that an incoming webhook request was sent by Bunny Stream and has not bee
 
 Signed webhook POSTs use signature version **`v1`**. Each signed request includes the following headers:
 
-| Header                              | Value                                     |
-| ----------------------------------- | ----------------------------------------- |
-| `X-BunnyStream-Signature-Version`   | `v1`                                      |
-| `X-BunnyStream-Signature-Algorithm` | `hmac-sha256`                             |
-| `X-BunnyStream-Signature`           | Lowercase hex HMAC-SHA256 (64 characters) |
+| Header | Value |
+| --- | --- |
+| `X-BunnyStream-Signature-Version` | `v1` |
+| `X-BunnyStream-Signature-Algorithm` | `hmac-sha256` |
+| `X-BunnyStream-Signature` | Lowercase hex HMAC-SHA256 (64 characters) |
 
 The signature is an **HMAC-SHA256** of the exact raw request body, using the webhook signing secret as the key, encoded as a **lowercase hex string**.
 
 <Note>
-  The signing secret is your library's **Read-Only API key**. Validation must use the **exact raw body** as received — do not parse and re-serialize the JSON body.
+  [The signing secret is your library's **Read-Only API key**. Validation must use the **exact raw body** as received — do not parse and re-serialize the JSON body.](https://docs.bunny.net/api-reference/core/stream-video-library/get-video-library#response-read-only-api-key-one-of-0)
 </Note>
 
 ## How the signature is built
@@ -64,7 +64,7 @@ signature  = lowercase_hex( HMAC-SHA256( utf8(body), utf8(signatureSecret) ) )
 ```
 
 - **body**: The exact raw HTTP request body bytes as received.
-- **signatureSecret**: Your library's **Read-Only API key**, encoded as UTF-8.
+- **signatureSecret**: Your library's [**Read-Only API key**](https://docs.bunny.net/api-reference/core/stream-video-library/get-video-library#response-read-only-api-key-one-of-0), encoded as UTF-8.
 - **Output**: 64-character lowercase hexadecimal string.
 - The URL, timestamp, HTTP method, and headers are **not** part of the `v1` signature.
 
@@ -140,7 +140,6 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
 });
 ```
 
-
 ```python Python
 import os
 import hmac
@@ -178,7 +177,6 @@ def webhook():
     data = request.get_json()
     # ... handle webhook
 ```
-
 
 ```csharp C#
 using System.Security.Cryptography;
