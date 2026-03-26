@@ -1,0 +1,124 @@
+---
+title: Changelog
+description: Latest updates and improvements across bunny.net products.
+hidden: true
+---
+
+<Update label="2026-03-24" tags={["Magic Containers", "(Improvement)"]}>
+  ## Persistent Volumes are now generally available
+
+Persistent Volumes have moved out of preview and are now generally available with updated throughput limits and improved documentation. [Learn more](/magic-containers/persistent-volumes)
+
+</Update>
+
+<Update label="2026-03-20" tags={["Stream", "(Improvement)"]}>
+  ## Language detection for transcribing
+
+Transcribing now includes language detection information, making it easier to manage multi-language video content. [Learn more](/stream/transcribing)
+
+</Update>
+
+<Update label="2026-03-18" tags={["Stream", "(New)"]}>
+  ## Vimeo2Bunny CLI
+
+A new command-line tool to migrate videos from Vimeo to Bunny Stream. Videos transfer directly from Vimeo via Fetch Video URL — nothing is downloaded to your machine. [Learn more](/stream/vimeo2bunny)
+
+</Update>
+
+<Update label="2026-03-18" tags={["CDN", "(New)"]}>
+  ## Edge Rule pattern matching
+
+Use Lua-based pattern matching in Edge Rule conditions to match structured request values such as URLs, headers, cookies, and query strings. [Learn more](/cdn/edge-rules/pattern-matching)
+
+</Update>
+
+<Update label="2026-03-17" tags={["Database", "(New)"]}>
+  ## Database Shell
+
+The Bunny Database Shell (`bsql`) is a standalone, interactive SQL shell for querying and managing your database from the terminal. [Learn more](/database/connect/database-shell)
+
+</Update>
+
+<Update label="2026-03-16" tags={["Stream", "(New)"]}>
+  ## Webhook signature validation
+
+Validate webhook signatures to verify that incoming notifications are genuinely from Bunny Stream and have not been tampered with. [Learn more](/stream/webhooks)
+
+</Update>
+
+<Update label="2026-03-12" tags={["Stream", "(New)"]}>
+  ## Player 2.0
+
+The new Bunny Stream video player is here with a modern interface and improved performance. It's enabled by default for all new video libraries. [Learn more](/stream/player)
+
+</Update>
+
+<Update label="2026-03-10" tags={["Magic Containers", "(New)"]}>
+  ## Templates
+
+Deploy pre-built application templates with just a few clicks. Each template includes a ready-to-run container image, and some include a sidecar database. [Learn more](/magic-containers/templates)
+
+</Update>
+
+<Update label="2026-03-10" tags={["Magic Containers", "(New)"]}>
+  ## Quick Deploy
+
+A streamlined deployment flow that lets you go from zero to deployed in seconds, with everything presented in a single form. [Learn more](/magic-containers/quick-deploy)
+
+</Update>
+
+<Update label="2026-03-09" tags={["CDN", "(New)"]}>
+  ## JA4 fingerprinting
+
+JA4 TLS fingerprinting is now available on all pull zones. Identify clients based on their TLS handshake characteristics via the `CDN-JA4` request header. [Learn more](/cdn/security/ja4-fingerprinting)
+
+</Update>
+
+<Update label="2026-03-09" tags={["CDN", "(Improvement)"]}>
+  ## Logging and Permanent Log Storage updates
+
+Logging documentation has been updated with improved details on log retention, and Permanent Log Storage now includes specifics on part rotation and compression. [Learn more](/cdn/logging/permanent-storage)
+
+</Update>
+
+<Update label="2026-02-11" tags={["Stream", "(New)"]}>
+  ## Mobile SDK token authentication
+
+Token authentication is now available for the Stream Mobile SDKs, adding an extra layer of security for mobile video playback. [Learn more](/stream/mobile-sdk-token-authentication)
+
+</Update>
+
+<Update label="2026-02-11" tags={["Edge Scripting", "(New)"]}>
+  ## Node.js file system API
+
+A Node.js-compatible file system API is now available in Edge Scripts, allowing you to read and write files directly at the edge. [Learn more](/scripting/node/fs/node-fs)
+
+</Update>
+
+<Update label="2026-02-09" tags={["Magic Containers", "(New)"]}>
+  ## Graceful Shutdown
+
+Magic Containers now supports graceful shutdown with SIGTERM signals and configurable grace periods during rolling updates and scaling events. [Learn more](/magic-containers/graceful-shutdown)
+
+</Update>
+
+<Update label="2026-01-23" tags={["Stream", "(New)"]}>
+  ## Smart Chapters
+
+Automatically generate chapters for your videos using AI. Smart Chapters analyzes your video's caption track to create chapter markers. [Learn more](/stream/smart-chapters)
+
+</Update>
+
+<Update label="2026-01-20" tags={["Database", "(New)"]}>
+  ## SQL API
+
+Execute SQL queries against your Bunny Database over HTTP using the SQL API. [Learn more](/database/connect/sql-api)
+
+</Update>
+
+<Update label="2026-01-19" tags={["Database", "(New)"]}>
+  ## Database SDKs
+
+Connect to Bunny Database using official SDKs for TypeScript, Go, Rust, and .NET. [Learn more](/database/connect/typescript)
+
+</Update>

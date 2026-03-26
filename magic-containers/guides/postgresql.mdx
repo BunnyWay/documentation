@@ -191,3 +191,51 @@ psql -h <anycast-ip> -p <exposed-port> -U postgres -d app
   connect. Use a strong password and consider removing the Anycast endpoint when
   external access is no longer needed.
 </Warning>
+
+## TimescaleDB
+
+[TimescaleDB](https://www.timescale.com/) is a PostgreSQL extension for time-series data. It uses the same base configuration as PostgreSQL with a different image.
+
+### Configuration
+
+Use the official TimescaleDB image instead of the standard PostgreSQL image:
+
+- **Registry**: Docker Hub
+- **Image**: `timescale/timescaledb`
+- **Tag**: `latest-pg17` (or another [supported tag](https://hub.docker.com/r/timescale/timescaledb/tags))
+
+Configure the same environment variables as PostgreSQL:
+
+- `POSTGRES_USER` = `postgres`
+- `POSTGRES_PASSWORD` = a strong password
+- `POSTGRES_DB` = `app`
+- `PGDATA` = `/var/lib/postgresql/data/pgdata`
+
+<Warning>
+  The `PGDATA` environment variable is required when mounting a volume at
+  `/var/lib/postgresql/data`. The mount point may contain a `lost+found`
+  directory or other system files, which causes TimescaleDB initialization to
+  fail. Setting `PGDATA` to a subdirectory (e.g., `/var/lib/postgresql/data/pgdata`)
+  resolves this issue.
+</Warning>
+
+### Volume configuration
+
+Add a persistent volume with the same mount path as PostgreSQL:
+
+- **Name**: `timescaledb-data`
+- **Mount path**: `/var/lib/postgresql/data`
+
+### Connection
+
+TimescaleDB uses the same connection methods as PostgreSQL. Connect using port `5432`:
+
+```
+postgresql://postgres:YOUR_PASSWORD@127.0.0.1:5432/app
+```
+
+After connecting, enable the TimescaleDB extension in your database:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS timescaledb;
+```
