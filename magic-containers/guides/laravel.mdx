@@ -1,0 +1,342 @@
+---
+title: "Laravel + MariaDB"
+description: "Deploy a Laravel application with MariaDB to Magic Containers"
+---
+
+import GitHubActionsWorkflow from "/snippets/magic-containers/github-actions-workflow.mdx";
+import DockerCliSteps from "/snippets/magic-containers/docker-cli-steps.mdx";
+import DeploySteps from "/snippets/magic-containers/deploy-steps.mdx";
+import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-info.mdx";
+import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
+import NextSteps from "/snippets/magic-containers/next-steps.mdx";
+
+This guide walks you through building and deploying a Laravel application with MariaDB to Magic Containers with GitHub Container Registry. You'll need:
+
+- A GitHub account for source code and container registry
+- A bunny.net account with Magic Containers enabled
+
+## Create the Laravel app
+
+Create a new Laravel project:
+
+```bash
+composer create-project laravel/laravel app-laravel
+cd app-laravel
+```
+
+Update your `.env` to use MariaDB:
+
+```env .env
+DB_CONNECTION=mariadb
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=laravel
+DB_PASSWORD=laravel
+```
+
+<Warning>
+  Use `127.0.0.1` instead of `localhost` for `DB_HOST`. Magic Containers share a
+  localhost network between containers, but PHP/PDO interprets `localhost` as a
+  Unix socket connection which will fail. Using `127.0.0.1` forces a TCP
+  connection.
+</Warning>
+
+## Create the Nginx config
+
+Create `docker/nginx.conf`:
+
+```nginx docker/nginx.conf
+server {
+    listen 80;
+    server_name _;
+    root /var/www/html/public;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.php;
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_hide_header X-Powered-By;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
+
+## Create the supervisord config
+
+The app container runs both PHP-FPM and Nginx using supervisord. Create `docker/supervisord.conf`:
+
+```ini docker/supervisord.conf
+[supervisord]
+nodaemon=true
+logfile=/dev/stdout
+logfile_maxbytes=0
+
+[program:php-fpm]
+command=php-fpm -F
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+
+[program:nginx]
+command=nginx -g "daemon off;"
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+```
+
+## Create the entrypoint script
+
+Create `docker/entrypoint.sh`:
+
+```bash docker/entrypoint.sh
+#!/bin/sh
+cd /var/www/html
+
+touch .env
+
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+echo "Waiting for database..."
+until php artisan db:monitor --databases=mariadb > /dev/null 2>&1; do
+    sleep 1
+done
+echo "Database is ready."
+
+php artisan migrate --force
+
+exec supervisord -c /etc/supervisord.conf
+```
+
+<Note>
+  The entrypoint creates an empty `.env` file so Laravel reads configuration
+  from the container's environment variables instead of a file. Config caching
+  happens at startup (not at build time) so it picks up the runtime environment.
+  The script also waits for MariaDB to be ready before running migrations.
+</Note>
+
+## Create the Dockerfile
+
+```dockerfile Dockerfile
+FROM php:8.4-fpm-alpine
+
+RUN apk add --no-cache nginx supervisor curl \
+    && docker-php-ext-install pdo pdo_mysql
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+
+COPY . .
+
+RUN composer dump-autoload --optimize
+
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+COPY docker/nginx.conf /etc/nginx/http.d/default.conf
+COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 80
+
+CMD ["/entrypoint.sh"]
+```
+
+<Warning>
+  Do not run `php artisan config:cache` in the Dockerfile. Caching config at
+  build time bakes in the build environment's values, which won't match the
+  runtime environment variables set in Magic Containers. The entrypoint script
+  handles config caching at startup instead.
+</Warning>
+
+Create a `.dockerignore` to keep the `.env` file out of the image:
+
+```text .dockerignore
+.env
+.env.example
+.git
+node_modules
+vendor
+storage/logs/*
+tests
+.github
+```
+
+## Create the docker-compose file
+
+Create `docker-compose.yml` for local development:
+
+```yaml docker-compose.yml
+services:
+  app:
+    build: .
+    ports:
+      - "8000:80"
+    environment:
+      - DB_CONNECTION=mariadb
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=laravel
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: laravel
+      MARIADB_USER: laravel
+      MARIADB_PASSWORD: laravel
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  dbdata:
+```
+
+<Note>
+  The `docker-compose.yml` uses `DB_HOST=db` (the service name) for local
+  development. In Magic Containers, the `bunny.json` sets `DB_HOST=127.0.0.1`
+  since containers share the same localhost network.
+</Note>
+
+## Run locally
+
+```bash
+docker compose up --build
+```
+
+Visit [http://localhost:8000](http://localhost:8000).
+
+## Generate an app key
+
+Generate a key to use in production:
+
+```bash
+php artisan key:generate --show
+```
+
+Keep this value for the next step.
+
+## Build and push to GitHub Container Registry
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    Create `.github/workflows/deploy.yml` to automatically build and push on every commit to `main`:
+
+    <GitHubActionsWorkflow />
+
+    Push your code to trigger the workflow:
+
+    ```bash
+    git init
+    git add .
+    git commit -m "Initial commit"
+    git remote add origin https://github.com/YOUR_USERNAME/app-laravel.git
+    git push -u origin main
+    ```
+
+  </Tab>
+  <Tab title="Docker CLI">
+    Build and push manually from your local machine.
+
+    <DockerCliSteps imageName="app-laravel" />
+
+  </Tab>
+</Tabs>
+
+<PrivateRegistryInfo />
+
+## Deploy to Magic Containers
+
+<DeploySteps imageName="app-laravel" />
+
+When configuring the app, add two containers:
+
+### App container
+
+- **Image**: `ghcr.io/<your-username>/app-laravel:latest`
+- **Endpoint**: port `80`
+- **Environment variables**:
+  - `APP_ENV` = `production`
+  - `APP_DEBUG` = `false`
+  - `APP_KEY` = the key from `php artisan key:generate --show`
+  - `DB_CONNECTION` = `mariadb`
+  - `DB_HOST` = `127.0.0.1`
+  - `DB_PORT` = `3306`
+  - `DB_DATABASE` = `laravel`
+  - `DB_USERNAME` = `laravel`
+  - `DB_PASSWORD` = `laravel`
+
+### Database container
+
+- **Image**: `mariadb:11`
+- **Volume**: `/var/lib/mysql`
+- **Environment variables**:
+  - `MARIADB_DATABASE` = `laravel`
+  - `MARIADB_USER` = `laravel`
+  - `MARIADB_PASSWORD` = `laravel`
+  - `MARIADB_ROOT_PASSWORD` = `root`
+
+## Test your app
+
+```bash
+curl https://mc-xxx.bunny.run
+```
+
+<CustomHostnameInfo />
+
+## Continuous deployment
+
+The workflow automatically deploys to Magic Containers on every push to `main`. Configure the following in your repository settings:
+
+- **Variable** `APP_ID` - your Magic Containers app ID
+- **Secret** `BUNNYNET_API_KEY` - your bunny.net API key
+
+## Key differences for Magic Containers
+
+When deploying Laravel to Magic Containers, there are a few important things to keep in mind:
+
+| Topic          | What to do                       | Why                                                                                                                                |
+| -------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `DB_HOST`      | Use `127.0.0.1`, not `localhost` | PHP/PDO treats `localhost` as a Unix socket. Magic Containers share a localhost network, so TCP via `127.0.0.1` is required.       |
+| Config caching | Cache at startup, not build time | `php artisan config:cache` in the Dockerfile bakes in build-time values. Cache in the entrypoint so runtime env vars are used.     |
+| `.env` file    | Exclude from Docker image        | Add `.env` to `.dockerignore` and `touch .env` in the entrypoint. This ensures Laravel reads from container environment variables. |
+| Migrations     | Run at startup                   | The entrypoint waits for MariaDB, then runs `php artisan migrate --force` so the database is always up to date.                    |
+| App key        | Set via environment variable     | Generate with `php artisan key:generate --show` and set `APP_KEY` in the container environment.                                    |
+
+<NextSteps />
