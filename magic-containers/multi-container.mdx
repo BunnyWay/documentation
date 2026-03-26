@@ -7,7 +7,7 @@ description: "When using bunny.net Magic Containers, you can add multiple contai
 
 All containers run within a single pod. Because they share the same network namespace, they can communicate directly via `localhost`, which improves performance and simplifies networking. Containers must listen on distinct ports to avoid conflicts, as any collision will prevent the pod from starting. Sharing a pod also means containers share resources and have the same lifecycle, allowing you to manage them together and scale them in unison. The containers you add to the application all run in the same pod sandbox. Containers that are part of the same pod share the same network namespace.
 
-Containers can communicate via `localhost`. This improves the performance of the . For example, if you have an application with two containers: one running an API and another running Redis, the API container can access the Redis container through `localhost:<redis-port>`.
+Containers can communicate via `localhost`. For example, if you have an application with two containers: one running an API and another running Redis, the API container can access the Redis container through `localhost:<redis-port>`.
 
 Multiple containers cannot use the same port. Since the network namespace is shared, different containers cannot use the same port as they will collide and the pod will not start.
 
