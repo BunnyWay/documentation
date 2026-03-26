@@ -2886,7 +2886,7 @@
     },
     {
       "source": "/reference/oembed_getoembed",
-      "destination": "/api-reference/stream/oembed/oembed",
+      "destination": "/api-reference/stream/oembed/get-oembed",
       "permanent": true
     },
     {
