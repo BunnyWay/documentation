@@ -31,10 +31,20 @@ Lower quality settings on mobile save bandwidth without noticeable quality loss 
 
 ## CSS & JavaScript Minification
 
-Removes whitespace, comments, and unnecessary characters from CSS and JavaScript files.
+Minification strips whitespace, comments, and unnecessary characters from your CSS and JavaScript files, reducing file sizes and improving download times without changing functionality. 
 
-- Smaller file sizes
-- Faster download times
-- Identical functionality
+CSS and JavaScript minification can be toggled independently in your *Optimizer settings*.
 
-Toggle these independently in your Optimizer settings.
+### When to enable
+
+Enable minification if your files are not already minified. This reduces bandwidth usage and improves load times.
+
+### When to disable
+
+Disable minification if your files are already minified. Re-processing pre-minified files adds serving latency with no meaningful size reduction.
+
+### Mixed environments
+
+Files named `*.min.js` or `*.min.css` are automatically excluded from optimization. 
+
+This allows you to keep minification enabled for unminified files while avoiding redundant processing for others. Ensure pre-minified files to follow the `.min.js` / `.min.css` convention.
