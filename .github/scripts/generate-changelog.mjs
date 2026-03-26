@@ -65,40 +65,64 @@ function getChangedDocs() {
   const baseSha = process.env.BASE_SHA;
   const mergeSha = process.env.MERGE_SHA;
 
-  return files.map((file) => {
-    let diff = "";
-    try {
-      if (baseSha && mergeSha) {
-        diff = execSync(`git diff ${baseSha} ${mergeSha} -- ${file}`, {
-          encoding: "utf-8",
-          maxBuffer: 1024 * 512,
-        });
-      } else {
-        diff = execSync(`git diff HEAD~1 HEAD -- ${file}`, {
-          encoding: "utf-8",
-          maxBuffer: 1024 * 512,
-        });
-      }
-    } catch {
-      // New file — read full content
-      try {
-        diff = readFileSync(file, "utf-8");
-      } catch {
-        diff = "(file not found)";
-      }
-    }
+  // Detect which files are newly added vs modified
+  let newFiles = new Set();
+  try {
+    const diffRef =
+      baseSha && mergeSha ? `${baseSha} ${mergeSha}` : "HEAD~1 HEAD";
+    const added = execSync(`git diff --diff-filter=A --name-only ${diffRef}`, {
+      encoding: "utf-8",
+    })
+      .split("\n")
+      .filter(Boolean);
+    newFiles = new Set(added);
+  } catch {}
 
-    // If diff is still empty (e.g. file was added), read the full file
-    if (!diff.trim()) {
+  return files
+    .map((file) => {
+      // Check frontmatter for hidden: true and skip those files
       try {
-        diff = `(new file)\n${readFileSync(file, "utf-8")}`;
-      } catch {
-        diff = "(file not found)";
-      }
-    }
+        const content = readFileSync(file, "utf-8");
+        const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+        if (fmMatch && /^hidden:\s*true/m.test(fmMatch[1])) {
+          console.log(`Skipping hidden page: ${file}`);
+          return null;
+        }
+      } catch {}
 
-    return { file, diff };
-  });
+      const isNew = newFiles.has(file);
+      let diff = "";
+      try {
+        if (baseSha && mergeSha) {
+          diff = execSync(`git diff ${baseSha} ${mergeSha} -- ${file}`, {
+            encoding: "utf-8",
+            maxBuffer: 1024 * 512,
+          });
+        } else {
+          diff = execSync(`git diff HEAD~1 HEAD -- ${file}`, {
+            encoding: "utf-8",
+            maxBuffer: 1024 * 512,
+          });
+        }
+      } catch {
+        try {
+          diff = readFileSync(file, "utf-8");
+        } catch {
+          diff = "(file not found)";
+        }
+      }
+
+      if (!diff.trim()) {
+        try {
+          diff = `(new file)\n${readFileSync(file, "utf-8")}`;
+        } catch {
+          diff = "(file not found)";
+        }
+      }
+
+      return { file, diff, isNew };
+    })
+    .filter(Boolean);
 }
 
 // ---------------------------------------------------------------------------
@@ -111,13 +135,39 @@ async function classifyChanges(changedDocs, productMap) {
     ? new Date(mergedAt).toISOString().slice(0, 10)
     : new Date().toISOString().slice(0, 10);
 
+  // Build per-product list of existing pages so the model can distinguish
+  // "new docs for an existing feature" from "docs for a new feature"
+  const productPages = {};
+  for (const [path, product] of Object.entries(productMap)) {
+    // Only use paths without extensions (the canonical form)
+    if (/\.(mdx?|md)$/.test(path)) continue;
+    if (!productPages[product]) productPages[product] = [];
+    productPages[product].push(`/${path}`);
+  }
+
+  // Identify which products are touched so we only send relevant context
+  const touchedProducts = new Set();
+  for (const d of changedDocs) {
+    const product =
+      productMap[d.file] ||
+      productMap[d.file.replace(/\.(mdx?|md)$/, "")] ||
+      null;
+    if (product) touchedProducts.add(product);
+  }
+
+  const existingPagesContext = [...touchedProducts]
+    .map((p) => `${p}:\n${(productPages[p] || []).join("\n")}`)
+    .join("\n\n");
+
   const filesContext = changedDocs
     .map((d) => {
       const product =
         productMap[d.file] ||
         productMap[d.file.replace(/\.(mdx?|md)$/, "")] ||
         "Unknown";
-      return `### File: ${d.file}\nProduct: ${product}\n\n\`\`\`diff\n${d.diff.slice(0, 4000)}\n\`\`\``;
+      const status = d.isNew ? "NEWLY ADDED" : "MODIFIED";
+      const docsPath = "/" + d.file.replace(/\.(mdx?|md)$/, "");
+      return `### File: ${d.file}\nDocs URL: ${docsPath}\nProduct: ${product}\nFile status: ${status}\n\n\`\`\`diff\n${d.diff.slice(0, 4000)}\n\`\`\``;
     })
     .join("\n\n---\n\n");
 
@@ -127,28 +177,32 @@ Your job is to review documentation diffs and decide whether they represent user
 
 RULES:
 - Only include genuinely NEW features or meaningful product IMPROVEMENTS.
-- Do NOT include: documentation-only updates, typo fixes, rewording, new guides for existing features, pricing page updates, or formatting changes.
-- New features are typically new pages or new product sections describing functionality that didn't exist before.
+- Do NOT include: documentation-only updates, typo fixes, rewording, new guides/tutorials for existing features, pricing page updates, or formatting changes.
+- New features are typically new pages describing functionality that didn't exist before. Use the "Existing pages" list below to check — if the product already has pages covering this feature area, the new page is likely a guide for an existing feature, not a new feature.
+- A MODIFIED file is almost always a docs improvement for an existing feature — only include it if the diff clearly describes a new product capability (e.g. new API fields, new configuration options, increased limits).
 - Improvements are meaningful product enhancements (e.g. new throughput limits, GA releases, new options added).
-- If something just describes how an existing feature works (better docs), skip it.
-- Ignore hidden or private preview features.
+- If the diff shows frontmatter with \`hidden: true\`, skip it — these are hidden or private preview features not yet public.
 - Do not include internal info — no file paths, directory structures, code snippets, or implementation details.
-- Write in a positive, concise tone.
-- Always end descriptions with a "Learn more" link if a relevant docs page exists.
-- Keep descriptions to 1-2 sentences max.
+- Write in a positive, concise tone. Keep descriptions to 1-2 sentences max.
+- End descriptions with a "Learn more" link using the exact "Docs URL" value from the file context (e.g. \`[Learn more](/stream/encoding/per-title)\`). Do NOT invent or guess URLs.
 
 Respond ONLY with a JSON array (no markdown fences). Each entry:
 {
   "product": "Product Name",
   "type": "New" or "Improvement",
   "title": "Short feature title",
-  "description": "Brief user-facing description. [Learn more](/path/to/page)",
-  "docs_path": "/path/to/relevant/page"
+  "description": "Brief user-facing description. [Learn more](/docs-url-from-context)"
 }
 
 If NO changes warrant a changelog entry, return an empty array: []`;
 
-  const userPrompt = `Today's date is ${today}.
+  const userPrompt = `These changes were merged on ${today}.
+
+## Existing pages by product
+
+${existingPagesContext}
+
+## Changed files
 
 Review these documentation changes and determine which (if any) represent new features or product improvements worth adding to the changelog:
 
