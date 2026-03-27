@@ -1,6 +1,6 @@
 ---
 title: "Edge Rules Ordering"
-sidebarTitle: "Ordering"
+sidebarTitle: "Ordering & Execution"
 description: "Control the sequence of your Edge Rules to fine-tune behavior and execution priority."
 ---
 
@@ -25,7 +25,7 @@ Because of this, **we strongly recommend setting an explicit OrderIndex for all 
 
 Edge rules process actions differently depending on the action type.
 
-Some actions follow a **short-circuiting model**, where **only the first matching action is executed**, and further actions of that same type are ignored. This behavior applies when executing multiple actions of the same kind would cause conflicts or unintended side effects.
+Some actions follow a **short-circuiting model**, where **only the first matching action of that type is executed**, and further actions of that same type are ignored. This behavior applies when executing multiple actions of the same kind would cause conflicts or unintended side effects.
 
 Other actions support **multi-action execution**, meaning **all matching actions of that type are processed**, in sequence. This is typical for additive behaviors like setting response headers or appending cookies, where multiple values can coexist.
 
@@ -46,13 +46,36 @@ If multiple rules attempt to rewrite the URL or redirect, only the first matchin
 | 3          | If `Request Header` -> `User-Agent` contains `Googlebot` | `Override Browser Cache Time` -> `5`    |
 | 4          | if `Request Header` -> `User-Agent` contains `Google`    | `SetResponseHeader` -> `hello2=world2`  |
 
-If a request matches both conditions, the `Cache-Control` header will ultimately be set to `3600` because the rule with `OrderIndex = 1` executes first and short circuits, while they'll be two new response headers, `hello` and `hello2`.
+If a request matches both conditions:
 
-## Cached vs Non-Cached Edge Rule Execution
+- The `Cache-Control` value will be `3600`, because `Override Browser Cache Time` is a 🛑 short-circuiting action and the first match (OrderIndex = 1) wins.
+- Both `SetResponseHeader` actions will execute, resulting in `hello` and `hello2` headers being added.
 
-You also need to factor into your edge rule creation and execution whether the content will become cached or not, below is our list of Edge Rules that will execute upon `CACHE: HIT` and additionally, `CACHE: MISS`.
+## Edge Rule Execution Layers (Cache vs Origin)
 
-Executing Rules on a CACHE _HIT_ (Cache Layer):
+Edge Rules execute in two distinct stages of the request lifecycle:
+
+- Cache Layer - evaluated on every request, before cache lookup and cache decision are finalized
+- Proxy (Origin) Layer - evaluated only if the request goes to origin (CACHE MISS or BYPASS)
+
+<Warning>
+The Cache Layer is always executed, regardless of whether the request results in a CACHE HIT or MISS.
+
+The Proxy (Origin) Layer is only executed when the request cannot be served from cache.
+</Warning>
+
+### Request Flow Overview
+
+A request is processed in the following order:
+
+1. Edge Rules (Cache Layer)
+2. Cache Lookup (HIT or MISS)
+3. Edge Rules (Proxy/Origin Layer, only on MISS/BYPASS)
+4. Origin Request (if needed)
+
+### Cache Layer Execution (Always Runs):
+
+The following Edge Rules are evaluated at the Cache Layer, meaning they run on every request before cache resolution, regardless of whether the final result is a HIT or MISS.
 
 - `ForceSSL` (Enum Value: `0`) 🛑
 - `Redirect` (Enum Value: `1`) 🛑
@@ -75,7 +98,13 @@ Executing Rules on a CACHE _HIT_ (Cache Layer):
 - `RemoveBrowserCacheResponseHeader` (Enum Value: `26`) 🛑
 - `DisableShieldChallenge` (Enum Value: `27`) 🛑
 
-Additionally, Executing Rules on a CACHE _MISS_ (Origin Layer):
+### Proxy (Origin) Layer Execution (MISS/BYPASS Only):
+
+The following Edge Rules are evaluated only when the request reaches the origin, meaning:
+- Cache MISS
+- Cache BYPASS (e.g. due to rules or headers)
+
+These rules are not executed on cache hits, as no origin request is made.
 
 - `OriginUrl` (Enum Value: `2`) 🛑
 - `OverrideCacheTime` (Enum Value: `3`) 🛑
