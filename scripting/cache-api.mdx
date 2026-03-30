@@ -124,7 +124,6 @@ match(request)
 Unlike the browser Cache API, Bunny Edge Scripting does not support options on `match()`. You can accomplish this behavior by removing query strings or HTTP headers at `put()` time.
 
 Our implementation of the Cache API respects the following HTTP headers on the request passed to match():
-- `Range` - Results in a 206 response if a matching response with a Content-Length header is found.
 - `If-None-Match` - Results in a 304 response if a matching response is found with an ETag header with a value that matches a value in If-None-Match.
 
 #### Parameters
