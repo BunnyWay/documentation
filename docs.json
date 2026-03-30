@@ -843,6 +843,7 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "database/limits",
                   "database/replication",
                   "database/metrics",
                   "database/durability-and-consistency"
