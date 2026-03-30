@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "theme": "mint",
   "name": "bunny.net Documentation",
   "colors": {
     "primary": "#EF6126",
@@ -807,7 +807,11 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["database/index", "database/quickstart", "database/changelog"]
+                "pages": [
+                  "database/index",
+                  "database/quickstart",
+                  "database/changelog"
+                ]
               },
               {
                 "group": "Connect",
@@ -853,9 +857,15 @@
                 "pages": [
                   "integrations/wordpress/index",
                   "integrations/wordpress/quickstart",
+                  "integrations/wordpress/support-policy"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
                   "integrations/wordpress/content-offloading",
                   "integrations/wordpress/move-files-to-wordpress",
-                  "integrations/wordpress/support-policy"
+                  "integrations/wordpress/stream"
                 ]
               },
               {
@@ -876,8 +886,31 @@
             ]
           },
           {
+            "tab": "Terraform",
+            "groups": [
+              {
+                "group": "Terraform",
+                "pages": ["terraform/index", "terraform/quickstart"]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "terraform/authentication",
+                  "terraform/resources",
+                  "terraform/data-sources"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
+                  "terraform/importing-stream-library",
+                  "terraform/edgescript-pullzone"
+                ]
+              }
+            ]
+          },
+          {
             "tab": "cPanel",
-            "hidden": true,
             "groups": [
               {
                 "group": "cPanel",
@@ -976,30 +1009,6 @@
                   "directory": "api-reference/database"
                 },
                 "pages": ["api-reference/database/index"]
-              }
-            ]
-          },
-          {
-            "tab": "Terraform",
-            "groups": [
-              {
-                "group": "Terraform",
-                "pages": ["terraform/index", "terraform/quickstart"]
-              },
-              {
-                "group": "Reference",
-                "pages": [
-                  "terraform/authentication",
-                  "terraform/resources",
-                  "terraform/data-sources"
-                ]
-              },
-              {
-                "group": "Guides",
-                "pages": [
-                  "terraform/importing-stream-library",
-                  "terraform/edgescript-pullzone"
-                ]
               }
             ]
           }
