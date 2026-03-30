@@ -2,12 +2,10 @@
 title: Node:FS
 sidebarTitle: node:fs
 description: Read and write files in Edge Scripts using the Node.js-compatible file system API
-tag: Preview
 ---
 
 <Warning>
 No breaking changes are expected, but additional features will be implemented soon.
-The File System memory limit will also be increased after preview.
 </Warning>
 
 
@@ -30,10 +28,6 @@ Each script has now access to a Virtual File System that allow to handle
 file based operations.
 
 This file system lives on the Virtual Memory available of the worker.
-
-<Info>
-Preview limitation: We limit the VFS total memory size to **64MB**.
-</Info>
 
 Currently the file directory is composed of two folder:
 

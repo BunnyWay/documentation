@@ -15,4 +15,4 @@ description: "Frequently asked questions about Magic Containers."
 
 **Is container ingress charged on apps with no endpoints?** No. Ingress is free if there are no endpoints. However, any outbound data (egress) will still incur charges.
 
-**My application requires persistence of data. How can I use MC in this case?** Currently, Magic Containers does not support data persistence. You would need to host your database elsewhere (e.g., AWS) and connect your deployed application to that external database.
+**My application requires persistence of data. How can I use Magic Containers in this case?** Magic Containers supports data persistence through [Persistent Volumes](/magic-containers/persistent-volumes), which allow your containers to retain data across restarts and deployments. If you need a managed database, you can use [Bunny Database](/database), a fully managed database service that integrates seamlessly with Magic Containers.
