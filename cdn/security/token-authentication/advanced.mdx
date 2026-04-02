@@ -212,9 +212,3 @@ The `isDirectory` parameter controls how the token is embedded in the URL:
 
 - **`false` (query string)** - the token and parameters are appended as query string parameters. Suitable for direct file downloads and simple URL signing.
 - **`true` (path-based)** - the token is embedded in the URL path as `/bcdn_token=...`. This is required for HLS/DASH video delivery, where the player resolves relative segment URLs against the manifest path. Placing the token in the path ensures segment requests automatically inherit authentication without modifying the player.
-
-**Path-based example:**
-
-```
-https://myzone.b-cdn.net/bcdn_token=HS256-abc123&expires=1598024587&token_path=%2Fvideos%2F/videos/playlist.m3u8
-```
