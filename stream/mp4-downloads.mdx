@@ -6,21 +6,20 @@ description: "The bunny.net Stream platform offers MP4 URL access to some resolu
 ## Prerequisites
 
 - You must have a [Video Library created](/stream/quickstart#creating-a-video-library).
-
 - You need to have MP4 Fallback enabled under the encoding tab of the created video library
 
-<Frame>![Enable MP4 Fallback](/images/stream/enable-mp4-fallback.png)</Frame>
+<Frame>
+  ![Enable MP4 Fallback](/images/stream/enable-mp4-fallback.png)
+</Frame>
 
 - **Only videos uploaded after enabling MP4 Fallback will generate the MP4 file. Please keep in mind that the fallbacks go up to a maximum of 1080P in quality if the original permits.**
-
-- In addition to the above, we do not upscale videos. A 1080P fallback for example cannot be generated if the maximum quality of the original video is 480P, but in that case then play_480p.mp4 would work.
+- In addition to the above, we do not upscale videos. A 1080P fallback for example cannot be generated if the maximum quality of the original video is 480P, but in that case then play\_480p.mp4 would work.
 
 ## How to retrieve the MP4 URL?
 
 <Steps>
   <Step title="Open your video">
     Navigate to your video in the Stream dashboard.
-
   </Step>
   <Step title="Expand MP4 URLs">
     MP4 URLs will appear on your video page - click to expand.
@@ -28,12 +27,11 @@ description: "The bunny.net Stream platform offers MP4 URL access to some resolu
     <Frame>
       ![Expand MP4 URLs](/images/stream/mp4-fallback-video-details.png)
     </Frame>
-
   </Step>
   <Step title="Copy or download">
     You can now copy each MP4 resolution URL link or download the MP4 locally.
-    
-<Frame>
+
+    <Frame>
       ![MP4 URLs](/images/stream/mp4-fallback-urls.png)
     </Frame>
   </Step>
@@ -42,7 +40,7 @@ description: "The bunny.net Stream platform offers MP4 URL access to some resolu
 Assuming that the above eligibility criteria have been satisfied, you can generate an MP4 URL employing the subsequent structure:
 
 ```bash
-https://pull_zone_url.b-cdn.net/video_id/play\_resolution_heightp.mp4
+https://pull_zone_url.b-cdn.net/video_id/play_{ResolutionHeight}p.mp4
 ```
 
 While producing the above mentioned URL, it is critical to bear in mind that the fallback selections are only up to 1080p. It may be easier to copy/paste the HLS URL and then change the file on the end to the MP4 URL. Thus, any resolution that is higher than 1080p, such as 2160p, will trigger a 404 error because it is not present. If you only have one resolution enabled (for example, 2160p only (and nothing else) then we will generate an MP4 URL for that resolution).
@@ -62,13 +60,12 @@ https://pull_zone_url.b-cdn.net/video_id/play_1080p.mp4
     - Token authentication is enabled, but you are not producing a token or creating it incorrectly.
     - Allowed domains are specified, restricting video playback to only authorized domains.
     - Direct URL file access is denied. If you type the URL into your browser's address bar, you'll get a 403 error since you're attempting to access it directly. This is common on Apple devices, which do not send the correct referrer headers.
-
   </Accordion>
+
   <Accordion title="I'm getting a 404 error">
     This is most likely due to one of two things:
 
     - An incorrect URL construction.
     - The fallback resolution you want to use does not exist.
-
   </Accordion>
 </AccordionGroup>
