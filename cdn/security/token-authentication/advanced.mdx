@@ -8,13 +8,11 @@ Advanced token authentication uses HMAC-SHA256 signing and supports directory-le
 
 ## URL structure
 
-**Query string format:**
+Signed URLs use either a [query string or path-based format](#query-string-vs-path-based-tokens):
 
 ```
 https://myzone.b-cdn.net/videos/playlist.m3u8?token=HS256-abc123&expires=1598024587&token_path=%2Fvideos%2F
 ```
-
-**Path-based format** (useful for video delivery):
 
 ```
 https://myzone.b-cdn.net/bcdn_token=HS256-abc123&expires=1598024587&token_path=%2Fvideos%2F/videos/playlist.m3u8
@@ -25,10 +23,10 @@ https://myzone.b-cdn.net/bcdn_token=HS256-abc123&expires=1598024587&token_path=%
 | Parameter                 | Required | Description                                        |
 | ------------------------- | -------- | -------------------------------------------------- |
 | `token`                   | Yes      | Hashed signature |
-| `expires`                 | Yes      | UNIX timestamp in seconds when the URL becomes invalid (milliseconds and nanoseconds are not supported) |
+| `expires`                 | Yes      | UNIX timestamp in seconds when the URL becomes invalid |
 | `token_path`              | No       | URL-encoded path prefix for directory-level access |
 | `token_countries`         | No       | Comma-separated allowed country codes (ISO 3166-1) |
-| `token_countries_blocked` | No       | Comma-separated blocked country codes              |
+| `token_countries_blocked` | No       | Comma-separated blocked country codes (ISO 3166-1) |
 | `token_ignore_params`     | No       | When `true`, query parameters are excluded from token validation |
 | `limit`                   | No       | Download speed limit in kB/s                       |
 
