@@ -9,13 +9,13 @@ tag: Preview
 Our implementation is in preview as we are providing a complete in-house
 implementation of HTMLRewriter.
 
-`ExperimentalHTMLRewriter` and will be changed to `HTMLRewriter` before going public.
+`HTMLRewriter` and will be changed to `HTMLRewriter` before going public.
 </Warning>
 
 
 ## Overview
 
-`ExperimentalHTMLRewriter` lets you modify HTML responses as they stream through
+`HTMLRewriter` lets you modify HTML responses as they stream through
 your edge script. It parses HTML on the fly and calls your handler functions when
 it encounters matching elements, comments, or text without buffering the entire
 document in memory.
@@ -29,7 +29,7 @@ import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
-    return new ExperimentalHTMLRewriter()
+    return new HTMLRewriter()
       .on("h1", {
         element(el) {
           el.setInnerContent("Modified Title");
@@ -42,7 +42,7 @@ BunnySDK.net.http.servePullZone()
 ## Constructor
 
 ```js
-new ExperimentalHTMLRewriter(options?)
+new HTMLRewriter(options?)
 ```
 
 <ParamField path="options" type="object">
@@ -526,7 +526,7 @@ import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
-    return new ExperimentalHTMLRewriter()
+    return new HTMLRewriter()
       .on("a[href]", {
         element(el) {
           const href = el.getAttribute("href");
@@ -546,7 +546,7 @@ import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
-    return new ExperimentalHTMLRewriter()
+    return new HTMLRewriter()
       .onDocument({
         end(end) {
           end.append('<script src="/analytics.js"></script>', { html: true });
@@ -563,7 +563,7 @@ import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
-    return new ExperimentalHTMLRewriter()
+    return new HTMLRewriter()
       .on("script[src*='tracker']", {
         element(el) {
           el.remove();
@@ -587,7 +587,7 @@ import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
-    return new ExperimentalHTMLRewriter()
+    return new HTMLRewriter()
       .on("include[src]", {
         async element(el) {
           const src = el.getAttribute("src");
@@ -623,7 +623,7 @@ class AttributeRewriter {
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
-    return new ExperimentalHTMLRewriter()
+    return new HTMLRewriter()
       .on("a", new AttributeRewriter("href"))
       .on("img", new AttributeRewriter("src"))
       .transform(response);
@@ -647,7 +647,7 @@ class StripComments {
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
-    return new ExperimentalHTMLRewriter()
+    return new HTMLRewriter()
       .onDocument(new StripComments())
       .transform(response);
   });
@@ -672,7 +672,7 @@ class IncludeExpander {
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
-    return new ExperimentalHTMLRewriter()
+    return new HTMLRewriter()
       .on("include[src]", new IncludeExpander())
       .transform(response);
   });
@@ -687,7 +687,7 @@ import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
-    return new ExperimentalHTMLRewriter()
+    return new HTMLRewriter()
       .on("title", {
         element(el) {
           el.setInnerContent("My Site");
