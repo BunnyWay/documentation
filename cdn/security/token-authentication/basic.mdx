@@ -4,6 +4,10 @@ sidebarTitle: Basic
 description: Generate expiring URLs using MD5-based token authentication.
 ---
 
+<Warning>
+  Basic token authentication uses MD5, which is cryptographically insecure. This method is deprecated and may be removed in a future release. We strongly recommend you use [Advanced Token Authentication](/cdn/security/token-authentication/advanced) with HMAC-SHA256 for new implementations.
+</Warning>
+
 Basic token authentication uses MD5 hashing to create signed URLs with expiration times and optional IP validation.
 
 ## URL structure
