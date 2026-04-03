@@ -1,0 +1,73 @@
+name: Update Changelog
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  update-changelog:
+    if: >-
+      github.event.pull_request.merged == true &&
+      !startsWith(github.head_ref, 'changelog/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Get changed files
+        id: changed
+        run: |
+          FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.merge_commit_sha }} | grep '\.mdx\?$' || true)
+          if [ -z "$FILES" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            # Write to a file to avoid shell escaping issues
+            echo "$FILES" > /tmp/changed_files.txt
+          fi
+
+      - name: Generate changelog entries
+        if: steps.changed.outputs.skip == 'false'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MERGED_AT: ${{ github.event.pull_request.merged_at }}
+        run: node .github/scripts/generate-changelog.mjs
+
+      - name: Create PR with changelog updates
+        if: steps.changed.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          BRANCH="changelog/pr-${PR_NUMBER}"
+
+          # Check if any changelog files were modified
+          if git diff --quiet; then
+            echo "No changelog updates generated."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "docs: update changelog from PR #${PR_NUMBER}"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "docs: changelog update from #${PR_NUMBER} — ${PR_TITLE}" \
+            --body "Auto-generated changelog entries from PR #${PR_NUMBER}. Please review the AI-generated descriptions before merging." \
+            --base main \
+            --head "$BRANCH"

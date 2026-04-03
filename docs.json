@@ -393,7 +393,8 @@
                 "pages": [
                   "scripting/index",
                   "scripting/quickstart",
-                  "scripting/pricing"
+                  "scripting/pricing",
+                  "scripting/changelog"
                 ]
               },
               {
@@ -446,7 +447,11 @@
               },
               {
                 "group": "Runtime APIs",
-                "pages": ["scripting/node/fs/node-fs", "scripting/websockets"]
+                "pages": [
+                  "scripting/runtime/html-rewriter",
+                  "scripting/node/fs/node-fs",
+                  "scripting/websockets"
+                ]
               },
               {
                 "group": "Reference",
@@ -563,6 +568,7 @@
                       "stream/mobile-sdk-token-authentication"
                     ]
                   },
+                  "stream/expo-video",
                   "stream/embedding",
                   "stream/mp4-downloads"
                 ]
@@ -835,6 +841,7 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "database/limits",
                   "database/replication",
                   "database/metrics",
                   "database/durability-and-consistency"
@@ -864,7 +871,6 @@
                 "group": "Guides",
                 "pages": [
                   "integrations/wordpress/content-offloading",
-                  "integrations/wordpress/move-files-to-wordpress",
                   "integrations/wordpress/stream"
                 ]
               },
@@ -880,7 +886,8 @@
                 "pages": [
                   "integrations/wordpress/troubleshooting-static-urls",
                   "integrations/wordpress/troubleshooting-plugin-conflicts",
-                  "integrations/wordpress/troubleshooting-acceleration-not-enabled"
+                  "integrations/wordpress/troubleshooting-acceleration-not-enabled",
+                  "integrations/wordpress/move-files-to-wordpress"
                 ]
               }
             ]
@@ -2925,7 +2932,7 @@
     },
     {
       "source": "/reference/oembed_getoembed",
-      "destination": "/api-reference/stream/oembed/oembed",
+      "destination": "/api-reference/stream/oembed/get-oembed",
       "permanent": true
     },
     {
