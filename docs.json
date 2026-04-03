@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "almond",
   "name": "bunny.net Documentation",
   "colors": {
     "primary": "#EF6126",
@@ -911,6 +911,7 @@
           },
           {
             "tab": "cPanel",
+            "hidden": true,
             "groups": [
               {
                 "group": "cPanel",
@@ -2130,6 +2131,21 @@
     {
       "source": "/storage/move-files-to-wordpress",
       "destination": "/integrations/wordpress/move-files-to-wordpress",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/wordpress-static-urls",
+      "destination": "/integrations/wordpress/troubleshooting-static-urls",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/wordpress-plugin-conflicts",
+      "destination": "/integrations/wordpress/troubleshooting-plugin-conflicts",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/acceleration-not-enabled",
+      "destination": "/integrations/wordpress/troubleshooting-acceleration-not-enabled",
       "permanent": true
     },
     {
