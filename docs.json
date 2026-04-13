@@ -875,19 +875,19 @@
                 ]
               },
               {
-                "group": "Third-Party Plugins",
-                "pages": [
-                  "integrations/wordpress/wp-rocket",
-                  "integrations/wordpress/w3-total-cache"
-                ]
-              },
-              {
                 "group": "Troubleshooting",
                 "pages": [
                   "integrations/wordpress/troubleshooting-static-urls",
                   "integrations/wordpress/troubleshooting-plugin-conflicts",
                   "integrations/wordpress/troubleshooting-acceleration-not-enabled",
                   "integrations/wordpress/move-files-to-wordpress"
+                ]
+              },
+              {
+                "group": "Third-Party Plugins",
+                "pages": [
+                  "integrations/wordpress/wp-rocket",
+                  "integrations/wordpress/w3-total-cache"
                 ]
               }
             ]
