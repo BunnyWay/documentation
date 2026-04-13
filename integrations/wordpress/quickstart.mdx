@@ -1,0 +1,71 @@
+---
+title: Quickstart
+description: Install and configure the bunny.net WordPress plugin to speed up your website with CDN acceleration.
+---
+
+This guide walks you through installing and configuring the bunny.net WordPress plugin on your site.
+
+## Prerequisites
+
+- WordPress 6.7 or higher
+- PHP 8.1 or higher
+
+<Note>
+The plugin will not appear in the WordPress plugin directory on earlier versions of WordPress or PHP.
+</Note>
+
+## Install the plugin
+
+<Steps>
+  <Step title="Open the plugin installer">
+    Log in to your WordPress admin panel. Click **Plugins** in the sidebar, then click **Add New Plugin**.
+  </Step>
+  <Step title="Search and install">
+    In the search box, type **BunnyCDN**. Find the BunnyCDN plugin in the results and click **Install Now**.
+
+    <Frame>
+      ![BunnyCDN plugin search results](/images/integrations/wordpress/quickstart-plugin-search.png)
+    </Frame>
+  </Step>
+  <Step title="Activate the plugin">
+    After installation completes, click **Activate**.
+  </Step>
+</Steps>
+
+## Configure the plugin
+
+<Steps>
+  <Step title="Open the plugin settings">
+    In the WordPress sidebar, select **bunny.net** and click **Login / Create Account**.
+
+    <Frame>
+      ![bunny.net plugin menu](/images/integrations/wordpress/quickstart-plugin-menu.png)
+    </Frame>
+  </Step>
+  <Step title="Connect your account">
+    Create a new bunny.net account or log in with your existing credentials.
+  </Step>
+  <Step title="Run the Integration Wizard">
+    After logging in, select **Integration Wizard**.
+
+    <Frame>
+      ![Integration Wizard](/images/integrations/wordpress/quickstart-integration-wizard.png)
+    </Frame>
+  </Step>
+  <Step title="Confirm your URL">
+    Enter the URL of your WordPress website and click **Confirm URL**. The wizard uses this URL to configure your CDN integration.
+
+    <Frame>
+      ![Confirm URL](/images/integrations/wordpress/quickstart-confirm-url.png)
+    </Frame>
+  </Step>
+  <Step title="Select a Pull Zone">
+    If your account already has a Pull Zone for this URL, you'll be prompted to use the existing one or create a new one.
+  </Step>
+</Steps>
+
+<Frame>
+  ![Setup complete](/images/integrations/wordpress/quickstart-success.png)
+</Frame>
+
+CDN acceleration is enabled by default once the setup completes. Your website will immediately start serving static assets through the CDN.

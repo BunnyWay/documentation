@@ -1,0 +1,30 @@
+---
+title: WP Rocket
+description: Set up bunny.net CDN with WordPress using the WP Rocket caching plugin.
+mode: "wide"
+---
+
+This guide walks you through configuring bunny.net CDN on your WordPress site using WP Rocket.
+
+<Steps>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net), create a new Pull Zone, and set the origin URL to your WordPress site. For more details, see [How to create your first Pull Zone](/cdn/quickstart).
+  </Step>
+  <Step title="Install WP Rocket">
+    Purchase and download the WP Rocket plugin from their website. In your WordPress admin, go to **Plugins → Add New**, upload the ZIP file, and activate the plugin.
+  </Step>
+  <Step title="Configure the CDN">
+    Click the **WP Rocket** option in your WordPress admin bar, then go to **CDN Settings**. Enter the full hostname of your Pull Zone (including `https://`) and save your changes.
+
+    <Frame>
+      ![WP Rocket CDN Settings](/images/integrations/wordpress/wp-rocket-cdn-settings.png)
+    </Frame>
+  </Step>
+  <Step title="Verify the integration">
+    Open your site in an Incognito/Private Browsing window. In the browser's Developer Tools, open the **Sources** panel. You should see static assets being served from your CDN hostname.
+  </Step>
+</Steps>
+
+<Note>
+WP Rocket forces a no-cache instruction (`max-age=0`) on HTML files to ensure those pages are treated as dynamic. HTML pages will not be cached on the CDN unless you configure this explicitly via WP Rocket settings or an Edge Rule on your bunny.net Pull Zone.
+</Note>

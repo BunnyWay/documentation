@@ -1,0 +1,69 @@
+---
+title: CDN Acceleration Not Enabled
+description: Fix the "CDN Acceleration Is Not Enabled" error in the bunny.net WordPress plugin.
+---
+
+If the bunny.net WordPress plugin shows an error indicating CDN acceleration isn't detected, this guide covers the most common causes and solutions.
+
+<Frame>
+  ![CDN Acceleration Not Enabled error](/images/integrations/wordpress/acceleration-error-banner.png)
+</Frame>
+
+## Common causes
+
+### Direct origin access
+
+You may be accessing your WordPress admin panel without routing traffic through bunny.net. This can happen if:
+
+- DNS settings have not yet propagated
+- Your computer has a stale DNS cache entry
+- A static IP for your domain is defined in your computer's hosts file
+
+### CDN Acceleration not properly configured
+
+Your DNS settings may be incomplete or misconfigured. DNS records that aren't properly set up for CDN acceleration will prevent detection.
+
+### Web server altering headers
+
+If your site is behind a reverse proxy (e.g., Cloudflare, NGINX, or a load balancer), it may strip or modify the headers that bunny.net uses to confirm CDN usage.
+
+## Solutions
+
+### Clear your DNS cache
+
+<Tabs>
+  <Tab title="Windows">
+    ```bash
+    ipconfig /flushdns
+    ```
+  </Tab>
+  <Tab title="macOS">
+    ```bash
+    sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+    ```
+  </Tab>
+  <Tab title="Linux">
+    Restart the `nscd` or `systemd-resolved` service.
+  </Tab>
+</Tabs>
+
+Then restart your browser or clear its cache.
+
+### Verify Bunny DNS and CDN settings
+
+In the bunny.net dashboard, go to the **DNS** section. Make sure the DNS record pointing to your site has the green **CDN Proxy** icon enabled. If not, edit the DNS record and enable CDN Acceleration.
+
+<Frame>
+  ![Green CDN Proxy icon in DNS settings](/images/integrations/wordpress/acceleration-dns-green-icon.png)
+</Frame>
+
+## Verifying CDN Acceleration
+
+You can confirm your setup is working using any of these methods:
+
+- A green **CDN Proxy** icon next to your DNS record in the bunny.net dashboard
+- Response headers from your site containing:
+  - `CDN-ProxyVer: 1.04`
+  - `CDN-RequestPullSuccess: True`
+  - `CDN-RequestPullCode: 200`
+- In your WordPress Admin Panel under **bunny.net → About → Technical Information → Request Headers**, both `Cdn-RequestId` and `Via: BunnyCDN` should appear
