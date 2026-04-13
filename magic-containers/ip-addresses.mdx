@@ -3,7 +3,7 @@ title: IP Addresses
 description: You can use the following IP addresses to whitelist Bunny.net traffic in your firewall or ACLs.
 ---
 
-The API endpoint `https://api.bunny.net/mc/nodes` returns IP addresses as plain text (one per line) or JSON array depending on your `Accept` header.
+The API provides two endpoints for retrieving Magic Containers node IP addresses: `https://api.bunny.net/mc/nodes` returns a JSON array, and `https://api.bunny.net/mc/nodes/plain` returns plain text with one IP per line.
 
 <Info>
   The list returned from the API is dynamic, make sure to request it
@@ -12,26 +12,36 @@ The API endpoint `https://api.bunny.net/mc/nodes` returns IP addresses as plain 
 
 <RequestExample>
 
-```bash text/plain
-curl https://api.bunny.net/mc/nodes
-```
-
 ```bash application/json
 curl -H "Accept: application/json" https://api.bunny.net/mc/nodes
+```
+
+```bash text/plain
+curl https://api.bunny.net/mc/nodes/plain
 ```
 
 </RequestExample>
 
 <ResponseExample>
 
+```json application/json
+{
+  "items": [
+    "104.166.147.46",
+    "109.61.83.105",
+    "109.61.83.248"
+  ],
+  "meta": {
+    "totalItems": 3
+  },
+  "cursor": "<string>"
+}
+```
+
 ```bash text/plain
 104.166.147.46
 109.61.83.105
 109.61.83.248
-```
-
-```json application/json
-["104.166.147.46", "109.61.83.105", "109.61.83.248"]
 ```
 
 </ResponseExample>
