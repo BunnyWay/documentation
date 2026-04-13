@@ -15,9 +15,11 @@ The Face Detection API uses AI to automatically detect faces in your images and 
 <ParamField query="face_crop" type="string | boolean">
   Automatically detect faces and center the crop around them.
 
-**Format 1 (Boolean):** Set to `true` to detect all faces and ensure they're in frame with padding.
+**Format 1 (Boolean):** Set to `true` to detect all faces and ensure they're in frame with padding. If no faces are
+detected, the image will not be cropped.
 
-**Format 2 (Dimensions):** Specify `width,height` to crop with detected faces as the center point.
+**Format 2 (Dimensions):** Specify `width,height` to crop the image using the specified dimensions, with detected faces
+as the center point. If no faces are detected, the image is still cropped from the centre.
 
 </ParamField>
 

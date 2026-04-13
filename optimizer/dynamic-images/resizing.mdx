@@ -28,6 +28,15 @@ Resize images to specific dimensions while automatically maintaining aspect rati
 
 </ParamField>
 
+<ParamField query="upscaling" type="string">
+    Allows the image to be enlarged beyond its original dimensions.
+
+**Values:** `off`, `resampling`
+
+**Default:** `off`
+
+</ParamField>
+
 ## How it works
 
 When you apply width or height parameters, Bunny Optimizer:
@@ -116,3 +125,23 @@ https://yourzone.b-cdn.net/image.jpg?height=400&sharpen=3
   or height parameters. If any crop is defined in the query, it will be applied
   first, then resizing is applied to the cropped result.
 </Note>
+
+## Upscaling
+
+By default, Bunny Optimizer does not enlarge images beyond their original size.
+
+Use `upscaling=resampling` to permit standard resampling-based upscaling. When enabled, upscaling is limited to an output size of 24 megapixels while preserving aspect ratio.
+
+This limit applies only when the result would be larger than the original image. If the original image is already larger than 24 megapixels, it is not reduced unless another transformation requires it.
+
+```bash Upscale 1024x512 image to 2048x1024
+https://yourzone.b-cdn.net/image.jpg?width=2048&upscaling=resampling
+```
+
+```bash Upscale 1024x512 image to 1536x768
+https://yourzone.b-cdn.net/image.jpg?width=1536&height=768&upscaling=resampling
+```
+
+```bash Downscale 1024x512 image to 512x256. No upscaling (target is smaller than original).
+https://yourzone.b-cdn.net/image.jpg?width=512&upscaling=resampling
+```
