@@ -60,3 +60,21 @@ You can configure bunny.net features per hosting package in **WHM > Packages > E
 <Frame>
   ![Hosting package configuration](/images/integrations/cpanel/whm_package_limited.png)
 </Frame>
+
+## Hiding the plugin for certain packages
+
+If you want to hide the bunny.net plugin from customers on specific packages, you can use WHM's Feature Manager to create a feature list that excludes it.
+
+<Steps>
+  <Step title="Create a feature list">
+    In WHM, go to **Packages > Feature Manager**. Create a new feature list or edit an existing one.
+  </Step>
+  <Step title="Disable the bunny.net feature">
+    In the feature list, uncheck **bunny.net** to hide the plugin from cPanel for customers using this feature list.
+  </Step>
+  <Step title="Assign the feature list to a package">
+    Go to **Packages > Edit a Package**, select the package you want to restrict, and set the **Feature List** to the one you created.
+  </Step>
+</Steps>
+
+Customers on packages with this feature list will no longer see the bunny.net plugin in their cPanel.
