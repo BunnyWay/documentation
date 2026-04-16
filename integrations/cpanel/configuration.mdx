@@ -1,24 +1,58 @@
 ---
-title: "Configuration"
-description: "Learn about the bunny.net cPanel plugin configuration file and available options."
+title: Configuration
+description: Configure the bunny.net cPanel plugin settings including API keys, nameservers, and logging.
 ---
 
-The bunny.net cPanel plugin uses a configuration file located at `/etc/bunnynet.conf`. Some values are required and others are optional. The list below shows all available configuration options.
+The bunny.net cPanel plugin uses a configuration file located at `/etc/bunnynet.conf`. This file is created automatically during setup, but you can edit it to customize the plugin behavior.
 
-## Required
+## Configuration file
 
-| Key                | Description                                                                                              |
-| :----------------- | :------------------------------------------------------------------------------------------------------- |
-| `BUNNYNET_API_KEY` | The API key for your bunny.net account                                                                   |
-| `WHM_API_KEY`      | The API key for WHM (automatically generated on setup, managed in WHM > Development > Manage API Tokens) |
+```bash
+/etc/bunnynet.conf
+```
 
-## Optional
+After making changes to the configuration file, restart the daemon:
 
-| Key               | Description                                       | Default value           |
-| :---------------- | :------------------------------------------------ | :---------------------- |
-| `NS1`             | Primary custom nameserver                         | `kiki.bunny.net`        |
-| `NS2`             | Secondary custom nameserver                       | `coco.bunny.net`        |
-| `SOA_EMAIL`       | The SOA e-mail address                            | `hostmaster@bunny.net`  |
-| `DOH_RESOLVER`    | The DNS over HTTPS resolver                       | `https://dns.quad9.net` |
-| `LOG_LEVEL`       | The log level                                     | `warn`                  |
-| `URL_PURGE_WORKERS` | The number of workers to handle URL cache purging | `2`                     |
+```bash
+systemctl restart bunnynet-cpanel-daemon
+```
+
+## Required settings
+
+| Key | Description |
+| :--- | :--- |
+| `BUNNYNET_API_KEY` | Your bunny.net account API key. Available in [dash.bunny.net](https://dash.bunny.net). |
+| `WHM_API_KEY` | The WHM API token. Automatically generated during setup. Managed in **WHM > Development > Manage API Tokens**. |
+
+## Optional settings
+
+| Key | Description | Default |
+| :--- | :--- | :--- |
+| `NS1` | Primary nameserver | `kiki.bunny.net` |
+| `NS2` | Secondary nameserver | `coco.bunny.net` |
+| `SOA_EMAIL` | SOA email address | `hostmaster@bunny.net` |
+| `DOH_RESOLVER` | DNS over HTTPS resolver | `https://dns.quad9.net` |
+| `LOG_LEVEL` | Log level (`debug`, `info`, `warn`, `error`) | `warn` |
+| `URL_PURGE_WORKERS` | Number of workers for URL cache purging | `2` |
+
+## DNS cluster settings
+
+The DNS cluster configuration is available in **WHM > Clusters > DNS Cluster**. In addition to the API key and DNS role, you can enable:
+
+- **Sync all DNS zones** — Automatically synchronize all existing DNS zones to the cluster. Enable this if you want all current zones to be pushed to bunny.net DNS when setting up the cluster.
+
+<Frame>
+  ![DNS Cluster configuration](/images/integrations/cpanel/dns-cluster-config.png)
+</Frame>
+
+## Hosting packages
+
+You can configure bunny.net features per hosting package in **WHM > Packages > Edit a Package**. The following options are available under the **bunny.net** section:
+
+- **Max bunny.net websites** — Limit the number of websites that can use bunny.net per account
+- **Bunny Optimizer** — Enable or disable image optimization for the package
+- **Bunny Shield** — Enable or disable DDoS protection and WAF for the package
+
+<Frame>
+  ![Hosting package configuration](/images/integrations/cpanel/whm_package_limited.png)
+</Frame>
