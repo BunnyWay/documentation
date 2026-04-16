@@ -924,7 +924,12 @@
                 "group": "cPanel",
                 "pages": [
                   "integrations/cpanel/index",
-                  "integrations/cpanel/quickstart",
+                  "integrations/cpanel/quickstart"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
                   "integrations/cpanel/configuration",
                   "integrations/cpanel/custom-nameservers"
                 ]

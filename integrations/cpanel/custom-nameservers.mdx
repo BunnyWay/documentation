@@ -1,21 +1,39 @@
 ---
-title: "Custom nameservers"
-description: "Learn how to configure custom nameservers for the bunny.net cPanel plugin."
+title: Custom Nameservers
+description: Use your own branded nameservers with the bunny.net cPanel plugin.
 ---
 
-By default the bunny.net cPanel plugin uses bunny.net nameservers and displays them in the plugin. If you want to use custom nameservers, you need to update your DNS configuration and add or edit the `/etc/bunnynet.conf` file.
+By default, the bunny.net cPanel plugin uses `kiki.bunny.net` and `coco.bunny.net` as nameservers. You can replace these with your own branded nameservers (e.g., `ns1.example.com`).
 
-1. Update the example.com DNS zone, pointing the addresses to bunny.net:
-   ```
-   ns1.example.com.  IN  A     91.200.176.1
-   ns1.example.com.  IN  AAAA  2400:52e0:fff0::1
-   ns2.example.com.  IN  A     109.104.147.1
-   ns2.example.com.  IN  AAAA  2400:52e0:fff2::1
-   ```
-2. On your cPanel server, make sure those lines exist in your `/etc/bunnynet.conf` file:
-   ```
-   NS1=ns1.example.com
-   NS2=ns2.example.com
-   SOA_EMAIL=hostmaster@example.com
-   ```
-3. Run `systemctl restart bunnynet-cpanel-daemon`;
+## Set up custom nameservers
+
+<Steps>
+  <Step title="Create DNS records">
+    Add the following records to your domain's DNS zone, pointing your nameservers to bunny.net:
+
+    ```
+    ns1.example.com.  IN  A     91.200.176.1
+    ns1.example.com.  IN  AAAA  2400:52e0:fff0::1
+    ns2.example.com.  IN  A     109.104.147.1
+    ns2.example.com.  IN  AAAA  2400:52e0:fff2::1
+    ```
+  </Step>
+  <Step title="Update the configuration file">
+    Edit `/etc/bunnynet.conf` and add your custom nameservers:
+
+    ```
+    NS1=ns1.example.com
+    NS2=ns2.example.com
+    SOA_EMAIL=hostmaster@example.com
+    ```
+  </Step>
+  <Step title="Restart the daemon">
+    Apply the changes by restarting the daemon:
+
+    ```bash
+    systemctl restart bunnynet-cpanel-daemon
+    ```
+  </Step>
+</Steps>
+
+The plugin will now display your custom nameservers instead of the default bunny.net ones.

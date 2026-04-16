@@ -1,0 +1,64 @@
+---
+title: Enable bunny.net for a Website
+sidebarTitle: Enable for a Website
+description: Walk through enabling bunny.net CDN, DNS, and optimization for a website from cPanel.
+---
+
+Once your hosting provider has installed and configured the bunny.net cPanel plugin, you can enable bunny.net for any of your websites directly from cPanel.
+
+## Open the plugin
+
+Log in to cPanel. In the sidebar, click **bunny.net** to open the plugin.
+
+<Frame>
+  ![bunny.net in cPanel sidebar](/images/integrations/cpanel/cpanel_home.png)
+</Frame>
+
+The plugin lists all websites on your account. Click **Configure** on the website you want to enable.
+
+<Frame>
+  ![bunny.net domain list](/images/integrations/cpanel/cpanel_plugin.png)
+</Frame>
+
+## Enable bunny.net
+
+The setup wizard walks you through four steps automatically.
+
+<Steps>
+  <Step title="Checking website settings">
+    The plugin analyzes your website's current settings and DNS configuration.
+
+    <Frame>
+      ![Checking website settings](/images/integrations/cpanel/enable_step1.png)
+    </Frame>
+  </Step>
+  <Step title="Adding your website to Bunny DNS">
+    Your website is added to Bunny DNS. DNS records are automatically synced between cPanel and Bunny DNS, so you can continue managing them through the cPanel Zone Editor.
+
+    <Frame>
+      ![Adding domain to Bunny DNS](/images/integrations/cpanel/enable_step2.png)
+    </Frame>
+  </Step>
+  <Step title="Update nameservers">
+    Update your nameservers at your registrar to point to bunny.net. The plugin displays the nameservers you need to set and instructions for your registrar.
+
+    Click **Check Nameserver Configuration** to verify the change has propagated.
+
+    <Frame>
+      ![Update nameservers](/images/integrations/cpanel/enable_step3.png)
+    </Frame>
+  </Step>
+  <Step title="Enabling Bunny CDN">
+    Bunny CDN is activated for your website and an SSL certificate is provisioned automatically.
+
+    <Frame>
+      ![Enabling Bunny CDN](/images/integrations/cpanel/enable_step4.png)
+    </Frame>
+  </Step>
+</Steps>
+
+Once all four steps are complete, your website is live on bunny.net.
+
+<Frame>
+  ![Setup complete](/images/integrations/cpanel/enable_step5.png)
+</Frame>
