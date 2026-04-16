@@ -918,6 +918,7 @@
           },
           {
             "tab": "cPanel",
+            "hidden": true,
             "groups": [
               {
                 "group": "cPanel",
