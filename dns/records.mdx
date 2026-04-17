@@ -167,6 +167,10 @@ When monitoring is enabled on a record set:
 | **SVCB**  | General-purpose service binding record. Provides information about available services for a domain, including protocol and connection parameters.                  |
 | **TLSA**  | Associates a TLS certificate with a domain. Used with DANE to specify which certificate or CA should be trusted for a domain.                                      |
 
+<Note>
+  When a CNAME record is used at the zone apex, Bunny DNS automatically flattens it to A/AAAA records.
+</Note>
+
 ### Bunny-specific records
 
 | Type (UI label)    | Description                                                      |
