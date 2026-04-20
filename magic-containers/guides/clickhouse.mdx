@@ -162,7 +162,9 @@ A typical setup pairs ClickHouse with your application. When configuring the app
 
 ## External access
 
-To connect to ClickHouse from outside Magic Containers (e.g. from your local terminal), add an [Anycast endpoint](/magic-containers/endpoints):
+To connect to ClickHouse from outside Magic Containers (e.g. from your local terminal), add either a [CDN or Anycast endpoint](/magic-containers/endpoints). CDN endpoints work for ClickHouse's HTTP interface only; Anycast endpoints support both HTTP and the native protocol.
+
+### Anycast endpoint
 
 1. Go to your app's **Endpoints** tab and click **Add New Endpoint**
 2. Select **Anycast** as the type
@@ -193,8 +195,84 @@ clickhouse-client --host <anycast-ip> --port <exposed-port> --user app --passwor
   `9000`.
 </Note>
 
+### CDN endpoint
+
+A CDN endpoint exposes ClickHouse's HTTP interface through bunny.net's edge network at a `b-cdn.net` hostname, giving you HTTPS out of the box.
+
+1. Go to your app's **Endpoints** tab and click **Add New Endpoint**
+2. Select **CDN** as the type
+3. Set **Container Port** to `8123`
+4. Click **Add Endpoint**
+
+Then connect using the assigned hostname. In the examples below, `app` is both the username (`CLICKHOUSE_USER`) and the database name (`CLICKHOUSE_DB`) from the container's environment variables, and `YOUR_PASSWORD` is the `CLICKHOUSE_PASSWORD` you set. Substitute these with whatever you configured — for example, `clickhouse` for both if you kept the defaults.
+
+<Tabs>
+  <Tab title="Query">
+    ```bash
+    curl -u 'app:YOUR_PASSWORD' \
+      'https://mc-abc123xyz0.b-cdn.net/?query=SELECT+1'
+    ```
+  </Tab>
+  <Tab title="Create">
+    ```bash
+    curl -u 'app:YOUR_PASSWORD' \
+      'https://mc-abc123xyz0.b-cdn.net/?database=app' \
+      --data-binary "
+        CREATE TABLE IF NOT EXISTS events (
+          ts        DateTime,
+          user_id   UInt64,
+          event     String,
+          value     Float64
+        )
+        ENGINE = MergeTree()
+        ORDER BY (ts, user_id)
+      "
+    ```
+  </Tab>
+  <Tab title="Insert">
+    ```bash
+    curl -u 'app:YOUR_PASSWORD' \
+      'https://mc-abc123xyz0.b-cdn.net/?database=app&query=INSERT+INTO+events+FORMAT+JSONEachRow' \
+      --data-binary '
+        {"ts":"2026-04-20 10:00:00","user_id":1,"event":"view","value":1.0}
+        {"ts":"2026-04-20 10:01:00","user_id":2,"event":"click","value":2.5}
+        {"ts":"2026-04-20 10:02:00","user_id":1,"event":"view","value":1.0}
+      '
+    ```
+  </Tab>
+  <Tab title="Aggregate">
+    ```bash
+    curl -u 'app:YOUR_PASSWORD' \
+      'https://mc-abc123xyz0.b-cdn.net/?database=app' \
+      --data-binary "
+        SELECT event, count() AS n, sum(value) AS total
+        FROM events
+        GROUP BY event
+        ORDER BY n DESC
+        FORMAT PrettyCompact
+      "
+    ```
+  </Tab>
+</Tabs>
+
+<Warning>
+  CDN endpoints are publicly reachable with no authentication at the edge —
+  anyone who knows the hostname can reach ClickHouse, and only the database's
+  basic auth stands in the way. Always set a strong `CLICKHOUSE_PASSWORD`
+  (never leave it as `clickhouse/clickhouse`), especially with
+  `CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1` enabled.
+</Warning>
+
+<Note>
+  CDN endpoints only expose the HTTP interface (port `8123`). The native
+  protocol (port `9000`) and clients that depend on it — including
+  `clickhouse-client` without `--secure` and most BI tools' native drivers —
+  won't work. Use HTTP-based drivers, or add an Anycast endpoint for port
+  `9000`.
+</Note>
+
 <Warning>
   Exposing your database to the internet means anyone with the credentials can
-  connect. Use a strong password and consider removing the Anycast endpoint when
+  connect. Use a strong password and consider removing the endpoint when
   external access is no longer needed.
 </Warning>
