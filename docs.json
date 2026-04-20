@@ -939,6 +939,47 @@
         ]
       },
       {
+        "product": "CLI",
+        "icon": "terminal",
+        "description": "Manage bunny.net from your terminal",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Documentation",
+                "pages": [
+                  "cli/index",
+                  "cli/quickstart",
+                  "cli/installation",
+                  "cli/configuration",
+                  "cli/changelog"
+                ]
+              },
+              {
+                "group": "Commands",
+                "pages": [
+                  "cli/commands/auth",
+                  "cli/commands/config",
+                  "cli/commands/db",
+                  {
+                    "group": "Scripts",
+                    "hidden": true,
+                    "pages": ["cli/commands/scripts"]
+                  },
+                  {
+                    "group": "Registries",
+                    "hidden": true,
+                    "pages": ["cli/commands/registries"]
+                  },
+                  "cli/commands/api"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "product": "API Reference",
         "icon": "square-terminal",
         "description": "Build & Integrate with the Platform API",

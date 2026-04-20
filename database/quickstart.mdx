@@ -5,89 +5,93 @@ description: Create a database and run your first query in minutes
 
 <Steps>
 
-<Step title="Create a Database">
-
-From your Bunny dashboard, click **Add** in the left-hand sidebar and select **Database**.
-
-<Frame>![Add Database](/images/database/quickstart/add-new-database.png)</Frame>
-
-</Step>
-
-<Step title="Name your database">
-
-Enter a unique name for your database. This name will be used to identify your database in the dashboard and connection URLs.
-
-<Frame>![Database Name](/images/database/quickstart/database-name.png)</Frame>
-
-</Step>
-
-<Step title="Select a region">
-
-Choose how you want your database deployed:
+<Step title="Create a database">
 
 <Tabs>
-  <Tab title="Automatic">
-    **Automatic region selection**: We will choose the optimal regions for your
-    database based on your location and best performance.
+  <Tab title="Dashboard">
+    1. From your Bunny dashboard, click **Add** in the left-hand sidebar and select **Database**.
+
+       <Frame>
+         ![Add Database](/images/database/quickstart/add-new-database.png)
+       </Frame>
+
+    2. Enter a unique name for your database. This name will be used to identify your database in the dashboard and connection URLs.
+
+       <Frame>![Database Name](/images/database/quickstart/database-name.png)</Frame>
+
+    3. Choose how you want your database deployed:
+
+       - **Automatic**: We will choose the optimal regions for your database based on your location and best performance.
+       - **Single region**: Deploy your database to a single region without any replication. Best for development or applications with users in one geographic area.
+       - **Manual**: Manually select your storage location along with primary and replication regions. Best for applications with specific latency or compliance requirements.
+
+       <Frame>
+         ![Region Selection](/images/database/quickstart/region-selection.png)
+       </Frame>
+
+    4. Click **Add Database** to create your database.
+
+       <Frame>
+         ![Add Database Button](/images/database/quickstart/add-database-button.png)
+       </Frame>
+
+    5. Once created, copy your connection credentials:
+
+       - **Database URL**: Your database endpoint
+       - **Access Token**: Choose between **Full Access** (read/write) or **Read Only** depending on your needs
+
+       <Frame>
+         ![Database Credentials](/images/database/quickstart/database-credentials.png)
+       </Frame>
+
+       <Warning>
+         Keep your access tokens secure. Never commit them to version control or expose
+         them in client-side code.
+       </Warning>
+
+    6. **Optional**: if you have an existing Edge Script or Magic Container, you can add your database credentials directly from this page:
+
+       1. Click **Add Secrets to Edge Script** or **Add Secrets to Magic Container Apps**
+       2. Select the script or app you want to connect
+       3. The database URL and access token will be added as environment variables automatically
+
+       <Frame>
+         ![Add Secrets](/images/database/quickstart/add-database-secrets-to-scripts-or-apps.png)
+       </Frame>
+
   </Tab>
-  <Tab title="Single region">
-    **Single region deployment**: Deploy your database to a single region
-    without any replication. Best for development or applications with users in
-    one geographic area.
-  </Tab>
-  <Tab title="Manual">
-    **Manual region selection**: Manually select your storage location along
-    with primary and replication regions. Best for applications with specific
-    latency or compliance requirements.
+  <Tab title="CLI">
+    <Note>
+      Don't have the CLI installed? See the [CLI quickstart](/cli/quickstart) to install and authenticate.
+    </Note>
+
+    Create a database interactively:
+
+    ```bash
+    bunny db create
+    ```
+
+    You'll be prompted for a name and region mode (automatic, single region, or manual). After creation, the CLI offers to:
+
+    - **Link** the current directory to the database (writes `.bunny/database.json`)
+    - **Generate** a full-access auth token
+    - **Save** `BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN` to a `.env` file
+
+    For a fully non-interactive run (e.g. in CI):
+
+    ```bash
+    bunny db create --name mydb --primary FR
+    ```
+
+    <Warning>
+      Keep your access tokens secure. Never commit them to version control or
+      expose them in client-side code.
+    </Warning>
+
+    See [`bunny db`](/cli/commands/db) for the full command reference, including `bunny db shell` for an interactive SQL prompt.
+
   </Tab>
 </Tabs>
-
-<Frame>
-  ![Region Selection](/images/database/quickstart/region-selection.png)
-</Frame>
-
-</Step>
-
-<Step title="Create the database">
-
-Click **Add Database** to create your database.
-
-<Frame>
-  ![Add Database Button](/images/database/quickstart/add-database-button.png)
-</Frame>
-
-</Step>
-
-<Step title="Get your credentials">
-
-Once created, copy your connection credentials:
-
-- **Database URL**: Your database endpoint
-- **Access Token**: Choose between **Full Access** (read/write) or **Read Only** depending on your needs
-
-<Frame>
-  ![Database Credentials](/images/database/quickstart/database-credentials.png)
-</Frame>
-
-<Warning>
-  Keep your access tokens secure. Never commit them to version control or expose
-  them in client-side code.
-</Warning>
-
-</Step>
-
-<Step title="Connect from Edge Scripting or Magic Containers (Optional)">
-
-If you have an existing Edge Script or Magic Container, you can add your database credentials directly from this page:
-
-1. Click **Add Secrets to Edge Script** or **Add Secrets to Magic Container Apps**
-2. Select the script or app you want to connect
-3. The database URL and access token will be added as environment variables automatically
-
-<Frame>
-  ![Add
-  Secrets](/images/database/quickstart/add-database-secrets-to-scripts-or-apps.png)
-</Frame>
 
 </Step>
 

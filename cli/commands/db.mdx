@@ -1,0 +1,302 @@
+---
+title: bunny db
+sidebarTitle: db
+description: "Create, manage, and query Bunny Databases from the command line."
+---
+
+`bunny db` provides full lifecycle management for [Bunny Database](/database): creating databases, linking them to local projects, running SQL interactively, generating auth tokens, and viewing tables in a browser.
+
+## Database resolution
+
+Most `db` commands accept an optional `<database-id>` positional argument. When omitted, the CLI resolves the target in this order:
+
+1. Explicit `<database-id>` argument
+2. `.bunny/database.json` manifest written by `bunny db link`
+3. `BUNNY_DATABASE_URL` in a `.env` file (walked up from the current directory) matched against your database list
+4. Interactive selection prompt
+
+For `bunny db shell`, the CLI also reads `BUNNY_DATABASE_AUTH_TOKEN` from `.env` to skip token generation. Both variables can be written automatically by `bunny db create` or `bunny db quickstart`.
+
+---
+
+## `bunny db create`
+
+Create a new database. Interactively prompts for name and region selection (automatic, single region, or manual) when flags are omitted. After creation, prompts to link the directory, generate an auth token, and save credentials to `.env`.
+
+```bash
+# Interactive: prompts for name and region mode
+bunny db create
+
+# Single region
+bunny db create --name mydb --primary FR
+
+# Multi-region with replicas
+bunny db create --name mydb --primary FR,DE --replicas UK,NY
+
+# Fully non-interactive (CI / scripts)
+bunny db create --name mydb --primary FR --link --token --save-env --output json
+```
+
+| Flag               | Description                                                                              |
+| ------------------ | ---------------------------------------------------------------------------------------- |
+| `--name`           | Database name                                                                            |
+| `--primary`        | Comma-separated primary region IDs (e.g. `FR` or `FR,DE`)                                |
+| `--replicas`       | Comma-separated replica region IDs (e.g. `UK,NY`)                                        |
+| `--storage-region` | Override the auto-detected storage region                                                |
+| `--link`           | Link the current directory to the new database (skips prompt). Use `--no-link` to skip.  |
+| `--token`          | Generate a full-access auth token (skips prompt). Use `--no-token` to skip.              |
+| `--save-env`       | Save `BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN` to `.env`. Requires `--token`. |
+
+<Note>
+  In `--output json` mode, prompts are suppressed entirely. Flags are the only
+  way to opt in to linking, token creation, and `.env` writes. The JSON output
+  gains `linked`, `token`, and `saved_to_env` fields reflecting what happened.
+</Note>
+
+## `bunny db list`
+
+List all databases. Shows ID, name, status, primary region, and size.
+
+```bash
+bunny db list
+bunny db list --output json
+```
+
+## `bunny db show`
+
+Show details for a single database.
+
+```bash
+bunny db show <database-id>
+bunny db show
+bunny db show --output json
+```
+
+## `bunny db link`
+
+Link the current directory to a database. Writes `{ id, name }` to `.bunny/database.json` so subsequent `db` commands resolve the target without `BUNNY_DATABASE_URL` in `.env`. With no argument, lists all databases for interactive selection.
+
+```bash
+# Interactive selection
+bunny db link
+
+# Direct link by ID
+bunny db link <database-id>
+```
+
+`bunny db create` offers to link the new database, and `bunny db delete` automatically removes a stale link when it points at the deleted database.
+
+## `bunny db delete`
+
+Permanently delete a database. Requires double confirmation (or `--force` to skip).
+
+```bash
+bunny db delete <database-id>
+bunny db delete --force
+```
+
+| Flag      | Description               |
+| --------- | ------------------------- |
+| `--force` | Skip confirmation prompts |
+
+## `bunny db regions`
+
+Manage primary and replica regions for a database.
+
+### `bunny db regions list`
+
+```bash
+bunny db regions list
+bunny db regions list <database-id>
+```
+
+### `bunny db regions add`
+
+```bash
+bunny db regions add --primary FR,DE
+bunny db regions add --replicas UK,NY
+bunny db regions add --primary FR --replicas UK
+```
+
+| Flag         | Description                               |
+| ------------ | ----------------------------------------- |
+| `--primary`  | Comma-separated primary region IDs to add |
+| `--replicas` | Comma-separated replica region IDs to add |
+
+### `bunny db regions remove`
+
+```bash
+bunny db regions remove --primary FR
+bunny db regions remove --replicas UK,NY
+```
+
+| Flag         | Description                                  |
+| ------------ | -------------------------------------------- |
+| `--primary`  | Comma-separated primary region IDs to remove |
+| `--replicas` | Comma-separated replica region IDs to remove |
+
+### `bunny db regions update`
+
+Interactively update region configuration. Shows all available regions with current ones pre-selected. Toggle on/off and confirm.
+
+```bash
+bunny db regions update
+bunny db regions update <database-id>
+```
+
+## `bunny db usage`
+
+Show usage statistics for a database.
+
+```bash
+bunny db usage <database-id>
+bunny db usage --period 7d
+bunny db usage --output json
+```
+
+## `bunny db quickstart`
+
+Generate a quickstart guide for connecting to a database from your preferred language.
+
+```bash
+bunny db quickstart
+bunny db quickstart <database-id> --lang bun
+```
+
+## `bunny db shell`
+
+Open an interactive SQL shell for a database. Supports multiple output modes, sensitive column masking, persistent history, and dot-commands for quick introspection.
+
+```bash
+# Interactive shell (auto-detects database from .env)
+bunny db shell
+
+# Specify a database ID
+bunny db shell <database-id>
+
+# Execute a query and exit
+bunny db shell "SELECT * FROM users"
+bunny db shell <database-id> "SELECT * FROM users"
+bunny db shell --execute "SELECT COUNT(*) FROM posts"
+
+# Output modes
+bunny db shell -m json -e "SELECT * FROM users"
+bunny db shell -m csv -e "SELECT * FROM users"
+bunny db shell -m markdown -e "SELECT * FROM users"
+
+# Execute a SQL file
+bunny db shell -e seed.sql
+bunny db shell seed.sql
+
+# Show sensitive columns unmasked
+bunny db shell --unmask
+
+# Direct connection (skip API lookup)
+bunny db shell --url libsql://... --token ey...
+```
+
+| Flag        | Alias | Description                                                |
+| ----------- | ----- | ---------------------------------------------------------- |
+| `--execute` | `-e`  | Execute a SQL statement and exit                           |
+| `--mode`    | `-m`  | Output mode: `default`, `table`, `json`, `csv`, `markdown` |
+| `--unmask`  |       | Show sensitive column values unmasked                      |
+| `--url`     |       | Database URL (skips API lookup)                            |
+| `--token`   |       | Auth token (skips token generation)                        |
+
+### Dot-commands
+
+Available in interactive mode:
+
+| Command            | Description                               |
+| ------------------ | ----------------------------------------- |
+| `.tables`          | List all tables                           |
+| `.describe TABLE`  | Show column details for a table           |
+| `.schema [TABLE]`  | Show CREATE statements                    |
+| `.indexes [TABLE]` | List indexes                              |
+| `.fk TABLE`        | Show foreign keys for a table             |
+| `.er`              | Show entity-relationship overview         |
+| `.count TABLE`     | Count rows in a table                     |
+| `.size TABLE`      | Show table stats (rows, columns, indexes) |
+| `.truncate TABLE`  | Delete all rows from a table              |
+| `.dump [TABLE]`    | Dump schema and data as SQL               |
+| `.read FILE`       | Execute SQL statements from a file        |
+| `.mode [MODE]`     | Set output mode                           |
+| `.timing`          | Toggle query execution timing             |
+| `.mask`            | Enable sensitive column masking           |
+| `.unmask`          | Disable sensitive column masking          |
+| `.clear-history`   | Clear command history                     |
+| `.help`            | Show available commands                   |
+| `.quit` / `.exit`  | Exit the shell                            |
+
+### Sensitive column masking
+
+Columns matching patterns like `password`, `secret`, `api_key`, `auth_token`, `ssn`, etc. are masked by default (`********`). Email columns are partially masked (`a••••e@example.com`). Use `.unmask` or the `--unmask` flag to reveal values.
+
+## `bunny db studio`
+
+Open a read-only table viewer in your browser. Spins up a local server, generates a short-lived auth token if needed, and opens the studio UI.
+
+```bash
+# Auto-detect database (link, .env, or interactive)
+bunny db studio
+
+# Specific database
+bunny db studio <database-id>
+
+# Custom port
+bunny db studio --port 3000
+
+# Don't auto-open the browser
+bunny db studio --no-open
+
+# Use explicit credentials (skips API lookup)
+bunny db studio --url libsql://... --token ey...
+```
+
+| Flag        | Description                                     |
+| ----------- | ----------------------------------------------- |
+| `--port`    | Port for the local studio server (default 4488) |
+| `--url`     | Database URL (skips API lookup)                 |
+| `--token`   | Auth token (skips token generation)             |
+| `--no-open` | Don't automatically open the browser            |
+
+## `bunny db tokens`
+
+Generate and invalidate database auth tokens.
+
+### `bunny db tokens create`
+
+Generate an auth token for a database. The database ID can be provided as a positional argument or auto-detected from `BUNNY_DATABASE_URL` in a `.env` file.
+
+```bash
+# Provide database ID explicitly
+bunny db tokens create <database-id>
+
+# Auto-detect from .env BUNNY_DATABASE_URL
+bunny db tokens create
+
+# Read-only token
+bunny db tokens create --read-only
+
+# Token with expiry (duration shorthand or RFC 3339)
+bunny db tokens create --expiry 30d
+bunny db tokens create --expiry 2026-12-31T23:59:59Z
+```
+
+| Flag           | Description                                                               |
+| -------------- | ------------------------------------------------------------------------- |
+| `--read-only`  | Generate a read-only token (default: full access)                         |
+| `-e, --expiry` | Token expiry. Duration (`30d`, `12h`, `1w`, `1m`, `1y`) or RFC 3339 date  |
+
+### `bunny db tokens invalidate`
+
+Invalidate all auth tokens for a database. Prompts for confirmation unless `--force` is passed.
+
+```bash
+bunny db tokens invalidate <database-id>
+bunny db tokens invalidate --force
+```
+
+| Flag      | Description               |
+| --------- | ------------------------- |
+| `--force` | Skip confirmation prompts |
