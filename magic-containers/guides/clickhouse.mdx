@@ -204,19 +204,19 @@ A CDN endpoint exposes ClickHouse's HTTP interface through bunny.net's edge netw
 3. Set **Container Port** to `8123`
 4. Click **Add Endpoint**
 
-Then connect using the assigned hostname. In the examples below, `app` is both the username (`CLICKHOUSE_USER`) and the database name (`CLICKHOUSE_DB`) from the container's environment variables, and `YOUR_PASSWORD` is the `CLICKHOUSE_PASSWORD` you set. Substitute these with whatever you configured — for example, `clickhouse` for both if you kept the defaults.
+Then connect using the assigned hostname. Replace `username` and `password` with your `CLICKHOUSE_USER` and `CLICKHOUSE_PASSWORD`, and `database` with your `CLICKHOUSE_DB`.
 
 <Tabs>
   <Tab title="Query">
     ```bash
-    curl -u 'app:YOUR_PASSWORD' \
+    curl -u 'username:password' \
       'https://mc-abc123xyz0.b-cdn.net/?query=SELECT+1'
     ```
   </Tab>
   <Tab title="Create">
     ```bash
-    curl -u 'app:YOUR_PASSWORD' \
-      'https://mc-abc123xyz0.b-cdn.net/?database=app' \
+    curl -u 'username:password' \
+      'https://mc-abc123xyz0.b-cdn.net/?database=database' \
       --data-binary "
         CREATE TABLE IF NOT EXISTS events (
           ts        DateTime,
@@ -231,8 +231,8 @@ Then connect using the assigned hostname. In the examples below, `app` is both t
   </Tab>
   <Tab title="Insert">
     ```bash
-    curl -u 'app:YOUR_PASSWORD' \
-      'https://mc-abc123xyz0.b-cdn.net/?database=app&query=INSERT+INTO+events+FORMAT+JSONEachRow' \
+    curl -u 'username:password' \
+      'https://mc-abc123xyz0.b-cdn.net/?database=database&query=INSERT+INTO+events+FORMAT+JSONEachRow' \
       --data-binary '
         {"ts":"2026-04-20 10:00:00","user_id":1,"event":"view","value":1.0}
         {"ts":"2026-04-20 10:01:00","user_id":2,"event":"click","value":2.5}
@@ -242,8 +242,8 @@ Then connect using the assigned hostname. In the examples below, `app` is both t
   </Tab>
   <Tab title="Aggregate">
     ```bash
-    curl -u 'app:YOUR_PASSWORD' \
-      'https://mc-abc123xyz0.b-cdn.net/?database=app' \
+    curl -u 'username:password' \
+      'https://mc-abc123xyz0.b-cdn.net/?database=database' \
       --data-binary "
         SELECT event, count() AS n, sum(value) AS total
         FROM events
