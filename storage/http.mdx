@@ -1,13 +1,12 @@
 ---
-title: HTTP
-description: Upload and manage files using the Bunny Storage HTTP API for best performance, stability, and security
+title: "HTTP"
+description: "Upload and manage files using the Bunny Storage API over HTTP for best performance, stability, and security"
 ---
 
-The HTTP API is the recommended way to upload content to Bunny Storage. It provides the best performance, stability, and security through a simple RESTful protocol.
+HTTP is the recommended way to upload content to Bunny Storage. It provides the best performance, stability, and security through a simple RESTful protocol.
 
 <Info>
-  For complete API documentation, see the [Edge Storage API
-  Reference](/api-reference/storage).
+  For complete API documentation, see the [Edge Storage API Reference](/api-reference/storage).
 </Info>
 
 ## Authentication
@@ -18,30 +17,29 @@ All requests require authentication using the `AccessKey` header with your stora
 AccessKey: your-storage-zone-password
 ```
 
-Find your storage zone password in the **FTP & API Access** tab of your storage zone.
+Find your storage zone password in the **Access** tab of your storage zone.
 
 <Warning>
-  Use your storage zone password (AccessKey), not your global bunny.net API key
-  or Stream API key.
+  Use your storage zone password (AccessKey), not your global bunny.net API key or Stream API key.
 </Warning>
 
 ## Storage endpoints
 
 The API endpoint depends on your storage zone's primary region:
 
-| Region           | Endpoint                 |
-| ---------------- | ------------------------ |
-| Frankfurt, DE    | storage.bunnycdn.com     |
-| London, UK       | uk.storage.bunnycdn.com  |
-| New York, US     | ny.storage.bunnycdn.com  |
-| Los Angeles, US  | la.storage.bunnycdn.com  |
-| Singapore, SG    | sg.storage.bunnycdn.com  |
-| Stockholm, SE    | se.storage.bunnycdn.com  |
-| São Paulo, BR    | br.storage.bunnycdn.com  |
-| Johannesburg, SA | jh.storage.bunnycdn.com  |
-| Sydney, SYD      | syd.storage.bunnycdn.com |
+| Region | Endpoint |
+| --- | --- |
+| Frankfurt, DE | storage.bunnycdn.com |
+| London, UK | uk.storage.bunnycdn.com |
+| New York, US | ny.storage.bunnycdn.com |
+| Los Angeles, US | la.storage.bunnycdn.com |
+| Singapore, SG | sg.storage.bunnycdn.com |
+| Stockholm, SE | se.storage.bunnycdn.com |
+| São Paulo, BR | br.storage.bunnycdn.com |
+| Johannesburg, SA | jh.storage.bunnycdn.com |
+| Sydney, SYD | syd.storage.bunnycdn.com |
 
-Find your endpoint in the **FTP & API Access** page of your storage zone.
+Find your endpoint in the **Access** page of your storage zone.
 
 ## Upload a file
 
@@ -90,17 +88,16 @@ curl -X PUT \
 
 ### Response codes
 
-| Status Code | Description                                                   |
-| ----------- | ------------------------------------------------------------- |
-| 201         | File uploaded successfully                                    |
-| 400         | Upload unsuccessful (bad request)                             |
-| 401         | Invalid AccessKey, region hostname, or non-binary file format |
+| Status Code | Description |
+| --- | --- |
+| 201 | File uploaded successfully |
+| 400 | Upload unsuccessful (bad request) |
+| 401 | Invalid AccessKey, region hostname, or non-binary file format |
 
 ### Important considerations
 
 <Warning>
-  **File content must be raw binary:** Send the file as raw binary in the
-  request body without any encoding. Other formats will result in a 401 error.
+  **File content must be raw binary:** Send the file as raw binary in the request body without any encoding. Other formats will result in a 401 error.
 </Warning>
 
 - Use the correct regional endpoint for your storage zone's primary region
