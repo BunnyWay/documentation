@@ -686,7 +686,8 @@
                   "shield/ddos",
                   "shield/bot-detection",
                   "shield/access-lists",
-                  "shield/upload-scanning"
+                  "shield/upload-scanning",
+                  "shield/api-guardian"
                 ]
               },
               {
