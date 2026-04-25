@@ -1,0 +1,159 @@
+---
+title: "API Guardian"
+description: "API Guardian extends Bunny Shield with schema-aware protection for your APIs. By enforcing your OpenAPI contract at the edge, it ensures requests and responses match exactly what your application expects, stopping invalid or abusive traffic before it reaches your origin."
+---
+
+## Key Features
+
+- **Schema-Based Validation**: Upload your OpenAPI specification and turn it into enforceable validation rules that run directly at the edge.
+- **Full Request Coverage**: Validate path parameters, query strings, headers, cookies, and JSON request bodies against your API contract.
+- **Edge Authentication Enforcement**: Enforce API keys, Bearer tokens, OAuth2, and OpenID Connect validation before requests reach your origin.
+- **Response Validation**: Ensure responses match your schema to prevent accidental data exposure or inconsistent output.
+- **Per-Endpoint Rate Limiting**: Apply granular rate limits aligned with your API structure, including support for dynamic path templates.
+- **Integrated Protection**: Combine schema validation with targeted WAF-style inspection for injection attacks on selected parameters.
+
+## Schema-driven request validation
+
+API Guardian starts with your OpenAPI schema and transforms it into a real-time enforcement layer at the edge.
+
+When a specification is uploaded:
+
+- The schema is normalized and processed
+- Internal references are resolved
+- Validation rules are compiled into native Bunny Shield protections
+
+Every incoming request is checked against this contract before reaching your origin. This ensures that only requests that match your defined API structure are allowed through.
+
+Validation includes:
+
+- **Path parameters** to ensure correct structure and types  
+- **Query parameters** to validate allowed fields and formats  
+- **Headers and cookies** to enforce required values  
+- **JSON request bodies** (`application/json` and `*+json`) to match schema definitions  
+
+You can choose how violations are handled:
+
+- **Log** to observe mismatches without blocking traffic  
+- **Block** to enforce strict compliance  
+- **Ignore** for specific cases where flexibility is needed  
+
+![](/images/shield/api-guardian/request-validation.png)
+
+## Response validation
+
+APIs don’t just define what they accept, but also what they return.
+
+API Guardian can validate responses against your schema on a per-endpoint basis. This helps prevent:
+
+- Unexpected fields being exposed  
+- Incorrect response formats  
+- Edge-case behavior leaking unintended data  
+
+Responses are validated before leaving your infrastructure, ensuring consistency between your API contract and real-world behavior.
+
+![](/images/shield/api-guardian/response-validation.png)
+
+## Authentication enforcement at the edge
+
+API Guardian enforces authentication requirements defined in your OpenAPI schema before requests reach your origin.
+
+Supported authentication methods include:
+
+- **API Keys** (headers, query parameters, cookies)  
+- **HTTP Authentication** (Bearer and Basic)  
+- **OAuth2**  
+- **OpenID Connect**  
+
+Requests missing required credentials are rejected immediately, filtering out a large portion of automated and low-effort attack traffic.
+
+### Token validation
+
+For Bearer tokens and OpenID Connect:
+
+- **JWT structure and expiration** are validated for `bearerFormat: jwt`  
+- **Signature verification** is performed for OpenID Connect providers using public-key algorithms  
+- **JWKS endpoints** are automatically fetched and refreshed  
+- Tokens must match the expected **issuer** and **signing algorithm**  
+
+Supported algorithms include RSA and ECDSA (256, 384, 512-bit). Invalid, expired, unsigned, or tampered tokens are rejected at the edge before reaching your application.
+
+![](/images/shield/api-guardian/authentication.png)
+
+## Per-endpoint rate limiting
+
+Not all endpoints behave the same, and API Guardian reflects that.
+
+You can define rate limits directly per endpoint:
+
+- Supports dynamic paths like `/users/{id}`  
+- Applies limits at the template level across all variations  
+- Configurable per endpoint or per IP address  
+- Time windows from **1 second to 1 hour**  
+
+Versioned endpoints (e.g., `/v1`, `/v2`) are treated independently, allowing precise control as your API evolves.
+
+![](/images/shield/api-guardian/rate-limiting.png)
+
+## Targeted injection protection
+
+Schema validation ensures structure, but not all threats rely on structural violations.
+
+API Guardian allows you to apply deeper inspection selectively:
+
+- Choose specific **query**, **path**, **header**, or **cookie** parameters  
+- Detect patterns like **SQL injection** or **cross-site scripting (XSS)**  
+- Combine schema enforcement with traditional WAF-style protection  
+
+This provides precise control without unnecessary overhead across your entire API surface.
+
+![](/images/shield/api-guardian/injection-detection.png)
+
+## Built into the edge pipeline
+
+API Guardian runs natively inside Bunny Shield’s request processing pipeline.
+
+- No additional network hops  
+- No external validation services  
+- Minimal latency impact  
+
+Validation happens alongside WAF, Bot Detection, and Rate Limiting, ensuring invalid traffic is filtered as early as possible.
+
+## Limits and requirements
+
+API Guardian includes safeguards to ensure consistent performance:
+
+- **Maximum OpenAPI spec size**: 2 MB  
+- Limits on schema complexity, nesting depth, and regex usage  
+- Supports **OpenAPI 3.0.x** specifications  
+
+Endpoint limits vary by plan:
+
+- **Advanced**: up to 10 endpoints  
+- **Business**: up to 50 endpoints  
+- **Enterprise**: customizable  
+
+These limits are designed to help focus protection on critical and high-traffic endpoints.
+
+## Logging & Observability
+
+API Guardian provides full visibility into validation activity:
+
+- **Validation events** logged for mismatched requests and responses  
+- Clear insight into why a request was flagged or blocked  
+- Integrated into Bunny Shield’s event logs for real-time monitoring  
+
+This allows you to safely start in **log mode**, observe real traffic patterns, and transition to **blocking mode** with confidence.
+
+![](/images/shield/api-guardian/logs.png)
+
+## Configuring via API
+
+You can manage API Guardian configurations through the Bunny Shield API.
+
+This allows you to:
+
+- Automate schema uploads  
+- Manage validation rules programmatically  
+- Integrate API protection into CI/CD workflows  
+
+By treating your OpenAPI schema as the source of truth, API Guardian enables consistent, automated security across all environments.
