@@ -31,11 +31,44 @@ Validation includes:
 - **Headers and cookies** to enforce required values  
 - **JSON request bodies** (`application/json` and `*+json`) to match schema definitions  
 
-You can choose how violations are handled:
+## Handling non-conforming requests
 
-- **Log** to observe mismatches without blocking traffic  
-- **Block** to enforce strict compliance  
-- **Ignore** for specific cases where flexibility is needed  
+API Guardian provides two layers of control over how requests that don’t match your schema are handled.
+
+### Rule execution mode
+
+Execution mode controls how API Guardian enforces its decisions globally:
+
+- **Log** to observe validation results without blocking traffic  
+- **Block** to enforce validation decisions at the edge  
+
+This setting applies to all validation outcomes and overrides any individual blocking decision, allowing you to safely test API Guardian in log mode before enforcing it.
+
+### Unmatched path handling
+
+Not all requests will match a defined path in your schema. The **Unmatched Path Action** controls how these requests are treated:
+
+- **Block** to reject requests targeting undefined endpoints (subject to execution mode)  
+- **Log** to record unmatched requests while still forwarding them  
+- **Ignore** to bypass API Guardian entirely for unmatched paths  
+
+Requests set to **Ignore** continue through the rest of Bunny Shield protections, including WAF, Rate Limiting, and Bot Detection.
+
+Requests that **do match** a declared path are handled by API Guardian’s schema validation and path enforcement. These requests are handled by API Guardian’s schema validation and path enforcement, instead of the standard managed WAF ruleset, to avoid false positives common with structured API traffic.
+
+### Authentication-aware path handling
+
+Unmatched path handling is not limited to literal path definitions.
+
+API Guardian automatically allows endpoints referenced by your authentication schemes. This ensures authentication flows work without requiring manual schema duplication.
+
+For OpenID Connect:
+
+- The provider’s discovery metadata is fetched  
+- Advertised endpoints (authorization, token, userinfo, JWKS, etc.) are automatically allowed  
+- Keys are kept up to date as they rotate  
+
+This allows login and token exchange flows to function correctly while still enforcing schema validation across your API.
 
 ![](/images/shield/api-guardian/request-validation.png)
 
@@ -96,15 +129,34 @@ Versioned endpoints (e.g., `/v1`, `/v2`) are treated independently, allowing pre
 
 ## Targeted injection protection
 
-Schema validation ensures structure, but not all threats rely on structural violations.
+Schema validation ensures requests are structurally correct, but some attacks rely on valid structure with malicious content.
 
-API Guardian allows you to apply deeper inspection selectively:
+API Guardian allows you to combine schema enforcement with targeted deep inspection:
 
-- Choose specific **query**, **path**, **header**, or **cookie** parameters  
-- Detect patterns like **SQL injection** or **cross-site scripting (XSS)**  
-- Combine schema enforcement with traditional WAF-style protection  
+- Select specific **query**, **path**, **header**, or **cookie** parameters for inspection  
+- Detect patterns like **SQL injection** and **cross-site scripting (XSS)**  
+- Apply deep inspection only where needed, reducing unnecessary overhead
 
-This provides precise control without unnecessary overhead across your entire API surface.
+### Schema-level inspection with `x-bunny-shield`
+
+You can also define inspection rules directly in your OpenAPI schema using the `x-bunny-shield` extension.
+
+This allows you to attach detection logic to specific fields:
+
+```json
+{
+  "properties": {
+    "comment": {
+      "type": "string",
+      "x-bunny-shield": "detectxss,detectsqli"
+    }
+  }
+}
+```
+
+- Applies to `string` schema types  
+- Accepts a comma-separated list of detectors (`detectxss`, `detectsqli`)  
+- Enables field-level inspection without additional dashboard configuration  
 
 ![](/images/shield/api-guardian/injection-detection.png)
 
