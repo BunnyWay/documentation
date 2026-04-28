@@ -91,9 +91,12 @@ This validates the DNS record and issues the certificate via Let's Encrypt.
 
 </Step>
 
-<Step title="Point your domain to bunny.net">
+<Step title="Update DNS to use your Pull Zone hostname">
 
-After the certificate is issued, update your domain’s DNS records to point to bunny.net.
+After the certificate is issued, update your domain’s DNS records to point to your Pull Zone hostname (e.g., `yourzone.b-cdn.net`).
+
+- Use a **CNAME record** for subdomains (e.g., `cdn.example.com`)
+- Use an **ALIAS/ANAME record** if configuring an apex/root domain
 
 HTTPS will be available immediately after traffic is switched.
 
