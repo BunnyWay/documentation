@@ -3,6 +3,104 @@ title: Changelog
 description: Latest updates and improvements across bunny.net products.
 ---
 
+<Update label="2026-04-28" tags={["Shield", "(New)"]}>
+  ## API Guardian
+
+Introducing API Guardian, a new feature in Bunny Shield that provides schema-aware protection for your APIs. It enforces your OpenAPI contract at the edge, ensuring requests and responses match your application's expectations, and stops invalid or abusive traffic before it reaches your origin. [Learn more](/shield/api-guardian)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Stream", "(Improvement)"]}>
+  ## bunny player enhancements
+
+This release improves playback reliability and performance across platforms, including upgrades to media-chrome, Firefox H.265 seeking fixes, and enhanced Chromecast sync. Additional improvements include better early-play and JIT video starts, heatmap functionality on token-protected embeds, and expanded RUM monitoring. [Learn more](/stream/player)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Stream", "(Improvement)"]}>
+  ## Stream API enhancements
+
+The Smart feature language model has been upgraded to v5.4 for higher quality generation, and JIT watermarking is now more reliable. Additionally, the cleanup unconfigured resolutions endpoint now supports MP4 removal. [Learn more](/api-reference/stream/manage-videos/cleanup-unconfigured-resolutions#parameter-delete-mp4-files)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Storage", "(Improvement)"]}>
+  ## S3 API enhancements
+
+The CopyObject operation now supports source objects up to 5 GB and works seamlessly with multipart uploads. CORS is now supported across pre-signed URLs. [Learn more](/storage/http)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Stream", "(Improvement)"]}>
+  ## Transcribing upgrade
+
+The transcribing language model has been upgraded to v1.2.0, offering faster and higher quality transcriptions. [Learn more](/stream/transcribing)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Stream", "(New)"]}>
+  ## Vimeo2Bunny CLI
+
+A new command-line tool to migrate videos from Vimeo to Bunny Stream. Videos transfer directly from Vimeo via Fetch Video URL — nothing is downloaded to your machine. [Learn more](/stream/vimeo2bunny)
+
+</Update>
+
+<Update label="2026-04-28" tags={["CDN", "(New)"]}>
+  ## Edge Rule pattern matching
+
+Use Lua-based pattern matching in Edge Rule conditions to match structured request values such as URLs, headers, cookies, and query strings. [Learn more](/cdn/edge-rules/pattern-matching)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Database", "(New)"]}>
+  ## Database Shell
+
+The Bunny Database Shell (`bsql`) is a standalone, interactive SQL shell for querying and managing your database from the terminal. [Learn more](/database/connect/database-shell)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Stream", "(New)"]}>
+  ## Webhook signature validation
+
+Validate webhook signatures to verify that incoming notifications are genuinely from Bunny Stream and have not been tampered with. [Learn more](/stream/webhooks)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Stream", "(New)"]}>
+  ## Player 2.0
+
+The new Bunny Stream video player is here with a modern interface and improved performance. It's enabled by default for all new video libraries. [Learn more](/stream/player)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Magic Containers", "(New)"]}>
+  ## Templates
+
+Deploy pre-built application templates with just a few clicks. Each template includes a ready-to-run container image, and some include a sidecar database. [Learn more](/magic-containers/templates)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Magic Containers", "(New)"]}>
+  ## Quick Deploy
+
+A streamlined deployment flow that lets you go from zero to deployed in seconds, with everything presented in a single form. [Learn more](/magic-containers/quick-deploy)
+
+</Update>
+
+<Update label="2026-04-28" tags={["CDN", "(New)"]}>
+  ## JA4 fingerprinting
+
+JA4 TLS fingerprinting is now available on all pull zones. Identify clients based on their TLS handshake characteristics. [Learn more](/cdn/edge-rules/pattern-matching)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Optimizer", "(Improvement)"]}>
+  ## Image resizing upscaling
+
+Bunny Optimizer now supports upscaling images beyond their original dimensions using resampling, with a limit of 24 megapixels. [Learn more](/optimizer/dynamic-images/resizing)
+
+</Update>
+
 <Update label="2026-04-27" tags={["Shield", "(New)"]}>
   ## API Guardian
 
