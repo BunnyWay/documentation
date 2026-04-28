@@ -1,0 +1,121 @@
+---
+title: Seamless Domain Migration
+description: Issue SSL certificates via DNS verification before pointing your domain to bunny.net, enabling seamless zero-downtime migration.
+---
+
+This feature allows you to issue an SSL certificate for your hostname **before pointing your domain to bunny.net**, avoiding HTTPS disruption during migration.
+
+Certificate issuance is performed using **DNS (TXT) validation**, and automatically transitions to **HTTP validation for renewals** after traffic is switched.
+
+<Steps>
+
+<Step title="Create a Pull Zone">
+
+In the [bunny.net dashboard](https://dash.bunny.net), select **Add Pull Zone** and configure your origin.
+
+<Frame>![Add Pull Zone](/images/cdn/add-pull-zone.png)</Frame>
+
+</Step>
+
+<Step title="Add your hostname">
+
+Open your Pull Zone and add your custom hostname (e.g., `cdn.example.com`).
+
+<Frame>![Add Hostname](/images/cdn/add-a-custom-hostname.png)</Frame>
+
+<Note>
+The hostname must be fully configured on the Pull Zone before requesting a certificate.
+</Note>
+
+</Step>
+
+<Step title="Request external DNS certificate">
+
+Initiate certificate issuance using DNS validation:
+
+```bash
+curl --request POST \
+  --url https://api.bunny.net/pullzone/{id}/requestExternalDnsCertificate \
+  --header 'AccessKey: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '
+{
+  "Hostname": "cdn.example.com"
+}
+'
+```
+
+This request returns the DNS TXT record required for domain verification.
+
+<Card title="API Reference" href="https://docs.bunny.net/api-reference/core/pull-zone/request-external-dns-certificate">
+  View full endpoint documentation
+</Card>
+
+</Step>
+
+<Step title="Create DNS TXT record">
+
+Add the returned TXT record to your domain’s DNS zone.
+
+Example:
+
+```bash
+_acme-challenge.example.com  TXT  "verification-token"
+```
+
+Wait until the record is publicly resolvable before continuing.
+
+</Step>
+
+<Step title="Complete certificate issuance">
+
+Finalize the process once the TXT record is live:
+
+```bash
+curl --request POST \
+  --url https://api.bunny.net/pullzone/{id}/completeExternalDnsCertificate \
+  --header 'AccessKey: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '
+{
+  "Hostname": "cdn.example.com"
+}
+'
+```
+
+This validates the DNS record and issues the certificate via Let's Encrypt.
+
+<Card title="API Reference" href="https://docs.bunny.net/api-reference/core/pull-zone/complete-external-dns-certificate">
+  View full endpoint documentation
+</Card>
+
+</Step>
+
+<Step title="Update DNS to use your Pull Zone hostname">
+
+After the certificate is issued, update your domain’s DNS records to point to your Pull Zone hostname (e.g., `yourzone.b-cdn.net`).
+
+- Use a **CNAME record** for subdomains (e.g., `cdn.example.com`)
+- Use an **ALIAS/ANAME record** if configuring an apex/root domain
+
+HTTPS will be available immediately after traffic is switched.
+
+</Step>
+
+<Step title="Automatic renewal">
+
+After the initial issuance:
+
+- Certificates automatically switch to **HTTP-01 validation**
+- Renewals happen automatically
+- No further DNS changes are required
+
+</Step>
+
+</Steps>
+
+<Note>
+- DNS TXT records must be publicly accessible before completing the request  
+- DNS propagation time depends on your DNS provider  
+- Certificate issuance depends on successful validation by Let's Encrypt  
+</Note>
