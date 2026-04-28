@@ -229,6 +229,7 @@
                   "cdn/custom-hostname",
                   "cdn/cdn-acceleration",
                   "cdn/ssl-setup",
+                  "cdn/seamless-migration",
                   "cdn/custom-404-page",
                   "cdn/websockets",
                   {
