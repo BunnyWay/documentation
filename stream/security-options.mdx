@@ -17,6 +17,15 @@ The Bunny Stream library security settings can be found within the Bunny Dashboa
 
 MediaCage is a basic free DRM system designed to prevent attempts at downloading your video content when enabled. MediaCage is tightly integrated into Bunny.net to dynamically encrypt the video content. It was designed to operate as a device-agnostic system and does not require any special hardware or software support on the client. With the encryption, this then prevents downloads by third party software as MediaCage only allows content to be loaded through the embed player itself.
 
+# Domains
+
+The Domains section lets you control which websites can access your Stream videos:
+
+- **Blocked domains** lists domains that should not be allowed to play your videos. If a domain is not on this list, it can still access the videos unless another security setting blocks it.
+- **Allowed domains** lists the only domains that are allowed to access your videos. If you leave this list empty, requests from all domains are allowed.
+
+If you use Allowed domains and enable Chromecast playback, also add `*.gstatic.com` to the allowed list. Chromecast devices and TVs use this Google domain when opening the casting page. Without it, the device may not be able to connect to the CDN and request the playlist or video segment files, which can prevent the video from playing on the TV even though it works in a browser.
+
 # Token Authentication
 
 There are two different types of Token Authentication offered for Stream, we can protect the embed view as well as the actual video files itself. This all depends on how you intend to actually show the video. We've got documentation this here: [https://docs.bunny.net/docs/stream-security](/docs/stream-security) but you'll need to use the path style tokens when protecting a HLS stream to ensure we protect the TS files too.
