@@ -22,7 +22,7 @@ MediaCage is a basic free DRM system designed to prevent attempts at downloading
 The Domains section lets you control which websites can access your Stream videos:
 
 - **Blocked domains** lists domains that should not be allowed to play your videos. If a domain is not on this list, it can still access the videos unless another security setting blocks it.
-- **Allowed domains** lists the only domains that are allowed to access your videos. If you leave this list empty, requests from all domains are allowed.
+- **Allowed domains** lists the only domains that are allowed to access your videos. If you leave this list empty, the allowlist does not restrict playback, but Blocked domains and other security settings still apply.
 
 If you use Allowed domains and enable Chromecast playback, also add `*.gstatic.com` to the allowed list. Chromecast devices and TVs use this Google domain when opening the casting page. Without it, the device may not be able to connect to the CDN and request the playlist or video segment files, which can prevent the video from playing on the TV even though it works in a browser.
 
