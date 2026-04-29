@@ -8,7 +8,8 @@ jobs:
   update-changelog:
     if: >-
       github.event.pull_request.merged == true &&
-      !startsWith(github.head_ref, 'changelog/')
+      !startsWith(github.head_ref, 'changelog/') &&
+      !startsWith(github.head_ref, 'fix/')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -27,14 +28,25 @@ jobs:
 
       - name: Get changed files
         id: changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
         run: |
-          FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.merge_commit_sha }} | grep '\.mdx\?$' || true)
+          # Use the GitHub API to get the actual list of files changed by this PR.
+          # This is correct regardless of merge strategy (squash/merge/rebase) and
+          # avoids picking up other PRs that landed on main since this PR's base.sha.
+          FILES=$(gh pr view "$PR_NUMBER" --json files --jq '.files[].path' | grep -E '\.mdx?$' || true)
           if [ -z "$FILES" ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
           else
             echo "skip=false" >> $GITHUB_OUTPUT
-            # Write to a file to avoid shell escaping issues
             echo "$FILES" > /tmp/changed_files.txt
+            # Parent of the merge commit = main's tip immediately before this PR landed.
+            # For squash merges (this repo's convention) this gives exactly the PR's diff.
+            BASE_SHA=$(git rev-parse "${MERGE_SHA}^")
+            echo "base_sha=${BASE_SHA}" >> $GITHUB_OUTPUT
+            echo "merge_sha=${MERGE_SHA}" >> $GITHUB_OUTPUT
           fi
 
       - name: Generate changelog entries
@@ -42,6 +54,8 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           MERGED_AT: ${{ github.event.pull_request.merged_at }}
+          BASE_SHA: ${{ steps.changed.outputs.base_sha }}
+          MERGE_SHA: ${{ steps.changed.outputs.merge_sha }}
         run: node .github/scripts/generate-changelog.mjs
 
       - name: Create PR with changelog updates
