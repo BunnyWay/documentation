@@ -8,7 +8,8 @@ jobs:
   update-changelog:
     if: >-
       github.event.pull_request.merged == true &&
-      !startsWith(github.head_ref, 'changelog/')
+      !startsWith(github.head_ref, 'changelog/') &&
+      !startsWith(github.head_ref, 'fix/')
     runs-on: ubuntu-latest
     permissions:
       contents: write
