@@ -215,11 +215,46 @@ Your job is to review documentation diffs and decide whether they represent user
 
 RULES:
 - Only include genuinely NEW features or meaningful product IMPROVEMENTS.
-- Do NOT include: documentation-only updates, typo fixes, rewording, clarifications, new guides/tutorials for existing features, pricing page updates, or formatting changes.
+- Do NOT include: typo fixes, rewording for clarity, restructured prose, formatting changes, pricing page wording updates, or new guides/tutorials for capabilities that already existed.
 - New features are typically new pages describing functionality that didn't exist before. Use the "Existing pages" list to check — if the product already has pages covering this feature area, the new page is likely a guide for an existing feature, not a new feature.
-- A MODIFIED file is almost always a docs improvement for an existing feature. Only include it if the diff EXPLICITLY describes a brand-new product capability (e.g. a newly released API field, a new configuration option, an increased limit, a GA announcement). Adding a sentence about an existing requirement, caveat, or behaviour is NOT a changelog event.
-- If "Lines added" is small (under ~30) and the file is MODIFIED, default to skipping unless the diff clearly states something new shipped.
+- For MODIFIED files, INCLUDE the change if you can point to a specific concrete capability that did not exist before. Concrete capabilities include:
+  - A new accepted value for an existing parameter (e.g. a new \`format\` option, a new region, a new event type)
+  - A newly released API field, request/response property, or query parameter
+  - A new configuration option, header, or webhook
+  - An increased or relaxed limit (size, rate, retention, etc.)
+  - A status promotion: beta → Public Preview, Public Preview → GA, hidden → public
+  - A behaviour change that users will observe (default values changed, ordering changed, semantics changed) — but only if the diff frames it as a change, not a clarification of pre-existing behaviour
+- For MODIFIED files, SKIP the change if the diff is just rewording, adding a caveat or warning, clarifying existing behaviour, or restructuring prose. A small diff is fine to include if it clearly adds one of the concrete capabilities above — do not skip purely on size.
 - If the diff shows frontmatter with \`hidden: true\`, skip it — these are hidden or private preview features not yet public.
+
+EXAMPLES:
+
+INCLUDE (small diff, one new accepted value):
+\`\`\`diff
+-**Accepted values:** \`webp\`, \`jpeg\`, \`png\`, \`gif\`
++**Accepted values:** \`webp\`, \`jpeg\`, \`png\`, \`gif\`, \`avif\`
+\`\`\`
+→ \`avif\` is a new output format that didn't exist before. Type: "Improvement", title e.g. "AVIF output support".
+
+INCLUDE (status promotion):
+\`\`\`diff
+-- **HEIC** *(beta)* - Compressed photo format
++- **HEIC** *(Public Preview)* - Compressed photo format
+\`\`\`
+→ Beta → Public Preview is a release milestone worth announcing.
+
+SKIP (pure rewording):
+\`\`\`diff
+-Unsupported browsers receive the original format
++Browsers without WebP support receive the original format
+\`\`\`
+→ Same meaning, clearer wording. Not a changelog event.
+
+SKIP (clarifying caveat about existing behaviour):
+\`\`\`diff
++We do not support transcoding animations to AVIF. If the original is already AVIF and unmodified, the animation is preserved.
+\`\`\`
+→ Documenting an existing limitation, not a new capability.
 
 DEDUPLICATION (critical):
 - The "Recent changelog entries" section below shows what is ALREADY published.
