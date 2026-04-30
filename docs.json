@@ -127,7 +127,8 @@
                   "cdn/quickstart",
                   "cdn/regions",
                   "cdn/pricing",
-                  "cdn/changelog"
+                  "cdn/changelog",
+                  "cdn/limits"
                 ]
               },
               {
