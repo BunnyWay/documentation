@@ -37,6 +37,12 @@ Resize images to specific dimensions while automatically maintaining aspect rati
 
 </ParamField>
 
+<Info>
+    The default upscaling behaviour can be changed to `resampling` (so you don't need to specify the query parameter each time)
+    in the Pull Zone config via the [Update Pull Zone](/api-reference/core/pull-zone/update-pull-zone) API by setting 
+    `OptimizerEnableUpscaling` to `true`.                                                          
+</Info>
+
 ## How it works
 
 When you apply width or height parameters, Bunny Optimizer:
