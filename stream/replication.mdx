@@ -1,5 +1,5 @@
 ---
-title: Replication
+title: "Replication"
 description: "Learn how geo-replication works in Bunny Stream to distribute your videos globally."
 ---
 
@@ -21,33 +21,26 @@ In the event that a file has just been uploaded to our platform, but the file ha
 
 # Available Replication Locations
 
-| SSD Tier                                                                            | HDD Tier              |
-| ----------------------------------------------------------------------------------- | --------------------- |
-| Frankfurt - Germany (note that Frankfurt has to be the main region for SSD storage) | Frankfurt - Germany   |
-| Europe - Stockholm                                                                  | Stockholm - Sweden    |
-| US West - Los Angeles                                                               | US West - Los Angeles |
-| Oceania - Sydney                                                                    | Oceania - Sydney      |
-| Africa - Johannesburg                                                               | Africa - Johannesburg |
-| Europe - Madrid                                                                     | Europe - London       |
-| US West - Seattle                                                                   | US East - New York    |
-| Asia - Tokyo                                                                        | Asia - Singapore      |
-| US East - New York                                                                  | LATAM - São Paulo     |
-| Asia - Singapore                                                                    |                       |
-| LATAM - São Paulo                                                                   |                       |
-| Europe - Prague                                                                     |                       |
-| US East - Miami                                                                     |                       |
-| Asia - Hong Kong                                                                    |                       |
+| HDD Tier |
+| :-- |
+| Frankfurt - Germany |
+| Stockholm - Sweden |
+| US West - Los Angeles |
+| Oceania - Sydney |
+| Africa - Johannesburg |
+| Europe - London |
+| US East - New York |
+| Asia - Singapore |
+| LATAM - São Paulo |
 
 <Info>
   ### Should I enable geo-replication?
 
-If enabled, your data will automatically be replicated into the selected regions and delivered from the closest region to the CDN PoP. This will greatly increase data reliability and performance for uncached requests in each region.
-
+  If enabled, your data will automatically be replicated into the selected regions and delivered from the closest region to the CDN PoP. This will greatly increase data reliability and performance for uncached requests in each region.
 </Info>
 
 <Info>
   ### 🚧 Removing replication zones
 
-Please note that once you have created your Bunny Storage zone and configured the replication zones, that due to technical limitations you will be unable to then remove replication zones afterwards. The only way to bypass this is to delete the zone, and re-create it with your new desired settings.
-
+  Please note that once you have created your Bunny Storage zone and configured the replication zones, that due to technical limitations you will be unable to then remove replication zones afterwards. The only way to bypass this is to delete the zone, and re-create it with your new desired settings.
 </Info>
