@@ -59,20 +59,25 @@ Each request is stored as a pipe-separated line:
 HIT|200|1507167062421|412|390|163.172.53.0|-|https://example.b-cdn.net/video.mp4|WA|Mozilla/5.0...|322b688bd63fb63f2babe9de30a5d262|DE
 ```
 
-| Field         | Description                       |
-| ------------- | --------------------------------- |
-| Cache Status  | `HIT` or `MISS`                   |
-| Status Code   | HTTP response code                |
-| Timestamp     | UTC UNIX timestamp (milliseconds) |
-| Bytes Sent    | Total bytes sent to client        |
-| Pull Zone ID  | ID of the Pull Zone               |
-| Remote IP     | Client IP (anonymized by default) |
-| Referer       | Referer header value              |
-| URL           | Requested URL                     |
-| Edge Location | POP code that served the request  |
-| User Agent    | Client user agent                 |
-| Request ID    | Unique request identifier         |
-| Country Code  | Two-letter ISO country code       |
+| Field        | Description |
+|--------------|-------------|
+| Cache Status | Cache result for the request. Possible values:<br /><br />• `HIT` – Response served directly from cache.<br />• `MISS` – Response not in cache; fetched from origin.<br />• `BYPASS` – Cache was skipped (e.g. due to request headers, cookies, or configuration).<br />• `REVALIDATED` – Cached response was validated with origin (e.g. via `ETag` / `Last-Modified`) and reused.<br />• `STALE` – Stale cached response served (typically due to origin being unavailable or slow).<br />• `UPDATING` – Stale content served while a background cache update is in progress.<br />• `-` – No cache interaction (e.g. non-cacheable methods like `POST`). |
+| Status Code  | HTTP response code |
+| Timestamp    | UTC UNIX timestamp (milliseconds) |
+| Bytes Sent   | Total bytes sent to client |
+| Pull Zone ID | ID of the Pull Zone |
+| Remote IP    | Client IP (anonymized by default) |
+| Referer      | Referer header value |
+| URL          | Requested URL |
+| Edge Location| POP code that served the request |
+| User Agent   | Client user agent |
+| Request ID   | Unique request identifier |
+| Country Code | Two-letter ISO country code |
+
+<p>
+  Cache behaviour depends on zone configuration, request headers, and origin
+  response headers (e.g. <code>Cache-Control</code>, <code>Set-Cookie</code>).
+</p>
 
 ### Extended logging
 
