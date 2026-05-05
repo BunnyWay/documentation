@@ -7,6 +7,15 @@ import SignupInfo from "/snippets/magic-containers/signup-info.mdx";
 
 This guide walks you through deploying WordPress with MariaDB to Magic Containers. You can deploy using a one-click template or configure the containers manually.
 
+<Info>
+  This is a starter guide intended to show how quickly a real workload can run
+  on Magic Containers. It's aimed at developers comfortable customising Docker
+  images, working with environment variables and volumes, and making changes to
+  a WordPress install at the file level. A production-grade WordPress deployment
+  will need additional hardening, image tuning, backup, and caching decisions
+  beyond what's covered here.
+</Info>
+
 <SignupInfo />
 
 ## Deploy with a template
@@ -181,7 +190,16 @@ Without these volumes, all data is lost when containers restart. See [persistent
 
 ## Manage files with File Browser
 
-Since Magic Containers don't provide SSH access, you can add [File Browser](https://filebrowser.org) as a sidecar container to manage themes, plugins, and uploads through a web UI.
+Since Magic Containers don't yet provide SSH access, you can temporarily add [File Browser](https://filebrowser.org) as a sidecar container when you need to inspect files, copy something out, or run a manual procedure that can't be done from WordPress admin (for example, editing `wp-config.php`, removing a broken plugin directory, or uploading a file that exceeds the WordPress upload limit).
+
+<Warning>
+  Treat File Browser as a short-lived tool. The `filebrowser/filebrowser` image
+  doesn't accept credentials through environment variables, and on first boot it
+  generates a random password that is printed **once** to the container logs and
+  not stored anywhere you can retrieve later. Use it for the task at hand, then
+  remove the endpoint and container. For anything you do regularly, do it
+  through WordPress admin instead.
+</Warning>
 
 <Steps>
   <Step title="Add the File Browser container">
@@ -210,21 +228,32 @@ Since Magic Containers don't provide SSH access, you can add [File Browser](http
   <Step title="Add an endpoint">
     Go to the **Endpoints** tab and add a new endpoint for the File Browser container on port `8085`.
   </Step>
+  <Step title="Capture the generated password from the logs">
+    Open your app and go to the **Logs** tab as it deploys. On first boot, File Browser prints a line similar to:
+
+    ```
+    User 'admin' initialized with randomly generated password: <random-password>
+    ```
+
+    The password is shown once. If you miss it, redeploy the container to generate a new one.
+
+  </Step>
   <Step title="Log in">
-    Open the File Browser endpoint URL in your browser. The default credentials are:
+    Open the File Browser endpoint URL in your browser and sign in:
 
     - **Username**: `admin`
-    - **Password**: `admin`
+    - **Password**: the value you copied from the logs
 
-    Change the password immediately after your first login under **Settings > User Management**.
+    Do your file work, then move on to the cleanup step below.
 
+  </Step>
+  <Step title="Remove File Browser when you're done">
+    Once you've finished, remove the File Browser endpoint and container from your app and redeploy. This closes off the publicly reachable login page and avoids leaving a long-lived tool exposed alongside your site.
   </Step>
 </Steps>
 
 <Warning>
-  File Browser has its own authentication, but anyone with the endpoint URL can
-  reach the login page. Change the default password immediately and consider
-  removing the endpoint when you don't need file access.
+  Anyone with the endpoint URL can reach the File Browser login page.
 </Warning>
 
 ## Add a custom hostname

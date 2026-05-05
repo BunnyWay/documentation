@@ -150,17 +150,31 @@ When monitoring is enabled on a record set:
 
 ## Supported record types
 
-| Type          | Description                                                    |
-| ------------- | -------------------------------------------------------------- |
-| **A**         | Maps a domain to an IPv4 address                               |
-| **AAAA**      | Maps a domain to an IPv6 address                               |
-| **CNAME**     | Creates an alias pointing to another domain                    |
-| **MX**        | Specifies mail servers for the domain                          |
-| **TXT**       | Stores text data (SPF, DKIM, verification records)             |
-| **SRV**       | Defines service locations                                      |
-| **CAA**       | Specifies which certificate authorities can issue certificates |
-| **PTR**       | Reverse DNS lookup                                             |
-| **NS**        | Delegates a subdomain to other nameservers                     |
-| **Redirect**  | Bunny-specific record for URL redirects                        |
-| **Pull Zone** | Bunny-specific record linking to a CDN Pull Zone               |
-| **Script**    | Bunny-specific record for scriptable DNS responses             |
+### Standard records
+
+| Type      | Description                                                                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **A**     | Maps a domain to an IPv4 address                                                                                                                                   |
+| **AAAA**  | Maps a domain to an IPv6 address                                                                                                                                   |
+| **CNAME** | Creates an alias pointing to another domain                                                                                                                        |
+| **MX**    | Specifies mail servers for the domain                                                                                                                              |
+| **TXT**   | Stores text data (SPF, DKIM, verification records)                                                                                                                 |
+| **SRV**   | Defines service locations (hostname, port, priority, weight)                                                                                                       |
+| **CAA**   | Specifies which certificate authorities can issue certificates                                                                                                     |
+| **PTR**   | Reverse DNS lookup                                                                                                                                                 |
+| **NS**    | Delegates a subdomain to other nameservers                                                                                                                         |
+| **HTTPS** | HTTPS service binding record. Indicates that a service is available over HTTPS and can include connection parameters such as supported protocols and port numbers. |
+| **SVCB**  | General-purpose service binding record. Provides information about available services for a domain, including protocol and connection parameters.                  |
+| **TLSA**  | Associates a TLS certificate with a domain. Used with DANE to specify which certificate or CA should be trusted for a domain.                                      |
+
+<Note>
+  When a CNAME record is used at the zone apex, Bunny DNS automatically flattens it to A/AAAA records.
+</Note>
+
+### Bunny-specific records
+
+| Type (UI label)    | Description                                                      |
+| ------------------ | ---------------------------------------------------------------- |
+| **PZ** (Pull Zone) | Links a domain to a CDN Pull Zone for automatic CDN acceleration |
+| **RDR** (Redirect) | URL redirect record. Redirects requests to another URL           |
+| **SCR** (Script)   | Scriptable DNS responses using DNS script                        |

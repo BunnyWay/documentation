@@ -126,7 +126,40 @@ function getChangedDocs() {
 }
 
 // ---------------------------------------------------------------------------
-// 3. Call OpenAI to classify and generate changelog entries
+// 3. Read recent entries from existing changelog files for dedup context
+// ---------------------------------------------------------------------------
+
+const RECENT_ENTRIES_PER_FILE = 25;
+
+function extractRecentEntries(filePath, limit) {
+  if (!existsSync(filePath)) return [];
+  const content = readFileSync(filePath, "utf-8");
+  // Match each <Update ...>...</Update> block
+  const blocks = content.match(/<Update[\s\S]*?<\/Update>/g) || [];
+  return blocks.slice(0, limit).map((b) => {
+    // Strip leading whitespace inside the block to keep context tight
+    return b.replace(/^\s+/gm, "").trim();
+  });
+}
+
+function buildExistingChangelogContext(touchedProducts) {
+  const sources = ["changelog.mdx"];
+  for (const product of touchedProducts) {
+    const slug = slugifyProduct(product);
+    sources.push(`${slug}/changelog.mdx`);
+  }
+
+  const sections = [];
+  for (const src of sources) {
+    const entries = extractRecentEntries(src, RECENT_ENTRIES_PER_FILE);
+    if (!entries.length) continue;
+    sections.push(`### ${src}\n\n${entries.join("\n\n")}`);
+  }
+  return sections.join("\n\n");
+}
+
+// ---------------------------------------------------------------------------
+// 4. Call OpenAI to classify and generate changelog entries
 // ---------------------------------------------------------------------------
 
 async function classifyChanges(changedDocs, productMap) {
@@ -159,6 +192,10 @@ async function classifyChanges(changedDocs, productMap) {
     .map((p) => `${p}:\n${(productPages[p] || []).join("\n")}`)
     .join("\n\n");
 
+  // Pull the most recent entries from the root and per-product changelogs so
+  // the model can refuse to re-announce something that's already published.
+  const existingChangelogContext = buildExistingChangelogContext(touchedProducts);
+
   const filesContext = changedDocs
     .map((d) => {
       const product =
@@ -167,21 +204,66 @@ async function classifyChanges(changedDocs, productMap) {
         "Unknown";
       const status = d.isNew ? "NEWLY ADDED" : "MODIFIED";
       const docsPath = "/" + d.file.replace(/\.(mdx?|md)$/, "");
-      return `### File: ${d.file}\nDocs URL: ${docsPath}\nProduct: ${product}\nFile status: ${status}\n\n\`\`\`diff\n${d.diff.slice(0, 4000)}\n\`\`\``;
+      const addedLines = (d.diff.match(/^\+(?!\+\+)/gm) || []).length;
+      return `### File: ${d.file}\nDocs URL: ${docsPath}\nProduct: ${product}\nFile status: ${status}\nLines added: ${addedLines}\n\n\`\`\`diff\n${d.diff.slice(0, 4000)}\n\`\`\``;
     })
     .join("\n\n---\n\n");
 
   const systemPrompt = `You are a changelog writer for bunny.net's developer documentation.
 
-Your job is to review documentation diffs and decide whether they represent user-facing product changes (new features or improvements) that belong in a changelog.
+Your job is to review documentation diffs and decide whether they represent user-facing product changes (new features or improvements) that belong in a changelog. Be CONSERVATIVE — when in doubt, skip the entry. A missed entry can be added by hand; a duplicate or noisy entry pollutes the public changelog.
 
 RULES:
 - Only include genuinely NEW features or meaningful product IMPROVEMENTS.
-- Do NOT include: documentation-only updates, typo fixes, rewording, new guides/tutorials for existing features, pricing page updates, or formatting changes.
-- New features are typically new pages describing functionality that didn't exist before. Use the "Existing pages" list below to check — if the product already has pages covering this feature area, the new page is likely a guide for an existing feature, not a new feature.
-- A MODIFIED file is almost always a docs improvement for an existing feature — only include it if the diff clearly describes a new product capability (e.g. new API fields, new configuration options, increased limits).
-- Improvements are meaningful product enhancements (e.g. new throughput limits, GA releases, new options added).
+- Do NOT include: typo fixes, rewording for clarity, restructured prose, formatting changes, pricing page wording updates, or new guides/tutorials for capabilities that already existed.
+- New features are typically new pages describing functionality that didn't exist before. Use the "Existing pages" list to check — if the product already has pages covering this feature area, the new page is likely a guide for an existing feature, not a new feature.
+- For MODIFIED files, INCLUDE the change if you can point to a specific concrete capability that did not exist before. Concrete capabilities include:
+  - A new accepted value for an existing parameter (e.g. a new \`format\` option, a new region, a new event type)
+  - A newly released API field, request/response property, or query parameter
+  - A new configuration option, header, or webhook
+  - An increased or relaxed limit (size, rate, retention, etc.)
+  - A status promotion: beta → Public Preview, Public Preview → GA, hidden → public
+  - A behaviour change that users will observe (default values changed, ordering changed, semantics changed) — but only if the diff frames it as a change, not a clarification of pre-existing behaviour
+- For MODIFIED files, SKIP the change if the diff is just rewording, adding a caveat or warning, clarifying existing behaviour, or restructuring prose. A small diff is fine to include if it clearly adds one of the concrete capabilities above — do not skip purely on size.
 - If the diff shows frontmatter with \`hidden: true\`, skip it — these are hidden or private preview features not yet public.
+
+EXAMPLES:
+
+INCLUDE (small diff, one new accepted value):
+\`\`\`diff
+-**Accepted values:** \`webp\`, \`jpeg\`, \`png\`, \`gif\`
++**Accepted values:** \`webp\`, \`jpeg\`, \`png\`, \`gif\`, \`avif\`
+\`\`\`
+→ \`avif\` is a new output format that didn't exist before. Type: "Improvement", title e.g. "AVIF output support".
+
+INCLUDE (status promotion):
+\`\`\`diff
+-- **HEIC** *(beta)* - Compressed photo format
++- **HEIC** *(Public Preview)* - Compressed photo format
+\`\`\`
+→ Beta → Public Preview is a release milestone worth announcing.
+
+SKIP (pure rewording):
+\`\`\`diff
+-Unsupported browsers receive the original format
++Browsers without WebP support receive the original format
+\`\`\`
+→ Same meaning, clearer wording. Not a changelog event.
+
+SKIP (clarifying caveat about existing behaviour):
+\`\`\`diff
++We do not support transcoding animations to AVIF. If the original is already AVIF and unmodified, the animation is preserved.
+\`\`\`
+→ Documenting an existing limitation, not a new capability.
+
+DEDUPLICATION (critical):
+- The "Recent changelog entries" section below shows what is ALREADY published.
+- If a candidate entry covers the same feature/topic as something already in that list, DO NOT include it. Even if the diff describes the feature in new words, if the underlying capability is already announced, skip it.
+- Match on the underlying feature, not on exact wording. "Seamless Domain Migration" and "External DNS SSL Issuance" describing the same capability is a duplicate.
+- When unsure whether something is a duplicate, skip it.
+
+OUTPUT:
+- Use the EXACT "Product" value from the file context — do not invent product names or assign features to a product they don't belong to.
 - Do not include internal info — no file paths, directory structures, code snippets, or implementation details.
 - Write in a positive, concise tone. Keep descriptions to 1-2 sentences max.
 - End descriptions with a "Learn more" link using the exact "Docs URL" value from the file context (e.g. \`[Learn more](/stream/encoding/per-title)\`). Do NOT invent or guess URLs.
@@ -198,13 +280,17 @@ If NO changes warrant a changelog entry, return an empty array: []`;
 
   const userPrompt = `These changes were merged on ${today}.
 
+## Recent changelog entries (DO NOT duplicate any of these)
+
+${existingChangelogContext || "(no existing changelog entries)"}
+
 ## Existing pages by product
 
 ${existingPagesContext}
 
 ## Changed files
 
-Review these documentation changes and determine which (if any) represent new features or product improvements worth adding to the changelog:
+Review these documentation changes and determine which (if any) represent new features or product improvements worth adding to the changelog. Remember: if the topic is already covered above, skip it.
 
 ${filesContext}`;
 
@@ -241,7 +327,7 @@ ${filesContext}`;
 }
 
 // ---------------------------------------------------------------------------
-// 4. Write changelog entries to the correct files
+// 5. Write changelog entries to the correct files
 // ---------------------------------------------------------------------------
 
 function formatDate() {
@@ -308,16 +394,36 @@ function slugifyProduct(name) {
   return name.toLowerCase().replace(/\s+/g, "-");
 }
 
-function writeEntries(entries) {
+// Pull the first /<segment>/ from the description's "Learn more" link and
+// match it to a known product folder. This keeps a misclassified entry from
+// landing in the wrong product's changelog (e.g. a /shield/... feature being
+// written to home/changelog.mdx because the model labeled the product "Home").
+function deriveProductSlug(entry, knownSlugs) {
+  const declared = slugifyProduct(entry.product);
+  const linkMatch = (entry.description || "").match(/\]\(\/([^/)]+)/);
+  const fromLink = linkMatch ? linkMatch[1].toLowerCase() : null;
+  if (fromLink && knownSlugs.has(fromLink) && fromLink !== declared) {
+    console.log(
+      `Reassigning "${entry.title}" from ${entry.product} → ${fromLink} based on docs URL.`
+    );
+    return fromLink;
+  }
+  return declared;
+}
+
+function writeEntries(entries, productMap) {
   if (!entries.length) {
     console.log("No changelog-worthy changes detected.");
     return;
   }
 
+  const knownSlugs = new Set(
+    [...new Set(Object.values(productMap))].map(slugifyProduct)
+  );
   const rootEntries = [];
 
   for (const entry of entries) {
-    const productSlug = slugifyProduct(entry.product);
+    const productSlug = deriveProductSlug(entry, knownSlugs);
     const productChangelogPath = `${productSlug}/changelog.mdx`;
 
     // Product-level entry (no product name in tags)
@@ -376,7 +482,7 @@ async function main() {
   const entries = await classifyChanges(changedDocs, productMap);
   console.log(`AI identified ${entries.length} changelog-worthy entries.`);
 
-  writeEntries(entries);
+  writeEntries(entries, productMap);
 }
 
 main().catch((err) => {
