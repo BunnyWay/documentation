@@ -718,7 +718,8 @@
                 "pages": [
                   "optimizer/index",
                   "optimizer/quickstart",
-                  "optimizer/pricing"
+                  "optimizer/pricing",
+                  "optimizer/changelog"
                 ]
               },
               {
@@ -744,6 +745,12 @@
                   "optimizer/watermarking",
                   "optimizer/burrow-smart-routing",
                   "optimizer/html-prerender"
+                ]
+              },{
+                "group": "Reference",
+                "pages": [
+                  "optimizer/limits",
+                  "optimizer/troubleshooting"
                 ]
               }
             ]
