@@ -31,7 +31,7 @@ Variable define where in the HTTP request the WAF should extract data for evalua
 - **`ARGS_POST`** (_Optional_ **Variable Value**) All request parameters passed via the POST method.
 - **`ARGS_POST_NAMES`** (_Optional_ **Variable Value**) The names (keys) of parameters in the POST method.
 - **`FILES_NAMES`** The names of uploaded files in the request.
-- **`GEO`** (_Optional_ **Variable Value** - **_COUNTRY_CODE, COUNTRY_CODE3, LATITUDE, LONGITUDE, ASN, CITY, CONTINENT, ORGANIZATION_**) (**Advanced**) The geo location information of the client making the request. With no Variable Value, returns all components.
+- **`GEO`** (_Optional_ **Variable Value** - **_COUNTRY_CODE, LATITUDE, LONGITUDE, ASN, CITY, CONTINENT, ORGANIZATION_**) (**Advanced**) The geo location information of the client making the request. With no Variable Value, returns all components.
 - **`REMOTE_ADDR`** The IP address of the client making the request.
 - **`QUERY_STRING`** The raw query string of the request (e.g., ?key=value\&name=example).
 - **`REQUEST_BASENAME`** The base name of the requested file (e.g., index.html).
@@ -45,7 +45,7 @@ Variable define where in the HTTP request the WAF should extract data for evalua
 - **`REQUEST_HEADERS`** (_Optional_ **Variable Value**) All request headers in a key-value pair format.
 - **`REQUEST_BODY`** (**Premium**) The textual payload of the request body.
 - **`RESPONSE_HEADERS`** (_Optional_ **Variable Value**) All response headers sent back to the client.
-- **`RESPONSE_BODY`** (**Premium**) The textual payload of the response body returned to the client.
+- **`RESPONSE_BODY`** (**Premium**) The textual payload of the response body returned by the origin server.
 - **`RESPONSE_STATUS`** The HTTP status code returned in the response (e.g., 200 OK, 404 Not Found).
 - **`FINGERPRINT`** (_Optional_ **Variable Value** - **_JA4\_A, JA4\_B, JA4\_C_** and any two-letter combination such as **_JA4\_AB_**) (**Premium**) The TLS client fingerprint of the request. With no Variable Value, returns the full JA4 string.
 - **`VERIFIED_BOT_CATEGORY`** The category assigned by verified-bot detection, e.g. `SEO` for verified search-engine crawlers, or empty when the client is not a recognized verified bot.
