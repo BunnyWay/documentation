@@ -718,7 +718,8 @@
                 "pages": [
                   "optimizer/index",
                   "optimizer/quickstart",
-                  "optimizer/pricing"
+                  "optimizer/pricing",
+                  "optimizer/changelog"
                 ]
               },
               {
@@ -744,6 +745,12 @@
                   "optimizer/watermarking",
                   "optimizer/burrow-smart-routing",
                   "optimizer/html-prerender"
+                ]
+              },{
+                "group": "Reference",
+                "pages": [
+                  "optimizer/limits",
+                  "optimizer/troubleshooting"
                 ]
               }
             ]
@@ -900,28 +907,27 @@
             "groups": [
               {
                 "group": "Terraform",
-                "pages": ["terraform/index", "terraform/quickstart"]
+                "pages": ["integrations/terraform/index", "integrations/terraform/quickstart"]
               },
               {
                 "group": "Reference",
                 "pages": [
-                  "terraform/authentication",
-                  "terraform/resources",
-                  "terraform/data-sources"
+                  "integrations/terraform/authentication",
+                  "integrations/terraform/resources",
+                  "integrations/terraform/data-sources"
                 ]
               },
               {
                 "group": "Guides",
                 "pages": [
-                  "terraform/importing-stream-library",
-                  "terraform/edgescript-pullzone"
+                  "integrations/terraform/importing-stream-library",
+                  "integrations/terraform/edgescript-pullzone"
                 ]
               }
             ]
           },
           {
             "tab": "cPanel",
-            "hidden": true,
             "groups": [
               {
                 "group": "cPanel",
@@ -1545,17 +1551,52 @@
     },
     {
       "source": "/docs/terraform-overview",
-      "destination": "/terraform",
+      "destination": "/integrations/terraform",
       "permanent": true
     },
     {
       "source": "/docs/terraform-quickstart",
-      "destination": "/terraform/quickstart",
+      "destination": "/integrations/terraform/quickstart",
       "permanent": true
     },
     {
       "source": "/docs/importing-stream-library",
-      "destination": "/terraform/importing-stream-library",
+      "destination": "/integrations/terraform/importing-stream-library",
+      "permanent": true
+    },
+    {
+      "source": "/terraform",
+      "destination": "/integrations/terraform",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/quickstart",
+      "destination": "/integrations/terraform/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/authentication",
+      "destination": "/integrations/terraform/authentication",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/resources",
+      "destination": "/integrations/terraform/resources",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/data-sources",
+      "destination": "/integrations/terraform/data-sources",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/importing-stream-library",
+      "destination": "/integrations/terraform/importing-stream-library",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/edgescript-pullzone",
+      "destination": "/integrations/terraform/edgescript-pullzone",
       "permanent": true
     },
     {
