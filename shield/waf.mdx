@@ -27,7 +27,7 @@ These rules are regularly updated to stay ahead of emerging threats, ensuring yo
 
 ### Reducing false positives on API traffic
 
-Predefined rules are tuned for general web traffic and can produce false positives on API-shaped requests where structured payloads, JWTs, or unusual content types resemble injection patterns. Rather than disabling individual managed rules, enabling [API Guardian](/shield/api-guardian) is often the cleaner option: for paths declared in your OpenAPI specification, API Guardian's schema-aware enforcement takes precedence over the predefined WAF ruleset, replacing it with validation aligned to your API contract. Paths outside the spec continue to be evaluated by the standard Shield protections, so the two features compose without overlap.
+Predefined rules are tuned for general web traffic and can flag API requests where structured payloads, JWTs, or unusual content types resemble injection patterns. For APIs, [API Guardian](/shield/api-guardian) is usually a better fit than disabling individual rules: requests on paths declared in your OpenAPI specification are validated against the contract instead of being run through the predefined ruleset.
 
 ## Configuring via API
 
