@@ -52,7 +52,7 @@ Not all requests will match a defined path in your schema. The **Unmatched Path 
 - **Log** to record unmatched requests and let them continue to your origin  
 - **Ignore** to bypass API Guardian entirely for unmatched paths  
 
-Only **Ignore** lets an unmatched request reach the Managed WAF ruleset; under **Block** and **Log**, Managed WAF is skipped (this may change in the future). Other Shield features such as Rate Limiting and Bot Detection apply regardless of this setting.
+Only **Ignore** lets an unmatched request reach the Managed WAF ruleset; under **Block** and **Log**, Managed WAF is skipped. Other Shield features such as Rate Limiting and Bot Detection apply regardless of this setting.
 
 Requests that **do match** a declared path are always handled by API Guardian’s schema validation and path enforcement, instead of the Managed WAF ruleset, to avoid false positives common with structured API traffic.
 
