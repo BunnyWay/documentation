@@ -40,20 +40,10 @@ Request Coalescing is ideal for:
 
 ## Per-request control with Edge Rules
 
-To override the zone-level setting for specific paths or request conditions, create an Edge Rule with the **Enable Request Coalescing** or **Disable Request Coalescing** action.
-
-<Steps>
-  <Step title="Create an Edge Rule">
-    Go to **Edge Rules** in your Pull Zone settings and click **Add Rule**.
-  </Step>
-  <Step title="Set the action">
-    Select **Enable Request Coalescing** or **Disable Request Coalescing**.
-  </Step>
-  <Step title="Add conditions">
-    Add conditions to match the requests you want to target, such as a URL path
-    pattern, file extension, or request header.
-  </Step>
-</Steps>
+To override the zone-level setting for specific paths or request conditions, create an Edge Rule with the **Enable Request Coalescing** or **Disable Request Coalescing** action
+1. Go to **Edge Rules** in your Pull Zone settings and click **Add Rule**
+2. Select **Enable Request Coalescing** or **Disable Request Coalescing**
+3. Add conditions to match the requests you want to target, such as a URL path pattern, file extension, or request header
 
 <Info>
   A common pattern is to leave Request Coalescing off at the zone level and
