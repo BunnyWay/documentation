@@ -25,6 +25,10 @@ Bunny Shield’s WAF comes with a set of predefined rules that cover most common
 
 These rules are regularly updated to stay ahead of emerging threats, ensuring your application remains protected against the latest vulnerabilities..
 
+### Reducing false positives on API traffic
+
+Predefined rules are tuned for general web traffic and can produce false positives on API-shaped requests where structured payloads, JWTs, or unusual content types resemble injection patterns. Rather than disabling individual managed rules, enabling [API Guardian](/shield/api-guardian) is often the cleaner option: for paths declared in your OpenAPI specification, API Guardian's schema-aware enforcement takes precedence over the predefined WAF ruleset, replacing it with validation aligned to your API contract. Paths outside the spec continue to be evaluated by the standard Shield protections, so the two features compose without overlap.
+
 ## Configuring via API
 
 You can utilize the Bunny Shield API to automate WAF configurations or integrate them into your continuous integration and continuous deployment (CI/CD) pipelines. This capability allows you to manage your security settings efficiently and consistently across different environments.

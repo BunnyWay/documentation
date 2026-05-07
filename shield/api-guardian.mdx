@@ -48,13 +48,13 @@ This setting applies to all validation outcomes and overrides any individual blo
 
 Not all requests will match a defined path in your schema. The **Unmatched Path Action** controls how these requests are treated:
 
-- **Block** to reject requests targeting undefined endpoints (subject to execution mode)  
-- **Log** to record unmatched requests while still forwarding them  
-- **Ignore** to bypass API Guardian entirely for unmatched paths  
+- **Block** to reject requests targeting undefined endpoints (subject to execution mode).
+- **Log** to record unmatched requests and let them continue to your origin.
+- **Ignore** to bypass API Guardian entirely for unmatched paths.
 
-Requests set to **Ignore** continue through the rest of Bunny Shield protections, including WAF, Rate Limiting, and Bot Detection.
+Only **Ignore** lets an unmatched request reach the Managed WAF ruleset; under **Block** and **Log**, Managed WAF is skipped (this may change in the future). Other Shield features such as Rate Limiting and Bot Detection apply regardless of this setting.
 
-Requests that **do match** a declared path are handled by API Guardian’s schema validation and path enforcement, instead of the standard managed WAF ruleset, to avoid false positives common with structured API traffic.
+Requests that **do match** a declared path are always handled by API Guardian’s schema validation and path enforcement, instead of the Managed WAF ruleset, to avoid false positives common with structured API traffic.
 
 ### Authentication-aware path handling
 
