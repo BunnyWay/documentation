@@ -48,9 +48,9 @@ This setting applies to all validation outcomes and overrides any individual blo
 
 Not all requests will match a defined path in your schema. The **Unmatched Path Action** controls how these requests are treated:
 
-- **Block** to reject requests targeting undefined endpoints (subject to execution mode).
-- **Log** to record unmatched requests and let them continue to your origin.
-- **Ignore** to bypass API Guardian entirely for unmatched paths.
+- **Block** to reject requests targeting undefined endpoints (subject to execution mode)  
+- **Log** to record unmatched requests and let them continue to your origin  
+- **Ignore** to bypass API Guardian entirely for unmatched paths  
 
 Only **Ignore** lets an unmatched request reach the Managed WAF ruleset; under **Block** and **Log**, Managed WAF is skipped (this may change in the future). Other Shield features such as Rate Limiting and Bot Detection apply regardless of this setting.
 
