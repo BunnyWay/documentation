@@ -6441,7 +6441,7 @@
           "OptimizerEnableUpscaling": {
             "type": "boolean",
             "nullable": true,
-            "description": "Determines if Optimizer should automatically upscale images"
+            "description": "Determines if Optimizer is allowed to upscale images"
           },
           "EnableWebSockets": {
             "type": "boolean",

@@ -1,0 +1,39 @@
+---
+title: Troubleshooting
+description: This page provides guidance on how to troubleshoot issues with the Bunny Optimiser
+---
+
+The information on this page should be used for troubleshooting purposes only. 
+Clients should not rely on these headers or error codes, as they may change in the future.
+
+## Response headers
+
+Responses from the Bunny Optimiser may include the following headers:
+- `X-DownloadSize`: Size of the original asset downloaded from the origin
+- `X-BO-CompressionRatio`: Percentage reduction in size of the final asset compared to the original
+- `X-BO-OriginDownloadTime`: Time spent downloading files from the origin (including the watermark, if present), in milliseconds
+- `X-BO-ProcessingTime`: Time spent on local processing, in milliseconds
+- `X-BO-Processing-Error`: Lists any errors that occurred while processing the request (see below)
+
+### Error codes
+The following errors may be returned as the value of the `X-BO-Processing-Error` header.
+
+#### General errors
+- `101` → An unknown error occurred
+- `102` → The original source file could not be downloaded from the origin
+- `103` → The source image could not be decoded or parsed as a valid image
+- `104` → Optimisation was skipped or failed because the output became larger than the original
+- `105` → The GIF file is invalid or cannot be processed
+- `106` → Text-based content could not be minified successfully
+- `107` → The requested output format is not supported
+
+#### Watermark-related
+- `200` → The watermark image could not be retrieved from its origin
+- `201` → The watermark origin request was cancelled before completion
+- `202` → The watermark image could not be decoded or parsed as a valid image
+- `204` → The watermark image URL returned a 404 Not Found response
+
+#### Processing constraints
+- `301` → The generated or requested WebP image exceeds the allowed size limit
+- `302` → The requested resize would upscale the image, but upscaling is not enabled
+- `303` → The requested upscale exceeds the allowed limit

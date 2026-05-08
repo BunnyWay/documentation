@@ -2,6 +2,18 @@
 
 Anyone is welcome to contribute to this repository to improve the bunny.net developer experience.
 
+## Ownership
+
+Every product team owns their own docs. If it ain't documented, it ain't a feature.
+
+Jamie ([jamie@bunny.net](mailto:jamie@bunny.net)) is the docs Steward, the point of contact for conventions, structure, and review when something doesn't fit cleanly into a single product team.
+
+## How to contribute
+
+If you spot something that could be improved, open a pull request. Even small fixes are welcome.
+
+If you can't open one yourself, ask Claude in Slack to do it. Tell it the repo name (`BunnyWay/documentation`) and what you want changed. It'll get you ~90% of the way there with our conventions already in place. Review the PR it opens before merging.
+
 ## External Contributors
 
 1. Fork the repo
@@ -11,9 +23,15 @@ Anyone is welcome to contribute to this repository to improve the bunny.net deve
 
 ## Staff
 
+These docs are public. Avoid documenting anything we don't want public yet, like unannounced features or internal tooling. Upcoming API changes, fixes, and general maintenance aren't considered secret.
+
+For tracking docs work tied to a larger project or feature rollout, use the [Documentation v2 board](https://bunny-net.atlassian.net/jira/software/c/projects/DOCS/boards/74) (DOCS) in Jira. Add docs as sub-tasks under your team's project tickets where relevant.
+
+PR flow:
+
 1. Create a branch from `main`
-2. Open a PR
-3. Get team approval, then merge when ready
+2. Open a PR. Draft PRs won't be reviewed. Add a reviewer when you're ready for review.
+3. Once approved, the PR opener merges it, unless otherwise stated.
 
 ---
 

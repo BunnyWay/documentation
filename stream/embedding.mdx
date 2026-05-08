@@ -71,39 +71,40 @@ However, you can also fine-tune or override these defaults on a per-embed basis 
 
 Below is a concise table summarizing each parameter, its possible values, a brief description, and the default value.
 
-| **Parameter**          | **Values**                                     | **Description**                                                                                                                                                                                                                                                                       | **Default Value** |
-| ---------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| **`autoplay`**         | `true`, `false`                                | Controls whether the video should start playing automatically. Due to browser restrictions on auto-play, this may not always work.                                                                                                                                                    | `true`            |
-| **`captions`**         | _caption short-code string_                    | Controls the default captions file that will be shown. By passing the caption code, the player will automatically load these captions. By default, the player remembers the user's last selection or does not load captions.                                                          | _N/A_             |
-| **`preload`**          | `true`, `false`                                | Controls whether the video files are preloaded. When set to `true`, the player immediately starts downloading the video so playback begins more quickly.                                                                                                                              | `true`            |
-| **`t`**                | 1. `Xs` or `1h20m45s` 2) `hh:mm:ss` 3) Numeric | Sets the video start time. Supports multiple formats: seconds/minutes/hours notation, `hh:mm:ss` format, or a simple numeric value interpreted as seconds.                                                                                                                            | _N/A_             |
-| **`chromecast`**       | `true`, `false`                                | Enables or disables Chromecast support within the player.                                                                                                                                                                                                                             | _N/A_             |
-| **`disableAirplay`**   | `true`, `false`                                | Disables AirPlay support when set to `true`.                                                                                                                                                                                                                                          | _N/A_             |
-| **`disableIosPlayer`** | `true`, `false`                                | Disables the native iOS player (used typically for fullscreen handling on iOS).                                                                                                                                                                                                       | _N/A_             |
-| **`showHeatmap`**      | `true`, `false`                                | Displays a heatmap on the progress bar when set to `true`, highlighting viewer engagement at different points in the video.                                                                                                                                                           | _N/A_             |
-| **`muted`**            | `true`, `false`                                | If set to `true`, the player starts in mute mode (no sound). This is often used for autoplay scenarios.                                                                                                                                                                               | _N/A_             |
-| **`loop`**             | `true`, `false`                                | Replays the video automatically after it ends, creating a continuous loop.                                                                                                                                                                                                            | _N/A_             |
-| **`playsinline`**      | `true`, `false`                                | Allows the video to play inline on mobile devices rather than forcing fullscreen playback.                                                                                                                                                                                            | _N/A_             |
-| **`showSpeed`**        | `true`, `false`                                | Shows a speed control within the player, allowing playback rate adjustments.                                                                                                                                                                                                          | _N/A_             |
-| **`rememberPosition`** | `true`, `false`                                | Controls whether the player remembers the last playback position for the viewer within their browser. If set to `true`, the player stores the last position and attempts to resume from that point when the viewer returns. When `false`, the video always starts from the beginning. | `false`           |
+| **Parameter** | **Values** | **Description** | **Default Value** |
+| --- | --- | --- | --- |
+| **`autoplay`** | `true`, `false` | Controls whether the video should start playing automatically. Due to browser restrictions on auto-play, this may not always work. | `true` |
+| **`captions`** | _caption short-code string_ | Controls the default captions file that will be shown. By passing the caption code, the player will automatically load these captions. By default, the player remembers the user's last selection or does not load captions. | _N/A_ |
+| **`preload`** | `true`, `false` | Controls whether the video files are preloaded. When set to `true`, the player immediately starts downloading the video so playback begins more quickly. | `true` |
+| **`t`** | 1. `Xs` or `1h20m45s` 2) `hh:mm:ss` 3) Numeric | Sets the video start time. Supports multiple formats: seconds/minutes/hours notation, `hh:mm:ss` format, or a simple numeric value interpreted as seconds. | _N/A_ |
+| **`chromecast`** | `true`, `false` | Enables or disables Chromecast support within the player. | _N/A_ |
+| **`disableAirplay`** | `true`, `false` | Disables AirPlay support when set to `true`. | _N/A_ |
+| **`disableIosPlayer`** | `true`, `false` | Disables the native iOS player (used typically for fullscreen handling on iOS). | _N/A_ |
+| **`showHeatmap`** | `true`, `false` | Displays a heatmap on the progress bar when set to `true`, highlighting viewer engagement at different points in the video. | _N/A_ |
+| **`muted`** | `true`, `false` | If set to `true`, the player starts in mute mode (no sound). This is often used for autoplay scenarios. | _N/A_ |
+| **`loop`** | `true`, `false` | Replays the video automatically after it ends, creating a continuous loop. | _N/A_ |
+| **`playsinline`** | `true`, `false` | Allows the video to play inline on mobile devices rather than forcing fullscreen playback. | _N/A_ |
+| **`showSpeed`** | `true`, `false` | Shows a speed control within the player, allowing playback rate adjustments. | _N/A_ |
+| **`rememberPosition`** | `true`, `false` | Controls whether the player remembers the last playback position for the viewer within their browser. If set to `true`, the player stores the last position and attempts to resume from that point when the viewer returns. When `false`, the video always starts from the beginning. | `false` |
+| `compactControls` | `true`, `false` | Enables compact UI view for the bunny player, allowing more space for video on desktop and mobile browsers. | `false` |
 
 # Player keyboard shortcuts
 
 Bunny Stream player has support for the following keyboard shortcuts.
 
-| Key    | Action                               |
-| ------ | ------------------------------------ |
-| 0 to 9 | Seek from 0 to 90% respectively      |
-| space  | Toggle playback                      |
-| K      | Toggle playback                      |
-| ←      | Seek backward by the seekTime option |
-| →      | Seek forward by the seekTime option  |
-| ↑      | Increase volume                      |
-| ↓      | Decrease volume                      |
-| M      | Toggle mute                          |
-| F      | Toggle fullscreen                    |
-| C      | Toggle captions                      |
-| L      | Toggle loop                          |
+| Key | Action |
+| --- | --- |
+| 0 to 9 | Seek from 0 to 90% respectively |
+| space | Toggle playback |
+| K | Toggle playback |
+| ← | Seek backward by the seekTime option |
+| → | Seek forward by the seekTime option |
+| ↑ | Increase volume |
+| ↓ | Decrease volume |
+| M | Toggle mute |
+| F | Toggle fullscreen |
+| C | Toggle captions |
+| L | Toggle loop |
 
 # Custom integration
 

@@ -33,7 +33,7 @@ Once you've created your S3-compatible storage zone, you're ready to connect.
 
 ### Authentication and credentials
 
-The credentials you need to connect via S3 are located in the **FTP & API Access** tab:
+The credentials you need to connect via S3 are located in the **Access** tab:
 
 - **Access Key ID**: Your Storage Zone name (bucket name)
 - **Secret Access Key**: Your Storage Zone Password
@@ -98,7 +98,7 @@ aws s3 cp s3://bucket-name/path/to/object /path/to/local/destination/ \
   --profile bunny \
   --endpoint-url https://[region]-s3.storage.bunnycdn.com
 
-# List objects (LIST Objects) - V2 only
+# List objects (LIST Objects)
 aws s3 ls s3://bucket-name/ --recursive \
   --profile bunny \
   --endpoint-url https://[region]-s3.storage.bunnycdn.com
@@ -190,7 +190,7 @@ Bunny Storage provides comprehensive S3 API compatibility for all your storage n
 
 ### Directory listing
 
-- **LIST Objects**: List objects (V2 only)
+- **LIST Objects**: List objects (V1 and V2)
 - List with prefix filtering
 - Paginated results
 - Directory-style navigation
@@ -204,6 +204,7 @@ Bunny Storage provides full support for S3 multipart uploads, enabling efficient
 | --- | --- |
 | ✅ [`CreateMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html) | ✅ Multipart session creation<br />✅ Returns UploadId<br />✅ System Metadata:<br />✅ Content-Type (with automatic detection from file extension)<br />✅ Content-Type stored in session for final object<br />✅ Automatic replication session creation<br />❌ Storage class selection<br />❌ Cache-Control, Content-Disposition, etc.<br />❌ SSE/SSE-C encryption<br />❌ Object tagging<br />❌ Object locking<br />❌ ACL headers |
 | ✅ [`UploadPart`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html) | ✅ Part upload (up to 10,000 parts)<br />✅ Returns ETag (part checksum)<br />✅ Automatic replication of parts<br />❌ Content-MD5 validation<br />❌ SSE/SSE-C encryption |
+| ✅ [`UploadPartCopy`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html) | ✅ Copy within same storage zone<br />✅ Part size up to 5 GB<br />✅ Range copy (source object must be greater than 5 MB)<br />✅ Supported headers:<br />✅ x-amz-copy-source<br />✅ x-amz-copy-source-range (optional, format: bytes=first-last)<br />❌ Cross-zone copying<br />❌ Conditional source headers<br />❌ Server-side encryption<br />❌ Bucket-owner verification<br />❌ Requester payer<br />❌ ACL grants |
 | ✅ [`ListParts`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html) | ✅ Query Parameters:<br />✅ max-parts (default 1000)<br />✅ part-number-marker<br />✅ Returns part ETag and size<br />✅ Pagination support<br />✅ IsTruncated flag |
 | ✅ [`CompleteMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html) | ✅ Finalizes multipart upload<br />✅ Validates all parts present<br />✅ Validates part ETags<br />✅ Creates final object with combined checksum<br />✅ Final checksum format: `MD5(part1+part2+...)-{partCount}`<br />✅ Applies Content-Type from session<br />✅ Automatic replication of completed object<br />✅ Cleanup of part files<br />✅ Returns ETag, Location, Bucket, Key<br />❌ Checksums in response |
 | ✅ [`AbortMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html) | ✅ Cancels multipart upload<br />✅ Deletes all uploaded parts |
@@ -219,8 +220,9 @@ Below is a detailed list of implemented object-level operations with their suppo
 | ✅ [`GetObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html) | ✅ Full object download<br />✅ Content-Type header<br />✅ Content-Length header<br />✅ Range requests (byte ranges)<br />✅ Multipart object download<br />❌ Conditional Operations (If-Match, If-Modified-Since, etc.)<br />❌ SSE-C encryption<br />❌ Versioning support |
 | ✅ [`PutObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html) | ✅ Object upload<br />✅ System Metadata:<br />✅ Content-Type (with automatic detection)<br />✅ Content-Length<br />✅ Checksum validation:<br />✅ x-amz-checksum-sha256 (Base64 encoded)<br />✅ Automatic replication to configured zones<br />❌ Storage Class selection<br />❌ Cache-Control, Content-Disposition, Content-Encoding<br />❌ Expires, Content-Language<br />❌ SSE encryption<br />❌ SSE-C encryption<br />❌ Object tagging (x-amz-tagging)<br />❌ Object locking<br />❌ ACL headers (x-amz-acl, x-amz-grant-\*) |
 | ✅ [`DeleteObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html) | ✅ Single object deletion<br />❌ Multi-factor authentication<br />❌ Object Locking<br />❌ Request Payer |
-| ✅ [`CopyObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html) | ✅ Object copy within same storage zone<br />✅ LastModified in response<br />✅ ChecksumSHA256 in response (Base64 encoded)<br />✅ Source object checksum validation<br />❌ Content-Type preservation<br />❌ ETag in response<br />❌ Cross-zone copying<br />❌ Metadata directive (x-amz-metadata-directive)<br />❌ Conditional copy operations<br />❌ Storage class selection<br />❌ SSE/SSE-C encryption<br />❌ Tagging |
-| ✅ [`ListObjectsV2`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html) | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ max-keys<br />✅ continuation-token<br />✅ Common prefix support<br />❌ fetch-owner |
+| ✅ [`CopyObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html) | ✅ Object copy within same storage zone<br />✅ Object size up to 5 GB<br />✅ LastModified in response<br />✅ ChecksumSHA256 in response (Base64 encoded)<br />✅ Source object checksum validation<br />❌ Content-Type preservation<br />❌ ETag in response<br />❌ Cross-zone copying<br />❌ Metadata directive (x-amz-metadata-directive)<br />❌ Conditional copy operations<br />❌ Storage class selection<br />❌ SSE/SSE-C encryption<br />❌ Tagging |
+| ✅ [`ListObjects`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjects.html) | ✅ Query Parameters:<br />✅ delimiter<br />✅ encoding-type<br />✅ marker<br />✅ max-keys<br />✅ prefix<br />✅ Common prefix support |
+| ✅ [`ListObjectsV2`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html) | ✅ Query Parameters:<br />✅ prefix<br />✅ delimiter<br />✅ max-keys<br />✅ continuation-token<br />✅ start-after<br />✅ Common prefix support<br />❌ fetch-owner |
 | ✅ `Presign` | ✅ expires-in<br />✅ Signing algorithm AWS4-HMAC-SHA256 |
 
 ### Unsupported operations
