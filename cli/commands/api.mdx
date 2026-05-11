@@ -1,0 +1,65 @@
+---
+title: bunny api
+sidebarTitle: api
+description: "Make raw authenticated HTTP requests to any bunny.net API endpoint."
+---
+
+`bunny api` sends a raw HTTP request to any bunny.net API endpoint with authentication handled automatically via your configured API key. It's useful for calling endpoints the CLI doesn't expose directly, scripting, and exploring the API.
+
+```bash
+# List pull zones
+bunny api GET /pullzone
+
+# Get a specific pull zone
+bunny api GET /pullzone/12345
+
+# List storage zones
+bunny api GET /storagezone
+
+# Create a pull zone with a JSON body
+bunny api POST /pullzone --body '{"Name":"my-zone","OriginUrl":"https://example.com"}'
+
+# Delete a DNS zone
+bunny api DELETE /dnszone/12345
+
+# Pipe body from stdin
+echo '{"Name":"my-zone","OriginUrl":"https://example.com"}' | bunny api POST /pullzone
+
+# Show request/response details
+bunny api GET /pullzone --verbose
+```
+
+| Flag     | Alias | Description       |
+| -------- | ----- | ----------------- |
+| `--body` | `-b`  | JSON request body |
+
+## Paths and methods
+
+- The method is **case-insensitive** (`get` and `GET` both work).
+- Paths are relative to `https://api.bunny.net`.
+- See the [API Reference](/api-reference) for a complete list of endpoints.
+
+## Request body
+
+You can pass a JSON body three ways:
+
+1. Inline with `--body`:
+   ```bash
+   bunny api POST /pullzone --body '{"Name":"my-zone","OriginUrl":"https://example.com"}'
+   ```
+2. From stdin:
+   ```bash
+   echo '{"Name":"my-zone","OriginUrl":"https://example.com"}' | bunny api POST /pullzone
+   ```
+3. From a file via shell redirection:
+   ```bash
+   bunny api POST /pullzone < body.json
+   ```
+
+## Tip: inspect requests
+
+Use `--verbose` to print the full request URL, headers, and raw response. Handy when exploring an endpoint or debugging auth.
+
+```bash
+bunny api GET /pullzone --verbose
+```
