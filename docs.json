@@ -746,12 +746,10 @@
                   "optimizer/burrow-smart-routing",
                   "optimizer/html-prerender"
                 ]
-              },{
+              },
+              {
                 "group": "Reference",
-                "pages": [
-                  "optimizer/limits",
-                  "optimizer/troubleshooting"
-                ]
+                "pages": ["optimizer/limits", "optimizer/troubleshooting"]
               }
             ]
           }
@@ -907,7 +905,10 @@
             "groups": [
               {
                 "group": "Terraform",
-                "pages": ["integrations/terraform/index", "integrations/terraform/quickstart"]
+                "pages": [
+                  "integrations/terraform/index",
+                  "integrations/terraform/quickstart"
+                ]
               },
               {
                 "group": "Reference",
@@ -973,7 +974,6 @@
                   "cli/commands/db",
                   {
                     "group": "Scripts",
-                    "hidden": true,
                     "pages": ["cli/commands/scripts"]
                   },
                   {
