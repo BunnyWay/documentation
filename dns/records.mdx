@@ -148,6 +148,14 @@ When monitoring is enabled on a record set:
 - If all records in a group are offline, filtering is disabled to prevent false positives
 - Single-value records continue to be returned regardless of health status
 
+## Wildcard records
+
+A wildcard record (for example, `*.example.com`) is used to synthesize responses for any subdomain that does not have an explicit record of any type defined.
+
+<Note>
+  Bunny DNS intentionally deviates from [RFC 4592](https://datatracker.ietf.org/doc/html/rfc4592) when a wildcard interacts with an Empty Non-Terminal (ENT). An ENT is a name that has no records of its own but has descendants that do (for example, `b.example.com` is an ENT if only `a.b.example.com` exists). Per the RFC, queries for an ENT should return a NODATA response and the wildcard must not be expanded. Bunny DNS instead actively populates the response with the wildcard value, so queries for an ENT receive the wildcard record rather than an empty answer.
+</Note>
+
 ## Supported record types
 
 ### Standard records
