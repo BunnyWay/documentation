@@ -1,0 +1,82 @@
+---
+title: Configuration
+description: Profiles, global options, output formats, and environment variables.
+---
+
+## Profiles
+
+The CLI supports multiple named configurations called **profiles**. Each profile stores its own API key, so you can switch between personal, staging, and production accounts.
+
+```bash
+# Default profile
+bunny login
+
+# Named profile
+bunny login --profile staging
+
+# Run any command against a profile
+bunny db list --profile staging
+```
+
+See [`bunny config`](/cli/commands/config) for creating, inspecting, and deleting profiles.
+
+## Global options
+
+These flags are available on every command.
+
+| Flag        | Alias | Description                                                  | Default   |
+| ----------- | ----- | ------------------------------------------------------------ | --------- |
+| `--profile` | `-p`  | Configuration profile to use                                 | `default` |
+| `--verbose` | `-v`  | Enable verbose output                                        | `false`   |
+| `--output`  | `-o`  | Output format: `text`, `json`, `table`, `csv`, or `markdown` | `text`    |
+| `--api-key` |       | API key (takes priority over profile and environment)        |           |
+| `--version` |       | Show version                                                 |           |
+| `--help`    |       | Show help                                                    |           |
+
+## Output formats
+
+Use `--output` (or `-o`) to control how results are printed. This is particularly useful for scripting or piping into other tools.
+
+| Format     | Description                                                  |
+| ---------- | ------------------------------------------------------------ |
+| `text`     | Human-friendly borderless tables with bold headers (default) |
+| `json`     | Structured JSON for scripting and piping                     |
+| `table`    | Bordered ASCII table                                         |
+| `csv`      | Comma-separated values with proper escaping                  |
+| `markdown` | GitHub-flavored pipe tables                                  |
+
+```bash
+bunny db list --output json
+bunny db list --output csv > databases.csv
+bunny db list --output markdown
+```
+
+## Environment variables
+
+| Variable                 | Description                                                     |
+| ------------------------ | --------------------------------------------------------------- |
+| `BUNNYNET_API_KEY`       | API key (overrides profile-based key)                           |
+| `BUNNYNET_API_URL`       | API base URL (default: `https://api.bunny.net`)                 |
+| `BUNNYNET_DASHBOARD_URL` | Dashboard URL for auth flow (default: `https://dash.bunny.net`) |
+| `NO_COLOR`               | Disable colored output ([no-color.org](https://no-color.org))   |
+
+### Database-specific
+
+Some `bunny db` commands also read from a `.env` file walked up from the current directory:
+
+| Variable                    | Read by                                                 |
+| --------------------------- | ------------------------------------------------------- |
+| `BUNNY_DATABASE_URL`        | All `db` commands. Auto-detects the target database     |
+| `BUNNY_DATABASE_AUTH_TOKEN` | `bunny db shell`. Skips on-demand token generation      |
+
+Both variables can be written automatically by `bunny db create --save-env` or `bunny db quickstart`.
+
+## Resolving credentials
+
+When a command needs an API key, the CLI resolves it in this order:
+
+1. `--api-key` flag
+2. `BUNNYNET_API_KEY` environment variable
+3. API key stored in the selected profile (`--profile` or `default`)
+
+If none of those are set, the command will prompt you to run `bunny login`.

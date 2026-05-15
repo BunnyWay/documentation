@@ -1,0 +1,60 @@
+---
+title: bunny config
+sidebarTitle: config
+description: "Manage CLI configuration and named profiles."
+---
+
+Profiles let you keep multiple authenticated configurations (personal, staging, production) and switch between them with `--profile`. See [Configuration](/cli/configuration) for an overview.
+
+## `bunny config init`
+
+Initialize CLI configuration. Prompts for an API key unless one is provided.
+
+```bash
+# Interactive: prompts for an API key
+bunny config init
+
+# Non-interactive
+bunny config init --api-key bny_xxxxxxxxxxxx
+```
+
+| Flag        | Description                                                |
+| ----------- | ---------------------------------------------------------- |
+| `--api-key` | API key to store in the profile (skips interactive prompt) |
+| `--profile` | Profile name to initialize (default: `default`)            |
+
+## `bunny config show`
+
+Print the resolved configuration: active profile, API key status, and API URL.
+
+```bash
+bunny config show
+bunny config show --output json
+bunny config show --profile staging
+```
+
+| Flag        | Description                                            |
+| ----------- | ------------------------------------------------------ |
+| `--output`  | `text` or `json`                                       |
+| `--profile` | Profile to inspect (default: `default`)                |
+
+## `bunny config profile create`
+
+Create a new named profile.
+
+```bash
+bunny config profile create staging
+bunny config profile create staging --api-key bny_xxxxxxxxxxxx
+```
+
+| Flag        | Description                                            |
+| ----------- | ------------------------------------------------------ |
+| `--api-key` | API key to store in the new profile                    |
+
+## `bunny config profile delete`
+
+Delete a named profile.
+
+```bash
+bunny config profile delete staging
+```

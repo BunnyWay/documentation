@@ -1,0 +1,63 @@
+---
+title: Authentication
+sidebarTitle: Authentication
+description: "Log in, log out, and verify the active account with `bunny login`, `bunny logout`, and `bunny whoami`."
+---
+
+## `bunny login`
+
+Authenticate with bunny.net via the browser. A successful login stores credentials under the selected profile (defaults to `default`).
+
+```bash
+# Browser-based login
+bunny login
+
+# Log in to a specific profile
+bunny login --profile staging
+
+# Overwrite an existing profile without prompting
+bunny login --force
+```
+
+| Flag         | Description                                        |
+| ------------ | -------------------------------------------------- |
+| `--profile`  | Profile name to log in to (default: `default`)     |
+| `--force`    | Overwrite an existing profile without prompting    |
+
+<Tip>
+  Prefer API keys over browser auth in CI. Run `bunny config init --api-key bny_xxx` to
+  seed a profile, or export `BUNNYNET_API_KEY`.
+</Tip>
+
+## `bunny logout`
+
+Remove a stored authentication profile.
+
+```bash
+bunny logout
+bunny logout --force
+bunny logout --profile staging
+```
+
+| Flag         | Description                                          |
+| ------------ | ---------------------------------------------------- |
+| `--profile`  | Profile to remove (default: `default`)               |
+| `--force`    | Skip confirmation prompts                            |
+
+## `bunny whoami`
+
+Show the currently authenticated account: name, email, and active profile.
+
+```bash
+bunny whoami
+# Logged in as Jamie Barton (jamie@bunny.net) 🐇
+# Profile: default
+
+bunny whoami --output json
+bunny whoami --profile staging
+```
+
+| Flag         | Description                                   |
+| ------------ | --------------------------------------------- |
+| `--profile`  | Profile to inspect (default: `default`)       |
+| `--output`   | `text` or `json`                              |
