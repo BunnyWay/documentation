@@ -17,52 +17,74 @@ Only when these checks pass is the bot classified as legitimate and allowed thro
 
 ## Supported Verified Bots
 
-The following crawlers are verified and allowed across all Bunny Shield mitigation methods and challenges:
+The following crawlers and preview agents are verified and automatically allowed across all Bunny Shield layers.
 
-- **Google** `.googlebot.com, .google.com`
+### Search Engine Crawlers
+
+- **Google**: `.googlebot.com`, `.google.com`
   - **Googlebot**
-  - **Google-InspectionTool**
-  - **Google-Site-Verification**
-  - **FeedFetcher-Google**
-  - **GoogleProducer**
-  - **Mediapartners-Google**
-  - **AdsBot-Google**
-  - **APIs-Google**
-  - **Storebot-Google**
   - **Googlebot-Image**
   - **Googlebot-Video**
+  - **Google-InspectionTool**
+  - **Google-Site-Verification**
+  - **GoogleProducer**
+  - **APIs-Google**
+  - **Storebot-Google**
+  - **Google-AdWords-Instant**
+  - **Google-AdWords-Express**
+
+- **FeedFetcher-Google**: `.googleusercontent.com`, `.google.com`
+
+- **AdsBot-Google**: `.googlebot.com`, `.google.com`
+  - **AdsBot-Google**
+  - **AdsBot-Google-Mobile**
+
+- **AdsBot-Google-Mobile-Apps**: `.google.com`
+
+- **Mediapartners-Google**: `.google.com`
 
 - **Yahoo! Slurp**: `.crawl.yahoo.net`
 
 - **Bingbot (Microsoft)**: `.search.msn.com`
 
-- **Yandex**: `.yandex.ru`, `.yndx.net`
+- **Yandex**: `.yandex.ru`, `.yandex.net`, `.yndx.net`, `.yandex.com`
 
-- **Baiduspider**: `.crawl.baidu.com`
+- **Baiduspider**: `.crawl.baidu.com`, `.baidu.jp`
 
-- **Facebookexternalhit**: `.facebook.com, .fbsv.net`
+- **Applebot**: `.applebot.apple.com`
 
-- **Twitterbot**: `.twitter.com`
+- **MojeekBot**: `.mojeek.com`
+
+- **QwantBot**: `.qwant.com`
+
+- **PinterestBot**: `.pinterest.com`
+
+- **PrerenderGateway**
+  - Used by our Optimizer HTML Prerender service for SEO and JavaScript rendering.
+
+### Performance & Auditing Tools
+
+- **Chrome Lighthouse**: `.googleusercontent.com`, `.google.com`
+
+### Social Media & Link Preview Bots
+
+- **Facebookexternalhit**: `.facebook.com`, `.fbsv.net`
+
+- **Twitterbot / X Preview Bot**: `.twttr.com`, `.twitter.com`, `.x.com`
 
 - **LinkedInBot**: `.linkedin.com`
 
 - **Pinterest**: `.pinterest.com`
 
-- **Applebot**: `.apple.com`
-
 - **WhatsApp**: `.whatsapp.net`
 
 - **Tumblr**: `.tumblr.com`
 
-- **SkypeUriPreview**: `.skype.com`
-
-- **Discordbot**: `.discordapp.com`
-
 - **TelegramBot**: `.telegram.org`
 
-- **MojeekBot**: `.mojeek.com`
+### Messaging & Collaboration Preview Bots
 
-- **QwantBot**: `.qwant.com`
+- **SkypeUriPreview**: `.skype.com`, `.skype.net`
 
 ## Why Verification Matters
 
