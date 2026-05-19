@@ -1,9 +1,11 @@
 ---
 title: "Creating a rate limit rule"
-description: "Creating a rate limit rule allows you to customize Bunny Shield’s protections to manage traffic effectively and defend against abuse. Whether you're safeguarding against malicious bots or preventing traffic spikes from overwhelming your services, rate limit rules give you precise control over request volumes. With Bunny Shield’s advanced capabilities, you can ensure optimal performance and security while maintaining a seamless experience for legitimate users."
+description: "Customize Bunny Shield’s protections to throttle abuse, slow malicious bots, and absorb traffic spikes without affecting legitimate users."
 ---
 
-# What you'll need
+Rate limit rules cap how many requests a client can make to your application within a defined window. Combine them with Shield's targeting controls to throttle abuse on specific endpoints without affecting legitimate traffic.
+
+## What you'll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
@@ -11,7 +13,7 @@ Before you dive in, make sure you have the following prerequisites in place:
 - An existing Shield Zone.
 - Advanced Plan or above on the existing Shield Zone (if creating more than 2 rate limit rules\*).
 
-# Creating a Ratelimit Rule
+## Creating a rate limit rule
 
 To create an effective rate limit rule, it's important to understand the fundamentals of how to build a Custom WAF Rule on Bunny Shield. Familiarize yourself with our [Rule Engine](/shield/rule-engine) documentation to gain insights into how rules are structured and processed within the system.
 
@@ -19,23 +21,23 @@ To create an effective rate limit rule, it's important to understand the fundame
 
 This rule processes each HTTP request by extracting only the REQUEST_URI (**Variable**), converting it to lowercase, and removing whitespaces (**Transformations**). It then verifies if the transformed REQUEST_URI matches exactly (**Operator**) with '/blockedpath’ (**Operator Value**). If a match is found, we increment the global rate limit counter. If the RequestCount (10 requests) is exceeded within the defined 1-second Timeframe, then our WAF Engine will block (**Response Action**) the request for the defined 30-second BlockTime, halting further rule processing and intercepting the request.
 
-With the basics covered, you can now create highly effective rate limit rules tailored to protect your site with customized mitigation strategies.
+With the basics covered, you can write rate limit rules that mitigate the abuse patterns specific to your site.
 
-# Examples
+## Examples
 
-## Rate limit request if a cookie is set with a specific value and exceeds a defined limit
+### Rate limit request if a cookie is set with a specific value and exceeds a defined limit
 
 If you want to rate limit requests when a specific cookie is set to a certain value and the request rate exceeds a defined limit, you can use the following configuration:
 
 ![](/images/docs/2fcc5381951d8095a887ce2a0479ffcde7c7fd808fa9a9f96994f772e664d8eb-image.png)
 
-## Rate limit request if User-Agent is a known crawler and exceeds a defined limit
+### Rate limit request if User-Agent is a known crawler and exceeds a defined limit
 
 If you need to rate limit requests where the User-Agent header contains a known crawler identifier and the request rate exceeds a defined limit, use the following rule configuration:
 
 ![](/images/docs/3c473840055c08fe347e4bbf83ef7771cad56a666b33ef65482abcce35dc41c4-awdawdawdawwdawdawdawdawd.pg.jpg)
 
-# Need help or encountering issues?
+## Need help or encountering issues?
 
 If you encounter any difficulties or have questions, our support team is here to assist you. Please don't hesitate to contact us via [support request form](https://bunny.net/contact/) for prompt assistance.
 

@@ -665,7 +665,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["shield/index", "shield/quickstart"]
+                "pages": ["shield/index", "shield/quickstart", "shield/pricing"]
               },
               {
                 "group": "Protection Features",
@@ -698,6 +698,7 @@
                   "shield/verified-bots",
                   "shield/metrics",
                   "shield/cookies",
+                  "shield/troubleshooting",
                   "shield/api-reference"
                 ]
               }
