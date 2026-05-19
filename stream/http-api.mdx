@@ -5,7 +5,7 @@ description: "Upload videos to Bunny Stream using the HTTP API."
 
 From creating the video object to sending the actual video content, you’ll learn how to complete the process smoothly.
 
-# What You’ll Need
+## What You’ll Need
 
 Before you begin, ensure you have:
 
@@ -15,14 +15,14 @@ A video library already created. It can be done **via Dashboard** (Follow "Step 
 
 Have your Stream API key prepared. To learn how to obtain your Stream API key, see [How to obtain your Stream API key guide.](https://support.bunny.net/hc/en-us/articles/13503339878684-How-to-find-your-stream-API-key)
 
-# Understanding the Upload Process
+## Understanding the Upload Process
 
 Uploading a video through the HTTP API involves **two main steps:**
 
 1. **Create the video object** in your library (metadata and title).
 2. **Upload the video file** in **binary format** using a PUT request.
 
-# Creating a Video
+## Creating a Video
 
 Before uploading any video content, you must first **create a video object** in your library. This step is often overlooked, so please ensure it’s completed before proceeding with the upload.
 
@@ -30,7 +30,7 @@ Before uploading any video content, you must first **create a video object** in 
 
 You can find full details about the available parameters in the [Stream API Reference](/api-reference/stream).
 
-# How to Create a Video:
+## How to Create a Video:
 
 Make an authenticated POST request to the following endpoint:
 
@@ -73,7 +73,7 @@ At this stage, most fields (like encoding status or view count) will be empty or
 
 You’ll need the `videoId` from this response in the next step.
 
-# Uploading the Video File
+## Uploading the Video File
 
 Once the video object is created, you can proceed to upload the actual video file.
 
@@ -137,7 +137,7 @@ Use the "--data-binary" flag to send the file correctly
 
 If this step is skipped or misconfigured, the upload may silently fail or the video will not process correctly.
 
-# Fetching Videos from a Remote URL (Optional)
+## Fetching Videos from a Remote URL (Optional)
 
 If you already have a video file hosted on another platform or server, [bunny.net](https://bunny.net/) allows you to fetch it directly using a remote URL, saving you the trouble of downloading and re-uploading manually.
 
@@ -173,7 +173,7 @@ curl --request POST
 
 Once fetched, the video will be automatically added to your library and begin processing like a normal upload.
 
-## Queued Fetch Limit
+### Queued Fetch Limit
 
 The fetch API supports a limited number of queued fetch requests per user at a time; this limit may vary by region, time, current load, and other factors. If you exceed the limit before previous fetches complete, the API will return **HTTP 429 (Too Many Requests)**. To avoid this, either wait for in-progress fetches to finish before submitting new ones, or implement retry logic with backoff when you receive a 429 response.
 

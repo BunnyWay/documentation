@@ -3,7 +3,9 @@ title: "Embedding videos"
 description: "Bunny Stream is designed for developers and content creators to easily upload, process, and display videos within any application or website. Once your videos have been processed, you can embed them by using our lightweight embed player, enabling seamless playback across all devices and browsers."
 ---
 
-# How to embed a video?
+Once a video has finished processing, you can embed it on any page using the Bunny Stream player. This page covers the iframe URL pattern, sizing tips, and code samples for common frameworks.
+
+## How to embed a video?
 
 Embedding a video involves placing an `<iframe>` element on your webpage. By referencing the correct Bunny Stream embed url and including your video library and video IDs, you can display your video anywhere you like. Each embedded video is accessed via the following URL pattern:
 
@@ -59,7 +61,7 @@ Example code:
 
 The embed code for a particular video can be generated on the video details page in the dashboard.
 
-# Parameters
+## Parameters
 
 By default, many of the player’s controls and behaviors, such as captions, autoplay, and preload, can be configured on a global scale within the Player tab of your Bunny Stream library settings. Adjusting these default configurations ensures that any video embedded from that library inherits the same baseline behavior, providing a consistent user experience across all embedded instances.
 
@@ -67,7 +69,7 @@ By default, many of the player’s controls and behaviors, such as captions, aut
 
 However, you can also fine-tune or override these defaults on a per-embed basis by adding query parameters directly to the embed URL. This flexibility allows you to tailor the playback experience for specific pages or use-cases without affecting the global settings of your library.
 
-# Supported Parameters
+## Supported Parameters
 
 Below is a concise table summarizing each parameter, its possible values, a brief description, and the default value.
 
@@ -88,7 +90,7 @@ Below is a concise table summarizing each parameter, its possible values, a brie
 | **`rememberPosition`** | `true`, `false` | Controls whether the player remembers the last playback position for the viewer within their browser. If set to `true`, the player stores the last position and attempts to resume from that point when the viewer returns. When `false`, the video always starts from the beginning. | `false` |
 | `compactControls` | `true`, `false` | Enables compact UI view for the bunny player, allowing more space for video on desktop and mobile browsers. | `false` |
 
-# Player keyboard shortcuts
+## Player keyboard shortcuts
 
 Bunny Stream player has support for the following keyboard shortcuts.
 
@@ -106,6 +108,6 @@ Bunny Stream player has support for the following keyboard shortcuts.
 | C | Toggle captions |
 | L | Toggle loop |
 
-# Custom integration
+## Custom integration
 
 If you prefer to use your own player or a fully custom video integration, you can directly access the raw video files from Bunny Stream’s infrastructure. Please refer to our [Video Storage Structure](/docs/stream-video-storage-structure) documentation for details on how to retrieve and utilize video files directly.
