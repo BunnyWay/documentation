@@ -1,9 +1,9 @@
 ---
 title: "API Guardian"
-description: "API Guardian extends Bunny Shield with schema-aware protection for your APIs. By enforcing your OpenAPI contract at the edge, it ensures requests and responses match exactly what your application expects, stopping invalid or abusive traffic before it reaches your origin."
+description: "Schema-aware API protection. Bunny Shield enforces your OpenAPI contract at the edge so requests and responses match what your application expects."
 ---
 
-API Guardian turns your OpenAPI specification into an enforcement layer at the edge. It validates requests and responses against your schema, authenticates traffic, and applies per-endpoint controls so invalid or abusive calls are stopped before they reach your origin.
+API Guardian uses your OpenAPI specification as the source of truth for what your API accepts. At the edge, every request is validated against the schema, authenticated against the configured security scheme, and counted against per-endpoint rate limits before reaching your origin.
 
 ## Key Features
 
@@ -24,7 +24,7 @@ When a specification is uploaded:
 - Internal references are resolved
 - Validation rules are compiled into native Bunny Shield protections
 
-Every incoming request is checked against this contract before reaching your origin. This ensures that only requests matching your defined API structure are allowed through.
+Every incoming request is checked against this contract before reaching your origin. Only requests matching your defined API structure are allowed through.
 
 Validation includes:
 
@@ -62,7 +62,7 @@ Requests that **do match** a declared path are always handled by API Guardian’
 
 Unmatched path handling is not limited to literal path definitions.
 
-API Guardian automatically allows endpoints referenced by your authentication schemes. This ensures authentication flows work without requiring manual schema duplication.
+API Guardian automatically allows endpoints referenced by your authentication schemes, so login and token-exchange flows work without manual schema duplication.
 
 For OpenID Connect:
 
@@ -186,7 +186,7 @@ Endpoint limits vary by plan:
 - **Business**: up to 50 endpoints  
 - **Enterprise**: customizable  
 
-These limits are designed to help focus protection on critical and high-traffic endpoints.
+These limits help focus protection on critical and high-traffic endpoints.
 
 ## Logging & Observability
 
@@ -196,7 +196,7 @@ API Guardian provides full visibility into validation activity:
 - Clear insight into why a request was flagged or blocked  
 - Integrated into Bunny Shield’s event logs for real-time monitoring  
 
-This allows you to safely start in **log mode**, observe real traffic patterns, and transition to **blocking mode** with confidence.
+This makes it safe to start in **log mode**, observe real traffic patterns, and switch to **blocking mode** once you're happy with the results.
 
 ![](/images/shield/api-guardian/logs.png)
 

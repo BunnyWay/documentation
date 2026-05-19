@@ -3,11 +3,11 @@ title: Troubleshooting
 description: Diagnose unexpected Shield challenges and resolve false-positive rule triggers.
 ---
 
-Bunny Shield is designed to be resilient against bad actors while letting legitimate traffic through. If you're seeing a challenge you didn't expect or a request blocked you believe is safe, the sections below walk through where to look and how to act.
+Unexpected Shield challenges and false-positive rule triggers usually trace back to one of a handful of features. This page covers how to find which one fired and how to resolve it.
 
 ## Why am I getting a Shield challenge?
 
-A Shield challenge can be issued by any Shield feature that supports the **Challenge** response action. If a challenge is appearing on requests you expected to pass, check each of the configured features in turn:
+Any Shield feature that supports the **Challenge** response action can issue one. If a challenge is appearing on requests you expected to pass, check each configured feature:
 
 - **WAF**: [Custom WAF rules](/shield/custom-waf-rule) can add a Challenge action to matched request patterns.
 - **DDoS Mitigation**: Higher [DDoS sensitivity levels](/shield/ddos) can present a Challenge to validate access to your site.
@@ -15,15 +15,15 @@ A Shield challenge can be issued by any Shield feature that supports the **Chall
 - **Bot Detection**: [Bot Detection](/shield/bot-detection) may issue a Challenge when traffic looks automated.
 - **Access Lists**: Both [curated and custom Access Lists](/shield/access-lists) can be configured to present a Challenge.
 
-In general, legitimate users should pass the challenge transparently. If you're seeing repeated or unexpected challenges, narrow down which feature is responsible using the event logs (see below).
+Legitimate users should pass the challenge transparently. If challenges are firing repeatedly or on traffic that shouldn't be flagged, use the event logs to narrow down which feature is responsible.
 
 ## I have triggered a false positive
 
-A "false positive" is a request that Shield has logged or blocked when you would expect it to pass. Diagnosing one is usually a three-step flow: inspect the event log, decide which mitigation fits, and apply it.
+A false positive is a request that Shield logged or blocked when you would expect it to pass. To resolve one, find the rule in the event log, then apply an exception that fits.
 
 ### Inspect the event log
 
-Event logs show exactly which rule matched and why. Logs are currently available via the API — see the [Shield event log endpoint](/api-reference/shield) for details.
+Event logs show exactly which rule matched and why. Logs are currently available via the API. See the [Shield event log endpoint](/api-reference/shield) for details.
 
 The response includes a `TriggerMatch` field that identifies what the engine flagged. Example log:
 
@@ -45,7 +45,7 @@ The response includes a `TriggerMatch` field that identifies what the engine fla
 }
 ```
 
-In this case, `/.env` is matched as a common attack vector. The `ruleId` (`930130`) maps to the OWASP Core Rule Set entry for restricted file access — this is a valid block.
+In this case, `/.env` is matched as a common attack vector. The `ruleId` (`930130`) maps to the OWASP Core Rule Set entry for restricted file access, so this is a valid block.
 
 More nuanced rules may need closer inspection. For example, PHP rules can trigger on open-ended PHP code (e.g., `<?php` without a closing `?>`). The `TriggerMatch` value will often contain a larger fragment of content you can use to confirm whether the match is genuine.
 
@@ -53,6 +53,6 @@ More nuanced rules may need closer inspection. For example, PHP rules can trigge
 
 Once you've identified the rule, there are three options, in order of preference:
 
-1. **Add an exception inside the Shield feature that fired** — for example, allow a specific file, IP, or User-Agent within the WAF or Access List configuration.
-2. **Add an Edge Rule exception** — [Edge Rules](/cdn/edge-rules) can disable parts (or all) of Shield based on conditions like a file extension, hostname, or URL path. Useful when the carve-out should apply only to specific traffic patterns.
-3. **Disable the Shield rule entirely** — only recommended as a last resort. Disabling a rule outright may expose your application to the attack vector that rule was protecting against.
+1. **Add an exception inside the Shield feature that fired.** For example, allow a specific file, IP, or User-Agent within the WAF or Access List configuration.
+2. **Add an Edge Rule exception.** [Edge Rules](/cdn/edge-rules) can disable parts (or all) of Shield based on conditions like a file extension, hostname, or URL path. Useful when the carve-out should apply only to specific traffic patterns.
+3. **Disable the Shield rule entirely.** Only recommended as a last resort. Disabling a rule outright may expose your application to the attack vector that rule was protecting against.

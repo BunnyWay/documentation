@@ -1,20 +1,20 @@
 ---
 title: "Bot Detection"
-description: "Bunny Shield's bot detection engine gives you deep control over identifying and blocking malicious bots without impacting legitimate automation or user experience. From headless browsers to impersonators and scraping tools, Bunny Shield offers layered defense designed to preserve performance while enhancing protection."
+description: "Identify and block malicious bots, including headless browsers, impersonators, and scrapers, without affecting legitimate automation or user experience."
 ---
 
-Bunny Shield combines behavioral fingerprinting, header anomaly detection, and IP reputation to separate real users from automation without impacting legitimate visitors. Detection rules and sensitivity profiles propagate globally within seconds, so you can react to attacks as they unfold.
+Bunny Shield identifies automated traffic using behavioral fingerprinting, header anomalies, and IP reputation. Detection rules and sensitivity profiles propagate across the edge within seconds, so policy changes take effect in near real time.
 
 ## Key Features
 
-- **Behavioral Fingerprinting**: Leverage advanced techniques like fingerprinting, header anomaly detection, and request behavior modeling to distinguish real users from automated traffic.
-- **Real-Time Response**: Create detection logic and mitigation rules that propagate globally across our edge within seconds, ensuring rapid reaction to attacks as they unfold.
-- **Customizable Rules**: Tailor detection conditions based on HTTP headers, IP reputation, user-agent anomalies, cookie presence, request frequency, and more.
-- **False Positive Resistant**: Designed to avoid blocking legitimate crawlers or automation, Bunny Shield provides flexible allow-listing, ASN validation, and crawl integrity filters.
+- **Behavioral Fingerprinting**: Distinguish real users from automated traffic using fingerprinting, header anomaly detection, and request behavior modeling.
+- **Real-Time Response**: Detection logic and mitigation rules propagate across the edge within seconds, so policy changes take effect almost immediately.
+- **Customizable Rules**: Set detection conditions based on HTTP headers, IP reputation, user-agent anomalies, cookie presence, request frequency, and other signals.
+- **False Positive Resistant**: Allow-listing, ASN validation, and crawl integrity filters keep legitimate crawlers and automation from being blocked.
 
 ## Multi-layer request analysis
 
-Every request that reaches Bunny Shield is evaluated using multiple layers of analysis, designed to catch automation wherever it tries to hide:
+Every request that reaches Bunny Shield is evaluated through multiple layers of analysis, each targeting a different way automation tries to hide:
 
 - **Request integrity checks** analyzes headers, query structures, and protocol patterns to detect spoofed or malformed requests.
 - **Request body inspection** for applicable methods, which will inspect payload structure and behavior to spot signs of scripted abuse.

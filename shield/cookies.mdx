@@ -3,7 +3,7 @@ title: "Cookies"
 description: "Bunny Shield relies on cookies to support its abuse mitigation features, protect against automated bots, and maintain legitimate user access. These cookies enable the service to validate users efficiently while maintaining security and performance."
 ---
 
-Bunny Shield uses a small number of short-lived, first-party cookies to validate browser sessions, support challenge mechanisms, and detect automated abuse. The sections below describe each cookie, its purpose, and how it fits into the broader privacy and compliance picture.
+Bunny Shield sets a small number of short-lived, first-party cookies that back its challenge flow, session validation, and bot detection.
 
 ## Cookie Usage
 
@@ -15,22 +15,22 @@ As outlined above, all the cookies listed above are strictly necessary to delive
 
 Bunny.net encourages customers to disclose the use of these cookies to their end users. Depending on regional legal requirements, you may need to inform your users about the use of these cookies and the reasons behind their presence, ensuring proper consent or disclosure in accordance with local regulations.
 
-- Bunny Shield ensures that these cookies never track user behavior beyond verifying legitimacy of the browser request. They do not contain personally identifiable information and exist only as short-lived, first-party cookies dedicated to ensuring secure, legitimate user access. By implementing these practices, Bunny Shield maintains a balanced approach, promoting user trust while fulfilling its security obligations.
+- These cookies never track user behavior beyond verifying the browser request. They contain no personally identifiable information and are short-lived, first-party cookies used only for verifying legitimate access.
 
 ## Cookies
 
 `bunny_shield`
 
-- The `bunny_shield` cookie serves as a temporary indicator that a user has successfully completed the JavaScript Proof-of-Work (PoW) challenge. Once set, this cookie helps Bunny Shield recognize validated users without repeatedly subjecting them to the challenge, thereby streamlining subsequent visits and enhancing overall user experience.
+- A temporary indicator that the user has completed the JavaScript Proof-of-Work (PoW) challenge. Once set, it lets Bunny Shield recognize validated users without re-running the challenge on every visit.
 
 `bunny_shield_chk`
 
-- The `bunny_shield_chk` cookie functions as a checksum or validation token to ensure the integrity of the first cookie. This second cookie prevents tampering, forgery, or any unauthorized manipulation of the validation data, further reinforcing the legitimacy and security of the user session. Both of these first-party, functional cookies collectively safeguard the user journey, preserve performance, and maintain the highest standards of data protection.
+- A checksum or validation token that verifies the integrity of the `bunny_shield` cookie. This prevents tampering, forgery, or unauthorized changes to the validation data.
 
 `bunny_shield_id`
 
-- The `bunny_shield_id` cookie is a persistent, first-party identifier used by Bunny Shield’s bot detection system. It assigns a unique ID to each browser session, allowing the system to reliably distinguish between legitimate users and potentially malicious actors. By maintaining this session-level identity, Bunny Shield enhances behavioral analysis and improves the accuracy of long-term bot mitigation strategies without collecting personally identifiable information.
+- A persistent, first-party identifier used by Bunny Shield’s bot detection. It assigns a unique ID to each browser session so the system can distinguish legitimate users from malicious actors over time. No personally identifiable information is collected.
 
 `bunny_shield_bd`
 
-- The `bunny_shield_bd` cookie is used to capture a detailed, non-invasive fingerprint of the user’s browser environment. This includes characteristics such as rendering behavior, device attributes, and feature support. The fingerprinting process supports Bunny Shield’s efforts to identify automation patterns and detect spoofed or emulated clients, all while preserving user anonymity. As a functional security measure, `bunny_shield_bd` reinforces session integrity and contributes to a more robust defense against sophisticated threats.
+- Captures a non-invasive fingerprint of the user's browser environment, including rendering behavior, device attributes, and feature support. The fingerprint helps Bunny Shield identify automation patterns and spoofed or emulated clients while preserving user anonymity.

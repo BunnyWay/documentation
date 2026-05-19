@@ -3,18 +3,18 @@ title: "Access Lists"
 description: "Access Lists give you precise control over who can and cannot reach your applications. From blocking malicious proxies and anonymized botnets to allowing trusted infrastructure or internal tools, Access Lists provide real-time traffic filtering that is enforced instantly across our global edge."
 ---
 
-Access Lists let you decide which clients can reach your origin, based on identifiers like IP, CIDR range, ASN, or country. Curated threat feeds and your own custom rules run together at the edge, giving you adaptive protection without backend changes.
+Access Lists decide which clients can reach your origin based on identifiers like IP, CIDR range, ASN, or country. Curated threat feeds and your own custom rules run together at the edge, so policy changes apply globally without touching your backend.
 
 ## Key Features
 
 - **Flexible Controls**: Allow, block, challenge, or log traffic based on IPs, CIDRs, ASNs, or entire countries.
 - **Curated Threat Lists**: Continuously updated feeds from leading reputation sources, available on Advanced, Business, and Enterprise plans.
-- **Custom Lists**: Create your own access policies with rules tailored to your exact needs, from trusted networks to high-risk regions.
+- **Custom Lists**: Build your own access policies, from trusted networks through to high-risk regions.
 - **Instant Enforcement**: Rules propagate globally within seconds and are applied directly at the edge without adding latency or backend complexity.
 
 ## Multi-layer Access Control
 
-Access Lists combine curated intelligence with your own rules to deliver adaptive protection:
+Access Lists combine curated intelligence with your own rules:
 
 - **Curated threat feeds** cover VPNs, Tor nodes, abusive datacenters, and active attack sources.
 - **Custom rules** allow you to define access logic for IPs, CIDRs, ASNs, or countries.
@@ -25,14 +25,14 @@ Access Lists combine curated intelligence with your own rules to deliver adaptiv
 
 Each Access List rule gives you full control over how Bunny Shield should handle matched traffic:
 
-- **Allow**: Ensure trusted traffic passes through without restriction.
+- **Allow**: Pass trusted traffic through without restriction.
 - **Block**: Drop malicious requests at the edge instantly.
 - **Challenge**: Trigger browser verification for suspicious traffic without blocking it outright.
 - **Log**: Record traffic patterns for analysis without applying enforcement.
 
 ## Action Precedence
 
-When multiple rules apply to the same request, Bunny Shield follows a defined order of precedence to ensure consistent results:
+When multiple rules apply to the same request, Bunny Shield follows a defined order of precedence:
 
 1. **Bypass**: Always takes priority. Requests that match a Bypass skip further evaluation from Bunny Shield.
 2. **Allow**: Trusted traffic is passed through without restriction.
@@ -40,7 +40,7 @@ When multiple rules apply to the same request, Bunny Shield follows a defined or
 4. **Challenge**: Suspicious requests are challenged if no higher-priority action applies.
 5. **Log**: If no other action matches, requests can be logged for monitoring and analysis.
 
-This order ensures that trusted traffic is never blocked and that security actions are applied consistently across your rules.
+This order keeps trusted traffic from being blocked and applies security actions consistently across your rules.
 
 ## Curated Threat Intelligence
 
@@ -48,7 +48,7 @@ Bunny Shield maintains a library of continuously updated reputation feeds that a
 
 - **Advanced**: VPNs, common datacenters, Tor exit nodes, FireHOL Level 1, AbuseIPDB, NetMountains
 - **Business**: Includes all Advanced feeds plus Blocklist DE, ThreatFox, StopForumSpam, SpamHaus DROP, and more
-- **Enterprise**: Includes all Advanced and Business feeds with support for custom feed integrations tailored to your infrastructure
+- **Enterprise**: Includes all Advanced and Business feeds, plus support for custom feed integrations
 
 ![](/images/docs/78d3b9ba31a96c349979acef3aeedeea5dcafc51a6f188b263399a2433e4d116-image.png)
 

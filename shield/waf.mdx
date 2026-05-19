@@ -1,18 +1,18 @@
 ---
 title: WAF
 sidebarTitle: Overview
-description: "Bunny Shield's WAF serves as a protective barrier for your web applications by filtering, monitoring, and blocking HTTP traffic to and from your services. It is designed to shield your websites from common security threats and vulnerabilities without disrupting the experience of legitimate users."
+description: "A Web Application Firewall that filters, monitors, and blocks HTTP traffic in front of your services. Blocks common threats without affecting legitimate users."
 ---
 
-The Bunny Shield WAF inspects HTTP traffic in real time to block common attacks like SQL injection, cross-site scripting, and the broader OWASP Top 10. You can rely on the managed ruleset out of the box or layer custom rules on top to address threats specific to your application.
+The Bunny Shield WAF inspects HTTP traffic in real time to block common attacks like SQL injection, cross-site scripting, and the rest of the OWASP Top 10. The managed ruleset works on its own, or you can layer custom rules on top to cover threats specific to your application.
 
 ## Key Features
 
 - **Automatic Threat Detection**: Bunny Shield's WAF automatically identifies and blocks prevalent attacks such as SQL injection, cross-site scripting (XSS), and cross-site request forgery (CSRF). By detecting malicious patterns in incoming requests, it prevents attackers from exploiting vulnerabilities in your application.
 - **Customizable Security Rules**: The WAF allows you to tailor security measures to your specific needs by configuring custom security rules. This flexibility enables you to address unique threats pertinent to your application, ensuring a higher level of protection.
 - **Real-Time Monitoring**: With real-time logs and security events, you gain complete visibility into your application's security status. Monitoring blocked and allowed traffic helps you stay informed about potential threats and respond promptly to any suspicious activities.
-- **Flexible API**: Bunny Shield provides a RESTful API that lets you manage your WAF configurations programmatically. This feature enables seamless integration with your existing workflows and automation tools, allowing for efficient and consistent security management.
-- **Low Latency Protection**: Optimized for speed, Bunny Shield's WAF ensures that security measures do not introduce delays to user requests. By maintaining low latency, it preserves a smooth and responsive user experience while keeping your application secure.
+- **Flexible API**: Manage your WAF configuration programmatically through the REST API, so it slots into your existing workflows and automation.
+- **Low Latency Protection**: WAF checks run at the edge with minimal overhead, so security measures don't add noticeable delay to user requests.
 
 ## WAF Rules and Policies
 
@@ -45,12 +45,12 @@ You can access detailed logs through the WAF Logging API by sending a GET reques
 
 GET [https://api.bunny.net/shield/event-logs/\{\{shieldZoneId}}](https://api.bunny.net/shield/event-logs/%7B%7BshieldZoneId%7D%7D)
 
-Replace `{{shieldZoneId}}` with your actual Shield Zone ID. This will provide you with comprehensive logs of blocked and allowed traffic, which you can use for further analysis.
+Replace `{{shieldZoneId}}` with your Shield Zone ID. The response returns logs of blocked and allowed traffic that you can analyze further.
 
 ## Best Practices
 
 To maximize the effectiveness of Bunny Shield's WAF, consider the following best practices:
 
-- **Use Predefined Rules**: Begin by enabling the predefined rules provided by Bunny Shield to cover a broad spectrum of common threats effectively. These rules are designed to protect against known vulnerabilities and are regularly updated.
+- **Use Predefined Rules**: Start with the predefined ruleset, which covers a broad range of common threats and is updated regularly.
 - **Monitor and Review Logs**: Regularly checking your WAF logs helps you stay informed about potential threats and unusual activity. By monitoring these logs, you can identify new threat patterns and adjust your security measures accordingly.
 - **Regularly Update Rules**: Cyber threats evolve rapidly. Keeping your custom rules up-to-date allows you to adapt to new vulnerabilities and attack vectors, ensuring ongoing protection for your application.

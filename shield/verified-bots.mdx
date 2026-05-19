@@ -11,7 +11,7 @@ Not all traffic claiming to be a search engine bot is genuine. Many malicious ac
 
 1. The bot’s IP address is resolved to its PTR hostname.
 2. The hostname is checked against our whitelist of trusted domains.
-3. If the hostname matches, Bunny Shield confirms the authenticity by performing a forward DNS lookup to ensure the hostname resolves back to the same IP range.
+3. If the hostname matches, Bunny Shield performs a forward DNS lookup and confirms the hostname resolves back to the same IP range.
 
 Only when these checks pass is the bot classified as legitimate and allowed through.
 
@@ -66,7 +66,7 @@ The following crawlers are verified and allowed across all Bunny Shield mitigati
 
 ## Why Verification Matters
 
-- **Prevents abuse**: Many malicious crawlers disguise themselves with fake user-agent strings. PTR verification ensures that only real search and social bots get access.
+- **Prevents abuse**: Many malicious crawlers disguise themselves with fake user-agent strings. PTR verification means only real search and social bots get access.
 - **Preserves SEO**: Legitimate crawlers are never blocked by WAF rules, rate limits, or bot detection challenges.
 - **Improves security**: Fake bots are denied, reducing the chance of scraping, spam, and credential stuffing attempts.
 
