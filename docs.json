@@ -698,6 +698,7 @@
                   "shield/verified-bots",
                   "shield/metrics",
                   "shield/cookies",
+                  "shield/troubleshooting",
                   "shield/api-reference"
                 ]
               }
