@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "theme": "mint",
   "name": "bunny.net Documentation",
   "colors": {
     "primary": "#EF6126",
@@ -127,7 +127,8 @@
                   "cdn/quickstart",
                   "cdn/regions",
                   "cdn/pricing",
-                  "cdn/changelog"
+                  "cdn/changelog",
+                  "cdn/limits"
                 ]
               },
               {
@@ -229,14 +230,13 @@
                   "cdn/custom-hostname",
                   "cdn/cdn-acceleration",
                   "cdn/ssl-setup",
+                  "cdn/seamless-migration",
                   "cdn/custom-404-page",
                   "cdn/websockets",
                   {
                     "group": "Troubleshooting",
                     "pages": [
-                      "cdn/troubleshooting/acceleration-not-enabled",
                       "cdn/troubleshooting/unexpected-redirects",
-                      "cdn/troubleshooting/wordpress-static-urls",
                       "cdn/troubleshooting/cookies-still-sent",
                       "cdn/troubleshooting/run-traceroute",
                       "cdn/troubleshooting/still-slow",
@@ -332,7 +332,7 @@
                 ]
               },
               {
-                "group": "Tutorials",
+                "group": "Guides",
                 "pages": [
                   {
                     "group": "Go",
@@ -450,8 +450,8 @@
               {
                 "group": "Runtime APIs",
                 "pages": [
+                  "scripting/runtime/html-rewriter",
                   "scripting/node/fs/node-fs",
-                  "scripting/cache-api",
                   "scripting/websockets"
                 ]
               },
@@ -632,10 +632,6 @@
                 "group": "Guides",
                 "pages": [
                   {
-                    "group": "WordPress",
-                    "pages": ["storage/move-files-to-wordpress"]
-                  },
-                  {
                     "group": "Static Site Hosting",
                     "pages": [
                       "storage/static-site-hosting/index",
@@ -669,7 +665,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["shield/index", "shield/quickstart"]
+                "pages": ["shield/index", "shield/quickstart", "shield/pricing"]
               },
               {
                 "group": "Protection Features",
@@ -692,7 +688,8 @@
                   "shield/ddos",
                   "shield/bot-detection",
                   "shield/access-lists",
-                  "shield/upload-scanning"
+                  "shield/upload-scanning",
+                  "shield/api-guardian"
                 ]
               },
               {
@@ -701,6 +698,7 @@
                   "shield/verified-bots",
                   "shield/metrics",
                   "shield/cookies",
+                  "shield/troubleshooting",
                   "shield/api-reference"
                 ]
               }
@@ -721,7 +719,8 @@
                 "pages": [
                   "optimizer/index",
                   "optimizer/quickstart",
-                  "optimizer/pricing"
+                  "optimizer/pricing",
+                  "optimizer/changelog"
                 ]
               },
               {
@@ -748,6 +747,10 @@
                   "optimizer/burrow-smart-routing",
                   "optimizer/html-prerender"
                 ]
+              },
+              {
+                "group": "Reference",
+                "pages": ["optimizer/limits", "optimizer/troubleshooting"]
               }
             ]
           }
@@ -782,6 +785,16 @@
                   "dns/scriptable/introduction",
                   "dns/scriptable/query-response-object-types",
                   "dns/scriptable/helper-objects"
+                ]
+              },
+              {
+                "group": "Troubleshooting",
+                "pages": [
+                  "dns/troubleshooting/domain-unavailable",
+                  "dns/troubleshooting/aaaa-queries-in-logs",
+                  "dns/troubleshooting/cdn-acceleration-ssl",
+                  "dns/troubleshooting/cdn-acceleration-not-activating",
+                  "dns/troubleshooting/rdr-record-ssl"
                 ]
               }
             ]
@@ -847,6 +860,7 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "database/limits",
                   "database/replication",
                   "database/metrics",
                   "database/durability-and-consistency"
@@ -859,28 +873,123 @@
       {
         "product": "Integrations",
         "icon": "puzzle",
-        "description": "Third-party integrations and plugins",
+        "description": "Official and third-party plugins and integrations",
         "tabs": [
           {
             "tab": "WordPress",
             "groups": [
               {
                 "group": "WordPress",
-                "pages": ["integrations/wordpress"]
+                "pages": [
+                  "integrations/wordpress/index",
+                  "integrations/wordpress/quickstart",
+                  "integrations/wordpress/support-policy"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
+                  "integrations/wordpress/content-offloading",
+                  "integrations/wordpress/stream"
+                ]
+              },
+              {
+                "group": "Troubleshooting",
+                "pages": [
+                  "integrations/wordpress/troubleshooting-static-urls",
+                  "integrations/wordpress/troubleshooting-plugin-conflicts",
+                  "integrations/wordpress/troubleshooting-acceleration-not-enabled",
+                  "integrations/wordpress/move-files-to-wordpress"
+                ]
+              },
+              {
+                "group": "Third-Party Plugins",
+                "pages": [
+                  "integrations/wordpress/wp-rocket",
+                  "integrations/wordpress/w3-total-cache"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Terraform",
+            "groups": [
+              {
+                "group": "Terraform",
+                "pages": [
+                  "integrations/terraform/index",
+                  "integrations/terraform/quickstart"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "integrations/terraform/authentication",
+                  "integrations/terraform/resources",
+                  "integrations/terraform/data-sources"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
+                  "integrations/terraform/importing-stream-library",
+                  "integrations/terraform/edgescript-pullzone"
+                ]
               }
             ]
           },
           {
             "tab": "cPanel",
-            "hidden": true,
             "groups": [
               {
                 "group": "cPanel",
                 "pages": [
                   "integrations/cpanel/index",
-                  "integrations/cpanel/quickstart",
+                  "integrations/cpanel/quickstart"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
                   "integrations/cpanel/configuration",
                   "integrations/cpanel/custom-nameservers"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "CLI",
+        "icon": "terminal",
+        "description": "Manage bunny.net from your terminal",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Documentation",
+                "pages": [
+                  "cli/index",
+                  "cli/quickstart",
+                  "cli/installation",
+                  "cli/configuration",
+                  "cli/changelog"
+                ]
+              },
+              {
+                "group": "Commands",
+                "pages": [
+                  "cli/commands/auth",
+                  "cli/commands/config",
+                  "cli/commands/db",
+                  "cli/commands/scripts",
+                  {
+                    "group": "Registries",
+                    "hidden": true,
+                    "pages": ["cli/commands/registries"]
+                  },
+                  "cli/commands/api"
                 ]
               }
             ]
@@ -971,30 +1080,6 @@
                   "directory": "api-reference/database"
                 },
                 "pages": ["api-reference/database/index"]
-              }
-            ]
-          },
-          {
-            "tab": "Terraform",
-            "groups": [
-              {
-                "group": "Terraform",
-                "pages": ["terraform/index", "terraform/quickstart"]
-              },
-              {
-                "group": "Reference",
-                "pages": [
-                  "terraform/authentication",
-                  "terraform/resources",
-                  "terraform/data-sources"
-                ]
-              },
-              {
-                "group": "Guides",
-                "pages": [
-                  "terraform/importing-stream-library",
-                  "terraform/edgescript-pullzone"
-                ]
               }
             ]
           }
@@ -1515,17 +1600,52 @@
     },
     {
       "source": "/docs/terraform-overview",
-      "destination": "/terraform",
+      "destination": "/integrations/terraform",
       "permanent": true
     },
     {
       "source": "/docs/terraform-quickstart",
-      "destination": "/terraform/quickstart",
+      "destination": "/integrations/terraform/quickstart",
       "permanent": true
     },
     {
       "source": "/docs/importing-stream-library",
-      "destination": "/terraform/importing-stream-library",
+      "destination": "/integrations/terraform/importing-stream-library",
+      "permanent": true
+    },
+    {
+      "source": "/terraform",
+      "destination": "/integrations/terraform",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/quickstart",
+      "destination": "/integrations/terraform/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/authentication",
+      "destination": "/integrations/terraform/authentication",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/resources",
+      "destination": "/integrations/terraform/resources",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/data-sources",
+      "destination": "/integrations/terraform/data-sources",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/importing-stream-library",
+      "destination": "/integrations/terraform/importing-stream-library",
+      "permanent": true
+    },
+    {
+      "source": "/terraform/edgescript-pullzone",
+      "destination": "/integrations/terraform/edgescript-pullzone",
       "permanent": true
     },
     {
@@ -2110,7 +2230,27 @@
     },
     {
       "source": "/docs/wordpress-plugin-support-policy",
-      "destination": "/integrations/wordpress",
+      "destination": "/integrations/wordpress/support-policy",
+      "permanent": true
+    },
+    {
+      "source": "/storage/move-files-to-wordpress",
+      "destination": "/integrations/wordpress/move-files-to-wordpress",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/wordpress-static-urls",
+      "destination": "/integrations/wordpress/troubleshooting-static-urls",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/wordpress-plugin-conflicts",
+      "destination": "/integrations/wordpress/troubleshooting-plugin-conflicts",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/acceleration-not-enabled",
+      "destination": "/integrations/wordpress/troubleshooting-acceleration-not-enabled",
       "permanent": true
     },
     {

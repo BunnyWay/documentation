@@ -1,124 +1,188 @@
 ---
 title: Changelog
 description: Latest updates and improvements across bunny.net products.
-hidden: true
 ---
 
-<Update label="2026-03-24" tags={["Magic Containers", "(Improvement)"]}>
-  ## Persistent Volumes are now generally available
+<Update label="2026-05-12" tags={["CLI", "(New)"]}>
+  ## Bunny CLI
 
-Persistent Volumes have moved out of preview and are now generally available with updated throughput limits and improved documentation. [Learn more](/magic-containers/persistent-volumes)
+The new Bunny CLI lets you manage bunny.net resources from your terminal. The initial release supports Bunny Database: create databases, open an interactive SQL shell with `bunny db shell`, generate auth tokens, and browse data with `bunny db studio`. [Learn more](/cli)
+</Update>
 
+<Update label="2026-05-07" tags={["CDN", "(Improvement)"]}>
+  ## Per-request control for Request Coalescing
+
+You can now enable or disable Request Coalescing per request using Edge Rules, allowing more granular control over caching behavior. [Learn more](/cdn/request-coalescing)
+
+</Update>
+
+<Update label="2026-05-04" tags={["Stream", "(New)"]}>
+  ## Compact controls - bunny player feature
+
+Maximize screen real estate on the bunny player with Compact Controls. Ideal for mobile and embedded players. You can now enable compact controls on your video library via the 'update video library' API endpoint or by adding 'compactControls=true' to your player embed parameters. 
+[Learn more](/api-reference/core/stream-video-library/update-video-library#response-enable-compact-controls)
+
+</Update>
+
+<Update label="2026-05-01" tags={["Stream", "(Improvement)"]}>
+  ## 'Add video library' API update
+
+The Stream 'Add video library' API endpoint can now pre-configure premium encoding, transcribing, video resolutions and more in a single API call.  
+[Learn more](/api-reference/core/stream-video-library/add-video-library)
+
+</Update>
+
+<Update label="2026-04-30" tags={["Optimizer", "(Improvement)"]}>
+  ## AVIF support
+
+The Optimizer now supports AVIF as both an input and output format, offering better compression than WebP with excellent quality. [Learn more](/optimizer/dynamic-images/formats)
+
+</Update>
+
+<Update label="2026-04-28" tags={["Optimizer", "(Improvement)"]}>
+  ## Image Upscaling
+
+Introduced the 'upscaling' parameter to allow images to be enlarged beyond their original dimensions using resampling. [Learn more](/optimizer/dynamic-images/resizing)
+
+</Update>
+
+<Update label="2026-04-28" tags={["CDN", "(New)"]}>
+  ## Seamless Domain Migration
+
+Introducing seamless domain migration with SSL certificate issuance via DNS verification, allowing zero-downtime transitions to bunny.net. [Learn more](/cdn/seamless-migration)
+
+</Update>
+
+<Update label="2026-04-27" tags={["Shield", "(New)"]}>
+  ## API Guardian
+
+Introducing API Guardian, a new feature in Bunny Shield that provides schema-aware protection for your APIs. It enforces your OpenAPI contract at the edge, ensuring requests and responses match your application's expectations, and stops invalid or abusive traffic before it reaches your origin. [Learn more](/shield/api-guardian)
+
+</Update>
+<Update label="2026-04-15" tags={["Stream", "(Improvement)"]}>
+  ## bunny player 
+
+This release makes playback smoother and more reliable everywhere. We've upgraded media-chrome to 4.19.0, fixed Firefox H.265 seeking and referrer handling, tightened Chromecast sync, and cleaned up iOS fullscreen transitions. Early-play and JIT videos start has improved, heatmaps work on token-protected embeds, and we've refined French UI translations and expanded RUM monitoring to new regions.
+</Update>
+
+<Update label="2026-04-07" tags={["Stream", "(Improvement)"]}>
+  ## Stream API
+
+Upgraded Smart feature language model to v5.4 for higher quality generation.
+JIT watermarking is now more reliable, accurate, and consistent.
+Cleanup unconfigured resolutions endpoint now supports MP4 removal [Learn more](/api-reference/stream/manage-videos/cleanup-unconfigured-resolutions#parameter-delete-mp4-files)
+</Update>
+
+<Update label="2026-04-07" tags={["Storage", "(Improvement)"]}>
+  ## S3 API 'Closed Preview'
+
+CopyObject now handles source objects up to 5 GB and plays nicely with multipart uploads, CORS works across pre-signed URLS. 
+</Update>
+
+<Update label="2026-03-31" tags={["Stream", "(Improvement)"]}>
+  ## Transcribing upgrade
+
+Transcribing language model has been upgraded to v1.2.0 for faster and higher quality transcriptions. [Learn more](/stream/transcribing)
+</Update>
+
+<Update label="2026-03-24" tags={["Storage", "(Improvement)"]}>
+  ## S3 API 'Closed Preview'
+
+Added presigned URL support for S3 via the AWS CLI presign command.
 </Update>
 
 <Update label="2026-03-20" tags={["Stream", "(Improvement)"]}>
   ## Language detection for transcribing
 
 Transcribing now includes language detection information, making it easier to manage multi-language video content. [Learn more](/stream/transcribing)
-
 </Update>
 
 <Update label="2026-03-18" tags={["Stream", "(New)"]}>
   ## Vimeo2Bunny CLI
 
 A new command-line tool to migrate videos from Vimeo to Bunny Stream. Videos transfer directly from Vimeo via Fetch Video URL — nothing is downloaded to your machine. [Learn more](/stream/vimeo2bunny)
-
 </Update>
 
 <Update label="2026-03-18" tags={["CDN", "(New)"]}>
   ## Edge Rule pattern matching
 
 Use Lua-based pattern matching in Edge Rule conditions to match structured request values such as URLs, headers, cookies, and query strings. [Learn more](/cdn/edge-rules/pattern-matching)
-
 </Update>
 
 <Update label="2026-03-17" tags={["Database", "(New)"]}>
   ## Database Shell
 
 The Bunny Database Shell (`bsql`) is a standalone, interactive SQL shell for querying and managing your database from the terminal. [Learn more](/database/connect/database-shell)
-
 </Update>
 
 <Update label="2026-03-16" tags={["Stream", "(New)"]}>
   ## Webhook signature validation
 
 Validate webhook signatures to verify that incoming notifications are genuinely from Bunny Stream and have not been tampered with. [Learn more](/stream/webhooks)
-
 </Update>
 
 <Update label="2026-03-12" tags={["Stream", "(New)"]}>
   ## Player 2.0
 
 The new Bunny Stream video player is here with a modern interface and improved performance. It's enabled by default for all new video libraries. [Learn more](/stream/player)
-
 </Update>
 
 <Update label="2026-03-10" tags={["Magic Containers", "(New)"]}>
   ## Templates
 
 Deploy pre-built application templates with just a few clicks. Each template includes a ready-to-run container image, and some include a sidecar database. [Learn more](/magic-containers/templates)
-
 </Update>
 
 <Update label="2026-03-10" tags={["Magic Containers", "(New)"]}>
   ## Quick Deploy
 
 A streamlined deployment flow that lets you go from zero to deployed in seconds, with everything presented in a single form. [Learn more](/magic-containers/quick-deploy)
-
 </Update>
 
 <Update label="2026-03-09" tags={["CDN", "(New)"]}>
   ## JA4 fingerprinting
 
 JA4 TLS fingerprinting is now available on all pull zones. Identify clients based on their TLS handshake characteristics via the `CDN-JA4` request header. [Learn more](/cdn/security/ja4-fingerprinting)
-
 </Update>
 
 <Update label="2026-03-09" tags={["CDN", "(Improvement)"]}>
   ## Logging and Permanent Log Storage updates
 
 Logging documentation has been updated with improved details on log retention, and Permanent Log Storage now includes specifics on part rotation and compression. [Learn more](/cdn/logging/permanent-storage)
-
 </Update>
 
 <Update label="2026-02-11" tags={["Stream", "(New)"]}>
   ## Mobile SDK token authentication
 
 Token authentication is now available for the Stream Mobile SDKs, adding an extra layer of security for mobile video playback. [Learn more](/stream/mobile-sdk-token-authentication)
-
 </Update>
 
 <Update label="2026-02-11" tags={["Edge Scripting", "(New)"]}>
   ## Node.js file system API
 
 A Node.js-compatible file system API is now available in Edge Scripts, allowing you to read and write files directly at the edge. [Learn more](/scripting/node/fs/node-fs)
-
 </Update>
 
-<Update label="2026-02-09" tags={["Magic Containers", "(New)"]}>
+<Update label="2026-02-01" tags={["Magic Containers", "(Improvement)"]}>
   ## Graceful Shutdown
 
-Magic Containers now supports graceful shutdown with SIGTERM signals and configurable grace periods during rolling updates and scaling events. [Learn more](/magic-containers/graceful-shutdown)
-
+New applications now have a default grace period of 30 seconds (up from 1 second), giving your applications more time to clean up resources and complete in-flight requests during rolling updates and scaling events. [Learn more](/magic-containers/graceful-shutdown)
 </Update>
 
 <Update label="2026-01-23" tags={["Stream", "(New)"]}>
   ## Smart Chapters
 
 Automatically generate chapters for your videos using AI. Smart Chapters analyzes your video's caption track to create chapter markers. [Learn more](/stream/smart-chapters)
-
 </Update>
 
 <Update label="2026-01-20" tags={["Database", "(New)"]}>
   ## SQL API
 
 Execute SQL queries against your Bunny Database over HTTP using the SQL API. [Learn more](/database/connect/sql-api)
-
 </Update>
 
 <Update label="2026-01-19" tags={["Database", "(New)"]}>
   ## Database SDKs
 
 Connect to Bunny Database using official SDKs for TypeScript, Go, Rust, and .NET. [Learn more](/database/connect/typescript)
-
 </Update>

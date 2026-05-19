@@ -1,0 +1,34 @@
+---
+title: WordPress Static URLs
+description: Fix issues where not all WordPress static assets are being served through the CDN.
+---
+
+In some cases, even after configuring the bunny.net plugin, some static resource URLs may not be served through the CDN. Below are the most common causes and how to resolve them.
+
+## Page caching
+
+If your WordPress site uses a static page caching plugin (such as LiteSpeed Cache or WP Fastest Cache), it may be holding an older cached version of your pages from before the CDN plugin was activated.
+
+After activating the plugin for the first time, purge the cache of any caching plugins to ensure the new URLs take effect. This also applies to server-level caching configured by your web host.
+
+## Conflicting CDN integration plugin
+
+Many caching plugins include their own CDN configuration, which can conflict with the bunny.net plugin. For example, if both the bunny.net plugin and WP Rocket CDN integration are enabled with different asset settings, this can cause unexpected behavior.
+
+There should always be only one CDN integration enabled at a time.
+
+## Incorrect URL detection
+
+The plugin detects your site URL based on your WordPress settings. If no URLs are being rewritten, check that the URL in the **Advanced Settings** of the plugin matches the actual URL of your website.
+
+## CSS and JavaScript files
+
+Some static resources are loaded from within CSS files or dynamically by JavaScript. The plugin cannot modify those files to replace URLs. In these cases, check your CSS and JavaScript files for any hardcoded URLs that bypass the CDN.
+
+## Dynamically generated scripts or lazy loading
+
+Some WordPress plugins load images dynamically from scripts generated on the fly. The plugin cannot access these URLs as they are typically encoded within JavaScript. Check whether the plugin in question offers CDN configuration or allows you to specify which URLs to load.
+
+## HTTP/2 Push
+
+If your server is configured to push resources to the browser via HTTP/2 Push, those resources may be delivered before the browser requests the CDN version. Disable HTTP/2 Push for resources that are already served from the CDN.

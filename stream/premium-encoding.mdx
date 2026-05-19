@@ -5,13 +5,29 @@ description: "Bunny Stream's Premium Encoding Tier is designed specifically for 
 
 With support for advanced encoding formats like x265 (HEVC), VP9, and AV1 (AV1 and x265 coming soon), you can optimize your videos for various devices and network conditions. This not only improves the playability experience but also allows for efficient bandwidth usage without compromising quality. Explore how our advanced encoding features empower you to elevate your audience's viewing experience. By leveraging the Premium Encoding Tier, you can deliver high-quality content more effectively, providing a seamless and engaging experience for your users.
 
-# Just-in-Time encoding
+## Just-in-Time encoding
 
-With Just-in-Time encoding, your videos become available for streaming almost immediately after upload, eliminating long encoding queues and delays. The feature dynamically adjusts to different resolutions, bitrates, and devices, ensuring that videos are instantly playable just moments after they're uploaded, regardless of length or size.
+With Just-in-Time (JIT) encoding, videos are ready for playback shortly after upload, eliminating long encoding queues and reducing delays. Instead of pre-processing entire files, JIT dynamically prepares video segments on demand, allowing content to start playing within seconds.
 
-By providing a seamless viewing experience, you boost both engagement and retention. Viewers are more likely to stay and interact with your content when it's readily accessible and tailored to their specific device and network conditions. This real-time adaptability enhances viewer satisfaction, fostering a loyal and satisfied audience base.
+In most cases, videos become playable within **10–15 seconds**, regardless of their size or duration.
 
-# Multiple output codec support
+JIT automatically adapts to different resolutions, bitrates, devices, and network conditions. This ensures a smooth playback experience across a wide range of environments, helping improve viewer engagement and retention. When content is instantly accessible and optimized for each viewer, users are more likely to stay, interact, and return.\
+\
+**Performance Considerations**\
+Several factors can influence how quickly a video becomes playable with JIT:
+
+- **File structure**
+  Files optimized for streaming (e.g., MP4 with the _moov atom_ at the beginning) start significantly faster. If metadata is located at the end of the file, startup may be slower and can reduce JIT effectiveness.
+- **Upload method**
+  Standard HTTP uploads typically perform best, as they can feed directly into the JIT pipeline. With TUS uploads, processing may not begin until the upload is fully completed.
+- **Source complexity**
+  Higher resolutions, bitrates, or frame rates increase the time required to generate the first playable segments.
+- **Encoding and segmenting overhead**
+  Even with JIT, initial segments must still be created before playback can begin.
+- **File size and duration**
+  While these factors do have an impact, they are generally less significant than file structure and source complexity.
+
+## Multiple output codec support
 
 By leveraging modern codecs like VP9, x265 (HEVC), and AV1, Bunny Stream offers higher compression efficiency compared to older codecs like H.264 (x264). This means you can achieve excellent video quality at lower bandwidth usage, allowing for smoother streaming experiences even on slower internet connections. The reduced bitrate requirements not only enhance the viewing experience but also help in reducing streaming costs by lowering bandwidth consumption.
 
@@ -23,45 +39,45 @@ These advanced codecs are widely supported by major browsers and platforms, incl
 
 With the inclusion of cutting-edge codecs and continued support for x264, Bunny Stream's premium encoding tier provides a versatile set of output options. This flexibility allows you to tackle advanced streaming scenarios, catering to diverse device capabilities and network conditions.
 
-# Encoding prioritization
+## Encoding prioritization
 
 Premium encoding tier users benefit from Encoding Prioritization, which ensures that videos are encoded faster and in predicted time.
 
 Encoding jobs utilize high-performance encoders that are dynamically scaled to ensure predicted completion times. This means your videos are processed more rapidly, minimizing the wait between upload and availability. Whether you're handling a small set of video files or managing bulk uploads, Encoding Prioritization ensures a smoother and more efficient workflow. If you need to meet specific encoding Service Level Agreements (SLAs), our sales team is ready to work with you to ensure your requirements are met.
 
-# Pricing for Premium Encoding Tier
+## Pricing for Premium Encoding Tier
 
 We offer a straightforward and adaptable pricing model designed to suit your specific encoding needs. Our pricing is based on maximum video output resolution and number of output codecs.
 
 | Maximum encoded video resolution | Price per minute |
-| -------------------------------- | ---------------- |
-| SD (480p and below)              | \$0.025          |
-| HD (1080p and 720p)              | \$0.050          |
-| 4K (Above 1080p)                 | \$0.150          |
+| --- | --- |
+| SD (480p and below) | \$0.025 |
+| HD (1080p and 720p) | \$0.050 |
+| 4K (Above 1080p) | \$0.150 |
 
 Price is per output codec. Therefore, selecting multiple codecs (e.g., x264 and VP9) will multiply the cost accordingly.
 
 Please be advised that video length is counted in 10-second increments. For example, a 3-second video is billed as 10 seconds.
 
-## Full HD price
+### Full HD price
 
 The base price is **\$0.05 per minute** for Full HD (1080p) video output. This rate includes a comprehensive range of output resolutions, encompassing 1080p, 720p, 480p, 360p, and 240p.
 
 Whether you're streaming in high definition or need multiple resolutions for adaptive streaming, this all-inclusive pricing simplifies your budgeting process.
 
-## SD price
+### SD price
 
 For content that is exclusively in Standard Definition (SD) with resolutions below 720p, we offer a reduced rate of **\$0.025 per minute (0.5x multiplier)**, effectively half the base price. This cost-effective option is ideal for content that doesn't require high-definition output, allowing you to save on expenses without compromising the necessary quality for your audience.
 
-## 4K price
+### 4K price
 
 When it comes to 4K Ultra HD content the encoding cost is **\$0.15 per minute (3x multiplier)**, applied per output codec. This pricing is perfect for delivering ultra-high-definition content with exceptional clarity and detail, ensuring your viewers have the best possible experience.
 
-## Output codecs
+### Output codecs
 
 With the premium encoding tier, you have the flexibility to select multiple output codecs to meet your specific needs. Available codecs include **x264, VP9, x265 (HEVC)**, and **AV1**. Pricing applies per output codec, so choosing multiple codecs like x264 and VP9 will proportionally increase the cost. This structure provides scalability and allows you to optimize your content for different devices and platforms, ensuring the best possible viewing experience for your audience.
 
-## Pricing examples
+### Pricing examples
 
 To illustrate how our pricing works in practice, consider the following examples of video encoding jobs:
 

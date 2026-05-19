@@ -3,7 +3,7 @@ title: Request Coalescing
 description: Combine multiple simultaneous requests to the same resource into a single origin request.
 ---
 
-Request Coalescing combines multiple simultaneous requests for the same uncached resource into a single request to your origin. Instead of forwarding every request individually, Bunny holds subsequent requests and streams the response back to all waiting clients once the first request completes.
+Request Coalescing combines multiple simultaneous requests for the same uncached resource into a single request to your origin. Instead of forwarding every request individually, Bunny ties subsequent requests to the initial one and streams response bytes simultaneously to all waiting clients as soon as they arrive.
 
 ## How it works
 
@@ -37,6 +37,19 @@ Request Coalescing is ideal for:
 1. Go to your Pull Zone in the [dashboard](https://dash.bunny.net)
 2. Navigate to **Caching**
 3. Enable **Request Coalescing**
+
+## Per-request control with Edge Rules
+
+To override the zone-level setting for specific paths or request conditions, create an Edge Rule with the **Enable Request Coalescing** or **Disable Request Coalescing** action
+1. Go to **Edge Rules** in your Pull Zone settings and click **Add Rule**
+2. Select **Enable Request Coalescing** or **Disable Request Coalescing**
+3. Add conditions to match the requests you want to target, such as a URL path pattern, file extension, or request header
+
+<Info>
+  A common pattern is to leave Request Coalescing off at the zone level and
+  enable it only on paths serving publicly cacheable content, keeping
+  authenticated routes safely excluded.
+</Info>
 
 ## Important limitations
 

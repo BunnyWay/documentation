@@ -3,45 +3,54 @@ title: Storage Structure
 description: "All videos on Bunny Stream are processed and stored in a standardized location. The following page describes how and where videos are stored, allowing you to access them programmatically or within your own video player."
 ---
 
-# Video storage structure
+Each Bunny Stream video can be reached through several stable URL patterns, depending on whether you want the direct play URL, the original file, HLS, or per-resolution files. Use the patterns below to access videos programmatically or in your own player.
 
-### Direct play URL
+#### Direct play URL
 
 ```bash
 https://video.bunnycdn.com/play/{video_library_id}/{video_id}
 ```
 
-### Original file (if enabled)
+#### Original file (if enabled)
 
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/original
 ```
 
-### HLS playlist URL
+#### HLS playlist URL
 
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8
 ```
 
-### Thumbnail URL
+#### Thumbnail URL
 
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/{thumbnail_file_name}
 ```
 
-### Preview animation URL (WebP)
+#### Preview animation URL (WebP)
 
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/preview.webp
 ```
 
-### MP4 video URL
+#### Preview animation URL high quality (WebM & Mp4)
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/preview_hq.webm
+```
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/preview_hq.mp4
+```
+
+#### MP4 video URL
 
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/play_{resolution_height}p.mp4
 ```
 
-### Subtitle file URL
+#### Subtitle file URL
 
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/captions/{language_code}.vtt

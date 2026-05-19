@@ -1,0 +1,46 @@
+---
+title: bunny registries
+sidebarTitle: registries
+description: "Manage container registries used by Magic Containers apps."
+---
+
+`bunny registries` manages the container registries available to [Magic Containers](/magic-containers) for pulling private images.
+
+Running `bunny registries` without a subcommand lists all registries.
+
+```bash
+bunny registries
+bunny registries list
+bunny registries add --name "GitHub" --username myorg
+bunny registries remove <registry-id>
+```
+
+## `bunny registries list`
+
+List all configured container registries.
+
+```bash
+bunny registries list
+bunny registries list --output json
+```
+
+## `bunny registries add`
+
+Add a new container registry.
+
+```bash
+bunny registries add --name "GitHub" --username myorg
+```
+
+| Flag         | Description                                    |
+| ------------ | ---------------------------------------------- |
+| `--name`     | Display name for the registry                  |
+| `--username` | Registry username                              |
+
+## `bunny registries remove`
+
+Remove a container registry by ID.
+
+```bash
+bunny registries remove <registry-id>
+```

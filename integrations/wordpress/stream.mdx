@@ -1,0 +1,68 @@
+---
+title: Stream Videos
+description: Embed Bunny Stream videos in WordPress using the Stream Video block or shortcode.
+---
+
+The bunny.net WordPress plugin includes built-in support for [Bunny Stream](/stream), allowing you to upload and embed videos directly from the WordPress editor.
+
+## Stream Video block
+
+The plugin adds a **bunny.net Stream Video** block to the WordPress block editor. Use it to upload new videos or embed existing ones from your Stream library.
+
+<Steps>
+  <Step title="Add the block">
+    In the block editor, click the **+** inserter and search for **bunny.net Stream Video**.
+  </Step>
+  <Step title="Select a video">
+    Choose an existing video from your Stream library or upload a new one directly from the block.
+  </Step>
+  <Step title="Configure playback">
+    Use the block settings panel to adjust playback options like autoplay, muting, and looping.
+  </Step>
+</Steps>
+
+## Shortcode
+
+For classic editor pages, WooCommerce product descriptions, or anywhere blocks aren't supported, use the `bunnycdn_stream_video` shortcode.
+
+```text
+[bunnycdn_stream_video library=LIBRARY_ID id="VIDEO_ID"]
+```
+
+| Parameter | Required | Description |
+| --- | --- | --- |
+| `library` | Yes | Your Stream library ID (numeric) |
+| `id` | Yes | The video ID (UUID format) |
+| `responsive` | No | Set to `true` for responsive sizing (default) |
+
+### Example
+
+```text
+[bunnycdn_stream_video library=197133 id="dc48a09e-d9bb-420a-83d7-72dc2304c034" responsive=true]
+```
+
+### WooCommerce
+
+To embed a video in a WooCommerce product description, paste the shortcode directly into the product's description field:
+
+```text
+[bunnycdn_stream_video library=197133 id="dc48a09e-d9bb-420a-83d7-72dc2304c034" responsive=true]
+```
+
+You can find your library ID and video ID in the [Bunny Stream dashboard](https://dash.bunny.net/stream).
+
+## Supported parameters
+
+All [Stream embed parameters](/stream/embedding#supported-parameters) are supported as shortcode attributes. Common options include:
+
+| Parameter | Values | Description |
+| --- | --- | --- |
+| `autoplay` | `true`, `false` | Start playing automatically |
+| `muted` | `true`, `false` | Start in mute mode |
+| `loop` | `true`, `false` | Replay after the video ends |
+| `preload` | `true`, `false` | Pre-download video files |
+| `showSpeed` | `true`, `false` | Show playback speed control |
+| `captions` | caption short-code | Default captions language |
+| `t` | `Xs`, `1h20m45s`, `hh:mm:ss` | Video start time |
+
+For the full list, see [Embedding videos](/stream/embedding#supported-parameters).

@@ -1,0 +1,98 @@
+---
+title: Managing Your CDN
+sidebarTitle: Managing CDN
+description: Manage CDN settings, caching, Shield, Optimizer, and cache purging from the cPanel plugin.
+---
+
+After enabling bunny.net for a website, you can manage CDN settings, security, and optimization directly from cPanel. Click on a configured website to access its settings.
+
+## Overview
+
+The overview page shows bandwidth served, cache hit ratio, and request statistics for your website.
+
+You can also purge the CDN cache from this page using the **Purge Cache** button in the top right corner.
+
+<Frame>
+  ![Domain overview with stats](/images/integrations/cpanel/cpanel-overview-stats.png)
+</Frame>
+
+## Purge cache
+
+Click **Purge Cache** to clear cached content and fetch fresh files from your origin. You can purge specific URLs or all files at once.
+
+Use `*` as a wildcard in the URL path to purge folders or multiple files at once (e.g., `https://example.com/css/*`).
+
+<Frame>
+  ![Purge cache dialog](/images/integrations/cpanel/cpanel-purge-cache.png)
+</Frame>
+
+## CDN
+
+### General
+
+The General tab controls core CDN behavior:
+
+- **SSL** — Your website is automatically protected with a valid SSL certificate
+- **CORS headers** — Automatically adds Cross-Origin Resource Sharing headers for files with common extensions
+- **Extensions list** — The file extensions that are served through the CDN
+- **Routing filters** — Route traffic based on geography (e.g., European Union only)
+
+<Frame>
+  ![CDN General settings](/images/integrations/cpanel/cpanel-cdn-general.png)
+</Frame>
+
+### Caching
+
+The Caching tab controls how content is cached at the edge:
+
+- **Smart Cache** — Dynamically determines whether to cache a request based on the file extension and MIME type, enabling full-site acceleration
+- **Cache expiration time** — How long edge servers store files before fetching a new version
+- **Browser cache expiration time** — How long browsers cache files locally
+- **Show your website even when down** — Serve stale cached files when your origin is offline or updating
+- **Query string sort** — Sort query parameters before checking the cache to improve hit rates
+- **Cache error responses** — Temporarily cache error responses (5xx) for 5 seconds to protect your origin
+
+<Frame>
+  ![CDN Caching settings](/images/integrations/cpanel/cpanel-cdn-caching.png)
+</Frame>
+
+## Shield
+
+### WAF
+
+Bunny Shield's Web Application Firewall detects, blocks, and stops malicious requests before they reach your origin. It protects against exploits, SQL injection, and other attacks.
+
+- **WAF** — Toggle to enable or disable the firewall
+- **Rule execution mode** — Choose between **Log** (monitor only) and **Block** (actively block threats)
+- **WAF rule sensitivity** — Adjust detection, execution, and blocking levels from Low to Extreme
+
+<Frame>
+  ![Shield WAF settings](/images/integrations/cpanel/cpanel-shield-waf.png)
+</Frame>
+
+### DDoS
+
+DDoS mitigation automatically detects and blocks malicious traffic before it reaches your server. It protects against network-level attacks (Layers 3 & 4) and website-level threats (Layer 7).
+
+- **Valid challenge window** — How long a visitor can access your site after passing a challenge
+- **DDoS sensitivity** — Controls how aggressively DDoS protection responds to suspicious traffic
+
+<Frame>
+  ![Shield DDoS settings](/images/integrations/cpanel/cpanel-shield-ddos.png)
+</Frame>
+
+## Optimizer
+
+Bunny Optimizer automatically enhances your website's performance by compressing and optimizing assets with no coding required.
+
+- **Bunny Optimizer** — Master toggle for all optimization features
+- **WebP Image Compression** — Converts images to WebP format to reduce file size
+- **Dynamic Image API** — Processes images on demand using a dynamic, URL-based manipulation API
+- **Minify CSS** — Minifies CSS files to reduce their size
+- **Minify JS** — Minifies JavaScript files to reduce their size
+- **Smart Image Optimization** — Optimizes images for desktop and mobile devices
+- **Maximum image width** — Set maximum image dimensions for desktop and mobile separately
+
+<Frame>
+  ![Bunny Optimizer settings](/images/integrations/cpanel/cpanel-optimizer.png)
+</Frame>

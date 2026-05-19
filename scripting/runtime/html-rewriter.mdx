@@ -1,0 +1,706 @@
+---
+title: HTMLRewriter
+sidebarTitle: HTMLRewriter
+description: Transform HTML responses on the edge with streaming, selector-based rewriting.
+tag: Preview
+---
+
+## Overview
+
+`HTMLRewriter` lets you modify HTML responses as they stream through
+your edge script. It parses HTML on the fly and calls your handler functions when
+it encounters matching elements, comments, or text without buffering the entire
+document in memory.
+
+## Quick Start
+
+A simple middleware example:
+
+```js
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+
+BunnySDK.net.http.servePullZone()
+  .onOriginResponse(async ({ response }) => {
+    return new HTMLRewriter()
+      .on("h1", {
+        element(el) {
+          el.setInnerContent("Modified Title");
+        },
+      })
+      .transform(response);
+  });
+```
+
+## Constructor
+
+```js
+new HTMLRewriter(options?)
+```
+
+<ParamField path="options" type="object">
+  <Expandable title="properties">
+    <ParamField path="enableEsiTags" type="boolean" default={false}>
+      When `true`, enables processing of ESI ([Edge Side
+      Includes](https://www.w3.org/TR/esi-lang)) tags like `<esi:include>`.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Methods
+
+### `on(selector, handlers)`
+
+Registers handlers for elements matching a CSS selector. Returns `this` for chaining.
+
+```js
+rewriter.on("div.content", {
+  element(el) { /* ... */ },
+  comments(comment) { /* ... */ },
+  text(text) { /* ... */ },
+});
+```
+
+<ParamField path="selector" type="string" required>
+  A CSS selector. See [supported selectors](#supported-css-selectors) below.
+</ParamField>
+
+<ParamField path="handlers" type="ElementHandlers" required>
+  An object with optional handler functions. Each handler can be sync or async.
+  <Expandable title="properties">
+    <ParamField path="element" type="(el: Element) => void | Promise<void>">
+      Called when an opening tag matching the selector is encountered.
+    </ParamField>
+    <ParamField path="comments" type="(comment: Comment) => void | Promise<void>">
+      Called for HTML comments within the matched element.
+    </ParamField>
+    <ParamField path="text" type="(text: TextChunk) => void | Promise<void>">
+      Called for text content within the matched element.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### `onDocument(handlers)`
+
+Registers document-level handlers. Returns `this` for chaining.
+
+```js
+rewriter.onDocument({
+  doctype(doctype) { /* ... */ },
+  comments(comment) { /* ... */ },
+  text(text) { /* ... */ },
+  end(end) { /* ... */ },
+});
+```
+
+<ParamField path="handlers" type="DocumentHandlers" required>
+  <Expandable title="properties">
+    <ParamField path="doctype" type="(doctype: Doctype) => void | Promise<void>">
+      Called when the `<!DOCTYPE>` declaration is encountered.
+    </ParamField>
+    <ParamField path="comments" type="(comment: Comment) => void | Promise<void>">
+      Called for document-level comments (outside any element scope).
+    </ParamField>
+    <ParamField path="text" type="(text: TextChunk) => void | Promise<void>">
+      Called for document-level text.
+    </ParamField>
+    <ParamField path="end" type="(end: DocumentEnd) => void | Promise<void>">
+      Called when the end of the document is reached.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### `transform(response)`
+
+Applies all registered handlers to the response body and returns a new `Response`.
+
+```js
+const transformed = rewriter.transform(response);
+```
+
+<ParamField path="response" type="Response" required>
+  The HTTP response to transform. Must not be an error response.
+</ParamField>
+
+**Returns:** A new `Response` with:
+- The same headers (minus `Content-Length`, since the body length may change)
+- A streaming body with the transformed HTML
+
+---
+
+## Handler Types
+
+### Element
+
+Passed to `element` handlers. Represents an HTML opening tag.
+
+#### Properties
+
+| Property | Type | Description |
+|---|---|---|
+| `tagName` | `string` | Tag name (lowercase). Readable and writable. |
+| `namespaceURI` | `string` | Namespace URI (readonly). |
+| `removed` | `boolean` | Whether the element has been removed (readonly). |
+| `attributes` | `IterableIterator<[string, string]>` | Iterable of `[name, value]` pairs (readonly). |
+
+#### Attribute Methods
+
+##### `getAttribute(name)`
+
+Returns the value of the attribute with the given name, or `null` if the attribute does not exist.
+
+<ParamField path="name" type="string" required>
+  The attribute name.
+</ParamField>
+
+**Returns:** `string | null`
+
+##### `hasAttribute(name)`
+
+Returns whether the element has an attribute with the given name.
+
+<ParamField path="name" type="string" required>
+  The attribute name.
+</ParamField>
+
+**Returns:** `boolean`
+
+##### `setAttribute(name, value)`
+
+Sets the value of the attribute with the given name. Adds the attribute if it does not exist.
+
+<ParamField path="name" type="string" required>
+  The attribute name.
+</ParamField>
+<ParamField path="value" type="string" required>
+  The attribute value.
+</ParamField>
+
+**Returns:** `Element` — the element itself, for chaining.
+
+##### `removeAttribute(name)`
+
+Removes the attribute with the given name. No-op if the attribute does not exist.
+
+<ParamField path="name" type="string" required>
+  The attribute name.
+</ParamField>
+
+**Returns:** `Element` — the element itself, for chaining.
+
+Setters return the element itself, so calls can be chained:
+
+```js
+el.setAttribute("class", "new")
+  .setAttribute("id", "main")
+  .removeAttribute("style");
+```
+
+#### Content Mutation Methods
+
+All content mutation methods accept `content` as a `string`, `ReadableStream<Uint8Array>`, or `Response`,
+and an optional `options` object. They all return `Element` for chaining.
+
+<ParamField path="content" type="string | ReadableStream<Uint8Array> | Response" required>
+  The content to insert. Strings are inserted directly. Streams and Response bodies are consumed and piped into the output.
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+##### `before(content, options?)`
+
+Inserts content immediately before the element's opening tag.
+
+**Returns:** `Element`
+
+##### `after(content, options?)`
+
+Inserts content immediately after the element's closing tag.
+
+**Returns:** `Element`
+
+##### `prepend(content, options?)`
+
+Inserts content at the beginning of the element, right after the opening tag.
+
+**Returns:** `Element`
+
+##### `append(content, options?)`
+
+Inserts content at the end of the element, right before the closing tag.
+
+**Returns:** `Element`
+
+##### `replace(content, options?)`
+
+Replaces the entire element (opening tag, content, and closing tag) with the provided content.
+
+**Returns:** `Element`
+
+##### `setInnerContent(content, options?)`
+
+Replaces the element's inner content, keeping the opening and closing tags.
+
+**Returns:** `Element`
+
+```js
+el.before("<hr>", { html: true })
+  .setInnerContent("Hello")
+  .after("<hr>", { html: true });
+```
+
+#### Removal Methods
+
+##### `remove()`
+
+Removes the element and all of its content (opening tag, children, closing tag).
+
+**Returns:** `Element`
+
+##### `removeAndKeepContent()`
+
+Removes the element's opening and closing tags but keeps the inner content in place.
+
+**Returns:** `Element`
+
+#### End Tag Handler
+
+##### `onEndTag(handler)`
+
+Registers a handler that is called when the element's closing tag is encountered.
+
+<ParamField path="handler" type="(endTag: EndTag) => void | Promise<void>" required>
+  A callback receiving the [`EndTag`](#endtag) object. Can be async.
+</ParamField>
+
+**Returns:** `void`
+
+```js
+el.onEndTag((endTag) => {
+  endTag.before("<hr>", { html: true });
+});
+```
+
+### Comment
+
+Passed to `comments` handlers.
+
+#### Properties
+
+| Property | Type | Description |
+|---|---|---|
+| `text` | `string` | The comment text, without `<!--` and `-->`. Readable and writable. |
+| `removed` | `boolean` | Whether the comment has been removed (readonly). |
+
+#### Methods
+
+##### `before(content, options?)`
+
+Inserts content immediately before the comment.
+
+<ParamField path="content" type="string | ReadableStream<Uint8Array> | Response" required>
+  The content to insert.
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+**Returns:** `Comment`
+
+##### `after(content, options?)`
+
+Inserts content immediately after the comment.
+
+<ParamField path="content" type="string | ReadableStream<Uint8Array> | Response" required>
+  The content to insert.
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+**Returns:** `Comment`
+
+##### `replace(content, options?)`
+
+Replaces the comment with the provided content.
+
+<ParamField path="content" type="string | ReadableStream<Uint8Array> | Response" required>
+  The content to replace with.
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+**Returns:** `Comment`
+
+##### `remove()`
+
+Removes the comment from the document.
+
+**Returns:** `Comment`
+
+### TextChunk
+
+Passed to `text` handlers. Note: a single text node may be split across multiple chunks.
+
+#### Properties
+
+| Property | Type | Description |
+|---|---|---|
+| `text` | `string` | The text content (readonly). |
+| `lastInTextNode` | `boolean` | `true` if this is the last chunk in the text node (readonly). |
+| `removed` | `boolean` | Whether this chunk has been removed (readonly). |
+
+#### Methods
+
+##### `before(content, options?)`
+
+Inserts content immediately before the text chunk.
+
+<ParamField path="content" type="string | ReadableStream<Uint8Array> | Response" required>
+  The content to insert.
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+**Returns:** `TextChunk`
+
+##### `after(content, options?)`
+
+Inserts content immediately after the text chunk.
+
+<ParamField path="content" type="string | ReadableStream<Uint8Array> | Response" required>
+  The content to insert.
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+**Returns:** `TextChunk`
+
+##### `replace(content, options?)`
+
+Replaces the text chunk with the provided content.
+
+<ParamField path="content" type="string | ReadableStream<Uint8Array> | Response" required>
+  The content to replace with.
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+**Returns:** `TextChunk`
+
+##### `remove()`
+
+Removes the text chunk from the document.
+
+**Returns:** `TextChunk`
+
+### EndTag
+
+Passed to `onEndTag` handlers.
+
+#### Properties
+
+| Property | Type | Description |
+|---|---|---|
+| `name` | `string` | The end tag name. Readable and writable. |
+
+#### Methods
+
+##### `before(content, options?)`
+
+Inserts content immediately before the end tag.
+
+<ParamField path="content" type="string | ReadableStream<Uint8Array> | Response" required>
+  The content to insert.
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+**Returns:** `EndTag`
+
+##### `after(content, options?)`
+
+Inserts content immediately after the end tag.
+
+<ParamField path="content" type="string | ReadableStream<Uint8Array> | Response" required>
+  The content to insert.
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+**Returns:** `EndTag`
+
+##### `remove()`
+
+Removes the end tag from the document.
+
+**Returns:** `EndTag`
+
+### Doctype
+
+Passed to `doctype` handlers. All properties are read-only.
+
+#### Properties
+
+| Property | Type | Description |
+|---|---|---|
+| `name` | `string \| null` | The doctype name (e.g. `"html"`). |
+| `publicId` | `string \| null` | The PUBLIC identifier. |
+| `systemId` | `string \| null` | The SYSTEM identifier. |
+
+### DocumentEnd
+
+Passed to `end` handlers.
+
+#### Methods
+
+##### `append(content, options?)`
+
+Appends content at the end of the document.
+
+<ParamField path="content" type="string" required>
+  The content to append. Only accepts `string` (not streams or responses).
+</ParamField>
+<ParamField path="options.html" type="boolean" default={false}>
+  When `true`, content is inserted as raw HTML. When `false`, content is escaped as text.
+</ParamField>
+
+**Returns:** `DocumentEnd`
+
+```js
+end.append("<!-- generated -->", { html: true });
+```
+
+---
+
+## Supported CSS Selectors
+
+The following CSS selectors are supported, based on the
+[W3C Selectors Level 4](https://www.w3.org/TR/selectors-4/) specification.
+
+| Selector | Description | Spec |
+|---|---|---|
+| `*` | Any element | [Universal selector](https://www.w3.org/TR/selectors-4/#the-universal-selector) |
+| `E` | Element of type `E` | [Type selector](https://www.w3.org/TR/selectors-4/#type-selectors) |
+| `E.class` | Element with class | [Class selector](https://www.w3.org/TR/selectors-4/#class-html) |
+| `E#id` | Element with ID | [ID selector](https://www.w3.org/TR/selectors-4/#id-selectors) |
+| `E:nth-child(n)` | The n-th child of its parent | [:nth-child()](https://www.w3.org/TR/selectors-4/#the-nth-child-pseudo) |
+| `E:first-child` | First child of its parent | [:first-child](https://www.w3.org/TR/selectors-4/#the-first-child-pseudo) |
+| `E:nth-of-type(n)` | The n-th sibling of its type | [:nth-of-type()](https://www.w3.org/TR/selectors-4/#the-nth-of-type-pseudo) |
+| `E:first-of-type` | First sibling of its type | [:first-of-type](https://www.w3.org/TR/selectors-4/#the-first-of-type-pseudo) |
+| `E:not(s)` | Element that does not match compound selector `s` | [:not()](https://www.w3.org/TR/selectors-4/#negation) |
+| `E[attr]` | Element with attribute `attr` | [Attribute selector](https://www.w3.org/TR/selectors-4/#attribute-selectors) |
+| `E[attr="value"]` | Attribute exactly equals `value` | [Attribute selector](https://www.w3.org/TR/selectors-4/#attribute-selectors) |
+| `E[attr="value" i]` | Case-insensitive attribute match | [Case sensitivity](https://www.w3.org/TR/selectors-4/#attribute-case) |
+| `E[attr="value" s]` | Case-sensitive attribute match | [Case sensitivity](https://www.w3.org/TR/selectors-4/#attribute-case) |
+| `E[attr~="value"]` | Whitespace-separated list containing `value` | [Attribute selector](https://www.w3.org/TR/selectors-4/#attribute-selectors) |
+| `E[attr^="value"]` | Attribute starts with `value` | [Attribute selector](https://www.w3.org/TR/selectors-4/#attribute-selectors) |
+| `E[attr$="value"]` | Attribute ends with `value` | [Attribute selector](https://www.w3.org/TR/selectors-4/#attribute-selectors) |
+| `E[attr*="value"]` | Attribute contains `value` | [Attribute selector](https://www.w3.org/TR/selectors-4/#attribute-selectors) |
+| `E[attr\|="value"]` | Hyphen-separated attribute starting with `value` | [Attribute selector](https://www.w3.org/TR/selectors-4/#attribute-selectors) |
+| `E F` | `F` descendant of `E` | [Descendant combinator](https://www.w3.org/TR/selectors-4/#descendant-combinators) |
+| `E > F` | `F` direct child of `E` | [Child combinator](https://www.w3.org/TR/selectors-4/#child-combinators) |
+
+---
+
+## Examples
+
+### Rewrite Links
+
+```js
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+
+BunnySDK.net.http.servePullZone()
+  .onOriginResponse(async ({ response }) => {
+    return new HTMLRewriter()
+      .on("a[href]", {
+        element(el) {
+          const href = el.getAttribute("href");
+          if (href?.startsWith("http://")) {
+            el.setAttribute("href", href.replace("http://", "https://"));
+          }
+        },
+      })
+      .transform(response);
+  });
+```
+
+### Inject a Script
+
+```js
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+
+BunnySDK.net.http.servePullZone()
+  .onOriginResponse(async ({ response }) => {
+    return new HTMLRewriter()
+      .onDocument({
+        end(end) {
+          end.append('<script src="/analytics.js"></script>', { html: true });
+        },
+      })
+      .transform(response);
+  });
+```
+
+### Remove Elements
+
+```js
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+
+BunnySDK.net.http.servePullZone()
+  .onOriginResponse(async ({ response }) => {
+    return new HTMLRewriter()
+      .on("script[src*='tracker']", {
+        element(el) {
+          el.remove();
+        },
+      })
+      .on(".cookie-banner", {
+        element(el) {
+          el.remove();
+        },
+      })
+      .transform(response);
+  });
+```
+
+### Async Handler
+
+Handlers can return a `Promise` for async operations like sub-requests.
+
+```js
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+
+BunnySDK.net.http.servePullZone()
+  .onOriginResponse(async ({ response }) => {
+    return new HTMLRewriter()
+      .on("include[src]", {
+        async element(el) {
+          const src = el.getAttribute("src");
+          const partial = await fetch(src);
+          el.replace(partial.body, { html: true });
+        },
+      })
+      .transform(response);
+  });
+```
+
+### Class-Based Handlers
+
+Instead of inline objects, you can define handler classes and pass instances to `.on()` or `.onDocument()`.
+
+```js
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+
+class AttributeRewriter {
+  #attrName;
+
+  constructor(attrName) {
+    this.#attrName = attrName;
+  }
+
+  element(el) {
+    const value = el.getAttribute(this.#attrName);
+    if (value) {
+      el.setAttribute(this.#attrName, value.replace("http://", "https://"));
+    }
+  }
+}
+
+BunnySDK.net.http.servePullZone()
+  .onOriginResponse(async ({ response }) => {
+    return new HTMLRewriter()
+      .on("a", new AttributeRewriter("href"))
+      .on("img", new AttributeRewriter("src"))
+      .transform(response);
+  });
+```
+
+#### Document Handler Class
+
+```js
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+
+class StripComments {
+  comments(comment) {
+    comment.remove();
+  }
+
+  end(end) {
+    end.append("<!-- cleaned -->", { html: true });
+  }
+}
+
+BunnySDK.net.http.servePullZone()
+  .onOriginResponse(async ({ response }) => {
+    return new HTMLRewriter()
+      .onDocument(new StripComments())
+      .transform(response);
+  });
+```
+
+#### Async Class Handler
+
+Class methods can be `async` just like inline handlers.
+
+```js
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+
+class IncludeExpander {
+  async element(el) {
+    const src = el.getAttribute("src");
+    if (src) {
+      const partial = await fetch(src);
+      el.replace(partial.body, { html: true });
+    }
+  }
+}
+
+BunnySDK.net.http.servePullZone()
+  .onOriginResponse(async ({ response }) => {
+    return new HTMLRewriter()
+      .on("include[src]", new IncludeExpander())
+      .transform(response);
+  });
+```
+
+### Multiple Selectors
+
+Chain multiple `.on()` calls to handle different elements independently.
+
+```js
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+
+BunnySDK.net.http.servePullZone()
+  .onOriginResponse(async ({ response }) => {
+    return new HTMLRewriter()
+      .on("title", {
+        element(el) {
+          el.setInnerContent("My Site");
+        },
+      })
+      .on("meta[name='description']", {
+        element(el) {
+          el.setAttribute("content", "Custom description");
+        },
+      })
+      .on("img", {
+        element(el) {
+          el.setAttribute("loading", "lazy");
+        },
+      })
+      .transform(response);
+  });
+```
+
+# References
+
+- [Edge Side Includes](https://www.w3.org/TR/esi-lang) - W3 Reference of ESI.
+- [W3C Selectors 4 Specification](https://www.w3.org/TR/selectors-4/)
+- [WASM HTMLRewriter Implementation](https://github.com/remorses/htmlrewriter) - If you want to use locally

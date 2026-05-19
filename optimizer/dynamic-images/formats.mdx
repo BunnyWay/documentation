@@ -10,7 +10,7 @@ Convert images to modern, efficient formats for better compression and performan
 <ParamField query="format" type="string">
   Convert the image to a specific output format.
 
-**Accepted values:** `webp`, `jpeg`, `png`, `gif`
+**Accepted values:** `webp`, `jpeg`, `png`, `gif`, `avif`
 
 **Default:** Original format (or auto-optimized based on configuration)
 
@@ -28,16 +28,17 @@ When configured with automatic format optimization, Bunny Optimizer detects clie
 
 Bunny Optimizer accepts the following input formats:
 
-- **JPEG** - Standard web image format
+- **JPEG** - Standard compressed photo format
 - **PNG** - Lossless format with transparency support
-- **WebP** - Modern format with superior compression
+- **WebP** - Compressed format with transparency support
 - **GIF** - Animation and simple graphics format
-- **BMP** - Bitmap image format
-- **TIFF** - High-quality image format
-- **TGA** - Truevision graphics format
-- **PBM** - Portable bitmap format
-- **HEIC** (beta) - High-efficiency image format from Apple devices
-- **HEIF** (beta) - High-efficiency image file format
+- **BMP** - Uncompressed bitmap image format
+- **TIFF** - Flexible format for high-detail images
+- **TGA** - Raster graphics image format
+- **PBM** - Simple monochrome bitmap format
+- **HEIC** *(Public Preview)* - Compressed photo format commonly used by Apple devices
+- **HEIF** *(Public Preview)* - Image container with efficient compression
+- **AVIF** *(Public Preview)* - Image format using AV1 compression
 
 ### Output formats
 
@@ -47,6 +48,7 @@ Bunny Optimizer can convert images to these output formats:
 - **PNG** - Best for graphics, logos, or images requiring transparency
 - **WebP** - Modern format offering 25-35% better compression than JPEG
 - **GIF** - Best for simple animations or limited-color graphics
+- **AVIF** *(Public Preview)* - Next-generation format with better compression than WebP and excellent quality, but slower encoding and slightly less universal support 
 
 <Note>
   WebP output is limited to a maximum dimension of 16,383 pixels on either width
@@ -72,6 +74,7 @@ https://yourzone.b-cdn.net/image.png?format=jpeg
 ```
 
 WebP typically offers 25-35% better compression than JPEG at equivalent quality levels, making it ideal for web delivery when browser support is available.
+While AVIF can achieve even better compression, WebP is generally preferred for on-the-fly optimisation due to its significantly faster encoding times.
 
 ### Automatic format optimization
 
@@ -102,8 +105,9 @@ Bunny Optimizer supports manipulation of animated image formats:
 - **PNG** (APNG format)
 
 <Info>
-  Animation manipulation is in preview. Some features may change as we continue
-  development.
+  We do not support transcoding animations to AVIF. If the original image is already in AVIF format and remains 
+  unmodified, the animation will be preserved. However, if the image is altered or converted from another format, 
+  the animation will be lost.
 </Info>
 
 Apply transformations like resizing, cropping, and color adjustments to animated images. The animation frames are processed while maintaining timing and loop settings.
@@ -120,7 +124,7 @@ https://yourzone.b-cdn.net/animation.gif?format=webp
 
 ### Transparency handling
 
-When converting from formats that support transparency (PNG, WebP, GIF) to formats that don't (JPEG), all transparent areas become opaque with a white or black background.
+When converting from formats that support transparency (PNG, WebP, GIF, AVIF) to formats that don't (JPEG), all transparent areas become opaque with a white or black background.
 
 If you need to preserve transparency, ensure your output format supports it:
 
