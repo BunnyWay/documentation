@@ -29,6 +29,16 @@ You can access detailed logs through the WAF Logging API by sending a GET reques
 
 Replace `{{shieldZoneId}}` with your actual Shield Zone ID. This will provide you with comprehensive logs of blocked and allowed traffic, which you can use for further analysis.
 
+## Tuning sensitivity
+
+In rare cases, you may find that DDoS mitigation isn't aggressive enough to react to bad actors attacking your domain. Understanding the sensitivity levels and the logic behind them helps you decide how to respond.
+
+DDoS mitigation is stateful: as requests reach the Shield layer, multiple checks are performed on each one. Higher sensitivity levels validate more rigorously and react faster to bad-actor patterns. During a real attack, a domain on **High** sensitivity will typically remove a high-impact bad actor and present a Shield challenge faster than a domain on **Low**. Review how your site is impacted and choose the level that fits.
+
+When mitigation triggers, the Shield challenge asks the client to complete a lightweight computational task. Passing the challenge allows the request through; failing it stops automated traffic from going any further. If you're seeing suspected automation or recurring attack patterns, **increasing sensitivity beyond Low** raises the chance that those bad actors are challenged and blocked.
+
+![DDoS sensitivity settings](/images/shield/ddos/sensitivity-levels.png)
+
 ## Best Practices
 
 - **Match Sensitivity to Risk**: Start with Medium (2) sensitivity for most scenarios and adjust to Low (1) High (3), or Extreme (4) based on your application's traffic patterns and risk profile.
