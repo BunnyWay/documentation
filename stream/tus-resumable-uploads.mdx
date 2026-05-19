@@ -55,6 +55,10 @@ SHA256(library_id + api_key + expiration_time + video_id)
   The signature must be generated on your server to keep your API key secure. Never expose your API key in client-side code.
 </Warning>
 
+<Note>
+  A **401 Unauthorized** from the TUS endpoint usually means one of: the `AuthorizationExpire` timestamp has passed before the upload finished, the `AuthorizationSignature` was generated with a different value than the request actually sends (mismatched library ID, API key, expiration, or video ID), or one of the `LibraryId` / `VideoId` headers is missing. The values used to generate the signature on your server must match the headers sent on the client byte-for-byte.
+</Note>
+
 <CodeGroup>
 
 ```javascript Node.js

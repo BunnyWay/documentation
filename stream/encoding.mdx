@@ -24,6 +24,10 @@ Configures the list of resolutions that the uploaded videos will be transcoded t
 
 Configures the list of resolutions that the uploaded videos will be transcoded to. Each resolution comes with a pre-tuned bitrate that provides a great ratio of picture quality and bandwidth usage, but you can fine-tune this by clicking on the bitrate number in the Enabled Resolutions list. Then, you can configure the specific bitrates in which your videos will be encoded in.
 
+<Note>
+  Each enabled resolution is a separate encoding job, so a library with five resolutions enabled takes proportionally longer to process than one with two. The same applies if MP4 fallback or multiple output codecs are turned on. The standard transcoding queue is shared and fairly scheduled, so encoding may also be briefly delayed during peak periods — this is normal. If a video stays in **Processing** for more than a few hours, contact support. For predictable, priority encoding times, see [Premium Encoding](/stream/premium-encoding).
+</Note>
+
 # Keep Original Files
 
 This is the original file of your video, which is useful if you want to store your original files with us as well, along with the encoded ones. In addition, the re-encoding of existing videos can only be performed if Original Files are kept with us. It also allows you to download the original files of your videos again, if you accidentally deleted them locally on your computer or server. Please remember that for an original file to be kept, this option must be enabled before you upload a video.

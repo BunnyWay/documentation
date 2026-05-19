@@ -111,6 +111,14 @@ curl --request PUT
 
 This response indicates that the video was uploaded successfully.
 
+<Note>
+  A **401 Unauthorized** on create or upload usually means the `AccessKey` header is missing, contains a non-Stream key (e.g. an account-level API key), or is set against the wrong library — each Stream library has its own API key, found under Stream > Your Library > API. Upload calls authenticate per-library, so a key from a different library will be rejected even if it's valid.
+</Note>
+
+<Note>
+  For files over **2 GB** or any upload over an unstable connection, prefer [TUS resumable uploads](/stream/tus-resumable-uploads) instead of this direct PUT. The HTTP API has no resume support — if the connection drops partway, the whole upload restarts. If a dashboard upload appears stuck, the "Uploading" state reflects your client's upload progress, not server-side processing; check your upload speed and try renaming the file before re-uploading to reset the upload context.
+</Note>
+
 **File Format Requirements:**
 
 When uploading your video file, it must be sent as **raw binary data,** not encoded or wrapped in JSON.

@@ -75,6 +75,10 @@ Ensure the protection of your video content through the Security section, which 
 - **Domain Restriction** - Control where your video content can be played by specifying allowed domains. This feature prevents your videos from being embedded or played on unauthorized websites.
 - **Block Direct URL File Access** -You can enable this setting to prevent direct access to your video files without a proper referer header. This measure blocks attempts to access and download your content directly via its URL, offering an additional layer of protection against unauthorized distribution.
 
+<Note>
+  These settings combine. Enabling **Block Direct URL File Access** without populating **Allowed domains** will return a 403 on thumbnails, previews, and direct file URLs even when the embed iframe still works. Each library's security settings are independent — duplicating a library does not copy its security config. See [Security Options](/stream/security-options) for the full breakdown.
+</Note>
+
 # Delivery optimization
 
 The Delivery section of the Bunny Stream Dashboard is designed to help you manage how your video content is distributed and accessed worldwide, ensuring optimal performance and cost-efficiency.

@@ -1,5 +1,6 @@
 ---
 title: "Security"
+sidebarTitle: Overview
 description: "Bunny Stream provides a powerful security toolset to give you full control of who, where and for how long can view your videos."
 ---
 
@@ -14,3 +15,7 @@ For instructions on how to generate tokens, please see the [Embed view token aut
 # CDN token authentication
 
 The CDN token authentication works on the Pull Zone level. It allows you to secure and sign direct video URLs on a lower level and use those in your own video player or custom solution. For instructions on how to set this up, see the [CDN Pull Zone Token Authentication Guide](/docs/cdn-token-authentication).
+
+<Note>
+  CDN token authentication applies to all direct URLs — MP4 fallbacks, HLS playlists and segments, thumbnails, and previews. If any of these return a **403** after enabling it, the token is either expired, malformed, or missing from the request. Pull Zone-level controls (IP allowlists, Edge Rules, hotlink protection) can also block Stream playback independently of your library security settings — when troubleshooting, check the linked Pull Zone under Stream > Your Library > API > Pull Zone > Manage.
+</Note>
