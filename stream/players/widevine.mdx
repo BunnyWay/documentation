@@ -3,18 +3,20 @@ title: "Widevine HTML5 integration"
 description: "This guide provides step-by-step instructions on integrating Widevine with HTML5 video players. Widevine ensures secure playback and decryption of encrypted videos through the configuration of license server URLs."
 ---
 
-# What you'll need
+This guide walks through pointing common HTML5 video players at Bunny Stream's Widevine license server so encrypted videos play back securely in Chrome, Edge, Firefox, and other Widevine-capable browsers.
+
+## What you'll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
 - A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
 - Ensure that the Media Cage DRM Enterprise feature is enabled in your account. If you need guidance on how to enable this feature, please refer to our [Media Cage DRM Enterprise quickstart guide](/docs/mediacage-enterprise-drm-quickstart).
 
-# Use license server URL with video players
+## Use license server URL with video players
 
 To ensure the seamless playback of encrypted videos, it is crucial to configure the license server URL with your video players. The following section provides a code snippet for configuring license proxies with various widely used video players.
 
-# Authentication
+## Authentication
 
 The license service endpoint employs referrer protection and embed token authentication to secure requests, similar to our player Embed View. That means if token authentication is enabled it should also be present in requests going to DRM license endpoint ( the same is for referrer protection and token authentication). These security rules ensure that only requests from authorized sources with valid tokens are processed if configured.
 

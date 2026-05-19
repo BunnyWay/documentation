@@ -3,7 +3,9 @@ title: "Video specification"
 description: "Video, audio, and caption formats that Bunny Stream supports"
 ---
 
-# Guidelines
+Bunny Stream accepts a wide range of input video, audio, and caption formats. The guidelines below help you prepare source files that encode efficiently, and the tables that follow list the exact containers and codecs we support.
+
+## Guidelines
 
 - The total storage used to store your encoded video files may be larger than your source video file size
 
@@ -25,7 +27,7 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
   - 1080 width x 1920 height
   - 720 width x 1280 height
 
-# Supported input file containers
+## Supported input file containers
 
 | Video | Audio | Captions |
 | ----- | ----- | -------- |
@@ -42,7 +44,7 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
 | .amv  |       |          |
 | .mpeg |       |          |
 
-# Supported input codecs
+## Supported input codecs
 
 | Video                                                 | Audio |
 | ----------------------------------------------------- | ----- |
@@ -54,7 +56,7 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
 | MPEG-2                                                | WMA   |
 | ProRes                                                |       |
 
-# Premium encoding outputs
+## Premium encoding outputs
 
 - Matches source video file frame rates up to 60 frames per second
 - If your input video file frame rate is higher than 60, the video output file will be reduced down to 60 frames per second
@@ -101,7 +103,7 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
 | 360p (nHD 640 x 360)    | 640 kbps              | 128 kbps                  |
 | 240p (EGA 352 x 240)    | 480 kbps              | 96 kbps                   |
 
-# Free encoding outputs
+## Free encoding outputs
 
 | H.264 (AVC) resolution  | Default video bitrate |
 | ----------------------- | --------------------- |
@@ -111,7 +113,7 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
 | 360p (nHD 640 x 360)    | 800 kbps              |
 | 240p (EGA 352 x 240)    | 600 kbps              |
 
-# Multi-audio support
+## Multi-audio support
 
 - Video files with embedded multi-channel audio tracks are supported. This means a single media file containing both video and multiple separate audio tracks
 - Stereo pair tracks = 2 audio channels per track
@@ -119,11 +121,11 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
 - We do not currently support surround sound or Dolby audio formats
 - We only support ISO 639-1 language codes
 
-# Caption support
+## Caption support
 
-#### .vtt and .srt caption files
+##### .vtt and .srt caption files
 
-# Video file upload limits
+## Video file upload limits
 
 - Maximum video file duration: 72 hours
 - Maximum video resolution: 2160p (UHD 3840 x 2160) / 2160 x 3840
