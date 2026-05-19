@@ -448,10 +448,10 @@
                 "pages": ["scripting/statistics", "scripting/logs"]
               },
               {
-                "group": "Runtime APIs",
+                "group": "APIs",
                 "pages": [
-                  "scripting/runtime/html-rewriter",
-                  "scripting/node/fs/node-fs",
+                  "scripting/html-rewriter",
+                  "scripting/node-fs",
                   "scripting/websockets"
                 ]
               },
@@ -3296,6 +3296,16 @@
     {
       "source": "/stream/beta-player",
       "destination": "/stream/player",
+      "permanent": true
+    },
+    {
+      "source": "/scripting/runtime/html-rewriter",
+      "destination": "/scripting/html-rewriter",
+      "permanent": true
+    },
+    {
+      "source": "/scripting/node/fs/node-fs",
+      "destination": "/scripting/node-fs",
       "permanent": true
     }
   ]
