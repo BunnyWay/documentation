@@ -3,7 +3,9 @@ title: "Understanding Rule Engine"
 description: "The Rule Engine is the core component of the Web Application Firewall (WAF) that enables precise control over HTTP requests by executing rules. These rules determine how the WAF inspects, evaluates, and responds to incoming traffic, enhancing the security and integrity of web applications."
 ---
 
-# The fundamentals
+Every custom WAF rule is built from a small set of building blocks: a variable that tells the engine where to look in a request, an operator that defines the match condition, optional transformations that normalize the data before comparison, and a response action that determines what happens on a match. The sections below cover each piece in detail.
+
+## The fundamentals
 
 A WAF rule is structured into four main sections, each playing a vital role in the request evaluation process:
 

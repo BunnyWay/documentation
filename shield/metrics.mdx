@@ -3,7 +3,9 @@ title: "Metrics & Logging"
 description: "We provide comprehensive metrics and logging features to enhance the monitoring and observability of your website's security. It is crucial to regularly review these metrics and logs to ensure that no false positives are triggered and that potential threats are effectively blocked."
 ---
 
-# Metrics
+Bunny Shield surfaces both aggregated metrics and per-request logs so you can audit how the WAF Engine is treating your traffic, spot false positives, and tune your rulesets with confidence.
+
+## Metrics
 
 Our system allows you to view detailed metrics related to your website's traffic and security events processed by the WAF Engine. These metrics include:
 
@@ -14,7 +16,7 @@ Our system allows you to view detailed metrics related to your website's traffic
 
 Analyzing these metrics provides valuable insights into the performance of your WAF Engine and helps determine whether further investigation or configuration adjustments are necessary for your WAF Engine rulesets. Monitoring these metrics can also help identify unusual patterns that may indicate security threats or misconfigurations leading to false positives. You can view the complete API documentation for our Metrics endpoints [here](https://api.bunny.net/shield/docs/index.html), under the section labeled **Metrics**.
 
-# Logging
+## Logging
 
 Our WAF Engine provides in-depth logging for all triggered requests. These logs enable you to see exactly why a rule was triggered, whether it was logged or blocked, and the specific details of the request that caused the trigger. This detailed logging is essential for making informed decisions about whether you need to adjust your ruleset or confirm that the WAF Engine is correctly identifying and handling potential threats.
 

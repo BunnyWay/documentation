@@ -665,7 +665,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["shield/index", "shield/quickstart"]
+                "pages": ["shield/index", "shield/quickstart", "shield/pricing"]
               },
               {
                 "group": "Protection Features",

@@ -3,6 +3,8 @@ title: "Bot Detection"
 description: "Bunny Shield's bot detection engine gives you deep control over identifying and blocking malicious bots without impacting legitimate automation or user experience. From headless browsers to impersonators and scraping tools, Bunny Shield offers layered defense designed to preserve performance while enhancing protection."
 ---
 
+Bunny Shield combines behavioral fingerprinting, header anomaly detection, and IP reputation to separate real users from automation without impacting legitimate visitors. Detection rules and sensitivity profiles propagate globally within seconds, so you can react to attacks as they unfold.
+
 ## Key Features
 
 - **Behavioral Fingerprinting**: Leverage advanced techniques like fingerprinting, header anomaly detection, and request behavior modeling to distinguish real users from automated traffic.
@@ -41,6 +43,12 @@ With Custom mode enabled, you can adjust:
 ![](/images/docs/1e86729bb9352d34a81922ae5317d1a9e4fd01c901b6845470b06f8a40beb01c-image.png)
 
 These options let you tailor detection to match your traffic profile and risk tolerance. And with Edge Rules, you can disable bot detection dynamically based on headers, cookies, IP addresses, or specific endpoints, giving you full control over when and where protection applies.
+
+## Challenges
+
+When bot detection (or another Shield feature) issues a challenge, the visitor is served a built-in JavaScript Proof-of-Work page that runs automatically in the browser. The challenge itself is not user-customizable, but if you have **whitelabelling enabled on your Pull Zone**, the Bunny branding is removed so the challenge page matches your domain without exposing the provider.
+
+![Whitelabelled Shield challenge page](/images/shield/bot-detection/whitelabel-challenge.png)
 
 ## Logging & Observability
 
