@@ -5,7 +5,7 @@ description: " Welcome to our Bunny Stream video player with modern interface an
 
 The new Bunny Stream video player is ready to power your video experiences! It's enabled by default for all new video libraries.
 
-## Quickstart guide
+## Quickstart
 
 **How to enable the video player** for existing video libraries from your Bunny Stream dashboard:
 
@@ -27,8 +27,9 @@ The new Bunny Stream video player is ready to power your video experiences! It's
        className="dark:hidden"
      />
    </Frame>
-7. Your video library **Videos and embed codes** will now reflect the new video player
-8. **Update your embed URLs to use the new player endpoint:**\
+
+6. Your video library **Videos and embed codes** will now reflect the new video player
+7. **Update your embed URLs to use the new player endpoint:**\
    player.mediadelivery.net/embed/
 8. **Enjoy!**
 
@@ -49,7 +50,7 @@ curl https://api.bunny.net/videolibrary/<library_id> \
 | `2`   | Enable the new video player             |
 | `1`   | Disable and revert to the legacy player |
 
-**Note:** Updating the video library via the dashboard or API does not automatically update your existing embed URLs. To use the new player endpoint, update your embed URLs to:  player.mediadelivery.net/embed/ 
+**Note:** Updating the video library via the dashboard or API does not automatically update your existing embed URLs. To use the new player endpoint, update your embed URLs to: player.mediadelivery.net/embed/
 
 ## About
 
@@ -77,8 +78,10 @@ The player is built to be inclusive. It supports screen readers, keyboard naviga
 
 - The new video player uses a new player URL for both Embed URL iframe and Direct Play URLs https://player.mediadelivery.net 
 - Your pre-existing player Embed URL iframe and Direct Play URLs will still work https://iframe.mediadelivery.net
-- You can still swap your video library back to the previous player by enabling the legacy player within player settings 
+- You can still swap your video library back to the previous player by enabling the legacy player within player settings
 
 <Note>
-  If you use [Custom Head HTML within the legacy player - check out our guide for migrating.](https://docs.bunny.net/stream/custom-head-html-migration-guide)
+  If you use [Custom Head HTML within the legacy player - check out our guide
+  for
+  migrating.](https://docs.bunny.net/stream/custom-head-html-migration-guide)
 </Note>
