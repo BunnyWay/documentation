@@ -3,7 +3,9 @@ title: "Adaptive bitrate streaming"
 description: "In the world of computing, particularly within the realm of streaming, the concept of bitrate is fundamental. Bitrate, or bit rate, represents the volume of bits transferred or processed over a given unit of time. Typically measured in bits per second (bps), this metric is pivotal in determining the quality of media, be it audio or video, streamed across a network. It's crucial to distinguish between bits per second (bps) and bytes per second (Bps) as they signify different aspects: bps measures uploading or downloading speed, whereas Bps quantifies the amount of data transferred."
 ---
 
-# Bitrate in video streaming
+Bunny Stream automatically produces multiple renditions of each video so the player can adapt to the viewer's connection in real time. This page covers how bitrate works, how Bunny Stream encodes for adaptive streaming, and what to expect at each resolution.
+
+## Bitrate in video streaming
 
 For video content, a higher bitrate is synonymous with improved image quality, thanks to the greater volume of data transmitted per time unit. This not only affects the video file's size for local viewing but also determines the requisite network bandwidth for users to enjoy a seamless streaming experience. The following table illustrates approximate video bitrates for various common resolutions:
 
@@ -11,18 +13,18 @@ For video content, a higher bitrate is synonymous with improved image quality, t
 
 The essence of video quality also hinges on adaptive bitrate streaming, alongside specific encoding, resolution, and framerate parameters.
 
-# Encoding
+## Encoding
 
 Encoding transforms digital video into a specific format by identifying patterns within the video. It replaces repetitive elements with references, thereby reducing file size or the required bitrate. While lossless compression allows for a perfect reconstruction of the original video, lossy compression eliminates deemed unnecessary information, which cannot be recovered later. Lossy compression is generally preferred for encoding video to store as much visual data as possible into fewer bits. The efficacy of encoding depends on the algorithm's settings, its computational complexity, and the available hardware and software support.
 
-# Resolution
+## Resolution
 
 Resolution specifies the pixel count constituting a single video frame. Typically, higher resolutions mean a sharper image and enhanced video quality, improving the viewing experience on larger displays. Resolution is denoted by the formula Width x Height, indicating the total number of pixels. For instance, a resolution of 480 x 360 equates to 172,800 pixels. In broadcasting and video players, resolutions are often represented only by their height (e.g., 480, 720, 1080).
 
-# Framerate
+## Framerate
 
 Framerate, or frames per second (fps), dictates the frequency at which video frames are displayed, creating the illusion of motion. While 24 fps is standard for most video formats, content with rapid movements might benefit from higher framerates, ranging from 30 to 60 fps.
 
-# Adaptive bitrate streaming
+## Adaptive bitrate streaming
 
 Adaptive bitrate streaming optimizes video resolution and framerate based on the viewer's network bandwidth. This technology allows users with high bandwidth to enjoy high-quality streams, whereas those with limited bandwidth can reduce the resolution and framerate to suit their constraints. Adaptive bitrate streaming enhances the user experience by minimizing buffering and ensuring smooth playback under varying network condition

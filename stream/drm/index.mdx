@@ -18,11 +18,11 @@ Bunny Stream offers two distinct media content protection tiers: **MediaCage Bas
 
 \*_Screen Grab Protection is not available on Widevine clients with L3 level of security. For a deeper understanding, refer to [Widevine DRM Security Levels](/docs/widevine-drm-security-levels)._
 
-# MediaCage Basic DRM
+## MediaCage Basic DRM
 
 **MediaCage Basic DRM** is a basic protection solution and it serves as an entry-level digital content protection solution. It employs innovative dynamic encryption, ensuring that your content is encrypted on demand. This encryption process occurs internally, securing your content as it traverses the network to reach your users.
 
-## Key features
+### Key features
 
 - **Dynamic encryption**: Utilizes an innovative dynamic clear key encryption for on-demand content protection.
 - **Download prevention**: MediaCage Basic DRM employs a special mechanism to prevent download of media files.
@@ -30,7 +30,7 @@ Bunny Stream offers two distinct media content protection tiers: **MediaCage Bas
 
 **MediaCage Basic DRM** is suitable for scenarios where basic content protection is required. It is an innovative solution for users seeking entry-level security measures for their digital content.
 
-# MediaCage Enterprise DRM
+## MediaCage Enterprise DRM
 
 **MediaCage Enterprise DRM** is an advanced protection feature which represents our advanced digital content protection solution, offering an elevated level of security for enterprise-level requirements. It incorporates underlying industry standard technologies ([FairPlay Streaming](https://developer.apple.com/streaming/fps/) and [Widevine](https://www.widevine.com/)), providing enhanced encryption and protection features.
 
@@ -42,7 +42,7 @@ Bunny Stream offers two distinct media content protection tiers: **MediaCage Bas
 
 In comparison to our MediaCage Basic DRM, the MediaCage Enterprise DRM protects the content also on client devices using hardware vendor support for protecting content key during the playback.
 
-## Key features
+### Key features
 
 - **Automatic encryption during packaging**: Content is automatically protected during the transcoding process.
 
@@ -73,7 +73,7 @@ In comparison to our MediaCage Basic DRM, the MediaCage Enterprise DRM protects 
 | Android        | ✅       |                    |
 | iOS            |          | ✅                 |
 
-## FairPlay streaming
+### FairPlay streaming
 
 **FairPlay streaming**, a technology developed by Apple, is an underlying component of our MediaCage Enterprise DRM solution. It provides a highly secure mechanism for content protection on Apple devices. This hardware-centric approach significantly enhances the overall security of your content, limiting key exchanges to Apple devices, including Macs, iPhones, iPads, and Apple TV.
 
@@ -84,7 +84,7 @@ In comparison to our MediaCage Basic DRM, the MediaCage Enterprise DRM protects 
 
 To use FairPlay Streaming to deliver your content you have to request the FPS Deployment Package from Apple. You can get more information about the process in our FairPlay Streaming Certificate Registration guide.
 
-## Widevine
+### Widevine
 
 Widevine provides digital media solutions for the delivery of digital entertainment to a wide range of device platforms. Widevine is integrated into our MediaCage Enterprise DRM solution. The technology is built-in a number of device platforms such as Windows, Android, ChromeOS and browsers such as Chrome, Firefox, Edge...
 
@@ -93,9 +93,9 @@ Widevine provides digital media solutions for the delivery of digital entertainm
   documentation portal](https://developers.google.com/widevine).
 </Info>
 
-## Pricing
+### Pricing
 
-### One simple plan: $99/month plus DRM-license fees
+#### One simple plan: $99/month plus DRM-license fees
 
 Our unique pricing model consists of a base fee of $99 per month, coupled with additional costs for DRM-license fees. This approach allows you to pay only for what you use, ensuring that your costs are always aligned with your actual consumption of DRM licenses. This means you only pay for the licenses you use, in addition to the monthly base fee.
 
@@ -117,7 +117,7 @@ Enterprise DRM ensures that videos are encrypted during the transcoding process 
 
 </Info>
 
-### What counts as a DRM-license?
+#### What counts as a DRM-license?
 
 A DRM license is issued each time a user initiates playback of a video that requires a DRM (Digital Rights Management) license for decryption. Our system is designed to count licenses in a manner that ensures fairness and cost-effectiveness:
 
@@ -132,7 +132,7 @@ A DRM license is issued each time a user initiates playback of a video that requ
 - **Resolution upgrade**: A video played in UHD typically incurs 2 DRM license requests if the player initially starts in SD or HD before switching to UHD.
 - **SD resolution**: Watching a video in SD resolution does not count towards DRM license usage.
 
-### Monthly cost calculation example
+#### Monthly cost calculation example
 
 To illustrate, if 10,000 users each watch 15 HD videos in a month, this results in 150,000 DRM licenses. Applying the tiered pricing model, the cost for 150,000 licenses amounts to $669.
 

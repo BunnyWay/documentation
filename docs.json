@@ -785,6 +785,16 @@
                   "dns/scriptable/query-response-object-types",
                   "dns/scriptable/helper-objects"
                 ]
+              },
+              {
+                "group": "Troubleshooting",
+                "pages": [
+                  "dns/troubleshooting/domain-unavailable",
+                  "dns/troubleshooting/aaaa-queries-in-logs",
+                  "dns/troubleshooting/cdn-acceleration-ssl",
+                  "dns/troubleshooting/cdn-acceleration-not-activating",
+                  "dns/troubleshooting/rdr-record-ssl"
+                ]
               }
             ]
           }

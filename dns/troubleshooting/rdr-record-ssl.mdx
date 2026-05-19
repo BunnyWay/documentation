@@ -1,0 +1,26 @@
+---
+title: RDR Record SSL Certificate Issues
+description: Troubleshoot invalid SSL certificate errors on Redirect (RDR) DNS records.
+---
+
+After creating a Redirect (RDR) DNS record, you may find that the redirected domain isn't serving a valid SSL certificate. The following are the common causes.
+
+## The certificate is still being issued
+
+If you've just created the record, the certificate may still be issuing. Activation takes anywhere from a few seconds to a few minutes — wait before investigating further.
+
+## The record was created before Bunny DNS was active
+
+If the RDR record was created before your domain was fully pointing to Bunny DNS, the certificate authority couldn't validate the domain and the certificate failed to issue.
+
+If your domain is now fully pointing to Bunny DNS, delete and recreate the Redirect record. The certificate should issue within a few minutes.
+
+## CAA records are blocking Let's Encrypt
+
+If your domain has a custom CAA record that doesn't authorize Let's Encrypt, certificate issuance will fail. In this case, use a Pull Zone with a redirect Edge Rule instead and provide your own certificate for the domain.
+
+## Other Let's Encrypt issues
+
+Bunny.net uses Let's Encrypt to issue SSL certificates. If none of the above applies, the issue is likely on the Let's Encrypt validation side. Run a check for your domain with the [Let's Debug tool](https://letsdebug.net/) to identify the problem.
+
+If Let's Debug doesn't find an issue, reach out to support from the control panel.

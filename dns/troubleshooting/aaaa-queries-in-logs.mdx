@@ -1,0 +1,18 @@
+---
+title: AAAA Queries Without AAAA Records
+description: Why AAAA queries appear in DNS logs even when no AAAA records are configured.
+---
+
+If you've only configured A records, you may still see a large number of AAAA queries in your [DNS logs](/dns/logging). This is expected behavior.
+
+## Why this happens
+
+The global shortage of IPv4 addresses has driven a large-scale migration to IPv6 networks. Most global infrastructure currently runs IPv4 or a dual stack of IPv4 and IPv6, but the migration to IPv6 is ongoing.
+
+As a result, many clients, browsers, and applications on IPv6-enabled networks now prioritize IPv6 lookups. When resolving a domain, they first issue an **AAAA** query to look for an IPv6 address. If no AAAA record is configured, they fall back to an **A** query for an IPv4 address.
+
+Bunny DNS logs these AAAA queries with an empty answer. The queries are harmless.
+
+## Recommendation
+
+Configure both A and AAAA records for your domain when possible. This avoids the fallback round-trip and improves resolution time, which can improve overall performance for your website or application.

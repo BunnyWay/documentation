@@ -7,7 +7,7 @@ Bunny Stream MediaCage Enterprise DRM uniquely supports all three Widevine secur
 
 When this restriction is enabled (e.g., via the `SdOnlyForL3` parameter in the Widevine License service), the license server will reject requests for HD keys on L3 devices, potentially causing playback failures if the player attempts to select an HD rendition. To handle this gracefully and ensure seamless playback, client-side players should proactively detect the device's Widevine security level and limit rendition selection to SD (Standard Definition) resolutions (typically 480p or lower) when L3 is detected. This approach avoids license rejection errors by ensuring only compatible SD streams are requested.
 
-# Handling Restrictions in Players
+## Handling Restrictions in Players
 
 If the HD restriction for L3 is enabled on the server side, implement the following best practices in your player:
 
