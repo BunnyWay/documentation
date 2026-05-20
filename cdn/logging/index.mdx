@@ -8,11 +8,202 @@ bunny.net provides raw request logs for all Pull Zones with Logging Enabled. Log
 
 For longer retention, use [Permanent Log Storage](/cdn/logging/permanent-storage) to automatically archive logs to Edge Storage.
 
+We expose two HTTP APIs for accessing logs:
+
+- **[Logging API v2](#logging-api-v2)** - recommended. Structured JSON, rich filtering, pagination, and per-field search.
+- **[Logging API v1](#logging-api-v1-legacy)** - legacy. Streams a raw pipe-delimited file for a given day; preserved for existing integrations.
+
 ## Privacy & GDPR
 
 IP addresses are anonymized by default. To enable full IP logging, sign the Data Processing Agreement (DPA) in your account settings, then disable anonymization in your Pull Zone logging settings.
 
-## API endpoint
+When anonymization is enabled, anonymized IPs are returned by the API in one of two forms depending on your Pull Zone setting:
+
+- **Remove last octet** - IPv4 is masked to a `/24` (e.g. `163.172.53.0`); IPv6 is masked to a `/64` (e.g. `2001:7d0:700d:db04::`).
+- **Drop all** - IPv4 becomes `0.0.0.0` and IPv6 becomes `::`.
+
+Anonymization applies on read at the API boundary. Filtering by `remoteIp` adapts to the same mask width, so the filter can never reveal information beyond what the response shows.
+
+## Logging API v2
+
+```bash
+GET https://logging.bunnycdn.com/v2/pullzones/{pullZoneId}/logs
+```
+
+Authenticate with your account API key or a bearer JWT:
+
+```bash
+AccessKey: your-api-key
+# or
+Authorization: Bearer <jwt>
+```
+
+Logs are retained for the past 3 days. Both `from` and the range `to - from` must fall within that window.
+
+### Example
+
+```bash
+curl -H "AccessKey: your-api-key" \
+     "https://logging.bunnycdn.com/v2/pullzones/1337/logs?from=2026-05-08T00:00:00Z&to=2026-05-09T00:00:00Z&status=4xx,5xx&limit=50"
+```
+
+### Query parameters
+
+| Parameter             | Type            | Description |
+| --------------------- | --------------- | ----------- |
+| `from`                | ISO 8601 UTC    | Inclusive start of the time range. Defaults to `to - 24h`. Must fall within the 3-day retention window. |
+| `to`                  | ISO 8601 UTC    | Exclusive end of the time range. Defaults to `now`. |
+| `status`              | comma list      | HTTP status filter. Each entry is either an exact code (`200`, `404`) or a class (`2xx`, `5xx`). Multiple entries are OR-ed. |
+| `cacheStatus`         | comma list      | Cache statuses to match exactly (e.g. `HIT,MISS,EXPIRED`). |
+| `country`             | comma list      | ISO 3166 alpha-2 country codes (e.g. `EE,DE`). |
+| `edgeLocation`        | string          | Edge location / server zone, exact match. |
+| `remoteIp`            | IPv4 or IPv6    | Filter by client IP. The match width adapts to the zone's anonymization setting: exact when anonymization is disabled, `/24` (IPv4) or `/64` (IPv6) under last-octet anonymization, and ignored under full anonymization. |
+| `urlContains`         | string          | Case-insensitive substring match against host + path. |
+| `userAgentContains`   | string          | Case-insensitive substring match against the User-Agent header. |
+| `refererContains`     | string          | Case-insensitive substring match against the Referer header. |
+| `search`              | space-separated | Free-text token search. A row matches if ANY token appears in ANY searched column (cache status, request ID, edge location, host, path, user agent, referer, and content range for extended-logging zones). Max 16 tokens of up to 128 characters each. |
+| `includeOriginShield` | boolean         | Include origin-shield (edge → shield) requests. Defaults to `false`. |
+| `limit`               | integer         | Maximum entries per page. Defaults to `100`, capped at `10000`. |
+| `offset`              | integer         | Number of entries to skip. Defaults to `0`. |
+| `order`               | string          | Sort by timestamp: `asc` or `desc` (default). |
+
+<Note>
+  Country code, the encrypted-at-rest authorization header, and the raw client IP are
+  not matched by the free-text `search` parameter. Use `country`, `remoteIp`, and the
+  dedicated header filters for those.
+</Note>
+
+### Response
+
+`200 OK` returns a JSON envelope with the page of entries, pagination state, and an
+echoed query summary:
+
+```json
+{
+  "data": [
+    {
+      "timestamp": "2026-05-08T14:32:11.265Z",
+      "pullZoneId": 1337,
+      "requestId": "648fd832dbc1b102134949e15a9fdb2d",
+      "cacheStatus": "MISS",
+      "statusCode": 404,
+      "bytesSent": 1095,
+      "remoteIp": "163.172.53.0",
+      "countryCode": "FI",
+      "edgeLocation": "WA",
+      "scheme": "https",
+      "host": "example.b-cdn.net",
+      "path": "/video.mp4",
+      "url": "https://example.b-cdn.net/video.mp4",
+      "userAgent": "Mozilla/5.0 ...",
+      "referer": null
+    }
+  ],
+  "pagination": {
+    "offset": 0,
+    "limit": 100,
+    "returned": 1,
+    "hasMore": false
+  },
+  "query": {
+    "pullZoneId": 1337,
+    "from": "2026-05-08T00:00:00Z",
+    "to": "2026-05-09T00:00:00Z",
+    "order": "desc"
+  }
+}
+```
+
+### Log entry fields
+
+| Field          | Type           | Description |
+| -------------- | -------------- | ----------- |
+| `timestamp`    | ISO 8601 UTC   | Time the request was received at the edge (millisecond precision). |
+| `pullZoneId`   | integer        | Pull Zone identifier the request was served from. |
+| `requestId`    | string         | 32-character hex unique request identifier. |
+| `cacheStatus`  | string         | Cache result (see [cache status values](#cache-status-values) below). |
+| `statusCode`   | integer        | HTTP response status code. |
+| `bytesSent`    | integer        | Total bytes sent in the response (headers + body). |
+| `remoteIp`     | string \| null | Client IP, possibly anonymized; `null` when no IP was recorded. |
+| `countryCode`  | string \| null | ISO 3166 alpha-2 country code derived from the client IP; `null` if unknown. |
+| `edgeLocation` | string         | POP code that served the request. |
+| `scheme`       | string         | `http` or `https`. |
+| `host`         | string         | Request `Host` header. |
+| `path`         | string         | Request URI path (with query string if present). |
+| `url`          | string         | Fully composed URL: `{scheme}://{host}{path}`. |
+| `userAgent`    | string \| null | `User-Agent` header; `null` when absent. |
+| `referer`      | string \| null | `Referer` header; `null` when absent. |
+
+#### Extended logging fields
+
+When extended logging is enabled for the Pull Zone (contact support), entries also
+include:
+
+| Field                 | Type           | Description |
+| --------------------- | -------------- | ----------- |
+| `bodyBytesSent`       | integer        | Response body bytes, excluding headers. |
+| `contentRange`        | string \| null | HTTP `Content-Range` header. |
+| `authorizationHeader` | string \| null | Decrypted `Authorization` header value (encrypted at rest). |
+
+Null fields are omitted from the JSON response.
+
+#### Cache status values
+
+| Value         | Meaning |
+| ------------- | ------- |
+| `HIT`         | Response served directly from cache. |
+| `MISS`        | Response not in cache; fetched from origin. |
+| `BYPASS`      | Cache was skipped (e.g. due to request headers, cookies, or configuration). |
+| `REVALIDATED` | Cached response was validated with origin (e.g. via `ETag` / `Last-Modified`) and reused. |
+| `STALE`       | Stale cached response served (typically due to origin being unavailable or slow). |
+| `UPDATING`    | Stale content served while a background cache update is in progress. |
+| `-`           | No cache interaction (e.g. non-cacheable methods like `POST`). |
+
+### Pagination
+
+The response sets `pagination.hasMore` to `true` when more results are available
+beyond the current page. To fetch the next page, repeat the request with
+`offset` advanced by `limit`:
+
+```bash
+curl -H "AccessKey: your-api-key" \
+     "https://logging.bunnycdn.com/v2/pullzones/1337/logs?from=...&to=...&limit=100&offset=100"
+```
+
+### Error responses
+
+Errors return a structured JSON envelope:
+
+```json
+{
+  "error": {
+    "code": "invalid_request",
+    "message": "One or more query parameters are invalid.",
+    "details": [
+      "Time range cannot exceed 3 days (log retention window).",
+      "limit must be between 1 and 10000."
+    ]
+  }
+}
+```
+
+| HTTP status | `error.code`        | Meaning |
+| ----------- | ------------------- | ------- |
+| 400         | `invalid_request`   | One or more query parameters failed validation. See `details`. |
+| 401         | `unauthorized`      | Neither `Authorization` nor `AccessKey` header was provided. |
+| 403         | `forbidden`         | Credentials are invalid, or the Pull Zone is suspended/disabled. |
+| 404         | `logging_disabled`  | Logging is not enabled for this Pull Zone. |
+| 429         | `rate_limited`      | Per-Pull-Zone rate limit exceeded (30 requests / 10 seconds). |
+| 500         | `internal_error`    | Unexpected server error. |
+
+## Logging API v1 (Legacy)
+
+<Warning>
+  The v1 API is preserved for existing integrations. New work should use
+  [Logging API v2](#logging-api-v2), which returns structured JSON, supports
+  rich filtering and pagination, and avoids the pipe-injection issues inherent
+  to the v1 format.
+</Warning>
 
 Download raw log files from the logging API:
 
@@ -51,7 +242,7 @@ curl -H "AccessKey: your-api-key" \
 | `search`   | Filter log lines by string match                                             |
 | `download` | Whether to return logs as a downloadable file (default: `true`)              |
 
-## Log format
+### Log format
 
 Each request is stored as a pipe-separated line:
 
@@ -61,7 +252,7 @@ HIT|200|1507167062421|412|390|163.172.53.0|-|https://example.b-cdn.net/video.mp4
 
 | Field        | Description |
 |--------------|-------------|
-| Cache Status | Cache result for the request. Possible values:<br /><br />• `HIT` – Response served directly from cache.<br />• `MISS` – Response not in cache; fetched from origin.<br />• `BYPASS` – Cache was skipped (e.g. due to request headers, cookies, or configuration).<br />• `REVALIDATED` – Cached response was validated with origin (e.g. via `ETag` / `Last-Modified`) and reused.<br />• `STALE` – Stale cached response served (typically due to origin being unavailable or slow).<br />• `UPDATING` – Stale content served while a background cache update is in progress.<br />• `-` – No cache interaction (e.g. non-cacheable methods like `POST`). |
+| Cache Status | Cache result for the request. See [cache status values](#cache-status-values). |
 | Status Code  | HTTP response code |
 | Timestamp    | UTC UNIX timestamp (milliseconds) |
 | Bytes Sent   | Total bytes sent to client |
@@ -74,6 +265,12 @@ HIT|200|1507167062421|412|390|163.172.53.0|-|https://example.b-cdn.net/video.mp4
 | Request ID   | Unique request identifier |
 | Country Code | Two-letter ISO country code |
 
+<Note>
+  Pipe (`|`) characters in user-controllable fields (Referer, URL, User-Agent,
+  Content-Range, Authorization) are stripped from the v1 output to keep the
+  delimiter unambiguous. If you need the original byte sequence, use v2.
+</Note>
+
 ### Extended logging
 
 Extended logging adds three additional fields (contact support to enable):
@@ -85,6 +282,9 @@ Extended logging adds three additional fields (contact support to enable):
 | Authorization Header | Authorization header value (Encrypted at rest) |
 
 ## HTTP status codes
+
+These codes apply to logged responses served by the CDN edge and are surfaced via
+both API versions.
 
 ### 2XX Success
 
