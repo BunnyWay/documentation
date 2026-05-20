@@ -1,6 +1,6 @@
 ---
-title: Encoding
-sidebarTitle: Overview
+title: "Encoding"
+sidebarTitle: "Overview"
 description: "bunny.net Stream platform provides users with powerful and, most of all, free transcoding of their videos."
 ---
 
@@ -10,7 +10,7 @@ Encoding aside, we also provide an abundance of highly customizable options with
 
 ## Where can I find these settings?
 
-The Bunny Stream Video Library encoding settings can be found within the Bunny Dashboard. It is under Stream > Your Library > Encoding.
+The Bunny Stream Video Library encoding settings can be found within the Bunny Dashboard. It is under Stream \> Your Library \> Encoding.
 
 ## Understanding the options offered
 
@@ -76,10 +76,26 @@ In addition to being able to choose resolutions to be encoded in your videos, yo
 
 This allows you to set the watermark for the video library. A watermark will be applied to each video that is uploaded. This option must be enabled before you upload a video for the watermark to appear on the video itself.
 
+## Video storage usage
+
+You can view how much storage your encoded video is using via clicking the (i) information icon found on your video summary within your video library, or alternatively via the video info (i) information icon found on the video page.
+
+A summary will appear with a breakdown of your video storage usage giving per-video breakdown of your storage consumption:
+
+- Codec (H264, H265, AV1, VP9)
+- MP4 (MP4 fallback)
+- Original (Keep original files)
+- Other (Preview animations, thumbnails, watermarks and captions)
+- Total  
+
+<Info>
+  Video storage usage can also be provided over aPI [https://docs.bunny.net/api-reference/stream/manage-videos/get-video-storage-size-info](https://docs.bunny.net/api-reference/stream/manage-videos/get-video-storage-size-info)
+</Info>
+
 ## Why are my videos taking up more space than they should?
 
 You may notice that once a video is uploaded, it consumes a larger amount of storage space than it is using on your local machine. This would be due to the encoding options that you've set under the Encoding Tab of your Video Library, you can find the options that increase the size below;
 
-`MP4 Fallback Keep Original Files Enabled Resolutions`
+`MP4 Fallback` `Keep Original Files` `Enabled Resolutions`
 
 If you wish to reduce the size of the final encoded video, you may want to look at which resolutions and/or options you need, whilst disabling the ones you don't need. Please keep in mind that videos only uploaded after the changes will be affected by the change.
