@@ -3,6 +3,51 @@ title: "Changelog"
 description: "Latest updates and improvements to Stream."
 ---
 
+<Update label="2026-05-21" tags={["Stream","(Improvement)"]}>
+  ## Stream compact controls added to player settings
+
+  Maximize screen real estate on the bunny player with Compact Controls. Ideal for mobile and embedded players. You can now enable compact controls on your video library via the 'Compact Controls' toggle within player settings. [Learn more](/stream/player-settings)
+</Update>
+
+<Update label="2026-05-20" tags={["Stream","(Improvement)"]}>
+  ## Stream Video storage size info API endpoint & Dashboard update
+
+  We've created and extended the 'Get Video Storage Size Info' endpoint, giving customers a granular, per-video breakdown of your encoded videos storage consumption over API. [Learn more](/api-reference/stream/manage-videos/get-video-storage-size-info)
+
+  This feature has been added to the Stream dashboard for granular video storage usage breakdown via the (i) information icon - selectable within your video library or the video page. [Learn more](/stream/encoding)
+</Update>
+
+<Update label="2026-05-04" tags={["Stream","(New)"]}>
+  ## Stream compact controls - bunny player feature
+
+  Maximize screen real estate on the bunny player with Compact Controls. Ideal for mobile and embedded players. You can now enable compact controls on your video library via the 'update video library' API endpoint or by adding 'compactControls=true' to your player embed parameters. [Learn more](/api-reference/core/stream-video-library/update-video-library#response-enable-compact-controls)
+</Update>
+
+<Update label="2026-05-01" tags={["Stream","(Improvement)"]}>
+  ## Stream 'Add video library' API update
+
+  The Stream 'Add video library' API endpoint can now pre-configure premium encoding, transcribing, video resolutions and more in a single API call.\
+  [Learn more](/api-reference/core/stream-video-library/add-video-library)
+</Update>
+
+<Update label="2026-04-15" tags={["Stream","(Improvement)"]}>
+  ## bunny player
+
+  This release makes playback smoother and more reliable everywhere. We've upgraded media-chrome to 4.19.0, fixed Firefox H.265 seeking and referrer handling, tightened Chromecast sync, and cleaned up iOS fullscreen transitions. Early-play and JIT videos start has improved, heatmaps work on token-protected embeds, and we've refined French UI translations and expanded RUM monitoring to new regions.
+</Update>
+
+<Update label="2026-04-07" tags={["Stream","(Improvement)"]}>
+  ## Stream API
+
+  Upgraded Smart feature language model to v5.4 for higher quality generation. JIT watermarking is now more reliable, accurate, and consistent. Cleanup unconfigured resolutions endpoint now supports MP4 removal [Learn more](/api-reference/stream/manage-videos/cleanup-unconfigured-resolutions#parameter-delete-mp4-files)
+</Update>
+
+<Update label="2026-03-31" tags={["Stream","(Improvement)"]}>
+  ## Transcribing upgrade
+
+  Transcribing language model has been upgraded to v1.2.0 for faster and higher quality transcriptions. [Learn more](/stream/transcribing)
+</Update>
+
 <Update label="2026-03-27" tags={["New"]}>
   ## Free encoding
 
