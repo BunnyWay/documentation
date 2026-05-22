@@ -604,7 +604,8 @@
                 "pages": [
                   "storage/index",
                   "storage/quickstart",
-                  "storage/pricing"
+                  "storage/pricing",
+                  "storage/changelog"
                 ]
               },
               {
