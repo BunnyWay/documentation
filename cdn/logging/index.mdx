@@ -66,6 +66,7 @@ curl -H "AccessKey: your-api-key" \
 | `limit`               | integer         | Maximum entries per page. Defaults to `100`, capped at `10000`. |
 | `offset`              | integer         | Number of entries to skip. Defaults to `0`. |
 | `order`               | string          | Sort by timestamp: `asc` or `desc` (default). |
+| `requestId`           | UUID            | Exact request ID lookup. Accepts standard UUID format (with or without hyphens). |
 
 <Note>
   Country code, the encrypted-at-rest authorization header, and the raw client IP are
@@ -96,7 +97,10 @@ echoed query summary:
       "path": "/video.mp4",
       "url": "https://example.b-cdn.net/video.mp4",
       "userAgent": "Mozilla/5.0 ...",
-      "referer": null
+      "referer": null,
+      "ja4Fingerprint": "t13d1513h2_8daaf6152771_1eb89897b454",
+      "asn": 15169,
+      "asnOrganization": "Google LLC"
     }
   ],
   "pagination": {
@@ -133,6 +137,9 @@ echoed query summary:
 | `url`          | string         | Fully composed URL: `{scheme}://{host}{path}`. |
 | `userAgent`    | string \| null | `User-Agent` header; `null` when absent. |
 | `referer`      | string \| null | `Referer` header; `null` when absent. |
+| `ja4Fingerprint`   | string \| null  | JA4 TLS client fingerprint; `null` when absent. |
+| `asn`              | integer \| null | Autonomous System Number derived from the client IP; `null` if unknown. |
+| `asnOrganization`  | string \| null  | Organization that owns the AS; `null` if unknown. |
 
 #### Extended logging fields
 
