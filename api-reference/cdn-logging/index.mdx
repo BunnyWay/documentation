@@ -1,0 +1,72 @@
+---
+title: Logging API Reference
+sidebarTitle: Overview
+description: Access raw CDN request logs for your pull zones via HTTP.
+---
+
+The Logging API provides access to raw request logs for all pull zones with logging enabled. Logs appear in near real-time and are retained for 3 days.
+
+## Base URL
+
+```
+https://logging.bunnycdn.com
+```
+
+## Authentication
+
+Authenticate using the `AccessKey` header or a bearer JWT:
+
+```bash
+curl --request GET \
+  --url https://logging.bunnycdn.com/v2/pullzones/{pullZoneId}/logs \
+  --header 'AccessKey: YOUR_API_KEY'
+```
+
+```bash
+curl --request GET \
+  --url https://logging.bunnycdn.com/v2/pullzones/{pullZoneId}/logs \
+  --header 'Authorization: Bearer YOUR_JWT'
+```
+
+<Note>
+  Find your API key in the [account
+  settings](https://dash.bunny.net/account/settings) under **API Keys**.
+</Note>
+
+## API versions
+
+Two versions of the API are available:
+
+| Version | Format | Description |
+| --- | --- | --- |
+| [v2](/cdn/logging/api-reference/query-logs) | JSON | Structured JSON with rich filtering, pagination, and per-field search. **Recommended.** |
+| [v1](/cdn/logging/api-reference/query-logs-legacy) | Pipe-delimited | Streams a raw pipe-delimited file for a given day. Preserved for existing integrations. |
+
+## Cache status values
+
+Both API versions return the following cache status values:
+
+| Value | Description |
+| --- | --- |
+| `HIT` | Response served directly from cache |
+| `MISS` | Response not in cache; fetched from origin |
+| `BYPASS` | Cache was skipped (e.g. due to request headers, cookies, or configuration) |
+| `REVALIDATED` | Cached response was validated with origin and reused |
+| `STALE` | Stale cached response served (typically due to origin being unavailable or slow) |
+| `UPDATING` | Stale content served while a background cache update is in progress |
+| `-` | No cache interaction (e.g. non-cacheable methods like `POST`) |
+
+## Rate limits
+
+Both API versions enforce a per-pull-zone rate limit of **30 requests per 10 seconds**. Exceeding this returns a `429` response.
+
+## Error codes
+
+| HTTP Status | Code | Description |
+| --- | --- | --- |
+| 400 | `invalid_request` | One or more query parameters failed validation |
+| 401 | `unauthorized` | No authentication credentials provided |
+| 403 | `forbidden` | Credentials are invalid, or pull zone is suspended/disabled |
+| 404 | `logging_disabled` | Logging is not enabled for this pull zone |
+| 429 | `rate_limited` | Per-pull-zone rate limit exceeded |
+| 500 | `internal_error` | Unexpected server error |
