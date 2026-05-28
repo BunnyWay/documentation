@@ -1034,6 +1034,14 @@
                 "pages": ["api-reference/origin-errors/index"]
               },
               {
+                "group": "CDN Logging API",
+                "openapi": {
+                  "source": "https://logging.bunnycdn.com/docs/all/swagger.json",
+                  "directory": "api-reference/cdn-logging"
+                },
+                "pages": ["api-reference/cdn-logging/index"]
+              },
+              {
                 "group": "Storage API",
                 "openapi": {
                   "source": "/api-reference/storage/openapi.json",
