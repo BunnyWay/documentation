@@ -1034,18 +1034,10 @@
                 "pages": ["api-reference/origin-errors/index"]
               },
               {
-                "group": "CDN Logging v1 API",
+                "group": "CDN Logging API",
                 "openapi": {
-                  "source": "https://logging.bunnycdn.com/docs/v1/swagger.json",
-                  "directory": "api-reference/cdn-logging-v1"
-                },
-                "pages": ["api-reference/cdn-logging/index"]
-              },
-              {
-                "group": "CDN Logging v2 API",
-                "openapi": {
-                  "source": "https://logging.bunnycdn.com/docs/v2/swagger.json",
-                  "directory": "api-reference/cdn-logging-v2"
+                  "source": "https://logging.bunnycdn.com/docs/all/swagger.json",
+                  "directory": "api-reference/cdn-logging"
                 },
                 "pages": ["api-reference/cdn-logging/index"]
               },
