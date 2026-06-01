@@ -1098,6 +1098,16 @@
   },
   "redirects": [
     {
+      "source": "/stream/smart-chapters",
+      "destination": "/stream/smart-generate",
+      "permanent": true
+    },
+    {
+      "source": "/stream-smart-chapters",
+      "destination": "/stream/smart-generate",
+      "permanent": true
+    },
+    {
       "source": "/docs",
       "destination": "/",
       "permanent": true
