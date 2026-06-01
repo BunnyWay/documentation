@@ -495,7 +495,7 @@
                   },
                   "stream/premium-encoding",
                   "stream/transcribing",
-                  "stream/smart-chapters",
+                  "stream/smart-generate",
                   {
                     "group": "MediaCage DRM",
                     "pages": [
