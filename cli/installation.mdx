@@ -1,0 +1,42 @@
+---
+title: Installation
+description: Install the Bunny CLI via shell installer or npm.
+---
+
+## curl
+
+Download a prebuilt binary for your platform and add it to your `PATH`:
+
+```bash
+curl -fsSL https://cli.bunny.net/install.sh | sh
+```
+
+<Note>
+  `install.sh` is a POSIX shell script, so piping to `sh`, `bash`, or `zsh` all
+  work.
+</Note>
+
+## npm
+
+If you already use Node.js, install globally from npm:
+
+```bash
+npm install -g @bunny.net/cli
+```
+
+## Verify your installation
+
+```bash
+bunny
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/cli/quickstart">
+    Log in and create your first database
+  </Card>
+  <Card title="Authentication" icon="key" href="/cli/commands/auth">
+    `bunny login`, `bunny logout`, `bunny whoami`
+  </Card>
+</CardGroup>

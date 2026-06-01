@@ -10,7 +10,7 @@ FPS Deployment Package consists of:
 - Private key password string
 - Application secret key (ASK) string
 
-# Signing up for an Apple developer account
+## Signing up for an Apple developer account
 
 To get the FPS Deployment Package you will need to create an Apple Developer account. If you don't have one, follow the steps below:
 
@@ -18,42 +18,37 @@ To get the FPS Deployment Package you will need to create an Apple Developer acc
 2. Click on the **Enroll** button to begin the account creation process.
 3. Fill in the required information, including your Apple ID or create a new one, and follow the on-screen instructions to complete the account setup.
 
-# Requesting deployment package
+## Requesting deployment package
 
 To request the Deployment Package, follow the steps below:
 
 1. Navigate to the [FairPlay Streaming website](https://developer.apple.com/streaming/fps/).
-
 2. Scroll down to the bottom of the page and click on the **Request Deployment Package** link.
-
 3. You will be redirected to a login page. Log in with your Apple Developer account credentials. Note that to request the deployment package, you need to be an account holder.
-
 4. Fill out the deployment package request form with the necessary information.
 
 <Info>
-During the application process, you may be asked about the implementation and testing of the Key Server Module (KSM). Answer accordingly, stating that you are using a 3rd party DRM company and that the company has already built and tested KSM.
-
+  During the application process, you may be asked about the implementation and testing of the Key Server Module (KSM). Answer accordingly, stating that you are using a 3rd party DRM company and that the company has already built and tested KSM.
 </Info>
 
 5. Submit the deployment package request and wait for Apple's confirmation, usually taking few days.
 6. Once your request is confirmed, Apple will issue a package containing the FPS Credential Creation Guide document.
 
-# Creating a private key and Certificate Signing Request (CSR)
+## Creating a private key and Certificate Signing Request (CSR)
 
 <Info>
-If you haven't already installed OpenSSL, download and install it on your PC or server. You can find OpenSSL packages for various operating systems on the official OpenSSL website.
-
+  If you haven't already installed OpenSSL, download and install it on your PC or server. You can find OpenSSL packages for various operating systems on the official OpenSSL website.
 </Info>
 
 1. Open a terminal or command prompt and run the following command to generate a private key. You will be prompted to enter a password. Choose a password (shorter than 32 characters) and make a note of it for future reference.
 
-```
+```text
 openssl genrsa -aes256 -traditional -out privatekey.pem 1024
 ```
 
 2. Now, you can create a CSR file using the private key generated in the previous step. Run the following command:
 
-```
+```text
 openssl req -new -sha1 -key privatekey.pem -out certreq.csr -subj "/CN=SubjectName/OU=OrganizationalUnit/O=Organization/C=US"
 ```
 
@@ -64,13 +59,13 @@ Replace the values in the `/CN=SubjectName/OU=OrganizationalUnit/O=Organization/
 
 You have now successfully created a private key and a CSR using OpenSSL. These files are essential for obtaining a digital certificate from a Certificate Authority. Keep the private key secure and share the CSR with the CA to complete the certificate issuance process.
 
-# Creating FPS certificate at Apple developer portal
+## Creating FPS certificate at Apple developer portal
 
 The next step is to create FPS certificate. Follow the steps below:
 
 1. Log in to Apple Developer Portal.
 2. After logging in, locate and click on the **Certificate, IDs & Profiles** menu.
-3. On the **Certificate, IDs & Profiles** menu, click the "+" button. This will take you to the **Create a New Certificate** screen.
+3. On the **Certificate, IDs & Profiles** menu, click the "\+" button. This will take you to the **Create a New Certificate** screen.
 4. In the **Create a New Certificate** screen, select **FairPlay Streaming Certificate** from the available options, and click the **Continue** button to proceed.
 5. Click on the **Choose File** button and select the certreq.csr file that was created in the previous step, and click **Continue**.
 6. The screen will display the Application Secret Key (ASK) string. Copy this key, pase it in a secure location for future reference, and click **Continue**.
@@ -78,13 +73,15 @@ The next step is to create FPS certificate. Follow the steps below:
 8. Once the generation is complete, the FairPlay Streaming certificate will be displayed in the Certificate list. Locate the certificate and click the **Download** button to save the FPS certificate file (fairplay.cer) to your computer.
 
 <Info>
-If asked to select a Fairplay Streaming SDK version during the above steps, select SDK 4.x.
-
+  If asked to select a Fairplay Streaming SDK version during the above steps, select SDK 4.x.
 </Info>
 
 <Info>
-If you encounter any errors during this process, please reach out to Apple support for assistance.
+  We currently only support Apple FairPlay SPC v1 (Server Playback Context). 
+</Info>
 
+<Info>
+  If you encounter any errors during this process, please reach out to Apple support for assistance.
 </Info>
 
 ---
@@ -94,8 +91,3 @@ If you encounter any errors during this process, please reach out to Apple suppo
 [Google Widevine DRM](/docs/widevine-drm-security-levels)
 
 - [Table of Contents](#)
-
-- - [Signing up for an Apple developer account](#signing-up-for-an-apple-developer-account)
-  - [Requesting deployment package](#requesting-deployment-package)
-  - [Creating a private key and Certificate Signing Request (CSR)](#creating-a-private-key-and-certificate-signing-request-csr)
-  - [Creating FPS certificate at Apple developer portal](#creating-fps-certificate-at-apple-developer-portal)

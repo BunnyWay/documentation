@@ -46,10 +46,10 @@ Signing with `token_path=/videos/stream1/` allows access to all files in that di
 
 IP locking binds a token to a specific client IP address. Any request from a different IP will be rejected, even if the token is otherwise valid. This is useful for preventing token sharing or URL redistribution.
 
-To use IP locking, pass the client's IP address (IPv4 or IPv6) as the `userIp` parameter when signing the URL. The IP is included in the HMAC signature but is not appended to the URL itself.
+To use IP locking, pass the client's IPv4 address as the `userIp` parameter when signing the URL. The IP is included in the HMAC signature but is not appended to the URL itself.
 
 <Note>
-  IP locking requires the **Token IP Validation** setting to be enabled on your Pull Zone. Enabling this without including the IP in your tokens will cause all requests to fail.
+  Only IPv4 addresses are supported. IP locking requires the **Token IP Validation** setting to be enabled on your Pull Zone. Enabling this without including the IP in your tokens will cause all requests to fail. Enabling Token IP Validation also disables IPv6 routing on the Pull Zone to prevent mismatches.
 </Note>
 
 <Warning>

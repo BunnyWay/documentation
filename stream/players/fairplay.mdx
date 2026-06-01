@@ -3,20 +3,22 @@ title: "Fairplay HTML5 player integration"
 description: "This documentation will guide you through the integration of the FairPlay DRM solution into your web application, ensuring secure and compliant playback of DRM-encrypted content."
 ---
 
-# What you'll need
+This guide walks through configuring an HTML5 video player with Bunny Stream's FairPlay license server so encrypted videos can be played back securely on Safari and Apple devices.
+
+## What you'll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
 - A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
 - Ensure that the Media Cage DRM Enterprise feature is enabled in your account. If you need guidance on how to enable this feature, please refer to our [Media Cage DRM Enterprise quickstart guide](/docs/mediacage-enterprise-drm-quickstart).
 
-# Playing DRM content
+## Playing DRM content
 
 Once video content is DRM encrypted, every play session needs a valid play license. Play license can be obtained from a License Server URL.
 
 > Note: Certificate and license server apply the same security mechanisms as player embed view. If referrer protection and/or token authentication is enabled in library settings, valid referrer header and/or token query parameters should also be provided to Fairplay DRM endpoints.
 
-## Certificate URL
+### Certificate URL
 
 To use Fairplay, player needs to obtain the Fairplay certificate first. It is accessible with the URL of the following pattern:
 
@@ -24,7 +26,7 @@ To use Fairplay, player needs to obtain the Fairplay certificate first. It is ac
 https://video.bunnycdn.com/FairPlay/{library_id}/certificate
 ```
 
-## License server URL
+### License server URL
 
 Fairplay key server is accessible with the URL of the following pattern:
 
@@ -35,7 +37,7 @@ https://video.bunnycdn.com/FairPlay/{library_id}/license/?videoId=${video_id}
 - `library_id`: A unique identifier for the library or content collection.
 - `video_id`: The specific identifier for the FairPlay encrypted video.
 
-# Fairplay integration with Safari
+## Fairplay integration with Safari
 
 Safari browsers on macOS and iOS inherently support the playback of HLS streams encrypted with Fairplay. To facilitate Fairplay integration on Safari, use the provided sample code:
 
@@ -171,7 +173,7 @@ Place the HTML5 video element on desired place in the html document.
   ```
 </CodeGroup>
 
-# Authentication
+## Authentication
 
 The license service endpoint employs referrer protection and embed token authentication to secure requests, similar to our player Embed View. That means if token authentication is enabled it should also be present in requests going to DRM license endpoint ( the same is for referrer protection and token authentication). These security rules ensure that only requests from authorized sources with valid tokens are processed if configured.
 

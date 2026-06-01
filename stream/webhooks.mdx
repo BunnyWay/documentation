@@ -3,7 +3,9 @@ title: "Webhooks"
 description: "Bunny Stream allows you to configure a secure webhook URL. Our system will automatically send notifications back to this URL once a video status changes. This allows you to track the updates and progress of the video processing cycles on your side."
 ---
 
-# Callback
+Configure a webhook URL on your library to receive a POST notification every time a video changes state — for example, when uploading completes or transcoding finishes. The sections below describe the callback payload, status codes, and signature verification.
+
+## Callback
 
 When the video state changes, a JSON callback will be sent back to your URL as a POST request. Below is an example object that will be sent.
 
@@ -19,7 +21,7 @@ When the video state changes, a JSON callback will be sent back to your URL as a
 
 </CodeGroup>
 
-# Status list
+## Status list
 
 Below are the possible status codes sent with the webhook:
 
@@ -35,11 +37,11 @@ Below are the possible status codes sent with the webhook:
 - 9 - **CaptionsGenerated** : Automatic captions were generated.
 - 10 - **TitleOrDescriptionGenerated** : Automatic generation of title or description has been completed.
 
-# Signature validation
+## Signature validation
 
 Verify that an incoming webhook request was sent by Bunny Stream and has not been tampered with.
 
-## Overview
+### Overview
 
 Signed webhook POSTs use signature version **`v1`**. Each signed request includes the following headers:
 
@@ -55,7 +57,7 @@ The signature is an **HMAC-SHA256** of the exact raw request body, using the web
   [The signing secret is your library's **Read-Only API key**. Validation must use the **exact raw body** as received — do not parse and re-serialize the JSON body.](https://docs.bunny.net/api-reference/core/stream-video-library/get-video-library#response-read-only-api-key-one-of-0)
 </Note>
 
-## How the signature is built
+### How the signature is built
 
 ```text
 version    = "v1"
@@ -68,7 +70,7 @@ signature  = lowercase_hex( HMAC-SHA256( utf8(body), utf8(signatureSecret) ) )
 - **Output**: 64-character lowercase hexadecimal string.
 - The URL, timestamp, HTTP method, and headers are **not** part of the `v1` signature.
 
-## Validation steps
+### Validation steps
 
 <Steps>
   <Step title="Read the raw request body">
@@ -91,7 +93,7 @@ signature  = lowercase_hex( HMAC-SHA256( utf8(body), utf8(signatureSecret) ) )
   </Step>
 </Steps>
 
-## Code examples
+### Code examples
 
 <CodeGroup>
 
@@ -212,7 +214,7 @@ bool ValidateWebhookSignature(
 
 </CodeGroup>
 
-## Important notes
+### Important notes
 
 <Warning>
   Always use the **exact raw body bytes** for validation. If your framework parses JSON and re-serializes it, whitespace or key ordering may change and the signature will not match.

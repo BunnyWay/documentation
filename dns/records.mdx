@@ -142,11 +142,40 @@ If all records have equal weights, up to 3 records are randomly returned from th
 
 ### Health monitoring
 
-When monitoring is enabled on a record set:
+Bunny DNS provides basic built-in monitoring for any A, AAAA, or CNAME record. When monitoring is enabled, each IP is tested every 30 seconds from a selection of 3 regions around the world. For a record to be detected as online, the monitored response must be successful.
 
-- Offline records are automatically removed from DNS responses
-- If all records in a group are offline, filtering is disabled to prevent false positives
-- Single-value records continue to be returned regardless of health status
+<Info>
+  The 30-second monitoring interval cannot currently be changed.
+</Info>
+
+#### Monitoring types
+
+Two monitoring types are available:
+
+| Type     | Description                                                                                                                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ping** | Sends 4 ICMP ping packets to the monitored IP during each test from a region. At least one packet must return successfully within 2500ms for the test to pass.                                    |
+| **HTTP** | Sends HTTP requests to the configured IP on port 80. The request must complete within 10 seconds and return a non-5xx status code. Any other outcome (including a 5xx response) counts as a timeout. |
+
+#### What happens when a record is offline
+
+The behavior when a record is detected as offline depends on the record set:
+
+- **Single-value records** continue to be returned regardless of health status.
+- **Record sets** (multiple records sharing the same type and name) remove offline records from routing automatically.
+- If **all records** in a set are offline, filtering is disabled to prevent false positives and all records continue to be returned.
+
+<Info>
+  Bunny DNS does not currently send alerts when an outage is detected. Alerting is planned for a future release.
+</Info>
+
+## Wildcard records
+
+A wildcard record (for example, `*.example.com`) is used to synthesize responses for any subdomain that does not have an explicit record of any type defined.
+
+<Note>
+  Bunny DNS intentionally deviates from [RFC 4592](https://datatracker.ietf.org/doc/html/rfc4592) when a wildcard interacts with an Empty Non-Terminal (ENT). An ENT is a name that has no records of its own but has descendants that do (for example, `b.example.com` is an ENT if only `a.b.example.com` exists). Per the RFC, queries for an ENT should return a NODATA response and the wildcard must not be expanded. Bunny DNS instead actively populates the response with the wildcard value, so queries for an ENT receive the wildcard record rather than an empty answer.
+</Note>
 
 ## Supported record types
 

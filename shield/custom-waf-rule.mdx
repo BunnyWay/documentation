@@ -1,9 +1,11 @@
 ---
 title: "Creating a custom WAF rule"
-description: "Creating a Custom WAF Rule allows you to tailor Bunny Shield’s Web Application Firewall to meet your specific security needs. By defining custom rules, you gain precise control over how your web applications are safeguarded, enabling you to fine-tune existing protections or address unique threats. Bunny Shield's advanced capabilities ensure that you can enhance your defences without compromising the seamless experience of legitimate users."
+description: "Define your own WAF rules in Bunny Shield to fine-tune existing protections or block threats the managed ruleset doesn't cover."
 ---
 
-# What you'll need
+Custom WAF rules let you write conditions Bunny Shield doesn't cover out of the box. You pick the variables, operators, transformations, and response actions to target threats specific to your application.
+
+## What you'll need
 
 Before you dive in, make sure you have the following prerequisites in place:
 
@@ -12,50 +14,50 @@ Before you dive in, make sure you have the following prerequisites in place:
 - Advanced Plan or above on the existing Shield Zone.
 - Your AccessKey or JWT for API authentication.
 
-These prerequisites ensure you have the necessary access and permissions to create and manage custom WAF rules effectively.
+With these in place, you'll have the access and permissions needed to create and manage custom WAF rules.
 
-# Creating a custom WAF rule
+## Creating a custom WAF rule
 
-To get started, first ensure you understand the fundamentals of how we build a custom WAF rule on Bunny Shield. You can check out our [Understanding Rule Engine](/docs/shield-understanding-rule-engine) documentation for more information.
+Before writing your first rule, read the [Rule Engine](/shield/rule-engine) documentation to understand how rules are structured.
 
 ![](/images/docs/7943f5069c900e680d2b136f98d0bce7ddd320d2beec28157b16af24e41caa16-image.png)
 
 This rule processes each HTTP request by extracting only the REQUEST_URI (**Variable**), converting it to lowercase, and removing whitespaces (**Transformations**). It then verifies if the transformed REQUEST_URI matches exactly (**Operator**) with '/blockedpath' (**Operator Value**). If a match is found, our WAF Engine will block (**Response Action**) the request, halting further rule processing and intercepting the request.
 
-With the basics covered, you can now create highly effective WAF rules tailored to protect your site with customized mitigation strategies.
+With the basics covered, you can write WAF rules that target the threats specific to your site.
 
-# Examples of custom WAF rules
+## Examples of custom WAF rules
 
 To illustrate how you can implement custom WAF rules, here are some practical examples:
 
-## Block request by ASN
+### Block request by ASN
 
 If you want to block requests that originate from a specific ASN, you can create a rule as follows:
 
 ![](/images/docs/ae556d5fb671d9928c2088848330834ac308f82fe207b83752ac8450106a21ad-image.png)
 
-## Block Request by Country Code
+### Block request by country code
 
 If you want to block requests that originate from a specific country code, you can create a rule as follows:
 
 ![](/images/docs/e7f3550fe240d2a64d18632a5183b0cb909c4716f0e796518d35fae34bfeeac5-image.png)
 
-## Log request if the specific cookie is set and has a specific value
+### Log request if the specific cookie is set and has a specific value
 
 If you want to log requests that contain a specific cookie with a particular value, you can create a rule as follows:
 
 ![](/images/docs/57b2bbe2aef059d026f21abb8a1b44fd5ae31907fb50eae15f6bf9ed74177b4f-image.png)
 
-## Challenge request if a specific path is accessed
+### Challenge request if a specific path is accessed
 
 To challenge a user when they access a specific path, you can define a rule like this:
 
 ![](/images/docs/6507dfa00b76c30cfde6cf128e77fef5488a9c0e3532bf8e4506489caeb00ee0-image.png)
 
-## Block request if User-Agent is a known crawler
+### Block request if User-Agent is a known crawler
 
 To block requests that have a User-Agent matching a known crawler, the rule would be:
 
 ![](/images/docs/1b0a50e440294062c2805f47564fbd4b1bb410569d7db29452eb1c5de0cb682b-image.png)
 
-By customizing these rules, you can effectively mitigate specific threats and enforce security policies tailored to your application's needs.
+Adapt these patterns to mitigate the threats and enforce the security policies that match your application.

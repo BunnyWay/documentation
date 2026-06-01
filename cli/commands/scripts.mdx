@@ -1,0 +1,96 @@
+---
+title: bunny scripts
+sidebarTitle: scripts
+description: "Scaffold, deploy, and link Edge Scripts from the command line."
+---
+
+`bunny scripts` provides a full workflow for [Edge Scripting](/scripting): initialize a project from a template, deploy built code, and link an existing script to a local project.
+
+## `bunny scripts init`
+
+Create a new Edge Script project from a template.
+
+```bash
+# Interactive wizard
+bunny scripts init
+
+# Non-interactive with CLI deployment
+bunny scripts init --name my-script --type standalone --template Empty --deploy-method cli --deploy
+
+# Non-interactive with GitHub Actions
+bunny scripts init --name my-script --type standalone --template Empty --deploy-method github --deploy
+```
+
+| Flag              | Description                                      |
+| ----------------- | ------------------------------------------------ |
+| `--name`          | Project directory name                           |
+| `--type`          | Script type: `standalone` or `middleware`        |
+| `--template`      | Template name                                    |
+| `--deploy-method` | Deployment method: `github` or `cli`             |
+| `--deploy`        | Create script on bunny.net after scaffolding     |
+| `--skip-git`      | Skip git initialization (CLI deploy method only) |
+| `--skip-install`  | Skip dependency installation                     |
+
+When choosing **GitHub Actions**, git is initialized automatically, GitHub-specific workflow files are kept, and after creating the script you'll be shown the `SCRIPT_ID` to add as a GitHub repo secret.
+
+When choosing **CLI**, the `.github/` and `.changeset/` directories are removed from the template and git initialization is skipped.
+
+## `bunny scripts deploy`
+
+Deploy code to an Edge Script. Uploads code and publishes by default.
+
+```bash
+# Deploy and publish
+bunny scripts deploy dist/index.js
+
+# Deploy without publishing
+bunny scripts deploy dist/index.js --skip-publish
+
+# Deploy to a specific script
+bunny scripts deploy dist/index.js 12345
+```
+
+| Flag             | Description                    |
+| ---------------- | ------------------------------ |
+| `--skip-publish` | Upload code without publishing |
+
+<Note>
+  `bunny scripts deploy` works regardless of how the script was created or
+  whether GitHub Actions is configured. The last deployment always wins,
+  whether triggered by a GitHub Action or a manual CLI deploy.
+</Note>
+
+## `bunny scripts link`
+
+Link the current directory to a remote Edge Script. Creates a `.bunny/script.json` manifest file.
+
+```bash
+# Interactive: select from list
+bunny scripts link
+
+# Non-interactive
+bunny scripts link --id <script-id>
+```
+
+| Flag   | Description                   |
+| ------ | ----------------------------- |
+| `--id` | Script ID to link (bypass UI) |
+
+## `bunny scripts list`
+
+List all Edge Scripts.
+
+```bash
+bunny scripts list
+bunny scripts ls
+bunny scripts list --output json
+```
+
+## `bunny scripts show`
+
+Show details for an Edge Script. Uses the linked script from `.bunny/script.json` if no ID is provided.
+
+```bash
+bunny scripts show <script-id>
+bunny scripts show
+```

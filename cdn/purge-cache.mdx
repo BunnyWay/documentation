@@ -63,6 +63,10 @@ curl -X POST "https://api.bunny.net/pullzone/{id}/purgeCache" \
 
 Useful for invalidating all assets related to a specific product, user, or category without clearing your entire cache.
 
+<Note>
+  `CDN-Tag` header values are limited to 1024 bytes. Longer values are truncated.
+</Note>
+
 To purge a specific URL across all pull zones, use the Purge URL endpoint in the [Core API](/api-reference/core).
 
 ## Rate limits

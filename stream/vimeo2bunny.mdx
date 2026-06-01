@@ -8,7 +8,7 @@ Migrate videos from Vimeo to [**bunny.net**](http://bunny.net) [**Stream**](http
   [If you don't have npx installed follow this installation guide for node.js / npm.](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 </Info>
 
-## Installation
+### Installation
 
 <Tabs>
   <Tab title="npx (Recommended)">
@@ -35,7 +35,7 @@ Migrate videos from Vimeo to [**bunny.net**](http://bunny.net) [**Stream**](http
   </Tab>
 </Tabs>
 
-## Quickstart
+### Quickstart
 
 <CodeGroup>
 
@@ -46,11 +46,11 @@ npx vimeo2bunny migrate
 
 </CodeGroup>
 
-## Setup
+### Setup
 
 You need API credentials from both Vimeo and bunny.net.
 
-### 1. Get your Vimeo Access Token
+#### 1. Get your Vimeo Access Token
 
 1. Go to the [Vimeo Developer Portal](https://developer.vimeo.com) and log in.
 2. Click **Create an app** (or select an existing one).
@@ -74,7 +74,7 @@ You need API credentials from both Vimeo and bunny.net.
   The **Video Files** scope requires a paid Vimeo plan (Standard or above). Without it, the tool cannot access download links.
 </Warning>
 
-### 2. Get your bunny.net Stream Credentials
+#### 2. Get your bunny.net Stream Credentials
 
 1. Log in to [bunny.net](https://bunny.net).
 2. Open your **Stream library** → **API** section.
@@ -84,7 +84,7 @@ You need API credentials from both Vimeo and bunny.net.
   This uses the library-specific API key, not the account-level key.
 </Info>
 
-### 3. Configure the CLI
+#### 3. Configure the CLI
 
 ```bash
 vimeo2bunny config
@@ -100,9 +100,9 @@ export BUNNY_LIBRARY_ID=your_library_id
 export BUNNY_LIBRARY_API_KEY=your_api_key
 ```
 
-## Usage
+### Usage
 
-### List your Vimeo content
+#### List your Vimeo content
 
 ```bash
 vimeo2bunny list             # everything
@@ -110,7 +110,7 @@ vimeo2bunny list --folders   # folders only
 vimeo2bunny list --videos    # videos only
 ```
 
-### Migrate videos
+#### Migrate videos
 
 ```bash
 # Preview what will happen (no changes made)
@@ -129,13 +129,13 @@ vimeo2bunny migrate --concurrency 5
 vimeo2bunny migrate --resume
 ```
 
-### Check migration status
+#### Check migration status
 
 ```bash
 vimeo2bunny status
 ```
 
-## How It Works
+### How It Works
 
 <Steps>
   <Step title="Discover">
@@ -155,7 +155,7 @@ vimeo2bunny status
   </Step>
 </Steps>
 
-## What Gets Migrated
+### What Gets Migrated
 
 | Vimeo | bunny.net | Notes |
 | --- | --- | --- |
@@ -164,7 +164,7 @@ vimeo2bunny status
 | `tags` | `metaTags[keywords]` | Comma-separated |
 | `Folder` | `Collection` | Folder → Collection |
 
-## Troubleshooting
+### Troubleshooting
 
 <AccordionGroup>
   <Accordion title='"No download link available"'>
@@ -180,7 +180,7 @@ vimeo2bunny status
   </Accordion>
 </AccordionGroup>
 
-### Your Responsibilities
+#### Your Responsibilities
 
 By using this tool, you acknowledge and agree that:
 
@@ -192,6 +192,6 @@ bunny.net provides this tool for convenience only and makes no representations r
 
 If you are unsure whether your use case complies with Vimeo's terms, consult Vimeo's documentation or seek legal advice before proceeding.
 
-## Legal Notice
+### Legal Notice
 
 This tool is provided as-is under the [MIT License](https://opensource.org/licenses/MIT). It is not affiliated with, endorsed by, or sponsored by Vimeo, Inc. "Vimeo" is a registered trademark of Vimeo, Inc. Use of the name is purely descriptive.
