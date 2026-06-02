@@ -1,0 +1,72 @@
+---
+title: Platform Domains
+description: The domains and base URLs used across bunny.net for deployed apps, CDN delivery, and platform APIs.
+---
+
+Use this page to look up the domains bunny.net assigns to your resources and the base URLs of each public API.
+
+## Application URLs
+
+When you deploy code on bunny.net, you get a unique URL on the `bunny.run` domain so the app is reachable straight away.
+
+### Magic Containers
+
+Adding a CDN endpoint to a Magic Containers app generates a URL on `bunny.run`. You can find it on the **Endpoints** tab.
+
+```bash
+mc-<hash>.bunny.run
+```
+
+To learn more, see [Endpoints](/magic-containers/endpoints).
+
+### Edge Scripting
+
+Publishing a script generates a URL on `bunny.run`, backed by an automatically provisioned pull zone. The URL appears on the script overview after the first publish.
+
+```bash
+<script-name>-<hash>.bunny.run
+```
+
+The URL is set when the script is created and does not change if you later rename the script.
+
+To learn more, see [Deployments](/scripting/deployments).
+
+## CDN URLs
+
+Each pull zone you create gets a hostname on the `b-cdn.net` domain.
+
+```bash
+<pull-zone-name>.b-cdn.net
+```
+
+To use your own hostname instead, see [Custom Hostnames](/cdn/custom-hostname).
+
+## Database URLs
+
+Each database you create gets a connection URL on the `lite.bunnydb.net` domain.
+
+```bash
+libsql://<id>-<database-name>.lite.bunnydb.net
+```
+
+To learn more, see [Connecting to a database](/database/connect/authorization).
+
+## Platform APIs
+
+The public APIs are served from the following base URLs. For request and response details, see the [API Reference](/api-reference).
+
+| API              | Base URL                                |
+| ---------------- | --------------------------------------- |
+| Core Platform    | `https://api.bunny.net`                 |
+| Magic Containers | `https://api.bunny.net/mc`              |
+| Edge Scripting   | `https://api.bunny.net/compute`         |
+| Shield           | `https://api.bunny.net/shield`          |
+| Storage          | `https://{region}.storage.bunnycdn.com` |
+| Stream           | `https://video.bunnycdn.com`            |
+| CDN Logging      | `https://logging.bunnycdn.com`          |
+
+OpenAPI specifications are available on the [OpenAPI Specifications](/openapi) page.
+
+## Dashboard
+
+The bunny.net dashboard is at `dash.bunny.net`.

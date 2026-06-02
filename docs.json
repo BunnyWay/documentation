@@ -106,7 +106,7 @@
               },
               {
                 "group": "Product",
-                "pages": ["product-release-stages"]
+                "pages": ["product-release-stages", "domains"]
               }
             ]
           }
