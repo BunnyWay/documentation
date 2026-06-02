@@ -13,7 +13,7 @@ When you deploy code on bunny.net, you get a unique URL on the `bunny.run` domai
 
 Adding a CDN endpoint to a Magic Containers app generates a URL on `bunny.run`. You can find it on the **Endpoints** tab.
 
-```bash url-structure
+```bash
 mc-<hash>.bunny.run
 ```
 
@@ -23,7 +23,7 @@ To learn more, see [Endpoints](/magic-containers/endpoints).
 
 Publishing a script generates a URL on `bunny.run`, backed by an automatically provisioned pull zone. The URL appears on the script overview after the first publish.
 
-```bash url-structure
+```bash
 <script-name>-<hash>.bunny.run
 ```
 
@@ -35,11 +35,21 @@ To learn more, see [Deployments](/scripting/deployments).
 
 Each pull zone you create gets a hostname on the `b-cdn.net` domain.
 
-```bash url-structure
+```bash
 <pull-zone-name>.b-cdn.net
 ```
 
 To use your own hostname instead, see [Custom Hostnames](/cdn/custom-hostname).
+
+## Database URLs
+
+Each database you create gets a connection URL on the `lite.bunnydb.net` domain.
+
+```bash
+libsql://<id>-<database-name>.lite.bunnydb.net
+```
+
+To learn more, see [Connecting to a database](/database/connect/authorization).
 
 ## Platform APIs
 
