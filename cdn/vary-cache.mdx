@@ -98,6 +98,29 @@ Varies the cache based on specific cookie values. When enabled, enter the cookie
   header not listed here.
 </Note>
 
+### Request Headers
+
+Varies the cache based on the value of one or more request headers. When enabled, enter the header names you want to include as part of the cache key.
+
+This allows your origin to return different content for the same URL while still benefiting from CDN caching.
+
+Common use cases include:
+
+- Localized content using Accept-Language
+- Feature flags and staged rollouts using custom headers
+- API responses that vary by client capabilities
+- Device-specific experiences using custom application headers
+
+For example, varying by `Accept-Language` creates separate cache entries for requests such as:
+
+```
+Accept-Language: en-US
+Accept-Language: fr-FR
+Accept-Language: de-DE
+```
+
+Each unique header value combination creates a separate cache entry.
+
 ## Cache key impact
 
 Each vary setting you enable multiplies the number of cached versions per URL:
@@ -110,6 +133,7 @@ Each vary setting you enable multiplies the number of cached versions per URL:
 | Country Code   | Up to 195+ (one per country)     |
 | Query String   | Unlimited (one per unique query) |
 | Cookie         | Varies by cookie values          |
+| Request Headers| Varies by header values          |
 
 Enabling multiple settings compounds this effect. For example, WebP + Mobile + Country Code could create `2 × 2 × 195 = 780` cached versions of a single URL.
 
