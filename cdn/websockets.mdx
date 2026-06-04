@@ -20,19 +20,27 @@ You can enable WebSockets directly in the dashboard:
 
 ![](/images/docs/b56e5572907a8ff3d515a117590bfddc143fc244de41e30ac7057809d6954309-image.png)
 
-# Pricing & Limits
+# Connection Limits
 
-WebSockets are included with bunny.net and scale with your needs. You get 500 concurrent connections free on every zone. Higher limits are available via simple monthly upgrades:
+Each Pull Zone has a maximum number of simultaneous WebSocket connections it will accept. New zones default to 500 concurrent connections, and you can raise or lower this limit at any time from the dashboard or API.
 
-| Concurrent Connections | Monthly Price |
-| ---------------------- | ------------- |
-| 500 (Free)             | $0            |
-| 1,000                  | $10           |
-| 2,500                  | $25           |
-| 5,000                  | $40           |
-| 10,000                 | $70           |
-| 25,000                 | $150          |
-
-You can upgrade and downgrade your maximum allowed concurrent connections at any time, we will bill in second increments. We charge WebSocket bandwidth at the same rate as CDN bandwidth, and this will be included in your monthly CDN bill.
+- The minimum limit is 100 connections.
+- You can self-serve up to 25,000 concurrent connections.
+- Limits are rounded up to the nearest 100.
 
 Need more than 25,000 concurrent connections? Our team can help tailor a plan to fit your needs. Simply contact sales via support to discuss higher limits.
+
+# Pricing
+
+WebSockets are billed pay-as-you-go based on how long connections stay open. There is no monthly subscription and no separate plan to choose. Your maximum-connection limit only caps how many simultaneous connections a zone will accept; it does not affect how you are billed.
+
+| Metric          | Price                                     |
+| --------------- | ----------------------------------------- |
+| Connection time | $0.235 per million connection-minutes     |
+| Bandwidth       | Same rate as standard CDN bandwidth       |
+
+Usage is metered on the total time your connections remain open. One connection-minute is a single open connection for one minute, so 1,000 connections held open for one minute equals 1,000 connection-minutes. Charges are calculated continuously and added to your account throughout the month.
+
+For example, holding 1,000 concurrent connections open continuously for a 30-day month is roughly 43.2 million connection-minutes, or about $10.15 for the month.
+
+WebSocket bandwidth is charged at the same rate as regular CDN bandwidth and is included in your monthly CDN bill.
