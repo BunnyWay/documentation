@@ -55,6 +55,11 @@ Bunny Optimizer can convert images to these output formats:
   or height.
 </Note>
 
+<Note>
+  Bunny optimizer limits AVIF output to a maximum area of 4 megapixels. Because AVIF encoding time grows with image area, 
+  the Optimizer favours lower latency and automatically falls back to another format (WebP, JPEG, or GIF) for larger images.
+</Note>
+
 ## Usage
 
 ### Format conversion
