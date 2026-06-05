@@ -803,27 +803,6 @@
         ]
       },
       {
-        "product": "AI Image Generation",
-        "icon": "wand-sparkles",
-        "description": "Generate unique images on the fly using AI",
-        "tabs": [
-          {
-            "tab": "Documentation",
-            "groups": [
-              {
-                "group": "Documentation",
-                "pages": [
-                  "ai-image-generation/index",
-                  "ai-image-generation/quickstart",
-                  "ai-image-generation/reference",
-                  "ai-image-generation/pricing"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
         "product": "Database",
         "icon": "database",
         "description": "Serverless SQLite over HTTP",
