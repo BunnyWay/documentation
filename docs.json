@@ -965,6 +965,11 @@
                   "cli/commands/db",
                   "cli/commands/scripts",
                   {
+                    "group": "DNS",
+                    "hidden": true,
+                    "pages": ["cli/commands/dns"]
+                  },
+                  {
                     "group": "Registries",
                     "hidden": true,
                     "pages": ["cli/commands/registries"]

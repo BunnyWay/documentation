@@ -20,6 +20,7 @@ The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from
 
 - **Single binary**: install via `curl` or `npm`, authenticate once, run anywhere
 - **Databases**: create, link, shell into, and inspect Bunny Databases from the command line
+- **Edge Scripts**: scaffold, deploy, and manage Edge Scripts, their deployments, environment variables, and custom domains
 - **Raw API access**: `bunny api` lets you hit any bunny.net endpoint with auth handled automatically
 - **Profiles**: switch between multiple accounts (personal, staging, production) with `--profile`
 - **Scriptable output**: `--output json` / `csv` / `markdown` for pipelines, CI, and LLMs
@@ -47,6 +48,10 @@ The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from
   <Card title="bunny db" icon="database" href="/cli/commands/db">
     Create and manage Bunny Databases, open an interactive SQL shell, and
     generate auth tokens
+  </Card>
+  <Card title="bunny scripts" icon="code" href="/cli/commands/scripts">
+    Scaffold, deploy, and manage Edge Scripts, deployments, env vars, and custom
+    domains
   </Card>
   <Card title="bunny api" icon="square-terminal" href="/cli/commands/api">
     Make raw authenticated requests to any bunny.net API endpoint
