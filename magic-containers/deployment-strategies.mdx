@@ -3,19 +3,20 @@ title: "Blue/Green & A/B Deployments"
 description: "Run multiple versions of your app at the same time and control how traffic is routed between them."
 ---
 
-Magic Containers lets you run more than one version of an app simultaneously. Two routing patterns build on this:
+Magic Containers lets you run more than one version of an app simultaneously. Three routing patterns build on this:
 
 - **Blue/green**: switch _all_ traffic from the current version to a new one in a single, deterministic cutover.
 - **A/B**: split traffic between two versions by percentage, keeping each user pinned to the same version.
+- **Canary**: route a targeted slice, such as a single country, to the new version first, then widen as it proves healthy.
 
-Pick blue/green when you want a clean release with an instant rollback path. Pick A/B when you want to expose a new version to a fraction of real traffic. For everything else, a standard [rolling update](/magic-containers/rolling-updates) is enough.
+Pick blue/green when you want a clean release with an instant rollback path. Pick A/B when you want to expose a new version to a fraction of real traffic. Pick canary when you want to validate a new version on a targeted slice before rolling it out everywhere. For everything else, a standard [rolling update](/magic-containers/rolling-updates) is enough.
 
-|               | Blue/Green                                    | A/B                                     |
-| ------------- | --------------------------------------------- | --------------------------------------- |
-| Traffic       | 100% to one version at a time                 | Split by percentage (e.g. 90/10)        |
-| Goal          | Safe release + instant rollback               | Test a version on a slice of users      |
-| Routing       | Pull zone origin points at the active version | Edge Script picks a version per request |
-| Configured in | Terraform / dashboard                         | Edge Scripting (+ two apps)             |
+|               | Blue/Green                                    | A/B                                     | Canary                                  |
+| ------------- | --------------------------------------------- | --------------------------------------- | --------------------------------------- |
+| Traffic       | 100% to one version at a time                 | Split by percentage (e.g. 90/10)        | Ramps from a targeted slice to 100%     |
+| Goal          | Safe release + instant rollback               | Test a version on a slice of users      | Validate a version on a targeted slice  |
+| Routing       | Pull zone origin points at the active version | Edge Script picks a version per request | Edge Script picks a version per request |
+| Configured in | Terraform / dashboard                         | Edge Scripting (+ two apps)             | Edge Scripting (+ two apps)             |
 
 ## Why not just use rolling updates?
 
@@ -114,7 +115,7 @@ The approach:
 2. Add a [standalone Edge Script](/scripting/standalone/overview) that derives a stable key per visitor (client IP works well for stickiness).
 3. Hash the key into a bucket and route to app A or app B based on your target percentage.
 
-```typescript ab-router.ts theme={null}
+```typescript
 import * as BunnySDK from "@bunny.net/edgescript-sdk";
 
 const VARIANTS = {
@@ -146,10 +147,52 @@ BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
 });
 ```
 
-Because the same IP always hashes to the same bucket, a given visitor consistently sees the same version. Adjust `B_PERCENTAGE` to change the split, and update the variant URLs to your two apps' endpoints.
+Because the same IP always hashes to the same bucket, a given visitor consistently sees the same version. Adjust `B_PERCENTAGE` to change the split, and update the variant URLs to your two apps' endpoints. For a standalone reference, see [Weighted traffic splitting](/scripting/standalone/examples/weighted-routing).
 
 <Info>
   Use a key that's stable for the session you want to pin. Client IP is the
   simplest. To weight by something else (a cookie, a header, a user ID), hash
   that value instead.
 </Info>
+
+## Canary deployment
+
+A canary release sends the new version to a narrow, targeted audience first, lets you watch it under real traffic, then widens the audience as your confidence grows. Country makes a natural targeting key: ship to one or two markets, confirm the metrics look healthy, then add more.
+
+This uses the same two-app, [standalone Edge Script](/scripting/standalone/overview) setup as A/B, routing on the visitor's country instead of a percentage. bunny.net adds the [`CDN-RequestCountryCode`](/cdn/vary-cache) header to every request, so the script can read it directly.
+
+The approach:
+
+1. Deploy **two Magic Containers apps**: the stable version and the canary version.
+2. List the countries that should receive the canary.
+3. Route those countries to the canary app and everything else to stable.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+const STABLE = "https://app-stable.bunny.run";
+const CANARY = "https://app-canary.bunny.run";
+
+// Countries that receive the canary version first
+const CANARY_COUNTRIES = new Set(["NZ", "FI"]);
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const country = request.headers.get("CDN-RequestCountryCode") ?? "";
+  const variant = CANARY_COUNTRIES.has(country) ? CANARY : STABLE;
+
+  const target = new URL(request.url);
+  const origin = new URL(variant);
+  target.protocol = origin.protocol;
+  target.host = origin.host;
+
+  return fetch(new Request(target, request));
+});
+```
+
+To widen the rollout, add countries to `CANARY_COUNTRIES` and redeploy the script. To roll back, empty the set so all traffic returns to the stable app. For a standalone reference, see [Route by country](/scripting/standalone/examples/geo-routing).
+
+<Tip>
+  Combine this with the A/B bucket to ramp inside a country. Route a country to
+  the canary, then send a growing percentage of its visitors to the new version
+  as you gain confidence.
+</Tip>

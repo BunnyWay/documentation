@@ -414,7 +414,9 @@
                           "scripting/standalone/examples/return-json",
                           "scripting/standalone/examples/return-html",
                           "scripting/standalone/examples/send-email",
-                          "scripting/standalone/examples/redirect-domain"
+                          "scripting/standalone/examples/redirect-domain",
+                          "scripting/standalone/examples/weighted-routing",
+                          "scripting/standalone/examples/geo-routing"
                         ]
                       }
                     ]
