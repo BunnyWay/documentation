@@ -1,0 +1,155 @@
+---
+title: "Blue/Green & A/B Deployments"
+description: "Run multiple versions of your app at the same time and control how traffic is routed between them."
+---
+
+Magic Containers lets you run more than one version of an app simultaneously. Two routing patterns build on this:
+
+- **Blue/green**: switch _all_ traffic from the current version to a new one in a single, deterministic cutover.
+- **A/B**: split traffic between two versions by percentage, keeping each user pinned to the same version.
+
+Pick blue/green when you want a clean release with an instant rollback path. Pick A/B when you want to expose a new version to a fraction of real traffic. For everything else, a standard [rolling update](/magic-containers/rolling-updates) is enough.
+
+|               | Blue/Green                                    | A/B                                     |
+| ------------- | --------------------------------------------- | --------------------------------------- |
+| Traffic       | 100% to one version at a time                 | Split by percentage (e.g. 90/10)        |
+| Goal          | Safe release + instant rollback               | Test a version on a slice of users      |
+| Routing       | Pull zone origin points at the active version | Edge Script picks a version per request |
+| Configured in | Terraform / dashboard                         | Edge Scripting (+ two apps)             |
+
+## Why not just use rolling updates?
+
+A [rolling update](/magic-containers/rolling-updates) gradually replaces instances of a single app with the new image. During the rollout, both the old and new versions serve traffic at the same time, and across many regions a partial or stalled rollout can leave versions co-existing longer than you'd like.
+
+Blue/green sidesteps this by keeping the new version completely separate until you flip every request to it at once. There's no in-between state, and rolling back is just pointing traffic at the previous version again.
+
+<Info>
+  Rolling updates are the right default for most apps. Reach for blue/green when
+  a release must be atomic, such as a schema change where both versions need to
+  serve the same traffic safely.
+</Info>
+
+## Blue/green deployment
+
+The idea: deploy the new version as a **separate container app** while the current version keeps serving, then switch a pull zone's origin from the old endpoint to the new one.
+
+<Steps>
+  <Step title="Deploy the new version as a separate app">
+    Create a second Magic Containers app (the "green" version) with the new image. Leave the current "blue" app running and serving production traffic.
+  </Step>
+
+<Step title="Point a pull zone at the active version">
+  Use a pull zone with a `ComputeContainer` origin that targets the currently
+  active app's container and endpoint.
+</Step>
+
+<Step title="Cut over">
+  When the new version is ready, switch the origin to the green app's container
+  and endpoint, then apply. All traffic moves at once.
+</Step>
+
+  <Step title="Roll back if needed">
+    To revert, point the origin back at the blue app. Because it's still running, rollback is immediate.
+  </Step>
+</Steps>
+
+### Terraform example
+
+This pull zone routes to one container version at a time. To cut over, comment out the active block, uncomment the other, and apply:
+
+```hcl main.tf theme={null}
+resource "bunnynet_dns_zone" "app" {
+  domain = "example.net"
+}
+
+resource "bunnynet_dns_record" "app" {
+  zone  = bunnynet_dns_zone.app.id
+  name  = "*.app"
+  type  = "CNAME"
+  value = "example.b-cdn.net"
+}
+
+resource "bunnynet_pullzone" "prod" {
+  name = "my-app-prod"
+
+  origin {
+    type = "ComputeContainer"
+
+    # Blue (current version): inactive
+    # container_app_id      = "BLUE_APP_ID"
+    # container_endpoint_id = "BLUE_APP_ID-http"
+
+    # Green (new version): active
+    container_app_id      = "GREEN_APP_ID"
+    container_endpoint_id = "GREEN_APP_ID-http"
+  }
+}
+
+resource "bunnynet_pullzone_hostname" "prod" {
+  pullzone    = bunnynet_pullzone.prod.id
+  name        = "*.app.example.net"
+  tls_enabled = true
+  force_ssl   = false
+}
+```
+
+<Tip>
+  Replace `BLUE_APP_ID` and `GREEN_APP_ID` with your container app IDs. The
+  cutover is a one-line change to which origin block is active.
+</Tip>
+
+<Info>
+  For **stateful** workloads such as databases, both versions read and write the
+  same data, so the two versions must be compatible with a shared schema. The
+  version-selection logic typically lives in your application or database layer.
+</Info>
+
+## A/B deployment
+
+A/B routing sends a percentage of traffic to each version while keeping individual users pinned to one version (stickiness). [Edge Scripting](/scripting) handles the weighted split, running in front of two separate apps and choosing a version per request.
+
+The approach:
+
+1. Deploy **two Magic Containers apps**: version A and version B.
+2. Add a [standalone Edge Script](/scripting/standalone/overview) that derives a stable key per visitor (client IP works well for stickiness).
+3. Hash the key into a bucket and route to app A or app B based on your target percentage.
+
+```typescript ab-router.ts theme={null}
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+const VARIANTS = {
+  a: "https://app-a.bunny.run",
+  b: "https://app-b.bunny.run",
+};
+
+const B_PERCENTAGE = 10; // send 10% of visitors to version B
+
+// Polynomial string hash (Java String.hashCode style), mapped into a 0-99 bucket
+function bucket(key: string): "a" | "b" {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) {
+    h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  }
+  return h % 100 < B_PERCENTAGE ? "b" : "a";
+}
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const ip = request.headers.get("x-forwarded-for") ?? "0.0.0.0";
+  const variant = bucket(ip);
+
+  const target = new URL(request.url);
+  const origin = new URL(VARIANTS[variant]);
+  target.protocol = origin.protocol;
+  target.host = origin.host;
+
+  return fetch(new Request(target, request));
+});
+```
+
+Because the same IP always hashes to the same bucket, a given visitor consistently sees the same version. Adjust `B_PERCENTAGE` to change the split, and update the variant URLs to your two apps' endpoints.
+
+<Info>
+  Use a key that's stable for the session you want to pin. Client IP is the
+  simplest. To weight by something else (a cookie, a header, a user ID), hash
+  that value instead.
+</Info>
