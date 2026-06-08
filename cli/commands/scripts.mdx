@@ -1,10 +1,12 @@
 ---
 title: bunny scripts
 sidebarTitle: scripts
-description: "Scaffold, deploy, and link Edge Scripts from the command line."
+description: "Scaffold, deploy, and manage Edge Scripts from the command line."
 ---
 
-`bunny scripts` provides a full workflow for [Edge Scripting](/scripting): initialize a project from a template, deploy built code, and link an existing script to a local project.
+`bunny scripts` provides a full workflow for [Edge Scripting](/scripting): scaffold a project from a template, create and deploy scripts, manage deployments, environment variables, and custom domains, and link an existing script to a local project.
+
+Most subcommands default to the script linked in `.bunny/script.json`. Pass an ID (or `--id <script-id>`) to target another script.
 
 ## `bunny scripts init`
 
@@ -14,26 +16,60 @@ Create a new Edge Script project from a template.
 # Interactive wizard
 bunny scripts init
 
-# Non-interactive with CLI deployment
-bunny scripts init --name my-script --type standalone --template Empty --deploy-method cli --deploy
+# Non-interactive, no GitHub Actions workflow
+bunny scripts init --name my-script --type standalone --template Empty --no-github-actions --deploy
 
-# Non-interactive with GitHub Actions
-bunny scripts init --name my-script --type standalone --template Empty --deploy-method github --deploy
+# Non-interactive, keep the GitHub Actions workflow
+bunny scripts init --name my-script --type standalone --template Empty --github-actions --deploy
+
+# Use a custom template repo (GitHub owner/repo shorthand)
+bunny scripts init --repo owner/my-template
+
+# Use a custom template repo (full git URL)
+bunny scripts init --template-repo https://github.com/owner/my-template
 ```
 
-| Flag              | Description                                      |
-| ----------------- | ------------------------------------------------ |
-| `--name`          | Project directory name                           |
-| `--type`          | Script type: `standalone` or `middleware`        |
-| `--template`      | Template name                                    |
-| `--deploy-method` | Deployment method: `github` or `cli`             |
-| `--deploy`        | Create script on bunny.net after scaffolding     |
-| `--skip-git`      | Skip git initialization (CLI deploy method only) |
-| `--skip-install`  | Skip dependency installation                     |
+| Flag                        | Description                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------------ |
+| `--name`                    | Project directory name                                                               |
+| `--type`                    | Script type: `standalone` or `middleware`                                            |
+| `--template`                | Template name                                                                        |
+| `--template-repo`, `--repo` | Git repository URL or GitHub `owner/repo` shorthand to use as template               |
+| `--github-actions`          | Keep the template's GitHub Actions workflow (use `--no-github-actions` to remove it) |
+| `--deploy`                  | Create script on bunny.net after scaffolding                                         |
+| `--skip-git`                | Skip git initialization                                                              |
+| `--skip-install`            | Skip dependency installation                                                         |
 
-When choosing **GitHub Actions**, git is initialized automatically, GitHub-specific workflow files are kept, and after creating the script you'll be shown the `SCRIPT_ID` to add as a GitHub repo secret.
+When `--repo` / `--template-repo` is given without `--type`, the script type defaults to `standalone`.
 
-When choosing **CLI**, the `.github/` and `.changeset/` directories are removed from the template and git initialization is skipped.
+With `--github-actions`, git is initialized automatically, the template's `.github/` workflow is kept, and after creating the script you'll be shown the `SCRIPT_ID` to add as a GitHub repo secret. With `--no-github-actions`, the `.github/` directory is removed and git init is prompted (or skipped via `--skip-git`).
+
+<Note>
+  The `.changeset/` directory is always removed from the template. Bunny scripts
+  don't use it.
+</Note>
+
+## `bunny scripts create`
+
+Create a new Edge Script on bunny.net without scaffolding a project. Use this when you have an existing project, for example after running `bunny scripts init` without `--deploy`, and need a remote script before running `bunny scripts deploy`.
+
+```bash
+# Create using current directory name + link .bunny/script.json
+bunny scripts create
+
+# Explicit name and type
+bunny scripts create my-script --type middleware
+
+# Skip pull zone creation and directory linking
+bunny scripts create my-script --no-pull-zone --no-link
+```
+
+| Flag               | Description                                                                              |
+| ------------------ | ---------------------------------------------------------------------------------------- |
+| `--type`           | Script type: `standalone` or `middleware` (defaults to manifest, prompts if interactive) |
+| `--pull-zone`      | Create a linked pull zone (default: true). Use `--no-pull-zone` to skip.                 |
+| `--pull-zone-name` | Name for the linked pull zone                                                            |
+| `--link`           | Link this directory to the new script (default: true). Use `--no-link` to skip.          |
 
 ## `bunny scripts deploy`
 
@@ -54,10 +90,12 @@ bunny scripts deploy dist/index.js 12345
 | ---------------- | ------------------------------ |
 | `--skip-publish` | Upload code without publishing |
 
+After publishing, the live URL and any custom domains are printed.
+
 <Note>
   `bunny scripts deploy` works regardless of how the script was created or
-  whether GitHub Actions is configured. The last deployment always wins,
-  whether triggered by a GitHub Action or a manual CLI deploy.
+  whether GitHub Actions is configured. The last deployment always wins, whether
+  triggered by a GitHub Action or a manual CLI deploy.
 </Note>
 
 ## `bunny scripts link`
@@ -88,9 +126,189 @@ bunny scripts list --output json
 
 ## `bunny scripts show`
 
-Show details for an Edge Script. Uses the linked script from `.bunny/script.json` if no ID is provided.
+Show details for an Edge Script. Uses the linked script from `.bunny/script.json` if no ID is provided. Output includes the script's hostnames (system and custom) with their SSL status.
 
 ```bash
 bunny scripts show <script-id>
 bunny scripts show
+```
+
+## `bunny scripts stats`
+
+Show usage statistics for an Edge Script: request, CPU, and cost totals over the period, plus a per-bucket requests-served bar chart in text mode (buckets are labelled with friendly UTC dates, e.g. `May 19, 2026`, or date + time with `--hourly`). Defaults to the last 30 days.
+
+When no ID is given, the command resolves the linked script from `.bunny/script.json`. If there is no link either, it prompts you to pick a script and offers to link the directory for next time. In `--output json` mode the picker is skipped and the command errors instead. Pass an ID or run `bunny scripts link` in CI.
+
+```bash
+bunny scripts stats
+bunny scripts stats 12345 --from 2026-05-01 --to 2026-05-31
+bunny scripts stats 12345 --hourly
+bunny scripts stats 12345 --output json
+
+# Pick interactively without being asked to link (e.g. one-off checks)
+bunny scripts stats --no-link
+```
+
+| Flag       | Description                                                                        |
+| ---------- | ---------------------------------------------------------------------------------- |
+| `--from`   | Start date (YYYY-MM-DD); defaults to 30 days ago                                   |
+| `--to`     | End date (YYYY-MM-DD); defaults to today                                           |
+| `--hourly` | Group statistics by hour instead of by day                                         |
+| `--link`   | After an interactive pick, link the directory (use `--no-link` to skip the prompt) |
+
+## `bunny scripts delete`
+
+Delete an Edge Script. Uses the linked script if no ID is provided. Requires double confirmation (or `--force` to skip).
+
+```bash
+bunny scripts delete <script-id>
+bunny scripts delete
+bunny scripts delete <script-id> --force
+```
+
+| Flag      | Description               |
+| --------- | ------------------------- |
+| `--force` | Skip confirmation prompts |
+
+## `bunny scripts deployments`
+
+Manage Edge Script deployments.
+
+### `bunny scripts deployments list`
+
+List deployments for an Edge Script. Uses the linked script if no ID is provided.
+
+```bash
+bunny scripts deployments list
+bunny scripts deployments ls
+bunny scripts deployments list <script-id>
+bunny scripts deployments list --output json
+```
+
+### `bunny scripts deployments publish`
+
+Publish (roll back to) a past deployment by its release ID, as shown in `deployments list`. `bunny scripts deploy` already uploads and publishes in one step; use this to re-publish an earlier release without touching the current code. Uses the linked script if no ID is provided.
+
+```bash
+bunny scripts deployments publish <release-id>
+bunny scripts deployments publish <release-id> <script-id>
+bunny scripts deployments publish <release-id> --force
+```
+
+| Flag      | Description                  |
+| --------- | ---------------------------- |
+| `--force` | Skip the confirmation prompt |
+
+## `bunny scripts env`
+
+Manage environment variables and secrets for an Edge Script. All subcommands default to the linked script; pass `--id <script-id>` to target another.
+
+### `bunny scripts env list`
+
+List environment variables and secrets.
+
+```bash
+bunny scripts env list
+bunny scripts env ls
+bunny scripts env list --output json
+```
+
+### `bunny scripts env set`
+
+Set an environment variable or secret. Runs interactively when arguments are omitted. The variable name is uppercased.
+
+```bash
+bunny scripts env set MY_VAR value
+bunny scripts env set            # interactive
+bunny scripts env set API_KEY secret-value --secret
+```
+
+| Flag       | Description                             |
+| ---------- | --------------------------------------- |
+| `--secret` | Store as an encrypted secret            |
+| `--id`     | Edge Script ID (uses linked if omitted) |
+
+### `bunny scripts env remove`
+
+Remove an environment variable or secret. Shows an interactive picker when no name is given; prompts for confirmation unless `--force`.
+
+```bash
+bunny scripts env remove MY_VAR
+bunny scripts env rm MY_VAR -f
+```
+
+### `bunny scripts env pull`
+
+Pull environment variables to a local `.env` file.
+
+```bash
+bunny scripts env pull
+bunny scripts env pull <script-id>
+bunny scripts env pull --force
+```
+
+| Flag      | Description                                    |
+| --------- | ---------------------------------------------- |
+| `--force` | Overwrite an existing `.env` without prompting |
+
+## `bunny scripts domains`
+
+Manage custom domains for an Edge Script. A script's domains live on its linked pull zone, so these commands operate on that pull zone. All subcommands default to the linked script; pass `--id <script-id>` to target another, and `--pull-zone <id>` when a script has more than one linked pull zone.
+
+### `bunny scripts domains add`
+
+Add a custom domain. SSL is **not** requested by default. A free certificate can only be issued once your DNS points at bunny.net, so the command prints the `CNAME` record to create and the follow-up command to enable HTTPS. Pass `--ssl` to issue a certificate immediately; HTTP is redirected to HTTPS by default (opt out with `--no-force-ssl`).
+
+```bash
+# Add a domain and get DNS instructions
+bunny scripts domains add shop.example.com
+
+# Add and request SSL now (DNS must already be pointed at bunny.net). HTTPS forced
+bunny scripts domains add shop.example.com --ssl
+
+# Add and request SSL without forcing HTTPS
+bunny scripts domains add shop.example.com --ssl --no-force-ssl
+```
+
+| Flag             | Description                                                             |
+| ---------------- | ----------------------------------------------------------------------- |
+| `--ssl`          | Issue a free SSL certificate now and force HTTPS (requires DNS pointed) |
+| `--no-force-ssl` | When issuing SSL, keep serving HTTP instead of redirecting to HTTPS     |
+| `--id`           | Edge Script ID (uses linked script if omitted)                          |
+| `--pull-zone`    | Pull zone ID (required if the script has multiple linked zones)         |
+
+### `bunny scripts domains ssl`
+
+Request a free SSL certificate for a custom domain. Run this after the domain's DNS points at bunny.net (see the `CNAME` printed by `domains add`). HTTP is redirected to HTTPS by default; pass `--no-force-ssl` to keep plain HTTP.
+
+```bash
+bunny scripts domains ssl shop.example.com
+bunny scripts domains ssl shop.example.com --no-force-ssl
+```
+
+### `bunny scripts domains list`
+
+List the domains on a script's pull zone, with SSL and Force SSL status.
+
+```bash
+bunny scripts domains list
+bunny scripts domains ls
+bunny scripts domains list --output json
+```
+
+### `bunny scripts domains remove`
+
+Remove a custom domain. System hostnames controlled by bunny.net cannot be removed.
+
+```bash
+bunny scripts domains remove shop.example.com
+bunny scripts domains remove shop.example.com --force
+```
+
+## `bunny scripts docs`
+
+Open the Edge Scripts documentation in your browser.
+
+```bash
+bunny scripts docs
 ```

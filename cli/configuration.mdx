@@ -71,6 +71,14 @@ Some `bunny db` commands also read from a `.env` file walked up from the current
 
 Both variables can be written automatically by `bunny db create --save-env` or `bunny db quickstart`.
 
+## Shell completion
+
+Generate a shell completion script with `bunny completion` and add the output to your shell profile to enable tab completion.
+
+```bash
+bunny completion >> ~/.zshrc
+```
+
 ## Resolving credentials
 
 When a command needs an API key, the CLI resolves it in this order:
