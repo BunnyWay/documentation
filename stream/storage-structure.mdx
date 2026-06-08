@@ -26,7 +26,7 @@ https://{pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8
 #### Custom thumbnail URL
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/{thumbnail_filename}.jpg
+https://{pull_zone_url}.b-cdn.net/{video_id}/{thumbnail_filename}
 ```
 
 #### Default thumbnail URLs
@@ -62,18 +62,25 @@ https://{pull_zone_url}.b-cdn.net/{video_id}/seek/{_0}.jpg
 ```
 
 <Info>
-  Player seek thumbnails are visible within the video player timeline. They are incrementally generated based on video length every 10 seconds. Examples: 
+  Player seek thumbnails are visible within the video player timeline. They are incrementally generated based on video length every 2 seconds, or every 1 second for short videos. Examples: 
+</Info>
 
+#### Player seek thumbnail generated URL examples 
+```bash
   https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/\_0.jpg
   https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/\_1.jpg
   https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/\_2.jpg
   https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/\_3.jpg
-</Info>
+```
 
-#### Preview animation URL (WebP)
+#### Preview animation URL (WebP & Gif)
 
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/preview.webp
+```
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/preview.gif
 ```
 
 #### Preview animation URL high quality (WebM & Mp4)
