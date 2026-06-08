@@ -1,5 +1,5 @@
 ---
-title: Storage Structure
+title: "Storage Structure"
 description: "All videos on Bunny Stream are processed and stored in a standardized location. The following page describes how and where videos are stored, allowing you to access them programmatically or within your own video player."
 ---
 
@@ -23,16 +23,62 @@ https://{pull_zone_url}.b-cdn.net/{video_id}/original
 https://{pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8
 ```
 
-#### Thumbnail URL
+#### Custom thumbnail URL
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/{thumbnail_file_name}
+https://{pull_zone_url}.b-cdn.net/{video_id}/{thumbnail_filename}
 ```
 
-#### Preview animation URL (WebP)
+#### Default thumbnail URLs
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail.jpg
+```
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_1.jpg
+```
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_2.jpg
+```
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_3.jpg
+```
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_4.jpg
+```
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_5.jpg
+```
+
+#### Player seek thumbnail URLs
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/seek/{_0}.jpg
+```
+#### Example:
+```bash
+  https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/_0.jpg
+  https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/_1.jpg
+  https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/_2.jpg
+  https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/_3.jpg
+```
+<Info>
+  Player seek thumbnails are visible within the video player timeline. They are incrementally generated based on video length every 2 seconds, or every 1 second for short videos.
+</Info>
+
+#### Preview animation URL (WebP & Gif)
 
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/preview.webp
+```
+
+```bash
+https://{pull_zone_url}.b-cdn.net/{video_id}/preview.gif
 ```
 
 #### Preview animation URL high quality (WebM & Mp4)
@@ -40,6 +86,7 @@ https://{pull_zone_url}.b-cdn.net/{video_id}/preview.webp
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/preview_hq.webm
 ```
+
 ```bash
 https://{pull_zone_url}.b-cdn.net/{video_id}/preview_hq.mp4
 ```
