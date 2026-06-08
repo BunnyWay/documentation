@@ -8,97 +8,110 @@ Each Bunny Stream video can be reached through several stable URL patterns, depe
 #### Direct play URL
 
 ```bash
-https://video.bunnycdn.com/play/{video_library_id}/{video_id}
+https://player.mediadelivery.net/play/{video_library_id}/{video_id}
+```
+
+#### Embed URL
+
+```bash
+https://player.mediadelivery.net/embed/{video_library_id}/{video_id}
 ```
 
 #### Original file (if enabled)
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/original
+https://{pull_zone}.b-cdn.net/{video_id}/original
 ```
 
 #### HLS playlist URL
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/playlist.m3u8
+https://{pull_zone}.b-cdn.net/{video_id}/playlist.m3u8
 ```
 
 #### Custom thumbnail URL
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/{thumbnail_filename}
+https://{pull_zone}.b-cdn.net/{video_id}/{thumbnail_filename}
 ```
 
 #### Default thumbnail URLs
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail.jpg
+https://{pull_zone}.b-cdn.net/{video_id}/thumbnail.jpg
 ```
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_1.jpg
+https://{pull_zone}.b-cdn.net/{video_id}/thumbnail_1.jpg
 ```
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_2.jpg
+https://{pull_zone}.b-cdn.net/{video_id}/thumbnail_2.jpg
 ```
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_3.jpg
+https://{pull_zone}.b-cdn.net/{video_id}/thumbnail_3.jpg
 ```
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_4.jpg
+https://{pull_zone}.b-cdn.net/{video_id}/thumbnail_4.jpg
 ```
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/thumbnail_5.jpg
+https://{pull_zone}.b-cdn.net/{video_id}/thumbnail_5.jpg
 ```
 
-#### Player seek thumbnail URLs
+#### Player seek thumbnail sprite URLs
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/seek/{_0}.jpg
+https://{pull_zone}.b-cdn.net/{video_id}/seek/{_0}.jpg
 ```
+
 #### Example:
+
 ```bash
-  https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/_0.jpg
-  https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/_1.jpg
-  https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/_2.jpg
-  https://{pull\_zone\_url}.b-cdn.net/{video\_id}/seek/_3.jpg
+  https://{pull_zone}.b-cdn.net/{video_id}/seek/_0.jpg
+  https://{pull_zone}.b-cdn.net/{video_id}/seek/_1.jpg
+  https://{pull_zone}.b-cdn.net/{video_id}/seek/_2.jpg
+  https://{pull_zone}.b-cdn.net/{video_id}/seek/_3.jpg
 ```
+
 <Info>
-  Player seek thumbnails are visible within the video player timeline. They are incrementally generated based on video length every 2 seconds, or every 1 second for short videos.
+  Player seek thumbnail sprites appear in the video player timeline, generated every 2s (or every 1s for videos under 10s in duration).
+
+  Each thumbnail sprite sheet is a 6×6 grid of up to 36 frames, 1800px wide with 300px-wide cells; cell height follows the video's aspect ratio (e.g. 168px for 16:9).
+
+  Files are numbered sequentially (\_0.jpg, \_1.jpg, etc.), each covering up to 36 frames (~72s of video).
 </Info>
 
 #### Preview animation URL (WebP & Gif)
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/preview.webp
+https://{pull_zone}.b-cdn.net/{video_id}/preview.webp
 ```
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/preview.gif
+https://{pull_zone}.b-cdn.net/{video_id}/preview.gif
 ```
 
 #### Preview animation URL high quality (WebM & Mp4)
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/preview_hq.webm
+https://{pull_zone}.b-cdn.net/{video_id}/preview_hq.webm
 ```
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/preview_hq.mp4
+https://{pull_zone}.b-cdn.net/{video_id}/preview_hq.mp4
 ```
 
 #### MP4 video URL
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/play_{resolution_height}p.mp4
+https://{pull_zone}.b-cdn.net/{video_id}/play_{resolution_height}p.mp4
 ```
 
 #### Subtitle file URL
 
 ```bash
-https://{pull_zone_url}.b-cdn.net/{video_id}/captions/{language_code}.vtt
+https://{pull_zone}.b-cdn.net/{video_id}/captions/{language_code}.vtt
 ```
