@@ -6,8 +6,14 @@ description: "Latest updates and improvements across bunny.net products."
 <Update label="2026-06-08" tags={["CLI", "(New)"]}>
   ## Edge Scripting support now in CLI
 
-The Bunny CLI now includes full Edge Scripts management (`bunny scripts`): create, deploy, delete scripts, manage deployments and rollbacks, environment variables and secrets, and custom domains with SSL. [Learn more](/cli)
+  The Bunny CLI now includes full Edge Scripts management (`bunny scripts`): create, deploy, delete scripts, manage deployments and rollbacks, environment variables and secrets, and custom domains with SSL. [Learn more](/cli)
 
+</Update>
+
+<Update label="2026-06-09" tags={["Storage", "(New)"]}>
+  ## Storage root directory deletion support
+
+  The Storage Edge API DELETE endpoint now supports deleting the root directory (`/`) of a storage zone. By default, root deletion is blocked as a safety guard. Pass `allowRootDelete=true` as a query parameter or request header to bypass this protection. [Learn more](/storage/http#deleting-the-root-directory)
 </Update>
 
 <Update label="2026-06-08" tags={["Optimizer", "(Improvement)"]}>
