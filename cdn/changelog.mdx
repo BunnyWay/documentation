@@ -3,6 +3,40 @@ title: Changelog
 description: Latest updates and improvements to the CDN.
 ---
 
+<Update label="2026-06-04" tags={["New"]}>
+  ## Vary Cache by Request Headers
+
+You can now vary cached content based on the value of one or more request headers, such as `Accept-Language`. Each unique header value combination creates a separate cache entry, enabling localized content, feature flags, and device-specific experiences without sacrificing CDN caching. [Learn more](/cdn/vary-cache)
+
+</Update>
+
+<Update label="2026-06-04" tags={["Improvement"]}>
+  ## WebSocket pay-as-you-go pricing
+
+WebSocket billing has moved to pay-as-you-go pricing based on connection-minutes, replacing the previous tiered monthly subscription model. Connection limits can now be configured from 100 to 25,000 concurrent connections per zone. [Learn more](/cdn/websockets)
+
+</Update>
+
+<Update label="2026-05-26" tags={["Improvement"]}>
+  ## CDN Logging API enhancements
+
+The CDN Logging API now supports exact request ID lookup and includes additional fields such as JA4 TLS client fingerprint, ASN, and ASN organization in the response. [Learn more](/cdn/logging/index)
+
+</Update>
+
+<Update label="2026-05-20" tags={["CDN","(New)"]}>
+  ## CDN Logging API v2
+
+  The CDN Logging API v2 now returns structured JSON with filtering by status, cache status, country, IP, edge location, URL, User-Agent, and Referer. [Learn more](/cdn/logging)
+</Update>
+
+<Update label="2026-05-07" tags={["Improvement"]}>
+  ## Per-request control for Request Coalescing
+
+You can now enable or disable Request Coalescing per request using Edge Rules, allowing more granular control over caching behavior. [Learn more](/cdn/request-coalescing)
+
+</Update>
+
 <Update label="2026-04-28" tags={["New"]}>
   ## Seamless Domain Migration
 

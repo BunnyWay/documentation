@@ -106,7 +106,7 @@
               },
               {
                 "group": "Product",
-                "pages": ["product-release-stages"]
+                "pages": ["product-release-stages", "domains"]
               }
             ]
           }
@@ -448,10 +448,10 @@
                 "pages": ["scripting/statistics", "scripting/logs"]
               },
               {
-                "group": "Runtime APIs",
+                "group": "APIs",
                 "pages": [
-                  "scripting/runtime/html-rewriter",
-                  "scripting/node/fs/node-fs",
+                  "scripting/html-rewriter",
+                  "scripting/node-fs",
                   "scripting/websockets"
                 ]
               },
@@ -495,7 +495,7 @@
                   },
                   "stream/premium-encoding",
                   "stream/transcribing",
-                  "stream/smart-chapters",
+                  "stream/smart-generate",
                   {
                     "group": "MediaCage DRM",
                     "pages": [
@@ -604,7 +604,8 @@
                 "pages": [
                   "storage/index",
                   "storage/quickstart",
-                  "storage/pricing"
+                  "storage/pricing",
+                  "storage/changelog"
                 ]
               },
               {
@@ -665,7 +666,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["shield/index", "shield/quickstart"]
+                "pages": ["shield/index", "shield/quickstart", "shield/pricing"]
               },
               {
                 "group": "Protection Features",
@@ -698,6 +699,7 @@
                   "shield/verified-bots",
                   "shield/metrics",
                   "shield/cookies",
+                  "shield/troubleshooting",
                   "shield/api-reference"
                 ]
               }
@@ -746,12 +748,10 @@
                   "optimizer/burrow-smart-routing",
                   "optimizer/html-prerender"
                 ]
-              },{
+              },
+              {
                 "group": "Reference",
-                "pages": [
-                  "optimizer/limits",
-                  "optimizer/troubleshooting"
-                ]
+                "pages": ["optimizer/limits", "optimizer/troubleshooting"]
               }
             ]
           }
@@ -787,26 +787,15 @@
                   "dns/scriptable/query-response-object-types",
                   "dns/scriptable/helper-objects"
                 ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "product": "AI Image Generation",
-        "icon": "wand-sparkles",
-        "description": "Generate unique images on the fly using AI",
-        "tabs": [
-          {
-            "tab": "Documentation",
-            "groups": [
+              },
               {
-                "group": "Documentation",
+                "group": "Troubleshooting",
                 "pages": [
-                  "ai-image-generation/index",
-                  "ai-image-generation/quickstart",
-                  "ai-image-generation/reference",
-                  "ai-image-generation/pricing"
+                  "dns/troubleshooting/domain-unavailable",
+                  "dns/troubleshooting/aaaa-queries-in-logs",
+                  "dns/troubleshooting/cdn-acceleration-ssl",
+                  "dns/troubleshooting/cdn-acceleration-not-activating",
+                  "dns/troubleshooting/rdr-record-ssl"
                 ]
               }
             ]
@@ -907,7 +896,10 @@
             "groups": [
               {
                 "group": "Terraform",
-                "pages": ["integrations/terraform/index", "integrations/terraform/quickstart"]
+                "pages": [
+                  "integrations/terraform/index",
+                  "integrations/terraform/quickstart"
+                ]
               },
               {
                 "group": "Reference",
@@ -941,6 +933,48 @@
                 "pages": [
                   "integrations/cpanel/configuration",
                   "integrations/cpanel/custom-nameservers"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "CLI",
+        "icon": "terminal",
+        "description": "Manage bunny.net from your terminal",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Documentation",
+                "pages": [
+                  "cli/index",
+                  "cli/quickstart",
+                  "cli/installation",
+                  "cli/configuration",
+                  "cli/changelog"
+                ]
+              },
+              {
+                "group": "Commands",
+                "pages": [
+                  "cli/commands/auth",
+                  "cli/commands/config",
+                  "cli/commands/db",
+                  "cli/commands/scripts",
+                  {
+                    "group": "DNS",
+                    "hidden": true,
+                    "pages": ["cli/commands/dns"]
+                  },
+                  {
+                    "group": "Registries",
+                    "hidden": true,
+                    "pages": ["cli/commands/registries"]
+                  },
+                  "cli/commands/api"
                 ]
               }
             ]
@@ -982,6 +1016,14 @@
                   "directory": "api-reference/origin-errors"
                 },
                 "pages": ["api-reference/origin-errors/index"]
+              },
+              {
+                "group": "CDN Logging API",
+                "openapi": {
+                  "source": "https://logging.bunnycdn.com/docs/all/swagger.json",
+                  "directory": "api-reference/cdn-logging"
+                },
+                "pages": ["api-reference/cdn-logging/index"]
               },
               {
                 "group": "Storage API",
@@ -1039,6 +1081,16 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/stream/smart-chapters",
+      "destination": "/stream/smart-generate",
+      "permanent": true
+    },
+    {
+      "source": "/stream-smart-chapters",
+      "destination": "/stream/smart-generate",
+      "permanent": true
+    },
     {
       "source": "/docs",
       "destination": "/",
@@ -3248,6 +3300,19 @@
       "source": "/stream/beta-player",
       "destination": "/stream/player",
       "permanent": true
+    },
+    {
+      "source": "/scripting/runtime/html-rewriter",
+      "destination": "/scripting/html-rewriter",
+      "permanent": true
+    },
+    {
+      "source": "/scripting/node/fs/node-fs",
+      "destination": "/scripting/node-fs",
+      "permanent": true
     }
-  ]
+  ],
+  "contextual": {
+    "options": ["copy", "claude", "chatgpt", "cursor", "view", "vscode"]
+  }
 }

@@ -3,115 +3,111 @@ title: "Video specification"
 description: "Video, audio, and caption formats that Bunny Stream supports"
 ---
 
-# Guidelines
+Bunny Stream accepts a wide range of input video, audio, and caption formats. The guidelines below help you prepare source files that encode efficiently, and the tables that follow list the exact containers and codecs we support.
+
+## Guidelines
 
 - The total storage used to store your encoded video files may be larger than your source video file size
-
 - Encoding compresses your input video file into multiple video files of different resolutions, sizes, and formats for web streaming
-
 - The higher the quality of your input video file, the higher the quality your video encodes will be
-
 - Use uncompressed video formats or the highest quality compressed videos where possible
-
 - The following additional options will increase video storage when enabled
   - MP4 fallback
   - Keep original file
   - The number of enabled Premium Encoding codecs will impact your storage usage
   - The number of enabled resolutions will impact your storage usage
-
 - Premium and free encoding does not deinterlace your video, ensure your input video is progressive format and not interlaced before uploading
-
 - Portrait video orientation is supported
   - 1080 width x 1920 height
   - 720 width x 1280 height
 
-# Supported input file containers
+## Supported input file containers
 
 | Video | Audio | Captions |
-| ----- | ----- | -------- |
-| .mp4  | .mp3  | .vtt     |
-| .4mv  | .ogg  | .srt     |
-| .mkv  | .wav  |          |
-| .webm | .m4v  |          |
-| .mov  | .m4p  |          |
-| .avi  |       |          |
-| .vod  |       |          |
-| .flv  |       |          |
-| .wmv  |       |          |
-| .ts   |       |          |
-| .amv  |       |          |
-| .mpeg |       |          |
+| --- | --- | --- |
+| .mp4 | .mp3 | .vtt |
+| .4mv | .ogg | .srt |
+| .mkv | .wav |  |
+| .webm | .m4v |  |
+| .mov | .m4p |  |
+| .avi |  |  |
+| .vod |  |  |
+| .flv |  |  |
+| .wmv |  |  |
+| .ts |  |  |
+| .amv |  |  |
+| .mpeg |  |  |
 
-# Supported input codecs
+## Supported input codecs
 
-| Video                                                 | Audio |
-| ----------------------------------------------------- | ----- |
-| H.264 (AVC) - Profiles - baseline, main, high, high10 | AAC   |
-| H.265 (HEVC)                                          | MP3   |
-| VP9                                                   | LPCM  |
-| VP8                                                   | FLAC  |
-| AV1                                                   | ALAC  |
-| MPEG-2                                                | WMA   |
-| ProRes                                                |       |
+| Video | Audio |
+| --- | --- |
+| H.264 (AVC) - Profiles - baseline, main, high, high10 | AAC |
+| H.265 (HEVC) | MP3 |
+| VP9 | LPCM |
+| VP8 | FLAC |
+| AV1 | ALAC |
+| MPEG-2 | WMA |
+| ProRes |  |
 
-# Premium encoding outputs
+## Premium encoding outputs
 
 - Matches source video file frame rates up to 60 frames per second
 - If your input video file frame rate is higher than 60, the video output file will be reduced down to 60 frames per second
 - Video bitrate varies up to x1.4 pending input video bitrate
 - VP9 HDR-10 bit support
 
-| H.264 (AVC) resolution  | Default video bitrate | Audio bitrate (AAC Codec) |
-| ----------------------- | --------------------- | ------------------------- |
-| 2160p (UHD 3840 x 2160) | 13,000 kbps           | 256 kbps                  |
-| 1440p (QHD 2560 x 1440) | 8,000 kbps            | 256 kbps                  |
-| 1080p (FHD 1920 x 1080) | 5,000 kbps            | 256 kbps                  |
-| 720p (HD 1280 x 720)    | 2,800 kbps            | 256 kbps                  |
-| 480p (ED 842 x 480)     | 1,400 kbps            | 192 kbps                  |
-| 360p (nHD 640 x 360)    | 800 kbps              | 128 kbps                  |
-| 240p (EGA 352 x 240)    | 600 kbps              | 96 kbps                   |
+| H.264 (AVC) resolution | Default video bitrate | Audio bitrate (AAC Codec) |
+| --- | --- | --- |
+| 2160p (UHD 3840 x 2160) | 25,000 kbps | 256 kbps |
+| 1440p (QHD 2560 x 1440) | 8,000 kbps | 256 kbps |
+| 1080p (FHD 1920 x 1080) | 5,000 kbps | 256 kbps |
+| 720p (HD 1280 x 720) | 2,800 kbps | 256 kbps |
+| 480p (ED 842 x 480) | 1,400 kbps | 192 kbps |
+| 360p (nHD 640 x 360) | 800 kbps | 128 kbps |
+| 240p (EGA 352 x 240) | 600 kbps | 96 kbps |
 
-| AV1 resolution          | Default video bitrate | Audio bitrate (AAC Codec) |
-| ----------------------- | --------------------- | ------------------------- |
-| 2160p (UHD 3840 x 2160) | 7,800 kbps            | 256 kbps                  |
-| 1440p (QHD 2560 x 1440) | 4,900 kbps            | 256 kbps                  |
-| 1080p (FHD 1920 x 1080) | 2,400 kbps            | 256 kbps                  |
-| 720p (HD 1280 x 720)    | 1,680 kbps            | 256 kbps                  |
-| 480p (ED 842 x 480)     | 840 kbps              | 192 kbps                  |
-| 360p (nHD 640 x 360)    | 480 kbps              | 128 kbps                  |
-| 240p (EGA 352 x 240)    | 360 kbps              | 96 kbps                   |
+| AV1 resolution | Default video bitrate | Audio bitrate (AAC Codec) |
+| --- | --- | --- |
+| 2160p (UHD 3840 x 2160) | 15,000 kbps | 256 kbps |
+| 1440p (QHD 2560 x 1440) | 4,900 kbps | 256 kbps |
+| 1080p (FHD 1920 x 1080) | 2,400 kbps | 256 kbps |
+| 720p (HD 1280 x 720) | 1,680 kbps | 256 kbps |
+| 480p (ED 842 x 480) | 840 kbps | 192 kbps |
+| 360p (nHD 640 x 360) | 480 kbps | 128 kbps |
+| 240p (EGA 352 x 240) | 360 kbps | 96 kbps |
 
-| H265 (HEVC) resolution  | Default video bitrate | Audio bitrate (AAC Codec) |
-| ----------------------- | --------------------- | ------------------------- |
-| 2160p (UHD 3840 x 2160) | 10,400 kbps           | 256 kbps                  |
-| 1440p (QHD 2560 x 1440) | 6,400 kbps            | 256 kbps                  |
-| 1080p (FHD 1920 x 1080) | 4,000 kbps            | 256 kbps                  |
-| 720p (HD 1280 x 720)    | 2,240 kbps            | 256 kbps                  |
-| 480p (ED 842 x 480)     | 1,120 kbps            | 192 kbps                  |
-| 360p (nHD 640 x 360)    | 640 kbps              | 128 kbps                  |
-| 240p (EGA 352 x 240)    | 480 kbps              | 96 kbps                   |
+| H265 (HEVC) resolution | Default video bitrate | Audio bitrate (AAC Codec) |
+| --- | --- | --- |
+| 2160p (UHD 3840 x 2160) | 20,000 kbps | 256 kbps |
+| 1440p (QHD 2560 x 1440) | 6,400 kbps | 256 kbps |
+| 1080p (FHD 1920 x 1080) | 4,000 kbps | 256 kbps |
+| 720p (HD 1280 x 720) | 2,240 kbps | 256 kbps |
+| 480p (ED 842 x 480) | 1,120 kbps | 192 kbps |
+| 360p (nHD 640 x 360) | 640 kbps | 128 kbps |
+| 240p (EGA 352 x 240) | 480 kbps | 96 kbps |
 
-| VP9 resolution          | Default video bitrate | Audio bitrate (AAC Codec) |
-| ----------------------- | --------------------- | ------------------------- |
-| 2160p (UHD 3840 x 2160) | 10,400 kbps           | 256 kbps                  |
-| 1440p (QHD 2560 x 1440) | 6,400 kbps            | 256 kbps                  |
-| 1080p (FHD 1920 x 1080) | 4,000 kbps            | 256 kbps                  |
-| 720p (HD 1280 x 720)    | 2,240 kbps            | 256 kbps                  |
-| 480p (ED 842 x 480)     | 1,120 kbps            | 192 kbps                  |
-| 360p (nHD 640 x 360)    | 640 kbps              | 128 kbps                  |
-| 240p (EGA 352 x 240)    | 480 kbps              | 96 kbps                   |
+| VP9 resolution | Default video bitrate | Audio bitrate (AAC Codec) |
+| --- | --- | --- |
+| 2160p (UHD 3840 x 2160) | 20,000 kbps | 256 kbps |
+| 1440p (QHD 2560 x 1440) | 6,400 kbps | 256 kbps |
+| 1080p (FHD 1920 x 1080) | 4,000 kbps | 256 kbps |
+| 720p (HD 1280 x 720) | 2,240 kbps | 256 kbps |
+| 480p (ED 842 x 480) | 1,120 kbps | 192 kbps |
+| 360p (nHD 640 x 360) | 640 kbps | 128 kbps |
+| 240p (EGA 352 x 240) | 480 kbps | 96 kbps |
 
-# Free encoding outputs
+## Free encoding outputs
 
-| H.264 (AVC) resolution  | Default video bitrate |
-| ----------------------- | --------------------- |
-| 1080p (FHD 1920 x 1080) | 5,000 kbps            |
-| 720p (HD 1280 x 720)    | 2,800 kbps            |
-| 480p (ED 842 x 480)     | 1,400 kbps            |
-| 360p (nHD 640 x 360)    | 800 kbps              |
-| 240p (EGA 352 x 240)    | 600 kbps              |
+| H.264 (AVC) resolution | Default video bitrate |
+| --- | --- |
+| 1080p (FHD 1920 x 1080) | 5,000 kbps |
+| 720p (HD 1280 x 720) | 2,800 kbps |
+| 480p (ED 842 x 480) | 1,400 kbps |
+| 360p (nHD 640 x 360) | 800 kbps |
+| 240p (EGA 352 x 240) | 600 kbps |
 
-# Multi-audio support
+## Multi-audio support
 
 - Video files with embedded multi-channel audio tracks are supported. This means a single media file containing both video and multiple separate audio tracks
 - Stereo pair tracks = 2 audio channels per track
@@ -119,11 +115,11 @@ description: "Video, audio, and caption formats that Bunny Stream supports"
 - We do not currently support surround sound or Dolby audio formats
 - We only support ISO 639-1 language codes
 
-# Caption support
+## Caption support
 
-#### .vtt and .srt caption files
+##### .vtt and .srt caption files
 
-# Video file upload limits
+## Video file upload limits
 
 - Maximum video file duration: 72 hours
 - Maximum video resolution: 2160p (UHD 3840 x 2160) / 2160 x 3840

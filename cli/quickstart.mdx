@@ -1,0 +1,93 @@
+---
+title: Quickstart
+description: Install the Bunny CLI, authenticate, and start managing your bunny.net resources.
+---
+
+<Steps>
+
+<Step title="Install the CLI">
+
+Install `bunny` using the shell installer or npm:
+
+<Tabs>
+  <Tab title="curl">
+    ```bash
+    curl -fsSL https://cli.bunny.net/install.sh | sh
+    ```
+
+    The installer downloads a prebuilt binary for your platform and places it on your `PATH`. Works with `sh`, `bash`, or `zsh`.
+
+  </Tab>
+  <Tab title="npm">
+    ```bash
+    npm install -g @bunny.net/cli
+    ```
+  </Tab>
+</Tabs>
+
+See [Installation](/cli/installation) for more options.
+
+</Step>
+
+<Step title="Authenticate">
+
+Log in with your bunny.net account:
+
+<Tabs>
+  <Tab title="Browser">
+    ```bash
+    bunny login
+    ```
+
+    Opens your browser to complete sign-in. Credentials are stored in your CLI config under the `default` profile.
+
+  </Tab>
+  <Tab title="API key">
+    ```bash
+    bunny config init --api-key bny_xxxxxxxxxxxx
+    ```
+
+    Set up a profile directly from a bunny.net [API key](/account/api-keys).
+
+  </Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Verify you're logged in">
+
+Confirm the CLI is authenticated with the expected account:
+
+```bash
+bunny whoami
+# Logged in as Jamie Barton (jamie@bunny.net) 🐇
+# Profile: default
+```
+
+If you manage multiple accounts, see [profiles](/cli/configuration#profiles) for switching between them with `--profile`.
+
+</Step>
+
+<Step title="Run your first command">
+
+With the CLI authenticated, you can manage any bunny.net resource from your terminal:
+
+<CardGroup cols={2}>
+  <Card title="bunny db" icon="database" href="/cli/commands/db">
+    Create and manage Bunny Databases, open an interactive SQL shell, and
+    generate auth tokens
+  </Card>
+  <Card title="bunny scripts" icon="code" href="/cli/commands/scripts">
+    Scaffold, deploy, and manage Edge Scripts and their custom domains
+  </Card>
+  <Card title="bunny api" icon="square-terminal" href="/cli/commands/api">
+    Make raw authenticated requests to any bunny.net API endpoint
+  </Card>
+  <Card title="bunny config" icon="cog" href="/cli/commands/config">
+    Manage CLI configuration and named profiles
+  </Card>
+</CardGroup>
+
+</Step>
+
+</Steps>

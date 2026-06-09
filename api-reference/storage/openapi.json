@@ -157,6 +157,20 @@
             "required": true,
             "description": "The API AccessKey used for authentication.",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "allowRootDelete",
+            "in": "query",
+            "required": false,
+            "description": "Set to `true` to bypass the root directory deletion guard and delete the storage zone root (`/`).",
+            "schema": { "type": "string", "enum": ["true"] }
+          },
+          {
+            "name": "allowRootDelete",
+            "in": "header",
+            "required": false,
+            "description": "Set to `true` to bypass the root directory deletion guard and delete the storage zone root.",
+            "schema": { "type": "string", "enum": ["true"] }
           }
         ],
         "responses": {

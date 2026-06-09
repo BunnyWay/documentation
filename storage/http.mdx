@@ -130,10 +130,41 @@ Returns a JSON array of files and directories.
 
 ## Delete a file
 
-Delete files using a DELETE request:
+Delete files or directories using a DELETE request. Deleting a directory recursively removes all of its contents.
 
 ```bash
 curl -X DELETE \
   https://storage.bunnycdn.com/your-zone-name/path/to/file.jpg \
   -H "AccessKey: your-storage-password"
+```
+
+### Deleting the root directory
+
+By default, deleting the root directory (`/`) is blocked as a safety guard. To bypass this protection, include `allowRootDelete=true` as either a query string parameter or a request header.
+
+<Warning>
+  Deleting the root directory permanently removes **all files and directories** in your storage zone. This action cannot be undone.
+</Warning>
+
+**Via query string parameter:**
+
+- Key: `allowRootDelete`
+- Value: `true`
+
+```bash
+curl -X DELETE \
+  "https://storage.bunnycdn.com/your-zone-name/?allowRootDelete=true" \
+  -H "AccessKey: your-storage-password"
+```
+
+**Via request header:**
+
+- Name: `allowRootDelete`
+- Value: `true`
+
+```bash
+curl -X DELETE \
+  https://storage.bunnycdn.com/your-zone-name/ \
+  -H "AccessKey: your-storage-password" \
+  -H "allowRootDelete: true"
 ```

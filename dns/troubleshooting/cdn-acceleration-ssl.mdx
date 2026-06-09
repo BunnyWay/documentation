@@ -1,0 +1,34 @@
+---
+title: CDN Acceleration SSL Issues
+description: Troubleshoot SSL certificate issues on DNS records with CDN Acceleration enabled.
+---
+
+When you enable [CDN Acceleration](/dns/records#cdn-acceleration) on Bunny DNS, bunny.net automatically registers your domain with Bunny CDN, enables a secure proxy to your origin, and configures an SSL certificate for the accelerated hostname.
+
+If you see an SSL error after enabling CDN Acceleration, one of the following is usually the cause.
+
+## DNS configuration issues
+
+Bunny.net uses Let's Encrypt to issue SSL certificates. Let's Encrypt validates ownership by contacting our system before issuing a certificate, so if your domain is not yet pointing its nameservers to bunny.net when the certificate is requested, issuance will fail.
+
+To resolve this:
+
+1. Confirm your domain is pointing to bunny.net nameservers (typically `kiki.bunny.net` and `coco.bunny.net`).
+2. Confirm the DNS record is correctly configured.
+3. Wait for the nameserver change to propagate. This can take up to 24 hours.
+
+<Info>
+  Keep CDN Acceleration disabled until the nameserver change has fully propagated.
+</Info>
+
+If you enabled CDN Acceleration before propagation completed, you can manually request the certificate from the connected Pull Zone's settings.
+
+## Configuration delay
+
+Once a DNS record is accelerated, bunny.net immediately configures the HTTP domain across our global network and begins issuing the SSL certificate. The process usually completes within seconds but can occasionally take a few minutes.
+
+During this window, your domain remains reachable but may not respond correctly to HTTPS requests. The certificate will be issued after a series of retries, so wait a few minutes before investigating further.
+
+## Still stuck?
+
+If you've followed the steps above and your accelerated domain is still unreachable over HTTPS, reach out to our Super Bunnies for further help.

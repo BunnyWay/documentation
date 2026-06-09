@@ -1,0 +1,28 @@
+---
+title: "Changelog"
+description: "Latest updates and improvements for Storage."
+---
+
+<Update label="2026-06-09" tags={["Storage","(New)"]}>
+  ## Root directory deletion support
+
+  The Storage Edge API DELETE endpoint now supports deleting the root directory (`/`) of a storage zone. By default, root deletion is blocked as a safety guard. Pass `allowRootDelete=true` as a query parameter or request header to bypass this protection. [Learn more](/storage/http#deleting-the-root-directory)
+</Update>
+
+<Update label="2026-05-19" tags={["Storage","(Improvement)"]}>
+  ## S3 API 'Closed Preview'
+
+  Added support for 4 new S3 Storage Zone regions: London (UK), Stockholm (SE), Los Angeles (LA) and Johannesburg (JH).
+</Update>
+
+<Update label="2026-04-07" tags={["Storage","(Improvement)"]}>
+  ## S3 API 'Closed Preview'
+
+  CopyObject now handles source objects up to 5 GB and plays nicely with multipart uploads, CORS works across pre-signed URLS.
+</Update>
+
+<Update label="2026-03-24" tags={["Storage","(Improvement)"]}>
+  ## S3 API 'Closed Preview'
+
+  Added presigned URL support for S3 via the AWS CLI presign command.
+</Update>

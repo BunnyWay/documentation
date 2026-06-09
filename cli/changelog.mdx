@@ -1,0 +1,28 @@
+---
+title: Changelog
+description: Release notes for the Bunny CLI.
+---
+
+<Update label="2026-06-08" tags={["New"]}>
+  ## Edge Scripts commands
+
+  `bunny scripts` now covers the full Edge Scripts lifecycle: `create` a script without scaffolding, `deploy` and manage `deployments` (including rollbacks), `env` for environment variables and secrets, `domains` for custom domains with SSL, `stats` for usage statistics, and `delete`. The `init` command adds `--template-repo` for custom templates and `--github-actions` / `--no-github-actions` flags. [Learn more](/cli/commands/scripts)
+</Update>
+
+<Update label="2026-06-08" tags={["New"]}>
+  ## DNS commands (experimental)
+
+  `bunny dns` adds CLI management for DNS zones and records. Create, list, update, and remove records, import and export BIND zone files, manage DNSSEC, view query statistics, and configure query logging with optional IP anonymization. This command is experimental and hidden from `--help` while it stabilizes. [Learn more](/cli/commands/dns)
+</Update>
+
+<Update label="2026-06-08" tags={["New"]}>
+  ## Shell completion
+
+  Run `bunny completion` to generate a shell completion script for tab completion in your terminal. [Learn more](/cli/configuration#shell-completion)
+</Update>
+
+<Update label="2026-06-08" tags={["Improvement"]}>
+  ## Database shell session note
+
+  The `bunny db shell` documentation now notes that sessions last 30 minutes when no explicit token is provided. [Learn more](/cli/commands/db)
+</Update>

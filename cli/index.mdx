@@ -1,0 +1,65 @@
+---
+title: Bunny CLI
+sidebarTitle: Introduction
+description: Manage bunny.net from your terminal
+---
+
+<Warning>
+  The Bunny CLI is currently in [Public
+  Preview](/product-release-stages#stage-2-public-preview). Commands and flags
+  may evolve during this period, [open an
+  issue](https://github.com/BunnyWay/cli/issues) if you see something broken, or
+  have suggestions to improve the experience.
+</Warning>
+
+The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from your terminal. It's useful for scripting, CI/CD, local development workflows, and quickly inspecting resources without leaving your shell.
+
+<Card title="CLI Quickstart" href="/cli/quickstart" icon="rocket" horizontal />
+
+## Key features
+
+- **Single binary**: install via `curl` or `npm`, authenticate once, run anywhere
+- **Databases**: create, link, shell into, and inspect Bunny Databases from the command line
+- **Edge Scripts**: scaffold, deploy, and manage Edge Scripts, their deployments, environment variables, and custom domains
+- **Raw API access**: `bunny api` lets you hit any bunny.net endpoint with auth handled automatically
+- **Profiles**: switch between multiple accounts (personal, staging, production) with `--profile`
+- **Scriptable output**: `--output json` / `csv` / `markdown` for pipelines, CI, and LLMs
+
+## Getting started
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/cli/quickstart">
+    Install the CLI, log in, and run your first command
+  </Card>
+  <Card title="Installation" icon="download" href="/cli/installation">
+    curl installer and npm options
+  </Card>
+  <Card title="Configuration" icon="settings" href="/cli/configuration">
+    Profiles, environment variables, output formats, and global options
+  </Card>
+  <Card title="Authentication" icon="key" href="/cli/commands/auth">
+    `bunny login`, `bunny logout`, and `bunny whoami`
+  </Card>
+</CardGroup>
+
+## Commands
+
+<CardGroup cols={2}>
+  <Card title="bunny db" icon="database" href="/cli/commands/db">
+    Create and manage Bunny Databases, open an interactive SQL shell, and
+    generate auth tokens
+  </Card>
+  <Card title="bunny scripts" icon="code" href="/cli/commands/scripts">
+    Scaffold, deploy, and manage Edge Scripts, deployments, env vars, and custom
+    domains
+  </Card>
+  <Card title="bunny api" icon="square-terminal" href="/cli/commands/api">
+    Make raw authenticated requests to any bunny.net API endpoint
+  </Card>
+  <Card title="bunny config" icon="sliders" href="/cli/commands/config">
+    Manage CLI configuration and named profiles
+  </Card>
+  <Card title="bunny login / logout" icon="key" href="/cli/commands/auth">
+    Browser-based or API key authentication
+  </Card>
+</CardGroup>

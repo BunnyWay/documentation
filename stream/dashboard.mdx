@@ -1,9 +1,11 @@
 ---
-title: Dashboard
+title: "Dashboard"
 description: "The Bunny Stream dashboard is divided into several key areas, each dedicated to a specific aspect of video content management and delivery."
 ---
 
-# Manage library
+The dashboard is the easiest way to upload videos, configure your library, customise the player, and monitor delivery. The sections below walk through each area you'll find under Stream \> Your Library.
+
+## Manage library
 
 The foundation of the dashboard, this section enables the uploading, organization, and management of video content. You can add new videos, create collections for better organization, and manage existing content with ease.
 
@@ -14,11 +16,11 @@ The foundation of the dashboard, this section enables the uploading, organizatio
 - **Uploading and Managing Videos** - You can upload Videos directly to the platform, allowing for immediate management and organization. Here you can also create collections to categorize content, facilitating easier access and navigation.
 - **Content Updates and Modifications**- You can update or remove content as necessary, ensuring the video library remains current and relevant.
 
-# Player section
+## Player section
 
 This area focuses on tailoring the video player's look and functionality to match your branding or specific preferences.
 
-![](/images/docs/8613221-image.png) ![](/images/docs/d7d1a560564688474a361d548acafbf00eca1bdee89594f9446697b72057c059-Screenshot_2025-06-27_at_14.35.23.png)
+<img src="/images/docs/8613221-image.png" /> <img src="/images/docs/d7d1a560564688474a361d548acafbf00eca1bdee89594f9446697b72057c059-Screenshot_2025-06-27_at_14.35.23.png" />
 
 **Key Features:**
 
@@ -28,7 +30,7 @@ This area focuses on tailoring the video player's look and functionality to matc
 - **Watchtime Heatmap** - Enable the watchtime heatmap within your player so viewers can view the most popular parts of your video from the transport bar.
 - **Resumable Player** - Enable your video player to remember and resume playback where the video was last left when viewers leave and return to your video experience.
 
-# Advertising
+## Advertising
 
 The Advertising section allows you to monetize your content by displaying VAST-compatible ads within your videos.
 
@@ -38,7 +40,7 @@ The Advertising section allows you to monetize your content by displaying VAST-c
 
 - **Ad Setup and Configuration** - You can easily embed advertisements, customize their appearance and timing, and adjust settings to fit your monetization strategy.
 
-# Encoding options
+## Encoding options
 
 In the Encoding section, you can manage the process of converting your uploaded videos into different formats and resolutions to ensure optimal playback across devices and bandwidths.
 
@@ -52,7 +54,7 @@ In the Encoding section, you can manage the process of converting your uploaded 
 - **Enable Early-Play** - Enabling Early-Play can come in handy if you wish to play your video before all the resolutions are done transcoding. Using this option will use the resolution that your original video comes with and will play the original file, which in turn, will expose the original file to the public. Do not toggle this on if you do not wish the original file to be accessible.
 - **Enable Content Tagging** - Content tagging is still a preview at this point and will only tag videos at the moment with their associated content.
 
-# Transcribing and accessibility
+## Transcribing and accessibility
 
 The Transcribing feature offers a suite of tools for automatically generating and managing subtitles and captions. This functionality not only improves accessibility for a wider audience but also boosts viewer engagement by providing a textual representation of the audio content.
 
@@ -63,7 +65,7 @@ The Transcribing feature offers a suite of tools for automatically generating an
 - **Automatic Transcription** - Automatically generates subtitles and captions for videos, eliminating the need for manual transcription efforts.
 - **Transcription Translation** - Offers the capability to automatically translate the generated subtitles and captions into multiple languages.
 
-# Security features
+## Security features
 
 Ensure the protection of your video content through the Security section, which encompasses a range of features designed to control access and secure your videos.
 
@@ -75,7 +77,11 @@ Ensure the protection of your video content through the Security section, which 
 - **Domain Restriction** - Control where your video content can be played by specifying allowed domains. This feature prevents your videos from being embedded or played on unauthorized websites.
 - **Block Direct URL File Access** -You can enable this setting to prevent direct access to your video files without a proper referer header. This measure blocks attempts to access and download your content directly via its URL, offering an additional layer of protection against unauthorized distribution.
 
-# Delivery optimization
+<Note>
+  These settings combine. Enabling **Block Direct URL File Access** without populating **Allowed domains** will return a 403 on thumbnails, previews, and direct file URLs even when the embed iframe still works. Each library's security settings are independent — duplicating a library does not copy its security config. See [Security Options](/stream/security-options) for the full breakdown.
+</Note>
+
+## Delivery optimization
 
 The Delivery section of the Bunny Stream Dashboard is designed to help you manage how your video content is distributed and accessed worldwide, ensuring optimal performance and cost-efficiency.
 
@@ -91,7 +97,7 @@ The Delivery section of the Bunny Stream Dashboard is designed to help you manag
 
 - **Routing Filters** - Routing Filters provide a means to precisely control the distribution pathway for your video content across Bunny.net's Content Delivery Network (CDN).
 
-# Storage management
+## Storage management
 
 In the Storage section you can manage your video storage, keeping track of your usage and optimizing storage allocation.
 
@@ -101,7 +107,7 @@ In the Storage section you can manage your video storage, keeping track of your 
 
 - **Efficient Use of Resources** - You can manage the storage space and implement the geo-replication to ensure content is stored and accessed effectively.
 
-# Performance statistics
+## Performance statistics
 
 The Statistics section offers a comprehensive suite of analytics tools designed to provide insights into the performance of your video content. It allows you to measure viewer engagement and the overall reach of your content, allowing for informed decisions to enhance your video strategy.
 
@@ -118,7 +124,7 @@ The Statistics section offers a comprehensive suite of analytics tools designed 
 - **Video Delivery Performance**- Evaluate the efficiency and speed of your video content delivery. This metric helps identify potential bottlenecks or issues affecting viewer experience.
 - **Optimization Opportunities**- Analyze performance data to uncover opportunities for improving content delivery and optimizing viewer engagement. This could involve adjustments to video quality, encoding settings, or content distribution strategies.
 
-# API and webhook integration
+## API and webhook integration
 
 The API section is designed to provide you the access to the Bunny Stream API, facilitating the integration and automation of video streaming functionalities within applications.
 
@@ -134,14 +140,3 @@ The API section is designed to provide you the access to the Bunny Stream API, f
 [Upload video from URL](/docs/stream-upload-video-from-url)
 
 - [Table of Contents](#)
-
-- - [Manage library](#manage-library)
-  - [Player section](#player-section)
-  - [Advertising](#advertising)
-  - [Encoding options](#encoding-options)
-  - [Transcribing and accessibility](#transcribing-and-accessibility)
-  - [Security features](#security-features)
-  - [Delivery optimization](#delivery-optimization)
-  - [Storage management](#storage-management)
-  - [Performance statistics](#performance-statistics)
-  - [API and webhook integration](#api-and-webhook-integration)

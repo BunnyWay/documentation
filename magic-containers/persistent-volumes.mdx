@@ -23,6 +23,18 @@ Volumes are tied to specific regions. This means:
 - When scaling to a new region, new volumes are automatically provisioned in that region
 - Each pod within the same region gets its own dedicated blank volume (no data duplication between pods)
 
+## Scaling behavior
+
+When your application scales up, new volume instances are created and attached to pods on available nodes. When it scales down, those volume instances are detached but not deleted automatically.
+
+Detached volumes remain in your account and continue to reserve storage capacity. It is your responsibility to delete them from the **Volumes** tab if they are no longer needed.
+
+When your application scales back up, the platform will attempt to reuse existing detached volume instances. However, since workloads are scheduled dynamically, pods may be placed on nodes that do not host your previous volume instances, which means reattachment cannot be guaranteed and new empty volumes may be provisioned instead.
+
+<Warning>
+  Keep this behavior in mind when scaling applications with persistent volumes. Scaling down leaves detached volumes that persist until deleted, and a subsequent scale-up may not restore access to the same data if your pods are placed on different nodes.
+</Warning>
+
 ## Node unavailability
 
 Persistent volumes are bound to specific nodes within a region. If a node becomes temporarily unavailable (for example, due to maintenance or infrastructure changes), the platform preserves your volume and pod association so data remains intact when the node returns:

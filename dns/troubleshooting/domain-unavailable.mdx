@@ -1,0 +1,44 @@
+---
+title: Domain Unavailable on the Internet
+description: Common reasons a domain is unreachable, including ERR_NAME_NOT_RESOLVED errors.
+---
+
+If your domain isn't reachable on the internet (for example, your browser returns `ERR_NAME_NOT_RESOLVED`), one of the following is usually the cause.
+
+## Nameservers are not configured correctly at your registrar
+
+To activate Bunny DNS, your domain must be configured at your registrar with the [nameservers](/dns/nameservers) shown in the DNS panel for your zone. If the registrar isn't pointing at these nameservers, resolvers can't route queries to Bunny DNS.
+
+Some registrars take up to 24 hours to apply nameserver changes. Monitor the nameserver records at your registrar after making changes.
+
+## Missing glue records for custom nameservers
+
+If you've configured [custom nameservers](/dns/nameservers#custom-nameservers) in the bunny.net control panel that point back to your own domain, you must configure glue records at your registrar. Without them, resolvers can't find the DNS network responsible for the domain.
+
+The custom nameserver hostnames must also have A records that point to the same IPs as the glue records.
+
+## DNSSEC was not disabled before transferring from another DNS service
+
+If you migrated from a DNS service that had DNSSEC enabled and didn't disable it before the transfer, the chain of trust breaks and resolvers reject Bunny DNS responses.
+
+To fix this:
+
+1. Disable DNSSEC on your previous DNS service.
+2. Re-enable [DNSSEC](/dns/dnssec) on Bunny DNS.
+3. Add the new DNSSEC records to your registrar if required.
+
+## An exception in your DNS script
+
+If you're using [Scriptable DNS](/dns/scriptable/introduction), an exception thrown by the script prevents Bunny DNS from returning records. Check your script for runtime errors.
+
+## Missing A, AAAA, or CNAME records
+
+For a domain to be reachable, it needs the appropriate DNS records. To reach `example.com`, for instance, you need an A record pointing to an IPv4 address (such as `185.188.10.122`), an AAAA record for IPv6, or a CNAME pointing to another resolvable hostname.
+
+## Typo in the domain name
+
+When troubleshooting, double-check that the queried domain matches the DNS zone or record exactly. A single character difference will cause resolution to fail.
+
+## Debugging tools
+
+Bunny's [DNS Lookup tool](https://tools.bunny.net/dns-lookup) can perform global NS lookups to check propagation status and verify record responses from different regions.

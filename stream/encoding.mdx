@@ -1,6 +1,6 @@
 ---
-title: Encoding
-sidebarTitle: Overview
+title: "Encoding"
+sidebarTitle: "Overview"
 description: "bunny.net Stream platform provides users with powerful and, most of all, free transcoding of their videos."
 ---
 
@@ -8,31 +8,35 @@ It allows users to convert their videos into multiple desired resolutions for ma
 
 Encoding aside, we also provide an abundance of highly customizable options with which you can further tweak the end result of the videos. This document describes the configuration settings for Bunny Stream video encoding, and helps you configure them for the best results.
 
-# Where can I find these settings?
+## Where can I find these settings?
 
-The Bunny Stream Video Library encoding settings can be found within the Bunny Dashboard. It is under Stream > Your Library > Encoding.
+The Bunny Stream Video Library encoding settings can be found within the Bunny Dashboard. It is under Stream \> Your Library \> Encoding.
 
-# Understanding the options offered
+## Understanding the options offered
 
 ![](/images/docs/b026386e82141a581dc317feae8f5544a73717a78c7788127630bbe59b71db16-Screenshot_2025-09-28_at_16.47.12.png)
 
-# Enabled Resolutions
+## Enabled Resolutions
 
 Configures the list of resolutions that the uploaded videos will be transcoded to. Each enabled resolution will provide the user with the ability to switch the playback into that resolution. Enabling a wide range of resolutions gives your end user a better experience by adapting to various connection speeds and player configurations. However, each additional resolution will also consume additional storage to hold the transcoded video files.
 
-# Resolutions Bitrates
+## Resolutions Bitrates
 
 Configures the list of resolutions that the uploaded videos will be transcoded to. Each resolution comes with a pre-tuned bitrate that provides a great ratio of picture quality and bandwidth usage, but you can fine-tune this by clicking on the bitrate number in the Enabled Resolutions list. Then, you can configure the specific bitrates in which your videos will be encoded in.
 
-# Keep Original Files
+<Note>
+  Each enabled resolution is a separate encoding job, so a library with five resolutions enabled takes proportionally longer to process than one with two. The same applies if MP4 fallback or multiple output codecs are turned on. The standard transcoding queue is shared and fairly scheduled, so encoding may also be briefly delayed during peak periods — this is normal. If a video stays in **Processing** for more than a few hours, contact support. For predictable, priority encoding times, see [Premium Encoding](/stream/premium-encoding).
+</Note>
+
+## Keep Original Files
 
 This is the original file of your video, which is useful if you want to store your original files with us as well, along with the encoded ones. In addition, the re-encoding of existing videos can only be performed if Original Files are kept with us. It also allows you to download the original files of your videos again, if you accidentally deleted them locally on your computer or server. Please remember that for an original file to be kept, this option must be enabled before you upload a video.
 
-# Enable Early-Play
+## Enable Early-Play
 
 Enabling Early-Play can come in handy if you wish to play your video before all the resolutions are done transcoding. Using this option will use the resolution that your original video comes with and will play the original file, which in turn, will expose the original file to the public. Do not toggle this on if you do not wish the original file to be accessible.
 
-# Enable Content Tagging
+## Enable Content Tagging
 
 Content tagging is still a preview at this point and will only tag videos at the moment with their associated content. The current existing categories that it can assign a video with are the following;
 
@@ -56,26 +60,43 @@ Content tagging is still a preview at this point and will only tag videos at the
 
 Please keep in mind that for a video to be tagged, this option **has to be enabled** before you upload a video. In the case that you are curious about the more specific details of how Content Tagging works, we would recommend reading the [Tagging](/stream/tagging) article.
 
-# Enable MP4 Fallback
+## Enable MP4 Fallback
 
 Generates an MP4 file that you are able to use should you have the need for it. Please keep in mind that the fallback in question, goes only up to 720P, along with that, this option needs to be enabled **before you upload a video,** as it generates a fallback only upon encoding.
 
 Should you seek to find out more about how to construct an MP4 URL using our Stream, please follow this guide.
 
-# Enabled Resolutions
+## Enabled Resolutions
 
 The following option allows you to decide which resolutions you want your video to be encoded in. This is extremely useful when it comes to maximizing compatibility with your users, as you can provide them with several resolutions to choose from depending on their internet connection speed and quality. Just like with the other options, the resolutions need to be configured **before a video is uploaded.**
 
 In addition to being able to choose resolutions to be encoded in your videos, you can also tweak around with the bitrate of the videos themselves by clicking on the bitrate value next to the resolution. Bitrate allows you to control the video image quality, the higher it is, the better the quality will be and the more space on storage will the videos will consume.
 
-# Watermark
+## Watermark
 
 This allows you to set the watermark for the video library. A watermark will be applied to each video that is uploaded. This option must be enabled before you upload a video for the watermark to appear on the video itself.
 
-# Why are my videos taking up more space than they should?
+## Video storage usage
+
+You can view how much storage your encoded video is using via clicking the (i) information icon found on your video summary within your video library, or alternatively via the video info (i) information icon found on the video page.
+
+A summary will appear with a breakdown of your video storage usage giving per-video breakdown of your storage consumption:
+
+- Codec (H264, H265, AV1, VP9)
+- MP4 (MP4 fallback)
+- Original (Keep original files)
+- Other (Preview animations, thumbnails, watermarks and captions)
+- Total  
+
+<Info>
+  Video storage size info can also be provided over API via:\
+  [https://docs.bunny.net/api-reference/stream/manage-videos/get-video-storage-size-info](https://docs.bunny.net/api-reference/stream/manage-videos/get-video-storage-size-info)
+</Info>
+
+## Why are my videos taking up more space than they should?
 
 You may notice that once a video is uploaded, it consumes a larger amount of storage space than it is using on your local machine. This would be due to the encoding options that you've set under the Encoding Tab of your Video Library, you can find the options that increase the size below;
 
-`MP4 Fallback Keep Original Files Enabled Resolutions`
+`MP4 Fallback` `Keep Original Files` `Enabled Resolutions`
 
 If you wish to reduce the size of the final encoded video, you may want to look at which resolutions and/or options you need, whilst disabling the ones you don't need. Please keep in mind that videos only uploaded after the changes will be affected by the change.

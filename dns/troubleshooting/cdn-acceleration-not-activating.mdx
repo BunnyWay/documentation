@@ -1,0 +1,20 @@
+---
+title: Can't Activate CDN Acceleration
+description: Resolve errors when enabling CDN Acceleration on a DNS record.
+---
+
+If you receive an error when trying to enable [CDN Acceleration](/dns/records#cdn-acceleration) on a DNS record, this is usually caused by an existing Pull Zone that is already mapped to the hostname you're trying to accelerate.
+
+Hostnames are a unique map between a Pull Zone and its configuration, so only a single instance of a hostname can exist in the system at a time.
+
+## Option 1: Remove the existing hostname
+
+Open the Pull Zone that already has the hostname configured and delete the hostname from it. You can then enable CDN Acceleration on the DNS record.
+
+## Option 2: Use a PZ (Pull Zone) DNS record
+
+Instead of CDN Acceleration, use a **PZ** DNS record to point your domain or subdomain directly at the existing Pull Zone. PZ records are a Bunny-specific record type designed for this exact case. See [Bunny-specific records](/dns/records#bunny-specific-records).
+
+<Info>
+  For CDN Acceleration to work, your domain's nameservers must point to `kiki.bunny.net` and `coco.bunny.net` (or your custom nameservers if configured manually).
+</Info>
