@@ -3311,5 +3311,8 @@
       "destination": "/scripting/node-fs",
       "permanent": true
     }
-  ]
+  ],
+  "contextual": {
+    "options": ["copy", "claude", "chatgpt", "cursor", "view", "vscode"]
+  }
 }
