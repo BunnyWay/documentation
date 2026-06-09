@@ -3,6 +3,13 @@ title: Changelog
 description: Latest updates and improvements to Bunny Optimizer
 ---
 
+<Update label="2026-06-08" tags={["Improvement"]}>
+  ## AVIF output area limit
+
+AVIF output is now limited to a maximum area of 4 megapixels. Larger images automatically fall back to another format (WebP, JPEG, or GIF) to keep latency low. A new `304` processing error code is returned when this limit is reached. [Learn more](/optimizer/dynamic-images/formats)
+
+</Update>
+
 <Update label="2026-04-30" tags={["Improvement"]}>
   ## AVIF support
 
