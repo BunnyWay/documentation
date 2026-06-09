@@ -22,13 +22,13 @@ Some bots are recognized by user agent but publish no verifiable identity (no re
 Being recognized as a known bot does not automatically allow a request through. On a new Shield Zone nothing is configured: a recognized bot is identified, and its category is made available to your rules, but is otherwise subject to your normal protections. You decide how each bot is handled at two levels:
 
 - **Per category** - apply an action to every bot in a category at once.
-- **Per bot** - override a single bot. A per-bot setting always takes precedence over its category.
+- **Per bot** - override a single bot. A per-bot setting always takes precedence over its category, and clearing it (Ignore) returns the bot to following its category.
 
 The available actions are:
 
 - **Allow** - the bot bypasses most of Shield's mitigations (DDoS challenges, Bot Detection and Access Lists). This only takes effect once the bot's identity is verified. A bot that cannot be verified is allowed only if you explicitly allow it, choosing to trust the user-agent match alone.
 - **Block** - the request is rejected at the edge (before cache) with a `403`.
-- **Ignore** *(default)* - the bot is recognized but receives no special treatment; it is subject to your WAF rules, rate limits, and challenges like any other request.
+- **Ignore** *(default)* - the bot has no setting of its own and follows its category. Unless its category allows or blocks it, it gets no special treatment and is subject to your WAF rules, rate limits, and challenges like any other request.
 
 ## Bot Categories
 
