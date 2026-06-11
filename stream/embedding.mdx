@@ -76,7 +76,7 @@ Below is a concise table summarizing each parameter, its possible values, a brie
 | **Parameter** | **Values** | **Description** | **Default Value** |
 | --- | --- | --- | --- |
 | **`autoplay`** | `true`, `false` | Controls whether the video should start playing automatically. Due to browser restrictions on auto-play, this may not always work. | `true` |
-| **`captions`** | `Caption short-code string` | Controls the default captions file that will be shown. By passing the caption code, the player will automatically load these captions. By default, the player remembers the user's last selection or does not load captions. | _N/A_ |
+| **`captions`** | `caption short-code string`<br />`-auto` | Controls the default captions file that will be shown. By passing the caption code, the player will automatically load these captions. By default, the player remembers the user's last selection or does not load captions. Use in combination with `-auto`after the country code for the captions to display automatically on playback. | _N/A_ |
 | **`preload`** | `true`, `false` | Controls whether the video files are preloaded. When set to `true`, the player immediately starts downloading the video so playback begins more quickly. | `true` |
 | **`t`** | `Xs` ,`1h20m45s` , `hh:mm:ss`<br />, `Numeric` | Sets the video start time. Supports multiple formats: hours/minutes/seconds notation, `hh:mm:ss` format, or a simple numeric value interpreted as seconds. | _N/A_ |
 | **`chromecast`** | `true`, `false` | Enables or disables Chromecast support within the player. | _N/A_ |
