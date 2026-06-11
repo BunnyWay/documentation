@@ -16,11 +16,11 @@ The Bunny Stream Video Library encoding settings can be found within the Bunny D
 
 ![](/images/docs/b026386e82141a581dc317feae8f5544a73717a78c7788127630bbe59b71db16-Screenshot_2025-09-28_at_16.47.12.png)
 
-## Enabled Resolutions
+## Enabled resolutions
 
 Configures the list of resolutions that the uploaded videos will be transcoded to. Each enabled resolution will provide the user with the ability to switch the playback into that resolution. Enabling a wide range of resolutions gives your end user a better experience by adapting to various connection speeds and player configurations. However, each additional resolution will also consume additional storage to hold the transcoded video files.
 
-## Resolutions Bitrates
+## Resolution bitrates
 
 Configures the list of resolutions that the uploaded videos will be transcoded to. Each resolution comes with a pre-tuned bitrate that provides a great ratio of picture quality and bandwidth usage, but you can fine-tune this by clicking on the bitrate number in the Enabled Resolutions list. Then, you can configure the specific bitrates in which your videos will be encoded in.
 
@@ -28,7 +28,7 @@ Configures the list of resolutions that the uploaded videos will be transcoded t
   Each enabled resolution is a separate encoding job, so a library with five resolutions enabled takes proportionally longer to process than one with two. The same applies if MP4 fallback or multiple output codecs are turned on. The standard transcoding queue is shared and fairly scheduled, so encoding may also be briefly delayed during peak periods — this is normal. If a video stays in **Processing** for more than a few hours, contact support. For predictable, priority encoding times, see [Premium Encoding](/stream/premium-encoding).
 </Note>
 
-## Keep Original Files
+## Keep original files
 
 This is the original file of your video, which is useful if you want to store your original files with us as well, along with the encoded ones. In addition, the re-encoding of existing videos can only be performed if Original Files are kept with us. It also allows you to download the original files of your videos again, if you accidentally deleted them locally on your computer or server. Please remember that for an original file to be kept, this option must be enabled before you upload a video.
 
@@ -62,9 +62,11 @@ Please keep in mind that for a video to be tagged, this option **has to be enabl
 
 ## Enable MP4 Fallback
 
-Generates an MP4 file that you are able to use should you have the need for it. Please keep in mind that the fallback mp4 in question goes up to 1080P, along with that, this option needs to be enabled **before you upload a video,** as it generates a MP4 fallback only upon encoding.
+Generates MP4 videos up to 240p, 360p, 720p & 1080p in resolution. Note that this option must be enabled before uploading a video, as the MP4 video is only generated during encoding.
 
-Should you seek to find out more about how to construct an MP4 URL using our Stream, please follow this guide.
+<Info>
+  [For more information more about how to construct an MP4 URL](/stream/storage-structure#mp4-fallback-url).
+</Info>
 
 ## Enabled Resolutions
 
