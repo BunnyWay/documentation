@@ -11,17 +11,43 @@ Each Bunny Stream video can be reached through several stable URL patterns, depe
 https://player.mediadelivery.net/play/{video_library_id}/{video_id}
 ```
 
+#### Direct play URL query parameter
+
+This query parameter example means the direct play URL will start video playback at 30 seconds.
+
+```bash
+https://player.mediadelivery.net/play/{video_library_id}/{video_id}?t=30s
+```
+
+<Info>
+  Direct play URL is ideal full screen experiences. [For more information about supported query parameters](/stream/embedding#supported-parameters).
+</Info>
+
 #### Embed URL
 
 ```bash
 https://player.mediadelivery.net/embed/{video_library_id}/{video_id}
 ```
 
-#### Original file (if enabled)
+#### Embed URL iframe example
+
+```html
+<div style="position:relative;padding-top:56.25%;"><iframe src="https://player.mediadelivery.net/embed/{video_library_id}/{video_id}?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style="border:0;position:absolute;top:0;height:100%;width:100%;" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen;" allowfullscreen="true"></iframe></div>
+```
+
+<Info>
+  Embed URL is best for embedding the video player into websites or browser experiences. It requires an iframe. [Read more about embedding videos here](/stream/embedding#supported-parameters).
+</Info>
+
+#### Original file URL
 
 ```bash
 https://{pull_zone}.b-cdn.net/{video_id}/original
 ```
+
+<Info>
+  E(/stream/embedding#supported-parameters).
+</Info>
 
 #### HLS playlist URL
 
@@ -104,10 +130,22 @@ https://{pull_zone}.b-cdn.net/{video_id}/preview_hq.webm
 https://{pull_zone}.b-cdn.net/{video_id}/preview_hq.mp4
 ```
 
-#### MP4 video URL
+#### Fallback MP4 URL
 
 ```bash
-https://{pull_zone}.b-cdn.net/{video_id}/play_{resolution_height}p.mp4
+https://{pull_zone}.b-cdn.net/{video_id}/play_1080p.mp4
+```
+
+```bash
+https://{pull_zone}.b-cdn.net/{video_id}/play_720p.mp4
+```
+
+```bash
+https://{pull_zone}.b-cdn.net/{video_id}/play_360p.mp4
+```
+
+```bash
+https://{pull_zone}.b-cdn.net/{video_id}/play_240p.mp4
 ```
 
 #### Subtitle file URL
