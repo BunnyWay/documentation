@@ -67,7 +67,7 @@ By default, many of the player’s controls and behaviors, such as captions, aut
 
 ![](/images/docs/d267314b297a80462b1668920e710619e6a80d7c2e1e9ad1b9491b4ccbdcda84-image.png)
 
-However, you can also fine-tune or override these defaults on a per-embed basis by adding query parameters directly to the embed URL. This flexibility allows you to tailor the playback experience for specific pages or use-cases without affecting the global settings of your library.
+However, you can also fine-tune or override these defaults on a per-embed basis by adding query parameters directly to the embed or direct play URL. This flexibility allows you to tailor the playback experience for specific pages or use-cases without affecting the global settings of your library.
 
 ## Supported Parameters
 
@@ -78,7 +78,7 @@ Below is a concise table summarizing each parameter, its possible values, a brie
 | **`autoplay`** | `true`, `false` | Controls whether the video should start playing automatically. Due to browser restrictions on auto-play, this may not always work. | `true` |
 | **`captions`** | `Caption short-code string` | Controls the default captions file that will be shown. By passing the caption code, the player will automatically load these captions. By default, the player remembers the user's last selection or does not load captions. | _N/A_ |
 | **`preload`** | `true`, `false` | Controls whether the video files are preloaded. When set to `true`, the player immediately starts downloading the video so playback begins more quickly. | `true` |
-| **`t`** | `Xs` ,`1h20m45s` , `hh:mm:ss` <br />, `Numeric` | Sets the video start time. Supports multiple formats: seconds/minutes/hours notation, `hh:mm:ss` format, or a simple numeric value interpreted as seconds. | _N/A_ |
+| **`t`** | `Xs` ,`1h20m45s` , `hh:mm:ss`<br />, `Numeric` | Sets the video start time. Supports multiple formats: seconds/minutes/hours notation, `hh:mm:ss` format, or a simple numeric value interpreted as seconds. | _N/A_ |
 | **`chromecast`** | `true`, `false` | Enables or disables Chromecast support within the player. | _N/A_ |
 | **`disableAirplay`** | `true`, `false` | Disables AirPlay support when set to `true`. | _N/A_ |
 | **`disableIosPlayer`** | `true`, `false` | Disables the native iOS player (used typically for fullscreen handling on iOS). | _N/A_ |
