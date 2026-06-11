@@ -11,16 +11,16 @@ Each Bunny Stream video can be reached through several stable URL patterns, depe
 https://player.mediadelivery.net/play/{video_library_id}/{video_id}
 ```
 
-#### Direct play URL query parameter
-
-This query parameter example means the direct play URL will start video playback at 30 seconds.
+#### Direct play URL example
 
 ```bash
 https://player.mediadelivery.net/play/{video_library_id}/{video_id}?t=30s
 ```
 
+This example uses a query parameter which means the direct play URL will start video playback at 30 seconds. For more information about supported [query parameters](/stream/embedding#supported-parameters).
+
 <Info>
-  Direct play URL is ideal full screen experiences. \[For more information about supported [query parameters](/stream/embedding#supported-parameters).
+  Direct play URL is ideal full screen experiences.
 </Info>
 
 #### Embed URL
@@ -29,15 +29,13 @@ https://player.mediadelivery.net/play/{video_library_id}/{video_id}?t=30s
 https://player.mediadelivery.net/embed/{video_library_id}/{video_id}
 ```
 
-#### Embed URL iframe example
+#### Embed URL example
 
 ```html
 <div style="position:relative;padding-top:56.25%;"><iframe src="https://player.mediadelivery.net/embed/{video_library_id}/{video_id}?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style="border:0;position:absolute;top:0;height:100%;width:100%;" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen;" allowfullscreen="true"></iframe></div>
 ```
 
-<Info>
-  Embed URL is best for embedding the video player into websites or browser experiences. It requires an iframe. [Read more about embedding videos here](/stream/embedding#supported-parameters).
-</Info>
+Embed URL is best for embedding the video player into websites or browser experiences. It requires an iframe. [Read more about embedding videos here](/stream/embedding).
 
 #### Original file URL
 
