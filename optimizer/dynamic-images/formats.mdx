@@ -58,6 +58,10 @@ Bunny Optimizer can convert images to these output formats:
 <Note>
   Bunny optimizer limits AVIF output to a maximum area of 4 megapixels. Because AVIF encoding time grows with image area, 
   the Optimizer favours lower latency and automatically falls back to another format (WebP, JPEG, or GIF) for larger images.
+
+  For most on-the-fly optimisation use cases, we recommend WebP as the best overall balance between compression, image quality,
+  browser compatibility, and processing performance. AVIF can offer excellent compression, but is generally better suited for
+  smaller images or workflows where the additional encoding time is acceptable.
 </Note>
 
 ## Usage
@@ -79,7 +83,7 @@ https://yourzone.b-cdn.net/image.png?format=jpeg
 ```
 
 WebP typically offers 25-35% better compression than JPEG at equivalent quality levels, making it ideal for web delivery when browser support is available.
-While AVIF can achieve even better compression, WebP is generally preferred for on-the-fly optimisation due to its significantly faster encoding times.
+While AVIF can achieve excellent compression, WebP is generally recommended for on-the-fly optimisation because it provides the best overall balance between compression, quality, compatibility, and processing performance.
 
 ### Automatic format optimization
 
