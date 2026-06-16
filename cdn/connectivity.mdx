@@ -1,0 +1,95 @@
+---
+title: Connectivity
+sidebarTitle: Connectivity
+description: Learn how bunny.net supports IPv4 and IPv6 connectivity across our global network.
+---
+
+bunny.net supports both IPv4 and IPv6 connectivity across our global edge network. Our IPv6 support continues to expand as we upgrade connectivity throughout our infrastructure and partner networks.
+
+## Network Support
+
+bunny.net operates two network tiers with different IPv6 support levels:
+
+| Network | Coverage | IPv6 Support |
+| -------- | -------- | ------------ |
+| Standard Network | 119+ Points of Presence | Best effort |
+| Volume Network | 10 Points of Presence | Native dual-stack |
+
+The **Volume Network** is fully dual-stack, providing native IPv4 and IPv6 connectivity throughout the entire delivery path.
+
+The **Standard Network** offers IPv6 support on a best-effort basis. While many locations already support dual-stack connectivity, some edge locations remain IPv4-only due to upstream network limitations or regional infrastructure constraints.
+
+## CDN Ingress Connectivity
+
+When users connect to bunny.net, DNS responses are generated based on the capabilities of the serving location.
+
+- **A records** are always available for IPv4 connectivity.
+- **AAAA records** are returned when the serving Point of Presence supports IPv6 connectivity.
+- Clients with IPv6 connectivity will automatically connect over IPv6 whenever possible.
+
+This approach ensures optimal compatibility while allowing IPv6-capable locations to serve traffic natively over IPv6.
+
+## Origin Connectivity
+
+We support both IPv4 and IPv6 connections to your origin servers.
+
+You can configure origins using:
+
+- Hostnames that resolve to **A records**
+- Hostnames that resolve to **AAAA records**
+- Dual-stack hostnames that resolve to both **A and AAAA records**
+- Direct IPv6 addresses enclosed in square brackets (`[]`) according to RFC standards
+
+Examples:
+
+```text
+https://origin.example.com
+https://[2001:db8::1]
+```
+
+When a hostname resolves to both IPv4 and IPv6 addresses, we will attempt to establish connectivity using the best available path based on the capabilities of the serving edge location.
+
+### Volume Network Origins
+
+The Volume Network provides native dual-stack connectivity to origins. Edge servers within the Volume Network can establish connections to both IPv4 and IPv6 origin infrastructure.
+
+### Standard Network Origins
+
+On the Standard Network, IPv6 origin connectivity is provided on a best-effort basis. If the serving edge location has IPv6 connectivity to the origin, we can connect to IPv6-enabled origins. Otherwise, IPv4 connectivity will be used.
+
+If guaranteed IPv6 connectivity to your origin is required, enabling Origin Shield routes all origin traffic through a Volume Network location with native dual-stack support.
+
+## Origin Shield and IPv6 Origins
+
+For customers using the Standard Network who require guaranteed IPv6 connectivity to their origin infrastructure, we recommend enabling Origin Shield.
+
+Both Origin Shield locations:
+
+- **Chicago, IL**
+- **Paris, France**
+
+are part of the Volume Network and provide native dual-stack connectivity.
+
+When Origin Shield is enabled, all origin fetches are routed through the selected shield location rather than directly from the serving edge location. This ensures that communication between bunny.net and your origin always originates from a Volume Network Point of Presence with native IPv4 and IPv6 support.
+
+This configuration is particularly useful when:
+
+- Your origin is reachable only over IPv6
+- You want to guarantee IPv6 connectivity regardless of which Standard Network edge location serves the request
+- You want to combine the global coverage of the Standard Network with reliable dual-stack origin connectivity
+
+<Note>
+  Origin Shield can be used to guarantee IPv6 connectivity to your origin even when requests are served from Standard Network locations that do not currently have IPv6 connectivity to the origin.
+</Note>
+
+## IPv6 Expansion
+
+Expanding IPv6 support remains an ongoing priority across our network.
+
+While a significant portion of our infrastructure already operates in dual-stack mode, achieving full IPv6 coverage across more than 119 Points of Presence requires coordination with upstream providers and local network operators worldwide. Some locations currently operate in environments where native IPv6 connectivity is not yet available.
+
+As connectivity improves, IPv6 support will continue to expand across additional edge locations without requiring any changes to your CDN configuration.
+
+<Note>
+  IPv6 support on the Volume Network is available across all locations. On the Standard Network, IPv6 availability depends on the capabilities of the serving Point of Presence and its upstream connectivity.
+</Note>
