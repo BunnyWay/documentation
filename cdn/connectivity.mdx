@@ -59,6 +59,33 @@ On the Standard Network, IPv6 origin connectivity is provided on a best-effort b
 
 If guaranteed IPv6 connectivity to your origin is required, enabling Origin Shield routes all origin traffic through a Volume Network location with native dual-stack support.
 
+## CDN Acceleration and IPv6 Origins
+
+bunny.net's CDN Acceleration feature supports dual-stack origin connectivity when used with Bunny DNS.
+
+When accelerating DNS records, we automatically detect matching IPv4 and IPv6 records for the same hostname and use both when establishing connectivity to your origin.
+
+For example, if your DNS zone contains:
+
+```dns
+www    A       203.0.113.10
+www    AAAA    2001:db8::10
+```
+
+and the **A record** is configured for CDN Acceleration, we will automatically discover the matching **AAAA record** and attempt to use both addresses when connecting to your origin.
+
+This enables:
+
+- Dual-stack origin connectivity through CDN Acceleration
+- Automatic IPv6 support without additional configuration
+- Improved resiliency by allowing both IPv4 and IPv6 paths to be used when available
+
+As with standard origin connectivity, IPv6 connectivity depends on the capabilities of the serving edge location. Volume Network locations provide native dual-stack connectivity, while Standard Network locations provide IPv6 connectivity on a best-effort basis.
+
+<Note>
+  When accelerating a hostname through Bunny DNS, matching A and AAAA records for the same hostname are automatically considered for origin connectivity. You do not need to separately accelerate both record types.
+</Note>
+
 ## Origin Shield and IPv6 Origins
 
 For customers using the Standard Network who require guaranteed IPv6 connectivity to their origin infrastructure, we recommend enabling Origin Shield.
