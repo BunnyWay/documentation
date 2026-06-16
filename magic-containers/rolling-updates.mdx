@@ -37,7 +37,7 @@ Imagine you have an application deployed in 3 regions, each with 10 pods. If you
 When your application uses [persistent volumes](/magic-containers/persistent-volumes), the rolling update process is adjusted to prevent data corruption. Rather than starting new pods before removing old ones, existing pods are shut down first to fully unmount their volumes before new pods are started.
 
 <Warning>
-  This means applications with persistent volumes will experience brief downtime during a rolling update, as the old pod must release the volume before the new pod can attach it.
+  Applications with persistent volumes may experience a short period of downtime during a rolling update if the number of pods is less than 2, as the old pod must release the volume before the new pod can attach it.
 </Warning>
 
 # Handling issues during a rolling update
