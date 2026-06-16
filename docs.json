@@ -128,7 +128,8 @@
                   "cdn/regions",
                   "cdn/pricing",
                   "cdn/changelog",
-                  "cdn/limits"
+                  "cdn/limits",
+                  "cdn/connectivity"
                 ]
               },
               {
