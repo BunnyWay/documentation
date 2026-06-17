@@ -18,6 +18,9 @@
   "interaction": {
     "drilldown": false
   },
+  "metadata": {
+    "timestamp": true
+  },
   "navbar": {
     "primary": {
       "type": "button",
