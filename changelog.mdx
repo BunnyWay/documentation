@@ -4,6 +4,13 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-06-17" tags={["Magic Containers", "(New)"]}>
+  ## Persistent volume file permissions and rolling update behavior
+
+  New documentation covering file permission behavior when multiple containers in a pod share a persistent volume, including root vs non-root access scenarios and sticky bit protection. Also documents the adjusted rolling update process for applications with persistent volumes, where existing pods are shut down first to unmount volumes before new pods start. [Learn more](/magic-containers/persistent-volumes#file-permissions)
+
+</Update>
+
 <Update label="2026-06-16" tags={["CDN", "(New)"]}>
   ## CDN Connectivity documentation
 
