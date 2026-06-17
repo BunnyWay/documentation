@@ -3,11 +3,11 @@ title: "Blue/Green & A/B Deployments"
 description: "Run multiple versions of your app at the same time and control how traffic is routed between them."
 ---
 
-Magic Containers lets you run more than one version of an app simultaneously. Three routing patterns build on this:
+Magic Containers lets you run more than one version of an app simultaneously. That unlocks three well-known release strategies. Here's the short version of each, and how it maps to Magic Containers:
 
-- **Blue/green**: switch _all_ traffic from the current version to a new one in a single, deterministic cutover.
-- **A/B**: split traffic between two versions by percentage, keeping each user pinned to the same version.
-- **Canary**: route a targeted slice, such as a single country, to the new version first, then widen as it proves healthy.
+- **[Blue/green](#bluegreen-deployment)** keeps two environments side by side, the current one (blue) and the new one (green), then switches _all_ traffic over in a single cutover. You get a clean release with no in-between state, and rollback is just pointing traffic back at blue.
+- **[A/B](#ab-deployment)** runs both versions at once and splits traffic between them by percentage, keeping each user pinned to the same version. It's how you put a new version in front of a slice of real users and compare how it performs.
+- **[Canary](#canary-deployment)** releases the new version to a narrow, targeted slice first, such as a single country, watches it under real traffic, then widens the audience as your confidence grows.
 
 Pick blue/green when you want a clean release with an instant rollback path. Pick A/B when you want to expose a new version to a fraction of real traffic. Pick canary when you want to validate a new version on a targeted slice before rolling it out everywhere. For everything else, a standard [rolling update](/magic-containers/rolling-updates) is enough.
 
@@ -159,7 +159,7 @@ Because the same IP always hashes to the same bucket, a given visitor consistent
 
 A canary release sends the new version to a narrow, targeted audience first, lets you watch it under real traffic, then widens the audience as your confidence grows. Country makes a natural targeting key: ship to one or two markets, confirm the metrics look healthy, then add more.
 
-This uses the same two-app, [standalone Edge Script](/scripting/standalone/overview) setup as A/B, routing on the visitor's country instead of a percentage. bunny.net adds the [`CDN-RequestCountryCode`](/cdn/vary-cache) header to every request, so the script can read it directly.
+This uses the same two-app, [standalone Edge Script](/scripting/standalone/overview) setup as A/B, routing on the visitor's country instead of a percentage. bunny.net adds the [`CDN-RequestCountryCode`](//cdn/cdn-acceleration#http-headers) header to every request, so the script can read it directly.
 
 The approach:
 
