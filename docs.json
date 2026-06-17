@@ -18,6 +18,9 @@
   "interaction": {
     "drilldown": false
   },
+  "metadata": {
+    "timestamp": true
+  },
   "navbar": {
     "primary": {
       "type": "button",
@@ -317,6 +320,7 @@
                 "pages": [
                   "magic-containers/autoscaling",
                   "magic-containers/rolling-updates",
+                  "magic-containers/deployment-strategies",
                   "magic-containers/graceful-shutdown",
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
@@ -414,7 +418,9 @@
                           "scripting/standalone/examples/return-json",
                           "scripting/standalone/examples/return-html",
                           "scripting/standalone/examples/send-email",
-                          "scripting/standalone/examples/redirect-domain"
+                          "scripting/standalone/examples/redirect-domain",
+                          "scripting/standalone/examples/weighted-routing",
+                          "scripting/standalone/examples/geo-routing"
                         ]
                       }
                     ]
