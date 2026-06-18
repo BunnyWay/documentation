@@ -32,6 +32,27 @@ Imagine you have an application deployed in 3 regions, each with 10 pods. If you
 
 **Total Iterations** - 5 iterations to update all pods in each region.
 
+# Applications with persistent volumes
+
+When your application uses [persistent volumes](/magic-containers/persistent-volumes), the rolling update process is adjusted to prevent data corruption. Rather than starting new pods before removing old ones, existing pods are shut down first to fully unmount their volumes before new pods are started.
+
+<Warning>
+  Applications with persistent volumes may experience a short period of downtime during a rolling update if the number of pods is less than 2, as the old pod must release the volume before the new pod can attach it.
+</Warning>
+
+## Practical example
+
+Imagine you have an application deployed in 3 regions, each with 10 pods, and each pod has a persistent volume attached. If you update the container image:
+
+1. Iteration 1:
+   - Remove 2 old pods (20% of 10) in each region and wait for their volumes to fully unmount.
+   - Start 2 new pods in each region and wait until they are running and healthy.
+
+2. Iterations 2–5:
+   - Repeat the above steps until all pods are updated.
+
+**Total Iterations** - 5 iterations to update all pods in each region.
+
 # Handling issues during a rolling update
 
 If the Rolling Update encounters problems, such as deploying a broken image, it handles the situation by detecting any new pod that fails to reach a running state within ten minutes and considering it unhealthy. In such cases, the Rolling Update is terminated. All new pods with the faulty configuration are deleted, and old pods are restored to maintain application stability. The Rolling Update then restarts automatically, using the latest configuration. If the issue is fixed, such as by providing a healthy image, the update will proceed successfully.

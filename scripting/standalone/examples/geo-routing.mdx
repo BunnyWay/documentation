@@ -1,0 +1,30 @@
+---
+title: "Route by country"
+description: "Send visitors from specific countries to a different origin using the CDN-RequestCountryCode header."
+---
+
+bunny.net adds the [`CDN-RequestCountryCode`](/cdn/vary-cache) header to every request. This script reads it and routes the listed countries to a second origin.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+const PRIMARY = "https://primary.example.com";
+const ALTERNATE = "https://alternate.example.com";
+
+// Countries routed to the alternate origin
+const ALTERNATE_COUNTRIES = new Set(["NZ", "FI"]);
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const country = request.headers.get("CDN-RequestCountryCode") ?? "";
+  const variant = ALTERNATE_COUNTRIES.has(country) ? ALTERNATE : PRIMARY;
+
+  const target = new URL(request.url);
+  const origin = new URL(variant);
+  target.protocol = origin.protocol;
+  target.host = origin.host;
+
+  return fetch(new Request(target, request));
+});
+```
+
+Add or remove entries in `ALTERNATE_COUNTRIES` to change which countries get the alternate origin.

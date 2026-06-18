@@ -91,6 +91,80 @@ Your application now has scalable persistent volumes attached to each container.
 Throughput limits are defined in the pod cgroup and apply to each volume individually. If a pod has two volumes attached, each volume receives its own 10 MB/s read and 10 MB/s write limits.
 </Note>
 
+## File permissions
+
+When multiple containers in a pod share a volume, their ability to read, modify, or delete each other's files depends on which user each container runs as.
+
+**Which user does a container run as?** By default, if no `USER` instruction is present in your Dockerfile, the container runs as root (`uid=0`). If a `USER` instruction is specified, the container runs as that user.
+
+```dockerfile
+# Runs as root (no USER specified)
+FROM ubuntu:22.04
+CMD ["myapp"]
+
+# Runs as a non-root user
+FROM ubuntu:22.04
+USER 1000
+CMD ["myapp"]
+```
+
+<Note>
+  Volumes are only shared between containers within the same pod. Containers from different pods cannot access each other's volumes.
+</Note>
+
+### Root creates files, non-root accesses them
+
+| Operation | Result |
+|-----------|--------|
+| Read      | ✅     |
+| Modify    | ❌     |
+| Delete    | ❌     |
+
+Files created by a root process can be read but not modified or deleted by non-root containers.
+
+### Non-root creates files, root accesses them
+
+| Operation | Result |
+|-----------|--------|
+| Read      | ✅     |
+| Modify    | ✅     |
+| Delete    | ✅     |
+
+Root always has full access regardless of file permissions.
+
+### Both containers run as the same non-root user
+
+| Operation | Result |
+|-----------|--------|
+| Read      | ✅     |
+| Modify    | ✅     |
+| Delete    | ✅     |
+
+Full access as both containers are the file owner.
+
+### Each container runs as a different non-root user
+
+| Operation | Result |
+|-----------|--------|
+| Read      | ✅     |
+| Modify    | ❌     |
+| Delete    | ❌     |
+
+The accessing container is not the file owner. It can read files but cannot modify or delete them.
+
+### Summary
+
+| Scenario                               | Read | Modify | Delete |
+|----------------------------------------|------|--------|--------|
+| Root creates, non-root accesses        | ✅   | ❌     | ❌     |
+| Non-root creates, root accesses        | ✅   | ✅     | ✅     |
+| Same non-root user                     | ✅   | ✅     | ✅     |
+| Different non-root users               | ✅   | ❌     | ❌     |
+
+### A note on deletion
+
+On Linux, whether a process can delete a file is determined by write permission on the **directory** containing the file, not by the file's own permissions. Because all pod containers share write access to the volume directory, a non-root container would ordinarily be able to delete any file inside it regardless of who created it. To prevent this, the volume directory is configured with the **sticky bit** — the same mechanism used by shared system directories such as `/tmp`. With the sticky bit set, only the file's owner or root can delete or rename a file, even with directory write access. The `Delete ❌` entries in the tables above rely on this.
+
 ## FAQ
 
 <AccordionGroup>

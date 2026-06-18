@@ -1,0 +1,40 @@
+---
+title: "Weighted traffic splitting"
+description: "Send a set percentage of visitors to a second origin and keep each visitor on the same origin across requests."
+---
+
+This script hashes a stable key (the client IP) into a 0-99 bucket and routes by percentage. The same key always lands in the same bucket, so a visitor stays on one origin across requests.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+const ORIGINS = {
+  a: "https://origin-a.example.com",
+  b: "https://origin-b.example.com",
+};
+
+const B_PERCENTAGE = 10; // send 10% of visitors to origin B
+
+// Polynomial string hash (Java String.hashCode style), mapped into a 0-99 bucket
+function bucket(key: string): "a" | "b" {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) {
+    h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  }
+  return h % 100 < B_PERCENTAGE ? "b" : "a";
+}
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const ip = request.headers.get("x-forwarded-for") ?? "0.0.0.0";
+  const variant = bucket(ip);
+
+  const target = new URL(request.url);
+  const origin = new URL(ORIGINS[variant]);
+  target.protocol = origin.protocol;
+  target.host = origin.host;
+
+  return fetch(new Request(target, request));
+});
+```
+
+Adjust `B_PERCENTAGE` to change the split. To pin on something other than the client IP, such as a cookie or a header, hash that value instead.
