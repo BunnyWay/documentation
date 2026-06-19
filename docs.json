@@ -876,7 +876,9 @@
               {
                 "group": "Guides",
                 "pages": [
-                  "integrations/wordpress/content-offloading",
+                  "integrations/wordpress/enable-bunny-dns",
+                  "integrations/wordpress/enable-offloader",
+                  "integrations/wordpress/enable-shield",
                   "integrations/wordpress/stream"
                 ]
               },
@@ -2261,6 +2263,16 @@
     {
       "source": "/cdn/troubleshooting/acceleration-not-enabled",
       "destination": "/integrations/wordpress/troubleshooting-acceleration-not-enabled",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/wordpress/content-offloading",
+      "destination": "/integrations/wordpress/enable-offloader",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/wordpress/offloader-and-shield",
+      "destination": "/integrations/wordpress/enable-offloader",
       "permanent": true
     },
     {
