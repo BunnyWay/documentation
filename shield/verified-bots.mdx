@@ -1,95 +1,53 @@
 ---
-title: "Verified SEO Bots"
-description: "Bunny Shield automatically recognizes and allows legitimate SEO and social media crawlers to pass through all mitigation layers and challenges. These crawlers are critical for search indexing, link previews, and content sharing, and ensuring their uninterrupted access helps your site remain discoverable and accessible."
+title: "Verified Bots"
+description: "Bunny Shield recognizes well-known good bots - search crawlers, social and link-preview fetchers, AI agents, and other utility bots - verifies that they are genuine, and lets you decide per category or per bot whether they are allowed through, blocked, or treated as ordinary traffic."
 ---
 
-To prevent abuse, Bunny Shield verifies the authenticity of every bot request before allowing it through.
+Bunny Shield identifies a large set of well-known bots and verifies that each request claiming to be one is genuine. Recognizing a bot doesn't grant it any special treatment on its own, you stay in control of what happens to it.
 
 ## Verification Process
 
-Not all traffic claiming to be a search engine bot is genuine. Many malicious actors spoof user agents to bypass protections. To solve this, Bunny Shield verifies the authenticity of SEO bots using reverse DNS lookups (PTR records):
+Not all traffic claiming to be a search engine or social crawler is genuine. Many malicious actors spoof user agents to bypass protections. Before trusting a bot, Bunny Shield verifies its authenticity:
 
-1. The bot’s IP address is resolved to its PTR hostname.
-2. The hostname is checked against our whitelist of trusted domains.
-3. If the hostname matches, Bunny Shield performs a forward DNS lookup and confirms the hostname resolves back to the same IP range.
+1. The request's user agent is matched against the catalog of known bots, identifying a candidate bot and its category.
+2. For bots that publish a verifiable identity, the client IP is confirmed:
+   - **Reverse DNS (PTR)** - the IP is resolved to its hostname, which is checked against the bot operator's trusted domains, and then a **forward DNS** lookup confirms the hostname resolves back to the same IP.
+   - **Published IP ranges** - some bots are instead verified against the operator's officially published IP ranges.
+3. Only when these checks pass is the request marked as a **verified** bot.
 
-Only when these checks pass is the bot classified as legitimate and allowed through.
+Some bots are recognized by user agent but publish no verifiable identity (no reverse-DNS domain or IP range). These are identified but cannot be verified, and can be allowed or blocked at your own discretion.
 
-## Supported Verified Bots
+## Controlling Bot Access
 
-The following crawlers and preview agents are verified and automatically allowed across all Bunny Shield layers.
+Being recognized as a known bot does not automatically allow a request through. On a new Shield Zone nothing is configured: a recognized bot is identified, and its category is made available to your rules, but is otherwise subject to your normal protections. You decide how each bot is handled at two levels:
 
-### Search Engine Crawlers
+- **Per category** - apply an action to every bot in a category at once.
+- **Per bot** - override a single bot. A per-bot setting always takes precedence over its category, and clearing it (Ignore) returns the bot to following its category.
 
-- **Google**: `.googlebot.com`, `.google.com`
-  - **Googlebot**
-  - **Googlebot-Image**
-  - **Googlebot-Video**
-  - **Google-InspectionTool**
-  - **Google-Site-Verification**
-  - **GoogleProducer**
-  - **APIs-Google**
-  - **Storebot-Google**
-  - **Google-AdWords-Instant**
-  - **Google-AdWords-Express**
+The available actions are:
 
-- **FeedFetcher-Google**: `.googleusercontent.com`, `.google.com`
+- **Allow** - the bot bypasses most of Shield's mitigations (DDoS challenges, Bot Detection and Access Lists). This only takes effect once the bot's identity is verified. A bot that cannot be verified is allowed only if you explicitly allow it, choosing to trust the user-agent match alone.
+- **Block** - the request is rejected at the edge (before cache) with a `403`.
+- **Ignore** *(default)* - the bot has no setting of its own and follows its category. Unless its category allows or blocks it, it gets no special treatment and is subject to your WAF rules, rate limits, and challenges like any other request.
 
-- **AdsBot-Google**: `.googlebot.com`, `.google.com`
-  - **AdsBot-Google**
-  - **AdsBot-Google-Mobile**
+## Bot Categories
 
-- **AdsBot-Google-Mobile-Apps**: `.google.com`
+Bots are grouped into categories so you can manage them together:
 
-- **Mediapartners-Google**: `.google.com`
+- **Search engine crawlers (SEO)** - indexing bots such as search engine spiders.
+- **Social media** - social network crawlers that fetch shared links.
+- **Link previews** - bots that generate link preview cards and unfurls.
+- **AI scrapers** - crawlers that gather content for AI training and datasets.
+- **AI tools** - AI assistants and agents that fetch pages on a user's behalf.
+- **Advertising** - ad verification and ad-serving bots.
+- **Tools** - monitoring, uptime, and other utility bots.
 
-- **Yahoo! Slurp**: `.crawl.yahoo.net`
+## Using Verified Bots in Rules
 
-- **Bingbot (Microsoft)**: `.search.msn.com`
-
-- **Yandex**: `.yandex.ru`, `.yandex.net`, `.yndx.net`, `.yandex.com`
-
-- **Baiduspider**: `.crawl.baidu.com`, `.baidu.jp`
-
-- **Applebot**: `.applebot.apple.com`
-
-- **MojeekBot**: `.mojeek.com`
-
-- **QwantBot**: `.qwant.com`
-
-- **PinterestBot**: `.pinterest.com`
-
-- **PrerenderGateway**
-  - Used by our Optimizer HTML Prerender service for SEO and JavaScript rendering.
-
-### Performance & Auditing Tools
-
-- **Chrome Lighthouse**: `.googleusercontent.com`, `.google.com`
-
-### Social Media & Link Preview Bots
-
-- **Facebookexternalhit**: `.facebook.com`, `.fbsv.net`
-
-- **Twitterbot / X Preview Bot**: `.twttr.com`, `.twitter.com`, `.x.com`
-
-- **LinkedInBot**: `.linkedin.com`
-
-- **Pinterest**: `.pinterest.com`
-
-- **WhatsApp**: `.whatsapp.net`
-
-- **Tumblr**: `.tumblr.com`
-
-- **TelegramBot**: `.telegram.org`
-
-### Messaging & Collaboration Preview Bots
-
-- **SkypeUriPreview**: `.skype.com`, `.skype.net`
+When a bot is verified, its category is exposed to the Shield rule engine through the `VERIFIED_BOT_CATEGORY` variable. You can use this in custom rules to handle categories differently - for example, allowing search crawlers while challenging AI scrapers.
 
 ## Why Verification Matters
 
-- **Prevents abuse**: Many malicious crawlers disguise themselves with fake user-agent strings. PTR verification means only real search and social bots get access.
-- **Preserves SEO**: Legitimate crawlers are never blocked by WAF rules, rate limits, or bot detection challenges.
-- **Improves security**: Fake bots are denied, reducing the chance of scraping, spam, and credential stuffing attempts.
-
-Legitimate SEO bots are vital for site visibility and usability. With Bunny Shield, you can rest assured that authentic crawlers pass freely while fakes are stopped at the edge.
+- **Prevents abuse** - many malicious crawlers disguise themselves with fake user-agent strings. Identity verification ensures only genuine bots are treated as such.
+- **Keeps you in control** - you decide which bots to allow, block, or leave subject to your normal protections, per category or per individual bot.
+- **Preserves access for the bots you trust** - bots you allow pass freely through challenges and rate limits, so search indexing, link previews, and other legitimate automation keep working.
