@@ -1,0 +1,175 @@
+---
+title: "Custom Response Pages"
+description: "Customize the challenge, block, and rate limit response pages shown to visitors when Bunny Shield takes action. Create fully branded experiences that match your website while maintaining Bunny Shield protection."
+---
+
+Custom Response Pages allow you to fully customize the content displayed to visitors when Bunny Shield issues a challenge, blocks a request, or enforces a rate limit.
+
+Instead of generic protection pages, you can present visitors with branded experiences that match the look and feel of your website, helping maintain a consistent user experience even during security events.
+
+<Callout type="info">
+Custom Response Pages are available on <strong>Advanced</strong> and higher Bunny Shield plans.
+</Callout>
+
+## Overview
+
+By default, Bunny Shield serves clean, generic response pages whenever a request is challenged, blocked, or rate limited.
+
+With Custom Response Pages enabled, you can replace the contents of the page body with your own HTML, allowing you to:
+
+* Match your website branding and styling
+* Provide additional support or contact information
+* Explain why access was restricted
+* Offer troubleshooting instructions for legitimate visitors
+* Create localized or multilingual response pages
+
+The response status codes and Bunny Shield protection logic remain unchanged. Only the page content presented to visitors is customized.
+
+### Supported Response Types
+
+You can customize the following Bunny Shield response pages:
+
+* **Challenge Pages**
+
+  * Displayed when visitors must complete a verification challenge.
+
+* **Block Pages**
+
+  * Displayed when Bunny Shield blocks a request due to security policies.
+
+* **Rate Limit Pages**
+
+  * Displayed when a visitor exceeds configured rate limits.
+
+## How It Works
+
+Bunny Shield provides a customizable HTML editor for each response page type.
+
+For security and reliability reasons, only the contents within the page's `<body>` element can be customized. Within the body, you can include your own HTML, CSS, JavaScript, and external assets to fully customize the visitor experience.
+
+```html
+<body>
+    <link rel="stylesheet" href="https://acme.com/custom-response.css">
+
+    <div class="container">
+        <img src="https://acme.com/logo.svg" alt="Company Logo">
+        <h1>Security Verification Required</h1>
+        <p>Please complete the verification below to continue.</p>
+    </div>
+
+    <script src="https://acme.com/custom-response.js"></script>
+</body>
+```
+
+The surrounding document structure, response handling, challenge functionality, and security controls remain managed by Bunny Shield to ensure the page continues to function correctly.
+
+
+section can be modified.
+
+The surrounding page structure, protection logic, challenge functionality, and security controls remain managed by Bunny Shield.
+
+This ensures custom pages continue to function correctly while allowing complete control over the visitor-facing content and styling.
+
+## Configuring Custom Response Pages
+
+To configure custom response pages:
+
+1. Open your **Shield Zone**.
+2. Navigate to **Settings** -> **Response Pages**.
+4. Enable **White-label block pages**.
+5. Click **Create custom page** for the response you'd like to customize.
+6. Edit the HTML body content.
+7. Save your changes.
+
+### Response Page Configuration
+
+![](/images/shield/custom-response-pages/response-pages.png)
+
+### HTML Editor
+
+![](/images/shield/custom-response-pages/response-page-editor.png)
+
+## Example Use Cases
+
+### Branded Challenge Page
+
+Add your company logo, colors, and messaging to create a seamless verification experience.
+
+```html
+<body>
+    <div class="container">
+        <img src="https://acme.com/logo.svg" alt="Company Logo">
+        <h1>Security Verification Required</h1>
+        <p>Please complete the verification below to continue.</p>
+    </div>
+</body>
+```
+
+### Custom Block Page
+
+Provide additional information for visitors who may have been blocked unintentionally.
+
+```html
+<body>
+    <h1>Access Restricted</h1>
+    <p>
+        Your request was blocked by our security systems.
+        If you believe this is an error, please contact support.
+    </p>
+</body>
+```
+
+### Custom Rate Limit Page
+
+Help users understand temporary access restrictions.
+
+```html
+<body>
+    <h1>Too Many Requests</h1>
+    <p>
+        You have exceeded the allowed request rate.
+        Please wait a few minutes and try again.
+    </p>
+</body>
+```
+
+## Fallback Behavior
+
+If a custom response page is not configured, Bunny Shield automatically serves a generic, non-branded response page.
+
+These default pages provide a clean and professional experience without displaying Bunny.net branding.
+
+## Best Practices
+
+When creating custom response pages, we recommend:
+
+* Keeping messaging clear and concise.
+* Explaining why the visitor is seeing the page.
+* Providing support or contact information where appropriate.
+* Ensuring branding matches your website.
+* Avoiding excessive scripts or external dependencies.
+* Testing pages on desktop and mobile devices.
+
+## Frequently Asked Questions
+
+### Can I modify the entire HTML document?
+
+No. Bunny Shield only allows customization of the content within the page's `<body>` element. This includes any HTML, CSS, and JavaScript you wish to add, including `<style>`, `<script>`, and external `<link>` tags.
+
+The surrounding document structure, response handling, challenge functionality, and security controls remain managed by Bunny Shield to ensure the page continues to function correctly.
+
+### Can I customize challenge, block, and rate limit pages separately?
+
+Yes. Each response page type can be configured independently.
+
+### What happens if I remove my custom content?
+
+Bunny Shield will automatically fall back to serving the default generic response page.
+
+### Does customizing a page affect protection functionality?
+
+No. Custom Response Pages only change the visitor-facing content. Bunny Shield's protection logic, challenges, and mitigation systems continue to operate normally.
+
+### Which plans include Custom Response Pages?
+
+Custom Response Pages are available on **Advanced** and higher Bunny Shield plans.
