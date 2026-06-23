@@ -75,7 +75,10 @@
                       "account/api-keys",
                       "account/integrations",
                       "account/data-processing-agreement",
-                      "account/close-account"
+                      "account/close-account",
+                      "account/account-suspended",
+                      "account/abuse-procedure",
+                      "account/dmca-procedure"
                     ]
                   },
                   {
