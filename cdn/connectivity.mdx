@@ -59,6 +59,28 @@ On the Standard Network, IPv6 origin connectivity is provided on a best-effort b
 
 If guaranteed IPv6 connectivity to your origin is required, enabling Origin Shield routes all origin traffic through a Volume Network location with native dual-stack support.
 
+## 502 and 504 errors
+
+A `502 Bad Gateway` means an edge server received an invalid response from your origin. A `504 Gateway Timeout` means the origin didn't respond in time. When the origin is unreachable, edge servers serve from cache where possible and only return the error when the file isn't cached. Common causes:
+
+- **Origin offline:** The most common cause. Edge servers can't connect to your origin and the file isn't in cache.
+- **Firewall blocking edge servers:** Because the CDN proxies all your traffic, origin firewalls or security software can mistake the volume of edge requests for an attack and block them. Whitelist the [edge server IP list](https://api.bunny.net/system/edgeserverlist) ([IPv6](https://api.bunny.net/system/edgeserverlist/ipv6)) and update it periodically as the network changes.
+- **Network congestion:** A rare, transient routing problem between an edge location and a distant origin.
+- **Timeouts:** By default Bunny waits 10 seconds for a TCP connection and 60 seconds for the origin to start sending data. Immediate 502s usually mean an origin firewall or WAF is rejecting the connection. These timeouts are configurable via Safehop.
+
+Use the [bunny.net diagnostic tools](https://tools.bunny.net/) to test latency, traceroutes, and HTTP requests from over 120 locations and see whether specific regions are blocked or the origin is slow. If you've ruled out the causes above, contact [support@bunny.net](mailto:support@bunny.net).
+
+## Origin redirect loops
+
+If your CDN URLs return a 301 redirect back to your own domain, the origin is issuing that redirect and the CDN is forwarding it. Bunny CDN never returns a 301 on its own, except for hotlink protection. Check the following:
+
+- **Origin URL host:** Make sure the Pull Zone Origin URL matches the exact domain your site serves from, including the `www` or non-`www` version. A mismatch triggers your origin's canonical redirect.
+- **Origin URL protocol:** If your server forces HTTPS, set the Origin URL to `https://`. An `http://` Origin URL against an HTTPS-only origin produces a redirect.
+- **Origin redirect or rewrite rules:** Check your server configuration for redirect or rewrite rules affecting your assets.
+- **Hotlink protection:** If enabled, whitelist every domain the CDN serves (both `www` and non-`www`), with no protocol or slashes in the hostname field.
+
+After any change, purge the full Pull Zone cache and wait for it to sync, since cached 301s persist on the edge.
+
 ## CDN Acceleration and IPv6 Origins
 
 bunny.net's CDN Acceleration feature supports dual-stack origin connectivity when used with Bunny DNS.

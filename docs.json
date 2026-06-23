@@ -207,6 +207,7 @@
                     "pages": [
                       "cdn/integrations/cms/wordpress",
                       "cdn/integrations/cms/typo3",
+                      "cdn/integrations/cms/joomla",
                       "cdn/integrations/cms/expressionengine",
                       "cdn/integrations/cms/shopware",
                       "cdn/integrations/cms/drupal",
@@ -240,14 +241,8 @@
                   {
                     "group": "Troubleshooting",
                     "pages": [
-                      "cdn/troubleshooting/unexpected-redirects",
-                      "cdn/troubleshooting/cookies-still-sent",
                       "cdn/troubleshooting/run-traceroute",
-                      "cdn/troubleshooting/still-slow",
-                      "cdn/troubleshooting/301-redirects",
-                      "cdn/troubleshooting/502-504-errors",
-                      "cdn/troubleshooting/low-cache-hit-rate",
-                      "cdn/troubleshooting/lets-encrypt-issues"
+                      "cdn/troubleshooting/still-slow"
                     ]
                   }
                 ]
@@ -2261,6 +2256,36 @@
     {
       "source": "/cdn/troubleshooting/acceleration-not-enabled",
       "destination": "/integrations/wordpress/troubleshooting-acceleration-not-enabled",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/301-redirects",
+      "destination": "/cdn/connectivity#origin-redirect-loops",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/unexpected-redirects",
+      "destination": "/cdn/connectivity#origin-redirect-loops",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/502-504-errors",
+      "destination": "/cdn/connectivity#502-and-504-errors",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/cookies-still-sent",
+      "destination": "/cdn/vary-cache#cookie",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/low-cache-hit-rate",
+      "destination": "/cdn/smart-cache#improving-your-cache-hit-rate",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/lets-encrypt-issues",
+      "destination": "/cdn/ssl-setup#troubleshooting",
       "permanent": true
     },
     {

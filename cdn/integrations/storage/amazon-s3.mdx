@@ -1,5 +1,43 @@
 ---
 title: Amazon S3
 description: Use bunny.net CDN as a caching layer for Amazon S3 to accelerate file delivery and reduce origin costs.
-url: https://support.bunny.net/hc/en-us/articles/360000335451-How-to-speed-up-your-Amazon-S3-file-delivery-with-BunnyCDN
 ---
+
+Bunny CDN caches files from your Amazon S3 bucket and delivers them from a global edge network, speeding up delivery and reducing egress costs. This guide walks you through the setup in a few steps.
+
+<Tip>
+  Prefer to keep your files on bunny.net? [Bunny Storage](/storage) is globally replicated object storage with tight CDN integration, and it offers an [S3-compatible API](/storage/s3) (currently in beta).
+</Tip>
+
+<Steps>
+  <Step title="Create an S3 bucket and upload a file">
+    If you don't already have a bucket, sign in to the [AWS Management Console](https://console.aws.amazon.com/s3/), click **Create bucket**, and follow the prompts (see [Amazon's guide](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html) for details). Upload a file and give it public-read permissions.
+
+    <Frame>
+      ![Creating an Amazon S3 bucket](/images/cdn/integrations/storage/s3-create-bucket.png)
+    </Frame>
+  </Step>
+  <Step title="Find your bucket's public URL">
+    Click the uploaded file to open its details, which include the public link. Copy only the first part of the link, the hostname and bucket path, for example `https://s3-eu-west-1.amazonaws.com/your-bucket/`. Don't include the file name.
+
+    <Frame>
+      ![Getting the S3 object URL](/images/cdn/integrations/storage/s3-get-url.png)
+    </Frame>
+  </Step>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and create a new Pull Zone. Give it a name (this becomes your CDN hostname) and paste the URL from the previous step into the **Origin URL** field, then choose your pricing tiers and click **Add Pull Zone**. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+
+    <Frame>
+      ![Adding a Pull Zone with the S3 bucket as origin](/images/cdn/integrations/storage/s3-add-pull-zone.png)
+    </Frame>
+  </Step>
+  <Step title="Test your Pull Zone">
+    Once the configuration has synced to the edge network, request a file through your Pull Zone hostname, for example:
+
+    ```
+    https://mys3zone.b-cdn.net/bunny.jpg
+    ```
+
+    If the file is served, Bunny CDN is caching content from your bucket. Replace your S3 URLs with the Bunny CDN URLs in your application to start serving cached content.
+  </Step>
+</Steps>

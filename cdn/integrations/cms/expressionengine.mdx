@@ -1,5 +1,35 @@
 ---
 title: ExpressionEngine
 description: Configure bunny.net CDN with ExpressionEngine to accelerate your website and optimize asset delivery.
-url: https://support.bunny.net/hc/en-us/articles/360019199051-How-to-speed-up-your-ExpressionEngine-website-with-BunnyCDN
 ---
+
+Setting up Bunny CDN with ExpressionEngine takes only a single line of configuration plus a template change.
+
+<Steps>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and create a new Pull Zone with your ExpressionEngine site as the origin URL. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+  </Step>
+  <Step title="Edit your index.php file">
+    You'll need SSH or FTP access to your web server. Open the `index.php` file in your site's root and find this line:
+
+    ```php
+    // $assign_to_config['global_vars'] = array();
+    ```
+
+    Uncomment it and define a global variable for your CDN URL, replacing the hostname with your Pull Zone:
+
+    ```php
+    $assign_to_config['global_vars'] = array('cdn_url' => 'https://YOURZONE.b-cdn.net/');
+    ```
+  </Step>
+  <Step title="Use the variable in your templates">
+    Update your templates to reference the new `{cdn_url}` variable when linking to static resources. For example:
+
+    ```text
+    {cdn_url}uploads/image.jpg
+    ```
+  </Step>
+  <Step title="Test the integration">
+    Load your site and confirm that the URLs for your static content now include your Pull Zone hostname. Once they do, ExpressionEngine is serving assets through Bunny CDN.
+  </Step>
+</Steps>

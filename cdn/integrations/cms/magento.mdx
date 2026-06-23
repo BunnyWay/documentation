@@ -1,5 +1,43 @@
 ---
 title: Magento
 description: Integrate bunny.net CDN with your Magento store for faster page loads and optimized e-commerce performance.
-url: https://support.bunny.net/hc/en-us/articles/360001944171-How-to-speed-up-your-Magento-website-with-BunnyCDN
 ---
+
+This guide walks you through serving your Magento store's static and media files through Bunny CDN in four steps.
+
+<Steps>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and create a new Pull Zone with your Magento store as the origin URL. Match the protocol (HTTP or HTTPS) of your site exactly. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+
+    <Frame>
+      ![Creating a Pull Zone for Magento](/images/cdn/integrations/cms/magento-add-pull-zone.png)
+    </Frame>
+  </Step>
+  <Step title="Add the required CORS headers">
+    Open your Pull Zone's **Headers** settings and add the `html` and `json` extensions. This is required, otherwise your Magento admin interface won't work correctly.
+
+    <Frame>
+      ![Adding CORS headers to the Pull Zone](/images/cdn/integrations/cms/magento-cors-headers.png)
+    </Frame>
+  </Step>
+  <Step title="Configure Magento to use the Pull Zone">
+    Log in to your Magento admin panel and go to **Stores → Configuration → General → Web**.
+
+    <Frame>
+      ![Magento Web configuration](/images/cdn/integrations/cms/magento-web-config.png)
+    </Frame>
+
+    Open the **Base URLs** tab and enter your Pull Zone hostname in both **Base URL for Static View Files** and **Base URL for User Media Files**, including the `/static/` and `/media/` subfolders respectively.
+
+    <Frame>
+      ![Setting the Base URLs](/images/cdn/integrations/cms/magento-base-urls.png)
+    </Frame>
+
+    Repeat the same values in the **Base URLs (Secure)** section, using the `https://` version of the URL to avoid connectivity issues. Click **Save Config**.
+  </Step>
+  <Step title="Flush the Magento cache">
+    Flush your Magento cache as prompted by the settings dashboard.
+  </Step>
+</Steps>
+
+Your Magento store is now serving static and media files through Bunny CDN.

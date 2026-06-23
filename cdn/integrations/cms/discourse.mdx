@@ -1,5 +1,41 @@
 ---
 title: Discourse
 description: Speed up your Discourse forum with bunny.net CDN for faster page loads and improved performance.
-url: https://support.bunny.net/hc/en-us/articles/360000549272-How-to-speed-up-Discourse-with-BunnyCDN
 ---
+
+Discourse has built-in CDN support. This guide walks you through pointing it at Bunny CDN.
+
+<Steps>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and open the **Add Pull Zone** page. Choose a name for your zone, then set the origin URL to your Discourse forum (for example, `discourse.example.com`).
+
+    <Frame>
+      ![Creating a Pull Zone for Discourse](/images/cdn/integrations/cms/discourse-add-zone.png)
+    </Frame>
+
+    Select a pricing tier and click **Add Pull Zone**. For more detail, see [How to create your first Pull Zone](/cdn/quickstart).
+  </Step>
+  <Step title="Configure Discourse with your Pull Zone">
+    Open your `app.yml` configuration file and find the following lines:
+
+    ```yaml
+    ## the origin pull CDN address for this Discourse instance
+    DISCOURSE_CDN_URL: https://discourse-cdn.example.com
+    ```
+
+    If they aren't present, add them below the other `DISCOURSE_` variables. Replace the `DISCOURSE_CDN_URL` value with your Pull Zone hostname.
+
+    <Frame>
+      ![Setting DISCOURSE_CDN_URL in app.yml](/images/cdn/integrations/cms/discourse-cdn-url.png)
+    </Frame>
+  </Step>
+  <Step title="Rebuild the Discourse container">
+    Apply the new configuration by rebuilding the container:
+
+    ```bash
+    ./launcher rebuild app
+    ```
+
+    Once the rebuild finishes, your forum is served through Bunny CDN. To confirm everything is working, see [Verify your configuration](/cdn/verify-configuration).
+  </Step>
+</Steps>

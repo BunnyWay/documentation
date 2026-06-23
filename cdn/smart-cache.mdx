@@ -82,3 +82,22 @@ To cache a file type that Smart Cache normally excludes, create an Edge Rule wit
   This is useful for caching HTML pages or API responses that you know are safe
   to cache, such as static site generators or public API endpoints.
 </Info>
+
+## Improving your cache hit rate
+
+A healthy Pull Zone typically sees a cache hit rate above 95%. A rate below 70% usually points to a configuration issue causing requests to be fetched from your origin instead of served from cache. Common causes and fixes:
+
+- **Missing or restrictive `Cache-Control` headers:** Bunny follows the origin's `Cache-Control` header to decide whether and how long to cache. Check it with `curl -I https://your-zone.b-cdn.net/path/file.css`. If it's missing, set to `no-cache`, or has a very low `max-age`, the file won't cache well. Set an appropriate `max-age`, or override caching with an Edge Rule (see [Override Smart Cache](#override-smart-cache)).
+- **Changing query strings:** Each unique URL, including its query string, is cached separately, so `/style.css?v=1` and `/style.css?v=2` are two cache entries. If the query string changes but the content doesn't, disable **URL Query String** under [Vary Cache](/cdn/vary-cache#url-query-string) so all variants share one cache file. Review your workflow first, since this affects every query-string variant.
+- **New or recently purged zone:** Cache hit rate builds up over time. A brand-new or just-purged zone shows a low rate until traffic warms the cache, usually within a day.
+- **Dynamic content via Smart Cache:** With Smart Cache enabled, dynamic content is treated as non-cacheable, which lowers the reported rate on zones that serve many dynamic assets.
+- **Infrequently requested files:** Files that aren't requested for a period (typically 5 to 7 days) may be evicted from cache. The more popular a file, the higher its hit rate.
+- **Mostly static content:** Consider [Perma-Cache](/cdn/perma-cache) to permanently store files on edge storage. Note that Perma-Cache hits are still reported as MISS in CDN cache metrics.
+- **Simultaneous mass requests:** For livestreaming or live events where many users request the same uncached asset at once, enable [Request Coalescing](/cdn/request-coalescing) to funnel them into a single origin request.
+
+## Video and large file delivery
+
+If a video buffers when you skip ahead in the timeline, or large files only become seekable after fully downloading, two settings control this:
+
+- **Enable cache file slicing:** In your Pull Zone **Caching** settings, enable cache file slicing (optimize for video). Without slicing, an uncached file is downloaded from the origin as one large object and is only seekable from the start until fully cached. Slicing splits large files into small chunks that are fetched independently, so any part of the file can be requested at any time, regardless of cache state.
+- **Encode video with the header at the start:** If seeking still fails even when the file is cached, your video likely has its metadata (the moov atom) at the end of the file, forcing the browser to download the whole file before it can play. Re-encode with a web-optimized (fast-start) preset so the header sits at the beginning.
