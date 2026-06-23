@@ -177,6 +177,7 @@
                     "group": "Security",
                     "pages": [
                       "cdn/security/hotlink-protection",
+                      "cdn/security/geographic-blocking",
                       {
                         "group": "Token Authentication",
                         "pages": [
