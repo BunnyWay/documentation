@@ -1,12 +1,12 @@
 ---
 title: Enable Bunny DNS and CDN Acceleration
-sidebarTitle: Enable Bunny DNS and CDN
+sidebarTitle: Bunny DNS and CDN
 description: Migrate your domain to Bunny DNS and enable CDN Acceleration. This is a prerequisite for the Bunny Offloader and Bunny Shield features in the WordPress plugin.
 ---
 
 Several features of the bunny.net WordPress plugin, including **Bunny Offloader** and **Bunny Shield**, require that your domain uses Bunny DNS with CDN Acceleration enabled. Traffic must flow through the bunny.net CDN proxy so the plugin can offload media to Storage and so Shield can inspect and mitigate requests at the edge.
 
-This guide walks through migrating your domain to Bunny DNS, enabling CDN Acceleration, and verifying that everything is wired up correctly. Once complete, head to [Enable Offloader](/integrations/wordpress/enable-offloader) or [Enable Shield](/integrations/wordpress/enable-shield) to turn on the features themselves.
+This guide walks through migrating your domain to Bunny DNS, enabling CDN Acceleration, and verifying that everything is wired up correctly. Once complete, head to [Enable Offloader](/integrations/wordpress/offloader) or [Enable Shield](/integrations/wordpress/shield) to turn on the features themselves.
 
 <Note>
   These features are only supported when using the official bunny.net plugin and
@@ -113,7 +113,7 @@ Verify your setup using any of these methods:
 <CardGroup cols={2}>
   <Card
     title="Enable Offloader"
-    href="/integrations/wordpress/enable-offloader"
+    href="/integrations/wordpress/offloader"
     icon="cloud-upload"
   >
     Offload media files to Bunny Storage for scalable, globally replicated
@@ -121,7 +121,7 @@ Verify your setup using any of these methods:
   </Card>
   <Card
     title="Enable Shield"
-    href="/integrations/wordpress/enable-shield"
+    href="/integrations/wordpress/shield"
     icon="shield"
   >
     Turn on WAF and DDoS protection with Bunny Shield.
