@@ -32,6 +32,12 @@ If this happens:
 2. Implement exponential backoff retry logic
 3. Distribute requests across longer time periods
 
+## Renaming files
+
+Renaming files or folders directly on Bunny Storage is not currently supported by design, so you won't see a rename option in the dashboard or over FTP. Allowing renames could cause inconsistencies while content propagates across edge locations, so the action is blocked to keep replication stable.
+
+To rename a file, re-upload it under the new name, then delete the old one once the upload succeeds.
+
 ## Durability and reliability
 
 For information about data durability, redundancy, and reliability guarantees, see [Durability](/storage/durability).
