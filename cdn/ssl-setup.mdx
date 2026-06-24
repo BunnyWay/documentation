@@ -120,7 +120,7 @@ Common causes:
 
 - **DNS not propagated**: Use [dnschecker.org](https://dnschecker.org) to confirm your CNAME is resolving globally
 - **Cloudflare proxy enabled**: Disable the orange cloud icon on your CNAME record
-- **Geolocation blocks**: Let's Encrypt validates from multiple regions (including USA and Europe). If you've blocked these regions via Traffic Manager or Edge Rules, validation will fail
+- **Geolocation blocks**: Let's Encrypt validates from multiple regions (including USA and Europe). If you've blocked these regions via Traffic Manager or Edge Rules, validation may fail
 - **CAA records**: If your domain has CAA DNS records, add `letsencrypt.org` to the allowed issuers
 
 ### Rate limiting
