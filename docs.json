@@ -775,7 +775,7 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["dns/index", "dns/quickstart"]
+                "pages": ["dns/index", "dns/quickstart", "dns/changelog"]
               },
               {
                 "group": "DNS Management",
