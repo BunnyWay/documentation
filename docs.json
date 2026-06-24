@@ -785,7 +785,8 @@
                   "dns/import-export",
                   "dns/dnssec",
                   "dns/logging",
-                  "dns/statistics"
+                  "dns/statistics",
+                  "dns/limits"
                 ]
               },
               {
