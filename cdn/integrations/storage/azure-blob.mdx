@@ -1,5 +1,54 @@
 ---
 title: Microsoft Azure Storage Blobs
 description: Accelerate Azure Blob Storage delivery with bunny.net CDN for faster file access and reduced egress costs.
-url: https://support.bunny.net/hc/en-us/articles/360018372772-How-to-speed-up-Microsoft-Azure-Storage-Blobs-with-BunnyCDN
 ---
+
+Bunny CDN caches files from your Microsoft Azure Blob Storage container and delivers them from a global edge network, speeding up delivery and reducing egress costs. This guide walks you through the setup in three steps.
+
+<Tip>
+  Prefer to keep your files on bunny.net? [Bunny Storage](/storage) is globally replicated object storage with tight CDN integration, and it offers an [S3-compatible API](/storage/s3) (currently in beta).
+</Tip>
+
+<Steps>
+  <Step title="Configure your container and upload some blobs">
+    Set up an Azure Storage container and upload some data, following [Microsoft's quickstart](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal).
+  </Step>
+  <Step title="Get the container URL and create a Pull Zone">
+    Click the three dots to the right of your file, then select **Blob Properties**.
+
+    <Frame>
+      ![Opening Blob Properties](/images/cdn/integrations/storage/azure-blob-properties-menu.png)
+    </Frame>
+
+    Copy the blob URL. It looks like this:
+
+    ```
+    https://harrytest1.blob.core.windows.net/cdn01/bunnycdn.png
+    ```
+
+    <Frame>
+      ![The blob URL in Blob Properties](/images/cdn/integrations/storage/azure-blob-url.png)
+    </Frame>
+
+    For the Pull Zone origin you only need the hostname and container path, so remove the file name:
+
+    ```
+    https://harrytest1.blob.core.windows.net/cdn01/
+    ```
+
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and create a new Pull Zone. Give it a name (this becomes your CDN hostname), paste the trimmed URL into the **Origin URL** field, choose your pricing tiers, and click **Add Pull Zone**. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+
+    <Frame>
+      ![Adding a Pull Zone with the Azure container as origin](/images/cdn/integrations/storage/azure-add-pull-zone.png)
+    </Frame>
+  </Step>
+  <Step title="Test your Pull Zone">
+    Once the configuration has synced to the edge network, request a file through your Pull Zone hostname, for example:
+
+    ```
+    https://azuretest.b-cdn.net/bunnycdn.png
+    ```
+
+    If the file is served, Bunny CDN is caching content from your container. Replace your container URLs with the Bunny CDN URLs in your application to start serving cached content.
+  </Step>
+</Steps>

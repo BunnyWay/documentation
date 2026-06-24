@@ -1,5 +1,59 @@
 ---
 title: Typo3
 description: Integrate bunny.net CDN with your TYPO3 website for faster content delivery and improved performance.
-url: https://support.bunny.net/hc/en-us/articles/360018879551-How-to-speed-up-your-Typo3-website-with-BunnyCDN
 ---
+
+TYPO3 can serve assets through Bunny CDN using the [Content Replacer extension](https://extensions.typo3.org/extension/replacer/), which rewrites the content URLs on your site. This guide walks you through the setup.
+
+<Steps>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and create a new Pull Zone with your TYPO3 site as the origin URL. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+
+    Match the protocol of your site exactly. If your TYPO3 site runs on HTTPS, enable HTTPS on the Pull Zone; if it runs on HTTP only, leave HTTPS disabled. A mismatch will cause errors.
+  </Step>
+  <Step title="Install the Content Replacer extension">
+    If your TYPO3 install uses Composer mode, install the extension from the command line:
+
+    ```bash
+    composer req jweiland/replacer
+    ```
+
+    <Frame>
+      ![Installing the Content Replacer extension with Composer](/images/cdn/integrations/cms/typo3-composer-install.png)
+    </Frame>
+
+    Otherwise, install it through the **Extension Manager** in the TYPO3 web interface.
+  </Step>
+  <Step title="Configure the Content Replacer">
+    Go to **Template**, select the root page, enable **Modify**, and edit the entire template record.
+
+    <Frame>
+      ![Editing the TYPO3 template record](/images/cdn/integrations/cms/typo3-edit-template.png)
+    </Frame>
+
+    Scroll to the **Setup** box and paste the following, replacing `YOURZONE.b-cdn.net` with your Pull Zone hostname:
+
+    ```typoscript
+    config.tx_ja_replacer {
+      search {
+        1 = typo3temp/
+        2 = fileadmin/
+        3 = typo3conf/
+      }
+      replace {
+        1 = https://YOURZONE.b-cdn.net/typo3temp/
+        2 = https://YOURZONE.b-cdn.net/fileadmin/
+        3 = https://YOURZONE.b-cdn.net/typo3conf/
+      }
+    }
+    ```
+
+    Click **Save**, then select the lightning bolt and click **Flush all caches**.
+
+    <Frame>
+      ![Flushing all caches in TYPO3](/images/cdn/integrations/cms/typo3-flush-caches.png)
+    </Frame>
+  </Step>
+</Steps>
+
+Your TYPO3 site now serves static assets through Bunny CDN.

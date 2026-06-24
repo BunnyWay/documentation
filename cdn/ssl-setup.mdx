@@ -105,14 +105,19 @@ Use this option for wildcard domains (`*.yourdomain.com`) or certificates from c
 
 Common causes:
 
-- **DNS not propagated**: Use [dnschecker.org](https://dnschecker.org) to confirm your CNAME is resolving globally
+- **DNS not propagated**: Use [dnschecker.org](https://dnschecker.org) to confirm your CNAME is resolving globally. After updating a DNS record, wait a few minutes before requesting the certificate so the change can propagate, otherwise our servers may read a stale cached record
+- **Incorrect CNAME record**: Verify with a [DNS lookup tool](https://toolbox.googleapps.com/apps/dig/) that your hostname returns a CNAME pointing to the exact hostname of your Pull Zone. If you use [Bunny DNS](/dns), point your custom domain's CNAME to your `b-cdn.net` Pull Zone hostname
 - **Cloudflare proxy enabled**: Disable the orange cloud icon on your CNAME record
 - **Geolocation blocks**: Let's Encrypt validates from multiple regions (including USA and Europe). If you've blocked these regions via Traffic Manager or Edge Rules, validation will fail
-- **CAA records**: If your domain has CAA DNS records, add `letsencrypt.org` to the allowed issuers
+- **CAA records**: If your domain has CAA DNS records, add `letsencrypt.org` to the allowed issuers, or remove the CAA records to allow any issuer
 
 ### Rate limiting
 
-Requesting certificates too many times in a short period can trigger Let's Encrypt rate limits (up to one week). Be patient when troubleshooting DNS issues before retrying.
+Requesting certificates too many times in a short period can trigger Let's Encrypt rate limits (up to one week). Be patient when troubleshooting DNS issues before retrying. If you need SSL immediately while rate-limited, upload a [custom certificate](#custom-certificate) from another CA.
+
+### Debugging a failed request
+
+When a certificate request fails via the dashboard or API, the returned error includes an ACME challenge URL (like `https://acme-v02.api.letsencrypt.org/acme/chall/...`). Open it to see the exact reason the issuance failed. If you're still stuck, contact [support@bunny.net](mailto:support@bunny.net).
 
 ## Root domains
 

@@ -1,5 +1,50 @@
 ---
 title: Drupal
 description: Integrate bunny.net CDN with your Drupal website for faster content delivery and improved performance.
-url: https://support.bunny.net/hc/en-us/articles/360018510091-How-to-speed-up-your-Drupal-website-with-BunnyCDN
 ---
+
+Drupal supports CDN delivery through the [CDN module](https://www.drupal.org/project/cdn), which rewrites your asset URLs to serve them through Bunny CDN. This guide walks you through installing and configuring it.
+
+<Steps>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and create a new Pull Zone with your Drupal site as the origin URL. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+
+    Match the protocol of your site exactly. If your Drupal site runs on HTTPS, enable HTTPS on the Pull Zone; if it runs on HTTP only, leave HTTPS disabled. A mismatch will cause errors.
+
+    <Note>
+      You can set a long Cache-Control time for Drupal. The CDN module serves updated elements from new URLs, so changes appear immediately without waiting for the cache to expire.
+    </Note>
+  </Step>
+  <Step title="Install the CDN module">
+    Download the latest `.tar.gz` release of the [Drupal CDN module](https://www.drupal.org/project/cdn) and copy its download URL. You'll need SSH or FTP access to your site.
+
+    In the Drupal admin, select **Manage**, then **Extend**, then **Install new module**.
+
+    <Frame>
+      ![Drupal Extend page with the Install new module button](/images/cdn/integrations/cms/drupal-extend-install-module.png)
+    </Frame>
+
+    Paste the `.tar.gz` URL, click **Install**, and provide your SSH/FTP credentials when prompted. When the installer finishes, click **Enable newly added modules**.
+
+    Scroll to the **Web Services** section, select the **CDN** and **CDN UI** modules, then click **Install**.
+
+    <Frame>
+      ![Enabling the CDN and CDN UI modules](/images/cdn/integrations/cms/drupal-enable-cdn-modules.png)
+    </Frame>
+  </Step>
+  <Step title="Configure the CDN module">
+    Go to **Manage → Configuration**, scroll to the bottom, and click **CDN Integration**. On the **Status** tab, make sure **Serve files from a CDN** is enabled.
+
+    <Frame>
+      ![Enabling Serve files from a CDN](/images/cdn/integrations/cms/drupal-cdn-status.png)
+    </Frame>
+
+    Open the **Mapping** tab, select **Simple** mapping, choose **Serve all files**, and enter your Pull Zone hostname in the field on the right. Click **Save configuration**.
+
+    <Frame>
+      ![Configuring the CDN mapping](/images/cdn/integrations/cms/drupal-cdn-mapping.png)
+    </Frame>
+  </Step>
+</Steps>
+
+Your Drupal site now serves static assets through Bunny CDN.

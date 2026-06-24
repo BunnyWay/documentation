@@ -197,7 +197,7 @@ A wildcard record (for example, `*.example.com`) is used to synthesize responses
 | **TLSA**  | Associates a TLS certificate with a domain. Used with DANE to specify which certificate or CA should be trusted for a domain.                                      |
 
 <Note>
-  When a CNAME record is used at the zone apex, Bunny DNS automatically flattens it to A/AAAA records.
+  Bunny DNS supports CNAME flattening on both **CNAME** and **Pull Zone (PZ)** records. When either is used at the zone apex (root domain), Bunny DNS automatically flattens it to A/AAAA records, so you can point a root domain directly at a Pull Zone.
 </Note>
 
 ### Bunny-specific records

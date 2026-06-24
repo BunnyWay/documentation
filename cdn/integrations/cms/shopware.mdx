@@ -1,5 +1,70 @@
 ---
 title: Shopware
 description: Configure bunny.net CDN with Shopware to accelerate your e-commerce store and improve customer experience.
-url: https://support.bunny.net/hc/en-us/articles/360018577551-How-to-speed-up-your-Shopware-site-with-BunnyCDN
 ---
+
+Shopware can serve media through Bunny CDN using a community-built adapter that uploads your content to a Bunny Storage zone and delivers it through a connected Pull Zone.
+
+<Note>
+  The [Shopware adapter](https://github.com/tinect/TinectMediaBunnycdn) is built and maintained by the community, not by bunny.net.
+</Note>
+
+<Steps>
+  <Step title="Create a Storage Zone and Pull Zone">
+    The adapter uploads your media to a Bunny [Storage Zone](/storage), which is then delivered through a Pull Zone that uses the Storage Zone as its origin. Set up both before configuring Shopware. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+  </Step>
+  <Step title="Install the Shopware adapter">
+    Download the latest `TinectMediaBunnycdn.zip` from the adapter's [GitHub releases page](https://github.com/tinect/TinectMediaBunnycdn/releases).
+
+    In Shopware, open **Configuration → Plugin Manager**.
+
+    <Frame>
+      ![Opening the Shopware Plugin Manager](/images/cdn/integrations/cms/shopware-plugin-manager.png)
+    </Frame>
+
+    Go to **Installed**, click **Upload Plugin**, and select the ZIP file you downloaded.
+
+    <Frame>
+      ![Uploading the plugin ZIP file](/images/cdn/integrations/cms/shopware-upload-plugin.png)
+    </Frame>
+
+    The plugin appears under **Uninstalled**. Click the green **+** to install it.
+
+    <Frame>
+      ![Installing the uploaded plugin](/images/cdn/integrations/cms/shopware-enable-plugin.png)
+    </Frame>
+
+    Once installed, the plugin is **Inactive**. Click the pencil icon next to its name, then click **Activate**. If prompted to clear caches, confirm.
+
+    <Frame>
+      ![Activating the plugin](/images/cdn/integrations/cms/shopware-activate-plugin.png)
+    </Frame>
+  </Step>
+  <Step title="Configure Shopware to use Bunny CDN">
+    You'll need SSH or FTP access to edit a PHP file. In your Shopware install directory, open `config.php` and append the following to the configuration array:
+
+    ```php
+    'cdn' => [
+        'backend' => 'bunnycdn',
+        'adapters' => [
+            'bunnycdn' => [
+                'type' => 'bunnycdn',
+                'mediaUrl' => 'https://PULLZONE.b-cdn.net/',
+                'apiUrl' => 'https://storage.bunnycdn.com/STORAGEZONENAME/',
+                'apiKey' => 'secret-api-key',
+            ],
+        ],
+    ],
+    ```
+
+    Replace `PULLZONE` with your Pull Zone hostname, `STORAGEZONENAME` with your Storage Zone name, and `apiKey` with the password from your Storage Zone's **FTP & API Access** page.
+
+    Finally, upload your existing local media to the Storage Zone:
+
+    ```bash
+    bin/console sw:media:migrate --from=local --to=bunnycdn
+    ```
+  </Step>
+</Steps>
+
+Your Shopware store now serves media through Bunny CDN.
