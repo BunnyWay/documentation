@@ -702,6 +702,7 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "shield/custom-response-pages",
                   "shield/verified-bots",
                   "shield/metrics",
                   "shield/cookies",
