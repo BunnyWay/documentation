@@ -878,7 +878,9 @@
               {
                 "group": "Guides",
                 "pages": [
-                  "integrations/wordpress/content-offloading",
+                  "integrations/wordpress/dns",
+                  "integrations/wordpress/offloader",
+                  "integrations/wordpress/shield",
                   "integrations/wordpress/stream"
                 ]
               },
@@ -2263,6 +2265,16 @@
     {
       "source": "/cdn/troubleshooting/acceleration-not-enabled",
       "destination": "/integrations/wordpress/troubleshooting-acceleration-not-enabled",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/wordpress/content-offloading",
+      "destination": "/integrations/wordpress/offloader",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/wordpress/offloader-and-shield",
+      "destination": "/integrations/wordpress/offloader",
       "permanent": true
     },
     {
