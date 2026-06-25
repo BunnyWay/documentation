@@ -591,8 +591,8 @@
                   },
                   "stream/statistics",
                   "stream/webhooks",
-                  "stream/api-reference",
-                  "stream/data-and-privacy"
+                  "stream/data-and-privacy",
+                  "stream/api-reference"
                 ]
               }
             ]
