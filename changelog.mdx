@@ -4,78 +4,76 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
-<Update label="2026-06-24" tags={["DNS", "(New)"]}>
+<Update label="2026-06-24" tags={["DNS","(New)"]}>
   ## DNS Limits and Defaults
 
   New reference page documenting Bunny DNS default limits, including the maximum number of records per zone (5,000) and DNS zones per account (500). Limits can be raised upon request by contacting sales. [Learn more](/dns/limits)
-
 </Update>
 
-<Update label="2026-06-23" tags={["Shield", "(New)"]}>
+<Update label="2026-06-23" tags={["Shield","(New)"]}>
   ## Custom Response Pages for Bunny Shield
 
   Customize the challenge, block, and rate limit pages shown to visitors when Bunny Shield takes action. Replace default response pages with fully branded HTML experiences that match your website, including custom styling, messaging, and support information. Available on Advanced and higher Shield plans. [Learn more](/shield/custom-response-pages)
-
 </Update>
 
-<Update label="2026-06-11" tags={["Stream", "(Improvement)"]}>
+<Update label="2026-06-11" tags={["Stream","(Improvement)"]}>
   ## Direct play URLs now support query parameters and documentation improvements
 
   Added direct play URL and embed URL examples with query parameters, documented the `-auto` captions flag, and improved cross-linking between Stream pages. Updated MP4 fallback documentation to reflect support for 240p, 360p, 720p & 1080p resolutions. [Learn more](/stream/storage-structure)
-
 </Update>
 
-<Update label="2026-06-16" tags={["CDN", "(New)"]}>
+<Update label="2026-06-16" tags={["CDN","(New)"]}>
   ## CDN Connectivity documentation
 
   New documentation covering IPv4 and IPv6 connectivity across the bunny.net CDN, including network tier support, origin connectivity, CDN Acceleration with dual-stack origins, and Origin Shield for guaranteed IPv6 connectivity. [Learn more](/cdn/connectivity)
-
 </Update>
 
-<Update label="2026-06-08" tags={["CLI", "(New)"]}>
+<Update label="2026-06-16" tags={["CDN","(New)"]}>
+  ## CDN Connectivity documentation
+
+  New documentation covering IPv4 and IPv6 connectivity across the bunny.net CDN, including network tier support, origin connectivity, CDN Acceleration with dual-stack origins, and Origin Shield for guaranteed IPv6 connectivity. [Learn more](/cdn/connectivity)
+</Update>
+
+<Update label="2026-06-08" tags={["CLI","(New)"]}>
   ## Edge Scripting support now in CLI
 
   The Bunny CLI now includes full Edge Scripts management (`bunny scripts`): create, deploy, delete scripts, manage deployments and rollbacks, environment variables and secrets, and custom domains with SSL. [Learn more](/cli)
-
 </Update>
 
-<Update label="2026-06-09" tags={["Storage", "(New)"]}>
+<Update label="2026-06-09" tags={["Storage","(New)"]}>
   ## Storage root directory deletion support
 
   The Storage Edge API DELETE endpoint now supports deleting the root directory (`/`) of a storage zone. By default, root deletion is blocked as a safety guard. Pass `allowRootDelete=true` as a query parameter or request header to bypass this protection. [Learn more](/storage/http#deleting-the-root-directory)
 </Update>
 
-<Update label="2026-06-08" tags={["Optimizer", "(Improvement)"]}>
+<Update label="2026-06-08" tags={["Optimizer","(Improvement)"]}>
   ## AVIF output area limit
 
   Bunny Optimizer now limits AVIF output to a maximum area of 4 megapixels. Larger images automatically fall back to another format (WebP, JPEG, or GIF) to keep latency low. A new `304` processing error code is returned when this limit is reached. [Learn more](/optimizer/dynamic-images/formats)
 </Update>
 
-<Update label="2026-06-04" tags={["CDN", "(New)"]}>
+<Update label="2026-06-04" tags={["CDN","(New)"]}>
   ## Vary Cache by Request Headers
 
-You can now vary cached content based on the value of one or more request headers, such as `Accept-Language`. Each unique header value combination creates a separate cache entry, enabling localized content, feature flags, and device-specific experiences without sacrificing CDN caching. [Learn more](/cdn/vary-cache)
-
+  You can now vary cached content based on the value of one or more request headers, such as `Accept-Language`. Each unique header value combination creates a separate cache entry, enabling localized content, feature flags, and device-specific experiences without sacrificing CDN caching. [Learn more](/cdn/vary-cache)
 </Update>
 
-<Update label="2026-06-04" tags={["CDN", "(Improvement)"]}>
+<Update label="2026-06-04" tags={["CDN","(Improvement)"]}>
   ## WebSocket pay-as-you-go pricing
 
-WebSocket billing has moved to pay-as-you-go pricing based on connection-minutes, replacing the previous tiered monthly subscription model. Connection limits can now be configured from 100 to 25,000 concurrent connections per zone. [Learn more](/cdn/websockets)
-
+  WebSocket billing has moved to pay-as-you-go pricing based on connection-minutes, replacing the previous tiered monthly subscription model. Connection limits can now be configured from 100 to 25,000 concurrent connections per zone. [Learn more](/cdn/websockets)
 </Update>
 
-<Update label="2026-06-02" tags={["Stream", "(Improvement)"]}>
+<Update label="2026-06-02" tags={["Stream","(Improvement)"]}>
   ## Stream Transcribing supported languages reference
 
   The Transcribing documentation now includes a complete reference table of all 56 supported languages with their ISO 639-1 codes. [Learn more](/stream/transcribing)
 </Update>
 
-<Update label="2026-05-26" tags={["CDN", "(Improvement)"]}>
+<Update label="2026-05-26" tags={["CDN","(Improvement)"]}>
   ## CDN Logging API enhancements
 
-The CDN Logging API now supports exact request ID lookup and includes additional fields such as JA4 TLS client fingerprint, ASN, and ASN organization in the response. [Learn more](/cdn/logging/index)
-
+  The CDN Logging API now supports exact request ID lookup and includes additional fields such as JA4 TLS client fingerprint, ASN, and ASN organization in the response. [Learn more](/cdn/logging/index)
 </Update>
 
 <Update label="2026-05-21" tags={["Stream","(Improvement)"]}>
