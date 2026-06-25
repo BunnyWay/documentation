@@ -1,0 +1,34 @@
+---
+title: Runtime
+description: The runtime APIs available on the bunny.net platform.
+---
+
+
+## Runtime
+
+The bunny.net EdgeScript Runtime is based on Deno, so you can use a subset of what
+is available from Deno or Node. Given the environment where we run
+EdgeScripts, we also provide functions you can use to alter the behavior of
+the script or bind to other bunny.net Services.
+
+
+### waitUntil
+
+The `waitUntil` function allows you to extend the duration of the isolate
+running a request. It can be useful when you want a script to continue doing
+work after the request it answered has finished. Even if no other requests are
+being routed to this script, it will extend the duration of this script
+invocation.
+
+It can be quite useful if you want to maintain [WebSocket](./websockets)
+connections.
+
+
+<Note>
+You can call `waitUntil` multiple times; the script will only be evicted once
+every given promise has been resolved.
+</Note>
+
+## References
+
+- [WebSocket](./websockets)
