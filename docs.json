@@ -477,6 +477,16 @@
                 "group": "APIs",
                 "pages": [
                   "scripting/runtime",
+                  {
+                    "group": "Cache API",
+                    "tag": "Preview",
+                    "pages": [
+                      "scripting/cache/index",
+                      "scripting/cache/managing-caches",
+                      "scripting/cache/reading-writing",
+                      "scripting/cache/examples"
+                    ]
+                  },
                   "scripting/html-rewriter",
                   "scripting/node-fs",
                   "scripting/websockets"
@@ -3385,6 +3395,11 @@
     {
       "source": "/scripting/runtime/html-rewriter",
       "destination": "/scripting/html-rewriter",
+      "permanent": true
+    },
+    {
+      "source": "/scripting/cache-api",
+      "destination": "/scripting/cache",
       "permanent": true
     },
     {

@@ -1,0 +1,40 @@
+---
+title: Managing caches
+sidebarTitle: Managing caches
+description: The global caches object — accessing the default cache and opening named caches.
+---
+
+## Default cache
+
+The `caches.default` API is strongly influenced by the web browsers’ Cache API Interface and gives you a single, unnamed cache shared across requests.
+
+```js
+await caches.default.match(request);
+```
+
+## Named caches
+
+You may create and manage additional Cache instances via the `caches.open` method. Named caches are useful when you want to version cache contents (e.g. `cache:v1`, `cache:v2`) so a deploy can switch over cleanly.
+
+```js
+const cache = await caches.open("cache:v1");
+await cache.match(request);
+```
+
+<Info>
+    **Note:** When using the Cache API, avoid overriding the hostname in cache requests, as this can lead to unexpected behaviour when using multiple domains associated with a PullZone.
+
+    ```js
+    // recommended approach: use current request url
+    const url = new URL(request.url);
+
+    const cache = await caches.open("cache:v1");
+    const response = await cache.match(`${url.origin}/example.html`);
+    ```
+
+</Info>
+
+## See also
+
+- [Reading & writing](./reading-writing)
+- [Examples](./examples)
