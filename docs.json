@@ -244,6 +244,19 @@
                   "cdn/custom-404-page",
                   "cdn/websockets",
                   {
+                    "group": "Frequently Asked Questions",
+                    "pages": [
+                      "cdn/frequently-asked-questions/etag-support",
+                      "cdn/frequently-asked-questions/cache-warming",
+                      "cdn/frequently-asked-questions/updating-files",
+                      "cdn/frequently-asked-questions/range-requests",
+                      "cdn/frequently-asked-questions/rtmp-streaming",
+                      "cdn/frequently-asked-questions/domain-limit",
+                      "cdn/frequently-asked-questions/mime-compression",
+                      "cdn/frequently-asked-questions/pop-routing"
+                    ]
+                  },
+                  {
                     "group": "Troubleshooting",
                     "pages": [
                       "cdn/troubleshooting/run-traceroute",
