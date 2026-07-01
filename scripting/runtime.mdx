@@ -21,14 +21,63 @@ being routed to this script, it will extend the duration of this script
 invocation.
 
 It can be quite useful if you want to maintain [WebSocket](./websockets)
-connections.
+connections, refresh a cache entry in the background, or fire off telemetry
+after the response has been returned to the client.
 
+#### Signature
+
+```typescript
+Bunny.v1.waitUntil(promise: Promise<unknown>): void;
+```
+
+#### Parameters
+
+<ParamField body="promise" type="Promise<unknown>" required>
+  A promise representing background work. The isolate will stay alive until
+  this promise settles (resolves or rejects).
+</ParamField>
+
+#### Returns
+
+`void` — `waitUntil` does not return a value.
 
 <Note>
 You can call `waitUntil` multiple times; the script will only be evicted once
 every given promise has been resolved.
 </Note>
 
+#### Example
+
+Return the response to the client immediately while a slower task — here,
+populating the cache — finishes in the background.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const url = new URL(request.url);
+  const cache = caches.default;
+  const cacheKey = new Request(url.toString(), { method: "GET" });
+
+  const hit = await cache.match(cacheKey);
+  if (hit) {
+    return hit;
+  }
+
+  const fresh = Response.json(
+    { generatedAt: new Date().toISOString(), random: Math.random() },
+    { headers: { "Cache-Control": "s-maxage=60" } },
+  );
+
+  // Don't block the response on the cache write — let it finish after we
+  // return. The isolate stays alive until cache.put() resolves.
+  Bunny.v1.waitUntil(cache.put(cacheKey, fresh.clone()));
+
+  return fresh;
+});
+```
+
 ## References
 
 - [WebSocket](./websockets)
+- [Cache API](./cache)
