@@ -8,7 +8,7 @@ description: The global caches object — accessing the default cache and openin
 
 The `caches.default` API is strongly influenced by the web browsers’ Cache API Interface and gives you a single, unnamed cache shared across requests.
 
-```js
+```typescript
 await caches.default.match(request);
 ```
 
@@ -16,7 +16,7 @@ await caches.default.match(request);
 
 You may create and manage additional Cache instances via the `caches.open` method. Named caches are useful when you want to version cache contents (e.g. `cache:v1`, `cache:v2`) so a deploy can switch over cleanly.
 
-```js
+```typescript
 const cache = await caches.open("cache:v1");
 await cache.match(request);
 ```
@@ -24,7 +24,7 @@ await cache.match(request);
 <Info>
     **Note:** When using the Cache API, avoid overriding the hostname in cache requests, as this can lead to unexpected behaviour when using multiple domains associated with a PullZone.
 
-    ```js
+    ```typescript
     // recommended approach: use current request url
     const url = new URL(request.url);
 
@@ -34,7 +34,8 @@ await cache.match(request);
 
 </Info>
 
-## See also
+## References
 
-- [Reading & writing](./reading-writing)
-- [Examples](./examples)
+- [Reading & writing](./reading-writing) — `match`, `put`, `delete` method reference.
+- [Examples](./examples) — end-to-end recipes using named and default caches.
+- [Cache API overview](./index) — regional behavior, limitations, and API surface.

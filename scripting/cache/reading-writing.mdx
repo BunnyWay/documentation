@@ -8,7 +8,7 @@ description: Reading from, writing to, and deleting entries on a Cache instance.
 
 Cache entry lifetimes are controlled via the `Cache-Control` header on the response you pass to `put()`. The same directives that govern HTTP caching apply here. For the full directive list, see [Cache-Control on MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control).
 
-```js
+```typescript
 await cache.put(
   `${url.origin}/example.html`,
   new Response("content", {
@@ -27,7 +27,7 @@ The `delete()` method finds the Cache entry whose key matches the request and re
 
 #### Syntax
 
-```js
+```typescript
 await cache.delete(request);
 ```
 
@@ -46,31 +46,14 @@ A `Promise` that resolves to `true` if a matching entry was found and removed, o
 
 Can throw an exception if there is an issue accessing the underlying cache storage.
 
-#### Examples
+#### Example
 
 ```typescript
-import * as BunnySDK from "@bunny.net/edgescript-sdk";
-
-BunnySDK.net.http.serve(
-  async (request: Request): Response | Promise<Response> => {
-    const url = new URL(request.url);
-
-    try {
-      await caches
-        .open("cache:v1")
-        .then((cache) => cache.delete(`${url.origin}/example.html`));
-
-      return new Response("Cache File Removed", {
-        headers: { "Cache-Control": "no-cache" },
-      });
-    } catch (error) {
-      return new Response(`Error deleting cache file: ${error.message}`, {
-        status: 500,
-      });
-    }
-  },
-);
+const cache = await caches.open("cache:v1");
+const deleted = await cache.delete(`${url.origin}/example.html`);
 ```
+
+See [Refresh and purge a cached value on demand](./examples#refresh-and-purge-a-cached-value-on-demand) for a full request handler that exposes `DELETE` as a purge endpoint.
 
 ### Match
 
@@ -78,7 +61,7 @@ The `match()` method of the Cache returns a Promise that resolves to the Respons
 
 #### Syntax
 
-```js
+```typescript
 await cache.match(request);
 ```
 
@@ -97,35 +80,15 @@ A `Promise` that resolves to the first `Response` that matches the request or to
 
 Can throw an exception if there is an issue accessing the underlying cache storage.
 
-#### Examples
+#### Example
 
 ```typescript
-import * as BunnySDK from "@bunny.net/edgescript-sdk";
-
-BunnySDK.net.http.serve(
-  async (request: Request): Response | Promise<Response> => {
-    const url = new URL(request.url);
-
-    try {
-      const res = await caches
-        .open("cache:v1")
-        .then((cache) => cache.match(`${url.origin}/example.html`));
-
-      if (res) {
-        return res;
-      } else {
-        return new Response("Cache Miss", {
-          headers: { "Cache-Control": "no-cache" },
-        });
-      }
-    } catch (error) {
-      return new Response(`Error matching cache file: ${error.message}`, {
-        status: 500,
-      });
-    }
-  },
-);
+const cache = await caches.open("cache:v1");
+const hit = await cache.match(`${url.origin}/example.html`);
+if (hit) return hit;
 ```
+
+See [Quickstart](./examples#quickstart) for a full handler that pairs a `match()` lookup with an `HTMLRewriter` transform.
 
 ### Put
 
@@ -133,7 +96,7 @@ The `put()` method of the Cache allows key/value pairs to be added to the curren
 
 #### Syntax
 
-```js
+```typescript
 await cache.put(request, response);
 ```
 
@@ -153,48 +116,18 @@ A `Promise` that resolves with `undefined`.
 
 Can throw an exception if there is an issue accessing the underlying cache storage.
 
-#### Examples
+#### Example
 
 ```typescript
-import * as BunnySDK from "@bunny.net/edgescript-sdk";
-
-BunnySDK.net.http.serve(
-  async (request: Request): Response | Promise<Response> => {
-    const url = new URL(request.url);
-    const now = new Date().toISOString();
-
-    try {
-      const cache = await caches.open("cache:v3");
-
-      const cachedResponse = await cache.match(`${url.origin}/example.html`);
-
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      const response = new Response(
-        `<!DOCTYPE html><html><body><p>Hello World at: ${now}</p></body></html>`,
-        {
-          headers: {
-            "Cache-Control": "max-age=10",
-            "Content-Type": "text/html; charset=utf-8",
-          },
-        },
-      );
-      // we clone the resource as this will consume the request body
-      await cache.put(`${url.origin}/example.html`, response.clone());
-
-      return response;
-    } catch (error) {
-      return new Response(`Error putting cache: ${error.message}`, {
-        status: 500,
-      });
-    }
-  },
-);
+const cache = await caches.open("cache:v1");
+// clone() so the response body can still be returned to the caller.
+await cache.put(`${url.origin}/example.html`, response.clone());
 ```
 
-## See also
+See [Updating a cache in middleware](./examples#updating-a-cache-in-middleware) for a full handler that populates the cache in response to origin requests.
 
-- [Managing caches](./managing-caches)
-- [Examples](./examples)
+## References
+
+- [Examples](./examples) — end-to-end recipes: cache-aside, middleware writes, refresh and purge.
+- [Managing caches](./managing-caches) — the global `caches` object and named cache instances.
+- [Cache API overview](./index) — regional behavior, limitations, and API surface.

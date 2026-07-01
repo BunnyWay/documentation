@@ -29,8 +29,12 @@ working on the feature and testing it at scale.
 
 API surface limits:
 
-- On `CacheStorage`: only `caches.default` and `caches.open(name)` are supported. `caches.has`, `caches.delete`, `caches.keys`, and `caches.match` are not.
-- On a `Cache` instance: only `match`, `put`, and `delete` are supported. `matchAll`, `add`, `addAll`, and `keys` are not.
+- **`CacheStorage`** (the global `caches` object)
+  - Supported: `caches.default`, `caches.open(name)`
+  - Not supported: `caches.has`, `caches.delete`, `caches.keys`, `caches.match`
+- **`Cache`** (an instance returned by `caches.default` or `caches.open`)
+  - Supported: `match`, `put`, `delete`
+  - Not supported: `matchAll`, `add`, `addAll`, `keys`
 
 We recommend versioning your cache names (e.g. `cache:v1`, `cache:v2`) so that a cache is completely purged when updating scripts.
 
