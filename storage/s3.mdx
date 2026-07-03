@@ -31,7 +31,8 @@ The credentials you need to connect via S3 are located in the **Access** tab:
 - **Access Key ID**: Your Storage Zone name (bucket name)
 - **Secret Access Key**: Your Storage Zone Password
 - **Endpoint URL**: `https://[region]-s3.storage.bunnycdn.com`
-- **Region**: `de` (Frankfurt), `ny` (New York), `sg` (Singapore), `uk` (London), `se` (Stockholm), `la` (Los angeles) or `jh` (Johannesburg)
+- **Region**: `de` (Frankfurt), `ny` (New York), `sg` (Singapore), `uk` (London), \
+  `se` (Stockholm), `la` (Los angeles),`jh` (Johannesburg) & `syd` (Sydney)
 
 <Note>
   Bunny Storage only supports path-style URLs (e.g., `https://[region]-s3.storage.bunnycdn.com/bucket-name/key`). Virtual hosted-style URLs (e.g., `bucket-name.s3.region.amazonaws.com`) are not supported.
@@ -248,10 +249,8 @@ Below is a detailed list of implemented object-level operations with their suppo
 
 Be aware of the following limitations when using S3-compatible storage:
 
-- 500 max RPS rate (upload & download combined)
-- 1Gbps max bandwidth throughput
-- 500 max RPS rate (upload & download combined)
-- 1Gbps max bandwidth throughput
+- 500 Max RPS rate (upload & download combined)
+- 1Gbps Max bandwidth throughput
 
 ### Regional availability
 
@@ -266,7 +265,7 @@ S3 compatibility is currently available in the following regions:
 - Stockholm (SE)
 - Los Angeles (LA)
 - Johannesburg (JH)
-- Sydney (JH)
+- Sydney (SYD)
 
 Additional regions will be added in the future.
 
