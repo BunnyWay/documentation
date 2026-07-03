@@ -111,6 +111,7 @@ All `Stats` timestamp properties are supported and return correct values:
 - `atime` - Last access time
 - `mtime` - Last modification time
 - `ctime` - Last status change time
+- `atimeMs`, `mtimeMs`, `ctimeMs` - Millisecond timestamps
 - `birthtime` - File creation time
 
 **Reliable Stats properties:**
@@ -123,7 +124,7 @@ All `Stats` timestamp properties are supported and return correct values:
 File and directory permissions are supported for the **owner (user)** bits. `chmod()` and `chmodSync()` work, and `Stats.mode` reflects the permissions you set. `access()` respects owner-level read, write, and execute bits.
 
 <Info>
-**Group and others** permission bits are accepted but have no effect — the sandboxed environment always runs as the file owner (uid=1000, gid=1000), so only the user/owner bits matter.
+**Group and others** permission bits are accepted but have no effect: the sandboxed environment always runs as the file owner (uid=1000, gid=1000), so only the user/owner bits matter.
 
 `chown()` and `chownSync()` have no effect; ownership is fixed to uid=1000, gid=1000.
 </Info>
