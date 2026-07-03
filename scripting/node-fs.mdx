@@ -108,16 +108,16 @@ Hard links are not supported. `link()` and `linkSync()` will throw errors.
 ### File Statistics - Timestamps
 
 All `Stats` timestamp properties are supported and return correct values:
-- `atime` - Last access time
-- `mtime` - Last modification time
-- `ctime` - Last status change time
-- `atimeMs`, `mtimeMs`, `ctimeMs` - Millisecond timestamps
-- `birthtime` - File creation time
 
 **Reliable Stats properties:**
 - `size` - File size in bytes
 - `isFile()` - Check if entry is a file
 - `isDirectory()` - Check if entry is a directory
+- `atime` - Last access time
+- `mtime` - Last modification time
+- `ctime` - Last status change time
+- `atimeMs`, `mtimeMs`, `ctimeMs` - Millisecond timestamps
+- `birthtime` - File creation time
 
 ### File and Directory Permissions
 
