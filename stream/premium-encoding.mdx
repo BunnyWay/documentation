@@ -11,21 +11,51 @@ With Just-in-Time (JIT) encoding, videos are ready for playback shortly after up
 
 In most cases, videos become playable within **10–15 seconds**, regardless of their size or duration.
 
-JIT automatically adapts to different resolutions, bitrates, devices, and network conditions. This ensures a smooth playback experience across a wide range of environments, helping improve viewer engagement and retention. When content is instantly accessible and optimized for each viewer, users are more likely to stay, interact, and return.\
-\
-**Performance Considerations**\
+JIT automatically adapts to different resolutions, bitrates, devices, and network conditions. This ensures a smooth playback experience across a wide range of environments, helping improve viewer engagement and retention. When content is instantly accessible and optimized for each viewer, users are more likely to stay, interact, and return.
+
+#### Performance Considerations
+
 Several factors can influence how quickly a video becomes playable with JIT:
 
-- **File structure**
-  Files optimized for streaming (e.g., MP4 with the _moov atom_ at the beginning) start significantly faster. If metadata is located at the end of the file, startup may be slower and can reduce JIT effectiveness.
-- **Upload method**
-  Standard HTTP uploads typically perform best, as they can feed directly into the JIT pipeline. With TUS uploads, processing may not begin until the upload is fully completed.
-- **Source complexity**
-  Higher resolutions, bitrates, or frame rates increase the time required to generate the first playable segments.
-- **Encoding and segmenting overhead**
-  Even with JIT, initial segments must still be created before playback can begin.
-- **File size and duration**
-  While these factors do have an impact, they are generally less significant than file structure and source complexity.
+- **File structure** Files optimized for streaming (e.g., MP4 with the _moov atom_ at the beginning) start significantly faster. If metadata is located at the end of the file, startup may be slower and can reduce JIT effectiveness.
+- **Upload method** Standard HTTP uploads typically perform best, as they can feed directly into the JIT pipeline. With TUS uploads, processing may not begin until the upload is fully completed.
+- **Source complexity** Higher resolutions, bitrates, or frame rates increase the time required to generate the first playable segments.
+- **Encoding and segmenting overhead** Even with JIT, initial segments must still be created before playback can begin.
+- **File size and duration** While these factors do have an impact, they are generally less significant than file structure and source complexity.
+
+#### Required JIT encoding Input Characteristics
+
+To be compatible with JIT encoding, the uploaded file should:
+
+- Use an MP4/MOV-style container.
+- The `moov` atom is required at the beginning of the file, often called **fast start**, **web optimized**, or **streamable MP4**.
+- Be readable by standard FFmpeg/ffprobe tooling.
+- Contain at least one valid audio or video stream.
+- Provide usable media metadata, including duration and, for video, width, height, and frame rate.
+
+The source file does not need to already be encoded as H.264/AAC, as long as the contained streams can be decoded and played back successfully.
+
+#### Recommended JIT file prepation
+
+Before uploading files intended for JIT encoding:
+
+1. Export or package the file as MP4 with **fast start** enabled.
+2. Avoid files where metadata is written only at the end of the file.
+3. Validate that the file can be probed by [FFmpeg's ffprobe command](https://ffmpeg.org/ffprobe.html).
+4. Preferred single primary video track and a single primary audio track.
+5. Ensure the video has consistent duration and frame-rate metadata.
+
+#### [HandBrake](https://handbrake.fr/)
+
+If using HandBrake to encode your video, please select the ‘Web optimized’ option for MP4.
+
+#### [FFmpeg](https://www.ffmpeg.org/)
+
+If using FFmpeg to encode your video, enable fast-start MP4 output with:
+
+```text
+ffmpeg -i input.mp4 -c copy -movflags +faststart output.mp4
+```
 
 ## Multiple output codec support
 
@@ -110,12 +140,3 @@ By investing in both codecs, you ensure optimal playback across different device
 [Transcribing](/docs/stream-transcribing)
 
 - [Table of Contents](#)
-- - [Just-in-Time encoding](#just-in-time-encoding)
-  - [Multiple output codec support](#multiple-output-codec-support)
-  - [Encoding prioritization](#encoding-prioritization)
-  - [Pricing for Premium Encoding Tier](#pricing-for-premium-encoding-tier)
-  - - [Full HD price](#full-hd-price)
-    - [SD price](#sd-price)
-    - [4K price](#4k-price)
-    - [Output codecs](#output-codecs)
-    - [Pricing examples](#pricing-examples)
