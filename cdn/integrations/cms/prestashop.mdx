@@ -1,5 +1,42 @@
 ---
 title: PrestaShop
 description: Speed up your PrestaShop store with bunny.net CDN for faster product pages and improved checkout performance.
-url: https://support.bunny.net/hc/en-us/articles/360016351371-How-to-speed-up-your-PrestaShop-store-with-BunnyCDN
 ---
+
+PrestaShop includes built-in CDN settings, so connecting it to Bunny CDN is straightforward.
+
+<Steps>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and create a new Pull Zone with your PrestaShop store as the origin URL. Match the protocol (HTTP or HTTPS) of your site exactly. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+  </Step>
+  <Step title="Open the Performance panel">
+    Log in to your PrestaShop admin panel and go to **Advanced Parameters → Performance**.
+
+    <Frame>
+      ![PrestaShop Advanced Parameters menu](/images/cdn/integrations/cms/prestashop-performance-menu.png)
+    </Frame>
+  </Step>
+  <Step title="Configure the CCC section">
+    In the **CCC (Combine, Compress and Cache)** section, set **Smart cache for CSS** and **Smart cache for JavaScript** to **Yes**.
+
+    <Frame>
+      ![Configuring the CCC section](/images/cdn/integrations/cms/prestashop-ccc.png)
+    </Frame>
+
+    <Note>
+      On older versions of PrestaShop, this section shows checkboxes instead of dropdowns. In that case, select **Use CCC for CSS** and **Use CCC for JavaScript**.
+    </Note>
+
+    Click **Save**.
+  </Step>
+  <Step title="Configure the Media Servers">
+    Scroll down to the **Media Servers** section and enter your Pull Zone hostname in the **Media server #1** field. Click **Save**.
+
+    <Frame>
+      ![Configuring Media server #1](/images/cdn/integrations/cms/prestashop-media-server.png)
+    </Frame>
+  </Step>
+  <Step title="Clear the cache (optional)">
+    If caching is enabled for your store, click **Clear cache** at the top of the page. Your pages will now be served through Bunny CDN.
+  </Step>
+</Steps>

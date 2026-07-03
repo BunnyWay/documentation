@@ -1,0 +1,34 @@
+---
+title: Geographic Blocking
+description: Block access to your Pull Zone from specific countries using bunny.net's Traffic Manager.
+---
+
+You can block access to a Pull Zone from specific countries using the **Traffic Manager**, for legal, regulatory, or other reasons.
+
+## Block countries
+
+<Steps>
+  <Step title="Open your Pull Zone">
+    In the [bunny.net dashboard](https://dash.bunny.net), go to **Delivery > CDN** and select your Pull Zone.
+  </Step>
+  <Step title="Open Traffic Manager">
+    Click **Traffic Manager** in the Pull Zone menu. You'll see a world map with two options: **Redirected countries** and **Blocked countries**.
+  </Step>
+  <Step title="Select the countries to block">
+    Add countries to **Blocked countries** by clicking them on the map or using the dropdown, then save your changes.
+  </Step>
+</Steps>
+
+## How blocking works
+
+Blocked countries are blocked at the DNS level. A DNS request to the Pull Zone from a blocked country resolves to `127.0.0.1`, so the connection never reaches the CDN and the user sees a connection error. Because the request is blocked before HTTP, it isn't logged on the Pull Zone and incurs no cost.
+
+Location is determined by geolocating the end user's EDNS client subnet using the MaxMind GeoIP2 database. If the resolver doesn't provide an EDNS client subnet, the resolver's own IP address is used instead.
+
+<Note>
+  **Redirected countries** is a related Traffic Manager option. Instead of blocking, it routes requests to the most affordable pricing region (North America / Europe), which you can use to control which regions serve which countries.
+</Note>
+
+<Warning>
+  IP-based geographic blocking isn't foolproof. Users can bypass it with a VPN or proxy. For stricter control, combine it with [Token Authentication](/cdn/security/token-authentication) country restrictions.
+</Warning>
