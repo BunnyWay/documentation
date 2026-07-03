@@ -438,6 +438,39 @@ BunnySDK.net.http.serve(async (request: Request) => {
 });
 ```
 
+### Example 6: Symbolic Links
+
+```typescript
+import * as fs from "node:fs/promises";
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(async (request: Request) => {
+  const original = "/tmp/original.txt";
+  const link = "/tmp/link.txt";
+
+  try {
+    await fs.writeFile(original, "hello from original", "utf-8");
+
+    // Create a symbolic link pointing to the original file
+    await fs.symlink(original, link);
+
+    // Reading through the symlink is transparent
+    const content = await fs.readFile(link, "utf-8");
+
+    // lstat inspects the link itself, not the target
+    const linkStats = await fs.lstat(link);
+    const target = await fs.readlink(link);
+
+    return new Response(
+      JSON.stringify({ content, isSymlink: linkStats.isSymbolicLink(), target }),
+      { headers: { "content-type": "application/json" } }
+    );
+  } catch (error) {
+    return new Response(`Error: ${error.message}`, { status: 500 });
+  }
+});
+```
+
 ## References
 
 - [Node.js File System Documentation](https://nodejs.org/api/fs.html) - Complete Node.js fs module reference
