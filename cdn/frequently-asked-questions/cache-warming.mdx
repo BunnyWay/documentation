@@ -1,0 +1,7 @@
+---
+title: Do you support cache warming or preloading content onto the CDN?
+---
+
+To ensure fair cache management and file distribution, we do not currently allow preloading files into cache.
+
+We hae a 'Smart Preloader' feature on Optimizer that monitors dynamic HTML requests going through bunny.net. If the system detects a request is slow, and might be negatively impacting the user experience, it will respond to the user with a special preloader screen HTML response. More details can be found here: https://docs.bunny.net/cdn/performance/smart-preloader

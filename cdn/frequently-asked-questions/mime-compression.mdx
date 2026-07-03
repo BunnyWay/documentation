@@ -1,0 +1,30 @@
+---
+title: MIME Type Compression Support
+description: Learn how BunnyCDN automatically compresses content using gzip, Brotli, and Zstandard, and view supported MIME types.
+---
+
+BunnyCDN automatically compresses content using **gzip**, **Brotli** (`br`), or **Zstandard** (`zstd`), depending on the incoming `Accept-Encoding` header. 
+
+Compression is guaranteed for a predefined set of MIME types listed below, as well as for files with the following extensions—even if the `Content-Type` header is missing or does not exactly match the list:
+* `.css`
+* `.js`
+* `.json`
+* `.xml`
+* `.svg`
+* `.html`
+
+BunnyCDN provides compression for these types, but it may also apply compression to other content types based on compatibility. 
+
+<Info>
+  If you don't see a specific MIME type listed, feel free to contact our support team, and we’ll be happy to review it for possible inclusion.
+</Info>
+
+## Supported MIME Types
+
+| Type | MIME Content Type |
+| :--- | :--- |
+| **Application** | `application/atf` <br /> `application/atom+xml` <br /> `application/dash+xml` <br /> `application/ecmascript` <br /> `application/eot` <br /> `application/font` <br /> `application/font-sfnt` <br /> `application/javascript` <br /> `application/json` <br /> `application/ld+json` <br /> `application/manifest+json` <br /> `application/opentype` <br /> `application/otf` <br /> `application/pkcs7-mime` <br /> `application/rss+xml` <br /> `application/truetype` <br /> `application/ttf` <br /> `application/vnd.apple.mpegurl` <br /> `application/vnd.geo+json` <br /> `application/vnd.ms-fontobject` <br /> `application/wasm` <br /> `application/x-font-opentype` <br /> `application/x-font-truetype` <br /> `application/x-font-ttf` <br /> `application/x-httpd-cgi` <br /> `application/x-javascript` <br /> `application/x-mpegurl` <br /> `application/x-opentype` <br /> `application/x-otf` <br /> `application/x-perl` <br /> `application/x-ttf` <br /> `application/x-web-app-manifest+json` <br /> `application/xhtml+xml` <br /> `application/xml` <br /> `application/xml+rss` |
+| **Font** | `font/eot` <br /> `font/opentype` <br /> `font/otf` <br /> `font/truetype` <br /> `font/ttf` |
+| **Image** | `image/svg+xml` <br /> `image/vnd.microsoft.icon` <br /> `image/x-icon` |
+| **Model** | `model/gltf-binary` |
+| **Text** | `text/cache-manifest` <br /> `text/css` <br /> `text/csv` <br /> `text/html` <br /> `text/javascript` <br /> `text/js` <br /> `text/plain` <br /> `text/richtext` <br /> `text/tab-separated-values` <br /> `text/x-component` <br /> `text/x-java-source` <br /> `text/x-script` <br /> `text/xml` |

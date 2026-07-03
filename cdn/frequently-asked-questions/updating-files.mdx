@@ -1,0 +1,7 @@
+---
+title: Does BunnyCDN automatically detect when a file is changed?
+---
+
+BunnyCDN does not monitor the files on your origin server for changes, this means that if a file is already cached on our servers, it will remain cached until the Cache-Control expires or it gets deleted to make space for more popular content.
+
+If you make a change to a file and need to see it reflected immediately, please make sure to purge the cache using the purge tool available at https://dash.bunny.net/purge

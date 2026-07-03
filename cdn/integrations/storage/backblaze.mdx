@@ -1,5 +1,101 @@
 ---
 title: Backblaze
 description: Speed up Backblaze B2 file delivery with bunny.net CDN for global caching and reduced bandwidth costs.
-url: https://support.bunny.net/hc/en-us/articles/360018649972-How-to-speed-up-your-Backblaze-B2-file-delivery-with-Bunny-CDN
 ---
+
+Bunny CDN caches files from your Backblaze B2 bucket and delivers them from a global edge network, speeding up delivery and saving on bandwidth costs. This guide uses S3-compatible authentication to securely connect a private B2 bucket. If you don't have a Backblaze B2 account yet, you can [create one for free](https://www.backblaze.com/b2/sign-up.html).
+
+<Tip>
+  Prefer to keep your files on bunny.net? [Bunny Storage](/storage) is globally replicated object storage with tight CDN integration, and it offers an [S3-compatible API](/storage/s3) (currently in beta).
+</Tip>
+
+<Steps>
+  <Step title="Create a private B2 bucket">
+    Log in to Backblaze and click **Create a Bucket**. Set the bucket to **Private** mode to keep your content secure while it's served to users. Encryption and Object Lock can be left at their defaults.
+
+    <Frame>
+      ![Creating a Backblaze B2 bucket](/images/cdn/integrations/storage/backblaze-create-bucket.png)
+    </Frame>
+
+    <Frame>
+      ![Setting the bucket to Private mode](/images/cdn/integrations/storage/backblaze-bucket-private.png)
+    </Frame>
+  </Step>
+  <Step title="Create an S3 application key">
+    To authenticate securely, Bunny CDN connects to your bucket using S3 authentication. Select **App Keys** in the Backblaze dashboard.
+
+    <Frame>
+      ![The App Keys page](/images/cdn/integrations/storage/backblaze-app-keys.png)
+    </Frame>
+
+    Click **Add a New Application Key**.
+
+    <Frame>
+      ![Adding a new application key](/images/cdn/integrations/storage/backblaze-add-app-key.png)
+    </Frame>
+
+    Select the private bucket you created and ensure **Allow List All Bucket Names** is checked, then click **Create New Key**.
+
+    <Frame>
+      ![Configuring the application key](/images/cdn/integrations/storage/backblaze-app-key-config.png)
+    </Frame>
+
+    On the confirmation page, save the **keyID** and **applicationKey** somewhere safe. You'll need them in a later step.
+
+    <Frame>
+      ![The created application key details](/images/cdn/integrations/storage/backblaze-app-key-created.png)
+    </Frame>
+  </Step>
+  <Step title="Find your S3 bucket URL">
+    Click **Browse Files** and upload a test file if you don't have one. Click the **(i)** info tooltip next to the file.
+
+    <Frame>
+      ![Browsing files and opening the info tooltip](/images/cdn/integrations/storage/backblaze-browse-files.png)
+    </Frame>
+
+    Find the **S3 URL** and save it, excluding the file name. For example, for a bucket named `bunnytestbucket`:
+
+    ```
+    https://bunnytestbucket.s3.eu-central-003.backblazeb2.com
+    ```
+
+    <Frame>
+      ![The S3 URL in the file details](/images/cdn/integrations/storage/backblaze-s3-url.png)
+    </Frame>
+  </Step>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and open **Add Pull Zone**. Give it a name (this becomes your CDN hostname) and paste the S3 URL from the previous step into the **Origin URL** field. The Host Header is generated automatically and doesn't need changing. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+
+    <Frame>
+      ![Adding a Pull Zone with the B2 S3 URL as origin](/images/cdn/integrations/storage/backblaze-add-pull-zone.png)
+    </Frame>
+
+    To use an existing Pull Zone instead, set the same Origin URL in its settings.
+
+    <Frame>
+      ![Reconfiguring an existing Pull Zone](/images/cdn/integrations/storage/backblaze-reconfigure-pull-zone.png)
+    </Frame>
+  </Step>
+  <Step title="Secure the connection with S3 authentication">
+    Open the **S3 Authentication** section of your Pull Zone's **Security** settings and click **Enable AWS S3 Authentication**. Fill in the details using the keys from step 2:
+
+    - **AWS Key**: your B2 `keyID`
+    - **AWS Secret**: your B2 `applicationKey`
+    - **AWS Region Name**: the region from your origin URL (for example, `eu-central`)
+
+    <Frame>
+      ![Configuring AWS S3 authentication on the Pull Zone](/images/cdn/integrations/storage/backblaze-s3-authentication.png)
+    </Frame>
+
+    Click **Save Configuration**.
+  </Step>
+  <Step title="Test your Pull Zone">
+    With everything configured, request a file through your Pull Zone hostname, for example:
+
+    ```
+    https://bunnytestwordpress.b-cdn.net/code-to-share.js
+    ```
+
+    If the file is served, your private B2 bucket is protected by S3 authentication and accelerated by Bunny CDN. Replace your existing URLs with the Bunny CDN URLs in your application to start serving cached content.
+  </Step>
+</Steps>

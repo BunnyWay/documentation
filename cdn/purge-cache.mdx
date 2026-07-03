@@ -12,6 +12,10 @@ You can purge the entire Pull Zone, or purge only files matching a specific tag.
   re-cached. Performance may decrease briefly until edge nodes repopulate.
 </Warning>
 
+<Note>
+  Bunny CDN does not monitor your origin for file changes. Once a file is cached, it stays cached until its `Cache-Control` lifetime expires or it's evicted to make room for more popular content. To reflect a change immediately, purge the cache or serve the file under a new query string (such as `?v=2`).
+</Note>
+
 ## Dashboard
 
 <Steps>
@@ -25,7 +29,7 @@ You can purge the entire Pull Zone, or purge only files matching a specific tag.
   </Step>
 
   <Step title="Enter a search tag (optional)">
-    Leave the search tag empty to purge the entire Pull Zone. If you enter a tag, only files with a matching `CDN-Tag` header are removed—the rest of your cache stays intact.
+    Leave the search tag empty to purge the entire Pull Zone. If you enter a tag, only files with a matching `CDN-Tag` header are removed. The rest of your cache stays intact.
 
     <Frame>
       ![Purge cache by tag](/images/cdn/full-cache-purge-or-by-tag.png)
