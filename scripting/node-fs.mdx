@@ -38,7 +38,7 @@ Currently the file directory is composed of two folder:
 └── tmp/ # Temporary directory, R/W access
 ```
 
-You can create directories where you want as permissions are not enforced yet.
+You can create directories anywhere. Permissions are enforced for the owner (user) but not for group or others.
 All files are opened in `w+`.
 
 <Info>
@@ -99,62 +99,33 @@ behave differently from traditional Node.js environments.
 
 ### Symbolic Links and Hard Links
 
-Symbolic links and hard links are not supported in the EdgeScripting runtime
-yet.
+Symbolic links are supported. `symlink()`, `symlinkSync()`, `readlink()`, `readlinkSync()`, and `lstat()` work as expected.
 
 <Warning>
-The following operations will throw errors or behave unexpectedly:
-- `symlink()`, `symlinkSync()` - Creating symbolic links
-- `readlink()`, `readlinkSync()` - Reading symbolic links
-- `link()`, `linkSync()` - Creating hard links
-- `lstat()` may not distinguish between files and symlinks correctly
+Hard links are not supported. `link()` and `linkSync()` will throw errors.
 </Warning>
-
-**Workaround:** Use `copyFile()` instead of creating links, or restructure 
-your application to avoid link dependencies.
 
 ### File Statistics - Timestamps
 
-File modification and access times are not reliably available yet.
-
-<Warning>
-The following `Stats` object properties may return incorrect or placeholder values:
+All `Stats` timestamp properties are supported and return correct values:
 - `atime` - Last access time
 - `mtime` - Last modification time
 - `ctime` - Last status change time
-- `atimeMs`, `mtimeMs`, `ctimeMs` - Millisecond timestamps
-- `birthtime`, `birthtimeMs` - File creation time
-</Warning>
+- `birthtime` - File creation time
 
 **Reliable Stats properties:**
 - `size` - File size in bytes
 - `isFile()` - Check if entry is a file
 - `isDirectory()` - Check if entry is a directory
 
-**Example of unreliable usage:**
-```typescript
-// DON'T rely on timestamps
-const stats = await fs.stat("file.txt");
-console.log(stats.mtime); // May be incorrect!
-
-// DO rely on size and type checks
-console.log(stats.size); // Reliable
-console.log(stats.isFile()); // Reliable
-```
-
 ### File and Directory Permissions
 
-All files and directories effectively have read/write permissions in the
-sandboxed environment (`644`) and are owned by the current (non root) user 
-(uid=1000, gid=1000).
+File and directory permissions are supported for the **owner (user)** bits. `chmod()` and `chmodSync()` work, and `Stats.mode` reflects the permissions you set. `access()` respects owner-level read, write, and execute bits.
 
 <Info>
-Permission-related operations have limited effect:
-- `chmod()`, `chmodSync()` - Not supported
-- `chown()`, `chownSync()` - Not supported
-- `Stats.mode` - Won't reflect actual permissions
-- Permission checks via `access()` - Will mostly tell you if a file exists or
-  not.
+**Group and others** permission bits are accepted but have no effect — the sandboxed environment always runs as the file owner (uid=1000, gid=1000), so only the user/owner bits matter.
+
+`chown()` and `chownSync()` have no effect; ownership is fixed to uid=1000, gid=1000.
 </Info>
 
 
