@@ -65,7 +65,11 @@ Presigned URLs require authentication. For publicly available presigned URLs wit
 **Presigned URL example (1hour):**\
 https://\[region\]-s3.storage.bunnycdn.com/bucket-name/path/to/object/?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=\[AccessKeyID\+Date\+region\+servicerequest\]&X-Amz-Date=20260320T160912Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=\[HMAC-SHA256Signature\]/
 
-## Examples
+<Card title="Presigned URL cache" type="note">
+  Presigned URLs are cached and the cache validates signatures for cached objects. Currently objects up to 256MB are cached, and only if they are accessed at least 2 times.
+</Card>
+
+## Example
 
 ### AWS CLI
 
@@ -245,8 +249,7 @@ Below is a detailed list of implemented object-level operations with their suppo
 Be aware of the following limitations when using S3-compatible storage:
 
 - 500 max RPS rate (upload & download combined)
-- 1Gbps max bandwidth throughput 
-
+- 1Gbps max bandwidth throughput
 - 500 max RPS rate (upload & download combined)
 - 1Gbps max bandwidth throughput
 
