@@ -1,0 +1,86 @@
+---
+title: Cache API
+sidebarTitle: Overview
+description: Fine-grained control over reading and writing from the bunny.net edge cache from Edge Scripting.
+---
+
+<Warning>
+  Currently the Edge Scripting runners happen after the HTTP cache layer. See
+  [Limitations](#limitations) for details.
+</Warning>
+
+## Overview
+
+The Cache API is an implementation of the [MSDN Cache Interface](https://developer.mozilla.org/en-US/docs/Web/API/Cache) to provide a persistent storage mechanism for Request / Response object pairs that are cached in long lived memory.
+
+The Cache API is available globally but the contents of the cache do not replicate outside of the originating region. A GET `/users` response can be cached in the originating region, but will not exist in another region until a request for the resources is made from there.
+
+An origin can have multiple, named Cache objects. You are responsible for implementing how your script handles Cache updates. Items in a Cache respect the `Cache-Control` request header, it is expected that you will use this to control the life cycle of your caches. Cache entries will automatically be purged a short time after they expire. Make sure to version caches by name and use the caches only from the version of the script that they can safely operate on.
+
+The cache instances are shared across all domains associated with your PullZone, however they **must** be accessed via the currently requesting host name. For this reason we either recommend using the current `Request` object as they key or constructing the key using the current request url e.g. `const key = new URL(req.url).origin + "/img/example.png";`. This will ensure your caches work reliably across all domains associated with your PullZone.
+
+<Info>**Note:** There is a hard limit of `100MB` per cache file.</Info>
+
+## Limitations
+
+Currently the Edge Scripting runners happen after the HTTP cache layer. If you
+want to have Edge Scripting being able to run before Cache, we are currently
+working on the feature and testing it at scale.
+
+API surface limits:
+
+- **`CacheStorage`** (the global `caches` object)
+  - Supported: `caches.default`, `caches.open(name)`
+  - Not supported: `caches.has`, `caches.delete`, `caches.keys`, `caches.match`
+- **`Cache`** (an instance returned by `caches.default` or `caches.open`)
+  - Supported: `match`, `put`, `delete`
+  - Not supported: `matchAll`, `add`, `addAll`, `keys`
+
+We recommend versioning your cache names (e.g. `cache:v1`, `cache:v2`) so that a cache is completely purged when updating scripts.
+
+## Quickstart
+
+A minimal cache-aside pattern: look up by URL, generate on miss, write back in the background.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk@0.12.0";
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const url = new URL(request.url);
+
+  try {
+    // Normalize the key to a GET on the request URL so reads and writes
+    // resolve to the same entry regardless of the inbound method.
+    const cacheKey = new Request(url.toString(), { method: "GET" });
+    const cache = caches.default;
+
+    const cached = await cache.match(cacheKey);
+    if (cached) {
+      console.log(`Cache hit for: ${request.url}.`);
+      return cached;
+    }
+
+    console.log(`Cache miss for: ${request.url}. Generating and caching.`);
+
+    // In a real script this is typically `await fetch(originUrl)`.
+    const response = Response.json(
+      { value: Math.random() },
+      { headers: { "Cache-Control": "s-maxage=10" } },
+    );
+
+    // Fire-and-forget the write so we can return immediately.
+    Bunny.v1.waitUntil(cache.put(cacheKey, response.clone()));
+
+    return response;
+  } catch (e) {
+    return new Response(`Cache error: ${(e as Error).message}`, { status: 500 });
+  }
+});
+```
+
+See [Examples](./examples) for more advanced recipes (HTMLRewriter integration, middleware writes, on-demand refresh and purge).
+
+## References
+
+- [MSDN CacheStorage](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage) - Mozilla's CacheStorage interface documentation
+- [MSDN Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache) - Mozilla's Cache interface documentation

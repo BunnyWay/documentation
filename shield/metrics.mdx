@@ -14,7 +14,7 @@ Our system allows you to view detailed metrics related to your website's traffic
 - The number of triggered rules that were logged.
 - The number of triggered rules that were blocked.
 
-Analyzing these metrics provides valuable insights into the performance of your WAF Engine and helps determine whether further investigation or configuration adjustments are necessary for your WAF Engine rulesets. Monitoring these metrics can also help identify unusual patterns that may indicate security threats or misconfigurations leading to false positives. You can view the complete API documentation for our Metrics endpoints [here](https://api.bunny.net/shield/docs/index.html), under the section labeled **Metrics**.
+Analyzing these metrics provides valuable insights into the performance of your WAF Engine and helps determine whether further investigation or configuration adjustments are necessary for your WAF Engine rulesets. Monitoring these metrics can also help identify unusual patterns that may indicate security threats or misconfigurations leading to false positives. You can view the complete API documentation for our Metrics endpoints [here](https://docs.bunny.net/api-reference/shield/metrics/get-an-overview-of-metrics-for-the-specified-shield-zone).
 
 ## Logging
 
@@ -22,4 +22,4 @@ Our WAF Engine provides in-depth logging for all triggered requests. These logs 
 
 You can view in-depth logs on any triggered requests by our WAF Engine, allowing you to see exactly why a rule was triggered (logged or blocked) and decide whether to adjust your ruleset or confirm that it's correctly triggering against requests.
 
-To access the WAF logging data, use the following API endpoint: GET [\<https://api.bunny.net/shield/event-logs/\{\{shieldZoneId}}>](https://api.bunny.net/shield/event-logs/%7B%7BshieldZoneId%7D%7D).
+To access the WAF logging data, use our API endpoint: [API reference](https://docs.bunny.net/api-reference/shield/event-logs/get-event-logs-for-shield-zone).

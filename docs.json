@@ -59,7 +59,12 @@
             "groups": [
               {
                 "group": "bunny.net",
-                "pages": ["index", "quickstart", "faq", "changelog"]
+                "pages": [
+                  "index",
+                  "quickstart",
+                  "faq",
+                  "changelog"
+                ]
               },
               {
                 "group": "Accounts & Billing",
@@ -112,7 +117,10 @@
               },
               {
                 "group": "Product",
-                "pages": ["product-release-stages", "domains"]
+                "pages": [
+                  "product-release-stages",
+                  "domains"
+                ]
               }
             ]
           }
@@ -354,7 +362,9 @@
                 "pages": [
                   {
                     "group": "Go",
-                    "pages": ["magic-containers/guides/simple-go-api"]
+                    "pages": [
+                      "magic-containers/guides/simple-go-api"
+                    ]
                   },
                   {
                     "group": "Node.js",
@@ -365,11 +375,15 @@
                   },
                   {
                     "group": "PHP",
-                    "pages": ["magic-containers/guides/php-slim"]
+                    "pages": [
+                      "magic-containers/guides/php-slim"
+                    ]
                   },
                   {
                     "group": "Python",
-                    "pages": ["magic-containers/guides/python-fastapi"]
+                    "pages": [
+                      "magic-containers/guides/python-fastapi"
+                    ]
                   },
                   {
                     "group": "Web Frameworks",
@@ -383,7 +397,9 @@
                   },
                   {
                     "group": "Apps",
-                    "pages": ["magic-containers/guides/wordpress"]
+                    "pages": [
+                      "magic-containers/guides/wordpress"
+                    ]
                   },
                   {
                     "group": "Databases",
@@ -465,11 +481,25 @@
               },
               {
                 "group": "Observability",
-                "pages": ["scripting/statistics", "scripting/logs"]
+                "pages": [
+                  "scripting/statistics",
+                  "scripting/logs"
+                ]
               },
               {
                 "group": "APIs",
                 "pages": [
+                  "scripting/runtime",
+                  {
+                    "group": "Cache API",
+                    "tag": "Preview",
+                    "pages": [
+                      "scripting/cache/index",
+                      "scripting/cache/managing-caches",
+                      "scripting/cache/reading-writing",
+                      "scripting/cache/examples"
+                    ]
+                  },
                   "scripting/html-rewriter",
                   "scripting/node-fs",
                   "scripting/websockets"
@@ -477,7 +507,10 @@
               },
               {
                 "group": "Reference",
-                "pages": ["scripting/limits", "scripting/api-reference"]
+                "pages": [
+                  "scripting/limits",
+                  "scripting/api-reference"
+                ]
               }
             ]
           }
@@ -600,10 +633,13 @@
                 "pages": [
                   {
                     "group": "Tools",
-                    "pages": ["stream/vimeo2bunny"]
+                    "pages": [
+                      "stream/vimeo2bunny"
+                    ]
                   },
                   "stream/statistics",
                   "stream/webhooks",
+                  "stream/data-and-privacy",
                   "stream/api-reference"
                 ]
               }
@@ -630,7 +666,10 @@
               },
               {
                 "group": "Features",
-                "pages": ["storage/storage-tiers", "storage/replication"]
+                "pages": [
+                  "storage/storage-tiers",
+                  "storage/replication"
+                ]
               },
               {
                 "group": "Manage Files & Objects",
@@ -686,7 +725,11 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["shield/index", "shield/quickstart", "shield/pricing"]
+                "pages": [
+                  "shield/index",
+                  "shield/quickstart",
+                  "shield/pricing"
+                ]
               },
               {
                 "group": "Protection Features",
@@ -772,7 +815,10 @@
               },
               {
                 "group": "Reference",
-                "pages": ["optimizer/limits", "optimizer/troubleshooting"]
+                "pages": [
+                  "optimizer/limits",
+                  "optimizer/troubleshooting"
+                ]
               }
             ]
           }
@@ -788,7 +834,11 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["dns/index", "dns/quickstart"]
+                "pages": [
+                  "dns/index",
+                  "dns/quickstart",
+                  "dns/changelog"
+                ]
               },
               {
                 "group": "DNS Management",
@@ -798,7 +848,8 @@
                   "dns/import-export",
                   "dns/dnssec",
                   "dns/logging",
-                  "dns/statistics"
+                  "dns/statistics",
+                  "dns/limits"
                 ]
               },
               {
@@ -890,7 +941,9 @@
               {
                 "group": "Guides",
                 "pages": [
-                  "integrations/wordpress/content-offloading",
+                  "integrations/wordpress/dns",
+                  "integrations/wordpress/offloader",
+                  "integrations/wordpress/shield",
                   "integrations/wordpress/stream"
                 ]
               },
@@ -988,12 +1041,16 @@
                   {
                     "group": "DNS",
                     "hidden": true,
-                    "pages": ["cli/commands/dns"]
+                    "pages": [
+                      "cli/commands/dns"
+                    ]
                   },
                   {
                     "group": "Registries",
                     "hidden": true,
-                    "pages": ["cli/commands/registries"]
+                    "pages": [
+                      "cli/commands/registries"
+                    ]
                   },
                   "cli/commands/api"
                 ]
@@ -1036,7 +1093,9 @@
                   "source": "/api-reference/origin-errors/openapi.json",
                   "directory": "api-reference/origin-errors"
                 },
-                "pages": ["api-reference/origin-errors/index"]
+                "pages": [
+                  "api-reference/origin-errors/index"
+                ]
               },
               {
                 "group": "CDN Logging API",
@@ -1044,7 +1103,9 @@
                   "source": "https://logging.bunnycdn.com/docs/all/swagger.json",
                   "directory": "api-reference/cdn-logging"
                 },
-                "pages": ["api-reference/cdn-logging/index"]
+                "pages": [
+                  "api-reference/cdn-logging/index"
+                ]
               },
               {
                 "group": "Storage API",
@@ -1052,7 +1113,9 @@
                   "source": "/api-reference/storage/openapi.json",
                   "directory": "api-reference/storage"
                 },
-                "pages": ["api-reference/storage/index"]
+                "pages": [
+                  "api-reference/storage/index"
+                ]
               },
               {
                 "group": "Stream API",
@@ -1060,7 +1123,9 @@
                   "source": "https://video.bunnycdn.com/openapi/bunnynet-video-api.public.json",
                   "directory": "api-reference/stream"
                 },
-                "pages": ["api-reference/stream/index"]
+                "pages": [
+                  "api-reference/stream/index"
+                ]
               },
               {
                 "group": "Shield API",
@@ -1068,7 +1133,9 @@
                   "source": "https://api.bunny.net/shield/docs/v1/swagger.json",
                   "directory": "api-reference/shield"
                 },
-                "pages": ["api-reference/shield/index"]
+                "pages": [
+                  "api-reference/shield/index"
+                ]
               },
               {
                 "group": "Edge Scripting API",
@@ -1076,7 +1143,9 @@
                   "source": "https://core-api-public-docs.b-cdn.net/docs/v3/compute.json",
                   "directory": "api-reference/scripting"
                 },
-                "pages": ["api-reference/scripting/index"]
+                "pages": [
+                  "api-reference/scripting/index"
+                ]
               },
               {
                 "group": "Magic Containers API",
@@ -1084,7 +1153,9 @@
                   "source": "https://api-mc.opsbunny.net/docs/public/swagger.json",
                   "directory": "api-reference/magic-containers"
                 },
-                "pages": ["api-reference/magic-containers/overview"]
+                "pages": [
+                  "api-reference/magic-containers/overview"
+                ]
               },
               {
                 "group": "Database API",
@@ -1093,7 +1164,9 @@
                   "source": "https://api.bunny.net/database/docs/private/api.json",
                   "directory": "api-reference/database"
                 },
-                "pages": ["api-reference/database/index"]
+                "pages": [
+                  "api-reference/database/index"
+                ]
               }
             ]
           }
@@ -2308,6 +2381,16 @@
       "permanent": true
     },
     {
+      "source": "/integrations/wordpress/content-offloading",
+      "destination": "/integrations/wordpress/offloader",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/wordpress/offloader-and-shield",
+      "destination": "/integrations/wordpress/offloader",
+      "permanent": true
+    },
+    {
       "source": "/integrations",
       "destination": "/integrations/wordpress",
       "permanent": true
@@ -3358,12 +3441,24 @@
       "permanent": true
     },
     {
+      "source": "/scripting/cache-api",
+      "destination": "/scripting/cache",
+      "permanent": true
+    },
+    {
       "source": "/scripting/node/fs/node-fs",
       "destination": "/scripting/node-fs",
       "permanent": true
     }
   ],
   "contextual": {
-    "options": ["copy", "claude", "chatgpt", "cursor", "view", "vscode"]
+    "options": [
+      "copy",
+      "claude",
+      "chatgpt",
+      "cursor",
+      "view",
+      "vscode"
+    ]
   }
 }

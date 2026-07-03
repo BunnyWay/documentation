@@ -1,0 +1,217 @@
+---
+title: Cache examples
+sidebarTitle: Examples
+description: End-to-end Cache API recipes for Edge Scripting.
+---
+
+## Quickstart
+
+Here is a practical example of caching a HTML page on the edge, but updating the content based on a query parameter.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(
+  async (request: Request): Response | Promise<Response> => {
+    const url = new URL(request.url);
+    const now = new Date();
+    const expires = new Date(now.getTime() + 60 * 1000); // + 1min
+
+    try {
+      const cache = await caches.open("cache:v1");
+
+      // 1. check to see if we already have a cache entry
+      let res = await cache.match(`${url.origin}/example.html`);
+
+      // 2. if we don't, create one and put it into the cache for 60 seconds
+      if (!res) {
+        res = new Response(
+          `<!DOCTYPE html><html><body><p>Hello <span id="name"></span></p><ul><li>created at: ${now.toISOString()}</li><li>expires at: ${expires.toISOString()}</li></ul></body></html>`,
+          {
+            headers: {
+              "Cache-Control": "max-age=60",
+              "Content-Type": "text/html; charset=utf-8",
+            },
+          },
+        );
+        await cache.put(`${url.origin}/example.html`, res.clone());
+      }
+
+      // 3. modify the contents
+      const content = new HTMLRewriter()
+        .on("span", {
+          element(el) {
+            el.setInnerContent(
+              url.searchParams.get("name") ??
+                "Nameless User (use ?name= to define this)",
+            );
+          },
+        })
+        .transform(res);
+
+      // 3. return modified contents to the user
+      return new Response(await content.text(), {
+        headers: {
+          "Cache-Control": "no-cache",
+          "Content-Type": "text/html; charset=utf-8",
+        },
+      });
+    } catch (error) {
+      return new Response(`Error: ${error.message}`, {
+        status: 500,
+      });
+    }
+  },
+);
+```
+
+## Updating a cache in middleware
+
+Here is an example of updating a cache in middleware
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+async function onOriginRequest(context: {
+  request: Request;
+}): Promise<Response> | Response | Promise<Request> | Request | void {
+  const now = new Date();
+
+  try {
+    const cache = await caches.open("cache:v1");
+
+    if (context.request.method == "POST") {
+      const res = new Response(`Content from POST: ${now.toISOString()}`, {
+        headers: {
+          "Cache-Control": "max-age=3600",
+          "Content-Type": "text/plain; charset=utf-8",
+        },
+      });
+
+      Bunny.v1.waitUntil(cache.put(context.request, res));
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+BunnySDK.net.http.servePullZone().onOriginRequest(onOriginRequest);
+```
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+BunnySDK.net.http.serve(
+  async (request: Request): Response | Promise<Response> => {
+    try {
+      const cache = await caches.open("cache:v1");
+
+      let res = await cache.match(request);
+
+      if (!res) {
+        const res = Response(await "Content from GET", {
+          headers: {
+            "Cache-Control": "no-cache",
+            "Content-Type": "text/plain; charset=utf-8",
+          },
+        });
+      }
+
+      return res;
+    } catch (error) {
+      return new Response(`Error: ${error.message}`, {
+        status: 500,
+      });
+    }
+  },
+);
+```
+
+## Refresh and purge a cached value on demand
+
+Expose a single URL that serves a cached JSON payload on `GET`, regenerates
+it on `POST`, and clears it on `DELETE`. Useful for cache-warming endpoints,
+manual invalidation hooks, or scheduled refreshes from an upstream job.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk@0.12.0";
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const url = new URL(request.url);
+  const cache = caches.default;
+
+  // Share one key across all three methods by normalizing the request to a
+  // GET on the same URL.
+  const cacheKey = new Request(url.toString(), { method: "GET" });
+
+  try {
+    if (request.method === "POST") {
+      const fresh = Response.json(
+        {
+          generatedAt: new Date().toISOString(),
+          random: Math.random(),
+        },
+        {
+          headers: { "Cache-Control": "s-maxage=60" },
+        },
+      );
+
+      await cache.put(cacheKey, fresh.clone());
+
+      return new Response(`Cached "${cacheKey.url}" for 60s`, {
+        headers: { "Cache-Control": "no-cache" },
+      });
+    }
+
+    if (request.method === "GET") {
+      const hit = await cache.match(cacheKey);
+      if (hit) {
+        return hit;
+      }
+
+      return new Response(
+        "No cached value yet. POST to this URL to generate one.",
+        { status: 404, headers: { "Cache-Control": "no-cache" } },
+      );
+    }
+
+    if (request.method === "DELETE") {
+      const deleted = await cache.delete(cacheKey);
+
+      return new Response(
+        deleted
+          ? `Purged "${cacheKey.url}"`
+          : `Nothing to purge for "${cacheKey.url}"`,
+        {
+          status: deleted ? 200 : 404,
+          headers: { "Cache-Control": "no-cache" },
+        },
+      );
+    }
+
+    return new Response("Method Not Allowed", {
+      status: 405,
+      headers: {
+        "Allow": "GET, POST, DELETE",
+        "Cache-Control": "no-cache",
+      },
+    });
+  } catch (e) {
+    return new Response(`Cache error: ${(e as Error).message}`, { status: 500 });
+  }
+});
+```
+
+<Note>
+  The POST handler awaits `cache.put()` so the acknowledgement reflects that
+  the value actually landed. For fire-and-forget refreshes, wrap it with
+  `Bunny.v1.waitUntil(cache.put(cacheKey, fresh.clone()))` and return
+  the ack immediately.
+</Note>
+
+## References
+
+- [Cache API overview](./index) — regional behavior, limitations, and API surface.
+- [Managing caches](./managing-caches) — the global `caches` object and named cache instances.
+- [Reading & writing](./reading-writing) — `match`, `put`, `delete` method reference.
+- [Runtime: waitUntil](../runtime#waituntil) — extend the isolate lifetime for background cache writes.

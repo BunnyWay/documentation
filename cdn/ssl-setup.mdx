@@ -14,6 +14,8 @@ Your custom domain must point to Bunny using a CNAME record before SSL validatio
   DNS resolution and prevents SSL validation from working.
 </Warning>
 
+To issue a certificate *before* repointing your domain and avoid HTTPS downtime during migration, use [Seamless Domain Migration](/cdn/seamless-migration) instead, which validates ownership over DNS first.
+
 ## Free Let's Encrypt certificate
 
 <Steps>
@@ -57,9 +59,19 @@ Your custom domain must point to Bunny using a CNAME record before SSL validatio
   </Step>
 </Steps>
 
+## Wildcard certificates
+
+When your domain is hosted on a [Bunny DNS](/dns) zone, Bunny automatically issues and renews a free Let's Encrypt wildcard certificate (`*.yourdomain.com`). Just follow the [Free Let's Encrypt certificate](#free-lets-encrypt-certificate) steps above with your wildcard hostname.
+
+If your domain is hosted elsewhere, move it to Bunny DNS ([DNS quickstart](/dns/quickstart)), or generate the wildcard certificate yourself (for example, with certbot using DNS validation) and [upload it manually](#custom-certificate).
+
+## ACME passthrough to origin
+
+If your origin requests its own certificates over ACME, Bunny forwards requests to `/.well-known/acme-challenge/` through to the origin so it can complete validation and have a certificate issued directly to it.
+
 ## Custom certificate
 
-Use this option for wildcard domains (`*.yourdomain.com`) or certificates from commercial providers.
+Use this option for certificates from commercial providers, or for wildcard certificates when your domain is not managed by Bunny DNS.
 
 <Steps>
   <Step title="Prepare your certificate files">
@@ -93,12 +105,6 @@ Use this option for wildcard domains (`*.yourdomain.com`) or certificates from c
   </Step>
 </Steps>
 
-<Note>
-  Let's Encrypt wildcard certificates are not supported through Bunny's
-  automatic issuance. For wildcards, generate the certificate yourself (e.g.,
-  using certbot with DNS validation) and upload it manually.
-</Note>
-
 ## Troubleshooting
 
 ### SSL validation fails
@@ -108,8 +114,8 @@ Common causes:
 - **DNS not propagated**: Use [dnschecker.org](https://dnschecker.org) to confirm your CNAME is resolving globally. After updating a DNS record, wait a few minutes before requesting the certificate so the change can propagate, otherwise our servers may read a stale cached record
 - **Incorrect CNAME record**: Verify with a [DNS lookup tool](https://toolbox.googleapps.com/apps/dig/) that your hostname returns a CNAME pointing to the exact hostname of your Pull Zone. If you use [Bunny DNS](/dns), point your custom domain's CNAME to your `b-cdn.net` Pull Zone hostname
 - **Cloudflare proxy enabled**: Disable the orange cloud icon on your CNAME record
-- **Geolocation blocks**: Let's Encrypt validates from multiple regions (including USA and Europe). If you've blocked these regions via Traffic Manager or Edge Rules, validation will fail
-- **CAA records**: If your domain has CAA DNS records, add `letsencrypt.org` to the allowed issuers, or remove the CAA records to allow any issuer
+- **Geolocation blocks**: Let's Encrypt validates from multiple regions (including USA and Europe). If you've blocked these regions via Traffic Manager or Edge Rules, validation may fail
+- **CAA records**: If your domain has CAA DNS records, add `letsencrypt.org` to the allowed issuers
 
 ### Rate limiting
 

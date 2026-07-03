@@ -45,30 +45,21 @@ You can customize the following Bunny Shield response pages:
 
 Bunny Shield provides a customizable HTML editor for each response page type.
 
-For security and reliability reasons, only the contents within the page's `<body>` element can be customized. Within the body, you can include your own HTML, CSS, JavaScript, and external assets to fully customize the visitor experience.
+For security and reliability reasons, only the contents within the page's `<body>` element can be customized. The editor already wraps your code in a `<body>` element, so you only need to provide the content that goes inside it. Within the body, you can include your own HTML, CSS, JavaScript, and external assets to fully customize the visitor experience.
 
 ```html
-<body>
-    <link rel="stylesheet" href="https://acme.com/custom-response.css">
+<link rel="stylesheet" href="https://acme.com/custom-response.css">
 
-    <div class="container">
-        <img src="https://acme.com/logo.svg" alt="Company Logo">
-        <h1>Security Verification Required</h1>
-        <p>Please complete the verification below to continue.</p>
-    </div>
+<div class="container">
+    <img src="https://acme.com/logo.svg" alt="Company Logo">
+    <h1>Security Verification Required</h1>
+    <p>Please complete the verification below to continue.</p>
+</div>
 
-    <script src="https://acme.com/custom-response.js"></script>
-</body>
+<script src="https://acme.com/custom-response.js"></script>
 ```
 
-The surrounding document structure, response handling, challenge functionality, and security controls remain managed by Bunny Shield to ensure the page continues to function correctly.
-
-
-section can be modified.
-
-The surrounding page structure, protection logic, challenge functionality, and security controls remain managed by Bunny Shield.
-
-This ensures custom pages continue to function correctly while allowing complete control over the visitor-facing content and styling.
+The surrounding document structure, response handling, challenge functionality, and security controls remain managed by Bunny Shield to ensure the page continues to function correctly, while giving you complete control over the visitor-facing content and styling.
 
 ## Configuring Custom Response Pages
 
@@ -96,13 +87,11 @@ To configure custom response pages:
 Add your company logo, colors, and messaging to create a seamless verification experience.
 
 ```html
-<body>
-    <div class="container">
-        <img src="https://acme.com/logo.svg" alt="Company Logo">
-        <h1>Security Verification Required</h1>
-        <p>Please complete the verification below to continue.</p>
-    </div>
-</body>
+<div class="container">
+    <img src="https://acme.com/logo.svg" alt="Company Logo">
+    <h1>Security Verification Required</h1>
+    <p>Please complete the verification below to continue.</p>
+</div>
 ```
 
 ### Custom Block Page
@@ -110,13 +99,11 @@ Add your company logo, colors, and messaging to create a seamless verification e
 Provide additional information for visitors who may have been blocked unintentionally.
 
 ```html
-<body>
-    <h1>Access Restricted</h1>
-    <p>
-        Your request was blocked by our security systems.
-        If you believe this is an error, please contact support.
-    </p>
-</body>
+<h1>Access Restricted</h1>
+<p>
+    Your request was blocked by our security systems.
+    If you believe this is an error, please contact support.
+</p>
 ```
 
 ### Custom Rate Limit Page
@@ -124,13 +111,11 @@ Provide additional information for visitors who may have been blocked unintentio
 Help users understand temporary access restrictions.
 
 ```html
-<body>
-    <h1>Too Many Requests</h1>
-    <p>
-        You have exceeded the allowed request rate.
-        Please wait a few minutes and try again.
-    </p>
-</body>
+<h1>Too Many Requests</h1>
+<p>
+    You have exceeded the allowed request rate.
+    Please wait a few minutes and try again.
+</p>
 ```
 
 ## Fallback Behavior
