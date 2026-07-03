@@ -915,6 +915,7 @@
                   "database/limits",
                   "database/replication",
                   "database/metrics",
+                  "database/import-export",
                   "database/durability-and-consistency"
                 ]
               }
