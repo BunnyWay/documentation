@@ -1,0 +1,203 @@
+---
+title: bunny sandbox
+sidebarTitle: sandbox
+description: "Create and manage on-demand cloud sandbox environments backed by Bunny Magic Containers."
+---
+
+`bunny sandbox` manages on-demand cloud sandbox environments backed by [Bunny Magic Containers](/magic-containers). Each sandbox is a fully isolated Ubuntu container with Node.js, Bun, Python, and Claude Code pre-installed. A 10 GB persistent volume is mounted at `/workplace`, your default working directory.
+
+Sandbox credentials (app ID, hostname, SSH endpoint, agent token) are stored in `~/.config/bunnynet.json` so you can reconnect without re-creating.
+
+---
+
+## `bunny sandbox create`
+
+Create and start a new sandbox. Waits for the container's SSH port to become reachable before returning.
+
+```bash
+# Create a sandbox with the default name "sandbox"
+bunny sandbox create
+
+# Create a named sandbox
+bunny sandbox create my-sandbox
+
+# Create in a specific region
+bunny sandbox create my-sandbox --region NY
+
+# Bake in environment variables (persisted for the sandbox's lifetime)
+bunny sandbox create my-sandbox -e NODE_ENV=production -e PORT=8080
+bunny sandbox create my-sandbox --env-file .env
+```
+
+| Flag         | Alias | Description                                        | Default |
+| ------------ | ----- | --------------------------------------------------- | ------- |
+| `--region`   |       | Region ID to deploy in (e.g. `AMS`, `NY`, `LA`, …) | `AMS`   |
+| `--env`      | `-e`  | Environment variable as `KEY=VALUE` (repeatable)   |         |
+| `--env-file` |       | Load environment variables from a dotenv file      |         |
+
+Variables set at creation are baked into the container and persist across restarts. Values from `--env` override those loaded from `--env-file`. To change them later, use [`bunny sandbox env`](#bunny-sandbox-env).
+
+Once ready, the output shows the app ID, public HTTPS hostname, and SSH address.
+
+## `bunny sandbox list`
+
+List all sandboxes saved in your local config.
+
+```bash
+bunny sandbox list
+bunny sandbox ls          # alias
+```
+
+Columns: Name, App ID, Hostname, SSH.
+
+## `bunny sandbox delete`
+
+Delete a sandbox and permanently destroy the underlying Magic Containers app.
+
+```bash
+bunny sandbox delete my-sandbox
+
+# Skip the confirmation prompt
+bunny sandbox delete my-sandbox --force
+bunny sandbox rm my-sandbox -f   # alias
+```
+
+| Flag      | Alias | Description              | Default |
+| --------- | ----- | ------------------------ | ------- |
+| `--force` | `-f`  | Skip confirmation prompt | `false` |
+
+## `bunny sandbox exec`
+
+Run a shell command inside a sandbox over SSH. Defaults to `/workplace` as the working directory.
+
+```bash
+# Run a command
+bunny sandbox exec my-sandbox ls -la
+
+# Run in a different directory
+bunny sandbox exec my-sandbox --cwd /tmp env
+
+# Pipe-friendly: exit code is propagated
+bunny sandbox exec my-sandbox -- cat /etc/os-release
+
+# Inject temporary environment variables for this command only
+bunny sandbox exec my-sandbox --env DEBUG=1 -- node app.js
+bunny sandbox exec my-sandbox --env-file .env -- printenv
+```
+
+| Flag         | Alias | Description                                      | Default      |
+| ------------ | ----- | ------------------------------------------------- | ------------ |
+| `--cwd`      |       | Working directory inside the sandbox             | `/workplace` |
+| `--env`      |       | Environment variable as `KEY=VALUE` (repeatable) |              |
+| `--env-file` |       | Load environment variables from a dotenv file    |              |
+
+Variables passed here apply only to that single command and are **not** persisted. For persistent variables, use [`bunny sandbox env`](#bunny-sandbox-env).
+
+## `bunny sandbox ssh`
+
+Open a full interactive SSH session. Drops you into a bash shell at `/workplace`. Type `exit` or press Ctrl-D to close.
+
+```bash
+bunny sandbox ssh my-sandbox
+
+# Set temporary environment variables for the session
+bunny sandbox ssh my-sandbox -e DEBUG=1 --env-file .env
+```
+
+| Flag         | Alias | Description                                      | Default |
+| ------------ | ----- | ------------------------------------------------- | ------- |
+| `--env`      | `-e`  | Environment variable as `KEY=VALUE` (repeatable) |         |
+| `--env-file` |       | Load environment variables from a dotenv file    |         |
+
+Variables apply only to the session and are not persisted.
+
+## `bunny sandbox url`
+
+Manage public CDN endpoints for ports running inside a sandbox. Useful for exposing a dev server or API to the internet.
+
+### `bunny sandbox url add`
+
+Expose a container port as a public HTTPS endpoint. Waits until the URL is provisioned and prints it.
+
+```bash
+# Expose port 3000 (endpoint named "port-3000")
+bunny sandbox url add my-sandbox 3000
+
+# Custom endpoint name
+bunny sandbox url add my-sandbox 8080 --label my-api
+```
+
+| Flag      | Description                   | Default       |
+| --------- | ------------------------------ | ------------- |
+| `--label` | Display name for the endpoint | `port-<port>` |
+
+### `bunny sandbox url list`
+
+List all user-created endpoints for a sandbox (built-in `api` and `ssh` endpoints are hidden).
+
+```bash
+bunny sandbox url list my-sandbox
+bunny sandbox url ls my-sandbox    # alias
+```
+
+Columns: ID, Name, Type, Port, URL.
+
+### `bunny sandbox url delete`
+
+Delete a public endpoint by name.
+
+```bash
+bunny sandbox url delete my-sandbox port-3000
+
+# Skip confirmation
+bunny sandbox url delete my-sandbox my-api --force
+bunny sandbox url rm my-sandbox my-api -f   # alias
+```
+
+| Flag      | Alias | Description              | Default |
+| --------- | ----- | ------------------------ | ------- |
+| `--force` | `-f`  | Skip confirmation prompt | `false` |
+
+## `bunny sandbox env`
+
+Manage a sandbox's **persistent** environment variables, the ones baked into the container. Unlike the temporary `--env` passed to `exec`/`ssh`, these survive across sessions. Changing them redeploys the sandbox with the new environment (running processes restart).
+
+### `bunny sandbox env set`
+
+Set one or more persistent variables, merging with the existing set.
+
+```bash
+# Set a single variable
+bunny sandbox env set my-sandbox NODE_ENV=production
+
+# Set several at once
+bunny sandbox env set my-sandbox API_URL=https://api.example.com LOG_LEVEL=debug
+
+# Load from a dotenv file
+bunny sandbox env set my-sandbox --env-file .env
+```
+
+| Flag         | Description                                   | Default |
+| ------------ | ---------------------------------------------- | ------- |
+| `--env-file` | Load environment variables from a dotenv file |         |
+
+### `bunny sandbox env list`
+
+List the sandbox's persistent variables. The internal `AGENT_TOKEN` is hidden.
+
+```bash
+bunny sandbox env list my-sandbox
+bunny sandbox env ls my-sandbox    # alias
+```
+
+Columns: Name, Value.
+
+### `bunny sandbox env delete`
+
+Remove one or more persistent variables. Names that are not set are reported and skipped; if none match, the command errors and nothing is redeployed.
+
+```bash
+bunny sandbox env delete my-sandbox NODE_ENV
+bunny sandbox env rm my-sandbox API_URL LOG_LEVEL    # alias
+bunny sandbox env unset my-sandbox API_URL           # alias
+```
