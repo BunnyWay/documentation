@@ -1,12 +1,12 @@
 ---
 title: "Free Encoding"
 sidebarTitle: "Free Encoding"
-description: "Stream provides users with powerful and, most of all, free transcoding of their videos."
+description: "Stream provides users with powerful and free transcoding video service"
 ---
 
-It allows users to convert their videos into multiple desired resolutions for maximum compatibility with the end-user who watches them, as our player intelligently selects the best resolution to play to the user, therefore minimizing buffering on unstable and/or poor connections. 
+Free encoding allows you to automatically convert uploaded videos into multiple playback resolutions, ensuring broad device compatibility and an optimal viewing experience. During playback, our stream player intelligently selects the most appropriate resolution based on the viewer’s device and current network conditions, helping to reduce buffering and provide smooth playback even on slower or unstable connections.
 
-Free encoding also provides an abundance of highly customizable options with which you can further tweak the end result of the videos. This document describes the configuration settings for Bunny Stream video encoding, and helps you configure them for the best results.
+In addition to adaptive streaming, Free encoding offers a range of configurable encoding options that let you tailor the output to your specific requirements. This guide explains each encoding setting available in Bunny Stream and provides recommendations to help you achieve the best balance between video quality, storage usage, and playback performance.
 
 <Note>
   Free encoding is a shared service intended for low volume workloads. For time sensitive video workflows that require fast turn-arounds check out [Premium encoding](https://docs.bunny.net/stream/premium-encoding). 
@@ -29,7 +29,7 @@ Configures the list of resolutions that the uploaded videos will be transcoded t
 Configures the list of resolutions that the uploaded videos will be transcoded to. Each resolution comes with a pre-tuned bitrate that provides a great ratio of picture quality and bandwidth usage, but you can fine-tune this by clicking on the bitrate number in the Enabled Resolutions list. Then, you can configure the specific bitrates in which your videos will be encoded in.
 
 <Note>
-  Each enabled resolution is a separate encoding job, so a library with five resolutions enabled takes proportionally longer to process than one with two. The same applies if MP4 fallback or multiple output codecs are turned on. The standard transcoding queue is shared and fairly scheduled, so encoding may also be briefly delayed during peak periods — this is normal. If a video stays in **Processing** for more than a few hours, contact support. For predictable, priority encoding times, see [Premium Encoding](/stream/premium-encoding).
+  Each enabled resolution is a separate encoding job, so a library with five resolutions enabled takes proportionally longer to process than one with two. The same applies if MP4 fallback or multiple output codecs are turned on.
 </Note>
 
 ## Keep original files
