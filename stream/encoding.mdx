@@ -1,12 +1,16 @@
 ---
-title: "Encoding"
-sidebarTitle: "Overview"
-description: "bunny.net Stream platform provides users with powerful and, most of all, free transcoding of their videos."
+title: "Free Encoding"
+sidebarTitle: "Free Encoding"
+description: "Stream provides users with powerful and free transcoding video service"
 ---
 
-It allows users to convert their videos into multiple desired resolutions for maximum compatibility with the end-user who watches them, as our player intelligently selects the best resolution to play to the user, therefore minimalizing buffering on unstable and/or poor connections.
+Free encoding allows you to automatically convert uploaded videos into multiple playback resolutions, ensuring broad device compatibility and an optimal viewing experience. During playback, our stream player intelligently selects the most appropriate resolution based on the viewer’s device and current network conditions, helping to reduce buffering and provide smooth playback even on slower or unstable connections.
 
-Encoding aside, we also provide an abundance of highly customizable options with which you can further tweak the end result of the videos. This document describes the configuration settings for Bunny Stream video encoding, and helps you configure them for the best results.
+In addition to adaptive streaming, Free encoding offers a range of configurable encoding options that let you tailor the output to your specific requirements. This guide explains each encoding setting available in Bunny Stream and provides recommendations to help you achieve the best balance between video quality, storage usage, and playback performance.
+
+<Note>
+  Free encoding is a shared service intended for low volume workloads. For time sensitive video workflows that require fast turn-arounds check out [Premium encoding](https://docs.bunny.net/stream/premium-encoding). 
+</Note>
 
 ## Where can I find these settings?
 
@@ -25,7 +29,7 @@ Configures the list of resolutions that the uploaded videos will be transcoded t
 Configures the list of resolutions that the uploaded videos will be transcoded to. Each resolution comes with a pre-tuned bitrate that provides a great ratio of picture quality and bandwidth usage, but you can fine-tune this by clicking on the bitrate number in the Enabled Resolutions list. Then, you can configure the specific bitrates in which your videos will be encoded in.
 
 <Note>
-  Each enabled resolution is a separate encoding job, so a library with five resolutions enabled takes proportionally longer to process than one with two. The same applies if MP4 fallback or multiple output codecs are turned on. The standard transcoding queue is shared and fairly scheduled, so encoding may also be briefly delayed during peak periods — this is normal. If a video stays in **Processing** for more than a few hours, contact support. For predictable, priority encoding times, see [Premium Encoding](/stream/premium-encoding).
+  Each enabled resolution is a separate encoding job, so a library with five resolutions enabled takes proportionally longer to process than one with two. The same applies if MP4 fallback or multiple output codecs are turned on.
 </Note>
 
 ## Keep original files
@@ -91,8 +95,7 @@ A summary will appear with a breakdown of your video storage usage giving per-vi
 - Total
 
 <Info>
-  Video storage size info can also be provided over API via:\
-  [https://docs.bunny.net/api-reference/stream/manage-videos/get-video-storage-size-info](https://docs.bunny.net/api-reference/stream/manage-videos/get-video-storage-size-info)
+  Video storage size info can also be provided over via [manage-videos endpoint get-video-storage-size-info](https://docs.bunny.net/api-reference/stream/manage-videos/get-video-storage-size-info) API endpoint. 
 </Info>
 
 ## Why are my videos taking up more space than they should?
@@ -101,4 +104,12 @@ You may notice that once a video is uploaded, it consumes a larger amount of sto
 
 `MP4 Fallback` `Keep Original Files` `Enabled Resolutions`
 
-If you wish to reduce the size of the final encoded video, you may want to look at which resolutions and/or options you need, whilst disabling the ones you don't need. Please keep in mind that videos only uploaded after the changes will be affected by the change.
+If you wish to reduce the size of the final encoded video, you may want to look at which resolutions and/or options you need, whilst disabling the ones you don't need. Please keep in mind that videos only uploaded after the changes will be affected by the change.\
+
+## Why are my videos taking so long to encode?
+
+After a video is uploaded, it enters the encoding queue before it becomes available for playback. Encoding time depends on several factors, including the size, duration and complexity of the source video, the number of output resolutions you’ve enabled, and current encoding platform demand.
+
+The free encoding service is shared across all users and is intended for general-purpose workloads. During periods of high demand, or when uploading large video libraries as part of a migration, encoding may take anywhere from several hours to multiple days to complete. Large batches of videos from other users can also increase queue times during peak periods.
+
+If your workflow requires videos to be available as quickly as possible, such as for production services, customer-facing applications, or time-sensitive content, we recommend using [**Premium Encoding**](https://docs.bunny.net/stream/premium-encoding). You should also consider enabling **Early Play** or **Just-in-Time encoding**, which allow viewers to begin watching content before the full encoding process has completed.
