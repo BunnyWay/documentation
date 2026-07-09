@@ -564,7 +564,7 @@
                     ]
                   },
                   "stream/vast",
-                  "stream/storage-tiers",
+                  "stream/delivery-tiers",
                   "stream/replication",
                   {
                     "group": "Security",
