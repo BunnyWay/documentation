@@ -52,7 +52,7 @@ SHA256 checksum validation is available using the `x-amz-checksum-sha256` header
 
 ### Presigned URL Validation
 
-Presigned URLs require authentication. For publicly available presigned URLs fronted by CDN please use [bunny.net](http://bunny.net) CDN by adding a pullzone to your storage zone.
+Presigned URLs require authentication. For publicly available presigned URLs fronted by CDN please use [bunny.net](http://bunny.net) CDN by adding a pullzone to your storage zone. 
 
 | Parameter | Description |
 | --- | --- |
@@ -313,4 +313,4 @@ Bunny Storage returns standard S3 error codes:
 5. **Include Content-Type headers** when uploading, or rely on automatic detection
 6. **Handle pagination properly** when listing objects or parts (max 1000 per request)
 7. **Monitor multipart sessions** and abort abandoned uploads to free storage
-8. **Set presigned URL expiry time** in seconds `--expires-in 3600` = 1hour
+8. **Set presigned URL expiry time** in seconds `--expires-in 3600` = 1 hour
