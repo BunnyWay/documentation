@@ -676,6 +676,8 @@
                 "pages": [
                   "storage/dashboard",
                   "storage/http",
+                  "storage/s3",
+                  "storage/ftp",
                   {
                     "group": "SDKs",
                     "pages": [
@@ -684,8 +686,7 @@
                       "storage/dotnet-sdk",
                       "storage/java-sdk"
                     ]
-                  },
-                  "storage/ftp"
+                  }
                 ]
               },
               {

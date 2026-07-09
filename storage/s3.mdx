@@ -1,7 +1,12 @@
-Bunny Storage supports an S3-compatible API (currently in beta), allowing you to use familiar S3 tools, libraries, and workflows with your storage zones. Use existing S3 tools and scripts, leverage popular S3 libraries across all programming languages, migrate from AWS S3 with minimal code changes, and work with S3 GUI tools.
+---
+title: "S3"
+tag: "Public preview"
+---
+
+Bunny Storage supports an S3-compatible API, allowing you to use familiar S3 tools, libraries, and workflows with your storage zones. Use existing S3 tools and scripts, leverage popular S3 libraries across all programming languages, migrate from AWS S3 with minimal code changes, and work with S3 GUI tools.
 
 <Info>
-  S3 compatibility is currently in closed preview. S3 compatibility must be enabled during storage zone creation and cannot be changed afterward.
+  S3 compatibility is currently in public preview. S3 compatibility must be enabled during storage zone creation and cannot be changed afterward.
 </Info>
 
 ## Creating a storage zone with S3 compatibility
@@ -27,7 +32,8 @@ The credentials you need to connect via S3 are located in the **Access** tab:
 - **Access Key ID**: Your Storage Zone name (bucket name)
 - **Secret Access Key**: Your Storage Zone Password
 - **Endpoint URL**: `https://[region]-s3.storage.bunnycdn.com`
-- **Region**: `de` (Frankfurt), `ny` (New York), `sg` (Singapore), `uk` (London), `se` (Stockholm), `la` (Los angeles) or `jh` (Johannesburg)
+- **Region**: `de` (Frankfurt), `ny` (New York), `sg` (Singapore), `uk` (London), \
+  `se` (Stockholm), `la` (Los angeles),`jh` (Johannesburg) & `syd` (Sydney)
 
 <Note>
   Bunny Storage only supports path-style URLs (e.g., `https://[region]-s3.storage.bunnycdn.com/bucket-name/key`). Virtual hosted-style URLs (e.g., `bucket-name.s3.region.amazonaws.com`) are not supported.
@@ -43,11 +49,11 @@ When uploading objects, Content-Type is determined in the following order:
 
 ### Checksum Validation
 
-SHA256 checksum validation is available using the `x-amz-checksum-sha256` header (Base64 encoded).\\
+SHA256 checksum validation is available using the `x-amz-checksum-sha256` header (Base64 encoded).
 
 ### Presigned URL Validation
 
-Presigned URLs require authentication. For publicly available presigned URLs without authentication please use [bunny.net](http://bunny.net) CDN by adding a pullzone to your storage zone.
+Presigned URLs require authentication. For publicly available presigned URLs fronted by CDN please use [bunny.net](http://bunny.net) CDN by adding a pullzone to your storage zone. 
 
 | Parameter | Description |
 | --- | --- |
@@ -61,7 +67,11 @@ Presigned URLs require authentication. For publicly available presigned URLs wit
 **Presigned URL example (1hour):**\
 https://\[region\]-s3.storage.bunnycdn.com/bucket-name/path/to/object/?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=\[AccessKeyID\+Date\+region\+servicerequest\]&X-Amz-Date=20260320T160912Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=\[HMAC-SHA256Signature\]/
 
-## Examples
+<Card title="Presigned URL cache" type="note">
+  Presigned URLs are cached and the cache validates signatures for cached objects. Currently objects up to 256MB are cached, and only if they are accessed at least 2 times.
+</Card>
+
+## Example
 
 ### AWS CLI
 
@@ -192,7 +202,7 @@ Bunny Storage provides full support for S3 multipart uploads, enabling efficient
 | API Name | Features |
 | --- | --- |
 | ✅ [`CreateMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html) | ✅ Multipart session creation<br />✅ Returns UploadId<br />✅ System Metadata:<br />    ✅ Content-Type (with automatic detection from file extension)<br />    ✅ Content-Type stored in session for final object<br />✅ Automatic replication session creation<br />❌ Storage class selection<br />❌ Cache-Control, Content-Disposition, etc.<br />❌ SSE/SSE-C encryption<br />❌ Object tagging<br />❌ Object locking<br />❌ ACL headers |
-| ✅ [`UploadPart`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html) | ✅ Part upload (up to 10,000 parts)<br />✅ Returns ETag (part checksum)<br />✅ Automatic replication of parts<br />❌ Content-MD5 validation<br />❌ SSE/SSE-C encryption |
+| ✅ [`UploadPart`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html) | ✅ Part upload (up to 10,000 parts)<br />✅ Returns ETag (part checksum)<br />✅ Automatic replication of parts<br />✅ Content-MD5 validation<br />❌ SSE/SSE-C encryption |
 | ✅ [`UploadPartCopy`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html) | ✅ Copy within same storage zone<br />✅ Part size up to 5 GB<br />✅ Range copy (source object must be greater than 5 MB)<br />✅ Supported headers:<br />    ✅ x-amz-copy-source<br />    ✅ x-amz-copy-source-range (optional, format: bytes=first-last)<br />❌ Cross-zone copying<br />❌ Conditional source headers<br />❌ Server-side encryption<br />❌ Bucket-owner verification<br />❌ Requester payer<br />❌ ACL grants |
 | ✅ [`ListParts`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html) | ✅ Query Parameters:<br />    ✅ max-parts (default 1000)<br />    ✅ part-number-marker<br />✅ Returns part ETag and size<br />✅ Pagination support<br />✅ IsTruncated flag |
 | ✅ [`CompleteMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html) | ✅ Finalizes multipart upload<br />✅ Validates all parts present<br />✅ Validates part ETags<br />✅ Creates final object with combined checksum<br />✅ Final checksum format: `MD5(part1+part2+...)-{partCount}`<br />✅ Applies Content-Type from session<br />✅ Automatic replication of completed object<br />✅ Cleanup of part files<br />✅ Returns ETag, Location, Bucket, Key<br />❌ Checksums in response |
@@ -240,11 +250,14 @@ Below is a detailed list of implemented object-level operations with their suppo
 
 Be aware of the following limitations when using S3-compatible storage:
 
+- 500 Max RPS rate (upload & download combined)
+- 1Gbps Max bandwidth throughput
+
 ### Regional availability
 
 S3-compatible storage zones support automatic multi-region replication. All operations including uploads, deletes, and multipart uploads are automatically replicated to your configured replication regions.
 
-S3 compatibility is currently only available in the following regions:
+S3 compatibility is currently available in the following regions:
 
 - Frankfurt (DE)
 - New York (NY)
@@ -253,6 +266,7 @@ S3 compatibility is currently only available in the following regions:
 - Stockholm (SE)
 - Los Angeles (LA)
 - Johannesburg (JH)
+- Sydney (SYD)
 
 Additional regions will be added in the future.
 
@@ -300,4 +314,4 @@ Bunny Storage returns standard S3 error codes:
 5. **Include Content-Type headers** when uploading, or rely on automatic detection
 6. **Handle pagination properly** when listing objects or parts (max 1000 per request)
 7. **Monitor multipart sessions** and abort abandoned uploads to free storage
-8. **Set presigned URL expiry time** in seconds `--expires-in 3600` = 1hour
+8. **Set presigned URL expiry time** in seconds `--expires-in 3600` = 1 hour
