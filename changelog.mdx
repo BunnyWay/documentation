@@ -4,6 +4,12 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-07-10" tags={["Scripting","(New)"]}>
+  ## Symbolic links, timestamps, and permissions in Edge Scripting
+
+  The Edge Scripting Node.js file system module now supports symbolic links (`symlink()`, `readlink()`, `lstat()`), returns correct file timestamps (`atime`, `mtime`, `ctime`, `birthtime`), and enforces owner-level file and directory permissions (`chmod()`, `access()`, `Stats.mode`). [Learn more](/scripting/node-fs)
+</Update>
+
 <Update label="2026-07-09" tags={["Storage","(New)"]}>
   ## S3 API 'Public Preview' launched
 
