@@ -126,7 +126,7 @@ File and directory permissions are supported for the **owner (user)** bits. `chm
 <Info>
 **Group and others** permission bits are accepted but have no effect: the sandboxed environment always runs as the file owner (uid=1000, gid=1000), so only the user/owner bits matter.
 
-`chown()` and `chownSync()` have no effect; ownership is fixed to uid=1000, gid=1000.
+`chown()` and `chownSync()` are implemented for compatibility, but ownership is not enforced. Changing the uid or gid has no effect on file access or permissions.
 </Info>
 
 
