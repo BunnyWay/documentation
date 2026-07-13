@@ -6080,6 +6080,11 @@
             "nullable": true,
             "description": "Determines if the optimizer origin tunnel system should be enabled for this zone"
           },
+          "OptimizerTunnelActiveProbingEnabled": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Determines if the optimizer tunnel system active probing should be enabled for this zone"
+          },
           "OptimizerDesktopMaxWidth": {
             "type": "integer",
             "format": "int32",
@@ -6999,6 +7004,10 @@
             "type": "boolean",
             "description": "Determines if the optimizer origin tunnel system is enabled for this zone"
           },
+          "OptimizerTunnelActiveProbingEnabled": {
+            "type": "boolean",
+            "description": "Determines if the optimizer tunnel system active probing should be enabled for this zone"
+          },
           "OptimizerDesktopMaxWidth": {
             "type": "integer",
             "format": "int32",
@@ -7372,6 +7381,7 @@
           "DnsZoneId",
           "OptimizerEnabled",
           "OptimizerTunnelEnabled",
+          "OptimizerTunnelActiveProbingEnabled",
           "OptimizerDesktopMaxWidth",
           "OptimizerMobileMaxWidth",
           "OptimizerImageQuality",
@@ -8797,6 +8807,11 @@
             "type": "boolean",
             "nullable": true,
             "description": "Determines if the optimizer origin tunnel system should be enabled for this zone"
+          },
+          "OptimizerTunnelActiveProbingEnabled": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Determines if the optimizer tunnel system active probing should be enabled for this zone"
           },
           "OptimizerDesktopMaxWidth": {
             "type": "integer",
