@@ -1,6 +1,7 @@
 ---
-title: "Video specification"
+title: "Video Specification"
 description: "Video, audio, and caption formats that Bunny Stream supports"
+keywords: ["video", "spec", "specification", "audio", "bitrate", "codec", "upload", "ingest", "encode", "transcode", "ABR", "format", "container", "frames", "fps", "language code", "iso code", "mutliaudio", "multi audio", "multi-audio", "multiple audio", "stereo"]
 ---
 
 Bunny Stream accepts a wide range of input video, audio, and caption formats. The guidelines below help you prepare source files that encode efficiently, and the tables that follow list the exact containers and codecs we support.
@@ -16,7 +17,8 @@ Bunny Stream accepts a wide range of input video, audio, and caption formats. Th
   - Keep original file
   - The number of enabled Premium Encoding codecs will impact your storage usage
   - The number of enabled resolutions will impact your storage usage
-- Premium and free encoding does not deinterlace your video, ensure your input video is progressive format and not interlaced before uploading
+- Premium and free encoding does not de-interlace your video, ensure your input video is progressive format and not interlaced before uploading
+- No audio processing or effects are applied to your videos during encoding. This means the audio volume or loudness is not compressed or normalized and the audio original is preserved.
 - Portrait video orientation is supported
   - 1080 width x 1920 height
   - 720 width x 1280 height

@@ -541,7 +541,6 @@
                     "group": "Encoding",
                     "pages": [
                       "stream/encoding",
-                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
                     ]
@@ -573,7 +572,9 @@
                       "stream/security-options",
                       "stream/token-authentication"
                     ]
-                  }
+                  },
+                  "stream/statistics",
+                  "stream/webhooks"
                 ]
               },
               {
@@ -631,15 +632,14 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "stream/video-specification",
+                  "stream/data-and-privacy",
                   {
                     "group": "Tools",
                     "pages": [
                       "stream/vimeo2bunny"
                     ]
                   },
-                  "stream/statistics",
-                  "stream/webhooks",
-                  "stream/data-and-privacy",
                   "stream/api-reference"
                 ]
               }
