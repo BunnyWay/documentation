@@ -572,7 +572,9 @@
                       "stream/security-options",
                       "stream/token-authentication"
                     ]
-                  }
+                  },
+                  "stream/statistics",
+                  "stream/webhooks"
                 ]
               },
               {
@@ -631,8 +633,13 @@
                 "group": "Reference",
                 "pages": [
                   "stream/video-specification",
-                  "stream/statistics",
-                  "stream/webhooks",
+                  {
+                    "group": "Tools",
+                    "pages": [
+                      "stream/vimeo2bunny"
+                    ]
+                  },
+                  "stream/video-specification",
                   {
                     "group": "Tools",
                     "pages": [
