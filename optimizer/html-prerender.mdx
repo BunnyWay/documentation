@@ -79,6 +79,27 @@ HTML Prerender is designed to help search engines and bots consume your content 
 - **No manipulation:** Only optimizes delivery, never alters content structure or adds keywords
 - **Developer-friendly:** Works with any origin behind Bunny Optimizer, including Bunny Storage
 
+## Controlling when a snapshot is captured
+
+HTML Prerender automatically determines when a page is ready by monitoring network activity. In some applications,
+the network can become idle before the page has finished updating the DOM, which may result in an incomplete snapshot.
+You can explicitly control when the page is considered ready to be captured by setting `window.prerenderReady` to
+`false` as early as possible, ideally in the document `<head>`:
+
+```javascript
+<script>window.prerenderReady = false;</script>
+```
+
+Once your application has finished fetching data and rendering the final DOM, set it to `true`:
+
+```javascript
+window.prerenderReady = true;
+```
+
+HTML Prerender will then capture the page once rendering is complete.
+<Info> A maximum rendering timeout is enforced. If a page takes too long to finish rendering, HTML Prerender may still
+capture its current state before all content is available.</Info>
+
 ## Limitations
 
 - Only publicly accessible URLs are prerendered
