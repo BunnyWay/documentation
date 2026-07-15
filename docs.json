@@ -574,20 +574,6 @@
                     ]
                   },
                   "stream/statistics",
-                  "stream/webhooks",
-                  "stream/statistics",
-                  "stream/webhooks",
-                  "stream/statistics",
-                  "stream/webhooks",
-                  "stream/statistics",
-                  "stream/webhooks",
-                  "stream/statistics",
-                  "stream/webhooks",
-                  "stream/statistics",
-                  "stream/webhooks",
-                  "stream/statistics",
-                  "stream/webhooks",
-                  "stream/statistics",
                   "stream/webhooks"
                 ]
               },
@@ -647,51 +633,7 @@
                 "group": "Reference",
                 "pages": [
                   "stream/video-specification",
-                  "stream/video-specification",
-                  "stream/video-specification",
-                  "stream/video-specification",
-                  "stream/video-specification",
-                  "stream/video-specification",
-                  "stream/video-specification",
-                  "stream/video-specification",
-                  "stream/video-specification",
                   "stream/data-and-privacy",
-                  {
-                    "group": "Tools",
-                    "pages": [
-                      "stream/vimeo2bunny"
-                    ]
-                  },
-                  {
-                    "group": "Tools",
-                    "pages": [
-                      "stream/vimeo2bunny"
-                    ]
-                  },
-                  {
-                    "group": "Tools",
-                    "pages": [
-                      "stream/vimeo2bunny"
-                    ]
-                  },
-                  {
-                    "group": "Tools",
-                    "pages": [
-                      "stream/vimeo2bunny"
-                    ]
-                  },
-                  {
-                    "group": "Tools",
-                    "pages": [
-                      "stream/vimeo2bunny"
-                    ]
-                  },
-                  {
-                    "group": "Tools",
-                    "pages": [
-                      "stream/vimeo2bunny"
-                    ]
-                  },
                   {
                     "group": "Tools",
                     "pages": [
