@@ -574,6 +574,8 @@
                     ]
                   },
                   "stream/statistics",
+                  "stream/webhooks",
+                  "stream/statistics",
                   "stream/webhooks"
                 ]
               },
@@ -633,12 +635,6 @@
                 "group": "Reference",
                 "pages": [
                   "stream/video-specification",
-                  {
-                    "group": "Tools",
-                    "pages": [
-                      "stream/vimeo2bunny"
-                    ]
-                  },
                   "stream/video-specification",
                   {
                     "group": "Tools",
@@ -646,7 +642,14 @@
                       "stream/vimeo2bunny"
                     ]
                   },
+                  "stream/video-specification",
                   "stream/data-and-privacy",
+                  {
+                    "group": "Tools",
+                    "pages": [
+                      "stream/vimeo2bunny"
+                    ]
+                  },
                   "stream/api-reference"
                 ]
               }
