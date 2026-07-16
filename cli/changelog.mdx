@@ -4,6 +4,12 @@ description: Release notes for the Bunny CLI.
 rss: true
 ---
 
+<Update label="2026-07-16" tags={["New"]}>
+  ## Sandbox commands
+
+  `bunny sandbox` manages on-demand cloud sandbox environments backed by Bunny Magic Containers. Create sandboxes (`create`), connect via SSH (`ssh`), run commands (`exec`), copy files (`cp`), browse remote files (`files`), expose ports as public HTTPS endpoints (`url add`/`list`/`delete`), and manage persistent environment variables (`env set`/`list`/`delete`). Each sandbox is a fully isolated Ubuntu container with Node.js, Bun, Python, and Claude Code pre-installed, with a 10 GB persistent volume mounted at `/workplace`. [Learn more](/cli/commands/sandbox)
+</Update>
+
 <Update label="2026-06-08" tags={["New"]}>
   ## Edge Scripts commands
 
