@@ -16,7 +16,9 @@ Sandbox credentials (app ID, SSH endpoint, agent token) are stored in the CLI's 
 
 Create and start a new sandbox. Waits for the container's SSH port to become reachable before returning.
 
-```bash
+<CodeGroup>
+
+```bash Command (create)
 # Create a sandbox with the default name "sandbox"
 bunny sandbox create
 
@@ -34,6 +36,16 @@ bunny sandbox create my-sandbox --env-file .env
 bunny sandbox create my-sandbox --env-file .env
 ```
 
+```text Response (create)
+Sandbox "my-sandbox" is ready.
+  App ID: Ab3xK9mPq2wR7nL
+  SSH:    203.0.113.42:8023
+
+Run commands with: bunny sandbox exec my-sandbox <command>
+```
+
+</CodeGroup>
+
 | Flag         | Alias | Description                                        | Default |
 | ------------ | ----- | --------------------------------------------------- | ------- |
 | `--region`   |       | Region ID to deploy in (e.g. `AMS`, `NY`, `LA`, …) | `AMS`   |
@@ -48,22 +60,40 @@ Once ready, the output shows the app ID and SSH address. Public URLs come later 
 
 List all sandboxes saved in your local config.
 
-```bash
+<CodeGroup>
+
+```bash Command (list)
 bunny sandbox list
 bunny sandbox ls          # alias
 ```
+
+```text Response (list)
+ Name        App ID           SSH
+ my-sandbox  Ab3xK9mPq2wR7nL  203.0.113.42:8023
+```
+
+</CodeGroup>
 
 ## `bunny sandbox delete`
 
 Delete a sandbox and permanently destroy the underlying Magic Containers app.
 
-```bash
+<CodeGroup>
+
+```bash Command (delete)
 bunny sandbox delete my-sandbox
 
 # Skip the confirmation prompt
 bunny sandbox delete my-sandbox --force
 bunny sandbox rm my-sandbox -f   # alias
 ```
+
+```text Response (delete)
+Delete sandbox "my-sandbox" (app Ab3xK9mPq2wR7nL)? (y/N) y
+Sandbox "my-sandbox" deleted.
+```
+
+</CodeGroup>
 
 | Flag      | Alias | Description              | Default |
 | --------- | ----- | ------------------------ | ------- |
@@ -73,7 +103,9 @@ bunny sandbox rm my-sandbox -f   # alias
 
 Run a shell command inside a sandbox over SSH. Defaults to `/workplace` as the working directory.
 
-```bash
+<CodeGroup>
+
+```bash Command (exec)
 # Run a command
 bunny sandbox exec my-sandbox ls -la
 
@@ -91,6 +123,18 @@ bunny sandbox exec my-sandbox --env-file .env -- printenv
 bunny sandbox exec my-sandbox --timeout 30 -- bun run build
 ```
 
+```text Response (exec)
+total 16
+drwxr-xr-x 3 root root 4096 Jul 16 09:12 .
+drwxr-xr-x 1 root root 4096 Jul 16 09:10 ..
+-rw-r--r-- 1 root root 1254 Jul 16 09:12 app.js
+drwxr-xr-x 2 root root 4096 Jul 16 09:11 src
+```
+
+</CodeGroup>
+
+The command's stdout and stderr stream to your terminal unchanged, and its exit code is propagated, so `exec` works in scripts and pipes.
+
 | Flag         | Alias | Description                                                     | Default      |
 | ------------ | ----- | --------------------------------------------------------------- | ------------ |
 | `--cwd`      |       | Working directory inside the sandbox                            | `/workplace` |
@@ -104,7 +148,9 @@ Variables passed here apply only to that single command and are **not** persiste
 
 Copy a file between your machine and a sandbox over SFTP. Exactly one of the two paths must reference a sandbox as `<sandbox>:<path>`; the other is a local path. Remote paths follow the same rules as elsewhere: relative paths resolve against `/workplace`.
 
-```bash
+<CodeGroup>
+
+```bash Command (cp)
 # Upload a file into the sandbox
 bunny sandbox cp ./app.js my-sandbox:/workplace/app.js
 
@@ -121,13 +167,21 @@ bunny sandbox cp my-sandbox:/workplace/out.log ./out.log
 bunny sandbox cp my-sandbox:/workplace/out.log ./logs/
 ```
 
+```text Response (cp)
+Copied ./app.js -> my-sandbox:/workplace/app.js
+```
+
+</CodeGroup>
+
 Uploads preserve the local file's Unix mode (so executables stay executable). Only single files are supported; directory and sandbox-to-sandbox copies are not.
 
 ## `bunny sandbox files`
 
 Manage files inside a sandbox over SFTP. A bare sandbox name targets `/workplace`; use `<sandbox>:<path>` for a specific directory (relative paths resolve against `/workplace`).
 
-```bash
+<CodeGroup>
+
+```bash Command (files)
 # List /workplace
 bunny sandbox files list my-sandbox
 bunny sandbox files ls my-sandbox    # alias
@@ -139,6 +193,15 @@ bunny sandbox files ls my-sandbox:src
 # Machine-readable listing (name, type, size, mode)
 bunny sandbox files ls my-sandbox --output json
 ```
+
+```text Response (files)
+ Name    Type       Size    Mode
+ src     directory          755
+ app.js  file       1.2 KB  644
+ run.sh  file       182 B   755
+```
+
+</CodeGroup>
 
 To copy files in and out, use [`bunny sandbox cp`](#bunny-sandbox-cp).
 
@@ -168,13 +231,23 @@ Manage public CDN endpoints for ports running inside a sandbox. Useful for expos
 
 Expose a container port as a public HTTPS endpoint. Waits until the URL is provisioned and prints it.
 
-```bash
+<CodeGroup>
+
+```bash Command (url add)
 # Expose port 3000 (endpoint named "port-3000")
 bunny sandbox url add my-sandbox 3000
 
 # Custom endpoint name
 bunny sandbox url add my-sandbox 8080 --label my-api
 ```
+
+```text Response (url add)
+Endpoint "port-3000" created.
+  Port: 3000
+  URL:  https://app-3000.b-cdn.net
+```
+
+</CodeGroup>
 
 | Flag      | Description                   | Default       |
 | --------- | ------------------------------ | ------------- |
@@ -184,22 +257,40 @@ bunny sandbox url add my-sandbox 8080 --label my-api
 
 List all user-created endpoints for a sandbox (built-in `api` and `ssh` endpoints are hidden).
 
-```bash
+<CodeGroup>
+
+```bash Command (url list)
 bunny sandbox url list my-sandbox
 bunny sandbox url ls my-sandbox    # alias
 ```
+
+```text Response (url list)
+ ID                                    Name       Type  Port  URL
+ Ab3xK9mPq2wR7nL-port-3000-Kj7mNp3qRx  port-3000  cdn   3000  https://app-3000.b-cdn.net
+```
+
+</CodeGroup>
 
 ### `bunny sandbox url delete`
 
 Delete a public endpoint by name.
 
-```bash
+<CodeGroup>
+
+```bash Command (url delete)
 bunny sandbox url delete my-sandbox port-3000
 
 # Skip confirmation
 bunny sandbox url delete my-sandbox my-api --force
 bunny sandbox url rm my-sandbox my-api -f   # alias
 ```
+
+```text Response (url delete)
+Delete endpoint "port-3000" from sandbox "my-sandbox"? (y/N) y
+Endpoint "port-3000" deleted.
+```
+
+</CodeGroup>
 
 | Flag      | Alias | Description              | Default |
 | --------- | ----- | ------------------------ | ------- |
@@ -213,7 +304,9 @@ Manage a sandbox's **persistent** environment variables, the ones baked into the
 
 Set one or more persistent variables, merging with the existing set.
 
-```bash
+<CodeGroup>
+
+```bash Command (env set)
 # Set a single variable
 bunny sandbox env set my-sandbox NODE_ENV=production
 
@@ -224,6 +317,13 @@ bunny sandbox env set my-sandbox API_URL=https://api.example.com LOG_LEVEL=debug
 bunny sandbox env set my-sandbox --env-file .env
 ```
 
+```text Response (env set)
+Persisted 2 variable(s): API_URL, LOG_LEVEL
+The sandbox is redeploying to apply the change.
+```
+
+</CodeGroup>
+
 | Flag         | Description                                   | Default |
 | ------------ | ---------------------------------------------- | ------- |
 | `--env-file` | Load environment variables from a dotenv file |         |
@@ -232,17 +332,37 @@ bunny sandbox env set my-sandbox --env-file .env
 
 List the sandbox's persistent variables. The internal `AGENT_TOKEN` is hidden.
 
-```bash
+<CodeGroup>
+
+```bash Command (env list)
 bunny sandbox env list my-sandbox
 bunny sandbox env ls my-sandbox    # alias
 ```
+
+```text Response (env list)
+ Name       Value
+ LOG_LEVEL  debug
+ NODE_ENV   production
+```
+
+</CodeGroup>
 
 ### `bunny sandbox env delete`
 
 Remove one or more persistent variables. Names that are not set are reported and skipped; if none match, the command errors and nothing is redeployed.
 
-```bash
+<CodeGroup>
+
+```bash Command (env delete)
 bunny sandbox env delete my-sandbox NODE_ENV
 bunny sandbox env rm my-sandbox API_URL LOG_LEVEL    # alias
 bunny sandbox env unset my-sandbox API_URL           # alias
 ```
+
+```text Response (env delete)
+Removed 1 variable(s): NODE_ENV
+Not set (ignored): DEBUG
+The sandbox is redeploying to apply the change.
+```
+
+</CodeGroup>
