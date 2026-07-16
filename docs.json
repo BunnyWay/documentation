@@ -541,6 +541,7 @@
                     "group": "Encoding",
                     "pages": [
                       "stream/encoding",
+                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
                     ]
@@ -632,7 +633,6 @@
               {
                 "group": "Reference",
                 "pages": [
-                  "stream/video-specification",
                   "stream/data-and-privacy",
                   {
                     "group": "Tools",
