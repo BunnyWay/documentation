@@ -1039,6 +1039,7 @@
                   "cli/commands/config",
                   "cli/commands/db",
                   "cli/commands/scripts",
+                  "cli/commands/sandbox",
                   {
                     "group": "DNS",
                     "hidden": true,
