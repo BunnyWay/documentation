@@ -550,6 +550,7 @@
                       "stream/video-specification",
                       "stream/video-specification",
                       "stream/video-specification",
+                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
                     ]
