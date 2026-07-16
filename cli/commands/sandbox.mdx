@@ -53,8 +53,6 @@ bunny sandbox list
 bunny sandbox ls          # alias
 ```
 
-Columns: Name, App ID, SSH.
-
 ## `bunny sandbox delete`
 
 Delete a sandbox and permanently destroy the underlying Magic Containers app.
@@ -142,7 +140,7 @@ bunny sandbox files ls my-sandbox:src
 bunny sandbox files ls my-sandbox --output json
 ```
 
-Columns: Name, Type (`file`/`directory`/`symlink`/`other`), Size, Mode (octal permissions). To copy files in and out, use [`bunny sandbox cp`](#bunny-sandbox-cp).
+To copy files in and out, use [`bunny sandbox cp`](#bunny-sandbox-cp).
 
 ## `bunny sandbox ssh`
 
@@ -191,8 +189,6 @@ bunny sandbox url list my-sandbox
 bunny sandbox url ls my-sandbox    # alias
 ```
 
-Columns: ID, Name, Type, Port, URL.
-
 ### `bunny sandbox url delete`
 
 Delete a public endpoint by name.
@@ -240,8 +236,6 @@ List the sandbox's persistent variables. The internal `AGENT_TOKEN` is hidden.
 bunny sandbox env list my-sandbox
 bunny sandbox env ls my-sandbox    # alias
 ```
-
-Columns: Name, Value.
 
 ### `bunny sandbox env delete`
 
