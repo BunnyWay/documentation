@@ -544,6 +544,7 @@
                       "stream/video-specification",
                       "stream/video-specification",
                       "stream/video-specification",
+                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
                     ]
@@ -566,6 +567,13 @@
                     "pages": [
                       "stream/premium-encoding",
                       "stream/just-in-time-encoding"
+                    ]
+                  },
+                  {
+                    "group": "Premium Encoding",
+                    "pages": [
+                      "stream/premium-encoding",
+                      "stream/jit-encoding"
                     ]
                   },
                   "stream/transcribing",
