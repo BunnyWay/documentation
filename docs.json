@@ -1184,16 +1184,6 @@
       "permanent": true
     },
     {
-      "source": "/stream/premium-encoding#just-in-time-encoding",
-      "destination": "/stream/jit-encoding",
-      "permanent": true
-    },
-    {
-      "source": "/stream/premium-encoding#just-in-time-encoding",
-      "destination": "/stream/jit-encoding",
-      "permanent": true
-    },
-    {
       "source": "/stream/smart-chapters",
       "destination": "/stream/smart-generate",
       "permanent": true
