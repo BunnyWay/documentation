@@ -632,14 +632,9 @@
               {
                 "group": "Reference",
                 "pages": [
-                  "stream/video-specification",
+                   "stream/video-specification",
+                  "stream/vimeo2bunny",
                   "stream/data-and-privacy",
-                  {
-                    "group": "Tools",
-                    "pages": [
-                      "stream/vimeo2bunny"
-                    ]
-                  },
                   "stream/api-reference"
                 ]
               }
