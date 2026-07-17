@@ -541,72 +541,8 @@
                     "group": "Encoding",
                     "pages": [
                       "stream/encoding",
-                      "stream/video-specification",
-                      "stream/video-specification",
-                      "stream/video-specification",
-                      "stream/video-specification",
-                      "stream/video-specification",
-                      "stream/video-specification",
-                      "stream/video-specification",
-                      "stream/video-specification",
-                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
-                    ]
-                  },
-                  {
-                    "group": "Premium Encoding",
-                    "pages": [
-                      "stream/premium-encoding"
-                    ]
-                  },
-                  {
-                    "group": "Premium Encoding",
-                    "pages": [
-                      "stream/premium-encoding",
-                      "stream/just-in-time-encoding"
-                    ]
-                  },
-                  {
-                    "group": "Premium Encoding",
-                    "pages": [
-                      "stream/premium-encoding",
-                      "stream/just-in-time-encoding"
-                    ]
-                  },
-                  {
-                    "group": "Premium Encoding",
-                    "pages": [
-                      "stream/premium-encoding",
-                      "stream/jit-encoding"
-                    ]
-                  },
-                  {
-                    "group": "Premium Encoding",
-                    "pages": [
-                      "stream/premium-encoding",
-                      "stream/jit-encoding"
-                    ]
-                  },
-                  {
-                    "group": "Premium Encoding",
-                    "pages": [
-                      "stream/premium-encoding",
-                      "stream/jit-encoding"
-                    ]
-                  },
-                  {
-                    "group": "Premium Encoding",
-                    "pages": [
-                      "stream/premium-encoding",
-                      "stream/jit-encoding"
-                    ]
-                  },
-                  {
-                    "group": "Premium Encoding",
-                    "pages": [
-                      "stream/premium-encoding",
-                      "stream/jit-encoding"
                     ]
                   },
                   {
@@ -702,6 +638,7 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "stream/video-specification",
                   "stream/vimeo2bunny",
                   "stream/data-and-privacy",
                   "stream/api-reference"
