@@ -548,6 +548,7 @@
                       "stream/video-specification",
                       "stream/video-specification",
                       "stream/video-specification",
+                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
                     ]
@@ -570,6 +571,13 @@
                     "pages": [
                       "stream/premium-encoding",
                       "stream/just-in-time-encoding"
+                    ]
+                  },
+                  {
+                    "group": "Premium Encoding",
+                    "pages": [
+                      "stream/premium-encoding",
+                      "stream/jit-encoding"
                     ]
                   },
                   {
@@ -1225,6 +1233,11 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/stream/premium-encoding#just-in-time-encoding",
+      "destination": "/stream/jit-encoding",
+      "permanent": true
+    },
     {
       "source": "/stream/premium-encoding#just-in-time-encoding",
       "destination": "/stream/jit-encoding",
