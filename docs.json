@@ -541,6 +541,8 @@
                     "group": "Encoding",
                     "pages": [
                       "stream/encoding",
+                      "stream/video-specification",
+                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
                     ]
@@ -632,7 +634,6 @@
               {
                 "group": "Reference",
                 "pages": [
-                   "stream/video-specification",
                   "stream/vimeo2bunny",
                   "stream/data-and-privacy",
                   "stream/api-reference"
