@@ -7,13 +7,30 @@ Bunny DNS supports importing and exporting DNS records using the universal BIND 
 
 ## Import records
 
-To import DNS records from a BIND-compatible zone file:
+<Tabs>
+  <Tab title="Dashboard">
+    To import DNS records from a BIND-compatible zone file:
 
-1. Go to **DNS** and select your DNS Zone
-2. Click **Import/Export**
-3. Upload your zone file or paste the contents
-4. Review the imported records
-5. Click to confirm the import
+    1. Go to **DNS** and select your DNS Zone
+    2. Click **Import/Export**
+    3. Upload your zone file or paste the contents
+    4. Review the imported records
+    5. Click to confirm the import
+
+  </Tab>
+  <Tab title="CLI">
+    <Note>
+      Don't have the CLI installed? See the [CLI quickstart](/cli/quickstart) to install and authenticate.
+    </Note>
+
+    ```bash
+    bunny dns records import example.com ./zonefile.txt
+    ```
+
+    See the [`bunny dns` command reference](/cli/commands/dns) for the full list of commands and flags.
+
+  </Tab>
+</Tabs>
 
 ### Supported record types for import
 
@@ -35,12 +52,25 @@ To import DNS records from a BIND-compatible zone file:
 
 ## Export records
 
-To export your DNS records to a BIND-compatible zone file:
+<Tabs>
+  <Tab title="Dashboard">
+    To export your DNS records to a BIND-compatible zone file:
 
-1. Go to **DNS** and select your DNS Zone
-2. Click **Import/Export**
-3. Click **Export Zone File**
-4. Save the downloaded file
+    1. Go to **DNS** and select your DNS Zone
+    2. Click **Import/Export**
+    3. Click **Export Zone File**
+    4. Save the downloaded file
+
+  </Tab>
+  <Tab title="CLI">
+    ```bash
+    bunny dns records export example.com                   # print to stdout
+    bunny dns records export example.com --file ./my.zone  # write to a path
+    bunny dns records export example.com --save            # write to ./example.com.zone
+    ```
+
+  </Tab>
+</Tabs>
 
 ### Supported record types for export
 

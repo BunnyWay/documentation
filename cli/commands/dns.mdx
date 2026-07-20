@@ -9,14 +9,15 @@ description: "Manage DNS zones and records from the command line."
   while it stabilizes. Commands and flags may change.
 </Warning>
 
-`bunny dns` manages [DNS](/dns) through two resource groups:
+`bunny dns` manages [DNS](/dns) through three resource groups:
 
 - **`bunny dns record`** manages the entries within a zone.
 - **`bunny dns zone`** manages the zone itself: settings, DNSSEC, logging, stats, and nameservers.
+- **`bunny dns script`** manages [Scriptable DNS](/dns/scriptable/introduction) scripts.
 
 The `[domain]` argument accepts either the zone's domain name or its numeric zone ID, and is optional everywhere. Omit it and you'll be prompted to pick a zone. `record update` and `record remove` likewise prompt you to pick a record when the ID is omitted.
 
-`record` aliases to `records` / `rec`; `zone` aliases to `zones` (and `domain` / `domains`).
+`record` aliases to `records` / `rec`; `zone` aliases to `zones` (and `domain` / `domains`); `script` aliases to `scripts`.
 
 ## Records
 
@@ -96,6 +97,42 @@ bunny dns zone logging enable example.com --anonymize-ip --anonymization drop
 bunny dns zone logging disable example.com
 ```
 
+## Scripts
+
+Manage [Scriptable DNS](/dns/scriptable/introduction) scripts: code that computes a DNS answer at query time, such as geo routing, weighted or failover answers, and closest-region selection. These are separate from Edge Scripts (`bunny scripts`, a different runtime).
+
+A script only affects DNS once it backs a `SCRIPT` record on a zone. Use `attach` to add that record from the script side.
+
+```bash
+# Scaffold a project: entry file, tsconfig, and package.json with a devDep on
+# @bunny.net/scriptable-dns-types for editor autocomplete
+bunny dns scripts init                                 # interactive wizard
+bunny dns scripts init geo-router --example geo --deploy
+
+# Create a remote script without scaffolding
+bunny dns scripts create geo-router
+
+# Upload and publish
+bunny dns scripts deploy                               # linked script's entry file
+bunny dns scripts deploy handleQuery.js
+bunny dns scripts deploy handleQuery.js 12345          # target a specific script
+bunny dns scripts deploy --skip-publish                # stage without publishing
+
+# Link the current directory to a script / list all scripts
+bunny dns scripts link 12345
+bunny dns scripts list
+
+# Point a hostname at a script by adding a SCRIPT record
+bunny dns scripts attach example.com api --script 12345
+bunny dns scripts attach example.com '@'               # apex, using the linked script
+```
+
+Scripts resolve without an explicit ID in this order: explicit `[id]`, then `.bunny/dns-script.json` (written by `link` / `create` / `init`), then the interactive picker.
+
+`init` starters via `--example`: `empty`, `geo`, `closest`, `weighted`, `failover`, `pullzone`. Pass `--deploy` to also create the script on bunny.net after scaffolding.
+
+`attach` always confirms before writing the record, and attaching at the apex (`'@'`) prints a stronger warning listing any records already at that name.
+
 ## Flags
 
 | Flag                                                                                                | Commands                                                                      | Description                                                          |
@@ -107,4 +144,7 @@ bunny dns zone logging disable example.com
 | `--file`, `--save`                                                                                  | `record export`                                                               | Write to a path, or to `<domain>.zone` in the current directory      |
 | `--from`, `--to`                                                                                    | `zone stats`                                                                  | Date range (defaults to the last 30 days)                            |
 | `--anonymize-ip`, `--anonymization`                                                                 | `zone logging enable`                                                         | Anonymize client IPs in logs (`onedigit` \| `drop`)                  |
-| `--force`                                                                                           | `record remove`, `zone remove`, `zone dnssec disable`, `zone logging disable` | Skip the confirmation prompt                                         |
+| `--example`, `--deploy`, `--skip-install`                                                           | `scripts init`                                                                | Starter template, create on bunny.net, skip type dependency install  |
+| `--skip-publish`                                                                                    | `scripts deploy`                                                              | Stage the upload without publishing                                  |
+| `--script`, `--ttl`                                                                                 | `scripts attach`                                                              | DNS script ID (defaults to the linked script), record TTL            |
+| `--force`                                                                                           | `record remove`, `zone remove`, `zone dnssec disable`, `zone logging disable`, `scripts attach` | Skip the confirmation prompt                        |

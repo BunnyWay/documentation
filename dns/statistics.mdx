@@ -7,7 +7,25 @@ The Statistics page shows DNS query metrics for your zone, helping you understan
 
 ## View statistics
 
-To access your DNS statistics, go to **DNS**, select your DNS Zone, then click **Statistics** in the zone menu.
+<Tabs>
+  <Tab title="Dashboard">
+    To access your DNS statistics, go to **DNS**, select your DNS Zone, then click **Statistics** in the zone menu.
+  </Tab>
+  <Tab title="CLI">
+    <Note>
+      Don't have the CLI installed? See the [CLI quickstart](/cli/quickstart) to install and authenticate.
+    </Note>
+
+    View query statistics from the command line. Text mode draws a bar chart, and the range defaults to the last 30 days:
+
+    ```bash
+    bunny dns zones stats example.com
+    bunny dns zones stats example.com --from 2026-05-01 --to 2026-05-31
+    bunny dns zones stats example.com --output json
+    ```
+
+  </Tab>
+</Tabs>
 
 ## Queries served
 

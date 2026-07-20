@@ -7,13 +7,34 @@ DNS logging records raw access logs of all queries to your zone. This is useful 
 
 ## Enable logging
 
-To enable DNS logging:
+<Tabs>
+  <Tab title="Dashboard">
+    To enable DNS logging:
 
-1. Go to **DNS** and select your DNS Zone
-2. Click **Logging** in the zone menu
-3. Click **Settings**
-4. Enable logging
-5. Save your configuration
+    1. Go to **DNS** and select your DNS Zone
+    2. Click **Logging** in the zone menu
+    3. Click **Settings**
+    4. Enable logging
+    5. Save your configuration
+
+  </Tab>
+  <Tab title="CLI">
+    <Note>
+      Don't have the CLI installed? See the [CLI quickstart](/cli/quickstart) to install and authenticate.
+    </Note>
+
+    ```bash
+    bunny dns zones logging enable example.com
+
+    # Anonymize client IPs in the logs (strategy: onedigit or drop)
+    bunny dns zones logging enable example.com --anonymize-ip --anonymization drop
+
+    # Disable logging (confirms unless --force)
+    bunny dns zones logging disable example.com
+    ```
+
+  </Tab>
+</Tabs>
 
 When enabled, the zone records and stores raw access logs of all queries for up to 3 days.
 
