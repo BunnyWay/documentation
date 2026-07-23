@@ -554,16 +554,22 @@
                     "pages": [
                       "stream/drm/index",
                       "stream/quickstart-mediacage-basic",
-                      "stream/mediacage-basic",
-                      "stream/mediacage-basic-guide",
                       "stream/quickstart-mediacage-enterprise",
-                      "stream/mediacage-enterprise",
-                      "stream/widevine-security-levels",
-                      "stream/widevine-l3",
-                      "stream/fairplay-deployment",
                       {
                         "group": "Basic DRM",
-                        "pages": []
+                        "pages": [
+                          "stream/mediacage-basic",
+                          "stream/mediacage-basic-guide"
+                        ]
+                      },
+                      {
+                        "group": "Enterprise DRM",
+                        "pages": [
+                          "stream/mediacage-enterprise",
+                          "stream/widevine-security-levels",
+                          "stream/widevine-l3",
+                          "stream/fairplay-deployment"
+                        ]
                       }
                     ]
                   },
