@@ -4,6 +4,12 @@ description: Release notes for the Bunny CLI.
 rss: true
 ---
 
+<Update label="2026-07-20" tags={["New"]}>
+  ## Scriptable DNS commands and record presets
+
+  `bunny dns scripts` brings [Scriptable DNS](/dns/scriptable/introduction) to the CLI: `init` scaffolds a project from starter examples (geo, closest, weighted, failover, pullzone) with the [`@bunny.net/scriptable-dns-types`](https://github.com/BunnyWay/cli/tree/main/packages/scriptable-dns-types) package preconfigured for editor autocomplete, `deploy` uploads and publishes your entry file, and `attach` points a hostname at the script by adding a `SCRIPT` record to a zone. `bunny dns records preset` applies curated record sets for common providers and tasks (Google Workspace, Microsoft 365, DMARC, and more) in one step, and `bunny dns zones link` lets a directory resolve its zone without passing a domain. [Learn more](/cli/commands/dns)
+</Update>
+
 <Update label="2026-06-08" tags={["New"]}>
   ## Edge Scripts commands
 

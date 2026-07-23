@@ -5,101 +5,161 @@ description: Create and configure your first DNS Zone in minutes.
 
 This guide walks you through adding a DNS Zone to bunny.net and configuring your domain to use Bunny DNS.
 
-<Steps>
-  <Step title="Create a new DNS Zone">
-    In the bunny.net dashboard, go to **DNS** and click **Add DNS Zone**, or select it from the **+ Add** sidebar launcher.
+<Tabs>
+  <Tab title="Dashboard">
+    <Steps>
+      <Step title="Create a new DNS Zone">
+        In the bunny.net dashboard, go to **DNS** and click **Add DNS Zone**, or select it from the **+ Add** sidebar launcher.
 
-    <Frame>![Add DNS Zone](/images/dns/add-dns-zone.png)</Frame>
+        <Frame>![Add DNS Zone](/images/dns/add-dns-zone.png)</Frame>
 
-  </Step>
+      </Step>
 
-  <Step title="Enter your domain">
-    Type your domain name (e.g., `mywebsite.com`) to start the setup process.
-  
-    <Frame>![Enter domain](/images/dns/enter-domain.png)</Frame>
-  
-  </Step>
-  
-  <Step title="Import records">
-      Now that you've entered your domain, you can import any existing DNS records.
+      <Step title="Enter your domain">
+        Type your domain name (e.g., `mywebsite.com`) to start the setup process.
 
-      <Frame>![Scan or upload](/images/dns/scan-or-upload.png)</Frame>
+        <Frame>![Enter domain](/images/dns/enter-domain.png)</Frame>
 
-    <Tabs>
-      <Tab title="Auto-import or add manually">
-        Select this option to have Bunny DNS scan and fetch your existing DNS records automatically. You can review and edit them before switching, or start from scratch.
+      </Step>
 
-        The scanning process can take several minutes depending on your domain's complexity.
-      </Tab>
-      <Tab title="Upload Zone File">
-        Drag and drop a DNS zone file (such as a BIND zone file), or click **Upload Zone File** to import all records at once.
+      <Step title="Import records">
+          Now that you've entered your domain, you can import any existing DNS records.
 
-        This is useful when migrating from providers that support zone file exports.
+          <Frame>![Scan or upload](/images/dns/scan-or-upload.png)</Frame>
 
-        [Learn more about importing zone files](/dns/import-export)
-      </Tab>
-    </Tabs>
+        <Tabs>
+          <Tab title="Auto-import or add manually">
+            Select this option to have Bunny DNS scan and fetch your existing DNS records automatically. You can review and edit them before switching, or start from scratch.
 
-    Click **Next** to continue.
+            The scanning process can take several minutes depending on your domain's complexity.
+          </Tab>
+          <Tab title="Upload Zone File">
+            Drag and drop a DNS zone file (such as a BIND zone file), or click **Upload Zone File** to import all records at once.
 
-  </Step>
+            This is useful when migrating from providers that support zone file exports.
 
-  <Step title="Review your records">
-    After scanning or importing, review your DNS records carefully:
+            [Learn more about importing zone files](/dns/import-export)
+          </Tab>
+        </Tabs>
 
-    - Compare detected records with your current DNS provider
-    - Add any missing records that weren't detected
-    - Remove or modify records as needed
-    - Check that critical records like MX (email) and CNAME entries are correct
+        Click **Next** to continue.
 
-    <Frame>![Review records](/images/dns/review-dns-records.png)</Frame>
+      </Step>
 
-  </Step>
+      <Step title="Review your records">
+        After scanning or importing, review your DNS records carefully:
 
-  <Step title="Confirm and add">
-    Once you've verified your records, choose how to proceed:
+        - Compare detected records with your current DNS provider
+        - Add any missing records that weren't detected
+        - Remove or modify records as needed
+        - Check that critical records like MX (email) and CNAME entries are correct
 
-    - **Confirm and add** creates the DNS Zone with your imported or configured records
-    - **Add DNS Zone without records** creates an empty DNS Zone that you can populate manually
+        <Frame>![Review records](/images/dns/review-dns-records.png)</Frame>
 
-    <Frame>![Confirm and add](/images/dns/confirm-and-add.png)</Frame>
+      </Step>
 
-    Click your preferred option to create the zone.
+      <Step title="Confirm and add">
+        Once you've verified your records, choose how to proceed:
 
-  </Step>
+        - **Confirm and add** creates the DNS Zone with your imported or configured records
+        - **Add DNS Zone without records** creates an empty DNS Zone that you can populate manually
 
-  <Step title="Update your nameservers">
-    After creating your DNS Zone, update your domain's nameservers at your domain registrar to point to Bunny DNS:
+        <Frame>![Confirm and add](/images/dns/confirm-and-add.png)</Frame>
 
-    - `kiki.bunny.net`
-    - `coco.bunny.net`
+        Click your preferred option to create the zone.
 
-    The process varies by registrar, but typically involves logging in to your registrar's control panel and replacing the existing nameservers with the ones above.
+      </Step>
 
-    <Info>DNS propagation can take up to 48 hours, though changes typically take effect within a few hours.</Info>
+      <Step title="Update your nameservers">
+        After creating your DNS Zone, update your domain's nameservers at your domain registrar to point to Bunny DNS:
 
-  </Step>
+        - `kiki.bunny.net`
+        - `coco.bunny.net`
 
-  <Step title="Next steps">
-    Your DNS Zone is now active. From here you can:
+        The process varies by registrar, but typically involves logging in to your registrar's control panel and replacing the existing nameservers with the ones above.
 
-    <CardGroup cols={2}>
-      <Card title="Manage DNS Records" href="/dns/records">
-        Add, edit, and configure DNS records for your domain.
-      </Card>
+        <Info>DNS propagation can take up to 48 hours, though changes typically take effect within a few hours.</Info>
 
-      <Card title="Enable DNSSEC" href="/dns/dnssec">
-        Protect your domain from spoofing and tampering.
-      </Card>
+      </Step>
+    </Steps>
 
-      <Card title="Scriptable DNS" href="/dns/scriptable/introduction">
-        Write JavaScript to dynamically respond to DNS queries.
-      </Card>
+  </Tab>
+  <Tab title="CLI">
+    <Note>
+      Don't have the CLI installed? See the [CLI quickstart](/cli/quickstart) to install and authenticate.
+    </Note>
 
-      <Card title="View Statistics" href="/dns/statistics">
-        Monitor DNS query traffic and patterns.
-      </Card>
-    </CardGroup>
+    <Steps>
+      <Step title="Create a new DNS Zone">
+        ```bash
+        bunny dns zones add example.com
+        ```
 
-  </Step>
-</Steps>
+        After creating the zone, the CLI checks your domain's live registrar delegation. If the domain already points at Bunny DNS, it simply confirms. Otherwise it prints the nameservers to set, naming your registrar when it can detect it.
+
+      </Step>
+
+      <Step title="Add or import records">
+        Import an existing BIND zone file, or add records individually:
+
+        ```bash
+        # Import a BIND zone file exported from your current provider
+        bunny dns records import example.com ./zonefile.txt
+
+        # Or add records one by one (use '@' for the zone apex)
+        bunny dns records add example.com api A 198.51.100.1
+        bunny dns records add example.com '@' MX mail.example.com 10
+
+        # Or apply a preset record set for a common provider (email, verification, security)
+        bunny dns records preset google-workspace example.com
+        ```
+
+        Run `bunny dns records add` with no arguments for an interactive wizard, and `bunny dns records list example.com` to review the result.
+
+      </Step>
+
+      <Step title="Update your nameservers">
+        Update your domain's nameservers at your domain registrar to point to Bunny DNS:
+
+        - `kiki.bunny.net`
+        - `coco.bunny.net`
+
+        Then verify the delegation has taken effect:
+
+        ```bash
+        bunny dns zones nameservers example.com
+        ```
+
+        This does a live nameserver lookup and confirms once your registrar delegates to Bunny DNS.
+
+        <Info>DNS propagation can take up to 48 hours, though changes typically take effect within a few hours.</Info>
+
+      </Step>
+    </Steps>
+
+    See the [`bunny dns` command reference](/cli/commands/dns) for the full list of zone, record, and script commands.
+
+  </Tab>
+</Tabs>
+
+## Next steps
+
+Your DNS Zone is now active. From here you can:
+
+<CardGroup cols={2}>
+  <Card title="Manage DNS Records" href="/dns/records">
+    Add, edit, and configure DNS records for your domain.
+  </Card>
+
+  <Card title="Enable DNSSEC" href="/dns/dnssec">
+    Protect your domain from spoofing and tampering.
+  </Card>
+
+  <Card title="Scriptable DNS" href="/dns/scriptable/introduction">
+    Write JavaScript to dynamically respond to DNS queries.
+  </Card>
+
+  <Card title="View Statistics" href="/dns/statistics">
+    Monitor DNS query traffic and patterns.
+  </Card>
+</CardGroup>
