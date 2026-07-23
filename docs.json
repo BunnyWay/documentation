@@ -642,10 +642,10 @@
               {
                 "group": "Reference",
                 "pages": [
+                   "stream/video-specification",
                   "stream/vimeo2bunny",
                   "stream/data-and-privacy",
-                  "stream/api-reference",
-                  "stream/video-specification"
+                  "stream/api-reference"
                 ]
               }
             ]
