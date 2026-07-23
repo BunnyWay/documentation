@@ -541,6 +541,7 @@
                     "group": "Encoding",
                     "pages": [
                       "stream/encoding",
+                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
                     ]
@@ -552,14 +553,18 @@
                     "group": "MediaCage DRM",
                     "pages": [
                       "stream/drm/index",
+                      "stream/quickstart-mediacage-basic",
                       "stream/mediacage-basic",
                       "stream/mediacage-basic-guide",
-                      "stream/quickstart-mediacage-basic",
-                      "stream/mediacage-enterprise",
                       "stream/quickstart-mediacage-enterprise",
+                      "stream/mediacage-enterprise",
                       "stream/widevine-security-levels",
                       "stream/widevine-l3",
-                      "stream/fairplay-deployment"
+                      "stream/fairplay-deployment",
+                      {
+                        "group": "Basic DRM",
+                        "pages": []
+                      }
                     ]
                   },
                   "stream/vast",
@@ -632,7 +637,6 @@
               {
                 "group": "Reference",
                 "pages": [
-                   "stream/video-specification",
                   "stream/vimeo2bunny",
                   "stream/data-and-privacy",
                   "stream/api-reference"
