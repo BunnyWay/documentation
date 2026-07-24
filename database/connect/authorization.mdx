@@ -3,7 +3,7 @@ title: "Auth & Access"
 description: "Manage database URLs and access tokens for authentication"
 ---
 
-To connect to your Bunny Database, you'll need your **Database URL** and an **Access Token**. Both can be obtained and managed from the Dashboard.
+To connect to your Bunny Database, you'll need your **Database URL** and an **Access Token**. Both can be obtained and managed from the Dashboard or the [Bunny CLI](/cli/quickstart).
 
 ## Accessing credentials
 
@@ -41,30 +41,89 @@ Access tokens authenticate your requests to the database. Bunny Database provide
 
 To create a new access token for an additional application while keeping existing tokens valid:
 
-1. Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access**
-2. Click **Generate Tokens**
-3. New full-access and read-only tokens will be created
-4. Copy or download your tokens immediately
+<Tabs>
+  <Tab title="Dashboard">
+    1. Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access**
+    2. Click **Generate Tokens**
+    3. New full-access and read-only tokens will be created
+    4. Copy or download your tokens immediately
 
-<Warning>
-  Tokens are only displayed once. If you lose them, you'll need to generate
-  another.
-</Warning>
+    <Warning>
+      Tokens are only displayed once. If you lose them, you'll need to generate
+      another.
+    </Warning>
+
+  </Tab>
+  <Tab title="CLI">
+    <Note>
+      Don't have the CLI installed? See the [CLI quickstart](/cli/quickstart) to install and authenticate.
+    </Note>
+
+    Generate a full-access token for the linked database:
+
+    ```bash
+    bunny db tokens create
+    ```
+
+    Generate a read-only token that expires after 30 days:
+
+    ```bash
+    bunny db tokens create --read-only --expiry 30d
+    ```
+
+    After generation, the CLI offers to save `BUNNY_DATABASE_AUTH_TOKEN` (and `BUNNY_DATABASE_URL` if missing) to your `.env` file. Pass `--no-save` to skip the prompt, or target a specific database by passing its ID:
+
+    ```bash
+    bunny db tokens create db_01KCHBG8C5KSFGG0VRNFQ7EK7X
+    ```
+
+    See [`bunny db`](/cli/commands/db) for the full command reference.
+
+  </Tab>
+</Tabs>
 
 ### Regenerating tokens
 
 If your tokens are exposed or compromised, regenerate them to invalidate all existing tokens:
 
-1. Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access**
-2. Click **Regenerate Tokens**
-3. All previous tokens will be immediately invalidated
-4. New full-access and read-only tokens will be created
-5. Copy or download your new tokens immediately
+<Tabs>
+  <Tab title="Dashboard">
+    1. Navigate to **Dashboard > Edge Platform > Database > [Select Database] > Access**
+    2. Click **Regenerate Tokens**
+    3. All previous tokens will be immediately invalidated
+    4. New full-access and read-only tokens will be created
+    5. Copy or download your new tokens immediately
 
-<Warning>
-  Regenerating tokens will invalidate **all** existing tokens for all databases.
-  Update all applications using the old tokens to prevent connection failures.
-</Warning>
+    <Warning>
+      Regenerating tokens will invalidate **all** existing tokens for all databases.
+      Update all applications using the old tokens to prevent connection failures.
+    </Warning>
+
+  </Tab>
+  <Tab title="CLI">
+    Invalidate every existing token for the database:
+
+    ```bash
+    bunny db tokens invalidate
+    ```
+
+    This is destructive, so the CLI asks for confirmation first. Use `--force` to skip the prompt in automated environments.
+
+    To invalidate the old tokens and immediately create a replacement in one step:
+
+    ```bash
+    bunny db tokens invalidate --regenerate --save-env
+    ```
+
+    `--save-env` writes the replacement token to your `.env` file (requires `--regenerate`).
+
+    <Warning>
+      Invalidating tokens revokes **all** existing tokens for the database.
+      Update all applications using the old tokens to prevent connection failures.
+    </Warning>
+
+  </Tab>
+</Tabs>
 
 ## Using credentials with client libraries
 
