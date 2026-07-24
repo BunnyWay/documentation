@@ -1,7 +1,11 @@
 ---
 title: "Middleware scripts"
 sidebarTitle: "Introduction"
-description: "Middleware scripts allow you to transform and modify HTTP requests and responses as they flow through the CDN. Manipulate requests before they reach your origin server and alter responses before they are sent back to the client."
+description: "Middleware scripts allow you to transform and modify HTTP requests
+and responses as they flow through the CDN. Manipulate requests before they
+reach your origin server or the cache and alter responses before they are sent 
+back to the client."
+tag: New
 ---
 
 Middleware scripts act as intermediaries within the CDN request workflow, allowing you to insert custom logic that modifies requests or responses as they pass through the CDN.
@@ -58,6 +62,60 @@ servePullZone(options: { url: string }): PullZoneHandler
 
 The `servePullZone` function returns a `PullZoneHandler` object with chainable middleware methods:
 
+### `onClientRequest`
+<Badge color="orange" icon="sparkles">Preview</Badge>
+
+<Info>
+If your PullZone is configured to execute script before cache, you'll have
+access to this function.
+</Info>
+
+Intercepts requests before they are sent to the cache. You can modify the request
+or short-circuit by returning a response directly.
+
+```ts
+onClientRequest(
+  middleware: (ctx: { request: Request }) => Promise<Response> | Response | Promise<Request> | Request | void
+): PullZoneHandler
+```
+
+| Property      | Type      | Description                 |
+| ------------- | --------- | --------------------------- |
+| `ctx.request` | `Request` | The incoming request object |
+
+**Return value:**
+
+- Return `Promise<Request>` to continue to the origin with the (modified) request
+- Return `Promise<Response>` to short-circuit and respond immediately without
+  hitting the cache
+
+### `onClientResponse` 
+<Badge color="orange" icon="sparkles">Preview</Badge>
+
+<Info>
+If your PullZone is configured to execute script before cache, you'll have
+access to this function.
+</Info>
+
+Intercepts requests before they are returned to the user even after you return a
+cached response.
+
+```ts
+onClientResponse(
+  middleware: (ctx: { request: Request; response: Response }) => Promise<Response> | Response
+): PullZoneHandler
+```
+
+| Property       | Type       | Description                         |
+| -------------- | ---------- | ----------------------------------- |
+| `ctx.request`  | `Request`  | The original request object         |
+| `ctx.response` | `Response` | The response from the origin server |
+
+**Return value:**
+
+- Return `Promise<Response>` or `Response` with the (modified) response to send
+to the client.
+
 ### `onOriginRequest`
 
 Intercepts requests before they are sent to the origin server. You can modify the request or short-circuit by returning a response directly.
@@ -96,15 +154,45 @@ onOriginResponse(
 
 - Return `Promise<Response>` with the (modified) response to send to the client
 
+## Enable Before Cache Scripts
+<Badge color="orange" icon="sparkles">Preview</Badge>
+
+To enable Middleware script to run before cache, you'll need to enable it at 
+your PullZone level.
+
+<Info>
+Right now the only way for you to enable it is to ask for support to participate
+on the preview.
+</Info>
+
 ## Workflow
 
 When a client makes a request to a Pull Zone, the request passes through middleware at different stages:
 
-1. **`onOriginRequest`** - Called before the request is sent to the origin. Modify the request or return a response to short-circuit.
-2. **Origin fetch** - The request is sent to your origin server (skipped if short-circuited).
-3. **`onOriginResponse`** - Called after the origin responds. Modify the response before it's sent to the client and cached.
+<Info>
+If your PullZone is configured to execute script before cache, you'll run the
+`onClientRequest` and `onClientResponse`.
+</Info>
 
-![](/images/docs/e5c6548c1d23722bbb1206f3a6bffe69d07db1541499995b13e3101b0011f91b-image.png)
+1. **`onClientRequest`** - Called before the request is sent to the cache. Modify the request or return a response to short-circuit.
+2. **`onOriginRequest`** - Called before the request is sent to the origin (so
+if the cache is giving a *MISS*). Modify the request or return a response to short-circuit.
+3. **Origin fetch** - The request is sent to your origin server.
+4. **`onOriginResponse`** - Called after the origin responds. Modify the response before it's sent to the client and cached.
+3. **`onClientResponse`** - Called just before a Response is sent to the client
+expect if you short circuit it at the `onClientRequest` layer.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Cache
+    participant Origin
+
+    Client->>Cache: onClientRequest
+    Cache->>Origin: onOriginRequest
+    Origin-->>Cache: onOriginResponse
+    Cache-->>Client: onClientResponse
+```
 
 ## Example
 
