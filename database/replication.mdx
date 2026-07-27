@@ -5,7 +5,25 @@ description: Learn how Bunny Database separates storage from compute and replica
 
 Bunny Database separates data storage (at rest) from data processing (in compute instances). This separation allows compute resources to be allocated dynamically in different regions while keeping data safely stored in its designated location.
 
-Configure regions from **Dashboard > Edge Platform > Database > [Select Database] > Regions**.
+Configure regions from the Dashboard or the [Bunny CLI](/cli/quickstart):
+
+<Tabs>
+  <Tab title="Dashboard">
+    Manage regions from **Dashboard > Edge Platform > Database > [Select Database] > Regions**.
+  </Tab>
+  <Tab title="CLI">
+    List, add, and remove regions with the `bunny db regions` commands:
+
+    ```bash
+    bunny db regions list                 # show primary and replica regions
+    bunny db regions add --primary DE      # add a primary region
+    bunny db regions add --replicas UK,NY  # add replica regions
+    bunny db regions remove --replicas UK  # remove a region
+    ```
+
+    At least one primary region must remain. See [`bunny db`](/cli/commands/db) for the full command reference.
+  </Tab>
+</Tabs>
 
 ## Storage location
 
