@@ -171,7 +171,7 @@ When a client makes a request to a Pull Zone, the request passes through middlew
 
 <Info>
 If your PullZone is configured to execute script before cache, you'll run the
-`onClientRequest` and `onClientResponse`.
+`onClientRequest` and `onClientResponse` if those are registered.
 </Info>
 
 1. **`onClientRequest`** - Called before the request is sent to the cache. Modify the request or return a response to short-circuit.
