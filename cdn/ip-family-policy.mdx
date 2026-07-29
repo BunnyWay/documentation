@@ -27,7 +27,7 @@ Only IPv4 is advertised. AAAA records are never returned, even when the serving 
 
 Edge server selection is unaffected: all eligible locations are available, regardless of their IPv6 capability.
 
-Use this policy if your clients or intermediate networks have known IPv6 problems, or if you require every request to arrive over IPv4.
+Use this policy when you require every request to arrive over IPv4, or when your clients or intermediate networks have known IPv6 problems. It is also the safest choice when something keys on the client's address, such as [IP-locked tokens](#token-authentication-and-ip-locking), rate limits, or allowlists, since a dual-stack client can otherwise switch family between requests.
 
 ## Dual Stack
 
@@ -93,7 +93,7 @@ In other words, token IP validation forces IPv4 Only unless you have explicitly 
 
 - **Leave it on Dual Stack** unless you have a specific reason not to. It serves IPv6 wherever it's available without ever compromising routing quality.
 - **Choose Dual Stack, Prefer IPv6** when maximizing IPv6 delivery matters more than the last few milliseconds of latency, or when a downstream service can only reach you over IPv6 and you need AAAA answers wherever possible without losing IPv4 clients.
-- **Choose IPv4 Only** to rule out IPv6 as a variable while debugging connectivity, or when you know your audience's IPv6 path is unreliable. This is also what a zone with [token IP validation](#token-authentication-and-ip-locking) falls back to.
+- **Choose IPv4 Only** when something keys on the client's IPv4 address, such as IP-locked tokens, rate limits, or allowlists, or when your clients' IPv6 support is unreliable. A Pull Zone with [token IP validation](#token-authentication-and-ip-locking) falls back to this policy automatically.
 - **Choose IPv6 Only** only for closed, fully IPv6-capable client populations, or when every connection must arrive over IPv6 so that IP-locked tokens can be signed against IPv6 addresses.
 
 <Note>
