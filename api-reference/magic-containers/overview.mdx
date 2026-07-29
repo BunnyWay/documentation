@@ -6,6 +6,26 @@ description: Create, modify or delete your Magic Containers applications configu
 
 The Magic Containers API provides a RESTful interface for managing your magic containers applications.
 
+## Application overview CPU metric
+
+`GET /mc/apps/{appId}/overview` returns CPU information in
+`averageCPU.indicator`. This value is **CPU utilization as a percentage of the
+application's CPU limit**, not the number of CPU cores the application is
+currently consuming.
+
+On the shared (dynamic) runtime, every application has an 8-core CPU limit.
+For example, an `averageCPU.indicator` value of `12.5` represents roughly one
+CPU core of average usage (`12.5%` of 8 cores), not 12.5 CPU cores. Reading the
+indicator as a core count can therefore make usage appear about 12.5 times
+higher than it is.
+
+When comparing this value with a measurement collected inside a container,
+convert the in-container CPU usage to a percentage of the 8-core limit before
+comparing it. Use comparable sampling periods as well: the overview value is
+aggregated over a recent window, while tools inside the container may report an
+instantaneous value or an average over a different period. Short CPU bursts can
+therefore cause the values to differ.
+
 ## Base URL
 
 ```

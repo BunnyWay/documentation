@@ -31,8 +31,28 @@ The Statistics tab provides a range of metrics that give you a comprehensive vie
 - **Latency**: Latency measures the time it takes for a request to travel from the source to the destination and receive a response. In the context of Magic Containers, it indicates the responsiveness of your application.
 - **Instances and active regions**: This metric provides insights into the number of instances running your application and the active regions where these instances are distributed.
 - **Traffic served**: This measures the amount of data served by your application, providing insights into its overall usage.
-- **CPU usage**: The central processing unit (CPU) monitors your application's usage, helping you understand the computational load.
+- **CPU usage**: Shows CPU utilization as a percentage of your application's CPU limit, helping you understand the computational load. On the shared (dynamic) runtime, the limit is 8 CPU cores, so this metric is not a count of cores consumed.
 - **Memory usage**: Tracks the memory consumption of your application, highlighting its memory usage patterns.
+
+## Interpreting CPU usage
+
+The CPU metric, including `averageCPU.indicator` from the application overview
+API endpoint, is expressed as a percentage of the application's CPU limit. It
+is not an absolute CPU-core measurement.
+
+Shared (dynamic) runtime applications have a fixed 8-core CPU limit. For
+example, a value of `12.5` means the application uses approximately one CPU
+core on average (`12.5%` of 8 cores). Treating `12.5` as 12.5 cores would make
+the reported usage appear roughly 12.5 times higher than the actual core use.
+This distinction can explain apparent 10–50x differences when the indicator is
+compared directly with CPU-core values from inside a container.
+
+To compare the metric with an in-container measurement, first convert the
+measurement to a percentage of the 8-core limit. Also compare similar time
+windows: the overview metric is aggregated over a recent window, whereas tools
+such as `/proc` readers may show instantaneous usage or calculate an average
+over a different period. Short-lived CPU bursts can make the two readings
+differ even after their units are aligned.
 
 # Configuring display options
 
