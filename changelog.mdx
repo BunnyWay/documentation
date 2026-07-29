@@ -10,6 +10,24 @@ rss: true
   Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. When enabled on a Pull Zone, middleware scripts gain two new hooks — `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support this mode, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
 </Update>
 
+<Update label="2026-07-27" tags={["Database","(Improvement)"]}>
+  ## CLI examples in Database documentation
+
+  Database documentation pages for token management, region configuration, usage metrics, and the database shell now include Bunny CLI command examples alongside dashboard steps, making it easy to manage your database from the terminal or the browser. [Learn more](/database/connect/authorization)
+</Update>
+
+<Update label="2026-07-27" tags={["Magic Containers","(Improvement)"]}>
+  ## Updated Blue/Green deployment Terraform examples
+
+  The Blue/Green deployment guide now includes complete Terraform resource definitions for container apps with proper resource references, replacing the previous placeholder ID examples. [Learn more](/magic-containers/deployment-strategies)
+</Update>
+
+<Update label="2026-07-20" tags={["DNS","(New)"]}>
+  ## DNS CLI support and Scriptable DNS types package
+
+  Bunny DNS documentation now includes CLI examples alongside dashboard steps for zones, records, DNSSEC, import/export, logging, and statistics. Scriptable DNS scripts can be scaffolded, deployed, and attached from the CLI with `bunny dns scripts`, and the new [`@bunny.net/scriptable-dns-types`](https://github.com/BunnyWay/cli/tree/main/packages/scriptable-dns-types) package provides TypeScript definitions for editor autocomplete. [Learn more](/cli/commands/dns)
+</Update>
+
 <Update label="2026-07-16" tags={["Stream","(Improvement)"]}>
   ## Bunny Player extended Chromecast support
 
