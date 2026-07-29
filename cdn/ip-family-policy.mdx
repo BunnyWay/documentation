@@ -51,7 +51,7 @@ This maximizes the share of your traffic delivered over IPv6, at the cost of pot
 
 It is also the best option when something downstream can only reach you over IPv6, such as an IPv6-only network or a service that pulls from your Pull Zone without IPv4 connectivity. By steering requests to IPv6-capable locations, this policy does its best to guarantee that an AAAA answer is available, while still returning A records so IPv4 clients keep working. **IPv6 Only** makes that guarantee absolute, but returns nothing at all when no IPv6-capable location is available.
 
-The bias is relaxed if the client is known to be IPv4. If [EDNS Client Subnet](#how-we-determine-the-client-address-family) tells us the client's address is IPv4, there is no benefit in preferring an IPv6-capable location, so selection falls back to normal distance and load based routing. AAAA queries keep the bias regardless, since only IPv6-capable clients act on an AAAA answer.
+The bias is relaxed if the client is known to be IPv4. If EDNS Client Subnet tells us the client's address is IPv4, there is no benefit in preferring an IPv6-capable location, so selection falls back to normal distance and load based routing. AAAA queries keep the bias regardless, since only IPv6-capable clients act on an AAAA answer.
 
 <Warning>
   Preferring IPv6 can route users to a Point of Presence that is not the closest one available. On the Standard Network, where IPv6 coverage is still expanding, this may measurably increase latency for users in regions without IPv6-enabled locations.
