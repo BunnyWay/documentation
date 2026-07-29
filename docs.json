@@ -121,6 +121,12 @@
                   "product-release-stages",
                   "domains"
                 ]
+              },
+              {
+                "group": "Troubleshooting",
+                "pages": [
+                  "troubleshooting/generate-a-har-file"
+                ]
               }
             ]
           }
