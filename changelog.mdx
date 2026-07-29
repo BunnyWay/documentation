@@ -4,6 +4,24 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-07-27" tags={["DNS","(Improvement)"]}>
+  ## CLI examples across DNS docs and Scriptable DNS quickstart
+
+  DNS documentation now includes CLI examples alongside every dashboard walkthrough — zones, records, DNSSEC, import/export, logging, statistics, and nameservers all have a CLI tab showing the equivalent `bunny dns` commands. The [Scriptable DNS introduction](/dns/scriptable/introduction) adds a full quickstart for both dashboard and CLI, plus a [type safety](/dns/scriptable/introduction#type-safety) section covering the [`@bunny.net/scriptable-dns-types`](https://github.com/BunnyWay/cli/tree/main/packages/scriptable-dns-types) package for editor autocomplete. [Learn more](/dns/quickstart)
+</Update>
+
+<Update label="2026-07-27" tags={["Database","(Improvement)"]}>
+  ## CLI examples across Database docs
+
+  Database documentation now includes CLI examples alongside dashboard steps for token management, region configuration, and usage metrics. The [database shell](/database/connect/database-shell) page adds a cross-reference to `bunny db shell` and documents the visual `bunny db studio` table browser. [Learn more](/database/connect/authorization)
+</Update>
+
+<Update label="2026-07-27" tags={["Magic Containers","(Improvement)"]}>
+  ## Improved Blue/Green deployment Terraform examples
+
+  The [Blue/Green deployment strategy guide](/magic-containers/deployment-strategies) now uses complete `bunnynet_compute_container_app` resource definitions for both blue and green apps, replaces hardcoded placeholder IDs with proper Terraform resource references, adds a `routing` tier configuration block, and simplifies the hostname example. [Learn more](/magic-containers/deployment-strategies)
+</Update>
+
 <Update label="2026-07-16" tags={["Stream","(Improvement)"]}>
   ## Bunny Player extended Chromecast support
 
