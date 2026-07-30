@@ -4,11 +4,6 @@ sidebarTitle: Overview
 description: Fine-grained control over reading and writing from the bunny.net edge cache from Edge Scripting.
 ---
 
-<Warning>
-  Currently the Edge Scripting runners happen after the HTTP cache layer. See
-  [Limitations](#limitations) for details.
-</Warning>
-
 ## Overview
 
 The Cache API is an implementation of the [MSDN Cache Interface](https://developer.mozilla.org/en-US/docs/Web/API/Cache) to provide a persistent storage mechanism for Request / Response object pairs that are cached in long lived memory.
@@ -22,10 +17,6 @@ The cache instances are shared across all domains associated with your PullZone,
 <Info>**Note:** There is a hard limit of `100MB` per cache file.</Info>
 
 ## Limitations
-
-Currently the Edge Scripting runners happen after the HTTP cache layer. If you
-want to have Edge Scripting being able to run before Cache, we are currently
-working on the feature and testing it at scale.
 
 API surface limits:
 

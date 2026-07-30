@@ -4,6 +4,18 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-07-30" tags={["Shield","(New)"]}>
+  ## Verified bot customization for Shield Zones
+
+  Bunny Shield now lets you control how verified bots are handled per Shield Zone — allow, block, or take no action — with per-bot and per-category overrides across seven categories: SEO, AI Scraper, AI Tool, Tool, Ads, Preview, and Social. Verification supports both reverse DNS and published IP range checks, and verified bot categories are exposed to the Rule Engine via the `VERIFIED_BOT_CATEGORY` variable for custom WAF rules. [Learn more](/shield/verified-bots)
+</Update>
+
+<Update label="2026-07-28" tags={["Edge Scripting","(New)"]}>
+  ## Before cache execution for Edge Scripts (Preview)
+
+  Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. When enabled on a Pull Zone, middleware scripts gain two new hooks — `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support this mode, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
+</Update>
+
 <Update label="2026-07-16" tags={["Stream","(Improvement)"]}>
   ## Bunny Player extended Chromecast support
 
