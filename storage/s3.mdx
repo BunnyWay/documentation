@@ -32,8 +32,7 @@ The credentials you need to connect via S3 are located in the **Access** tab:
 - **Access Key ID**: Your Storage Zone name (bucket name)
 - **Secret Access Key**: Your Storage Zone Password
 - **Endpoint URL**: `https://[region]-s3.storage.bunnycdn.com`
-- **Region**: `de` (Frankfurt), `ny` (New York), `sg` (Singapore), `uk` (London), \
-  `se` (Stockholm), `la` (Los angeles),`jh` (Johannesburg) & `syd` (Sydney)
+- **Region**: `de` (Frankfurt), `ny` (New York), `sg` (Singapore), `uk` (London), <br />`se` (Stockholm), `la` (Los angeles),`jh` (Johannesburg) & `syd` (Sydney)
 
 <Note>
   Bunny Storage only supports path-style URLs (e.g., `https://[region]-s3.storage.bunnycdn.com/bucket-name/key`). Virtual hosted-style URLs (e.g., `bucket-name.s3.region.amazonaws.com`) are not supported.
@@ -53,7 +52,7 @@ SHA256 checksum validation is available using the `x-amz-checksum-sha256` header
 
 ### Presigned URL Validation
 
-Presigned URLs require authentication. For publicly available presigned URLs fronted by CDN please use [bunny.net](http://bunny.net) CDN by adding a pullzone to your storage zone. 
+Presigned URLs require authentication. For publicly available presigned URLs fronted by CDN please use [bunny.net](http://bunny.net) CDN by adding a pullzone to your storage zone.
 
 | Parameter | Description |
 | --- | --- |
@@ -64,8 +63,7 @@ Presigned URLs require authentication. For publicly available presigned URLs fro
 | `X-Amz-SignedHeaders` | Headers included in the signature |
 | `X-Amz-Signature` | The HMAC-SHA256 signature |
 
-**Presigned URL example (1hour):**\
-https://\[region\]-s3.storage.bunnycdn.com/bucket-name/path/to/object/?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=\[AccessKeyID\+Date\+region\+servicerequest\]&X-Amz-Date=20260320T160912Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=\[HMAC-SHA256Signature\]/
+**Presigned URL example (1hour):**<br />https://\[region\]-s3.storage.bunnycdn.com/bucket-name/path/to/object/?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=\[AccessKeyID\+Date\+region\+servicerequest\]&X-Amz-Date=20260320T160912Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=\[HMAC-SHA256Signature\]/
 
 <Card title="Presigned URL cache" type="note">
   Presigned URLs are cached and the cache validates signatures for cached objects. Currently objects up to 256MB are cached, and only if they are accessed at least 2 times.
@@ -315,3 +313,4 @@ Bunny Storage returns standard S3 error codes:
 6. **Handle pagination properly** when listing objects or parts (max 1000 per request)
 7. **Monitor multipart sessions** and abort abandoned uploads to free storage
 8. **Set presigned URL expiry time** in seconds `--expires-in 3600` = 1 hour
+9. **Read-only password support** use this secret access key for read-only access
