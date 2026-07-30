@@ -19,6 +19,18 @@ In this quickstart you will learn how to:
   may evolve during this period.
 </Note>
 
+<Tip>
+  Already using the [Bunny CLI](/cli/quickstart)? The same shell is built in as
+  `bunny db shell`, which resolves your database and credentials automatically:
+
+  ```bash
+  bunny db shell                                    # interactive REPL
+  bunny db shell -e "SELECT * FROM users LIMIT 10"  # execute and exit
+  ```
+
+  See [`bunny db`](/cli/commands/db) for the full command reference.
+</Tip>
+
 ## Quickstart
 
 <Steps>
@@ -176,3 +188,20 @@ Save frequently used queries as named views to recall them later:
 ```
 
 Manage saved views with `.views`, `.view NAME`, and `.unsave NAME`.
+
+## Browse tables in your browser
+
+If you have the [Bunny CLI](/cli/quickstart) installed, `bunny db studio` opens a visual database explorer in your browser for the resolved database:
+
+```bash
+bunny db studio            # auto-detect database and open the browser
+bunny db studio --port 3000 # use a custom port
+bunny db studio --no-open   # start the server without opening a browser
+```
+
+<Note>
+  `bunny db studio` is experimental and provides a view-only table browser. Use
+  `bunny db shell` to run queries or modify data.
+</Note>
+
+Like `bunny db shell`, it resolves the database and credentials automatically, generating a short-lived token when one isn't already available. The server runs until you stop it with `Ctrl+C`. See [`bunny db`](/cli/commands/db) for the full command reference.
