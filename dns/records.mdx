@@ -7,44 +7,95 @@ DNS records map domain names to IP addresses and other resources. Bunny DNS supp
 
 ## Add a record
 
-<Steps>
-  <Step title="Open your DNS Zone">
-    In the bunny.net dashboard, go to **DNS** and select your DNS Zone, then click **Add Record**.
-  </Step>
+<Tabs>
+  <Tab title="Dashboard">
+    <Steps>
+      <Step title="Open your DNS Zone">
+        In the bunny.net dashboard, go to **DNS** and select your DNS Zone, then click **Add Record**.
+      </Step>
 
-  <Step title="Configure the record">
-    Fill in the record details:
+      <Step title="Configure the record">
+        Fill in the record details:
 
-    | Field | Description |
-    |-------|-------------|
-    | **Hostname** | The subdomain for this record. Leave empty for the root domain. |
-    | **Type** | The record type (A, AAAA, CNAME, MX, TXT, etc.) |
-    | **TTL** | Time to live. How long resolvers cache the record. |
-    | **Value** | The record value (IP address, hostname, or text depending on type). |
+        | Field | Description |
+        |-------|-------------|
+        | **Hostname** | The subdomain for this record. Leave empty for the root domain. |
+        | **Type** | The record type (A, AAAA, CNAME, MX, TXT, etc.) |
+        | **TTL** | Time to live. How long resolvers cache the record. |
+        | **Value** | The record value (IP address, hostname, or text depending on type). |
 
-    Expand **Advanced Settings** to configure additional options:
+        Expand **Advanced Settings** to configure additional options:
 
-    | Setting | Description |
-    |---------|-------------|
-    | **Routing Weight** | Value between 0-100 that controls how often this record is returned relative to others in a record set. |
-    | **Monitoring** | Enable health monitoring to automatically remove offline records from responses. |
-    | **Smart Record Type** | Configure geographic or latency-based routing for A and AAAA records. |
-    | **Record Enabled** | Toggle to disable a record without deleting it. Disabled records remain visible but don't respond to queries. |
+        | Setting | Description |
+        |---------|-------------|
+        | **Routing Weight** | Value between 0-100 that controls how often this record is returned relative to others in a record set. |
+        | **Monitoring** | Enable health monitoring to automatically remove offline records from responses. |
+        | **Smart Record Type** | Configure geographic or latency-based routing for A and AAAA records. |
+        | **Record Enabled** | Toggle to disable a record without deleting it. Disabled records remain visible but don't respond to queries. |
 
-    Click **Add Record** to save.
+        Click **Add Record** to save.
 
-  </Step>
-</Steps>
+      </Step>
+    </Steps>
+
+  </Tab>
+  <Tab title="CLI">
+    <Note>
+      Don't have the CLI installed? See the [CLI quickstart](/cli/quickstart) to install and authenticate.
+    </Note>
+
+    Add records with `bunny dns records add`. Positional values follow the record type, and `'@'` targets the zone apex:
+
+    ```bash
+    bunny dns records add example.com api A 198.51.100.1
+    bunny dns records add example.com '@' MX mail.example.com 10
+    bunny dns records add example.com '@' SRV 10 0 389 sip.example.com
+    bunny dns records add example.com '@' CAA '0 issue "letsencrypt.org"'
+
+    # Link a record to a Pull Zone or DNS script
+    bunny dns records add example.com cdn PullZone --pull-zone 12345
+    bunny dns records add example.com fn Script --script 67890
+    ```
+
+    Omit the record type (or all arguments) to run an interactive wizard that prompts for the zone, type, and per-type values. Pass `--ttl` and `--comment` to set those fields.
+
+    You can also apply a curated preset record set for a common provider or task (Google Workspace, Microsoft 365, DMARC, and more) in one step:
+
+    ```bash
+    bunny dns records preset list
+    bunny dns records preset google-workspace example.com
+    ```
+
+    See the [`bunny dns` command reference](/cli/commands/dns) for the full list of commands and flags.
+
+  </Tab>
+</Tabs>
 
 ## Edit a record
 
-To modify an existing record:
+<Tabs>
+  <Tab title="Dashboard">
+    To modify an existing record:
 
-1. Locate the record in your DNS Zone
-2. Click the **...** menu on the record row
-3. Select **Edit**
-4. Modify the record settings
-5. Click **Save Record**
+    1. Locate the record in your DNS Zone
+    2. Click the **...** menu on the record row
+    3. Select **Edit**
+    4. Modify the record settings
+    5. Click **Save Record**
+
+  </Tab>
+  <Tab title="CLI">
+    Pass the record ID (from `bunny dns records list`), or omit it to pick the record interactively. Only the flags you set are changed:
+
+    ```bash
+    bunny dns records list example.com
+    bunny dns records update example.com 123 --value 198.51.100.2
+    bunny dns records update example.com 123 --ttl 3600
+    bunny dns records update example.com 123 --disabled
+    ```
+
+  </Tab>
+</Tabs>
 
 <Info>
   The record type cannot be changed when editing. Delete and recreate the record
@@ -53,12 +104,26 @@ To modify an existing record:
 
 ## Delete a record
 
-To remove a record:
+<Tabs>
+  <Tab title="Dashboard">
+    To remove a record:
 
-1. Locate the record in your DNS Zone
-2. Click the **...** menu on the record row
-3. Select **Delete**
-4. Click **Delete** to confirm
+    1. Locate the record in your DNS Zone
+    2. Click the **...** menu on the record row
+    3. Select **Delete**
+    4. Click **Delete** to confirm
+
+  </Tab>
+  <Tab title="CLI">
+    Pass the record ID, or omit it to pick the record interactively. The CLI confirms before deleting unless you pass `--force`:
+
+    ```bash
+    bunny dns records remove example.com 123
+    bunny dns records remove example.com 123 --force
+    ```
+
+  </Tab>
+</Tabs>
 
 <Info>
   Deleting a record takes effect immediately. Make sure the record is no longer

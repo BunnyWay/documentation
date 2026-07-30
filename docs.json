@@ -509,6 +509,7 @@
                 "group": "Reference",
                 "pages": [
                   "scripting/limits",
+                  "scripting/before-cache",
                   "scripting/api-reference"
                 ]
               }
@@ -541,7 +542,6 @@
                     "group": "Encoding",
                     "pages": [
                       "stream/encoding",
-                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
                     ]
@@ -553,14 +553,24 @@
                     "group": "MediaCage DRM",
                     "pages": [
                       "stream/drm/index",
-                      "stream/mediacage-basic",
-                      "stream/mediacage-basic-guide",
                       "stream/quickstart-mediacage-basic",
-                      "stream/mediacage-enterprise",
                       "stream/quickstart-mediacage-enterprise",
-                      "stream/widevine-security-levels",
-                      "stream/widevine-l3",
-                      "stream/fairplay-deployment"
+                      {
+                        "group": "Basic DRM",
+                        "pages": [
+                          "stream/mediacage-basic",
+                          "stream/mediacage-basic-guide"
+                        ]
+                      },
+                      {
+                        "group": "Enterprise DRM",
+                        "pages": [
+                          "stream/mediacage-enterprise",
+                          "stream/widevine-security-levels",
+                          "stream/widevine-l3",
+                          "stream/fairplay-deployment"
+                        ]
+                      }
                     ]
                   },
                   "stream/vast",
@@ -573,7 +583,9 @@
                       "stream/security-options",
                       "stream/token-authentication"
                     ]
-                  }
+                  },
+                  "stream/statistics",
+                  "stream/webhooks"
                 ]
               },
               {
@@ -631,14 +643,8 @@
               {
                 "group": "Reference",
                 "pages": [
-                  {
-                    "group": "Tools",
-                    "pages": [
-                      "stream/vimeo2bunny"
-                    ]
-                  },
-                  "stream/statistics",
-                  "stream/webhooks",
+                  "stream/video-specification",
+                  "stream/vimeo2bunny",
                   "stream/data-and-privacy",
                   "stream/api-reference"
                 ]
@@ -1039,6 +1045,7 @@
                   "cli/commands/config",
                   "cli/commands/db",
                   "cli/commands/scripts",
+                  "cli/commands/sandbox",
                   {
                     "group": "DNS",
                     "hidden": true,

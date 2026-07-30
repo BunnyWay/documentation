@@ -1,12 +1,12 @@
 ---
 sidebarTitle: Seamless Domain Migration
 title: How to Seamlessly Migrate Your Domain to bunny.net
-description: Issue SSL certificates via DNS verification before pointing your domain to bunny.net, enabling seamless zero-downtime migration.
+description: Issue SSL certificates via DNS or HTTP validation before pointing your domain to bunny.net, enabling seamless zero-downtime migration.
 ---
 
 This feature allows you to issue an SSL certificate for your hostname **before pointing your domain to bunny.net**, avoiding HTTPS disruption during migration.
 
-Certificate issuance is performed using **DNS (TXT) validation**, and automatically transitions to **HTTP validation for renewals** after traffic is switched.
+You can verify domain control using either **DNS (TXT record) validation** or **HTTP (file) validation**, pick whichever you can perform on your current setup. In both cases issuance automatically transitions to **HTTP validation for renewals** once traffic is switched to bunny.net.
 
 <Steps>
 
@@ -30,7 +30,17 @@ The hostname must be fully configured on the Pull Zone before requesting a certi
 
 </Step>
 
-<Step title="Request external DNS certificate">
+<Step title="Verify domain control">
+
+Prove you control the hostname using **one** of the methods below. Choose **DNS** if you can edit your domain's DNS records, or **HTTP** if you can place a file on the server your domain currently points to. HTTP validation does not support wildcard hostnames, and only one verification (DNS or HTTP) can be pending per hostname at a time.
+
+<Tabs>
+
+<Tab title="DNS (TXT record)">
+
+<Steps>
+
+<Step title="Request the certificate">
 
 Initiate certificate issuance using DNS validation:
 
@@ -54,7 +64,7 @@ This request returns the DNS TXT record required for domain verification.
 
 </Step>
 
-<Step title="Create DNS TXT record">
+<Step title="Create the DNS TXT record">
 
 Add the returned TXT record to your domain’s DNS zone.
 
@@ -68,7 +78,7 @@ Wait until the record is publicly resolvable before continuing.
 
 </Step>
 
-<Step title="Complete certificate issuance">
+<Step title="Complete issuance">
 
 Finalize the process once the TXT record is live:
 
@@ -84,11 +94,87 @@ curl --request POST \
 '
 ```
 
-This validates the DNS record and issues the certificate via Let's Encrypt.
+This validates the DNS record and issues the certificate.
 
 <Card title="API Reference" href="https://docs.bunny.net/api-reference/core/pull-zone/complete-external-dns-certificate">
   View full endpoint documentation
 </Card>
+
+</Step>
+
+</Steps>
+
+</Tab>
+
+<Tab title="HTTP (file)">
+
+<Steps>
+
+<Step title="Request the certificate">
+
+Initiate certificate issuance using HTTP validation:
+
+```bash
+curl --request POST \
+  --url https://api.bunny.net/pullzone/{id}/requestExternalHttpCertificate \
+  --header 'AccessKey: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '
+{
+  "Hostname": "cdn.example.com"
+}
+'
+```
+
+This request returns the challenge file's path and its contents (`FilePath` and `FileContent`).
+
+<Card title="API Reference" href="https://docs.bunny.net/api-reference/core/pull-zone/request-external-http-certificate">
+  View full endpoint documentation
+</Card>
+
+</Step>
+
+<Step title="Host the challenge file">
+
+On the server your domain **currently** points to, serve the returned `FileContent` at the returned `FilePath` so it is reachable over plain HTTP (port 80):
+
+```text
+http://cdn.example.com/.well-known/acme-challenge/<token>
+```
+
+The response body must exactly match the `FileContent` value from the previous step. Redirects to HTTPS are followed during validation.
+
+</Step>
+
+<Step title="Complete issuance">
+
+Finalize the process once the file is reachable:
+
+```bash
+curl --request POST \
+  --url https://api.bunny.net/pullzone/{id}/completeExternalHttpCertificate \
+  --header 'AccessKey: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '
+{
+  "Hostname": "cdn.example.com"
+}
+'
+```
+
+This fetches the challenge file and issues the certificate.
+
+<Card title="API Reference" href="https://docs.bunny.net/api-reference/core/pull-zone/complete-external-http-certificate">
+  View full endpoint documentation
+</Card>
+
+</Step>
+
+</Steps>
+
+</Tab>
+
+</Tabs>
 
 </Step>
 
@@ -116,7 +202,8 @@ After the initial issuance:
 </Steps>
 
 <Note>
-- DNS TXT records must be publicly accessible before completing the request  
-- DNS propagation time depends on your DNS provider  
-- Certificate issuance depends on successful validation by Let's Encrypt  
+- For **DNS** validation, the TXT record must be publicly resolvable before completing the request; propagation time depends on your DNS provider
+- For **HTTP** validation, the challenge file must be reachable over plain HTTP (port 80) on the server your domain currently points to, and wildcard hostnames are not supported
+- Only one verification (DNS or HTTP) can be pending per hostname at a time; starting a new request replaces any previous pending one
+- Certificate issuance depends on successful validation by the certificate authority
 </Note>

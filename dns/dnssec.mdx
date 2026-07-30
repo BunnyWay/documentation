@@ -21,12 +21,33 @@ Our DNS service supports full DNSSEC signing. Once enabled, your DNS zones are s
 
 ## Steps to Enable DNSSEC
 
-1. Enable DNSSEC within your DNS zone under the Security tab.
+<Tabs>
+  <Tab title="Dashboard">
+    1. Enable DNSSEC within your DNS zone under the Security tab.
 
-![](/images/docs/1a1983ec6cabed83a892ce54e7ed52f4b66bab6445737261b474ee75a3bc5f1b-image.png)
+    ![](/images/docs/1a1983ec6cabed83a892ce54e7ed52f4b66bab6445737261b474ee75a3bc5f1b-image.png)
 
-2. Copy the DS Record provided after enabling.
-3. Add the DS Record through your domain registrar (see setup guides below).
+    2. Copy the DS Record provided after enabling.
+    3. Add the DS Record through your domain registrar (see setup guides below).
+
+  </Tab>
+  <Tab title="CLI">
+    <Note>
+      Don't have the CLI installed? See the [CLI quickstart](/cli/quickstart) to install and authenticate.
+    </Note>
+
+    1. Enable DNSSEC on the zone. The command prints the DS record to register:
+
+       ```bash
+       bunny dns zones dnssec enable example.com
+       ```
+
+    2. Add the DS Record through your domain registrar (see setup guides below).
+
+    To turn DNSSEC off again, run `bunny dns zones dnssec disable example.com` (confirms unless `--force`).
+
+  </Tab>
+</Tabs>
 
 **That's it! Your domain will now serve DNSSEC-signed responses.**
 

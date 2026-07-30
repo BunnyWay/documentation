@@ -2,12 +2,11 @@
 title: "Custom head HTML migration guide"
 ---
 
-This guide explains how to migrate custom `<head>` markup from the legacy Bunny Stream player (Plyr-based) to the new Bunny Stream Player.\
-It is based on typical customization patterns seen across customer integrations.
+This guide explains how to migrate custom `<head>` markup from the legacy Bunny Stream player (Plyr-based) to the new Bunny Stream Player.<br />It is based on typical customization patterns seen across customer integrations.
 
 ## **Introduction**
 
-The new Bunny Stream Player uses a modern Web Components architecture `media-chrome` + `bunny-*` instead of legacy Plyr internals.
+The new Bunny Stream Player uses a modern Web Components architecture `media-chrome` \+ `bunny-*` instead of legacy Plyr internals.
 
 In practice, this means:
 
@@ -41,7 +40,7 @@ Legacy player:
 
 New Bunny Stream Player:
 
-- Uses Web Components + media-chrome (`media-controller`, `media-*` controls, `bunny-*` components).
+- Uses Web Components \+ media-chrome (`media-controller`, `media-*` controls, `bunny-*` components).
 - Does not render Plyr DOM/classes.
 - Does not bundle jQuery.
 - Still renders your custom head HTML (through the existing custom CSS field), but selectors and script hooks should be updated.
@@ -55,25 +54,25 @@ New Bunny Stream Player:
 
 ## **Legacy to new selector mapping**
 
-| Legacy selector              | New selector                                                                    |
-| :--------------------------- | :------------------------------------------------------------------------------ |
-| `.plyr`                      | `media-controller`                                                              |
-| `.plyr__controls`            | `media-control-bar`, `bunny-media-control-bar`                                  |
-| `.plyr__control`             | `Specific elements` (`media-play-button`, `media-mute-button`, `etc`.)          |
-| `.plyr__control--overlaid`   | `media-play-button.large-play`                                                  |
-| `.plyr__poster`              | `bunny-poster-image::part(img)`, `bunny-poster-video::part(video)`              |
-| `.plyr__captions`            | `bunny-captions-display` , `cue parts `(`[part='cue-display']`, `[part='cue']`) |
-| `.plyr__progress`            | `bunny-media-time-range`                                                        |
-| `.plyr__volume`              | `media-volume-range`                                                            |
-| `[data-plyr="play"]`         | `media-play-button`                                                             |
-| `[data-plyr="mute"]`         | `media-mute-button`                                                             |
-| `[data-plyr="captions"]`     | `media-captions-button`                                                         |
-| `[data-plyr="pip"]`          | `media-pip-button`                                                              |
-| `[data-plyr="fullscreen"]`   | `media-fullscreen-button`                                                       |
-| `[data-plyr="airplay"]`      | `media-airplay-button`                                                          |
-| `[data-plyr="settings"]`     | `bunny-settings-menu-button`                                                    |
-| `[data-plyr="rewind"]`       | `media-seek-backward-button`                                                    |
-| `[data-plyr="fast-forward"]` | `media-seek-forward-button`                                                     |
+| Legacy selector | New selector |
+| :-- | :-- |
+| `.plyr` | `media-controller` |
+| `.plyr__controls` | `media-control-bar`, `bunny-media-control-bar` |
+| `.plyr__control` | `Specific elements` (`media-play-button`, `media-mute-button`, `etc`.) |
+| `.plyr__control--overlaid` | `media-play-button.large-play` |
+| `.plyr__poster` | `bunny-poster-image::part(img)`, `bunny-poster-video::part(video)` |
+| `.plyr__captions` | `bunny-captions-display` , `cue parts `(`[part='cue-display']`, `[part='cue']`) |
+| `.plyr__progress` | `bunny-media-time-range` |
+| `.plyr__volume` | `media-volume-range` |
+| `[data-plyr="play"]` | `media-play-button` |
+| `[data-plyr="mute"]` | `media-mute-button` |
+| `[data-plyr="captions"]` | `media-captions-button` |
+| `[data-plyr="pip"]` | `media-pip-button` |
+| `[data-plyr="fullscreen"]` | `media-fullscreen-button` |
+| `[data-plyr="airplay"]` | `media-airplay-button` |
+| `[data-plyr="settings"]` | `bunny-settings-menu-button` |
+| `[data-plyr="rewind"]` | `media-seek-backward-button` |
+| `[data-plyr="fast-forward"]` | `media-seek-forward-button` |
 
 ## **Migration examples**
 
@@ -134,6 +133,7 @@ bunny-poster-video::part(video) {
 ### 3) Hide specific controls (PiP and seek)
 
 Legacy (Plyr):
+
 ```html
 <style>
 [data-plyr="pip"],
@@ -145,6 +145,7 @@ Legacy (Plyr):
 ```
 
 New (Bunny Stream Player):
+
 ```html
 <style>
 media-pip-button,
@@ -170,6 +171,7 @@ Legacy (Plyr):
 ```
 
 New (Bunny Stream Player):
+
 ```html
 <style>
 bunny-captions-display {
