@@ -2269,11 +2269,6 @@
       "permanent": true
     },
     {
-      "source": "/quickstart",
-      "destination": "/quickstart",
-      "permanent": true
-    },
-    {
       "source": "/stream-captioning-2",
       "destination": "/stream",
       "permanent": true
@@ -2306,11 +2301,6 @@
     {
       "source": "/stream-player",
       "destination": "/stream/player-settings",
-      "permanent": true
-    },
-    {
-      "source": "/stream-smart-chapters",
-      "destination": "/stream/smart-chapters",
       "permanent": true
     },
     {
