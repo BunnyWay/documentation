@@ -54,7 +54,7 @@ Signed webhook POSTs use signature version **`v1`**. Each signed request include
 The signature is an **HMAC-SHA256** of the exact raw request body, using the webhook signing secret as the key, encoded as a **lowercase hex string**.
 
 <Note>
-  [The signing secret is your library's **Read-Only API key**. Validation must use the **exact raw body** as received — do not parse and re-serialize the JSON body.](https://docs.bunny.net/api-reference/core/stream-video-library/get-video-library#response-read-only-api-key-one-of-0)
+  [The signing secret is your library's **Read-Only API key**. Validation must use the **exact raw body** as received — do not parse and re-serialize the JSON body.](/api-reference/core/stream-video-library/get-video-library#response-read-only-api-key-one-of-0)
 </Note>
 
 ### How the signature is built
@@ -66,7 +66,7 @@ signature  = lowercase_hex( HMAC-SHA256( utf8(body), utf8(signatureSecret) ) )
 ```
 
 - **body**: The exact raw HTTP request body bytes as received.
-- **signatureSecret**: Your library's [**Read-Only API key**](https://docs.bunny.net/api-reference/core/stream-video-library/get-video-library#response-read-only-api-key-one-of-0), encoded as UTF-8.
+- **signatureSecret**: Your library's [**Read-Only API key**](/api-reference/core/stream-video-library/get-video-library#response-read-only-api-key-one-of-0), encoded as UTF-8.
 - **Output**: 64-character lowercase hexadecimal string.
 - The URL, timestamp, HTTP method, and headers are **not** part of the `v1` signature.
 
