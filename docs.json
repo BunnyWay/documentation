@@ -121,12 +121,6 @@
                   "product-release-stages",
                   "domains"
                 ]
-              },
-              {
-                "group": "Troubleshooting",
-                "pages": [
-                  "troubleshooting/generate-a-har-file"
-                ]
               }
             ]
           }
@@ -274,6 +268,7 @@
                     "group": "Troubleshooting",
                     "pages": [
                       "cdn/troubleshooting/run-traceroute",
+                      "cdn/troubleshooting/generate-a-har-file",
                       "cdn/troubleshooting/still-slow"
                     ]
                   }

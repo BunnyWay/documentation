@@ -1,10 +1,9 @@
 ---
 title: Generate a HAR File
-sidebarTitle: HAR File
-description: Capture a HAR file from your browser so bunny.net support can see exactly what your browser sent and received.
+description: Capture a HAR file from your browser so support can see exactly what your browser sent and received from the CDN.
 ---
 
-A HAR (HTTP Archive) file is a JSON recording of every request your browser made during a session, including URLs, headers, timings, and response data. When support asks for one, it's the fastest way for us to see what actually happened instead of guessing from a description.
+A HAR (HTTP Archive) file is a JSON recording of every request your browser made during a session, including URLs, headers, timings, and response data. When support asks for one, it's the fastest way for us to see what the edge actually returned instead of working from a description.
 
 Exporting one takes about a minute and only uses your browser's built-in developer tools. There's nothing to install.
 
@@ -19,7 +18,7 @@ Exporting one takes about a minute and only uses your browser's built-in develop
 
 Order matters. Open developer tools and enable log persistence **before** you reproduce the issue, otherwise the recording won't contain the request that failed.
 
-If the problem only happens on a specific hostname, Pull Zone, or region, reproduce it exactly that way. A capture of a working request tells us very little.
+Reproduce the issue against the hostname that's actually affected. If the problem only appears on one Pull Zone hostname, one file type, or from one region, capture it exactly that way — a recording of a working request tells us very little.
 
 ## Export a HAR file
 
@@ -27,12 +26,13 @@ If the problem only happens on a specific hostname, Pull Zone, or region, reprod
   <Tab title="Chrome, Edge & Brave">
     <Steps>
       <Step title="Open the affected page">
-        Navigate to the page or application where you're seeing the issue.
+        Navigate to the page or URL served by your Pull Zone where you're seeing
+        the issue.
       </Step>
       <Step title="Open developer tools">
-        Press `F12`, or `Ctrl+Shift+I` on Windows and Linux, or
-        `Cmd+Option+I` on macOS. You can also right-click the page and choose
-        **Inspect**.
+        Press `F12`, or `Ctrl + Shift + I` on Windows and Linux, or
+        `Cmd + Option + I` on macOS. You can also right-click the page and
+        choose **Inspect**.
       </Step>
       <Step title="Switch to the Network tab">
         Select **Network** in the developer tools toolbar.
@@ -54,11 +54,12 @@ If the problem only happens on a specific hostname, Pull Zone, or region, reprod
   <Tab title="Firefox">
     <Steps>
       <Step title="Open the affected page">
-        Navigate to the page or application where you're seeing the issue.
+        Navigate to the page or URL served by your Pull Zone where you're seeing
+        the issue.
       </Step>
       <Step title="Open developer tools">
-        Press `F12`, or `Ctrl+Shift+I` on Windows and Linux, or
-        `Cmd+Option+I` on macOS.
+        Press `F12`, or `Ctrl + Shift + I` on Windows and Linux, or
+        `Cmd + Option + I` on macOS.
       </Step>
       <Step title="Switch to the Network tab">
         Select **Network** in the developer tools toolbar.
@@ -85,10 +86,11 @@ If the problem only happens on a specific hostname, Pull Zone, or region, reprod
         called **Show Develop menu in menu bar**.
       </Step>
       <Step title="Open the affected page">
-        Navigate to the page or application where you're seeing the issue.
+        Navigate to the page or URL served by your Pull Zone where you're seeing
+        the issue.
       </Step>
       <Step title="Open Web Inspector">
-        Press `Cmd+Option+I`, or choose **Develop → Show Web Inspector**.
+        Press `Cmd + Option + I`, or choose **Develop → Show Web Inspector**.
       </Step>
       <Step title="Switch to the Network tab">
         Select **Network** in the Web Inspector toolbar, then turn on **Preserve
@@ -117,10 +119,13 @@ If the problem only happens on a specific hostname, Pull Zone, or region, reprod
 
 Attach the `.har` file to your support ticket along with:
 
-- The exact URL that failed, and the hostname or Pull Zone it belongs to
+- The exact URL that failed, and the Pull Zone or hostname it belongs to
 - The time the capture was taken, including your time zone
-- The `CDN-RequestId` response header value, if you have it. It lets us find the request in our logs.
+- The `CDN-RequestId` response header value, which lets us find the request in our logs
+- The `Server` response header, which identifies the PoP that handled the request. See [Find Your PoP and Run Diagnostics](/cdn/troubleshooting/run-traceroute).
 - What you expected to happen, and what happened instead
+
+For latency or routing problems, a [diagnostic report](https://tools.bunny.net/diagnostic-report) alongside the HAR file gives us a fuller picture. See [Connectivity](/cdn/connectivity) for network-level troubleshooting.
 
 Don't have a ticket yet? Open one from the [bunny.net dashboard](https://dash.bunny.net) or email [support@bunny.net](mailto:support@bunny.net).
 
