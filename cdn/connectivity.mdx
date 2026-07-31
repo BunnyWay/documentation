@@ -29,6 +29,8 @@ When users connect to bunny.net, DNS responses are generated based on the capabi
 
 This approach ensures optimal compatibility while allowing IPv6-capable locations to serve traffic natively over IPv6.
 
+Each Pull Zone can override this default behavior with an [IP Family Policy](/cdn/ip-family-policy), which controls whether we advertise IPv4, IPv6, or both, and whether routing prefers IPv6-capable locations.
+
 ## Origin Connectivity
 
 We support both IPv4 and IPv6 connections to your origin servers.

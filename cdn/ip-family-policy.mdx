@@ -1,0 +1,101 @@
+---
+title: IP Family Policy
+sidebarTitle: IP Family Policy
+description: Control which IP address families your Pull Zone advertises and which edge servers are eligible to serve it.
+---
+
+The **IP Family Policy** of a Pull Zone controls which IP address families bunny.net advertises for your CDN hostnames, and which edge servers are eligible to serve them.
+
+The policy affects the DNS answers returned for your Pull Zone hostname (`*.b-cdn.net`, custom hostnames, and hostnames [accelerated through Bunny DNS](/cdn/cdn-acceleration)):
+
+- **A records** advertise an IPv4 address of the selected edge server.
+- **AAAA records** advertise an IPv6 address of the selected edge server.
+- **HTTPS (SVCB) records** carry `ipv4hint` and `ipv6hint` values, along with matching A and AAAA records in the additional section.
+
+## Available policies
+
+| Policy | Answers returned | Edge server selection |
+| ------ | ---------------- | --------------------- |
+| **IPv4 Only** | A only | Unrestricted |
+| **Dual Stack** (default) | A, plus AAAA when the selected server has IPv6 | Unrestricted |
+| **Dual Stack, Prefer IPv6** | A, plus AAAA when the selected server has IPv6 | IPv6-capable servers preferred |
+| **IPv6 Only** | AAAA only | IPv6-capable servers only |
+
+## IPv4 Only
+
+Only IPv4 is advertised. AAAA records are never returned, even when the serving edge location supports IPv6, and HTTPS records contain an `ipv4hint` only.
+
+Edge server selection is unaffected: all eligible locations are available, regardless of their IPv6 capability.
+
+Use this policy when you require every request to arrive over IPv4, or when your clients or intermediate networks have known IPv6 problems. It is also the safest choice when something keys on the client's address, such as [IP-locked tokens](#token-authentication-and-ip-locking), rate limits, or allowlists, since a dual-stack client can otherwise switch family between requests.
+
+## Dual Stack
+
+The default policy. IPv4 is always advertised, and IPv6 is advertised whenever the edge server chosen for the request has an IPv6 address.
+
+- **A queries** return the IPv4 address of the selected server.
+- **AAAA queries** return the IPv6 address of the selected server, if it has one. If it doesn't, the answer is empty (NODATA) and the client uses IPv4.
+- **HTTPS queries** return both `ipv4hint` and `ipv6hint` when both families are available.
+
+Routing is not biased in any way. The nearest and least loaded location is selected exactly as it would be for an IPv4-only zone, and IPv6 is used opportunistically when that location supports it.
+
+<Note>
+  Because the Standard Network supports IPv6 on a best-effort basis, a Dual Stack zone may return AAAA records for some clients and not others depending on which Point of Presence serves them. See [Connectivity](/cdn/connectivity) for network tier details.
+</Note>
+
+## Dual Stack, Prefer IPv6
+
+Both address families are still advertised exactly as with Dual Stack, but routing is biased: IPv6-capable edge servers are preferred over IPv4-only ones, even when an IPv4-only location is closer to the client.
+
+This maximizes the share of your traffic delivered over IPv6, at the cost of potentially routing some users to a more distant Point of Presence.
+
+It is also the best option when something downstream can only reach you over IPv6, such as an IPv6-only network or a service that pulls from your Pull Zone without IPv4 connectivity. By steering requests to IPv6-capable locations, this policy does its best to guarantee that an AAAA answer is available, while still returning A records so IPv4 clients keep working. **IPv6 Only** makes that guarantee absolute, but returns nothing at all when no IPv6-capable location is available.
+
+The bias is relaxed if the client is known to be IPv4. If EDNS Client Subnet tells us the client's address is IPv4, there is no benefit in preferring an IPv6-capable location, so selection falls back to normal distance and load based routing. AAAA queries keep the bias regardless, since only IPv6-capable clients act on an AAAA answer.
+
+<Warning>
+  Preferring IPv6 can route users to a Point of Presence that is not the closest one available. On the Standard Network, where IPv6 coverage is still expanding, this may measurably increase latency for users in regions without IPv6-enabled locations.
+</Warning>
+
+## IPv6 Only
+
+Only IPv6 is advertised, and only IPv6-capable edge servers are eligible to serve the zone.
+
+- **AAAA queries** return the IPv6 address of the selected server.
+- **A queries** return an empty answer with the zone's SOA record. No IPv4 address is ever advertised, even to a client that asks for one.
+- **HTTPS queries** contain an `ipv6hint` only, with no additional A record.
+- If no IPv6-capable edge server is available for the request, the response is empty, it will never fall back to IPv4.
+
+<Warning>
+  An IPv6 Only Pull Zone is unreachable for IPv4-only clients, which still make up a substantial share of global traffic. Only use this policy when you control every client that connects, such as an internal or machine-to-machine workload.
+</Warning>
+
+## Token authentication and IP locking
+
+[IP locking](/cdn/security/token-authentication/advanced#ip-locking) binds a token to the client IP address you sign it with, and rejects any request arriving from a different address. The signed address and the address the request actually arrives from must therefore be in the same family. On a zone reachable over both families, a client can be handed an address in one family while your token was signed for the other, and every such request fails validation.
+
+To prevent that, enabling **Token IP Validation** on a Pull Zone pins the zone to a single address family:
+
+| IP Family Policy | Effective policy with Token IP Validation enabled |
+| ---------------- | ------------------------------------------------- |
+| IPv4 Only | IPv4 Only |
+| Dual Stack | IPv4 Only |
+| Dual Stack, Prefer IPv6 | IPv4 Only |
+| IPv6 Only | IPv6 Only |
+
+In other words, token IP validation forces IPv4 Only unless you have explicitly chosen **IPv6 Only**, which is always respected. Sign the family your zone serves: IPv4 addresses in the default case, IPv6 addresses when the policy is IPv6 Only.
+
+<Note>
+  Both IPv4 and IPv6 addresses can be signed. IPv4 binds either the exact address or a `/24`, and IPv6 binds the client's `/64` prefix. See [IP locking](/cdn/security/token-authentication/advanced#ip-locking) for the exact matching rules.
+</Note>
+
+## Choosing a policy
+
+- **Leave it on Dual Stack** unless you have a specific reason not to. It serves IPv6 wherever it's available without ever compromising routing quality.
+- **Choose Dual Stack, Prefer IPv6** when maximizing IPv6 delivery matters more than the last few milliseconds of latency, or when a downstream service can only reach you over IPv6 and you need AAAA answers wherever possible without losing IPv4 clients.
+- **Choose IPv4 Only** when something keys on the client's IPv4 address, such as IP-locked tokens, rate limits, or allowlists, or when your clients' IPv6 support is unreliable. A Pull Zone with [token IP validation](#token-authentication-and-ip-locking) falls back to this policy automatically.
+- **Choose IPv6 Only** only for closed, fully IPv6-capable client populations, or when every connection must arrive over IPv6 so that IP-locked tokens can be signed against IPv6 addresses.
+
+<Note>
+  IP Family Policy applies to inbound connectivity, meaning how clients reach the CDN. Connectivity from the edge to your origin is negotiated separately and is described in [Connectivity](/cdn/connectivity).
+</Note>

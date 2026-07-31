@@ -46,11 +46,28 @@ Signing with `token_path=/videos/stream1/` allows access to all files in that di
 
 IP locking binds a token to a specific client IP address. Any request from a different IP will be rejected, even if the token is otherwise valid. This is useful for preventing token sharing or URL redistribution.
 
-To use IP locking, pass the client's IPv4 address as the `userIp` parameter when signing the URL. The IP is included in the HMAC signature but is not appended to the URL itself.
+To use IP locking, pass the client's address as the `userIp` parameter when signing the URL. The address is included in the HMAC signature but is not appended to the URL itself.
+
+Both IPv4 and IPv6 addresses are supported, and each family binds at a different prefix length:
+
+| Family | Binds at | Behavior |
+| ------ | -------- | -------- |
+| IPv4   | `/32` or `/24` | Signing a full address (`203.0.113.42`) binds that exact address. Signing the network address of a `/24` (`203.0.113.0`) accepts any client within that `/24`. |
+| IPv6   | `/64`    | Only the `/64` prefix is bound, so any address within it is accepted. |
+
+IPv6 always binds at `/64` rather than the full address, because most clients change the rest of their address regularly for privacy. Binding the full address would stop validating as soon as it changed, often within hours, while a client's `/64` stays stable.
+
+For IPv4, you can widen the bind by signing the network address of a `/24` (for example `203.0.113.0` instead of `203.0.113.42`). Tokens signed that way validate for any client within that `/24`, which is useful for clients whose address shifts within a subnet.
 
 <Note>
-  Only IPv4 addresses are supported. IP locking requires the **Token IP Validation** setting to be enabled on your Pull Zone. Enabling this without including the IP in your tokens will cause all requests to fail. Enabling Token IP Validation also disables IPv6 routing on the Pull Zone to prevent mismatches.
+  IP locking requires the **Token IP Validation** setting to be enabled on your Pull Zone. Enabling this without including the IP in your tokens will cause all requests to fail.
 </Note>
+
+### Address family matching
+
+The signed address must be in the same family the request arrives over. A token signed with an IPv4 address cannot validate a request that arrives over IPv6, nor the reverse.
+
+Enabling **Token IP Validation** therefore pins the Pull Zone to a single family: the zone serves IPv4 only, unless its [IP Family Policy](/cdn/ip-family-policy#token-authentication-and-ip-locking) is set to **IPv6 Only**, which is respected and makes the zone serve IPv6 only. Sign whichever family the zone serves.
 
 <Warning>
   IP locking can cause issues for users behind proxies, VPNs, or with frequently changing IP addresses (e.g. mobile networks).
@@ -81,14 +98,15 @@ Use `token_countries` to allow access only from specific countries, or `token_co
 ## Generate the token
 
 ```
-token = "HS256-" + Base64URL(HMAC-SHA256(security_key, signature_path + expires + signing_data + user_ip))
+token = "HS256-" + flags + Base64URL(HMAC-SHA256(security_key, signature_path + expires + user_ip + signing_data))
 ```
 
 Where:
 - **`security_key`** is used as the HMAC key (not included in the message)
 - **`signature_path`** is the URL path, or the `token_path` override if set
+- **`user_ip`** is the optional IP address, omitted entirely when not set. IPv6 addresses are masked to their `/64` prefix before signing
 - **`signing_data`** is the alphabetically-sorted parameters joined as `key=value` pairs separated by `&`, excluding `token` and `expires`
-- **`user_ip`** is the optional IP address (empty string if not set)
+- **`flags`** is `1-` when an IP was signed, and empty otherwise, producing tokens of the form `HS256-1-<hash>`
 
 After Base64 encoding, replace `+` with `-`, `/` with `_`, and remove `=` padding characters.
 
