@@ -5,7 +5,7 @@ description: "To make sure everyone’s applications run reliably and smoothly, 
 
 # Dynamic runtime limits
 
-The following resource limits apply to each Magic Containers application running on the dynamic runtime:
+The following resource limits apply to each instance (pod) of a Magic Containers application running on the dynamic runtime:
 
 - **CPU**: 8 CPUs
 - **Memory**: 32 GiB
@@ -13,6 +13,10 @@ The following resource limits apply to each Magic Containers application running
 - **Network egress**: 1 Gbps
 - **Outbound connections**: 500
 - **Ephemeral storage**: 10 GB
+
+<Note>
+On [trial accounts](#trial-accounts), each instance runs with 1 CPU and 4 GiB of memory instead. The remaining runtime limits above are the same for trial and standard accounts.
+</Note>
 
 <Info>
 The default bandwidth limit is 1 Gbps. If your application requires higher bandwidth, you can request an increase by submitting a support ticket.
@@ -33,6 +37,10 @@ Once an application consumes 10 GB of ephemeral storage, the container/pod will 
 Magic Containers automatically attempts to restart a container if it detects a failure.
 
 ## CPU core detection
+
+<Note>
+This section assumes a standard account, where each instance gets 8 CPUs. On a [trial account](#trial-accounts) each instance gets 1 CPU, so use 1 wherever the examples below use 8.
+</Note>
 
 While Magic Containers allocates 8 CPUs worth of CPU time to each pod, applications running inside the container may still detect the total number of CPU cores available on the host machine (which can be 32 or more cores). This can lead to suboptimal performance because many applications automatically spawn threads based on the detected CPU count, resulting in excessive thread contention when only 8 CPUs worth of processing time is actually available.
 
@@ -124,13 +132,22 @@ By default, the following limits apply to each standard (non-trial) account on t
 - Number of persistent volumes per application: 2.
 - Maximum persistent volume size: 100 GB.
 
-# Trial accounts
+## Trial accounts
 
-If you are on a trial account, additional restrictions apply:
+If you are on a trial account, the following limits apply instead:
 
-- Credit card information is required.
-- Number of applications per account: 10
-- Number of regions per application: 5
-- Number of instances/pods per region per application: 2
+- Number of applications per account: 1.
+- Number of regions per application: 3.
+- Number of instances/pods per region per application: 3.
 - Number of persistent volumes per application: 1.
 - Maximum persistent volume size: 30 GB.
+- CPU per instance: 1 CPU.
+- Memory per instance: 4 GiB.
+
+Autoscaling is capped accordingly: the maximum number of instances per region cannot be set above 3, and the minimum number of instances multiplied by the number of [base regions](/magic-containers/deploy) cannot exceed 3. For example, an application with three base regions can keep one instance running in each of them.
+
+<Info>
+A verified payment card is required before a trial account can deploy or manage applications. Verifying your card does not raise the limits above.
+
+Trial limits are lifted when your account moves to a paid plan. Your existing applications are then updated automatically to the standard CPU and memory limits.
+</Info>
