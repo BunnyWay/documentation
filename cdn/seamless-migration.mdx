@@ -46,7 +46,7 @@ Initiate certificate issuance using DNS validation:
 
 ```bash
 curl --request POST \
-  --url https://api.bunny.net/pullzone/{id}/requestExternalDnsCertificate \
+  --url https://api.bunny.net/pullzone/requestExternalDnsCertificate \
   --header 'AccessKey: YOUR_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '
@@ -84,7 +84,7 @@ Finalize the process once the TXT record is live:
 
 ```bash
 curl --request POST \
-  --url https://api.bunny.net/pullzone/{id}/completeExternalDnsCertificate \
+  --url https://api.bunny.net/pullzone/completeExternalDnsCertificate \
   --header 'AccessKey: YOUR_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '
@@ -116,7 +116,7 @@ Initiate certificate issuance using HTTP validation:
 
 ```bash
 curl --request POST \
-  --url https://api.bunny.net/pullzone/{id}/requestExternalHttpCertificate \
+  --url https://api.bunny.net/pullzone/requestExternalHttpCertificate \
   --header 'AccessKey: YOUR_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '
@@ -152,7 +152,7 @@ Finalize the process once the file is reachable:
 
 ```bash
 curl --request POST \
-  --url https://api.bunny.net/pullzone/{id}/completeExternalHttpCertificate \
+  --url https://api.bunny.net/pullzone/completeExternalHttpCertificate \
   --header 'AccessKey: YOUR_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '
