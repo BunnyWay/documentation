@@ -4,6 +4,12 @@ description: Latest updates and improvements to Shield.
 rss: true
 ---
 
+<Update label="2026-08-04" tags={["New"]}>
+  ## CDN-Bot header for verified bot detection
+
+  Bunny Shield now forwards bot detection results to your origin in the `CDN-Bot` request header. For requests that match a known bot, the header includes the bot name, category, verification result, and applied action, letting your origin make its own decisions based on bot identity without re-implementing detection. [Learn more](/shield/verified-bots#forwarding-bot-information-to-your-origin)
+</Update>
+
 <Update label="2026-07-30" tags={["New"]}>
   ## Verified bot customization
 
