@@ -117,10 +117,12 @@ CMD ["myapp"]
 | Operation | Result |
 |-----------|--------|
 | Read      | ✅     |
-| Modify    | ❌     |
+| Modify    | ✅     |
 | Delete    | ❌     |
 
-Files created by a root process can be read but not modified or deleted by non-root containers.
+Files created by a root process can be read and modified by non-root containers in the same pod. Every container in a pod shares a group that owns the volume, and files created inside it are group-writable regardless of the creating process's umask.
+
+Deletion is a separate question, decided by the directory rather than by the file - see [A note on deletion](#a-note-on-deletion) below.
 
 ### Non-root creates files, root accesses them
 
@@ -147,19 +149,21 @@ Full access as both containers are the file owner.
 | Operation | Result |
 |-----------|--------|
 | Read      | ✅     |
-| Modify    | ❌     |
+| Modify    | ✅     |
 | Delete    | ❌     |
 
-The accessing container is not the file owner. It can read files but cannot modify or delete them.
+The accessing container is not the file owner, but it is in the group that owns the volume, and files inside a volume are group-writable - so it can read and modify them. Deletion is still restricted to the owner, see [A note on deletion](#a-note-on-deletion).
 
 ### Summary
 
 | Scenario                               | Read | Modify | Delete |
 |----------------------------------------|------|--------|--------|
-| Root creates, non-root accesses        | ✅   | ❌     | ❌     |
+| Root creates, non-root accesses        | ✅   | ✅     | ❌     |
 | Non-root creates, root accesses        | ✅   | ✅     | ✅     |
 | Same non-root user                     | ✅   | ✅     | ✅     |
-| Different non-root users               | ✅   | ❌     | ❌     |
+| Different non-root users               | ✅   | ✅     | ❌     |
+
+Modification works across users because the volume is group-owned and its files are group-writable. Deletion stays with the file's owner - that is the sticky bit, described next.
 
 ### A note on deletion
 
