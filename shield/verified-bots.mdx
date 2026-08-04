@@ -89,3 +89,32 @@ For example, you can use it to:
 - Combine `VERIFIED_BOT_CATEGORY` with a `User-Agent` match to target a single bot within a category and give it its own [rate limit](/shield/rate-limiting). For example, match `VERIFIED_BOT_CATEGORY` equal to `SEO` **and** a `User-Agent` containing `Googlebot` to apply a crawl-rate limit that affects only genuine, verified Googlebot traffic, while leaving other SEO crawlers on their own limits. Because the category is set only after verification, a spoofed `User-Agent` won't match, so the limit can't be evaded or abused by impersonators.
 
 <Card title="Understanding the Rule Engine" href="/shield/rule-engine" horizontal />
+
+## Forwarding bot information to your origin
+
+When Bunny Shield recognizes a request as a known bot, it forwards the detection result to your origin in the `CDN-Bot` request header.
+
+The header contains:
+
+- **Bot name** - The matched bot identifier.
+- **Category** - The bot category (such as `SEO`, `AI Scraper`, or `Social`).
+- **Verification result** - Whether the request successfully passed verification.
+- **Applied action** - The bot action selected for the request (`allow`, `block`, or `ignore`).
+
+Example:
+
+```text
+CDN-Bot: googlebot; category=SEO; verified=yes; action=allow
+```
+
+or, if the request did not pass verification:
+
+```text
+CDN-Bot: googlebot; category=SEO; verified=no; action=ignore
+```
+
+<Note>
+The `CDN-Bot` header is only added for requests that match a bot in Bunny Shield's known-bot catalog. Requests from ordinary clients, unknown bots, or traffic that is not recognized as one of the supported bots do not receive this header.
+</Note>
+
+The `verified` field reflects the result of Bunny Shield's verification process, while the `action` field shows the final bot action that was applied after evaluating any per-bot or per-category overrides for the current Shield Zone.
