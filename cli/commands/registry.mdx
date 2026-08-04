@@ -1,0 +1,56 @@
+---
+title: bunny registry
+sidebarTitle: registry
+description: "Push and inspect container images on the Bunny Container Registry."
+tag: Preview
+---
+
+<Note>
+`bunny registry` is **experimental** and may change in future releases.
+</Note>
+
+`bunny registry` pushes and inspects images on the [Bunny Container Registry](/magic-containers/bunny-container-registry).
+
+You don't need to tag images with the registry host or your account ID: the CLI adds and hides the account namespace automatically, so you always work with the bare repository name.
+
+```bash
+bunny registry push my-app:latest
+bunny registry list
+bunny registry tags my-app
+```
+
+## `bunny registry push`
+
+Push a local Docker image to the registry. Without flags, the repository and tag are derived from the image name.
+
+```bash
+bunny registry push my-app:latest
+bunny registry push my-app:dev --repository my-app --tag v1
+```
+
+| Flag           | Description                                            |
+| -------------- | ------------------------------------------------------ |
+| `--repository` | Target repository (defaults to the image name)         |
+| `--tag`        | Target tag (defaults to the image tag)                 |
+
+`push` uses Docker to read the local image, so Docker must be installed and the image must exist locally.
+
+## `bunny registry list`
+
+List all repositories in the registry.
+
+```bash
+bunny registry list
+```
+
+Alias: `bunny registry ls`
+
+## `bunny registry tags`
+
+List tags for a repository.
+
+```bash
+bunny registry tags my-app
+```
+
+`list` and `tags` talk to the registry directly and don't require Docker.
