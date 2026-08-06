@@ -150,7 +150,7 @@ Magic Containers AI will automatically analyze your app's requirements, determin
   <Step title="Configure Region Settings">
     You will be presented with a list of all available regions. For each region, you can set whether it is a base region or a standard region:
 
-    - **Base region**: Regions where your app will always be deployed. You must select at least one base region and there is no maximum limit.
+    - **Base region**: Regions where your app will always be deployed. You must select at least one base region. Standard accounts have no maximum, while trial accounts are limited to three regions. See [Limits](/magic-containers/limits#trial-accounts).
     - **Enabled region**: The provisioning system will actively monitor user locations and behavior. If it identifies active users in a specific region, it will dynamically deploy the app to accommodate the user traffic. Conversely, if there is no user activity in a region, the app will not be deployed in that area.
 
     <Frame>
@@ -167,7 +167,7 @@ Magic Containers AI will automatically analyze your app's requirements, determin
   </Step>
 
   <Step title="Configure instances and add container">
-    Set the minimum and maximum number of instances (maximum is 10), and click **Add New Container**.
+    Set the minimum and maximum number of instances (maximum is 10 per region on a standard account, 3 on a [trial account](/magic-containers/limits#trial-accounts)), and click **Add New Container**.
 
     <Frame>
       ![](/images/docs/d348d268a258d52cc4b66ff09458184bdebd3ee196e0edc1a590d952246ea39a-image.png)

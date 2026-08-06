@@ -12,7 +12,7 @@ Bunny DNS uses the following nameservers:
 - `kiki.bunny.net`
 - `coco.bunny.net`
 
-To view your nameservers, go to **DNS**, select your DNS Zone, then click **Nameservers** in the zone menu.
+To view your nameservers, go to **DNS**, select your DNS Zone, then click **Nameservers** in the zone menu. With the [bunny CLI](/cli), run `bunny dns zones nameservers example.com` to show them (custom nameservers if enabled, otherwise the defaults above).
 
 ## Update nameservers at your registrar
 
@@ -22,6 +22,14 @@ To activate Bunny DNS for your domain, update the nameserver records at your dom
 2. Find the domain management or DNS settings
 3. Replace existing nameservers with `kiki.bunny.net` and `coco.bunny.net`
 4. Save the changes
+
+You can verify the delegation has taken effect with the CLI, which does a live nameserver lookup:
+
+```bash
+bunny dns zones nameservers example.com
+```
+
+If the registrar already delegates to Bunny DNS it confirms; otherwise it shows the nameservers to set at your registrar, naming the registrar when it can detect it.
 
 <Info>
   DNS propagation can take up to 48 hours, though changes typically take effect

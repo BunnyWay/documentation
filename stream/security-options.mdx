@@ -31,7 +31,7 @@ If you use Allowed domains and enable Chromecast playback, also add `*.gstatic.c
 
 ## Token Authentication
 
-There are two different types of Token Authentication offered for Stream, we can protect the embed view as well as the actual video files itself. This all depends on how you intend to actually show the video. We've got documentation this [here](/docs/stream-security), but you'll need to use the path style tokens when protecting a HLS stream to ensure we protect the TS files too.
+There are two different types of Token Authentication offered for Stream, we can protect the embed view as well as the actual video files itself. This all depends on how you intend to actually show the video. We've got documentation this [here](/stream/security), but you'll need to use the path style tokens when protecting a HLS stream to ensure we protect the TS files too.
 
 <Note>
   If Token Authentication is enabled and you get a **403 Forbidden**, the most common causes are: the `expires` timestamp is in the past, the token was generated with the wrong key/video ID/expiration combination, or the request is missing the `token` and `expires` query parameters entirely. For HLS, remember to use path-style tokens so the `.ts` segments are signed alongside the playlist.

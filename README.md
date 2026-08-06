@@ -1,20 +1,20 @@
-# docs.bunny.net
+# bunny.net/docs
 
-Welcome to the [bunny.net docs](https://docs.bunny.net) repository. You'll find the source code for all product docs, API references, guides, and more.
+Welcome to the [bunny.net docs](https://bunny.net/docs) repository. You'll find the source code for all product docs, API references, guides, and more.
 
 ## Products
 
 | Product              | Description                                  | Docs                                                                       | Source                                   |
 | -------------------- | -------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------- |
-| **CDN**              | Accelerate and protect your content globally | [docs.bunny.net/cdn](https://docs.bunny.net/cdn)                           | [`/cdn`](/cdn)                           |
-| **Stream**           | Video streaming and delivery platform        | [docs.bunny.net/stream](https://docs.bunny.net/stream)                     | [`/stream`](/stream)                     |
-| **Storage**          | Global object storage                        | [docs.bunny.net/storage](https://docs.bunny.net/storage)                   | [`/storage`](/storage)                   |
-| **Optimizer**        | Automatic image and web optimization         | [docs.bunny.net/optimizer](https://docs.bunny.net/optimizer)               | [`/optimizer`](/optimizer)               |
-| **Magic Containers** | Deploy any app anywhere with Docker          | [docs.bunny.net/magic-containers](https://docs.bunny.net/magic-containers) | [`/magic-containers`](/magic-containers) |
-| **Scripting**        | Deploy serverless code at the edge           | [docs.bunny.net/scripting](https://docs.bunny.net/scripting)               | [`/scripting`](/scripting)               |
-| **Database**         | Serverless SQLite over HTTP                  | [docs.bunny.net/database](https://docs.bunny.net/database)                 | [`/database`](/database)                 |
-| **Shield**           | Stay protected and online no matter what     | [docs.bunny.net/shield](https://docs.bunny.net/shield)                     | [`/shield`](/shield)                     |
-| **DNS**              | Ultra-fast scriptable DNS platform           | [docs.bunny.net/dns](https://docs.bunny.net/dns)                           | [`/dns`](/dns)                           |
+| **CDN**              | Accelerate and protect your content globally | [bunny.net/docs/cdn](https://bunny.net/docs/cdn)                           | [`/cdn`](/cdn)                           |
+| **Stream**           | Video streaming and delivery platform        | [bunny.net/docs/stream](https://bunny.net/docs/stream)                     | [`/stream`](/stream)                     |
+| **Storage**          | Global object storage                        | [bunny.net/docs/storage](https://bunny.net/docs/storage)                   | [`/storage`](/storage)                   |
+| **Optimizer**        | Automatic image and web optimization         | [bunny.net/docs/optimizer](https://bunny.net/docs/optimizer)               | [`/optimizer`](/optimizer)               |
+| **Magic Containers** | Deploy any app anywhere with Docker          | [bunny.net/docs/magic-containers](https://bunny.net/docs/magic-containers) | [`/magic-containers`](/magic-containers) |
+| **Scripting**        | Deploy serverless code at the edge           | [bunny.net/docs/scripting](https://bunny.net/docs/scripting)               | [`/scripting`](/scripting)               |
+| **Database**         | Serverless SQLite over HTTP                  | [bunny.net/docs/database](https://bunny.net/docs/database)                 | [`/database`](/database)                 |
+| **Shield**           | Stay protected and online no matter what     | [bunny.net/docs/shield](https://bunny.net/docs/shield)                     | [`/shield`](/shield)                     |
+| **DNS**              | Ultra-fast scriptable DNS platform           | [bunny.net/docs/dns](https://bunny.net/docs/dns)                           | [`/dns`](/dns)                           |
 
 ## Local Development
 

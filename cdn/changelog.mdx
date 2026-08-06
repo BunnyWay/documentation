@@ -4,6 +4,19 @@ description: Latest updates and improvements to the CDN.
 rss: true
 ---
 
+<Update label="2026-07-31" tags={["New"]}>
+  ## IP Family Policy for Pull Zones
+
+  Pull Zones now support an IP Family Policy that controls which address families (IPv4, IPv6, or both) are advertised and which edge servers are eligible to serve the zone. Four policies are available: IPv4 Only, Dual Stack (default), Dual Stack Prefer IPv6, and IPv6 Only. Token authentication IP locking now supports IPv6 addresses, binding at the client's `/64` prefix. Enabling Token IP Validation pins the zone to a single address family automatically. [Learn more](/cdn/ip-family-policy)
+</Update>
+
+<Update label="2026-07-14" tags={["Improvement"]}>
+  ## HTTP validation for Seamless Domain Migration
+
+  Seamless Domain Migration now supports HTTP (file-based) validation alongside the existing DNS (TXT record) method for issuing SSL certificates before pointing your domain to bunny.net. Choose DNS if you control your domain's DNS records, or HTTP if you can place a challenge file on the server your domain currently points to. [Learn more](/cdn/seamless-migration)
+
+</Update>
+
 <Update label="2026-06-16" tags={["New"]}>
   ## CDN Connectivity documentation
 

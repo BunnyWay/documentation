@@ -1,0 +1,161 @@
+---
+title: Generate a HAR File
+description: Capture a HAR file from your browser so support can see exactly what your browser sent and received from the CDN.
+---
+
+A HAR (HTTP Archive) file is a JSON recording of every request your browser made during a session, including URLs, headers, timings, and response data. When support asks for one, it's the fastest way for us to see what the edge actually returned instead of working from a description.
+
+Exporting one takes about a minute and only uses your browser's built-in developer tools. There's nothing to install.
+
+<Warning>
+  A HAR file can contain cookies, authorization headers, API keys, and request
+  bodies from the pages it captured. Only share it through your support ticket,
+  never publicly. If something in the capture is sensitive, mention it to your
+  support agent instead of sending the file.
+</Warning>
+
+## Before you start
+
+Order matters. Open developer tools and enable log persistence **before** you reproduce the issue, otherwise the recording won't contain the request that failed.
+
+Reproduce the issue against the hostname that's actually affected. If the problem only appears on one Pull Zone hostname, one file type, or from one region, capture it exactly that way — a recording of a working request tells us very little.
+
+## Export a HAR file
+
+<Tabs>
+  <Tab title="Chrome, Edge & Brave">
+    <Steps>
+      <Step title="Open the affected page">
+        Navigate to the page or URL served by your Pull Zone where you're seeing
+        the issue.
+      </Step>
+      <Step title="Open developer tools">
+        Press `F12`, or `Ctrl + Shift + I` on Windows and Linux, or
+        `Cmd + Option + I` on macOS. You can also right-click the page and
+        choose **Inspect**.
+      </Step>
+      <Step title="Switch to the Network tab">
+        Select **Network** in the developer tools toolbar.
+      </Step>
+      <Step title="Enable Preserve log">
+        Tick **Preserve log**. Without it, the request list is cleared on every
+        page reload.
+      </Step>
+      <Step title="Reproduce the issue">
+        Reload the page or repeat the steps that trigger the problem, and wait
+        for it to fail.
+      </Step>
+      <Step title="Save the capture">
+        Right-click anywhere in the request list and choose **Save all as HAR
+        with content**, then pick a location for the file.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Firefox">
+    <Steps>
+      <Step title="Open the affected page">
+        Navigate to the page or URL served by your Pull Zone where you're seeing
+        the issue.
+      </Step>
+      <Step title="Open developer tools">
+        Press `F12`, or `Ctrl + Shift + I` on Windows and Linux, or
+        `Cmd + Option + I` on macOS.
+      </Step>
+      <Step title="Switch to the Network tab">
+        Select **Network** in the developer tools toolbar.
+      </Step>
+      <Step title="Enable Persist Logs">
+        Open the gear menu in the Network panel and make sure **Persist Logs** is
+        checked.
+      </Step>
+      <Step title="Reproduce the issue">
+        Reload the page or repeat the steps that trigger the problem, and wait
+        for it to fail.
+      </Step>
+      <Step title="Save the capture">
+        Right-click anywhere in the request list and choose **Save All As HAR**.
+        The same option is available in the gear menu.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Safari">
+    <Steps>
+      <Step title="Enable developer features">
+        This is a one-time setup. Go to **Safari → Settings → Advanced** and tick
+        **Show features for web developers**. On older versions, the setting is
+        called **Show Develop menu in menu bar**.
+      </Step>
+      <Step title="Open the affected page">
+        Navigate to the page or URL served by your Pull Zone where you're seeing
+        the issue.
+      </Step>
+      <Step title="Open Web Inspector">
+        Press `Cmd + Option + I`, or choose **Develop → Show Web Inspector**.
+      </Step>
+      <Step title="Switch to the Network tab">
+        Select **Network** in the Web Inspector toolbar, then turn on **Preserve
+        Log**.
+      </Step>
+      <Step title="Reproduce the issue">
+        Reload the page or repeat the steps that trigger the problem, and wait
+        for it to fail.
+      </Step>
+      <Step title="Save the capture">
+        Click the export icon in the Network panel toolbar to save the HAR file.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Mobile">
+    Mobile browsers, including iOS Safari and Chrome for Android, can't export a
+    HAR file on the device itself.
+
+    Reproduce the issue in a desktop browser instead. If the problem only happens
+    on mobile, tell your support agent the device, OS version, and browser, and
+    they'll suggest another way to capture the traffic.
+  </Tab>
+</Tabs>
+
+## What to send with the file
+
+Attach the `.har` file to your support ticket along with:
+
+- The exact URL that failed, and the Pull Zone or hostname it belongs to
+- The time the capture was taken, including your time zone
+- The `CDN-RequestId` response header value, which lets us find the request in our logs
+- The `Server` response header, which identifies the PoP that handled the request. See [Find Your PoP and Run Diagnostics](/cdn/troubleshooting/run-traceroute).
+- What you expected to happen, and what happened instead
+
+For latency or routing problems, a [diagnostic report](https://tools.bunny.net/diagnostic-report) alongside the HAR file gives us a fuller picture. See [Connectivity](/cdn/connectivity) for network-level troubleshooting.
+
+Don't have a ticket yet? Open one from the [bunny.net dashboard](https://dash.bunny.net) or email [support@bunny.net](mailto:support@bunny.net).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The capture is empty or missing the failed request">
+    Developer tools only record while they're open. Open the Network panel and
+    enable **Preserve log** or **Persist Logs** first, then reproduce the issue.
+    Requests made before the panel was open aren't recorded.
+  </Accordion>
+  <Accordion title="I can't find Preserve log or Save all as HAR">
+    These options usually go missing on older browser builds. Update to the
+    latest version of Chrome, Edge, Firefox, or Safari and check the Network
+    panel again.
+  </Accordion>
+  <Accordion title="The file is too large to attach">
+    Long captures grow quickly, especially with response content included.
+    Re-record a short capture that contains only the failing request, or
+    compress the `.har` file into a `.zip` before attaching it.
+  </Accordion>
+  <Accordion title="My browser isn't listed">
+    Chromium-based browsers such as Brave, Opera, Vivaldi, and Arc follow the
+    same steps as Chrome and Edge. If yours works differently, let your support
+    agent know which browser and version you're using.
+  </Accordion>
+  <Accordion title="The issue doesn't reproduce in a browser">
+    If the failing request comes from a server, CLI, or mobile app, a HAR file
+    won't capture it. Send us the request and response headers instead, along
+    with the `CDN-RequestId` value and a `curl -v` output if you can produce
+    one.
+  </Accordion>
+</AccordionGroup>

@@ -169,9 +169,8 @@ On Linux, whether a process can delete a file is determined by write permission 
 
 <AccordionGroup>
   <Accordion title="Will I still be charged while my volume is detached from the container?">
-    Persistent volume pricing has not yet taken effect, so you are not currently
-    charged for any volumes. Once billing begins, you will be charged while the
-    volume exists even if it's detached, as it still reserves storage capacity.
+    Yes, you are charged while the volume exists even if it's detached, as it
+    still reserves storage capacity.
   </Accordion>
   <Accordion title="How do volumes scale down?">
     The default behavior means the volume will detach when scaling down.
@@ -197,6 +196,4 @@ On Linux, whether a process can delete a file is determined by write permission 
 
 ## Pricing
 
-<Tip>Persistent volume pricing has not yet taken effect. You will not be charged for using persistent volumes while we gather feedback.</Tip>
-
-When billing begins, pricing will be \$0.10 per GB/month, charged based on the allocated (provisioned) volume size, not the actual used space.
+Pricing is \$0.10 per GB/month, charged based on the allocated (provisioned) volume size.

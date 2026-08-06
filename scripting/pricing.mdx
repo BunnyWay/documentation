@@ -16,18 +16,34 @@ Bunny Scripting pricing is based on two components:
 
 Increments are applied based on the total usage across all scripts, rather than for each individual script.
 
+Billing begins at the first increment, not at the first million. As soon as a script serves a single request, the first increment of each component is charged in full, and all remaining usage within that increment is already covered.
+
 <Info>
-  Note
+The smallest monthly Scripting charge is \$0.22. That is the first CPU Time increment (\$0.02) plus the first Requests increment (\$0.20). You will see it as soon as you start testing a script. It stays at \$0.22 until you pass 1,000,000 requests or 1000s of CPU time. See [Example 1: Minimum usage](#example-1-minimum-usage).
+</Info>
 
+<Info>
 Please note that normal charges for CDN bandwidth are billed separately and are not included in the CPU Time or Requests charges.
-
 </Info>
 
 # Example pricing scenarios
 
 To give you a better idea of how our pricing might translate into actual costs, consider the following examples:
 
-### Example 1: Moderate usage
+### Example 1: Minimum usage
+
+A newly deployed script that serves a single request, consuming 12 milliseconds of CPU time, would have the following estimated costs:
+
+|          | Monthly cost | Calculation                                                             |
+| -------- | ------------ | ----------------------------------------------------------------------- |
+| CPU Time | \$0.02       | 12 ms falls within the first 1,000,000 ms increment \* \$0.02           |
+| Requests | \$0.20       | 1 request falls within the first 1,000,000 request increment \* \$0.20  |
+
+**Total Monthly Cost: \$0.22**
+
+The rest of both increments is already paid for. Every further request that month adds nothing to this total until you pass 1,000,000 requests or 1000s of CPU time, at which point the next increment begins.
+
+### Example 2: Moderate usage
 
 A script that handles 10 million requests per month, with each request consuming an average of 10 milliseconds of CPU time, would have the following estimated costs:
 
@@ -38,7 +54,7 @@ A script that handles 10 million requests per month, with each request consuming
 
 **Total Monthly Cost: $4.00**
 
-### Example 2: High usage
+### Example 3: High usage
 
 A script that handles 100 million requests per month, with each request consuming an average of 7 milliseconds of CPU time, would have the following estimated costs:
 
@@ -49,4 +65,4 @@ A script that handles 100 million requests per month, with each request consumin
 
 **Total Monthly Cost: $34.00**
 
-These examples provide a clear view of how charges are computed based on the actual usage of CPU Time and number of requests. This pricing structure is designed to scale with the size and needs of your operations, ensuring that you only pay for what you use.
+These examples provide a clear view of how charges are computed based on the actual usage of CPU Time and number of requests. Because billing works in whole increments, your cost stays flat within an increment and steps up only when you cross into the next one. This pricing structure is designed to scale with the size and needs of your operations.

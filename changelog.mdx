@@ -4,16 +4,74 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
-<Update label="2026-06-26" tags={["Optimizer","(Improvement)"]}>
-  ## AVIF, HEIC and HEIF are now GA
+<Update label="2026-07-16" tags={["CLI","(New)"]}>
+  ## Cloud sandbox environments via Bunny CLI
 
-  Support for AVIF, HEIC and HEIF as input formats, and AVIF as an output format, has been promoted to [General Availability](/product-release-stages). [Learn more](/optimizer/dynamic-images/formats)
+  The Bunny CLI now supports creating and managing on-demand cloud sandbox environments backed by Bunny Magic Containers. Each sandbox is a fully isolated Ubuntu container with Node.js, Bun, Python, and Claude Code pre-installed, with 10 GB of persistent storage. Create, SSH into, copy files, expose public URLs, and manage environment variables — all from the CLI. [Learn more](/cli/commands/sandbox)
+</Update>
+
+<Update label="2026-07-31" tags={["CDN","(New)"]}>
+  ## IP Family Policy for Pull Zones
+
+  Pull Zones now support an IP Family Policy that controls which address families (IPv4, IPv6, or both) are advertised and which edge servers are eligible to serve the zone. Four policies are available: IPv4 Only, Dual Stack (default), Dual Stack Prefer IPv6, and IPv6 Only. Token authentication IP locking now also supports IPv6 addresses, binding at the client's `/64` prefix. [Learn more](/cdn/ip-family-policy)
+</Update>
+
+<Update label="2026-07-30" tags={["Shield","(New)"]}>
+  ## Verified bot customization for Shield Zones
+
+  Bunny Shield now lets you control how verified bots are handled per Shield Zone — allow, block, or take no action — with per-bot and per-category overrides across seven categories: SEO, AI Scraper, AI Tool, Tool, Ads, Preview, and Social. Verification supports both reverse DNS and published IP range checks, and verified bot categories are exposed to the Rule Engine via the `VERIFIED_BOT_CATEGORY` variable for custom WAF rules. [Learn more](/shield/verified-bots)
+</Update>
+
+<Update label="2026-07-28" tags={["Edge Scripting","(New)"]}>
+  ## Before cache execution for Edge Scripts (Preview)
+
+  Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. When enabled on a Pull Zone, middleware scripts gain two new hooks — `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support this mode, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
+</Update>
+
+<Update label="2026-07-16" tags={["Stream","(Improvement)"]}>
+  ## Bunny Player extended Chromecast support
+
+  We've just updated the Bunny player with a rebuilt Chromecast experience. Casting now supports eDRM (Widevine-protected) videos, closing a long-standing gap versus the legacy player.
+
+  The TV experience feels native, with the video title and thumbnail on screen and player colors and captions appearance (color, font, size, language) synced from the embed.
+
+  Viewers keep full playback control while casting — audio track selection works before and during a session, and playback rate changes apply on the TV. Session handling is seamless too: playback continues from the current position when casting starts and transfers back on stop, with page reloads, replays after the video ends with a smoother experience overall.
+
+  [Learn more](/stream/player-settings)
+</Update>
+
+<Update label="2026-07-01" tags={["Edge Scripting", "(Improvement)"]}>
+  ## Cache API documentation reorganized into dedicated section
+
+  The Edge Scripting Cache API documentation has been restructured from a single page into a multi-page section covering the API overview and limitations, managing default and named caches, reading and writing cache entries (`match`, `put`, `delete`), and end-to-end examples including a new on-demand refresh and purge recipe. The `waitUntil` runtime reference has also been expanded with a full API signature and a cache-population example. [Learn more](/scripting/cache)
+</Update>
+
+
+<Update label="2026-07-14" tags={["CDN","(Improvement)"]}>
+  ## HTTP validation for Seamless Domain Migration
+
+  Seamless Domain Migration now supports HTTP (file-based) validation alongside the existing DNS (TXT record) method for issuing SSL certificates before pointing your domain to bunny.net. Choose DNS if you control your domain's DNS records, or HTTP if you can place a challenge file on the server your domain currently points to. [Learn more](/cdn/seamless-migration)
+
+<Update label="2026-07-10" tags={["Scripting","(New)"]}>
+  ## Symbolic links, timestamps, and permissions in Edge Scripting
+
+  The Edge Scripting Node.js file system module now supports symbolic links (`symlink()`, `readlink()`, `lstat()`), returns correct file timestamps (`atime`, `mtime`, `ctime`, `birthtime`), and enforces owner-level file and directory permissions (`chmod()`, `access()`, `Stats.mode`). [Learn more](/scripting/node-fs)
+</Update>
+
+<Update label="2026-07-09" tags={["Storage","(New)"]}>
+  ## S3 API 'Public Preview' launched
+
+  S3-Compatible API is now available for all! We have also added a new S3 Storage Zone region: Sydney (SYD) & Uploadpart now supports Content-MD5 validation. [Learn more](/storage/s3)
 </Update>
 
 <Update label="2026-06-26" tags={["Optimizer","(Improvement)"]}>
-  ## AVIF, HEIC and HEIF are now GA
+  ## AVIF, HEIC and HEIF are now GAAVIF, HEIC and HEIF are now GA
 
-  Support for AVIF, HEIC and HEIF as input formats, and AVIF as an output format, has been promoted to [General Availability](/product-release-stages). [Learn more](/optimizer/dynamic-images/formats)
+  Support for AVIF, HEIC and HEIF as input formats, and AVIF as an output format, has been promoted to [General Availability](/product-release-stages)Support for AVIF, HEIC and HEIF as input formats, and AVIF as an output format, has been promoted to [General Availability](/product-release-stages). [Learn more](/optimizer/dynamic-images/formats)
+<Update label="2026-06-25" tags={["Edge Scripting","(New)"]}>
+  ## Edge Scripting Runtime API and `waitUntil` documentation
+
+  New Runtime API reference page for Edge Scripting, documenting the `waitUntil` function that allows scripts to continue running after a request completes — useful for maintaining WebSocket connections and background tasks. The WebSocket guide has also been updated with a practical `waitUntil` example. [Learn more](/scripting/runtime)
 </Update>
 
 <Update label="2026-06-23" tags={["Shield","(New)"]}>
@@ -26,12 +84,6 @@ rss: true
   ## Direct play URLs now support query parameters and documentation improvements
 
   Added direct play URL and embed URL examples with query parameters, documented the `-auto` captions flag, and improved cross-linking between Stream pages. Updated MP4 fallback documentation to reflect support for 240p, 360p, 720p & 1080p resolutions. [Learn more](/stream/storage-structure)
-</Update>
-
-<Update label="2026-06-16" tags={["CDN","(New)"]}>
-  ## CDN Connectivity documentation
-
-  New documentation covering IPv4 and IPv6 connectivity across the bunny.net CDN, including network tier support, origin connectivity, CDN Acceleration with dual-stack origins, and Origin Shield for guaranteed IPv6 connectivity. [Learn more](/cdn/connectivity)
 </Update>
 
 <Update label="2026-06-16" tags={["CDN","(New)"]}>
@@ -129,8 +181,7 @@ rss: true
 <Update label="2026-05-01" tags={["Stream","(Improvement)"]}>
   ## Stream 'Add video library' API update
 
-  The Stream 'Add video library' API endpoint can now pre-configure premium encoding, transcribing, video resolutions and more in a single API call.\
-  [Learn more](/api-reference/core/stream-video-library/add-video-library)
+  The Stream 'Add video library' API endpoint can now pre-configure premium encoding, transcribing, video resolutions and more in a single API call.<br />[Learn more](/api-reference/core/stream-video-library/add-video-library)
 </Update>
 
 <Update label="2026-04-30" tags={["Optimizer","(New)"]}>
