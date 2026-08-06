@@ -4,6 +4,12 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-08-06" tags={["Stream","(Improvement)"]}>
+  ## Stream API v1.5.13
+
+  The Stream API added structured error responses to several endpoints. Fetch Video now returns 422 when the origin file cannot be retrieved and 429 when too many fetch jobs are queued. Set Thumbnail returns 400 for invalid requests and 422 for origin fetch failures. Caption upload responses now include validation details via a structured result type. The resolution cleanup endpoint gained `allResolutions` and `outputs` parameters for finer control over which encoded outputs (HLS, MP4, or all) to remove. [Learn more](/stream/http-api)
+</Update>
+
 <Update label="2026-07-31" tags={["CDN","(New)"]}>
   ## IP Family Policy for Pull Zones
 
