@@ -1195,6 +1195,28 @@
             ]
           }
         ]
+      },
+      {
+        "product": "Partner API Reference",
+        "icon": "handshake",
+        "description": "Manage customers, pricing, and billing via the Partner Portal API",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Partner Portal API",
+                "openapi": {
+                  "source": "https://core-api-public-docs.b-cdn.net/docs/v3/PartnerPortal.json",
+                  "directory": "api-reference/partner"
+                },
+                "pages": [
+                  "api-reference/partner/index"
+                ]
+              }
+            ]
+          }
+        ]
       }
     ]
   },
