@@ -5,6 +5,20 @@ description: Monitor your database performance with real-time metrics and usage 
 
 Bunny Database provides detailed metrics to help you monitor performance, track usage, and optimize your queries. Access metrics from **Dashboard > Edge Platform > Database > [Select Database] > Metrics**.
 
+<Tip>
+  Prefer the terminal? The [Bunny CLI](/cli/quickstart) reports usage statistics
+  for a database with `bunny db usage`:
+
+  ```bash
+  bunny db usage                             # current month
+  bunny db usage --period 7d                 # last 7 days
+  bunny db usage --from 2026-01-01 --to 2026-01-31
+  ```
+
+  It shows rows read and written, query count, average latency, and storage. See
+  [`bunny db`](/cli/commands/db) for the full command reference.
+</Tip>
+
 ## Date range
 
 Use the date picker to filter all metrics by a specific time period. Select from preset ranges or define a custom date range to analyze historical performance.

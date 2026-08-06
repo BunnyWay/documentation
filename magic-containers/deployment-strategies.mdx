@@ -32,7 +32,7 @@ Blue/green sidesteps this by keeping the new version completely separate until y
 
 ## Blue/green deployment
 
-The idea: deploy the new version as a **separate container app** while the current version keeps serving, then switch a pull zone's origin from the old endpoint to the new one.
+The idea: deploy the new version as a **separate app** while the current version keeps serving, then switch a pull zone's origin from the old endpoint to the new one.
 
 <Steps>
   <Step title="Deploy the new version as a separate app">
@@ -59,15 +59,52 @@ The idea: deploy the new version as a **separate container app** while the curre
 This pull zone routes to one container version at a time. To cut over, comment out the active block, uncomment the other, and apply:
 
 ```hcl main.tf theme={null}
-resource "bunnynet_dns_zone" "app" {
-  domain = "example.net"
+resource "bunnynet_compute_container_app" "blue" {
+  name    = "my-app-blue"
+  ...
+
+  container {
+    name = "app"
+    image_tag = "2.3.14"
+    ...
+
+    endpoint {
+      name = "app"
+      type = "CDN"
+
+      cdn {
+        origin_ssl = false
+      }
+
+      port {
+        container = 8080
+      }
+    }
+  }
 }
 
-resource "bunnynet_dns_record" "app" {
-  zone  = bunnynet_dns_zone.app.id
-  name  = "*.app"
-  type  = "CNAME"
-  value = "example.b-cdn.net"
+resource "bunnynet_compute_container_app" "green" {
+  name    = "my-app-green"
+  ...
+
+  container {
+    name = "app"
+    image_tag = "3.0.0"
+    ...
+
+    endpoint {
+      name = "app"
+      type = "CDN"
+
+      cdn {
+        origin_ssl = false
+      }
+
+      port {
+        container = 8080
+      }
+    }
+  }
 }
 
 resource "bunnynet_pullzone" "prod" {
@@ -76,29 +113,27 @@ resource "bunnynet_pullzone" "prod" {
   origin {
     type = "ComputeContainer"
 
-    # Blue (current version): inactive
-    # container_app_id      = "BLUE_APP_ID"
-    # container_endpoint_id = "BLUE_APP_ID-http"
+    # Blue
+    container_app_id      = bunnynet_compute_container_app.blue.id
+    container_endpoint_id = bunnynet_compute_container_app.blue.container[0].endpoint[0].id
 
-    # Green (new version): active
-    container_app_id      = "GREEN_APP_ID"
-    container_endpoint_id = "GREEN_APP_ID-http"
+    # Green
+    # container_app_id      = bunnynet_compute_container_app.green.id
+    # container_endpoint_id = bunnynet_compute_container_app.green.container[0].endpoint[0].id
+  }
+
+  routing {
+    tier = "Standard"
   }
 }
 
 resource "bunnynet_pullzone_hostname" "prod" {
   pullzone    = bunnynet_pullzone.prod.id
-  name        = "*.app.example.net"
+  name        = "my-app.example.net"
   tls_enabled = true
   force_ssl   = false
 }
 ```
-
-<Tip>
-  Replace `BLUE_APP_ID` and `GREEN_APP_ID` with your container app IDs. The
-  cutover is a one-line change to which origin block is active.
-</Tip>
-
 <Info>
   For **stateful** workloads such as databases, both versions read and write the
   same data, so the two versions must be compatible with a shared schema. The

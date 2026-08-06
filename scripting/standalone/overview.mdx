@@ -42,6 +42,20 @@ serve(handler: (request: Request) => Response | Promise<Response>)
 
 The handler function receives a standard [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) or `Promise<Response>`.
 
+## Before cache execution
+<Badge color="orange" icon="sparkles">Preview</Badge>
+
+Standalone scripts act as the origin for their Pull Zone, so by default they
+only execute when the cache is missed. If your Pull Zone is configured to
+execute scripts before cache, your script runs on **every request**, before
+the cache lookup.
+
+<Info>
+You can enable it in your Pull Zone under **General** > **Origin** >
+**Run script before cache**, or directly in the script settings. Learn more
+about [before cache execution](/scripting/before-cache).
+</Info>
+
 ## Example
 
 This example demonstrates A/B testing based on a custom header:

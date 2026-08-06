@@ -46,7 +46,7 @@ Initiate certificate issuance using DNS validation:
 
 ```bash
 curl --request POST \
-  --url https://api.bunny.net/pullzone/{id}/requestExternalDnsCertificate \
+  --url https://api.bunny.net/pullzone/requestExternalDnsCertificate \
   --header 'AccessKey: YOUR_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '
@@ -58,7 +58,7 @@ curl --request POST \
 
 This request returns the DNS TXT record required for domain verification.
 
-<Card title="API Reference" href="https://docs.bunny.net/api-reference/core/pull-zone/request-external-dns-certificate">
+<Card title="API Reference" href="/api-reference/core/pull-zone/request-external-dns-certificate">
   View full endpoint documentation
 </Card>
 
@@ -84,7 +84,7 @@ Finalize the process once the TXT record is live:
 
 ```bash
 curl --request POST \
-  --url https://api.bunny.net/pullzone/{id}/completeExternalDnsCertificate \
+  --url https://api.bunny.net/pullzone/completeExternalDnsCertificate \
   --header 'AccessKey: YOUR_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '
@@ -96,7 +96,7 @@ curl --request POST \
 
 This validates the DNS record and issues the certificate.
 
-<Card title="API Reference" href="https://docs.bunny.net/api-reference/core/pull-zone/complete-external-dns-certificate">
+<Card title="API Reference" href="/api-reference/core/pull-zone/complete-external-dns-certificate">
   View full endpoint documentation
 </Card>
 
@@ -116,7 +116,7 @@ Initiate certificate issuance using HTTP validation:
 
 ```bash
 curl --request POST \
-  --url https://api.bunny.net/pullzone/{id}/requestExternalHttpCertificate \
+  --url https://api.bunny.net/pullzone/requestExternalHttpCertificate \
   --header 'AccessKey: YOUR_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '
@@ -128,7 +128,7 @@ curl --request POST \
 
 This request returns the challenge file's path and its contents (`FilePath` and `FileContent`).
 
-<Card title="API Reference" href="https://docs.bunny.net/api-reference/core/pull-zone/request-external-http-certificate">
+<Card title="API Reference" href="/api-reference/core/pull-zone/request-external-http-certificate">
   View full endpoint documentation
 </Card>
 
@@ -152,7 +152,7 @@ Finalize the process once the file is reachable:
 
 ```bash
 curl --request POST \
-  --url https://api.bunny.net/pullzone/{id}/completeExternalHttpCertificate \
+  --url https://api.bunny.net/pullzone/completeExternalHttpCertificate \
   --header 'AccessKey: YOUR_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '
@@ -164,7 +164,7 @@ curl --request POST \
 
 This fetches the challenge file and issues the certificate.
 
-<Card title="API Reference" href="https://docs.bunny.net/api-reference/core/pull-zone/complete-external-http-certificate">
+<Card title="API Reference" href="/api-reference/core/pull-zone/complete-external-http-certificate">
   View full endpoint documentation
 </Card>
 
