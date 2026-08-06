@@ -61,6 +61,131 @@ Example code:
 
 The embed code for a particular video can be generated on the video details page in the dashboard.
 
+## How to embed vertical portrait (9:16) mobile video
+
+Portrait (9:16) video is common for mobile-first content, short-form clips, and social-style players. By default, the Stream embed renders in landscape (16:9). This guide shows you how to adjust it for vertical video.
+
+#### Basic embed
+
+The standard Stream embed code wraps the iframe in a div with `padding-top: 56.25%` to maintain a 16:9 ratio:
+
+To embed portrait video, you have two options: the **wrapper approach** (broader compatibility) or the **direct approach** (simpler, modern browsers only).
+
+#### Option 1: Direct aspect-ratio (recommended)
+
+For modern browsers, you can apply `aspect-ratio` directly to the iframe and remove the wrapper div entirely.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portrait Video</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    body {
+      background: #000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+ 
+    iframe {
+      width: min(100vw, calc(100vh * 9 / 16));
+      aspect-ratio: 9 / 16;
+      border: 0;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <iframe
+    src="https://player.mediadelivery.net/embed/{library_id}/{video_id}?autoplay=true&loop=true&muted=true&preload=true&responsive=true"
+    loading="lazy"
+    allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen;"
+    allowfullscreen="true">
+  </iframe>
+</body>
+</html>
+```
+
+The key CSS properties are:
+
+- `aspect-ratio: 9 / 16` - locks the iframe to portrait proportions
+- `width: min(100vw, calc(100vh * 9 / 16))` - scales the player to fill the viewport without overflow on any screen size
+- `display: block` - removes the default inline gap beneath the iframe
+
+<Note>
+  This approach requires a browser that supports the `aspect-ratio` CSS property (Chrome 88\+, Firefox 89\+, Safari 15\+). For broader compatibility, use Option 2 below.
+</Note>
+
+#### Option 2: Wrapper div
+
+If you need to support older browsers or want more control (e.g. overlaying UI elements on top of the player), use a wrapper div instead.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portrait Video</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    body {
+      background: #000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+ 
+    .video-wrapper {
+      position: relative;
+      width: min(100vw, calc(100vh * 9 / 16));
+      aspect-ratio: 9 / 16;
+    }
+ 
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="video-wrapper">
+    <iframe
+      src="https://player.mediadelivery.net/embed/{library_id}/{video_id}?autoplay=true&loop=true&muted=true&preload=true&responsive=true"
+      loading="lazy"
+      allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen;"
+      allowfullscreen="true">
+    </iframe>
+  </div>
+</body>
+</html>
+```
+
+The wrapper approach works by:
+
+1. Sizing the **wrapper div** to the correct portrait dimensions
+2. Stretching the **iframe** to fill it absolutely with `position: absolute; width: 100%; height: 100%` Use this approach when you need to layer overlays, captions, or buttons on top of the player.
+
 ## Parameters
 
 By default, many of the player’s controls and behaviors, such as captions, autoplay, and preload, can be configured on a global scale within the Player tab of your Bunny Stream library settings. Adjusting these default configurations ensures that any video embedded from that library inherits the same baseline behavior, providing a consistent user experience across all embedded instances.
