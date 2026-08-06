@@ -19,17 +19,11 @@ Increments are applied based on the total usage across all scripts, rather than 
 Billing begins at the first increment, not at the first million. As soon as a script serves a single request, the first increment of each component is charged in full, and all remaining usage within that increment is already covered.
 
 <Info>
-  Note
-
-The smallest possible monthly Scripting charge is $0.22: the first CPU Time increment ($0.02) plus the first Requests increment ($0.20). You will see this amount as soon as you begin testing a script, and it will not increase until you pass 1,000,000 requests or 1000s of CPU time. See [Example 1: Minimum usage](#example-1-minimum-usage).
-
+The smallest monthly Scripting charge is \$0.22. That is the first CPU Time increment (\$0.02) plus the first Requests increment (\$0.20). You will see it as soon as you start testing a script. It stays at \$0.22 until you pass 1,000,000 requests or 1000s of CPU time. See [Example 1: Minimum usage](#example-1-minimum-usage).
 </Info>
 
 <Info>
-  Note
-
 Please note that normal charges for CDN bandwidth are billed separately and are not included in the CPU Time or Requests charges.
-
 </Info>
 
 # Example pricing scenarios
@@ -40,12 +34,12 @@ To give you a better idea of how our pricing might translate into actual costs, 
 
 A newly deployed script that serves a single request, consuming 12 milliseconds of CPU time, would have the following estimated costs:
 
-|          | Monthly cost | Calculation                                                           |
-| -------- | ------------ | --------------------------------------------------------------------- |
-| CPU Time | $0.02        | 12 ms falls within the first 1,000,000 ms increment \* $0.02          |
-| Requests | $0.20        | 1 request falls within the first 1,000,000 request increment \* $0.20 |
+|          | Monthly cost | Calculation                                                             |
+| -------- | ------------ | ----------------------------------------------------------------------- |
+| CPU Time | \$0.02       | 12 ms falls within the first 1,000,000 ms increment \* \$0.02           |
+| Requests | \$0.20       | 1 request falls within the first 1,000,000 request increment \* \$0.20  |
 
-**Total Monthly Cost: $0.22**
+**Total Monthly Cost: \$0.22**
 
 The rest of both increments is already paid for. Every further request that month adds nothing to this total until you pass 1,000,000 requests or 1000s of CPU time, at which point the next increment begins.
 
