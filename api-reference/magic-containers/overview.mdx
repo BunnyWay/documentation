@@ -26,3 +26,12 @@ curl --request GET \
   Find your API key in the [account API
   Keys](https://dash.bunny.net/account/api-key).
 </Note>
+
+## Metric units
+
+Some fields returned by the API report usage in different units:
+
+- **CPU** (for example, `averageCPU`) is reported **relative to your application's CPU limit**, not as an absolute number of cores. On the dynamic runtime the limit is 8 CPUs, so the value is roughly 12.5× the number of cores the container actually uses. To convert it to absolute cores, multiply by the CPU limit and divide by 100.
+- **RAM** (for example, `averageRAM`) is reported as an **absolute value**.
+
+For a full explanation of the dashboard metrics and how CPU usage relates to your CPU limit, see [Monitoring](/magic-containers/monitoring).
