@@ -136,26 +136,24 @@ Define the `onFpEncrypted` function to handle the 'encrypted' event. It fetches 
 ````
 </CodeGroup>
 
-Implement the `getResponse` function to send the SPC message to the FairPlay server and obtain the CKC for the encrypted session.
+Implement the `getResponse` function to send the SPC message to the FairPlay server and obtain the CKC for the encrypted session. The license endpoint expects the raw SPC bytes as the request body (no JSON wrapper, no `Content-Type` override) and returns the raw CKC bytes directly:
 
 <CodeGroup>
 ```bash bash
 async function getResponse(event, license_server_url) {
-    // need to convert the message to Base64 string
-    let spc_string = btoa(String.fromCharCode.apply(null, new Uint8Array(event.message)));
     let licenseResponse = await fetch(license_server_url, {
         method: 'POST',
-        headers: new Headers({'Content-type': 'application/json'}),
-        body: JSON.stringify({
-            "spc" : spc_string
-        }),
+        body: event.message,
     });
-    let responseObject = await licenseResponse.json();
-    return Uint8Array.from(atob(responseObject.ckc), c => c.charCodeAt(0));
+    return await licenseResponse.arrayBuffer();
 }
 ````
 
 </CodeGroup>
+
+<Warning>
+  Do not set a `Content-Type: application/json` header or wrap the SPC in a `{"spc": "..."}` JSON payload — that format belongs to the deprecated `/FairPlayLicense/{library_id}/{video_id}` endpoint and will cause the current `/FairPlay/{library_id}/license` endpoint to fail with an internal server error, since it expects and returns raw binary data.
+</Warning>
 
 Place the following script block in the 'head' section or in a separate JavaScript file. This code ensures that video playback starts when the page is loaded.
 
