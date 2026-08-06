@@ -93,6 +93,10 @@ When enabled, Bunny sends a `CDN-MobileDevice` header to your origin with a valu
 Varies the cache based on specific cookie values. When enabled, enter the cookie names you want to use as part of the cache key.
 
 <Note>
+  **Still seeing cookies on your CDN domain after enabling Disable Cookies?** The Disable Cookies feature strips `Set-Cookie` headers traveling over the CDN, but it can't remove wildcard cookies, for example a `.example.com` cookie set by Google Analytics, because those are set directly by your main domain rather than the CDN. They have practically no performance impact. To avoid them entirely, serve the CDN from a domain that isn't a subdomain of your site, or use the `b-cdn.net` hostname.
+</Note>
+
+<Note>
   Custom header-based vary is available via internal configuration. Contact
   [support@bunny.net](mailto:support@bunny.net) if you need to vary cache on a
   header not listed here.

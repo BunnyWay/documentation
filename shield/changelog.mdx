@@ -1,8 +1,21 @@
 ---
 title: Changelog
 description: Latest updates and improvements to Shield.
-hidden: true
+rss: true
 ---
+
+<Update label="2026-07-30" tags={["New"]}>
+  ## Verified bot customization
+
+  You can now control how Bunny Shield handles verified bots per Shield Zone — allow, block, or take no action — with per-bot and per-category overrides across seven categories: SEO, AI Scraper, AI Tool, Tool, Ads, Preview, and Social. Verification supports both reverse DNS and published IP range checks. Verified bot categories are also exposed to the Rule Engine via the `VERIFIED_BOT_CATEGORY` variable, enabling custom WAF rules that key off verified bot identity. [Learn more](/shield/verified-bots)
+</Update>
+
+<Update label="2026-06-23" tags={["New"]}>
+  ## Custom Response Pages
+
+  Customize the challenge, block, and rate limit pages shown to visitors when Bunny Shield takes action. Replace default response pages with fully branded HTML experiences that match your website, including custom styling, messaging, and support information. Available on Advanced and higher Shield plans. [Learn more](/shield/custom-response-pages)
+
+</Update>
 
 <Update label="2026-04-27" tags={["New"]}>
   ## API Guardian

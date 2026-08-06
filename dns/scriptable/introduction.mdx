@@ -3,6 +3,103 @@ title: "Introduction"
 description: "The Scriptable DNS allows you to dynamically respond to DNS queries using JavaScript scripts. The following pages contain sample documentation to help you get started."
 ---
 
+## Quickstart
+
+Create a DNS script, test it, publish it, and attach it to a hostname in your zone.
+
+<Tabs>
+  <Tab title="Dashboard">
+    <Steps>
+      <Step title="Create a DNS Script">
+        In the bunny.net dashboard, go to [**DNS Scripts**](https://dash.bunny.net/dns/scripts) and click **Add DNS Script**.
+      </Step>
+
+      <Step title="Write your script">
+        The Code editor opens with a starter script that answers every query with a TXT record:
+
+        ```javascript
+        /*
+            Handle the DNS query!
+        */
+        export default function handleQuery(event) {
+            return new TxtRecord("Hello world!");
+        }
+        ```
+
+        Edit the script to return the response you need, such as an `ARecord` for IP-based routing. See the [entry function](#entry-function) below for the query details available to your script.
+      </Step>
+
+      <Step title="Test it">
+        Use the fields below the editor to simulate a query: set the **Type**, **Hostname**, **Client IP**, **EDNS IP**, and **Location**, then click **Run**.
+
+        The **Response** panel shows the DNS response your script returned, so you can try different request parameters and evaluate how your script behaves. Output from `console.log` appears in the **Console** tab.
+      </Step>
+
+      <Step title="Publish the script">
+        Click **Save** to store your changes, then **Publish** to make the script live.
+      </Step>
+
+      <Step title="Attach it to a DNS Zone">
+        A script only answers queries once a record points at it:
+
+        1. Go to **DNS** and select your DNS Zone
+        2. Click **Add DNS Record**
+        3. Enter a **Hostname**
+        4. Select **SCR** as the **Type**
+        5. Select the script you just published in the **Script** dropdown
+        6. Click **Add Record**
+
+        Queries for that hostname are now answered by your script.
+      </Step>
+    </Steps>
+
+  </Tab>
+  <Tab title="CLI">
+    <Note>
+      Don't have the CLI installed? See the [CLI quickstart](/cli/quickstart) to install and authenticate.
+    </Note>
+
+    <Steps>
+      <Step title="Scaffold a project">
+        ```bash
+        bunny dns scripts init hello-dns
+        ```
+
+        This writes a `handleQuery` entry file, a `tsconfig.json`, and a `package.json` with the [type definitions](#type-safety) preconfigured, and links the directory to the script. Pass `--example` to start from a template (`empty`, `geo`, `closest`, `weighted`, `failover`, `pullzone`).
+      </Step>
+
+      <Step title="Write your script">
+        Edit the entry file to return the response you need. See the [entry function](#entry-function) below for the query details available to your script.
+      </Step>
+
+      <Step title="Deploy the script">
+        Upload and publish the linked script's entry file:
+
+        ```bash
+        bunny dns scripts deploy
+        ```
+      </Step>
+
+      <Step title="Attach it to a DNS Zone">
+        A script only answers queries once a record points at it. Add a `SCRIPT` record to a zone:
+
+        ```bash
+        bunny dns scripts attach example.com api
+        ```
+
+        The command confirms before writing the record. Verify it by querying the record type your script answers:
+
+        ```bash
+        dig api.example.com A
+        ```
+      </Step>
+    </Steps>
+
+    See the [`bunny dns` command reference](/cli/commands/dns) for the full list of script commands.
+
+  </Tab>
+</Tabs>
+
 ## Entry function
 
 The Scriptable DNS pipeline executes through a statically defined function **handleQuery**.
@@ -50,3 +147,41 @@ The entry function is passed a DnsRequest object parameter called **query** that
 | `longitude` | double | The longitude location of the client                   |
 | `country`   | string | The detected two letter ISO country code of the client |
 | `asn`       | long   | The detected ASN number of the client                  |
+
+## Type safety
+
+The Scriptable DNS runtime injects its globals (such as `ARecord` and the other [response object types](/dns/scriptable/query-response-object-types)) directly into your script, and does not support `import`. The [`@bunny.net/scriptable-dns-types`](https://github.com/BunnyWay/cli/tree/main/packages/scriptable-dns-types) package provides ambient TypeScript declarations for these globals, giving you editor autocomplete and optional type checking without any runtime imports.
+
+Install it as a development dependency:
+
+```bash
+npm install --save-dev @bunny.net/scriptable-dns-types
+```
+
+Then reference the types from within your script file with a triple-slash directive:
+
+```javascript
+/// <reference types="@bunny.net/scriptable-dns-types" />
+
+/** @param {DnsRequest} query */
+export default function handleQuery(query) {
+  if (query.request.geoLocation.country === "DE") {
+    return new ARecord("203.0.113.20", 30);
+  }
+  return new ARecord("203.0.113.10", 30);
+}
+```
+
+Or enable them project-wide through `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "types": ["@bunny.net/scriptable-dns-types"]
+  }
+}
+```
+

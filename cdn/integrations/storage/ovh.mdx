@@ -1,5 +1,39 @@
 ---
 title: OVH Public Cloud
 description: Use bunny.net CDN with OVH Public Cloud storage for faster file delivery and improved global performance.
-url: https://support.bunny.net/hc/en-us/articles/360017976692-How-to-speed-up-your-OVH-Public-Cloud-file-delivery-with-BunnyCDN
 ---
+
+Bunny CDN caches files from your OVH Public Cloud storage container and delivers them from a global edge network, speeding up delivery and reducing bandwidth costs. This guide walks you through the setup in three steps.
+
+<Tip>
+  Prefer to keep your files on bunny.net? [Bunny Storage](/storage) is globally replicated object storage with tight CDN integration, and it offers an [S3-compatible API](/storage/s3) (currently in beta).
+</Tip>
+
+<Steps>
+  <Step title="Configure your OVH storage container and upload some files">
+    If you don't already have an OVH Public Cloud storage container, set one up following [OVH's guide](https://docs.ovh.com/gb/en/storage/pcs/create-container/). Bunny CDN works with both the **Static hosting** and **Public** container options.
+  </Step>
+  <Step title="Find your container URL">
+    Once your container is created, copy the full container URL from the container page. This forms the basis of your Pull Zone, so you can append a file path inside the container to your Pull Zone hostname.
+
+    <Frame>
+      ![The OVH container URL](/images/cdn/integrations/storage/ovh-container-url.png)
+    </Frame>
+  </Step>
+  <Step title="Create a Pull Zone">
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and create a new Pull Zone. Give it a name (this becomes your CDN hostname), paste the container URL into the **Origin URL** field, choose your pricing tier, and click **Add Pull Zone**. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+
+    <Frame>
+      ![Adding a Pull Zone with the OVH container as origin](/images/cdn/integrations/storage/ovh-add-pull-zone.png)
+    </Frame>
+  </Step>
+  <Step title="Test your Pull Zone">
+    Once the configuration has synced to the edge network, append a file name to your Pull Zone hostname, for example:
+
+    ```
+    https://ovhstorage.b-cdn.net/bunny.png
+    ```
+
+    If the file is served, Bunny CDN is caching content from your container. Replace your container URLs with the Bunny CDN URLs in your application to start serving cached content.
+  </Step>
+</Steps>

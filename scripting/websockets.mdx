@@ -30,9 +30,16 @@ BunnySDK.net.http.serve(async (request: Request) => {
     socket.send(`Echo: ${event.data}`);
   });
 
-  socket.addEventListener("close", (event) => {
-    console.log("Client disconnected:", event.code, event.reason);
+  const closed = new Promise<void>((resolve) => {
+    socket.addEventListener("close", (event) => {
+      console.log("Client disconnected:", event.code, event.reason);
+      resolve();
+    });
   });
+
+  // It is important to call waitUntil; otherwise the script may be evicted
+  // while the WebSocket connection is still open.
+  Bunny.v1.waitUntil(closed);
 
   return response;
 });
@@ -273,3 +280,4 @@ socket.addEventListener("error", (event) => {
 
 - [WebSocket Protocol](https://www.rfc-editor.org/rfc/rfc6455.htm)
 - [WebSocket mdn Specification](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/)
+- [Runtime - waitUntil](./runtime#waituntil)

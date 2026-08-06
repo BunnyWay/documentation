@@ -1,0 +1,43 @@
+---
+title: Joomla
+description: Speed up your Joomla website with bunny.net CDN using the CDN for Joomla plugin.
+---
+
+Joomla can serve assets through Bunny CDN using the [CDN for Joomla plugin](https://www.regularlabs.com/extensions/cdnforjoomla) by Regular Labs, which rewrites your content URLs to serve them through the CDN.
+
+<Note>
+  The free version of the CDN for Joomla plugin only supports HTTP URLs. To use HTTPS URLs, you'll need the paid version.
+</Note>
+
+<Steps>
+  <Step title="Install the CDN for Joomla plugin">
+    Download the plugin from the [Regular Labs site](https://www.regularlabs.com/extensions/cdnforjoomla). In your Joomla admin, go to **Extensions → Manage → Install**, then upload the ZIP file you downloaded.
+
+    <Frame>
+      ![Installing the CDN for Joomla plugin](/images/cdn/integrations/cms/joomla-install-plugin.png)
+    </Frame>
+  </Step>
+  <Step title="Open the plugin configuration">
+    Go to **Extensions → Manage → Manage**, use the search to find the CDN plugin, then click it to open its configuration page and switch to the **Setup** tab.
+
+    <Frame>
+      ![Finding the CDN plugin](/images/cdn/integrations/cms/joomla-find-plugin.png)
+    </Frame>
+  </Step>
+  <Step title="Create a Pull Zone">
+    In your [bunny.net dashboard](https://dash.bunny.net), create a new Pull Zone with a name, set the origin URL to your website, choose your tier, and click **Add Pull Zone**. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+
+    <Frame>
+      ![Creating a Pull Zone](/images/cdn/integrations/cms/joomla-create-pull-zone.png)
+    </Frame>
+  </Step>
+  <Step title="Set the CDN Domain">
+    Back on the plugin's **Setup** tab, enter your Pull Zone hostname (the `b-cdn.net` hostname) in the **CDN Domain** field, then click **Save**.
+
+    <Frame>
+      ![Setting the CDN Domain](/images/cdn/integrations/cms/joomla-cdn-domain.png)
+    </Frame>
+  </Step>
+</Steps>
+
+Your Joomla site now serves content through Bunny CDN.

@@ -1,5 +1,44 @@
 ---
 title: Wasabi
 description: Speed up Wasabi cloud storage delivery with bunny.net CDN for global caching and faster file access.
-url: https://support.bunny.net/hc/en-us/articles/360018329232-How-to-speed-up-Wasabi-file-delivery-with-BunnyCDN
 ---
+
+Bunny CDN caches files from your Wasabi bucket and delivers them from a global edge network, speeding up delivery affordably. This guide walks you through the setup in three steps.
+
+<Tip>
+  Prefer to keep your files on bunny.net? [Bunny Storage](/storage) is globally replicated object storage with tight CDN integration, and it offers an [S3-compatible API](/storage/s3) (currently in beta).
+</Tip>
+
+<Steps>
+  <Step title="Configure your Wasabi bucket and upload some files">
+    If you don't already have a Wasabi bucket with some data in it, set one up first. Wasabi has a [tutorial video](https://www.youtube.com/watch?v=VSmSYDCuOEg) covering this.
+  </Step>
+  <Step title="Create a Pull Zone">
+    First, work out your bucket's URL. Navigate to `https://s3.wasabisys.com/BUCKETNAME/filepath` and you'll be redirected to the region that hosts your bucket, giving a URL like:
+
+    ```
+    https://s3.us-west-1.wasabisys.com/bunnycdn/bunnycdn.png
+    ```
+
+    For the Pull Zone origin, drop the file path and keep the bucket URL:
+
+    ```
+    https://s3.us-west-1.wasabisys.com/bunnycdn/
+    ```
+
+    Log in to your [bunny.net dashboard](https://dash.bunny.net) and create a new Pull Zone. Give it a name (this becomes your CDN hostname), paste the bucket URL into the **Origin URL** field, choose your pricing tier, and click **Add Pull Zone**. For details, see [How to create your first Pull Zone](/cdn/quickstart).
+
+    <Frame>
+      ![Adding a Pull Zone with the Wasabi bucket as origin](/images/cdn/integrations/storage/wasabi-add-pull-zone.png)
+    </Frame>
+  </Step>
+  <Step title="Test your Pull Zone">
+    Once the configuration has synced to the edge network, append a file name to your Pull Zone hostname, for example:
+
+    ```
+    https://wasabitest.b-cdn.net/bunnycdn.png
+    ```
+
+    If the file is served, Bunny CDN is caching content from your bucket. Replace your Wasabi URLs with the Bunny CDN URLs in your application to start serving cached content.
+  </Step>
+</Steps>

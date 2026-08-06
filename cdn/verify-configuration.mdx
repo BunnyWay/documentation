@@ -1,5 +1,51 @@
 ---
-title: Check if your website is correctly configured
+title: Verify your configuration
 description: Verify that your website is properly configured to use bunny.net CDN.
-url:
 ---
+
+After integrating your website with bunny.net, it's worth confirming that everything is configured correctly for optimal performance and delivery. This article covers a few ways to check that bunny.net is working and to test how your website performance has improved around the world.
+
+## Check the network requests and source code
+
+After setting up bunny.net, you'll want to confirm that your website is serving assets from the CDN, especially if you're using a third party plugin such as WordPress.
+
+<Steps>
+  <Step title="Open your browser developer tools">
+    Open your website in your browser and press `Ctrl + Shift + I` (or `Cmd + Option + I` on macOS) to open the developer tools.
+  </Step>
+
+  <Step title="Inspect the image requests">
+    Click on the **Network** tab, select the **Img** filter, and refresh the page.
+
+    If everything is set up correctly, you'll see a list of requests to the image files on your website.
+  </Step>
+
+  <Step title="Confirm the hostname">
+    Hover over a request to see the full image URL, and pay attention to the hostname the file was served from.
+
+    If the images are served from the hostname configured in your bunny.net account, such as `yourzone.b-cdn.net`, your website is successfully integrated with bunny.net and serving data from it.
+  </Step>
+</Steps>
+
+You can do the same by opening the source code of your website with `Ctrl + U`. This shows the code used to render your page, where you can check that the URLs to static files such as images, CSS, and JavaScript are using the correct bunny.net hostname.
+
+## Check your statistics and cache hit rate
+
+Another simple way to confirm that bunny.net is serving your data is to open the **Statistics** page in your [bunny.net dashboard](https://dash.bunny.net) under **Monitoring** > **Statistics**.
+
+If you see traffic and requests there, it's a positive sign that bunny.net is delivering traffic for your website.
+
+Pay attention to the cache hit rate at the bottom of the statistics page. A cache hit rate below 50%, particularly with decent traffic, suggests configuration issues.
+
+<Note>
+  For help improving a low cache hit rate, see [Smart Cache](/cdn/smart-cache) and the [Website Still Slow](/cdn/troubleshooting/still-slow) troubleshooting guide.
+</Note>
+
+## Test with a performance testing tool
+
+Once you've confirmed your setup, you can see how fast your website performs and find ways to improve it further. See [Website Still Slow](/cdn/troubleshooting/still-slow) for a list of easy to use performance testing tools.
+
+When testing, remember to:
+
+- Perform multiple tests, especially if you've recently created a new zone, to give bunny.net enough time to cache your website.
+- Treat any errors or slow performance as a sign of unresolved issues. For more information, see our [troubleshooting](/cdn/troubleshooting/still-slow) articles.

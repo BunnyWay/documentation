@@ -18,6 +18,9 @@
   "interaction": {
     "drilldown": false
   },
+  "metadata": {
+    "timestamp": true
+  },
   "navbar": {
     "primary": {
       "type": "button",
@@ -26,7 +29,7 @@
     },
     "links": [
       {
-        "href": "https://docs.bunny.net/api-reference",
+        "href": "https://bunny.net/docs/api-reference",
         "label": "API Reference"
       },
       {
@@ -56,7 +59,12 @@
             "groups": [
               {
                 "group": "bunny.net",
-                "pages": ["index", "quickstart", "faq", "changelog"]
+                "pages": [
+                  "index",
+                  "quickstart",
+                  "faq",
+                  "changelog"
+                ]
               },
               {
                 "group": "Accounts & Billing",
@@ -72,7 +80,10 @@
                       "account/api-keys",
                       "account/integrations",
                       "account/data-processing-agreement",
-                      "account/close-account"
+                      "account/close-account",
+                      "account/account-suspended",
+                      "account/abuse-procedure",
+                      "account/dmca-procedure"
                     ]
                   },
                   {
@@ -106,7 +117,10 @@
               },
               {
                 "group": "Product",
-                "pages": ["product-release-stages", "domains"]
+                "pages": [
+                  "product-release-stages",
+                  "domains"
+                ]
               }
             ]
           }
@@ -128,7 +142,9 @@
                   "cdn/regions",
                   "cdn/pricing",
                   "cdn/changelog",
-                  "cdn/limits"
+                  "cdn/limits",
+                  "cdn/connectivity",
+                  "cdn/ip-family-policy"
                 ]
               },
               {
@@ -173,6 +189,7 @@
                     "group": "Security",
                     "pages": [
                       "cdn/security/hotlink-protection",
+                      "cdn/security/geographic-blocking",
                       {
                         "group": "Token Authentication",
                         "pages": [
@@ -203,6 +220,7 @@
                     "pages": [
                       "cdn/integrations/cms/wordpress",
                       "cdn/integrations/cms/typo3",
+                      "cdn/integrations/cms/joomla",
                       "cdn/integrations/cms/expressionengine",
                       "cdn/integrations/cms/shopware",
                       "cdn/integrations/cms/drupal",
@@ -229,21 +247,30 @@
                 "pages": [
                   "cdn/custom-hostname",
                   "cdn/cdn-acceleration",
+                  "cdn/verify-configuration",
                   "cdn/ssl-setup",
                   "cdn/seamless-migration",
                   "cdn/custom-404-page",
                   "cdn/websockets",
                   {
+                    "group": "Frequently Asked Questions",
+                    "pages": [
+                      "cdn/frequently-asked-questions/etag-support",
+                      "cdn/frequently-asked-questions/cache-warming",
+                      "cdn/frequently-asked-questions/updating-files",
+                      "cdn/frequently-asked-questions/range-requests",
+                      "cdn/frequently-asked-questions/rtmp-streaming",
+                      "cdn/frequently-asked-questions/domain-limit",
+                      "cdn/frequently-asked-questions/mime-compression",
+                      "cdn/frequently-asked-questions/pop-routing"
+                    ]
+                  },
+                  {
                     "group": "Troubleshooting",
                     "pages": [
-                      "cdn/troubleshooting/unexpected-redirects",
-                      "cdn/troubleshooting/cookies-still-sent",
                       "cdn/troubleshooting/run-traceroute",
-                      "cdn/troubleshooting/still-slow",
-                      "cdn/troubleshooting/301-redirects",
-                      "cdn/troubleshooting/502-504-errors",
-                      "cdn/troubleshooting/low-cache-hit-rate",
-                      "cdn/troubleshooting/lets-encrypt-issues"
+                      "cdn/troubleshooting/generate-a-har-file",
+                      "cdn/troubleshooting/still-slow"
                     ]
                   }
                 ]
@@ -287,7 +314,14 @@
                   "magic-containers/deploy-with-github-actions",
                   "magic-containers/image-registries",
                   "magic-containers/regions",
-                  "magic-containers/ip-addresses"
+                  "magic-containers/ip-addresses",
+                  {
+                    "group": "Bunny Container Registry",
+                    "hidden": true,
+                    "pages": [
+                      "magic-containers/bunny-container-registry"
+                    ]
+                  }
                 ]
               },
               {
@@ -316,6 +350,7 @@
                 "pages": [
                   "magic-containers/autoscaling",
                   "magic-containers/rolling-updates",
+                  "magic-containers/deployment-strategies",
                   "magic-containers/graceful-shutdown",
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
@@ -336,7 +371,9 @@
                 "pages": [
                   {
                     "group": "Go",
-                    "pages": ["magic-containers/guides/simple-go-api"]
+                    "pages": [
+                      "magic-containers/guides/simple-go-api"
+                    ]
                   },
                   {
                     "group": "Node.js",
@@ -347,11 +384,15 @@
                   },
                   {
                     "group": "PHP",
-                    "pages": ["magic-containers/guides/php-slim"]
+                    "pages": [
+                      "magic-containers/guides/php-slim"
+                    ]
                   },
                   {
                     "group": "Python",
-                    "pages": ["magic-containers/guides/python-fastapi"]
+                    "pages": [
+                      "magic-containers/guides/python-fastapi"
+                    ]
                   },
                   {
                     "group": "Web Frameworks",
@@ -365,7 +406,9 @@
                   },
                   {
                     "group": "Apps",
-                    "pages": ["magic-containers/guides/wordpress"]
+                    "pages": [
+                      "magic-containers/guides/wordpress"
+                    ]
                   },
                   {
                     "group": "Databases",
@@ -413,7 +456,9 @@
                           "scripting/standalone/examples/return-json",
                           "scripting/standalone/examples/return-html",
                           "scripting/standalone/examples/send-email",
-                          "scripting/standalone/examples/redirect-domain"
+                          "scripting/standalone/examples/redirect-domain",
+                          "scripting/standalone/examples/weighted-routing",
+                          "scripting/standalone/examples/geo-routing"
                         ]
                       }
                     ]
@@ -445,11 +490,25 @@
               },
               {
                 "group": "Observability",
-                "pages": ["scripting/statistics", "scripting/logs"]
+                "pages": [
+                  "scripting/statistics",
+                  "scripting/logs"
+                ]
               },
               {
                 "group": "APIs",
                 "pages": [
+                  "scripting/runtime",
+                  {
+                    "group": "Cache API",
+                    "tag": "Preview",
+                    "pages": [
+                      "scripting/cache/index",
+                      "scripting/cache/managing-caches",
+                      "scripting/cache/reading-writing",
+                      "scripting/cache/examples"
+                    ]
+                  },
                   "scripting/html-rewriter",
                   "scripting/node-fs",
                   "scripting/websockets"
@@ -457,7 +516,11 @@
               },
               {
                 "group": "Reference",
-                "pages": ["scripting/limits", "scripting/api-reference"]
+                "pages": [
+                  "scripting/limits",
+                  "scripting/before-cache",
+                  "scripting/api-reference"
+                ]
               }
             ]
           }
@@ -488,7 +551,6 @@
                     "group": "Encoding",
                     "pages": [
                       "stream/encoding",
-                      "stream/video-specification",
                       "stream/adaptive-bitrate",
                       "stream/multi-audio"
                     ]
@@ -500,18 +562,28 @@
                     "group": "MediaCage DRM",
                     "pages": [
                       "stream/drm/index",
-                      "stream/mediacage-basic",
-                      "stream/mediacage-basic-guide",
                       "stream/quickstart-mediacage-basic",
-                      "stream/mediacage-enterprise",
                       "stream/quickstart-mediacage-enterprise",
-                      "stream/widevine-security-levels",
-                      "stream/widevine-l3",
-                      "stream/fairplay-deployment"
+                      {
+                        "group": "Basic DRM",
+                        "pages": [
+                          "stream/mediacage-basic",
+                          "stream/mediacage-basic-guide"
+                        ]
+                      },
+                      {
+                        "group": "Enterprise DRM",
+                        "pages": [
+                          "stream/mediacage-enterprise",
+                          "stream/widevine-security-levels",
+                          "stream/widevine-l3",
+                          "stream/fairplay-deployment"
+                        ]
+                      }
                     ]
                   },
                   "stream/vast",
-                  "stream/storage-tiers",
+                  "stream/delivery-tiers",
                   "stream/replication",
                   {
                     "group": "Security",
@@ -520,7 +592,9 @@
                       "stream/security-options",
                       "stream/token-authentication"
                     ]
-                  }
+                  },
+                  "stream/statistics",
+                  "stream/webhooks"
                 ]
               },
               {
@@ -578,12 +652,9 @@
               {
                 "group": "Reference",
                 "pages": [
-                  {
-                    "group": "Tools",
-                    "pages": ["stream/vimeo2bunny"]
-                  },
-                  "stream/statistics",
-                  "stream/webhooks",
+                  "stream/video-specification",
+                  "stream/vimeo2bunny",
+                  "stream/data-and-privacy",
                   "stream/api-reference"
                 ]
               }
@@ -610,13 +681,18 @@
               },
               {
                 "group": "Features",
-                "pages": ["storage/storage-tiers", "storage/replication"]
+                "pages": [
+                  "storage/storage-tiers",
+                  "storage/replication"
+                ]
               },
               {
                 "group": "Manage Files & Objects",
                 "pages": [
                   "storage/dashboard",
                   "storage/http",
+                  "storage/s3",
+                  "storage/ftp",
                   {
                     "group": "SDKs",
                     "pages": [
@@ -625,8 +701,7 @@
                       "storage/dotnet-sdk",
                       "storage/java-sdk"
                     ]
-                  },
-                  "storage/ftp"
+                  }
                 ]
               },
               {
@@ -666,7 +741,11 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["shield/index", "shield/quickstart", "shield/pricing"]
+                "pages": [
+                  "shield/index",
+                  "shield/quickstart",
+                  "shield/pricing"
+                ]
               },
               {
                 "group": "Protection Features",
@@ -696,6 +775,7 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "shield/custom-response-pages",
                   "shield/verified-bots",
                   "shield/metrics",
                   "shield/cookies",
@@ -751,7 +831,10 @@
               },
               {
                 "group": "Reference",
-                "pages": ["optimizer/limits", "optimizer/troubleshooting"]
+                "pages": [
+                  "optimizer/limits",
+                  "optimizer/troubleshooting"
+                ]
               }
             ]
           }
@@ -767,7 +850,11 @@
             "groups": [
               {
                 "group": "Documentation",
-                "pages": ["dns/index", "dns/quickstart"]
+                "pages": [
+                  "dns/index",
+                  "dns/quickstart",
+                  "dns/changelog"
+                ]
               },
               {
                 "group": "DNS Management",
@@ -777,7 +864,8 @@
                   "dns/import-export",
                   "dns/dnssec",
                   "dns/logging",
-                  "dns/statistics"
+                  "dns/statistics",
+                  "dns/limits"
                 ]
               },
               {
@@ -869,7 +957,9 @@
               {
                 "group": "Guides",
                 "pages": [
-                  "integrations/wordpress/content-offloading",
+                  "integrations/wordpress/dns",
+                  "integrations/wordpress/offloader",
+                  "integrations/wordpress/shield",
                   "integrations/wordpress/stream"
                 ]
               },
@@ -964,15 +1054,27 @@
                   "cli/commands/config",
                   "cli/commands/db",
                   "cli/commands/scripts",
+                  "cli/commands/sandbox",
+                  {
+                    "group": "Registry",
+                    "hidden": true,
+                    "pages": [
+                      "cli/commands/registry"
+                    ]
+                  },
                   {
                     "group": "DNS",
                     "hidden": true,
-                    "pages": ["cli/commands/dns"]
+                    "pages": [
+                      "cli/commands/dns"
+                    ]
                   },
                   {
                     "group": "Registries",
                     "hidden": true,
-                    "pages": ["cli/commands/registries"]
+                    "pages": [
+                      "cli/commands/registries"
+                    ]
                   },
                   "cli/commands/api"
                 ]
@@ -1015,7 +1117,9 @@
                   "source": "/api-reference/origin-errors/openapi.json",
                   "directory": "api-reference/origin-errors"
                 },
-                "pages": ["api-reference/origin-errors/index"]
+                "pages": [
+                  "api-reference/origin-errors/index"
+                ]
               },
               {
                 "group": "CDN Logging API",
@@ -1023,7 +1127,9 @@
                   "source": "https://logging.bunnycdn.com/docs/all/swagger.json",
                   "directory": "api-reference/cdn-logging"
                 },
-                "pages": ["api-reference/cdn-logging/index"]
+                "pages": [
+                  "api-reference/cdn-logging/index"
+                ]
               },
               {
                 "group": "Storage API",
@@ -1031,7 +1137,9 @@
                   "source": "/api-reference/storage/openapi.json",
                   "directory": "api-reference/storage"
                 },
-                "pages": ["api-reference/storage/index"]
+                "pages": [
+                  "api-reference/storage/index"
+                ]
               },
               {
                 "group": "Stream API",
@@ -1039,7 +1147,9 @@
                   "source": "https://video.bunnycdn.com/openapi/bunnynet-video-api.public.json",
                   "directory": "api-reference/stream"
                 },
-                "pages": ["api-reference/stream/index"]
+                "pages": [
+                  "api-reference/stream/index"
+                ]
               },
               {
                 "group": "Shield API",
@@ -1047,7 +1157,9 @@
                   "source": "https://api.bunny.net/shield/docs/v1/swagger.json",
                   "directory": "api-reference/shield"
                 },
-                "pages": ["api-reference/shield/index"]
+                "pages": [
+                  "api-reference/shield/index"
+                ]
               },
               {
                 "group": "Edge Scripting API",
@@ -1055,7 +1167,9 @@
                   "source": "https://core-api-public-docs.b-cdn.net/docs/v3/compute.json",
                   "directory": "api-reference/scripting"
                 },
-                "pages": ["api-reference/scripting/index"]
+                "pages": [
+                  "api-reference/scripting/index"
+                ]
               },
               {
                 "group": "Magic Containers API",
@@ -1063,7 +1177,9 @@
                   "source": "https://api-mc.opsbunny.net/docs/public/swagger.json",
                   "directory": "api-reference/magic-containers"
                 },
-                "pages": ["api-reference/magic-containers/overview"]
+                "pages": [
+                  "api-reference/magic-containers/overview"
+                ]
               },
               {
                 "group": "Database API",
@@ -1072,7 +1188,9 @@
                   "source": "https://api.bunny.net/database/docs/private/api.json",
                   "directory": "api-reference/database"
                 },
-                "pages": ["api-reference/database/index"]
+                "pages": [
+                  "api-reference/database/index"
+                ]
               }
             ]
           }
@@ -1097,12 +1215,12 @@
       "permanent": true
     },
     {
-      "source": "/docs/bunny-shield-documentation",
+      "source": "/bunny-shield-documentation",
       "destination": "/shield",
       "permanent": true
     },
     {
-      "source": "/docs/shield-overview",
+      "source": "/shield-overview",
       "destination": "/shield",
       "permanent": true
     },
@@ -1112,67 +1230,67 @@
       "permanent": true
     },
     {
-      "source": "/docs/shield-quickstart",
+      "source": "/shield-quickstart",
       "destination": "/shield/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/shield-waf",
+      "source": "/shield-waf",
       "destination": "/shield/waf",
       "permanent": true
     },
     {
-      "source": "/docs/shield-understanding-rule-engine",
+      "source": "/shield-understanding-rule-engine",
       "destination": "/shield/rule-engine",
       "permanent": true
     },
     {
-      "source": "/docs/shield-creating-a-custom-waf-rule",
+      "source": "/shield-creating-a-custom-waf-rule",
       "destination": "/shield/custom-waf-rule",
       "permanent": true
     },
     {
-      "source": "/docs/shield-rate-limiting",
+      "source": "/shield-rate-limiting",
       "destination": "/shield/rate-limiting",
       "permanent": true
     },
     {
-      "source": "/docs/shield-creating-a-ratelimit-rule",
+      "source": "/shield-creating-a-ratelimit-rule",
       "destination": "/shield/custom-rate-limit-rule",
       "permanent": true
     },
     {
-      "source": "/docs/shield-ddos-mitigation",
+      "source": "/shield-ddos-mitigation",
       "destination": "/shield/ddos",
       "permanent": true
     },
     {
-      "source": "/docs/bot-detection",
+      "source": "/bot-detection",
       "destination": "/shield/bot-detection",
       "permanent": true
     },
     {
-      "source": "/docs/shield-access-lists",
+      "source": "/shield-access-lists",
       "destination": "/shield/access-lists",
       "permanent": true
     },
     {
-      "source": "/docs/shield-verified-seo-bots",
+      "source": "/shield-verified-seo-bots",
       "destination": "/shield/verified-bots",
       "permanent": true
     },
     {
-      "source": "/docs/shield-metrics-logging",
+      "source": "/shield-metrics-logging",
       "destination": "/shield/metrics",
       "permanent": true
     },
     {
-      "source": "/docs/shield-cookies",
+      "source": "/shield-cookies",
       "destination": "/shield/cookies",
       "permanent": true
     },
     {
-      "source": "/docs/bunny-ai",
+      "source": "/bunny-ai",
       "destination": "/ai-image-generation",
       "permanent": true
     },
@@ -1182,217 +1300,217 @@
       "permanent": true
     },
     {
-      "source": "/docs/stream-image-processing",
+      "source": "/stream-image-processing",
       "destination": "/optimizer/dynamic-images/overview",
       "permanent": true
     },
     {
-      "source": "/docs/bunny-optimizer-face-crop",
+      "source": "/bunny-optimizer-face-crop",
       "destination": "/optimizer/dynamic-images/face-detection",
       "permanent": true
     },
     {
-      "source": "/docs/resizing",
+      "source": "/resizing",
       "destination": "/optimizer/dynamic-images/resizing",
       "permanent": true
     },
     {
-      "source": "/docs/cropping",
+      "source": "/cropping",
       "destination": "/optimizer/dynamic-images/cropping",
       "permanent": true
     },
     {
-      "source": "/docs/luminosity",
+      "source": "/luminosity",
       "destination": "/optimizer/dynamic-images/luminosity",
       "permanent": true
     },
     {
-      "source": "/docs/color-manipulation",
+      "source": "/color-manipulation",
       "destination": "/optimizer/dynamic-images/color-manipulation",
       "permanent": true
     },
     {
-      "source": "/docs/reflections-and-rotations",
+      "source": "/reflections-and-rotations",
       "destination": "/optimizer/dynamic-images/reflections-and-rotations",
       "permanent": true
     },
     {
-      "source": "/docs/filters",
+      "source": "/filters",
       "destination": "/optimizer/dynamic-images/blur-and-sharpen",
       "permanent": true
     },
     {
-      "source": "/docs/quality-format",
+      "source": "/quality-format",
       "destination": "/optimizer/dynamic-images/quality",
       "permanent": true
     },
     {
-      "source": "/docs/formats",
+      "source": "/formats",
       "destination": "/optimizer/dynamic-images/formats",
       "permanent": true
     },
     {
-      "source": "/docs/edge-storage-overview",
+      "source": "/edge-storage-overview",
       "destination": "/storage",
       "permanent": true
     },
     {
-      "source": "/docs/edge-storage-ftp",
+      "source": "/edge-storage-ftp",
       "destination": "/storage/ftp",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-overview",
+      "source": "/magic-containers-overview",
       "destination": "/magic-containers",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-getting-started",
+      "source": "/magic-containers-getting-started",
       "destination": "/magic-containers/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-pricing",
+      "source": "/magic-containers-pricing",
       "destination": "/magic-containers/pricing",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-deploy-your-app",
+      "source": "/magic-containers-how-to-deploy-your-app",
       "destination": "/magic-containers/deploy",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-github-action",
+      "source": "/magic-containers-github-action",
       "destination": "/magic-containers/deploy-with-github-actions",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-configure-private-container-registry-integration",
+      "source": "/magic-containers-how-to-configure-private-container-registry-integration",
       "destination": "/magic-containers/image-registries",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-global-deployment",
+      "source": "/magic-containers-global-deployment",
       "destination": "/magic-containers/regions",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-region-provisioning-and-latency-optimization",
+      "source": "/magic-containers-region-provisioning-and-latency-optimization",
       "destination": "/magic-containers/regions",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-list-of-nodes-to-whitelist",
+      "source": "/magic-containers-list-of-nodes-to-whitelist",
       "destination": "/magic-containers/ip-addresses",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-update-an-existing-app",
+      "source": "/magic-containers-how-to-update-an-existing-app",
       "destination": "/magic-containers/update",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containters-rolling-update-process",
+      "source": "/magic-containters-rolling-update-process",
       "destination": "/magic-containers/rolling-updates",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-edit-app-configuration",
+      "source": "/magic-containers-how-to-edit-app-configuration",
       "destination": "/magic-containers/configuration",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-configure-your-app-using-environment-variables",
+      "source": "/magic-containers-how-to-configure-your-app-using-environment-variables",
       "destination": "/magic-containers/environment-variables",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-configure-advanced-features",
+      "source": "/magic-containers-how-to-configure-advanced-features",
       "destination": "/magic-containers/configuration",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-expose-your-app-to-the-internet",
+      "source": "/magic-containers-how-to-expose-your-app-to-the-internet",
       "destination": "/magic-containers/endpoints",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-undeploying-your-app",
+      "source": "/magic-containers-undeploying-your-app",
       "destination": "/magic-containers/undeploy",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-delete-your-app",
+      "source": "/magic-containers-how-to-delete-your-app",
       "destination": "/magic-containers/delete",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-monitor-app-activity-and-use",
+      "source": "/magic-containers-how-to-monitor-app-activity-and-use",
       "destination": "/magic-containers/monitoring",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-logs",
+      "source": "/magic-containers-logs",
       "destination": "/magic-containers/logs",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-log-forwarding",
+      "source": "/magic-containers-log-forwarding",
       "destination": "/magic-containers/log-forwarding",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-how-to-define-health-checks",
+      "source": "/magic-containers-how-to-define-health-checks",
       "destination": "/magic-containers/health-checks",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-health-checks-and-monitoring",
+      "source": "/magic-containers-health-checks-and-monitoring",
       "destination": "/magic-containers/health-checks",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-autoscaling",
+      "source": "/magic-containers-autoscaling",
       "destination": "/magic-containers/autoscaling",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-sandboxing-containers",
+      "source": "/magic-containers-sandboxing-containers",
       "destination": "/magic-containers/sandbox",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-integrating-containers",
+      "source": "/magic-containers-integrating-containers",
       "destination": "/magic-containers/multi-container",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-app-metadata",
+      "source": "/magic-containers-app-metadata",
       "destination": "/magic-containers/app-metadata",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-use-cases",
+      "source": "/magic-containers-use-cases",
       "destination": "/magic-containers/use-cases",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-gaming-as-a-service",
+      "source": "/magic-containers-gaming-as-a-service",
       "destination": "/magic-containers/gaming",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-ai-training-and-inference-with-magic-containers",
+      "source": "/magic-containers-ai-training-and-inference-with-magic-containers",
       "destination": "/magic-containers/ai-training",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-image-optimizer",
+      "source": "/magic-containers-image-optimizer",
       "destination": "/magic-containers/image-optimizer",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-tutorials",
+      "source": "/magic-containers-tutorials",
       "destination": "/magic-containers/use-cases",
       "permanent": true
     },
@@ -1402,12 +1520,12 @@
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-limits",
+      "source": "/magic-containers-limits",
       "destination": "/magic-containers/limits",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-troubleshooting-application",
+      "source": "/magic-containers-troubleshooting-application",
       "destination": "/magic-containers/troubleshooting",
       "permanent": true
     },
@@ -1487,22 +1605,22 @@
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-overview",
+      "source": "/edge-scripting-overview",
       "destination": "/scripting",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-quickstart",
+      "source": "/edge-scripting-quickstart",
       "destination": "/scripting/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-pricing",
+      "source": "/edge-scripting-pricing",
       "destination": "/scripting/pricing",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-script-types",
+      "source": "/edge-scripting-script-types",
       "destination": "/scripting",
       "permanent": true
     },
@@ -1512,37 +1630,37 @@
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-standalone",
+      "source": "/edge-scripting-standalone",
       "destination": "/scripting/standalone/overview",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-middleware",
+      "source": "/edge-scripting-middleware",
       "destination": "/scripting/middleware/overview",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-environment-variables-and-secrets",
+      "source": "/edge-scripting-environment-variables-and-secrets",
       "destination": "/scripting/environment-variables",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-deployments",
+      "source": "/edge-scripting-deployments",
       "destination": "/scripting/deployments",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-github-action",
+      "source": "/edge-scripting-github-action",
       "destination": "/scripting/github-actions",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-github-integration",
+      "source": "/edge-scripting-github-integration",
       "destination": "/scripting/github-integration",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-statistics-and-logs",
+      "source": "/edge-scripting-statistics-and-logs",
       "destination": "/scripting/statistics",
       "permanent": true
     },
@@ -1552,67 +1670,67 @@
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-limits",
+      "source": "/edge-scripting-limits",
       "destination": "/scripting/limits",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-script-examples",
+      "source": "/edge-scripting-script-examples",
       "destination": "/scripting/standalone/overview",
       "permanent": true
     },
     {
-      "source": "/docs/script-example-fetch-url",
+      "source": "/script-example-fetch-url",
       "destination": "/scripting/standalone/examples/fetch-url",
       "permanent": true
     },
     {
-      "source": "/docs/script-example-return-json",
+      "source": "/script-example-return-json",
       "destination": "/scripting/standalone/examples/return-json",
       "permanent": true
     },
     {
-      "source": "/docs/script-example-return-html",
+      "source": "/script-example-return-html",
       "destination": "/scripting/standalone/examples/return-html",
       "permanent": true
     },
     {
-      "source": "/docs/script-example-send-email",
+      "source": "/script-example-send-email",
       "destination": "/scripting/standalone/examples/send-email",
       "permanent": true
     },
     {
-      "source": "/docs/access-edge-database-with-turso",
+      "source": "/access-edge-database-with-turso",
       "destination": "/scripting/standalone",
       "permanent": true
     },
     {
-      "source": "/docs/script-example-redirect-to-another-domain",
+      "source": "/script-example-redirect-to-another-domain",
       "destination": "/scripting/standalone/examples/redirect-domain",
       "permanent": true
     },
     {
-      "source": "/docs/script-example-modify-http-headers",
+      "source": "/script-example-modify-http-headers",
       "destination": "/scripting/middleware/examples/modify-headers",
       "permanent": true
     },
     {
-      "source": "/docs/script-example-modify-body",
+      "source": "/script-example-modify-body",
       "destination": "/scripting/middleware/examples/modify-body",
       "permanent": true
     },
     {
-      "source": "/docs/terraform-overview",
+      "source": "/terraform-overview",
       "destination": "/integrations/terraform",
       "permanent": true
     },
     {
-      "source": "/docs/terraform-quickstart",
+      "source": "/terraform-quickstart",
       "destination": "/integrations/terraform/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/importing-stream-library",
+      "source": "/importing-stream-library",
       "destination": "/integrations/terraform/importing-stream-library",
       "permanent": true
     },
@@ -1657,97 +1775,97 @@
       "permanent": true
     },
     {
-      "source": "/docs/stream-overview",
+      "source": "/stream-overview",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/stream-quickstart-guide",
+      "source": "/stream-quickstart-guide",
       "destination": "/stream/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/stream-pricing",
+      "source": "/stream-pricing",
       "destination": "/stream/pricing",
       "permanent": true
     },
     {
-      "source": "/docs/stream-dashboard-overview",
+      "source": "/stream-dashboard-overview",
       "destination": "/stream/dashboard",
       "permanent": true
     },
     {
-      "source": "/docs/stream-uploading-videos-through-our-http-api",
+      "source": "/stream-uploading-videos-through-our-http-api",
       "destination": "/stream/http-api",
       "permanent": true
     },
     {
-      "source": "/docs/stream-upload-video-from-url",
+      "source": "/stream-upload-video-from-url",
       "destination": "/stream/url-fetch",
       "permanent": true
     },
     {
-      "source": "/docs/stream-collections",
+      "source": "/stream-collections",
       "destination": "/stream/collections",
       "permanent": true
     },
     {
-      "source": "/docs/stream-understanding-content-tagging",
+      "source": "/stream-understanding-content-tagging",
       "destination": "/stream/tagging",
       "permanent": true
     },
     {
-      "source": "/docs/stream-metatags",
+      "source": "/stream-metatags",
       "destination": "/stream/metatags",
       "permanent": true
     },
     {
-      "source": "/docs/stream-video-storage-structure",
+      "source": "/stream-video-storage-structure",
       "destination": "/stream/storage-structure",
       "permanent": true
     },
     {
-      "source": "/docs/stream-embedding-videos",
+      "source": "/stream-embedding-videos",
       "destination": "/stream/embedding",
       "permanent": true
     },
     {
-      "source": "/docs/stream-player-settings",
+      "source": "/stream-player-settings",
       "destination": "/stream/player-settings",
       "permanent": true
     },
     {
-      "source": "/docs/stream-beta-video-player",
+      "source": "/stream-beta-video-player",
       "destination": "/stream/player",
       "permanent": true
     },
     {
-      "source": "/docs/new-video-player",
+      "source": "/new-video-player",
       "destination": "/stream/player",
       "permanent": true
     },
     {
-      "source": "/docs/adaptive-bitrate-streaming",
+      "source": "/adaptive-bitrate-streaming",
       "destination": "/stream/adaptive-bitrate",
       "permanent": true
     },
     {
-      "source": "/docs/multi-audio-support",
+      "source": "/multi-audio-support",
       "destination": "/stream/multi-audio",
       "permanent": true
     },
     {
-      "source": "/docs/playback-control-api",
+      "source": "/playback-control-api",
       "destination": "/stream/playback-api",
       "permanent": true
     },
     {
-      "source": "/docs/stream-how-to-retrieve-an-mp4-url-from-stream",
+      "source": "/stream-how-to-retrieve-an-mp4-url-from-stream",
       "destination": "/stream/mp4-downloads",
       "permanent": true
     },
     {
-      "source": "/docs/integration-methods",
+      "source": "/integration-methods",
       "destination": "/stream/players",
       "permanent": true
     },
@@ -1757,167 +1875,167 @@
       "permanent": true
     },
     {
-      "source": "/docs/bitmovin-player-integration",
+      "source": "/bitmovin-player-integration",
       "destination": "/stream/players/bitmovin",
       "permanent": true
     },
     {
-      "source": "/docs/shaka-player-integration",
+      "source": "/shaka-player-integration",
       "destination": "/stream/players/shaka",
       "permanent": true
     },
     {
-      "source": "/docs/widevine-integration",
+      "source": "/widevine-integration",
       "destination": "/stream/players/widevine",
       "permanent": true
     },
     {
-      "source": "/docs/fairplay-html5-player-integration",
+      "source": "/fairplay-html5-player-integration",
       "destination": "/stream/players/fairplay",
       "permanent": true
     },
     {
-      "source": "/docs/stream-encoding",
+      "source": "/stream-encoding",
       "destination": "/stream/encoding",
       "permanent": true
     },
     {
-      "source": "/docs/stream-premium-encoding",
+      "source": "/stream-premium-encoding",
       "destination": "/stream/premium-encoding",
       "permanent": true
     },
     {
-      "source": "/docs/stream-transcribing",
+      "source": "/stream-transcribing",
       "destination": "/stream/transcribing",
       "permanent": true
     },
     {
-      "source": "/docs/stream-video-specification",
+      "source": "/stream-video-specification",
       "destination": "/stream/video-specification",
       "permanent": true
     },
     {
-      "source": "/docs/stream-security",
+      "source": "/stream-security",
       "destination": "/stream/security",
       "permanent": true
     },
     {
-      "source": "/docs/stream-understanding-bunny-stream-security-options",
+      "source": "/stream-understanding-bunny-stream-security-options",
       "destination": "/stream/security-options",
       "permanent": true
     },
     {
-      "source": "/docs/stream-embed-token-authentication",
+      "source": "/stream-embed-token-authentication",
       "destination": "/stream/token-authentication",
       "permanent": true
     },
     {
-      "source": "/docs/stream-drm",
+      "source": "/stream-drm",
       "destination": "/stream/drm",
       "permanent": true
     },
     {
-      "source": "/docs/stream-mediacage-basic-drm",
+      "source": "/stream-mediacage-basic-drm",
       "destination": "/stream/mediacage-basic",
       "permanent": true
     },
     {
-      "source": "/docs/stream-understanding-mediacage-basic-drm",
+      "source": "/stream-understanding-mediacage-basic-drm",
       "destination": "/stream/mediacage-basic-guide",
       "permanent": true
     },
     {
-      "source": "/docs/mediacage-basic-drm-quickstart",
+      "source": "/mediacage-basic-drm-quickstart",
       "destination": "/stream/quickstart-mediacage-basic",
       "permanent": true
     },
     {
-      "source": "/docs/stream-mediacage-enterprise-drm",
+      "source": "/stream-mediacage-enterprise-drm",
       "destination": "/stream/mediacage-enterprise",
       "permanent": true
     },
     {
-      "source": "/docs/mediacage-enterprise-drm-quickstart",
+      "source": "/mediacage-enterprise-drm-quickstart",
       "destination": "/stream/quickstart-mediacage-enterprise",
       "permanent": true
     },
     {
-      "source": "/docs/fps-deployment-package-guide",
+      "source": "/fps-deployment-package-guide",
       "destination": "/stream/fairplay-deployment",
       "permanent": true
     },
     {
-      "source": "/docs/widevine-drm-security-levels",
+      "source": "/widevine-drm-security-levels",
       "destination": "/stream/widevine-security-levels",
       "permanent": true
     },
     {
-      "source": "/docs/stream-google-widevine-drm-sd-only-for-l3",
+      "source": "/stream-google-widevine-drm-sd-only-for-l3",
       "destination": "/stream/widevine-l3",
       "permanent": true
     },
     {
-      "source": "/docs/stream-advertising",
+      "source": "/stream-advertising",
       "destination": "/stream/vast",
       "permanent": true
     },
     {
-      "source": "/docs/stream-vast",
+      "source": "/stream-vast",
       "destination": "/stream/vast",
       "permanent": true
     },
     {
-      "source": "/docs/stream-statistics",
+      "source": "/stream-statistics",
       "destination": "/stream/statistics",
       "permanent": true
     },
     {
-      "source": "/docs/stream-webhook",
+      "source": "/stream-webhook",
       "destination": "/stream/webhooks",
       "permanent": true
     },
     {
-      "source": "/docs/stream-understanding-geo-replication",
+      "source": "/stream-understanding-geo-replication",
       "destination": "/stream/replication",
       "permanent": true
     },
     {
-      "source": "/docs/stream-what-is-the-difference-between-standard-and-volume-tier-zones",
+      "source": "/stream-what-is-the-difference-between-standard-and-volume-tier-zones",
       "destination": "/stream/storage-tiers",
       "permanent": true
     },
     {
-      "source": "/docs/stream-mobile-sdk",
+      "source": "/stream-mobile-sdk",
       "destination": "/stream/mobile-sdk",
       "permanent": true
     },
     {
-      "source": "/docs/stream-how-to-find-your-stream-api-key",
+      "source": "/stream-how-to-find-your-stream-api-key",
       "destination": "/stream/authentication",
       "permanent": true
     },
     {
-      "source": "/docs/stream-get-started",
+      "source": "/stream-get-started",
       "destination": "/stream/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/stream-quickstart",
+      "source": "/stream-quickstart",
       "destination": "/stream/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/stream-tutorials",
+      "source": "/stream-tutorials",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/stream-best-practices",
+      "source": "/stream-best-practices",
       "destination": "/stream/video-specification",
       "permanent": true
     },
     {
-      "source": "/docs/stream-use-and-expand",
+      "source": "/stream-use-and-expand",
       "destination": "/stream",
       "permanent": true
     },
@@ -1932,42 +2050,42 @@
       "permanent": true
     },
     {
-      "source": "/docs/cdn-overview",
+      "source": "/cdn-overview",
       "destination": "/cdn",
       "permanent": true
     },
     {
-      "source": "/docs/cdn-logging",
+      "source": "/cdn-logging",
       "destination": "/cdn/logging",
       "permanent": true
     },
     {
-      "source": "/docs/cdn-logging-api",
+      "source": "/cdn-logging-api",
       "destination": "/cdn/logging",
       "permanent": true
     },
     {
-      "source": "/docs/cdn-log-format",
+      "source": "/cdn-log-format",
       "destination": "/cdn/logging",
       "permanent": true
     },
     {
-      "source": "/docs/cdn-permanent-log-storage",
+      "source": "/cdn-permanent-log-storage",
       "destination": "/cdn/logging/permanent-storage",
       "permanent": true
     },
     {
-      "source": "/docs/cdn-log-forwarding",
+      "source": "/cdn-log-forwarding",
       "destination": "/cdn/logging/forwarding",
       "permanent": true
     },
     {
-      "source": "/docs/cdn-token-authentication",
+      "source": "/cdn-token-authentication",
       "destination": "/cdn/security/token-authentication",
       "permanent": true
     },
     {
-      "source": "/docs/cdn-token-authentication-basic",
+      "source": "/cdn-token-authentication-basic",
       "destination": "/cdn/security/token-authentication/basic",
       "permanent": true
     },
@@ -1987,42 +2105,42 @@
       "permanent": true
     },
     {
-      "source": "/docs/edge-rules-variable-expansion",
+      "source": "/edge-rules-variable-expansion",
       "destination": "/cdn/edge-rules/variable-expansion",
       "permanent": true
     },
     {
-      "source": "/docs/edge-rules-ordering",
+      "source": "/edge-rules-ordering",
       "destination": "/cdn/edge-rules/ordering",
       "permanent": true
     },
     {
-      "source": "/docs/cdn-websockets",
+      "source": "/cdn-websockets",
       "destination": "/cdn/websockets",
       "permanent": true
     },
     {
-      "source": "/docs/cdn-origin-errors",
+      "source": "/cdn-origin-errors",
       "destination": "/cdn/logging/origin-errors",
       "permanent": true
     },
     {
-      "source": "/docs/database-overview",
+      "source": "/database-overview",
       "destination": "/database",
       "permanent": true
     },
     {
-      "source": "/docs/dns-overview",
+      "source": "/dns-overview",
       "destination": "/dns",
       "permanent": true
     },
     {
-      "source": "/docs/dns-dnssec",
+      "source": "/dns-dnssec",
       "destination": "/dns/dnssec",
       "permanent": true
     },
     {
-      "source": "/docs/getting-started",
+      "source": "/getting-started",
       "destination": "/dns/scriptable/introduction",
       "permanent": true
     },
@@ -2032,27 +2150,27 @@
       "permanent": true
     },
     {
-      "source": "/docs/query-response-object-types",
+      "source": "/query-response-object-types",
       "destination": "/dns/scriptable/query-response-object-types",
       "permanent": true
     },
     {
-      "source": "/docs/scriptable-dns-helper-objects",
+      "source": "/scriptable-dns-helper-objects",
       "destination": "/dns/scriptable/helper-objects",
       "permanent": true
     },
     {
-      "source": "/docs/affiliate-competition-rules",
+      "source": "/affiliate-competition-rules",
       "destination": "/billing/affiliate-program",
       "permanent": true
     },
     {
-      "source": "/docs/best-practices-manual",
+      "source": "/best-practices-manual",
       "destination": "/billing/affiliate-best-practices",
       "permanent": true
     },
     {
-      "source": "/docs/affiliate-guidelines",
+      "source": "/affiliate-guidelines",
       "destination": "/billing/affiliate-guidelines",
       "permanent": true
     },
@@ -2067,172 +2185,162 @@
       "permanent": true
     },
     {
-      "source": "/docs/cdn-api-purge-rate-limits",
+      "source": "/cdn-api-purge-rate-limits",
       "destination": "/cdn/purge-cache#rate-limits",
       "permanent": true
     },
     {
-      "source": "/docs/us-taxation",
+      "source": "/us-taxation",
       "destination": "/billing/sales-tax",
       "permanent": true
     },
     {
-      "source": "/docs/bunny-ai-image-generation",
+      "source": "/bunny-ai-image-generation",
       "destination": "/ai-image-generation",
       "permanent": true
     },
     {
-      "source": "/docs/connecting",
+      "source": "/connecting",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/docs/database-pricing",
+      "source": "/database-pricing",
       "destination": "/database/pricing",
       "permanent": true
     },
     {
-      "source": "/docs/edge-scripting-documentation",
+      "source": "/edge-scripting-documentation",
       "destination": "/scripting",
       "permanent": true
     },
     {
-      "source": "/docs/free-trial-overview",
+      "source": "/free-trial-overview",
       "destination": "/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/frequently-asked-questions",
+      "source": "/frequently-asked-questions",
       "destination": "/billing/affiliate-faq",
       "permanent": true
     },
     {
-      "source": "/docs/getting-started-with-bunnynet",
+      "source": "/getting-started-with-bunnynet",
       "destination": "/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/http-sql-api",
+      "source": "/http-sql-api",
       "destination": "/database/connect/sql-api",
       "permanent": true
     },
     {
-      "source": "/docs/http-sql-api-1",
+      "source": "/http-sql-api-1",
       "destination": "/database/connect/sql-api",
       "permanent": true
     },
     {
-      "source": "/docs/limits",
+      "source": "/limits",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-documentation",
+      "source": "/magic-containers-documentation",
       "destination": "/magic-containers",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-persistent-volumes",
+      "source": "/magic-containers-persistent-volumes",
       "destination": "/magic-containers/persistent-volumes",
       "permanent": true
     },
     {
-      "source": "/docs/magic-containers-trial-limits",
+      "source": "/magic-containers-trial-limits",
       "destination": "/magic-containers/limits",
       "permanent": true
     },
     {
-      "source": "/docs/orms",
+      "source": "/orms",
       "destination": "/database",
       "permanent": true
     },
     {
-      "source": "/docs/premium-encoding",
+      "source": "/premium-encoding",
       "destination": "/stream/premium-encoding",
       "permanent": true
     },
     {
-      "source": "/docs/qp-api-overview-draft",
+      "source": "/qp-api-overview-draft",
       "destination": "/optimizer/dynamic-images/overview",
       "permanent": true
     },
     {
-      "source": "/docs/sdks",
+      "source": "/sdks",
       "destination": "/database",
       "permanent": true
     },
     {
-      "source": "/docs/reference",
+      "source": "/reference",
       "destination": "/api-reference",
       "permanent": true
     },
     {
-      "source": "/docs/quickstart",
-      "destination": "/quickstart",
-      "permanent": true
-    },
-    {
-      "source": "/docs/stream-captioning-2",
+      "source": "/stream-captioning-2",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/stream-changelog-2",
+      "source": "/stream-changelog-2",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/stream-free-encoding-2",
+      "source": "/stream-free-encoding-2",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/stream-just-in-time-encoding-2",
+      "source": "/stream-just-in-time-encoding-2",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/stream-live-streaming",
+      "source": "/stream-live-streaming",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/stream-moments-and-chapters_2",
+      "source": "/stream-moments-and-chapters_2",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/stream-player",
+      "source": "/stream-player",
       "destination": "/stream/player-settings",
       "permanent": true
     },
     {
-      "source": "/docs/stream-smart-chapters",
-      "destination": "/stream/smart-chapters",
-      "permanent": true
-    },
-    {
-      "source": "/docs/stream-storage",
+      "source": "/stream-storage",
       "destination": "/stream/storage-tiers",
       "permanent": true
     },
     {
-      "source": "/docs/stream-support-and-update-2",
+      "source": "/stream-support-and-update-2",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/stream-upload-and-playback-2",
+      "source": "/stream-upload-and-playback-2",
       "destination": "/stream",
       "permanent": true
     },
     {
-      "source": "/docs/troubleshooting-and-faq-2",
+      "source": "/troubleshooting-and-faq-2",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/docs/wordpress-plugin-support-policy",
+      "source": "/wordpress-plugin-support-policy",
       "destination": "/integrations/wordpress/support-policy",
       "permanent": true
     },
@@ -2257,32 +2365,72 @@
       "permanent": true
     },
     {
+      "source": "/cdn/troubleshooting/301-redirects",
+      "destination": "/cdn/connectivity#origin-redirect-loops",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/unexpected-redirects",
+      "destination": "/cdn/connectivity#origin-redirect-loops",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/502-504-errors",
+      "destination": "/cdn/connectivity#502-and-504-errors",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/cookies-still-sent",
+      "destination": "/cdn/vary-cache#cookie",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/low-cache-hit-rate",
+      "destination": "/cdn/smart-cache#improving-your-cache-hit-rate",
+      "permanent": true
+    },
+    {
+      "source": "/cdn/troubleshooting/lets-encrypt-issues",
+      "destination": "/cdn/ssl-setup#troubleshooting",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/wordpress/content-offloading",
+      "destination": "/integrations/wordpress/offloader",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/wordpress/offloader-and-shield",
+      "destination": "/integrations/wordpress/offloader",
+      "permanent": true
+    },
+    {
       "source": "/integrations",
       "destination": "/integrations/wordpress",
       "permanent": true
     },
     {
-      "source": "/docs/cpanel-plugin-installation",
+      "source": "/cpanel-plugin-installation",
       "destination": "/integrations/cpanel/quickstart",
       "permanent": true
     },
     {
-      "source": "/docs/configuration-file-and-available-configs",
+      "source": "/configuration-file-and-available-configs",
       "destination": "/integrations/cpanel/configuration",
       "permanent": true
     },
     {
-      "source": "/docs/enabling-custom-nameservers",
+      "source": "/enabling-custom-nameservers",
       "destination": "/integrations/cpanel/custom-nameservers",
       "permanent": true
     },
     {
-      "source": "/docs/taxation-vat-and-sales-tax",
+      "source": "/taxation-vat-and-sales-tax",
       "destination": "/billing/taxation",
       "permanent": true
     },
     {
-      "source": "/docs/s3",
+      "source": "/s3",
       "destination": "/storage/s3",
       "permanent": true
     },
@@ -3307,12 +3455,24 @@
       "permanent": true
     },
     {
+      "source": "/scripting/cache-api",
+      "destination": "/scripting/cache",
+      "permanent": true
+    },
+    {
       "source": "/scripting/node/fs/node-fs",
       "destination": "/scripting/node-fs",
       "permanent": true
     }
   ],
   "contextual": {
-    "options": ["copy", "claude", "chatgpt", "cursor", "view", "vscode"]
+    "options": [
+      "copy",
+      "claude",
+      "chatgpt",
+      "cursor",
+      "view",
+      "vscode"
+    ]
   }
 }

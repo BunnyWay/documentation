@@ -1,0 +1,30 @@
+---
+title: Do you support ETag?
+---
+
+## What is an ETag?
+
+The `ETag` (Entity Tag) header is an HTTP response header used to uniquely identify a specific version of a file. It allows web browsers and CDNs to quickly determine whether a cached copy of a file is still identical to the one on the origin server. 
+
+If a file changes, its ETag changes as well, making it a highly effective tool for validation, maximizing cache efficiency, and minimizing origin bandwidth usage.
+
+---
+
+## How Bunny.net Handles ETag Headers
+
+Bunny.net fully supports the `ETag` header out of the box, with a few important behavior considerations depending on your configuration:
+
+### Origin Passthrough
+If your origin server includes an `ETag` header in its response and the **Optimize for large media delivery** setting is **disabled** in your Pull Zone, Bunny.net will pass the ETag through to the client and cache the resource accordingly.
+
+### Smart Compression Adjustments
+When Bunny.net applies edge compression to a file (such as Brotli or Gzip), the original strong ETag will automatically be converted into a **weak ETag**. 
+
+When this happens, an upstream `W/` prefix is added to the start of the header string:
+
+```http
+# Original Strong ETag from Origin
+ETag: "123456789"
+
+# Modified Weak ETag after Edge Compression
+ETag: W/"123456789"

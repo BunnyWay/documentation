@@ -1,0 +1,146 @@
+---
+title: Connectivity
+sidebarTitle: Connectivity
+description: Learn how bunny.net supports IPv4 and IPv6 connectivity across our global network.
+---
+
+bunny.net supports both IPv4 and IPv6 connectivity across our global edge network. Our IPv6 support continues to expand as we upgrade connectivity throughout our infrastructure and partner networks.
+
+## Network Support
+
+bunny.net operates two network tiers with different IPv6 support levels:
+
+| Network | Coverage | IPv6 Support |
+| -------- | -------- | ------------ |
+| Standard Network | 119+ Points of Presence | Best effort |
+| Volume Network | 10 Points of Presence | Native dual-stack |
+
+The **Volume Network** is fully dual-stack, providing native IPv4 and IPv6 connectivity throughout the entire delivery path.
+
+The **Standard Network** offers IPv6 support on a best-effort basis. While many locations already support dual-stack connectivity, some edge locations remain IPv4-only due to upstream network limitations or regional infrastructure constraints.
+
+## CDN Ingress Connectivity
+
+When users connect to bunny.net, DNS responses are generated based on the capabilities of the serving location.
+
+- **A records** are always available for IPv4 connectivity.
+- **AAAA records** are returned when the serving Point of Presence supports IPv6 connectivity.
+- Clients with IPv6 connectivity will automatically connect over IPv6 whenever possible.
+
+This approach ensures optimal compatibility while allowing IPv6-capable locations to serve traffic natively over IPv6.
+
+Each Pull Zone can override this default behavior with an [IP Family Policy](/cdn/ip-family-policy), which controls whether we advertise IPv4, IPv6, or both, and whether routing prefers IPv6-capable locations.
+
+## Origin Connectivity
+
+We support both IPv4 and IPv6 connections to your origin servers.
+
+You can configure origins using:
+
+- Hostnames that resolve to **A records**
+- Hostnames that resolve to **AAAA records**
+- Dual-stack hostnames that resolve to both **A and AAAA records**
+- Direct IPv6 addresses enclosed in square brackets (`[]`) according to RFC standards
+
+Examples:
+
+```text
+https://origin.example.com
+https://[2001:db8::1]
+```
+
+When a hostname resolves to both IPv4 and IPv6 addresses, we will attempt to establish connectivity using the best available path based on the capabilities of the serving edge location.
+
+### Volume Network Origins
+
+The Volume Network provides native dual-stack connectivity to origins. Edge servers within the Volume Network can establish connections to both IPv4 and IPv6 origin infrastructure.
+
+### Standard Network Origins
+
+On the Standard Network, IPv6 origin connectivity is provided on a best-effort basis. If the serving edge location has IPv6 connectivity to the origin, we can connect to IPv6-enabled origins. Otherwise, IPv4 connectivity will be used.
+
+If guaranteed IPv6 connectivity to your origin is required, enabling Origin Shield routes all origin traffic through a Volume Network location with native dual-stack support.
+
+## 502 and 504 errors
+
+A `502 Bad Gateway` means an edge server received an invalid response from your origin. A `504 Gateway Timeout` means the origin didn't respond in time. When the origin is unreachable, edge servers serve from cache where possible and only return the error when the file isn't cached. Common causes:
+
+- **Origin offline:** The most common cause. Edge servers can't connect to your origin and the file isn't in cache.
+- **Firewall blocking edge servers:** Because the CDN proxies all your traffic, origin firewalls or security software can mistake the volume of edge requests for an attack and block them. Whitelist the [edge server IP list](https://api.bunny.net/system/edgeserverlist) ([IPv6](https://api.bunny.net/system/edgeserverlist/ipv6)) and update it periodically as the network changes.
+- **Network congestion:** A rare, transient routing problem between an edge location and a distant origin.
+- **Timeouts:** By default Bunny waits 10 seconds for a TCP connection and 60 seconds for the origin to start sending data. Immediate 502s usually mean an origin firewall or WAF is rejecting the connection. These timeouts are configurable via Safehop.
+
+Use the [bunny.net diagnostic tools](https://tools.bunny.net/) to test latency, traceroutes, and HTTP requests from over 120 locations and see whether specific regions are blocked or the origin is slow. If you've ruled out the causes above, contact [support@bunny.net](mailto:support@bunny.net).
+
+## Origin redirect loops
+
+If your CDN URLs return a 301 redirect back to your own domain, the origin is issuing that redirect and the CDN is forwarding it. Bunny CDN never returns a 301 on its own, except for hotlink protection. Check the following:
+
+- **Origin URL host:** Make sure the Pull Zone Origin URL matches the exact domain your site serves from, including the `www` or non-`www` version. A mismatch triggers your origin's canonical redirect.
+- **Origin URL protocol:** If your server forces HTTPS, set the Origin URL to `https://`. An `http://` Origin URL against an HTTPS-only origin produces a redirect.
+- **Origin redirect or rewrite rules:** Check your server configuration for redirect or rewrite rules affecting your assets.
+- **Hotlink protection:** If enabled, whitelist every domain the CDN serves (both `www` and non-`www`), with no protocol or slashes in the hostname field.
+
+After any change, purge the full Pull Zone cache and wait for it to sync, since cached 301s persist on the edge.
+
+## CDN Acceleration and IPv6 Origins
+
+bunny.net's CDN Acceleration feature supports dual-stack origin connectivity when used with Bunny DNS.
+
+When accelerating DNS records, we automatically detect matching IPv4 and IPv6 records for the same hostname and use both when establishing connectivity to your origin.
+
+For example, if your DNS zone contains:
+
+```dns
+www    A       203.0.113.10
+www    AAAA    2001:db8::10
+```
+
+and the **A record** is configured for CDN Acceleration, we will automatically discover the matching **AAAA record** and attempt to use both addresses when connecting to your origin.
+
+This enables:
+
+- Dual-stack origin connectivity through CDN Acceleration
+- Automatic IPv6 support without additional configuration
+- Improved resiliency by allowing both IPv4 and IPv6 paths to be used when available
+
+As with standard origin connectivity, IPv6 connectivity depends on the capabilities of the serving edge location. Volume Network locations provide native dual-stack connectivity, while Standard Network locations provide IPv6 connectivity on a best-effort basis.
+
+<Note>
+  When accelerating a hostname through Bunny DNS, matching A and AAAA records for the same hostname are automatically considered for origin connectivity. You do not need to separately accelerate both record types.
+</Note>
+
+## Origin Shield and IPv6 Origins
+
+For customers using the Standard Network who require guaranteed IPv6 connectivity to their origin infrastructure, we recommend enabling Origin Shield.
+
+Both Origin Shield locations:
+
+- **Chicago, IL**
+- **Paris, France**
+
+are part of the Volume Network and provide native dual-stack connectivity.
+
+When Origin Shield is enabled, all origin fetches are routed through the selected shield location rather than directly from the serving edge location. This ensures that communication between bunny.net and your origin always originates from a Volume Network Point of Presence with native IPv4 and IPv6 support.
+
+This configuration is particularly useful when:
+
+- Your origin is reachable only over IPv6
+- You want to guarantee IPv6 connectivity regardless of which Standard Network edge location serves the request
+- You want to combine the global coverage of the Standard Network with reliable dual-stack origin connectivity
+
+<Note>
+  Origin Shield can be used to guarantee IPv6 connectivity to your origin even when requests are served from Standard Network locations that do not currently have IPv6 connectivity to the origin.
+</Note>
+
+## IPv6 Expansion
+
+Expanding IPv6 support remains an ongoing priority across our network.
+
+A significant portion of our infrastructure already operates in dual-stack mode, to achieve full IPv6 coverage across more than 119 Points of Presence we are actively coordinating with upstream providers and local network operators worldwide. Some locations currently operate in environments where native IPv6 connectivity is not yet available.
+
+As connectivity improves, IPv6 support will continue to expand across additional edge locations without requiring any changes to your CDN configuration.
+
+<Note>
+  IPv6 support on the Volume Network is available across all locations. On the Standard Network, IPv6 availability depends on the capabilities of the serving Point of Presence and its upstream connectivity.
+</Note>
