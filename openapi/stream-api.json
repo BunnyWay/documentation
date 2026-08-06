@@ -9,7 +9,7 @@
       "url": "https://docs.bunny.net",
       "email": "support@bunny.net"
     },
-    "version": "1.0.0"
+    "version": "1.5.13"
   },
   "servers": [
     {
@@ -346,982 +346,6 @@
           },
           "403": {
             "description": "The request authorization failed"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      }
-    },
-    "/library/{libraryId}/live/{streamId}": {
-      "get": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Get live stream by ID",
-        "description": "Gets details of a live stream contained in library by its ID.",
-        "operationId": "LiveStream_GetByStreamId",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The details of the requested live stream",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveStreamModel"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested live stream was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      },
-      "put": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Update live stream",
-        "description": "Updates the live stream object with the specified parameters and returns it",
-        "operationId": "LiveStream_UpdateLiveStream",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
-        "requestBody": {
-          "x-name": "model",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateLiveStreamModel"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 3
-        },
-        "responses": {
-          "200": {
-            "description": "The live stream was successfully updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveStreamModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatusModelOfListOfString"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested live stream was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "403": {
-            "description": "The request authorization failed"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Delete live stream",
-        "description": "Deletes the live stream object and all resources associated with it. This operation cannot be undone.",
-        "operationId": "LiveStream_DeleteStream",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The details of the requested live stream",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveStreamModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatusModelOfListOfString"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested live stream was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "403": {
-            "description": "The request authorization failed"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      }
-    },
-    "/library/{libraryId}/live/{streamId}/play": {
-      "get": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Get live stream play data",
-        "operationId": "LiveStream_GetStreamPlayData",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "token",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "",
-              "nullable": true
-            },
-            "x-position": 3
-          },
-          {
-            "name": "expires",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "default": 0
-            },
-            "x-position": 4
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The play data of the requested live stream",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveStreamPlayDataModel"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested live stream was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "403": {
-            "description": "The request authorization failed"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/library/{libraryId}/live": {
-      "post": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Create new live stream",
-        "description": "Creates a new live stream object with the specified parameters and returns it",
-        "operationId": "LiveStream_Create",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          }
-        ],
-        "requestBody": {
-          "x-name": "model",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateLiveStreamModel"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 2
-        },
-        "responses": {
-          "200": {
-            "description": "The live stream was successfully created and returned as the response.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveStreamModel"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "403": {
-            "description": "The request authorization failed"
-          },
-          "400": {
-            "description": "Request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatusModelOfListOfString"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      },
-      "get": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "List streams",
-        "description": "Returns a list of streams associated with this library and collection, if passed",
-        "operationId": "LiveStream_List",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            },
-            "x-position": 2
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100
-            },
-            "x-position": 3
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "",
-              "nullable": true
-            },
-            "x-position": 4
-          },
-          {
-            "name": "orderBy",
-            "in": "query",
-            "description": "The field to order by. Possible values: date, title, status, started, ended, planned",
-            "schema": {
-              "type": "string",
-              "default": "date",
-              "nullable": true
-            },
-            "x-position": 5
-          },
-          {
-            "name": "collectionId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "nullable": true
-            },
-            "x-position": 6
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The list of live streams associated with this library",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginationListOfLiveStreamModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested library was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      }
-    },
-    "/library/{libraryId}/live/{streamId}/start": {
-      "put": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Start live stream",
-        "description": "Marks the stream as started, allowing viewers to view the stream.",
-        "operationId": "LiveStream_StartStream",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The details of the started live stream",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveStreamModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatusModelOfListOfString"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested live stream was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "403": {
-            "description": "The request authorization failed"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      }
-    },
-    "/library/{libraryId}/live/{streamId}/stop": {
-      "put": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Stop live stream",
-        "description": "Stops the stream, if publishing is still ongoing, it will be stopped by the ingest server. If 'DvrEnabled' was set to true, the stream will be converted to a regular video as a VOD.This operation cannot be undone.",
-        "operationId": "LiveStream_StopStream",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The details of the requested live stream",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveStreamModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatusModelOfListOfString"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested live stream was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "403": {
-            "description": "The request authorization failed"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      }
-    },
-    "/library/{libraryId}/live/{streamId}/regenerate-key": {
-      "put": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Regenerate stream key",
-        "description": "Regenerates the stream key for the live stream. This operation is not allowed for streams that ended.",
-        "operationId": "LiveStream_RegenerateStreamKey",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The details of the live stream with regenerated stream key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveStreamModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatusModelOfListOfString"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested live stream was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "403": {
-            "description": "The request authorization failed"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      }
-    },
-    "/library/{libraryId}/live/{streamId}/bitrate-history": {
-      "get": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "operationId": "LiveStream_GetBitrateHistory",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "startTime",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time",
-              "nullable": true
-            },
-            "x-position": 3
-          },
-          {
-            "name": "endTime",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time",
-              "nullable": true
-            },
-            "x-position": 4
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/library/{libraryId}/live/{streamId}/current-bitrate": {
-      "get": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "operationId": "LiveStream_GetLatestBitrate",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/library/{libraryId}/live/{streamId}/thumbnail": {
-      "post": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Set Thumbnail",
-        "operationId": "LiveStream_SetThumbnail",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "thumbnailUrl",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "nullable": true
-            },
-            "x-position": 3
-          }
-        ],
-        "requestBody": {
-          "description": "Optional thumbnail file to upload",
-          "content": {
-            "application/octet-stream": {
-              "schema": {
-                "type": "string",
-                "format": "binary",
-                "nullable": true
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The thumbnail was successfully set",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatusModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested stream was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
-          },
-          "403": {
-            "description": "The request authorization failed"
-          },
-          "422": {
-            "description": "Unable to fetch thumbnail from origin",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "AccessKey": []
-          }
-        ]
-      }
-    },
-    "/library/{libraryId}/live/{streamId}/thumbnails": {
-      "get": {
-        "tags": [
-          "Manage Live Streams"
-        ],
-        "summary": "Get live stream thumbnails",
-        "description": "Returns recent generated thumbnail object paths for the specified live stream. You can limit the number of results and optionally constrain by a time range using 'from' and 'to' in UTC.",
-        "operationId": "LiveStream_GetThumbnails",
-        "parameters": [
-          {
-            "name": "libraryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "streamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of thumbnails to return. Default: 5",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 5
-            },
-            "x-position": 3
-          },
-          {
-            "name": "from",
-            "in": "query",
-            "description": "Filter thumbnails created at or after this UTC timestamp",
-            "schema": {
-              "type": "string",
-              "format": "date-time",
-              "nullable": true
-            },
-            "x-position": 4
-          },
-          {
-            "name": "to",
-            "in": "query",
-            "description": "Filter thumbnails created at or before this UTC timestamp",
-            "schema": {
-              "type": "string",
-              "format": "date-time",
-              "nullable": true
-            },
-            "x-position": 5
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A list of thumbnail object paths (most recent first)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ThumbnailListResponseModel"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested live stream was not found"
-          },
-          "401": {
-            "description": "The request authentication failed"
           },
           "500": {
             "description": "Internal Server Error"
@@ -2422,6 +1446,16 @@
               }
             }
           },
+          "400": {
+            "description": "The request or URL was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusModel"
+                }
+              }
+            }
+          },
           "404": {
             "description": "The requested video was not found"
           },
@@ -2430,6 +1464,16 @@
           },
           "403": {
             "description": "The request authorization failed"
+          },
+          "422": {
+            "description": "Unable to fetch thumbnail from origin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusModel"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
@@ -2508,7 +1552,34 @@
             "description": "The requested video was not found"
           },
           "400": {
-            "description": "Failed fetching the video"
+            "description": "URL validation failed or request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusModel"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unable to fetch video from origin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusModel"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many fetch jobs queued. Please try again later.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusModel"
+                }
+              }
+            }
           },
           "401": {
             "description": "The request authentication failed"
@@ -2582,7 +1653,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatusModel"
+                  "$ref": "#/components/schemas/StatusModelOfCaptionValidationModel"
                 }
               }
             }
@@ -2595,7 +1666,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CaptionValidationModel"
+                  "$ref": "#/components/schemas/StatusModelOfCaptionValidationModel"
                 }
               }
             }
@@ -3087,7 +2158,7 @@
             "x-position": 4
           },
           {
-            "name": "deleteOriginal",
+            "name": "allResolutions",
             "in": "query",
             "schema": {
               "type": "boolean",
@@ -3096,13 +2167,32 @@
             "x-position": 5
           },
           {
-            "name": "deleteMp4Files",
+            "name": "deleteOriginal",
             "in": "query",
             "schema": {
               "type": "boolean",
               "default": false
             },
             "x-position": 6
+          },
+          {
+            "name": "outputs",
+            "in": "query",
+            "description": "Outputs to clean. Supported values: hls, mp4, all",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 7
+          },
+          {
+            "name": "deleteMp4Files",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "x-position": 8
           },
           {
             "name": "dryRun",
@@ -3112,7 +2202,7 @@
               "type": "boolean",
               "default": false
             },
-            "x-position": 7
+            "x-position": 9
           }
         ],
         "responses": {
@@ -3324,547 +2414,6 @@
           }
         }
       },
-      "VideoLibraryStatus": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "videoCount": {
-            "type": "integer",
-            "description": "The total number of videos contained by the video library",
-            "format": "int64"
-          },
-          "liveStreamCount": {
-            "type": "integer",
-            "description": "The total number of live streams contained by the video library",
-            "format": "int64"
-          }
-        }
-      },
-      "LiveStreamModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "videoLibraryId",
-          "guid",
-          "title",
-          "public",
-          "status",
-          "dateCreated",
-          "streamKey",
-          "playbackUrlHls",
-          "dvrEnabled",
-          "recordVod",
-          "availableResolutions",
-          "ingestRegion"
-        ],
-        "properties": {
-          "videoLibraryId": {
-            "type": "integer",
-            "description": "The ID of the video library that the live stream belongs to",
-            "format": "int64"
-          },
-          "guid": {
-            "type": "string",
-            "description": "The unique ID of the live stream",
-            "format": "guid",
-            "minLength": 1
-          },
-          "title": {
-            "type": "string",
-            "description": "The title of the live stream",
-            "minLength": 1
-          },
-          "description": {
-            "type": "string",
-            "description": "The description of the live stream",
-            "nullable": true
-          },
-          "category": {
-            "type": "string",
-            "description": "The category of the live stream",
-            "nullable": true
-          },
-          "collectionId": {
-            "type": "string",
-            "description": "The ID of the collection where the live stream belongs",
-            "nullable": true
-          },
-          "public": {
-            "type": "boolean",
-            "description": "Determines if the live stream is publicly accessible"
-          },
-          "status": {
-            "description": "The status of the live stream. See LiveStreamStatus.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LiveStreamStatus"
-              }
-            ]
-          },
-          "dateCreated": {
-            "type": "string",
-            "description": "The date when the live stream was created",
-            "format": "date-time",
-            "minLength": 1
-          },
-          "scheduledStartTime": {
-            "type": "string",
-            "description": "The scheduled start time of the live stream (optional)",
-            "format": "date-time",
-            "nullable": true
-          },
-          "scheduledEndTime": {
-            "type": "string",
-            "description": "The scheduled end time of the live stream (optional)",
-            "format": "date-time",
-            "nullable": true
-          },
-          "startedAt": {
-            "type": "string",
-            "description": "The date and time when the live stream publishing started",
-            "format": "date-time",
-            "nullable": true
-          },
-          "endedAt": {
-            "type": "string",
-            "description": "The date and time when the live stream publishing ended",
-            "format": "date-time",
-            "nullable": true
-          },
-          "durationSeconds": {
-            "type": "integer",
-            "description": "The duration of the live stream in seconds",
-            "format": "int32",
-            "nullable": true
-          },
-          "streamKey": {
-            "type": "string",
-            "description": "The stream key required for publishing the live stream",
-            "minLength": 1
-          },
-          "playbackUrlHls": {
-            "type": "string",
-            "description": "The HLS playback URL of the live stream",
-            "minLength": 1
-          },
-          "dvrEnabled": {
-            "type": "boolean",
-            "description": "Determines if DVR is enabled for the live stream"
-          },
-          "dvrWindowSeconds": {
-            "type": "integer",
-            "description": "The DVR window size in seconds, required when DvrEnabled is true",
-            "format": "int32",
-            "nullable": true
-          },
-          "recordVod": {
-            "type": "boolean",
-            "description": "Determines if a VOD recording should be created for the live stream"
-          },
-          "availableResolutions": {
-            "type": "string",
-            "description": "The available output resolutions of the live stream",
-            "minLength": 1
-          },
-          "width": {
-            "type": "integer",
-            "description": "The input video width in pixels",
-            "format": "int32",
-            "nullable": true
-          },
-          "height": {
-            "type": "integer",
-            "description": "The input video height in pixels",
-            "format": "int32",
-            "nullable": true
-          },
-          "framerate": {
-            "type": "number",
-            "description": "The framerate of the input stream",
-            "format": "double",
-            "nullable": true
-          },
-          "ingestRegion": {
-            "type": "string",
-            "description": "The primary ingest region of the live stream",
-            "minLength": 1
-          },
-          "peakConcurrentViewers": {
-            "type": "integer",
-            "description": "The peak number of concurrent viewers",
-            "format": "int32",
-            "nullable": true
-          },
-          "totalViewerSeconds": {
-            "type": "integer",
-            "description": "The total viewer watch time in seconds",
-            "format": "int64",
-            "nullable": true
-          },
-          "thumbnailFileName": {
-            "type": "string",
-            "description": "The file name of the thumbnail inside of the storage",
-            "nullable": true
-          },
-          "thumbnailUpdatedAt": {
-            "type": "string",
-            "description": "The date and time when the thumbnail was last updated",
-            "format": "date-time",
-            "nullable": true
-          },
-          "enableCountdown": {
-            "type": "boolean",
-            "description": "Determines if countdown should be shown in player before the stream start, if it was scheduled",
-            "nullable": true
-          },
-          "rtmpOutputs": {
-            "type": "array",
-            "description": "A list of up to 5 RTMP outputs that the incoming stream will be forwarded to",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "LiveStreamStatus": {
-        "type": "integer",
-        "description": "0 = Unknown\n1 = Created\n2 = Scheduled\n3 = Preview\n4 = Running\n5 = Ended\n6 = VodProcessing\n7 = Error",
-        "x-enumNames": [
-          "Unknown",
-          "Created",
-          "Scheduled",
-          "Preview",
-          "Running",
-          "Ended",
-          "VodProcessing",
-          "Error"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7
-        ]
-      },
-      "LiveStreamPlayDataModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "liveStream": {
-            "description": "Live stream data.",
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LiveStreamModel"
-              }
-            ]
-          },
-          "libraryName": {
-            "type": "string",
-            "nullable": true
-          },
-          "captionsPath": {
-            "type": "string",
-            "nullable": true
-          },
-          "seekPath": {
-            "type": "string",
-            "nullable": true
-          },
-          "thumbnailUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "fallbackUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "videoPlaylistUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "originalUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "previewUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "controls": {
-            "type": "string",
-            "nullable": true
-          },
-          "enableDRM": {
-            "type": "boolean"
-          },
-          "drmVersion": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "playerKeyColor": {
-            "type": "string",
-            "nullable": true
-          },
-          "vastTagUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "viAiPublisherId": {
-            "type": "string",
-            "nullable": true
-          },
-          "captionsFontSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "captionsFontColor": {
-            "type": "string",
-            "nullable": true
-          },
-          "captionsBackground": {
-            "type": "string",
-            "nullable": true
-          },
-          "uiLanguage": {
-            "type": "string",
-            "nullable": true
-          },
-          "allowEarlyPlay": {
-            "type": "boolean"
-          },
-          "tokenAuthEnabled": {
-            "type": "boolean"
-          },
-          "enableMP4Fallback": {
-            "type": "boolean"
-          },
-          "showHeatmap": {
-            "type": "boolean"
-          },
-          "fontFamily": {
-            "type": "string",
-            "nullable": true
-          },
-          "playbackSpeeds": {
-            "type": "string",
-            "nullable": true
-          },
-          "widevineMinClientSecurityLevel": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "zoneTier": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "rememberPlayerPosition": {
-            "type": "boolean"
-          }
-        }
-      },
-      "StatusModelOfListOfString": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/StatusModel"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "data": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "CreateLiveStreamModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "The title of the live stream",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "description": "The description of the live stream",
-            "nullable": true
-          },
-          "collectionId": {
-            "type": "string",
-            "description": "The ID of the collection where the live stream belongs",
-            "nullable": true
-          },
-          "dvrEnabled": {
-            "type": "boolean",
-            "description": "Determines if DVR is enabled for the live stream"
-          },
-          "dvrWindowSeconds": {
-            "type": "integer",
-            "description": "The DVR window size in seconds, required when DvrEnabled is true, max is 12 hours",
-            "format": "int32",
-            "maximum": 43200.0,
-            "minimum": 1.0,
-            "nullable": true
-          },
-          "recordVod": {
-            "type": "boolean",
-            "description": "Determines if a VOD recording should be created for the live stream"
-          },
-          "scheduledStartTime": {
-            "type": "string",
-            "description": "The scheduled start time of the live stream (optional, UTC)",
-            "format": "date-time",
-            "nullable": true
-          },
-          "scheduledEndTime": {
-            "type": "string",
-            "description": "The scheduled end time of the live stream (optional, UTC)",
-            "format": "date-time",
-            "nullable": true
-          },
-          "public": {
-            "type": "boolean",
-            "description": "Determines if the live stream is publicly accessible, defaults to true"
-          },
-          "enableCountdown": {
-            "type": "boolean",
-            "description": "Determines if countdown should be shown in player before the stream start, if it was scheduled",
-            "nullable": true
-          },
-          "rtmpOutputs": {
-            "type": "array",
-            "description": "A list of up to 5 RTMP outputs that the incoming stream will be forwarded to",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "UpdateLiveStreamModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "The title of the live stream",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "description": "The description of the live stream",
-            "nullable": true
-          },
-          "collectionId": {
-            "type": "string",
-            "description": "The ID of the collection where the live stream belongs",
-            "nullable": true
-          },
-          "dvrEnabled": {
-            "type": "boolean",
-            "description": "Determines if DVR is enabled for the live stream"
-          },
-          "dvrWindowSeconds": {
-            "type": "integer",
-            "description": "The DVR window size in seconds, required when DvrEnabled is true, max is 12 hours",
-            "format": "int32",
-            "maximum": 43200.0,
-            "minimum": 1.0,
-            "nullable": true
-          },
-          "recordVod": {
-            "type": "boolean",
-            "description": "Determines if a VOD recording should be created for the live stream"
-          },
-          "scheduledStartTime": {
-            "type": "string",
-            "description": "The scheduled start time of the live stream (optional, UTC)",
-            "format": "date-time",
-            "nullable": true
-          },
-          "scheduledEndTime": {
-            "type": "string",
-            "description": "The scheduled end time of the live stream (optional, UTC)",
-            "format": "date-time",
-            "nullable": true
-          },
-          "public": {
-            "type": "boolean",
-            "description": "Determines if the live stream is publicly accessible, defaults to true"
-          },
-          "enableCountdown": {
-            "type": "boolean",
-            "description": "Determines if countdown should be shown in player before the stream start, if it was scheduled (optional)",
-            "nullable": true
-          },
-          "rtmpOutputs": {
-            "type": "array",
-            "description": "A list of up to 5 RTMP outputs that the incoming stream will be forwarded to",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "PaginationListOfLiveStreamModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "totalItems": {
-            "type": "integer",
-            "description": "The total number of items that can be returned",
-            "format": "int64"
-          },
-          "currentPage": {
-            "type": "integer",
-            "description": "The current page of the response",
-            "format": "int64"
-          },
-          "itemsPerPage": {
-            "type": "integer",
-            "description": "The number of items returned per page",
-            "format": "int32"
-          },
-          "items": {
-            "type": "array",
-            "description": "The result items on the current result",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/LiveStreamModel"
-            }
-          }
-        }
-      },
-      "ThumbnailListResponseModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "url": {
-            "type": "string",
-            "nullable": true
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
       "VideoModel": {
         "type": "object",
         "additionalProperties": false,
@@ -4004,6 +2553,11 @@
             "description": "The file name of the thumbnail inside of the storage",
             "nullable": true
           },
+          "thumbnailUrl": {
+            "type": "string",
+            "description": "The CDN URL of the thumbnail",
+            "nullable": true
+          },
           "thumbnailBlurhash": {
             "type": "string",
             "description": "Thumbnail blurhash to show while the actual thumbnail is being loaded",
@@ -4061,11 +2615,20 @@
             "nullable": true
           },
           "smartGenerateStatus": {
-            "description": "The status of smart generate action (if triggered)",
+            "description": "Aggregate smart generate status derived from per-feature statuses when present: InProgress, then Queued, then Failed, then Finished; otherwise the stored legacy value. See SmartGenerateFeaturesStatus.",
             "nullable": true,
             "oneOf": [
               {
                 "$ref": "#/components/schemas/SmartGenerateStatus"
+              }
+            ]
+          },
+          "smartGenerateFeaturesStatus": {
+            "description": "Per-feature smart generate statuses (title, description, chapters, moments). Null for a feature on legacy rows.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SmartGenerateFeaturesStatusModel"
               }
             ]
           },
@@ -4087,28 +2650,71 @@
       },
       "VideoModelStatus": {
         "type": "integer",
-        "description": "0 = Created\n1 = Uploaded\n2 = Processing\n3 = Transcoding\n4 = Finished\n5 = Error\n6 = UploadFailed\n7 = JitSegmenting\n8 = JitPlaylistsCreated",
-        "x-enumNames": [
-          "Created",
-          "Uploaded",
-          "Processing",
-          "Transcoding",
-          "Finished",
-          "Error",
-          "UploadFailed",
-          "JitSegmenting",
-          "JitPlaylistsCreated"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8
+        "description": "",
+        "oneOf": [
+          {
+            "title": "Created",
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          },
+          {
+            "title": "Uploaded",
+            "type": "integer",
+            "enum": [
+              1
+            ]
+          },
+          {
+            "title": "Processing",
+            "type": "integer",
+            "enum": [
+              2
+            ]
+          },
+          {
+            "title": "Transcoding",
+            "type": "integer",
+            "enum": [
+              3
+            ]
+          },
+          {
+            "title": "Finished",
+            "type": "integer",
+            "enum": [
+              4
+            ]
+          },
+          {
+            "title": "Error",
+            "type": "integer",
+            "enum": [
+              5
+            ]
+          },
+          {
+            "title": "UploadFailed",
+            "type": "integer",
+            "enum": [
+              6
+            ]
+          },
+          {
+            "title": "JitSegmenting",
+            "type": "integer",
+            "enum": [
+              7
+            ]
+          },
+          {
+            "title": "JitPlaylistsCreated",
+            "type": "integer",
+            "enum": [
+              8
+            ]
+          }
         ]
       },
       "CaptionModel": {
@@ -4214,67 +2820,226 @@
       },
       "Severity": {
         "type": "integer",
-        "description": "0 = Undefined\n1 = Information\n2 = Warning\n3 = Error",
-        "x-enumNames": [
-          "Undefined",
-          "Information",
-          "Warning",
-          "Error"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3
+        "description": "",
+        "oneOf": [
+          {
+            "title": "Undefined",
+            "type": "integer",
+            "description": "Shouldn't be used",
+            "enum": [
+              0
+            ]
+          },
+          {
+            "title": "Information",
+            "type": "integer",
+            "description": "An info message to the user, shouldn't break anythying",
+            "enum": [
+              1
+            ]
+          },
+          {
+            "title": "Warning",
+            "type": "integer",
+            "description": "A warning message, for example that the transcoded video may break when playing",
+            "enum": [
+              2
+            ]
+          },
+          {
+            "title": "Error",
+            "type": "integer",
+            "description": "An error, meaning that the video will most likely not be playable",
+            "enum": [
+              3
+            ]
+          }
         ]
       },
       "IssueCodes": {
         "type": "integer",
-        "description": "0 = Undefined\n1 = StreamLengthsDifference\n2 = TranscodingWarnings\n3 = IncompatibleResolution\n4 = InvalidFramerate\n5 = VideoExceededMaxDuration\n6 = AudioExceededMaxDuration\n7 = OriginalCorrupted\n8 = TranscriptionFailed\n9 = JitIncompatible\n10 = JitFailed",
-        "x-enumNames": [
-          "Undefined",
-          "StreamLengthsDifference",
-          "TranscodingWarnings",
-          "IncompatibleResolution",
-          "InvalidFramerate",
-          "VideoExceededMaxDuration",
-          "AudioExceededMaxDuration",
-          "OriginalCorrupted",
-          "TranscriptionFailed",
-          "JitIncompatible",
-          "JitFailed"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10
+        "description": "",
+        "oneOf": [
+          {
+            "title": "Undefined",
+            "type": "integer",
+            "description": "Shouldn't be used",
+            "enum": [
+              0
+            ]
+          },
+          {
+            "title": "StreamLengthsDifference",
+            "type": "integer",
+            "description": "Marks that there is a mismatch between lengths of audio and video streams in the transcoded file",
+            "enum": [
+              1
+            ]
+          },
+          {
+            "title": "TranscodingWarnings",
+            "type": "integer",
+            "description": "Marks that transcoding completed with warnings",
+            "enum": [
+              2
+            ]
+          },
+          {
+            "title": "IncompatibleResolution",
+            "type": "integer",
+            "description": "Marks that original video file has incompatible resolution or isn't a video stream",
+            "enum": [
+              3
+            ]
+          },
+          {
+            "title": "InvalidFramerate",
+            "type": "integer",
+            "description": "Marks that original video file has invalid framerate",
+            "enum": [
+              4
+            ]
+          },
+          {
+            "title": "VideoExceededMaxDuration",
+            "type": "integer",
+            "description": "Marks that video stream exceeded max duration",
+            "enum": [
+              5
+            ]
+          },
+          {
+            "title": "AudioExceededMaxDuration",
+            "type": "integer",
+            "description": "Marks that audio stream exceeded max duration",
+            "enum": [
+              6
+            ]
+          },
+          {
+            "title": "OriginalCorrupted",
+            "type": "integer",
+            "description": "Marks that video file is corrupted and couldn't be processed properly",
+            "enum": [
+              7
+            ]
+          },
+          {
+            "title": "TranscriptionFailed",
+            "type": "integer",
+            "description": "Marks that video transcription finished with errors and might not be complete",
+            "enum": [
+              8
+            ]
+          },
+          {
+            "title": "JitIncompatible",
+            "type": "integer",
+            "description": "Marks that video file is not compatible with JIT encoding",
+            "enum": [
+              9
+            ]
+          },
+          {
+            "title": "JitFailed",
+            "type": "integer",
+            "description": "Marks that video failed JIT encoding",
+            "enum": [
+              10
+            ]
+          },
+          {
+            "title": "CaptionGenerationFailed",
+            "type": "integer",
+            "description": "Marks that captions generation failed",
+            "enum": [
+              11
+            ]
+          }
         ]
       },
       "SmartGenerateStatus": {
         "type": "integer",
-        "description": "0 = None\n1 = Queued\n2 = InProgress\n3 = Finished\n4 = Failed",
-        "x-enumNames": [
-          "None",
-          "Queued",
-          "InProgress",
-          "Finished",
-          "Failed"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4
+        "description": "",
+        "oneOf": [
+          {
+            "title": "None",
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          },
+          {
+            "title": "Queued",
+            "type": "integer",
+            "enum": [
+              1
+            ]
+          },
+          {
+            "title": "InProgress",
+            "type": "integer",
+            "enum": [
+              2
+            ]
+          },
+          {
+            "title": "Finished",
+            "type": "integer",
+            "enum": [
+              3
+            ]
+          },
+          {
+            "title": "Failed",
+            "type": "integer",
+            "enum": [
+              4
+            ]
+          }
         ]
+      },
+      "SmartGenerateFeaturesStatusModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "description": "Smart generate status for the video title, when applicable.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SmartGenerateStatus"
+              }
+            ]
+          },
+          "description": {
+            "description": "Smart generate status for the video description, when applicable.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SmartGenerateStatus"
+              }
+            ]
+          },
+          "chapters": {
+            "description": "Smart generate status for chapters, when applicable.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SmartGenerateStatus"
+              }
+            ]
+          },
+          "moments": {
+            "description": "Smart generate status for moments, when applicable.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SmartGenerateStatus"
+              }
+            ]
+          }
+        }
       },
       "VideoHeatmapModel": {
         "type": "object",
@@ -4307,6 +3072,10 @@
           "libraryName": {
             "type": "string",
             "nullable": true
+          },
+          "pullZoneId": {
+            "type": "integer",
+            "format": "int64"
           },
           "captionsPath": {
             "type": "string",
@@ -4400,10 +3169,38 @@
             "format": "int32",
             "nullable": true
           },
+          "widevineEmeRobustness": {
+            "type": "string",
+            "nullable": true
+          },
+          "widevineSdOnlyForL3": {
+            "type": "boolean"
+          },
+          "maxSoftwareWidevineResolution": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "zoneTier": {
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "isPlayable": {
+            "type": "boolean",
+            "description": "Determines if the video is currently playable using either playlist or original source."
+          },
+          "isPlaylistPlayable": {
+            "type": "boolean",
+            "description": "Determines if the HLS playlist is currently playable."
+          },
+          "preferredPlaybackSource": {
+            "description": "Preferred playback source for the current video state.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/VideoPlaybackSource"
+              }
+            ]
           },
           "rememberPlayerPosition": {
             "type": "boolean"
@@ -4411,8 +3208,41 @@
           "customCss": {
             "type": "string",
             "nullable": true
+          },
+          "exposeVideoMetadata": {
+            "type": "boolean"
+          },
+          "enableCompactControls": {
+            "type": "boolean"
           }
         }
+      },
+      "VideoPlaybackSource": {
+        "type": "string",
+        "description": "",
+        "oneOf": [
+          {
+            "title": "None",
+            "type": "string",
+            "enum": [
+              "None"
+            ]
+          },
+          {
+            "title": "Playlist",
+            "type": "string",
+            "enum": [
+              "Playlist"
+            ]
+          },
+          {
+            "title": "Original",
+            "type": "string",
+            "enum": [
+              "Original"
+            ]
+          }
+        ]
       },
       "VideoStatisticsModel": {
         "type": "object",
@@ -4463,18 +3293,36 @@
       },
       "EncoderOutputCodec": {
         "type": "integer",
-        "description": "0 = x264\n1 = vp9\n2 = hevc\n3 = av1",
-        "x-enumNames": [
-          "x264",
-          "vp9",
-          "hevc",
-          "av1"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3
+        "description": "",
+        "oneOf": [
+          {
+            "title": "x264",
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          },
+          {
+            "title": "vp9",
+            "type": "integer",
+            "enum": [
+              1
+            ]
+          },
+          {
+            "title": "hevc",
+            "type": "integer",
+            "enum": [
+              2
+            ]
+          },
+          {
+            "title": "av1",
+            "type": "integer",
+            "enum": [
+              3
+            ]
+          }
         ]
       },
       "PaginationListOfVideoModel": {
@@ -4598,6 +3446,27 @@
           }
         }
       },
+      "StatusModelOfCaptionValidationModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StatusModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "data": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CaptionValidationModel"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
       "CaptionValidationModel": {
         "type": "object",
         "additionalProperties": false,
@@ -4621,6 +3490,11 @@
             "items": {
               "type": "string"
             }
+          },
+          "warningMessage": {
+            "type": "string",
+            "description": "UI-friendly summary of warnings found in the uploaded captions file",
+            "nullable": true
           }
         }
       },
@@ -4976,6 +3850,16 @@
             "type": "string",
             "nullable": true
           },
+          "thumbnail_width": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "thumbnail_height": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "width": {
             "type": "integer",
             "format": "int32"
@@ -4997,598 +3881,6 @@
             "nullable": true
           }
         }
-      },
-      "ProblemDetails": {
-        "type": "object",
-        "additionalProperties": {
-          "nullable": true
-        },
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "EncoderCallbackModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "videoLibraryId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "videoGuid": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean"
-          },
-          "type": {
-            "$ref": "#/components/schemas/EncoderCallbackType"
-          },
-          "data": {
-            "type": "string",
-            "nullable": true
-          },
-          "isPremium": {
-            "type": "boolean"
-          },
-          "isJit": {
-            "type": "boolean"
-          },
-          "isRepackage": {
-            "type": "boolean"
-          },
-          "isReEncode": {
-            "type": "boolean"
-          },
-          "encodingJobId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "EncoderCallbackType": {
-        "type": "integer",
-        "description": "0 = ThumbnailGenerated\n1 = TaskFinished\n2 = JobFinished\n3 = TranscodingFailed\n4 = VideoInformation\n5 = ThumbnailInformation\n6 = EncodeProgress\n7 = ResolutionFinished\n8 = KeyGenerated\n9 = CaptionsGenerated\n10 = TitleOrDescriptionGenerated\n11 = TranscodingMessageIncoming\n12 = PremiumSegmenting\n13 = PremiumPlaylistsCreated\n14 = CaptionGenerationFailed\n15 = ChaptersGenerated\n16 = MomentsGenerated\n17 = LiveStreamMetadataUpdate",
-        "x-enumNames": [
-          "ThumbnailGenerated",
-          "TaskFinished",
-          "JobFinished",
-          "TranscodingFailed",
-          "VideoInformation",
-          "ThumbnailInformation",
-          "EncodeProgress",
-          "ResolutionFinished",
-          "KeyGenerated",
-          "CaptionsGenerated",
-          "TitleOrDescriptionGenerated",
-          "TranscodingMessageIncoming",
-          "PremiumSegmenting",
-          "PremiumPlaylistsCreated",
-          "CaptionGenerationFailed",
-          "ChaptersGenerated",
-          "MomentsGenerated",
-          "LiveStreamMetadataUpdate"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17
-        ]
-      },
-      "EncoderProgressModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "videoLibraryId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "videoGuid": {
-            "type": "string",
-            "nullable": true
-          },
-          "availableResolutions": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "LiveStreamMetadataUpdateCallbackModel": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/LiveStreamCallbackModel"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "type": {
-                "$ref": "#/components/schemas/EncoderCallbackType"
-              },
-              "metadata": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/LiveStreamMetadata"
-                  }
-                ]
-              }
-            }
-          }
-        ]
-      },
-      "LiveStreamMetadata": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "width": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "height": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "framerate": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      },
-      "LiveStreamCallbackModel": {
-        "type": "object",
-        "x-abstract": true,
-        "additionalProperties": false,
-        "properties": {
-          "videoLibraryId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "streamId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "success": {
-            "type": "boolean"
-          }
-        }
-      },
-      "LiveStreamThumbnailGeneratedCallbackModel": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/LiveStreamCallbackModel"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "type": {
-                "$ref": "#/components/schemas/EncoderCallbackType"
-              },
-              "newThumbnailFileName": {
-                "type": "string",
-                "nullable": true
-              }
-            }
-          }
-        ]
-      },
-      "VideoStatus": {
-        "type": "integer",
-        "description": "0 = Created\n1 = Uploaded\n2 = Processing\n3 = Transcoding\n4 = Finished\n5 = Error\n6 = UploadFailed\n7 = JitSegmenting\n8 = JitPlaylistsCreated",
-        "x-enumNames": [
-          "Created",
-          "Uploaded",
-          "Processing",
-          "Transcoding",
-          "Finished",
-          "Error",
-          "UploadFailed",
-          "JitSegmenting",
-          "JitPlaylistsCreated"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8
-        ]
-      },
-      "AddHeatmapDataModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "currentTime": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "AddVideoViewTimeModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "lid": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "v": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "wt": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "AddViewDataModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "views": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "watchTime": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "VideoInfoModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "video": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Video"
-              }
-            ]
-          },
-          "heatmapPrebuilt": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "Video": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "videoLibraryId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "guid": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateUploaded": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "views": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "totalWatchTime": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "totalWatchTimeViews": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "public": {
-            "type": "boolean"
-          },
-          "status": {
-            "$ref": "#/components/schemas/VideoStatus"
-          },
-          "userId": {
-            "type": "string",
-            "nullable": true
-          },
-          "length": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "framerate": {
-            "type": "number",
-            "format": "double"
-          },
-          "rotation": {
-            "type": "integer",
-            "nullable": true
-          },
-          "outputCodecs": {
-            "type": "string",
-            "nullable": true
-          },
-          "jitEncodingEnabled": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "encodingTier": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EncodingTier"
-              }
-            ]
-          },
-          "width": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "height": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "thumbnailCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "availableResolutions": {
-            "type": "string",
-            "nullable": true
-          },
-          "encodeProgress": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "captions": {
-            "type": "string",
-            "nullable": true
-          },
-          "storageSize": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "hasMP4Fallback": {
-            "type": "boolean"
-          },
-          "aesKeyName": {
-            "type": "string",
-            "nullable": true
-          },
-          "collectionId": {
-            "type": "string",
-            "nullable": true
-          },
-          "totalEncodingTime": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "thumbnailFileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "thumbnailBlurhash": {
-            "type": "string",
-            "nullable": true
-          },
-          "thumbnailTime": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "deleting": {
-            "type": "boolean"
-          },
-          "category": {
-            "type": "string",
-            "nullable": true
-          },
-          "chapters": {
-            "type": "string",
-            "nullable": true
-          },
-          "moments": {
-            "type": "string",
-            "nullable": true
-          },
-          "metaTags": {
-            "type": "string",
-            "nullable": true
-          },
-          "transcodingMessages": {
-            "type": "string",
-            "nullable": true
-          },
-          "vrType": {
-            "$ref": "#/components/schemas/VRTypes"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "transcoderVersion": {
-            "type": "string",
-            "nullable": true
-          },
-          "hasOriginal": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "encodedDrmType": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/VideoDrmType"
-              }
-            ]
-          },
-          "reEncoded": {
-            "type": "boolean"
-          },
-          "reEncodedTime": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "reEncodeCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "smartGenerateUsageCount": {
-            "type": "integer",
-            "nullable": true
-          },
-          "smartGenerateStatus": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/SmartGenerateStatus"
-              }
-            ]
-          },
-          "originalHash": {
-            "type": "string",
-            "nullable": true
-          },
-          "hasHighQualityPreview": {
-            "type": "boolean",
-            "nullable": true
-          }
-        }
-      },
-      "EncodingTier": {
-        "type": "integer",
-        "description": "0 = Free\n1 = Premium",
-        "x-enumNames": [
-          "Free",
-          "Premium"
-        ],
-        "enum": [
-          0,
-          1
-        ]
-      },
-      "VRTypes": {
-        "type": "integer",
-        "description": "0 = None\n1 = VR180\n2 = VR360",
-        "x-enumNames": [
-          "None",
-          "VR180",
-          "VR360"
-        ],
-        "enum": [
-          0,
-          1,
-          2
-        ]
-      },
-      "VideoDrmType": {
-        "type": "integer",
-        "description": "0 = None\n1 = Basic\n2 = EnterpriseEncoded\n3 = RepackageSuccessful\n4 = RepackageProcessing\n5 = RepackageFailed",
-        "x-enumNames": [
-          "None",
-          "Basic",
-          "EnterpriseEncoded",
-          "RepackageSuccessful",
-          "RepackageProcessing",
-          "RepackageFailed"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      },
-      "SyncSessionResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean"
-          },
-          "sessionKey": {
-            "type": "string",
-            "nullable": true
-          },
-          "rocksDbInfo": {
-            "$ref": "#/components/schemas/RocksDbInfo"
-          }
-        }
-      },
-      "RocksDbInfo": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "version": {
-            "type": "string"
-          }
-        }
-      },
-      "SyncSessionRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "lastSequenceNumber": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
       }
     },
     "securitySchemes": {
@@ -5603,9 +3895,6 @@
   "tags": [
     {
       "name": "Manage Collections"
-    },
-    {
-      "name": "Manage Live Streams"
     },
     {
       "name": "Manage Videos"
