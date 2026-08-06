@@ -1,0 +1,85 @@
+---
+title: Bunny Container Registry
+description: "Push container images to your private bunny.net registry and deploy them with Magic Containers."
+tag: Preview
+---
+
+<Note>
+Bunny Container Registry is in **Preview**. Features and commands may change. See [Product Release Stages](/product-release-stages) for details.
+</Note>
+
+Bunny Container Registry is a private, OCI-compliant container registry built into bunny.net. Push images from your machine or CI pipeline and they immediately show up in the Magic Containers image list, ready to deploy. No external registry or credential setup required.
+
+The registry is available at `registry.bunny.net`. Repositories are private to your account and namespaced by your account ID (`<account-id>/my-app`).
+
+<Info>
+Magic Containers only supports images built for the **linux/amd64** architecture. When building your container image, ensure you target this platform using `--platform linux/amd64`.
+</Info>
+
+You can push images in two ways: with Docker directly, or with the [bunny CLI](/cli). The CLI is the easier option: it handles authentication and the account namespace for you, so no configuration is needed.
+
+## Using Docker
+
+### Log in to the registry
+
+Authenticate with `token` as the username and your [API key](/account/api-keys) as the password:
+
+```bash
+docker login registry.bunny.net --username token
+```
+
+### Tag your image
+
+Tag the image with the registry host and your account ID. Replace `my-app` with the name of your image and `<account-id>` with your account ID:
+
+```bash
+docker tag my-app registry.bunny.net/<account-id>/my-app:latest
+```
+
+<Tip>
+Not sure where to find your account ID? Go to [Image Registries](https://dash.bunny.net/magic-containers/image-registries) in the dashboard and click **How to Push Images**. You'll see these Docker commands with your account ID already filled in, ready to copy.
+</Tip>
+
+### Push the image
+
+```bash
+docker push registry.bunny.net/<account-id>/my-app:latest
+```
+
+Once pushed, the image appears in the Magic Containers image list, where you can select it to deploy.
+
+## Using the bunny CLI
+
+<Note>
+`bunny registry` is **experimental** and may change in future releases.
+</Note>
+
+The [`bunny registry`](/cli/commands/registry) command pushes images and lists repositories and tags on the registry. Unlike Docker, you don't need to tag images with the registry host or your account ID: the CLI adds and hides the account namespace automatically, so you always work with the bare repository name.
+
+### Push an image
+
+```bash
+# Push, deriving the repository and tag from the image name
+bunny registry push my-app:latest
+
+# Push to an explicit repository and tag
+bunny registry push my-app:dev --repository my-app --tag v1
+```
+
+`push` uses Docker to read the local image, so Docker must be installed and the image must exist locally.
+
+### List repositories and tags
+
+```bash
+# List repositories (alias: ls)
+bunny registry list
+
+# List tags for a repository
+bunny registry tags my-app
+```
+
+`list` and `tags` talk to the registry directly and don't require Docker.
+
+## Deploying pushed images
+
+Images pushed to the Bunny Container Registry appear automatically in the image list when you [deploy](/magic-containers/deploy) or [update](/magic-containers/update) a Magic Containers app. Select the repository and tag to deploy; no registry credentials need to be configured.

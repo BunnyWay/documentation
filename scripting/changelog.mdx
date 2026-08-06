@@ -10,6 +10,24 @@ rss: true
   Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. Enable it per Pull Zone under **General** > **Origin** > **Run script before cache**. Middleware scripts gain two new hooks — `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support before cache execution, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
 </Update>
 
+<Update label="2026-07-10" tags={["New"]}>
+  ## Symbolic links, timestamps, and permissions support
+
+  The Node.js file system module now supports symbolic links (`symlink()`, `readlink()`, `lstat()`), returns correct file timestamps (`atime`, `mtime`, `ctime`, `birthtime`), and enforces owner-level file and directory permissions (`chmod()`, `access()`, `Stats.mode`). [Learn more](/scripting/node-fs)
+</Update>
+
+<Update label="2026-07-01" tags={["Improvement"]}>
+  ## Cache API documentation reorganized into dedicated section
+
+  The Cache API documentation has been restructured from a single page into a dedicated multi-page section with separate pages for the [API overview and limitations](/scripting/cache), [managing default and named caches](/scripting/cache/managing-caches), [reading and writing cache entries](/scripting/cache/reading-writing) (`match`, `put`, `delete`), and [end-to-end examples](/scripting/cache/examples) including a new on-demand refresh and purge recipe. The [`waitUntil` runtime reference](/scripting/runtime#waituntil) has also been expanded with a full API signature and a cache-population example.
+</Update>
+
+<Update label="2026-06-25" tags={["New"]}>
+  ## Runtime API and `waitUntil`
+
+  New Runtime API reference documenting the `waitUntil` function, which extends script isolate lifetime after a request finishes — ideal for keeping WebSocket connections alive and running background work. The WebSocket guide now includes a `waitUntil` usage example. [Learn more](/scripting/runtime)
+</Update>
+
 <Update label="2026-03-26" tags={["New"]}>
   ## Node.js file system API
 
