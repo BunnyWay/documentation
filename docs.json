@@ -314,7 +314,14 @@
                   "magic-containers/deploy-with-github-actions",
                   "magic-containers/image-registries",
                   "magic-containers/regions",
-                  "magic-containers/ip-addresses"
+                  "magic-containers/ip-addresses",
+                  {
+                    "group": "Bunny Container Registry",
+                    "hidden": true,
+                    "pages": [
+                      "magic-containers/bunny-container-registry"
+                    ]
+                  }
                 ]
               },
               {
@@ -1048,6 +1055,13 @@
                   "cli/commands/db",
                   "cli/commands/scripts",
                   "cli/commands/sandbox",
+                  {
+                    "group": "Registry",
+                    "hidden": true,
+                    "pages": [
+                      "cli/commands/registry"
+                    ]
+                  },
                   {
                     "group": "DNS",
                     "hidden": true,
