@@ -24,6 +24,12 @@ rss: true
   Pull Zones now support an IP Family Policy that controls which address families (IPv4, IPv6, or both) are advertised and which edge servers are eligible to serve the zone. Four policies are available: IPv4 Only, Dual Stack (default), Dual Stack Prefer IPv6, and IPv6 Only. Token authentication IP locking now also supports IPv6 addresses, binding at the client's `/64` prefix. [Learn more](/cdn/ip-family-policy)
 </Update>
 
+<Update label="2026-07-30" tags={["Storage","(New)"]}>
+  ## Read-only password support for S3 API
+
+  Bunny Storage's S3-compatible API now supports read-only access keys. Use a dedicated read-only secret access key for S3 connections that should only have read permissions, adding an extra layer of access control to your storage zones. [Learn more](/storage/s3)
+</Update>
+
 <Update label="2026-07-30" tags={["Shield","(New)"]}>
   ## Verified bot customization for Shield Zones
 
