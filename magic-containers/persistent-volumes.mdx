@@ -122,6 +122,8 @@ CMD ["myapp"]
 
 Files created by a root process can be read and modified by non-root containers in the same pod. Every container in a pod shares a group that owns the volume, and files created inside it are group-writable regardless of the creating process's umask.
 
+This applies to files created from the point the volume is set up onwards. On volumes created before August 2026, files written earlier may still be readable but not modifiable by a non-root container, while newly created ones behave as described here. Recreating the volume, or changing the volume's security context, brings the older files in line.
+
 Deletion is a separate question, decided by the directory rather than by the file - see [A note on deletion](#a-note-on-deletion) below.
 
 ### Non-root creates files, root accesses them
@@ -167,7 +169,11 @@ Modification works across users because the volume is group-owned and its files 
 
 ### A note on deletion
 
-On Linux, whether a process can delete a file is determined by write permission on the **directory** containing the file, not by the file's own permissions. Because all pod containers share write access to the volume directory, a non-root container would ordinarily be able to delete any file inside it regardless of who created it. To prevent this, the volume directory is configured with the **sticky bit** — the same mechanism used by shared system directories such as `/tmp`. With the sticky bit set, only the file's owner or root can delete or rename a file, even with directory write access. The `Delete ❌` entries in the tables above rely on this.
+On Linux, whether a process can delete a file is determined by write permission on the **directory** containing the file, not by the file's own permissions. Because all pod containers share write access to the volume directory, a non-root container would ordinarily be able to delete any file inside it regardless of who created it. To prevent this, the volume's top-level directory is configured with the **sticky bit** — the same mechanism used by shared system directories such as `/tmp`. With the sticky bit set, only the file's owner or root can delete or rename a file, even with directory write access.
+
+The sticky bit is not inherited, so it applies to files stored directly in the volume's top-level directory. Inside subdirectories that your application creates itself, deletion follows the ordinary rule again: any container in the pod can delete files there, including files another container created. If you rely on containers not being able to remove each other's files, keep those files at the top level of the volume, or set the sticky bit on your own directories (`chmod +t`) as part of your application's startup.
+
+The `Delete ❌` entries in the tables above describe the volume's top-level directory.
 
 ## FAQ
 
