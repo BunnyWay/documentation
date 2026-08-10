@@ -1,27 +1,77 @@
 ---
-title: Limits
-description: Storage zone, connection, and rate limits for Bunny Storage, plus the file-renaming limitation.
+title: "Limits"
+description: "Storage zone, connection, rate, request, and naming limits for Bunny Storage."
 ---
 
-To ensure optimal performance for all users, Bunny Storage has limits on concurrent connections and uploads.
+To ensure optimal performance for all users, Bunny Storage enforces limits on concurrent connections, request rates, throughput, and file naming. This page describes the limits that apply to your storage zones and how to work within them.
 
 ## Connection limits
 
-| Limit                           | Value   | Description                                                                          |
-| ------------------------------- | ------- | ------------------------------------------------------------------------------------ |
-| Concurrent Connections Per IP   | 100-200 | Up to 200 connections allowed from a single IP address                               |
-| Concurrent Connections Per Zone | 100     | Up to 100 concurrent connections allowed to upload to a single zone at the same time |
-| Maximum FTP Connections Per IP  | 25      | Maximum concurrent FTP connections from a single IP address                          |
+| Limit | Value | Description |
+| --- | --- | --- |
+| Concurrent HTTP connections per IP | 100 | Per server, per remote IP. Shared across the S3-compatible and HTTP APIs combined. |
+| Concurrent connections per zone | 100 | Up to 100 concurrent connections may upload to a single zone at the same time. |
+| Concurrent FTP connections per IP | 250 | Per server, per remote IP. |
+| Simultaneous FTP commands per IP / zone | 300 | Per server. Maximum number of FTP commands that can be in flight at once. |
+
+## Throughput and rate limits
+
+| Limit | Value | Description |
+| --- | --- | --- |
+| Throughput per connection | 1 Gbps | Maximum bandwidth for a single connection. |
+| Requests per second | 500 RPS | Maximum sustained request rate per storage zone. |
+
+To move data faster than a single connection allows, split transfers across multiple parallel connections rather than relying on one.
+
+## Request limits by operation
+
+Certain HTTP operations have their own concurrency and size limits:
+
+| Operation | Limit |
+| --- | --- |
+| POST (zip or download requests) | 10 requests per zone |
+| POST maximum request body size | 8 MB |
+| GET folder listing | 5 requests at a time |
+| DELETE | 30 simultaneous requests |
+
+## HTTP API limits
+
+The HTTP API is limited to **250 requests per zone, per server**. Requests beyond this limit are rejected until capacity frees up.
+
+## FTP timeouts
+
+FTP connections apply the following timeouts:
+
+| Timeout | Value | Description |
+| --- | --- | --- |
+| Connection | 10 seconds | Applied when no connection is established. |
+| Write | 10 seconds | Applied while writing data. |
+| Read | 30 seconds | Applied while reading data. |
+| Command read | 20 seconds | Applied while waiting for command results. |
+
+## File and directory naming
+
+When naming files and folders in Bunny Storage:
+
+- A file name including its full path cannot exceed **6,000 characters**.
+- A directory path cannot exceed **6,000 characters**.
+- File names cannot start or end with a space, and cannot be empty.
+
+Uploads that violate these rules are rejected.
+
+## SFTP path restrictions
+
+For security, SFTP paths cannot contain `..` (parent-directory traversal). If a path includes `..`, the SFTP connection fails **silently, with no error message**. If your SFTP client stops working unexpectedly, check that none of your paths contain `..`.
 
 ## How limits are applied
 
-Limits are applied on a **per-server basis**. Each Bunny Storage region runs multiple servers, and each server tracks limits independently.
+Most limits are applied on a **per-server basis**. Each Bunny Storage region runs multiple servers, and each server tracks limits independently.
 
 In practice, this allows you to achieve much higher concurrency than the per-server limits suggest.
 
 ## Rate limit responses
 
-When you reach a connection limit, further requests will be rejected with:
+When you reach a connection or request limit, further requests will be rejected with:
 
 - **HTTP Status Code**: 429 (Too Many Requests)
 - **FTP Response**: Connection refused
@@ -40,4 +90,4 @@ To rename a file, re-upload it under the new name, then delete the old one once 
 
 ## Durability and reliability
 
-For information about data durability, redundancy, and reliability guarantees, see [Durability](/storage/durability).
+For information about data durability, redundancy, and reliability guarantees, see [Durability](/docs/storage/durability).
