@@ -1,0 +1,197 @@
+---
+title: "Live Stream Quickstart"
+description: "Create, configure, and broadcast your first Bunny Stream live stream - from RTMP setup in OBS to going live and converting the recording to VOD."
+hidden: true
+---
+
+<Info>
+  **Closed preview.** Bunny Stream Live is currently available as a closed preview. Features, pricing, and limits described here may change before general availability. Please share bugs and feedback through your preview contact via the bunny.net Discord #live-stream-preview channel .
+</Info>
+
+This quickstart walks you through the full life cycle of a live stream on Bunny Stream: creating the stream, connecting an encoder over RTMP, going live, monitoring it in real time, and ending it so the recording is available on demand. You'll be broadcasting to viewers across the globe in a few minutes.
+
+## What you'll need
+
+Before you begin, make sure you have the following in place:
+
+- A [bunny.net](https://bunny.net/) account with live streaming enabled for the closed-preview ([log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+- A new **video library** in Bunny Stream. Create it first by following the [Stream Quickstart](/docs/stream/quickstart).
+- An **RTMP-capable encoder**. This guide uses [OBS Studio](https://obsproject.com/), a free, cross-platform encoder, but any encoder that supports RTMP/RTMPS ingest will work.
+- A stable upload connection with enough bandwidth for your target quality (see [Recommended encoder settings](#step-3-configure-your-encoder)).
+
+<Note>
+  **Closed-preview limits.** Accounts are limited to a **maximum stream duration of 12 hours**. You will not be charged for live encoding or related live stream CDN bandwidth or storage charges.
+</Note>
+
+## Step 1: Create a live stream
+
+1. Log in to the [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) and go to **Delivery → Stream**, then open your video library.
+2. From **Manage library**, click **Add Media** and choose **Add Live Stream** (or use the **Add Live Stream** card on the Overview tab).
+
+<Frame caption="Add Live Stream from the Add Media menu.">
+  ![Add Media dropdown open with Add Live Stream selected](/images/stream/live/add-live-stream-menu.png)
+</Frame>
+
+3. On the **Add live stream** page, enter a **Live stream title**. This is the only required field to create the stream.
+4. Optionally expand **Recommended encoder settings** to review the ingest settings for your target resolution before you create the stream.
+5. Click **Add Live Stream**.
+
+<Frame caption="Naming your live stream.">
+  ![Add live stream page with title field and pricing overview](/images/stream/live/add-live-stream-form.png)
+</Frame>
+
+## Step 2: Get your RTMP ingest details
+
+Once the stream is created, the **RTMP stream details** panel gives you everything your encoder needs to connect:
+
+| Field | Example value | Description |
+| --- | --- | --- |
+| **Stream key** | `bunnylive_xxxxxxxxxxxxxxxx…` | Your unique, secret key for this stream. Treat it like a password. |
+| **Primary ingest URL** | `rtmp://global.rtmp.mediadelivery.net/live` | The main RTMP endpoint your encoder streams to. |
+| **Backup ingest URL** | `rtmp://global-backup.rtmp.mediadelivery.net/live` | A failover endpoint. Configure it in a second encoder or profile for redundancy. |
+
+<Frame caption="RTMP stream details and live preview.">
+  ![Stream key, primary and backup ingest URLs, and preview panel](/images/stream/live/rtmp-stream-details.png)
+</Frame>
+
+<Warning>
+  Keep your **stream key** private - anyone with it can broadcast to your stream. You can regenerate it with the refresh icon **before** the stream starts, but the key **cannot be refreshed once the stream is live**.
+</Warning>
+
+Below the RTMP details you can also set up the stream itself:
+
+- **Description** - an optional summary of your stream.
+- **Schedule start date and time** - optionally set the date and time (24-hour UTC Timezone) you plan to go live. Starting the stream manually later will override this scheduled time.
+- **Video on demand (VOD)** - enabled by default. When on, the live stream is stored in your video library and is available to watch back as VOD after the stream ends.
+
+## Step 3: Configure your encoder
+
+Open your encoder and point it at Bunny's ingest endpoint. In **OBS Studio**, go to **Preferences → Stream** and set:
+
+- **Service:** `Custom…`
+- **Server:** paste the **Primary ingest URL** from Step 2 (`rtmp://global.rtmp.mediadelivery.net/live`).
+- **Stream Key:** paste your **Stream key**.
+
+<Frame caption="OBS Stream settings pointed at the Bunny ingest URL.">
+  ![OBS settings dialog with custom service, server, and stream key](/images/stream/live/obs-stream-settings.png)
+</Frame>
+
+Then, under **Preferences → Output**, match your encoder to the highest quality Bunny's adaptive bitrate (ABR) ladder for the best results. Bunny Stream Live ingests **H.264 (AVC)** video with **stereo AAC** audio and transcodes your feed into the following renditions:
+
+| Resolution | Recommended source bitrate |
+| --- | --- |
+| 240p (352 × 240) | 600 kbps |
+| 360p (640 × 360) | 800 kbps |
+| 480p (842 × 480) | 1,400 kbps |
+| 720p (1280 × 720) | 2,800 kbps |
+| 1080p (1920 × 1080) | 5,000 kbps |
+| 1440p (2560 × 1440) | 8,000 kbps |
+| 2160p / 4K (3840 × 2160) | 25,000 kbps |
+
+<Tip>
+  Encode and send Bunny a **single high-quality feed at your top target resolution** (for example, 1080p at ~5,000 kbps). Bunny generates the full ABR ladder automatically, so your viewers receive the best quality their connection and device can handle. Live streams support up to 60 FPS 1080p and 30 FPS 2160p.
+</Tip>
+
+When your settings are ready, start streaming from your encoder (in OBS, click **Start Streaming**). Your encoder should show a healthy bitrate and no dropped frames.
+
+<Frame caption="OBS actively streaming to Bunny.">
+  ![OBS main window streaming with a live bitrate indicator](/images/stream/live/obs-streaming.png)
+</Frame>
+
+## Step 4: Verify the connection and preview
+
+Back on the **Add live stream** page (or the **Control Room**), the **Preview** panel confirms that Bunny is receiving your feed:
+
+- The status indicator turns green and reads **Ready for live stream**.
+- The **Primary** and **Backup** badges show which ingest endpoints are connected.
+- Press play in the preview to confirm your feed looks correct **before** going live to your audience.
+
+<Frame caption="Preview showing a connected feed, ready to go live.">
+  ![Preview panel showing the incoming feed and a green Ready for live stream status](/images/stream/live/preview-ready.png)
+</Frame>
+
+From the **Control Room**, you can also click **Show Preview** to open the full-size preview player in a separate window and check playback and latency (last ping) without exposing the stream to viewers.
+
+<Frame caption="Full preview window with connection status and last ping.">
+  ![Livestream preview window showing the feed and connected status](/images/stream/live/preview-window.png)
+</Frame>
+
+## Step 5: Go live
+
+When you're happy with the preview, you're ready to broadcast:
+
+1. Open the **Control Room** for your stream. While your encoder is connected but you haven't started, the player shows **Live stream not active**, along with pre-stream metrics such as **Viewers waiting** and **Pre stream trailer total views**.
+2. Click **Start Stream**.
+3. Confirm in the dialog. Note that **starting manually overrides your scheduled start time**.
+
+<Frame caption="Confirm to start broadcasting to your audience.">
+  ![Start live stream confirmation dialog](/images/stream/live/start-stream-modal.png)
+</Frame>
+
+Your stream is now live. The header shows a **Live** badge and a running duration timer, and viewers watching the embed or direct URL now see your broadcast.
+
+## Step 6: Monitor your stream
+
+While you're live, the **Control Room** surfaces real-time statistics so you can keep an eye on performance and audience:
+
+- **Duration** - elapsed live time.
+- **Status** - connection health, last ping, and which of Primary/Backup ingest is active.
+- **Live Views**, **Unique Views**, and **Concurrency Views** - real-time audience numbers. \*Not available in closed-preview
+
+<Frame caption="Real-time stats while the stream is live.">
+  ![Control Room while live, showing duration, status, views, and bandwidth](/images/stream/live/live-control-room.png)
+</Frame>
+
+<Note>
+  If your primary ingest drops, Bunny automatically fails over to the backup endpoint (and back), so a single connection hiccup won't take your broadcast offline. Watch the **Primary & Backup** badges in the **Status** card to see which is active.
+</Note>
+
+## Step 7: End the stream and watch it back
+
+1. When you're finished, click **End Stream** in the Control Room header.
+2. Confirm in the dialog. Once ended, the stream cannot be restarted - you'll create a new stream for your next broadcast.
+
+<Frame caption="Confirm to end the live stream.">
+  ![End live stream confirmation dialog](/images/stream/live/end-stream-modal.png)
+</Frame>
+
+If **Video on demand** was enabled, Bunny immediately begins converting the recording into a VOD asset in your library. You'll see a notice that **your VOD is currently processing - viewers can still rewatch the live stream** while it does. Once processing completes, the recording plays back like any other Bunny Stream video, and you can pick or upload a **thumbnail** and edit the **title** and details.
+
+<Frame caption="After ending, the stream converts to an on-demand recording.">
+  ![Ended live stream with a VOD processing notice and thumbnail selection](/images/stream/live/ended-vod-processing.png)
+</Frame>
+
+## Getting the embed code or video URL
+
+Your live stream (and its VOD) can be shared or embedded exactly like a regular Bunny Stream video. From the stream's **General** tab, use the **Embed** and **Live stream links** sections to copy:
+
+- The **embed code** (iframe) to place the player in your webpage.
+- The **direct play URL** to share over email, social, or any channel.
+
+Paste the embed code into your page's HTML where you want the player to appear, then save and refresh.
+
+<Info>
+  For more detail on embedding and player options, see the [Embedding Videos guide](/docs/stream/embedding).
+</Info>
+
+## Next steps
+
+- Live Stream also supports the following within **advanced settings** and your **video library live stream settings**:
+  - **Countdown** within the bunny player so viewers can see how long they have left before the live stream starts. 
+  - **Thumbnails** displayed within the player before the live stream starts and generated during the live stream. 
+  - **Prestream Trailer** so viewers can watch a looping video with a countdown before the live stream starts. 
+  - **DVR** meaning viewers can rewind during the live stream a set amount of time. 
+  - **Watermarking** rendered into the live video stream. This is unique to the live stream library meaning a clean version is generated for VOD so you can apply a different Watermark to your VOD. 
+  - **RTMP distribution** for co-streaming live to other platforms in parallel. 
+  - **VOD** is re-encoded meaning all of bunny Stream's VOD features such as Premium encoding, Transcription, Smart generate and eDRM are supported for the VOD.
+- Configure **player UI, and authentication** (allowed/blocked domains, token, and CDN authentication) in **player and security video library settings**.
+
+- Automate stream creation and control with the **Bunny Stream Live API** (create/start/stop streams, fetch the HLS playlist URL, and subscribe to status webhooks).
+
+## Not currently supported by Live Stream during closed-preview 
+
+- Live statistics 
+- SRT Ingest
+- Low latency live streaming
+- Live streams longer than 12 hours
+- VOD Clipping
