@@ -1,0 +1,46 @@
+---
+title: Partner Portal API Reference
+sidebarTitle: Overview
+description: Manage your customers, pricing, products, and billing through the bunny.net Partner Portal API.
+---
+
+The Partner Portal API provides a RESTful interface for bunny.net partners to manage their customers. Create and invite customers, configure pricing and products, view billing, and access audit logs.
+
+<Note>
+  This API is available to accounts with the **ResellerPartner** or **MSPPartner** roles. Contact bunny.net if you would like to join the partner program.
+</Note>
+
+## Base URL
+
+```
+https://api.bunny.net
+```
+
+## Authentication
+
+Authenticate using the `AccessKey` header with your partner account API key:
+
+```bash
+curl --request GET \
+  --url https://api.bunny.net/api/partner/customers \
+  --header 'AccessKey: YOUR_API_KEY'
+```
+
+<Note>
+  Find your API key in the [account
+  settings](https://dash.bunny.net/account/settings) under **API Keys**.
+</Note>
+
+## Resources
+
+The Partner Portal API provides access to the following resources:
+
+| Resource      | Description                                                     |
+| ------------- | --------------------------------------------------------------- |
+| Customers     | Create, list, and invite customers under your partner account   |
+| Pricing       | View and configure the pricing applied to your customers        |
+| Products      | Enable or disable the products available to your customers      |
+| Contract      | Retrieve your partner contract details                          |
+| Billing       | View customer billing records and download invoice PDFs         |
+| Impersonation | Access a customer account on their behalf for support           |
+| Audit Log     | Review the history of actions taken across your customers       |
