@@ -7,7 +7,7 @@ description: Manage your customers, pricing, products, and billing through the b
 The Partner Portal API provides a RESTful interface for bunny.net partners to manage their customers. Create and invite customers, configure pricing and products, view billing, and access audit logs.
 
 <Note>
-  This API is available to accounts with the **ResellerPartner** or **MSPPartner** roles. Contact bunny.net if you would like to join the partner program.
+  This API is available to partners only. Contact bunny.net if you would like to join the partner program.
 </Note>
 
 ## Base URL
@@ -22,7 +22,7 @@ Authenticate using the `AccessKey` header with your partner account API key:
 
 ```bash
 curl --request GET \
-  --url https://api.bunny.net/api/partner/customers \
+  --url https://api.bunny.net/partner/customers \
   --header 'AccessKey: YOUR_API_KEY'
 ```
 

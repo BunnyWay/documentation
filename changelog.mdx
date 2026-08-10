@@ -4,6 +4,14 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-08-01" tags={["Edge Scripting","(New)"]}>
+  ## Connect a Bunny Database from the Edge Scripting creation flow
+
+  You can now connect a Bunny Database directly from the Edge Scripting creation flow. Create a new database or pick an existing one, and we'll automatically add the connection credentials (`BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN`) as script secrets. There's also a new Database CRUD API script template available to get you started.
+
+  ![Add Database](/images/changelog/edge-scripting-add-database.png)
+</Update>
+
 <Update label="2026-07-16" tags={["CLI","(New)"]}>
   ## Cloud sandbox environments via Bunny CLI
 
@@ -14,6 +22,12 @@ rss: true
   ## IP Family Policy for Pull Zones
 
   Pull Zones now support an IP Family Policy that controls which address families (IPv4, IPv6, or both) are advertised and which edge servers are eligible to serve the zone. Four policies are available: IPv4 Only, Dual Stack (default), Dual Stack Prefer IPv6, and IPv6 Only. Token authentication IP locking now also supports IPv6 addresses, binding at the client's `/64` prefix. [Learn more](/cdn/ip-family-policy)
+</Update>
+
+<Update label="2026-07-30" tags={["Storage","(New)"]}>
+  ## Read-only password support for S3 API
+
+  Bunny Storage's S3-compatible API now supports read-only access keys. Use a dedicated read-only secret access key for S3 connections that should only have read permissions, adding an extra layer of access control to your storage zones. [Learn more](/storage/s3)
 </Update>
 
 <Update label="2026-07-30" tags={["Shield","(New)"]}>
@@ -66,9 +80,9 @@ rss: true
 </Update>
 
 <Update label="2026-06-26" tags={["Optimizer","(Improvement)"]}>
-  ## AVIF, HEIC and HEIF are now GA
+  ## AVIF, HEIC and HEIF are now GAAVIF, HEIC and HEIF are now GA
 
-  Support for AVIF, HEIC and HEIF as input formats, and AVIF as an output format, has been promoted to [General Availability](/product-release-stages). [Learn more](/optimizer/dynamic-images/formats)
+  Support for AVIF, HEIC and HEIF as input formats, and AVIF as an output format, has been promoted to [General Availability](/product-release-stages)Support for AVIF, HEIC and HEIF as input formats, and AVIF as an output format, has been promoted to [General Availability](/product-release-stages). [Learn more](/optimizer/dynamic-images/formats)
 </Update>
 
 <Update label="2026-06-25" tags={["Edge Scripting","(New)"]}>
