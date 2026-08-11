@@ -5,7 +5,7 @@ hidden: true
 ---
 
 <Info>
-  **Closed preview.** Bunny Stream Live is currently available as a closed preview. Features, pricing, and limits described here may change before general availability. Please share bugs and feedback through your preview contact via the bunny.net Discord #live-stream-preview channel .
+  **Closed preview.** Bunny Stream Live is currently available as a closed preview. Features, pricing, and limits described here may change before general availability. Please share bugs and feedback via the bunny.net Discord #live-stream-preview channel.
 </Info>
 
 This quickstart walks you through the full life cycle of a live stream on Bunny Stream: creating the stream, connecting an encoder over RTMP, going live, monitoring it in real time, and ending it so the recording is available on demand. You'll be broadcasting to viewers across the globe in a few minutes.
@@ -14,13 +14,13 @@ This quickstart walks you through the full life cycle of a live stream on Bunny 
 
 Before you begin, make sure you have the following in place:
 
-- A [bunny.net](https://bunny.net/) account with live streaming enabled for the closed-preview ([log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+- A [bunny.net](https://bunny.net/) account with live streaming enabled for the closed preview ([log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
 - A new **video library** in Bunny Stream. Create it first by following the [Stream Quickstart](/docs/stream/quickstart).
 - An **RTMP-capable encoder**. This guide uses [OBS Studio](https://obsproject.com/), a free, cross-platform encoder, but any encoder that supports RTMP/RTMPS ingest will work.
 - A stable upload connection with enough bandwidth for your target quality (see [Recommended encoder settings](#step-3-configure-your-encoder)).
 
 <Note>
-  **Closed-preview limits.** Accounts are limited to a **maximum stream duration of 12 hours**. You will not be charged for live encoding charges.
+  **Closed-preview limits.** Accounts are limited to a **maximum stream duration of 12 hours**. You won't be charged for **live encoding** during the closed preview.
 </Note>
 
 ## Step 1: Create a live stream
@@ -61,12 +61,12 @@ Once the stream is created, the **RTMP stream details** panel gives you everythi
 Below the RTMP details you can also set up the stream itself:
 
 - **Description** - an optional summary of your stream.
-- **Schedule start date and time** - optionally set the date and time (24-hour UTC Timezone) you plan to go live. Starting the stream manually later will override this scheduled time.
+- **Schedule start date and time** - optionally set the date and time (24-hour UTC) you plan to go live. This does **not** start the stream automatically: you still start it manually (in [Step 5](#step-5-go-live)), and you can do so before, at, or after the scheduled time. Scheduling is mainly used to show viewers a **countdown** ahead of the stream.
 - **Video on demand (VOD)** - enabled by default. When on, the live stream is stored in your video library and is available to watch back as VOD after the stream ends.
 
 ## Step 3: Configure your encoder
 
-Open your encoder and point it at Bunny's ingest endpoint. In **OBS Studio**, go to **Preferences → Stream** and set:
+Open your encoder and point it at Bunny's ingest endpoint. In **OBS Studio**, go to **Settings → Stream** (on macOS, **OBS → Preferences → Stream**) and set:
 
 - **Service:** `Custom…`
 - **Server:** paste the **Primary ingest URL** from Step 2 (`rtmp://global.rtmp.mediadelivery.net/live`).
@@ -76,7 +76,7 @@ Open your encoder and point it at Bunny's ingest endpoint. In **OBS Studio**, go
   ![OBS settings dialog with custom service, server, and stream key](/images/stream/live/obs-stream-settings.png)
 </Frame>
 
-Then, under **Preferences → Output**, match your encoder to the highest quality Bunny's adaptive bitrate (ABR) ladder for the best results. Bunny Stream Live ingests **H.264 (AVC)** video with **stereo AAC** audio and transcodes your feed into the following renditions:
+Then, under **Output**, set your encoder to the highest quality in Bunny's adaptive bitrate (ABR) ladder that your upload connection can sustain. Bunny Stream Live ingests **H.264 (AVC)** video with **stereo AAC** audio and transcodes your feed into the following renditions:
 
 | Resolution | Recommended source bitrate |
 | --- | --- |
@@ -89,7 +89,7 @@ Then, under **Preferences → Output**, match your encoder to the highest qualit
 | 2160p / 4K (3840 × 2160) | 25,000 kbps |
 
 <Tip>
-  Encode and send Bunny a **single high-quality feed at your top target resolution** (for example, 1080p at ~5,000 kbps). Bunny generates the full ABR ladder automatically, so your viewers receive the best quality their connection and device can handle. Live streams support up to 60 FPS 1080p and 30 FPS 2160p.
+  Encode and send Bunny a **single high-quality feed at your top target resolution** (for example, 1080p at ~5,000 kbps). Bunny generates the full ABR ladder automatically, so your viewers receive the best quality their connection and device can handle. Live streams support up to 60 FPS at 1080p and 30 FPS at 2160p.
 </Tip>
 
 When your settings are ready, start streaming from your encoder (in OBS, click **Start Streaming**). Your encoder should show a healthy bitrate and no dropped frames.
@@ -105,6 +105,10 @@ Back on the **Add live stream** page (or the **Control Room**), the **Preview** 
 - The status indicator turns green and reads **Ready for live stream**.
 - The **Primary** and **Backup** badges show which ingest endpoints are connected.
 - Press play in the preview to confirm your feed looks correct **before** going live to your audience.
+
+<Info>
+  **Expect a short delay.** After your encoder starts publishing, allow **at least 5-10 seconds** before the preview playback and the connected **Primary/Backup** indicators appear in the dashboard. If they don't update immediately, wait a few seconds rather than restarting your encoder. We're working to reduce this delay.
+</Info>
 
 <Frame caption="Preview showing a connected feed, ready to go live.">
   ![Preview panel showing the incoming feed and a green Ready for live stream status](/images/stream/live/preview-ready.png)
@@ -136,10 +140,10 @@ While you're live, the **Control Room** surfaces real-time statistics so you can
 
 - **Duration** - elapsed live time.
 - **Status** - connection health, last ping, and which of Primary/Backup ingest is active.
-- **Live Views**, **Unique Views**, and **Concurrency Views** - real-time audience numbers. \*Not available in closed-preview
+- **Live CDN bandwidth** - data served so far.
 
 <Frame caption="Real-time stats while the stream is live.">
-  ![Control Room while live, showing duration, status, views, and bandwidth](/images/stream/live/live-control-room.png)
+  ![Control Room while live, showing duration, status, and bandwidth](/images/stream/live/live-control-room.png)
 </Frame>
 
 <Note>
@@ -156,6 +160,10 @@ While you're live, the **Control Room** surfaces real-time statistics so you can
 </Frame>
 
 If **Video on demand** was enabled, Bunny immediately begins converting the recording into a VOD asset in your library. You'll see a notice that **your VOD is currently processing - viewers can still rewatch the live stream** while it does. Once processing completes, the recording plays back like any other Bunny Stream video, and you can pick or upload a **thumbnail** and edit the **title** and details.
+
+<Note>
+  During the closed preview, the VOD includes **all content ingested from your encoder** - including anything sent while the stream was still in preview, before you clicked **Start Stream** - not only the portion after going live. This will change in the open preview so the VOD reflects only the live portion.
+</Note>
 
 <Frame caption="After ending, the stream converts to an on-demand recording.">
   ![Ended live stream with a VOD processing notice and thumbnail selection](/images/stream/live/ended-vod-processing.png)
@@ -174,24 +182,210 @@ Paste the embed code into your page's HTML where you want the player to appear, 
   For more detail on embedding and player options, see the [Embedding Videos guide](/docs/stream/embedding).
 </Info>
 
-## Next steps
+## Automate with the Live Stream API
+
+Everything you just did in the dashboard can be driven programmatically with the Bunny Stream API. This is the same workflow - create a stream, read its ingest details, start it, monitor it, and stop it - expressed as API calls.
+
+<Info>
+  The Live Stream API is part of the closed preview and may change before general availability. Endpoints, fields, and defaults described below reflect the current preview.
+</Info>
+
+### Authentication
+
+All Stream API requests go to the base URL `https://video.bunnycdn.com` and authenticate with your **video library API key**, sent in the `AccessKey` header. You can find this key in the dashboard under your video library's **API** section.
+
+```bash
+# Common values used throughout the examples
+export BUNNY_LIBRARY_ID="123456"
+export BUNNY_API_KEY="your-video-library-api-key"
+```
+
+<Warning>
+  Your API key grants full control over the video library - keep it server-side and never expose it in client-side code.
+</Warning>
+
+### Create a live stream
+
+Send a `POST` to `/library/{libraryId}/live` with a JSON body. Only the basics are shown here; all fields are optional, though you'll typically set a `title`.
+
+```bash
+curl --request POST \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live" \
+  --header "AccessKey: $BUNNY_API_KEY" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "title": "My first live stream",
+    "recordVod": true,
+    "enableCountdown": true,
+    "scheduledStartTime": "2026-01-15T18:00:00Z"
+  }'
+```
+
+Key fields in the request body (`CreateLiveStreamModel`):
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `title` | string | The title of the live stream. |
+| `description` | string | Optional description. |
+| `collectionId` | string | Collection the stream belongs to. |
+| `recordVod` | boolean | If `true`, the stream is converted to a VOD when it stops. |
+| `scheduledStartTime` | date-time | Scheduled start (UTC). Viewers can only watch after this time unless you start manually. |
+| `scheduledEndTime` | date-time | Scheduled end (UTC). |
+| `enableCountdown` | boolean | Show a countdown in the player before a scheduled start. |
+| `public` | boolean | Whether the stream is publicly accessible. Defaults to `true`. |
+| `dvrEnabled` | boolean | Enable DVR for the stream. |
+| `dvrWindowSeconds` | integer | DVR window in seconds. Required when `dvrEnabled` is `true`; max is `43200` (12 hours). |
+| `rtmpOutputs` | array | Up to 4 RTMP outputs to forward the incoming stream to (each with `endpoint` and `streamKey`). |
+| `preStreamTrailerVideoId` | string | Video ID of a trailer to play before the stream starts. |
+
+### Get your RTMP ingest details
+
+The create response (and `GET /library/{libraryId}/live/{streamId}`) returns a `LiveStreamModel` containing everything your encoder needs:
+
+```json
+{
+  "guid": "019fed6c-d433-7040-92cd-dfd0e4221757",
+  "title": "My first live stream",
+  "status": 1,
+  "streamKey": "bunnylive_xxxxxxxxxxxxxxxx",
+  "playbackUrlHls": "https://.../playlist.m3u8",
+  "recordVod": true,
+  "availableResolutions": "240p,360p,480p,720p,1080p",
+  "ingestEndpoints": {
+    "rtmp": {
+      "primaryIngestUrl": "rtmp://global.rtmp.mediadelivery.net/live",
+      "backupIngestUrl": "rtmp://global-backup.rtmp.mediadelivery.net/live"
+    }
+  }
+}
+```
+
+Point your encoder's **server** at `ingestEndpoints.rtmp.primaryIngestUrl` (or the backup URL) and set its **stream key** to `streamKey`. These are the same values you'd otherwise copy from the dashboard in [Step 2](#step-2-get-your-rtmp-ingest-details). Use `playbackUrlHls` for playback.
+
+<Note>
+  Save the `guid` returned here - it's the `streamId` used in every subsequent call.
+</Note>
+
+### Start and stop the stream
+
+Once your encoder is publishing, mark the stream live so viewers can watch. Starting via the API is the equivalent of clicking **Start Stream** in the Control Room and overrides any scheduled start time.
+
+<CodeGroup>
+```bash Start
+curl --request PUT \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/start" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+
+```bash Stop
+curl --request PUT \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/stop" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+</CodeGroup>
+
+<Warning>
+  Stopping a stream cannot be undone. If `recordVod` was set to `true`, the stream is converted to a regular video (VOD) when it stops.
+</Warning>
+
+### Check the stream status
+
+Poll `GET /library/{libraryId}/live/{streamId}/status` to drive your own UI or automation. It returns whether the primary/backup ingest is live, how long ago the last ping arrived, and the current duration.
+
+```bash
+curl --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/status" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+
+```json
+{
+  "readyToStart": true,
+  "primaryLive": true,
+  "backupLive": false,
+  "lastPingAgo": 205,
+  "duration": 12,
+  "statusTimeUtc": "2026-01-15T18:03:45Z"
+}
+```
+
+The `status` field on the live stream object itself moves through the stream's life cycle:
+
+| Value | Status | Meaning |
+| --- | --- | --- |
+| `1` | Created | The stream was just created. |
+| `2` | Scheduled | Scheduled to go live at `scheduledStartTime`. Publishing can start earlier, but it's only watchable after that time. |
+| `3` | Preview | Publishing has started but the stream wasn't started from the dashboard/API - visible only in the preview player. |
+| `4` | Running | Started from the dashboard or API; the stream is live. |
+| `5` | Ended | Finished; publishing is no longer possible. |
+| `6` | VodProcessing | Ended and currently processing the VOD output. |
+| `7` | Error | An error occurred during ingest or live publishing. |
+
+### Manage the stream
+
+<CodeGroup>
+```bash Update
+curl --request PUT \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID" \
+  --header "AccessKey: $BUNNY_API_KEY" \
+  --header "Content-Type: application/json" \
+  --data '{ "title": "Updated title", "recordVod": true }'
+```
+
+```bash Regenerate key
+curl --request PUT \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/regenerate-key" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+
+```bash Delete
+curl --request DELETE \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+</CodeGroup>
+
+<Note>
+  The stream key can only be regenerated **before** a stream has ended. Deleting a stream removes it and all associated resources and cannot be undone.
+</Note>
+
+### Endpoint reference
+
+All paths are relative to `https://video.bunnycdn.com` and require the `AccessKey` header (except the public playback endpoint).
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `POST` | `/library/{libraryId}/live` | Create a live stream. |
+| `GET` | `/library/{libraryId}/live` | List live streams (`page`, `itemsPerPage`, `search`, `orderBy`, `collectionId`). |
+| `GET` | `/library/{libraryId}/live/{streamId}` | Get a live stream by ID. |
+| `PUT` | `/library/{libraryId}/live/{streamId}` | Update a live stream. |
+| `DELETE` | `/library/{libraryId}/live/{streamId}` | Delete a live stream and its resources. |
+| `PUT` | `/library/{libraryId}/live/{streamId}/start` | Start the stream (make it watchable). |
+| `PUT` | `/library/{libraryId}/live/{streamId}/stop` | Stop the stream (converts to VOD if `recordVod` is enabled). |
+| `PUT` | `/library/{libraryId}/live/{streamId}/regenerate-key` | Regenerate the stream key (not allowed after a stream ends). |
+| `GET` | `/library/{libraryId}/live/{streamId}/status` | Get real-time ingest status. |
+| `GET` | `/library/{libraryId}/live/{streamId}/play` | Get playback data (public; supports `token` and `expires` for signed URLs). |
+| `GET` | `/library/{libraryId}/live/{streamId}/thumbnails` | List recent generated thumbnails (`limit`, `from`, `to`). |
+| `POST` | `/library/{libraryId}/live/{streamId}/thumbnail` | Set a custom thumbnail (upload or `thumbnailUrl`). |
+| `DELETE` | `/library/{libraryId}/live/{streamId}/thumbnail` | Remove the custom thumbnail. |
+| `GET` | `/library/{libraryId}/live/{streamId}/current-bitrate` | Get the latest ingest bitrate. |
+| `GET` | `/library/{libraryId}/live/{streamId}/bitrate-history` | Get ingest bitrate history (`startTime`, `endTime`). |
+
+## Additional features
 
 - Live Stream also supports the following within **advanced settings** and your **video library live stream settings**:
-  - **Countdown** within the bunny player so viewers can see how long they have left before the live stream starts. 
-  - **Thumbnails** displayed within the player before the live stream starts and generated during the live stream. 
-  - **Prestream Trailer** so viewers can watch a looping video with a countdown before the live stream starts. 
-  - **DVR** meaning viewers can rewind during the live stream a set amount of time. 
-  - **Watermarking** rendered into the live video stream. This is unique to the live stream library meaning a clean version is generated for VOD so you can apply a different Watermark to your VOD. 
-  - **RTMP distribution** for co-streaming live to other platforms in parallel. 
-  - **VOD** is re-encoded meaning all of bunny Stream's VOD features such as Premium encoding, Transcription, Smart generate and eDRM are supported for the VOD.
-- Configure **player UI, and authentication** (allowed/blocked domains, token, and CDN authentication) in **player and security video library settings**.
+  - **Countdown** within the bunny player so viewers can see how long they have left before the live stream starts.
+  - **Thumbnails** displayed within the player before the live stream starts and generated during the live stream.
+  - **Prestream Trailer** so viewers can watch a looping video with a countdown before the live stream starts.
+  - **DVR** meaning viewers can rewind during the live stream a set amount of time.
+  - **Watermarking** rendered into the live video stream. This is unique to the live stream library, meaning a clean version is generated for VOD so you can apply a different watermark to your VOD.
+  - **RTMP distribution** for co-streaming live to other platforms in parallel.
+  - **VOD** is re-encoded, meaning all of Bunny Stream's VOD features - such as Premium encoding, Transcription, Smart generate, and eDRM - are supported for the VOD.
+- Configure **player UI and authentication** (allowed/blocked domains, token, and CDN authentication) in your **player and security video library settings**.
+- Automate stream creation and control with the [Live Stream API](#automate-with-the-live-stream-api) - create, start, stop, monitor, and manage streams programmatically.
 
-- Automate stream creation and control with the **Bunny Stream Live API** (create/start/stop streams, fetch the HLS playlist URL, and subscribe to status webhooks).
+## Not currently supported by Live Stream during closed preview
 
-## Not currently supported by Live Stream during closed-preview 
-
-- Live statistics 
-- SRT Ingest
-- Low latency live streaming
-- Live streams longer than 12 hours
-- VOD Clipping
+- Live statistics
+- SRT ingest
+- Low-latency HLS live streaming
+- VOD clipping
