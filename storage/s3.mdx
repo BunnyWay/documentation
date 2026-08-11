@@ -307,12 +307,13 @@ Bunny Storage returns standard S3 error codes:
 | `NotImplemented` | 501 | The requested operation is not implemented (for example `DeleteObjects`) |
 | `InternalError` | 500 | Internal server error |
 | `ServiceUnavailable` | 403 | S3 compatibility is not enabled for this storage zone |
+| `SlowDown` | 503 | Rate limit exceeded. The response includes a `Retry-After` header (in seconds) — wait for that interval, then retry with exponential backoff. See [Limits](#limits) |
 
 ## Best Practices
 
 1. [**Use an SDK**](https://docs.aws.amazon.com/AmazonS3/latest/API/sdk-general-information-section.html) to interact with the S3 api
 2. **Enable Replication** for at least one additional region
-3. **Implement retry logic** for transient failures
+3. **Implement retry logic** for transient failures, honouring the `Retry-After` header on `SlowDown` responses
 4. **Use multipart uploads** for objects larger than 100MB
 5. **Include Content-Type headers** when uploading, or rely on automatic detection
 6. **Handle pagination properly** when listing objects or parts (max 1000 per request)
