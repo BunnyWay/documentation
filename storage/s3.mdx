@@ -298,7 +298,11 @@ Bunny Storage returns standard S3 error codes:
 | Error Code | HTTP Status | Description |
 | --- | --- | --- |
 | `NoSuchKey` | 404 | The specified file, folder, or multipart upload does not exist |
-| `InvalidSecurity` | 403 | Signature validation failed (incorrect bucket name, access key, or secret key) |
+| `NoSuchBucket` | 404 | The specified storage zone does not exist |
+| `SignatureDoesNotMatch` | 403 | The request signature does not match (usually an incorrect secret access key) |
+| `AccessDenied` | 403 | Missing or malformed `Authorization` header, or credentials that do not match the target storage zone |
+| `PreconditionFailed` | 412 | A conditional header (`If-Match`, `If-Unmodified-Since`, `x-amz-copy-source-if-*`) did not hold |
+| `BadDigest` | 400 | The supplied `x-amz-checksum-sha256` or `Content-MD5` does not match the uploaded data |
 | `InvalidRequest` | 400 | Invalid request parameters or headers |
 | `NotImplemented` | 501 | The requested operation is not implemented (for example `DeleteObjects`) |
 | `InternalError` | 500 | Internal server error |
