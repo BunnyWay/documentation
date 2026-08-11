@@ -282,7 +282,7 @@ The following S3 features are limited by:
 - **Server-Side Encryption**: SSE/SSE-C encryption is not currently supported
 - **Object Tagging**: Object and bucket tagging is not supported
 - **Lifecycle Policies**: Automatic lifecycle transitions are not supported
-- **Conditional Requests**: If-Match, If-Modified-Since headers not yet supported for GET/HEAD
+- **Custom Metadata**: User-defined metadata (`x-amz-meta-*`) is not supported, so it is not carried over by `CopyObject`
 - **Multipart Limits**: Maximum 10,000 parts per upload
 - **Multipart Session Expiry**: Sessions expire after 10 days
 - **Presigned URLs**: Minimum time: 1 second | Maximum time: 7 days (604800 seconds)
