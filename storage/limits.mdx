@@ -14,14 +14,6 @@ To ensure optimal performance for all users, Bunny Storage enforces limits on co
 | Concurrent FTP connections per IP | 250 | Per server, per remote IP. |
 | Simultaneous FTP commands per IP / zone | 300 | Per server. Maximum number of FTP commands that can be in flight at once. |
 
-## Throughput and rate limits
-
-| Limit | Value | Description |
-| --- | --- | --- |
-| Throughput per connection | 1 Gbps | Maximum bandwidth for a single connection. |
-| Requests per second | 500 RPS | Maximum sustained request rate per storage zone. |
-
-To move data faster than a single connection allows, split transfers across multiple parallel connections rather than relying on one.
 
 ## Request limits by operation
 
@@ -48,6 +40,15 @@ FTP connections apply the following timeouts:
 | Write | 10 seconds | Applied while writing data. |
 | Read | 30 seconds | Applied while reading data. |
 | Command read | 20 seconds | Applied while waiting for command results. |
+
+## S3 throughput and rate limits
+
+| Limit | Value | Description |
+| --- | --- | --- |
+| Throughput per connection | 1 Gbps | Maximum bandwidth for a single connection. |
+| Requests per second | 500 RPS | Maximum sustained request rate per storage zone. |
+
+To move data faster than a single connection allows, split transfers across multiple parallel connections rather than relying on one.
 
 ## File and directory naming
 
