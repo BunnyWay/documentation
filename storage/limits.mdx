@@ -61,15 +61,20 @@ In practice, this allows you to achieve much higher concurrency than the per-ser
 
 ## Rate limit responses
 
-When you reach a connection or request limit, further requests will be rejected with:
+The response you receive depends on which limit you reach and which protocol or API you're using.
 
-- **HTTP Status Code**: 429 (Too Many Requests)
-- **FTP Response**: Connection refused
+| Limit reached                                            | Protocol / API | Response                                          |
+| -------------------------------------------------------- | -------------- | ------------------------------------------------- |
+| IP concurrency limit or concurrent zone operations (250) | HTTP           | `429 Too Many Requests`                           |
+| IP concurrency limit or concurrent zone operations (250) | FTP            | Connection refused                                |
+| IP concurrency limit or concurrent zone operations (250) | S3 API         | `503 SlowDown`, with a `Retry-After: 5` header    |
+| Per-operation concurrency (GET / POST / DELETE)          | HTTP           | `400 Unable to process request`                   |
+| Folder listing rate limit                                | FTP            | `421 Server busy, please try again later`         |
 
-If this happens:
+If you hit one of these limits:
 
 1. Reduce concurrent connections
-2. Implement exponential backoff retry logic
+2. Implement exponential backoff retry logic (and honor the `Retry-After` header when present)
 3. Distribute requests across longer time periods
 
 ## Renaming files
