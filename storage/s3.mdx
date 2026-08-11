@@ -276,7 +276,7 @@ Additional regions will be added in the future.
 
 The following S3 features are limited by:
 
-- **CORS Configuration**: Cross-Origin Resource Sharing settings (must be handled at the CDN level)
+- **CORS Configuration**: CORS is not configurable — the S3 endpoint always responds with `Access-Control-Allow-Origin: *`. To control CORS, front the storage zone with a pull zone and configure it at the CDN level for file delivery.
 - **Versioning**: Object versioning is not supported
 - **ACLs**: Access Control Lists are not supported
 - **Server-Side Encryption**: SSE/SSE-C encryption is not currently supported
