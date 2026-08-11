@@ -5,6 +5,12 @@ description: "Storage zone, connection, rate, request, and naming limits for Bun
 
 To ensure optimal performance for all users, Bunny Storage enforces limits on concurrent connections, request rates, throughput, and file naming. This page describes the limits that apply to your storage zones and how to work within them.
 
+## How limits are applied
+
+Most limits are applied on a **per-server basis**. Each Bunny Storage region runs multiple servers, and each server tracks limits independently.
+
+In practice, this allows you to achieve much higher concurrency than the per-server limits suggest.
+
 ## Connection limits
 
 | Limit | Value | Description |
@@ -13,16 +19,15 @@ To ensure optimal performance for all users, Bunny Storage enforces limits on co
 | Concurrent FTP connections per IP | 250 | Per server, per remote IP. |
 | Simultaneous FTP commands per IP / zone | 300 | Per server. Maximum number of FTP commands that can be in flight at once. |
 
-
 ## Request limits by operation
 
-Certain HTTP operations have their own concurrency and size limits:
+Certain operations have their own concurrency and size limits:
 
 | Operation | Limit |
 | --- | --- |
 | POST (zip or download requests) | 10 requests per zone |
 | POST maximum request body size | 8 MB |
-| GET folder listing | 5 requests at a time |
+| Folder listing (HTTP GET and FTP) | 5 requests at a time |
 | DELETE | 30 simultaneous requests |
 
 ## HTTP API limits
@@ -38,6 +43,30 @@ The HTTP API is limited to **250 concurrent connections per zone, per server**. 
 
 To move data faster than a single connection allows, split transfers across multiple parallel connections rather than relying on one.
 
+## Rate limit responses
+
+The response you receive depends on which limit you reach and which protocol or API you're using.
+
+| Limit reached | Protocol / API | Response |
+| --- | --- | --- |
+| IP concurrency limit | HTTP | `429 Too Many Requests` |
+| IP concurrency limit | FTP | `421 Too many connections (N) from this IP, please try again later` |
+| IP concurrency limit | S3 API | `503 SlowDown`, with a `Retry-After: 5` header |
+| Concurrent connections per zone (250) | HTTP | `429 Too Many Requests` |
+| Concurrent connections per zone (250) | FTP | Connection refused |
+| Concurrent connections per zone (250) | S3 API | `503 SlowDown`, with a `Retry-After: 5` header |
+| Per-operation concurrency (GET / POST / DELETE) | HTTP | `400 Unable to process request` |
+| Folder listing rate limit | HTTP | `400 Unable to process request` |
+| Folder listing rate limit | FTP | `421 Server busy, please try again later` |
+
+For the per-IP FTP response, **N** is the number of connections currently open from your IP.
+
+If you hit one of these limits:
+
+1. Reduce concurrent connections
+2. Implement exponential backoff retry logic (and honor the `Retry-After` header when present)
+3. Distribute requests across longer time periods
+
 ## File and directory naming
 
 When naming files and folders in Bunny Storage:
@@ -51,30 +80,6 @@ Uploads that violate these rules are rejected.
 ## SFTP path restrictions
 
 For security, SFTP paths cannot contain `..` (parent-directory traversal). If a path includes `..`, the SFTP connection fails **silently, with no error message**. If your SFTP client stops working unexpectedly, check that none of your paths contain `..`.
-
-## How limits are applied
-
-Most limits are applied on a **per-server basis**. Each Bunny Storage region runs multiple servers, and each server tracks limits independently.
-
-In practice, this allows you to achieve much higher concurrency than the per-server limits suggest.
-
-## Rate limit responses
-
-The response you receive depends on which limit you reach and which protocol or API you're using.
-
-| Limit reached                                            | Protocol / API | Response                                          |
-| -------------------------------------------------------- | -------------- | ------------------------------------------------- |
-| IP concurrency limit or concurrent zone operations (250) | HTTP           | `429 Too Many Requests`                           |
-| IP concurrency limit or concurrent zone operations (250) | FTP            | Connection refused                                |
-| IP concurrency limit or concurrent zone operations (250) | S3 API         | `503 SlowDown`, with a `Retry-After: 5` header    |
-| Per-operation concurrency (GET / POST / DELETE)          | HTTP           | `400 Unable to process request`                   |
-| Folder listing rate limit                                | FTP            | `421 Server busy, please try again later`         |
-
-If you hit one of these limits:
-
-1. Reduce concurrent connections
-2. Implement exponential backoff retry logic (and honor the `Retry-After` header when present)
-3. Distribute requests across longer time periods
 
 ## Renaming files
 
