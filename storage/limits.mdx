@@ -30,18 +30,7 @@ Certain HTTP operations have their own concurrency and size limits:
 
 The HTTP API is limited to **250 requests per zone, per server**. Requests beyond this limit are rejected until capacity frees up.
 
-## FTP timeouts
-
-FTP connections apply the following timeouts:
-
-| Timeout | Value | Description |
-| --- | --- | --- |
-| Connection | 10 seconds | Applied when no connection is established. |
-| Write | 10 seconds | Applied while writing data. |
-| Read | 30 seconds | Applied while reading data. |
-| Command read | 20 seconds | Applied while waiting for command results. |
-
-## S3 throughput and rate limits
+## S3 API throughput and rate limits
 
 | Limit | Value | Description |
 | --- | --- | --- |
