@@ -180,7 +180,7 @@ Bunny Storage provides comprehensive S3 API compatibility for all your storage n
 
 - **PUT Object**: Create and update objects
 - **GET Object**: Read objects (range requests supported)
-- **DELETE Object**: Delete objects (single and batch operations)
+- **DELETE Object**: Delete objects (single object only — batch `DeleteObjects` is not supported)
 - **COPY Object**: Copy objects between locations
 - **HEAD Object**: Get object metadata
 - **PRESIGN Object**: Generate object URL expiry time (Set in seconds - default 1 hour)
@@ -300,6 +300,7 @@ Bunny Storage returns standard S3 error codes:
 | `NoSuchKey` | 404 | The specified file, folder, or multipart upload does not exist |
 | `InvalidSecurity` | 403 | Signature validation failed (incorrect bucket name, access key, or secret key) |
 | `InvalidRequest` | 400 | Invalid request parameters or headers |
+| `NotImplemented` | 501 | The requested operation is not implemented (for example `DeleteObjects`) |
 | `InternalError` | 500 | Internal server error |
 | `ServiceUnavailable` | 503 | S3 compatibility is not enabled for this storage zone |
 
