@@ -5,6 +5,34 @@ description: "Bunny Stream pricing for encoding, transcribing, DRM, storage, and
 
 Bunny Stream is billed across a handful of usage dimensions: encoding (free standard or Premium tier), transcribing, DRM licenses, storage, and CDN delivery. The tables below break down the current rates for each.
 
+## What each charge comes from
+
+Your [usage summary](/billing/billing-history#downloading-usage-summaries) itemizes charges by service, so a single Stream figure can cover several video libraries at once. Use the sections below to work out which activity produced a charge, and the linked endpoints to attribute it to a specific library. Accounts are also subject to a [\$1 minimum monthly usage](/billing/add-funds#minimum-monthly-usage).
+
+### Encoding
+
+Standard encoding is included at no extra cost, so enabling additional resolutions adds to your storage rather than to an encoding charge. Only [Premium Encoding](/stream/premium-encoding) is billed, per minute of output and per output codec, at the rates below.
+
+### Storage
+
+Storage is billed on what a video generates during encoding, not on the size of the file you uploaded. Each enabled resolution is stored separately, and **MP4 fallback**, **Keep original files**, preview animations, thumbnails, and captions all add more on top, so a library can easily hold several times the footage you sent it. [Video storage usage](/stream/encoding#video-storage-usage) shows which of these is taking the space for a given video.
+
+These encoding options apply to videos uploaded after they are set, so switching one off does not shrink videos that are already encoded. Use [Cleanup unconfigured resolutions](/api-reference/stream/manage-videos/cleanup-unconfigured-resolutions) to remove files that existing videos no longer need.
+
+### CDN delivery
+
+Delivery is billed on the bandwidth served to your viewers. Each video library is delivered on either the Standard or the Volume tier, and the two are priced differently: Standard is billed by the region the traffic is served in, while Volume is billed at a single worldwide rate that decreases with monthly volume. See [Delivery Tiers](/stream/delivery-tiers).
+
+### Transcribing
+
+Transcribing is charged per language per minute of audio at the point the transcription runs, so cost scales with both the total length of the videos and the number of languages selected: five languages cost five times one.
+
+Enabling transcribing on a video library applies it to videos uploaded from then on, but a transcription can also be requested for a single video with [Transcribe video](/api-reference/stream/manage-videos/transcribe-video), and that request can override the library's transcription settings. A transcribing charge can therefore appear for a library whose dashboard setting is currently off — either from a video processed before it was switched off, or from a direct API request. [Get transcribing statistics](/api-reference/core/stream-video-library/get-video-library-transcribing-statistics) reports the transcribed minutes for a library.
+
+### MediaCage Enterprise DRM
+
+The \$99 monthly base fee applies for as long as Enterprise DRM is enabled, whether or not any licenses are issued that month, and license fees are billed on top of it. [Get DRM statistics](/api-reference/core/stream-video-library/get-video-library-drm-statistics) reports the licenses issued for a library.
+
 ## Premium Encoding
 
 | Resolution                                                    | Encoding cost per minute |
@@ -54,6 +82,8 @@ For example, a single playback device may receive two separate licenses. One for
 | ------------------ | ------------------- |
 | 2nd region         | \$0.01              |
 | 3rd region +       | \$0.005             |
+
+Replication rates are added to the default region's rate, so a library replicated to one additional region is billed \$0.02/GB (2 × \$0.01) and one replicated to two additional regions is billed \$0.025/GB (2 × \$0.01 \+ \$0.005). [Replication regions cannot be removed once they are enabled](/stream/replication).
 
 ## [CDN](https://bunny.net/pricing/cdn/)
 
