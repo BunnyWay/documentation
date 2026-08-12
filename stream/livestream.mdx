@@ -1,11 +1,11 @@
 ---
-title: "Live Stream Quickstart"
-description: "Create, configure, and broadcast your first Bunny Stream live stream - from RTMP setup in OBS to going live and converting the recording to VOD."
+title: "Live Streaming Quickstart"
+description: "Create, configure, and broadcast your first bunny.net live stream - from RTMP setup in OBS to going live and converting the recording to VOD."
 hidden: true
 ---
 
 <Info>
-  **Closed preview.** Bunny Stream Live is currently available as a closed preview. Features, pricing, and limits described here may change before general availability. Please share bugs and feedback via the bunny.net Discord #live-stream-preview channel.
+  ** preview.** Bunny Stream Live is currently available as a closed preview. Features, pricing, and limits described here may change before general availability. Please share bugs and feedback via the bunny.net Discord #live-stream-preview channel.
 </Info>
 
 This quickstart walks you through the full life cycle of a live stream on Bunny Stream: creating the stream, connecting an encoder over RTMP, going live, monitoring it in real time, and ending it so the recording is available on demand. You'll be broadcasting to viewers across the globe in a few minutes.
@@ -20,7 +20,7 @@ Before you begin, make sure you have the following in place:
 - A stable upload connection with enough bandwidth for your target quality (see [Recommended encoder settings](#step-3-configure-your-encoder)).
 
 <Note>
-  **Closed-preview limits.** Accounts are limited to a **maximum stream duration of 12 hours**. You won't be charged for **live encoding** during the closed preview.
+  **Closed preview limits.** Accounts are limited to a **maximum stream duration of 12 hours**. You won't be charged for **live encoding** during the closed preview.
 </Note>
 
 ## Step 1: Create a live stream
@@ -162,7 +162,7 @@ While you're live, the **Control Room** surfaces real-time statistics so you can
 If **Video on demand** was enabled, Bunny immediately begins converting the recording into a VOD asset in your library. You'll see a notice that **your VOD is currently processing - viewers can still rewatch the live stream** while it does. Once processing completes, the recording plays back like any other Bunny Stream video, and you can pick or upload a **thumbnail** and edit the **title** and details.
 
 <Note>
-  During the closed preview, the VOD includes **all content ingested from your encoder** - including anything sent while the stream was still in preview, before you clicked **Start Stream**. This logic will change in public preview so the VOD reflects only the live portion.
+  During the  preview, the VOD includes **all content ingested from your encoder** - including anything sent while the stream was still in preview, before you clicked **Start Stream**. This logic will change in public preview so the VOD reflects only the live portion.
 </Note>
 
 <Frame caption="After ending, the stream converts to an on-demand recording.">
@@ -187,7 +187,7 @@ Paste the embed code into your page's HTML where you want the player to appear, 
 Everything you just did in the dashboard can be driven programmatically with the Bunny Stream API. This is the same workflow - create a stream, read its ingest details, start it, monitor it, and stop it - expressed as API calls.
 
 <Info>
-  The Live Stream API is part of the closed preview and may change before general availability. Endpoints, fields, and defaults described below reflect the current preview.
+  The Live Stream API is part of the  preview and may change before general availability. Endpoints, fields, and defaults described below reflect the current preview.
 </Info>
 
 ### Authentication
@@ -383,7 +383,7 @@ All paths are relative to `https://video.bunnycdn.com` and require the `AccessKe
 - Configure **player UI and authentication** (allowed/blocked domains, token, and CDN authentication) in your **player and security video library settings**.
 - Automate stream creation and control with the [Live Stream API](#automate-with-the-live-stream-api) - create, start, stop, monitor, and manage streams programmatically.
 
-## Not currently supported by Live Stream during closed preview
+## Not currently supported by Live Stream during  preview
 
 - Live statistics
 - SRT ingest
