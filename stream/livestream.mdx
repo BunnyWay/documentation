@@ -345,7 +345,7 @@ curl --request DELETE \
 </CodeGroup>
 
 <Note>
-  The stream key can only be regenerated **before** a stream has ended. Deleting a stream removes it and all associated resources and cannot be undone.
+  The **update** endpoint can only be used **before the stream is started**. The stream key can only be regenerated **before** a stream has ended. Deleting a stream removes it and all associated resources and cannot be undone.
 </Note>
 
 ### Endpoint reference
@@ -357,7 +357,7 @@ All paths are relative to `https://video.bunnycdn.com` and require the `AccessKe
 | `POST` | `/library/{libraryId}/live` | Create a live stream. |
 | `GET` | `/library/{libraryId}/live` | List live streams (`page`, `itemsPerPage`, `search`, `orderBy`, `collectionId`). |
 | `GET` | `/library/{libraryId}/live/{streamId}` | Get a live stream by ID. |
-| `PUT` | `/library/{libraryId}/live/{streamId}` | Update a live stream. |
+| `PUT` | `/library/{libraryId}/live/{streamId}` | Update a live stream. Can only be used before the stream is started. |
 | `DELETE` | `/library/{libraryId}/live/{streamId}` | Delete a live stream and its resources. |
 | `PUT` | `/library/{libraryId}/live/{streamId}/start` | Start the stream (make it watchable). |
 | `PUT` | `/library/{libraryId}/live/{streamId}/stop` | Stop the stream (converts to VOD if `recordVod` is enabled). |
