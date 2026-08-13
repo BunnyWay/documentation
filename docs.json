@@ -108,7 +108,6 @@
                     "group": "Affiliate Program",
                     "pages": [
                       "billing/affiliate-program",
-                      "billing/affiliate-faq",
                       "billing/affiliate-best-practices",
                       "billing/affiliate-guidelines"
                     ]
@@ -2221,7 +2220,12 @@
     },
     {
       "source": "/frequently-asked-questions",
-      "destination": "/billing/affiliate-faq",
+      "destination": "/billing/affiliate-program",
+      "permanent": true
+    },
+    {
+      "source": "/billing/affiliate-faq",
+      "destination": "/billing/affiliate-program",
       "permanent": true
     },
     {
