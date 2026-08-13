@@ -13,7 +13,6 @@ Never write internal information into this repository:
 - No links to internal tools, such as Slack, Jira, Zendesk, Confluence, or Notion.
 - No support ticket details, and nothing that identifies a customer.
 - No names of colleagues, and no record of who asked for a change.
-- No unreleased features, and no internal tooling.
 
 ## Pull request descriptions
 
