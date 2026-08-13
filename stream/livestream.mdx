@@ -5,7 +5,7 @@ hidden: true
 ---
 
 <Info>
-  ** preview.** Bunny Stream Live is currently available as a closed preview. Features, pricing, and limits described here may change before general availability. Please share bugs and feedback via the bunny.net Discord #live-stream-preview channel.
+  **Bunny Stream Live** is currently available as a **closed preview**. Features, pricing, and limits described here may change before general availability. Please share bugs and feedback via the bunny.net Discord #live-stream-preview channel.
 </Info>
 
 This quickstart walks you through the full life cycle of a live stream on Bunny Stream: creating the stream, connecting an encoder over RTMP, going live, monitoring it in real time, and ending it so the recording is available on demand. You'll be broadcasting to viewers across the globe in a few minutes.
@@ -20,7 +20,7 @@ Before you begin, make sure you have the following in place:
 - A stable upload connection with enough bandwidth for your target quality (see [Recommended encoder settings](#step-3-configure-your-encoder)).
 
 <Note>
-  **Closed preview limits.** Accounts are limited to a **maximum stream duration of 12 hours**. You won't be charged for **live encoding** during the closed preview.
+  **Closed preview limits:** Accounts are limited to a **maximum stream duration of 12 hours**. You won't be charged for **live encoding** during the closed preview.
 </Note>
 
 ## Step 1: Create a live stream
@@ -76,17 +76,29 @@ Open your encoder and point it at Bunny's ingest endpoint. In **OBS Studio**, go
   ![OBS settings dialog with custom service, server, and stream key](/images/stream/live/obs-stream-settings.png)
 </Frame>
 
+### Recommended encoder settings
+
+Use these settings as a starting point for your encoder, depending on the target output quality your upload connection can sustain:
+
+| Setting | 1080p | 2160p / 4K |
+| --- | --- | --- |
+| **Protocol** | RTMP/S | RTMP/S |
+| **Bitrate** | 5,000 - 8,000 kbps | 8,000 - 25,000 kbps |
+| **Video resolution** | 1920 × 1080 (1080p) | 3840 × 2160 (2160p, UHD) |
+| **Frame rate** | Max 60fps | Max 30fps |
+| **Audio settings** | Stereo AAC, 48 kHz, 256 kbps | Stereo AAC, 48 kHz, 320 kbps |
+
 Then, under **Output**, set your encoder to the highest quality in Bunny's adaptive bitrate (ABR) ladder that your upload connection can sustain. Bunny Stream Live ingests **H.264 (AVC)** video with **stereo AAC** audio and transcodes your feed into the following renditions:
 
 | Resolution | Recommended source bitrate |
 | --- | --- |
-| 240p (352 × 240) | 600 kbps |
-| 360p (640 × 360) | 800 kbps |
-| 480p (842 × 480) | 1,400 kbps |
-| 720p (1280 × 720) | 2,800 kbps |
-| 1080p (1920 × 1080) | 5,000 kbps |
-| 1440p (2560 × 1440) | 8,000 kbps |
 | 2160p / 4K (3840 × 2160) | 25,000 kbps |
+| 1440p (2560 × 1440) | 8,000 kbps |
+| 1080p (1920 × 1080) | 5,000 kbps |
+| 720p (1280 × 720) | 2,800 kbps |
+| 480p (842 × 480) | 1,400 kbps |
+| 360p (640 × 360) | 800 kbps |
+| 240p (352 × 240) | 600 kbps |
 
 <Tip>
   Encode and send Bunny a **single high-quality feed at your top target resolution** (for example, 1080p at ~5,000 kbps). Bunny generates the full ABR ladder automatically, so your viewers receive the best quality their connection and device can handle. Live streams support up to 60 FPS at 1080p and 30 FPS at 2160p.
@@ -271,6 +283,7 @@ Point your encoder's **server** at `ingestEndpoints.rtmp.primaryIngestUrl` (or t
 Once your encoder is publishing, mark the stream live so viewers can watch. Starting via the API is the equivalent of clicking **Start Stream** in the Control Room and overrides any scheduled start time.
 
 <CodeGroup>
+
 ```bash Start
 curl --request PUT \
   --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/start" \
@@ -282,6 +295,7 @@ curl --request PUT \
   --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/stop" \
   --header "AccessKey: $BUNNY_API_KEY"
 ```
+
 </CodeGroup>
 
 <Warning>
@@ -323,6 +337,7 @@ The `status` field on the live stream object itself moves through the stream's l
 ### Manage the stream
 
 <CodeGroup>
+
 ```bash Update
 curl --request PUT \
   --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID" \
@@ -342,6 +357,7 @@ curl --request DELETE \
   --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID" \
   --header "AccessKey: $BUNNY_API_KEY"
 ```
+
 </CodeGroup>
 
 <Note>
