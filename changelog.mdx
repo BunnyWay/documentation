@@ -7,23 +7,27 @@ rss: true
 <Update label="2026-08-14" tags={["Storage","(Improvement)"]}>
   ## S3 API: virtual hosted-style URLs, conditional requests, and expanded error codes
 
-| Operation / Behavior | Change |
-| --- | --- |
-| **URL styles** | Virtual hosted-style URLs (`https://bucket-name.[region]-s3.storage.bunnycdn.com/key`) are now supported alongside path-style URLs. |
-| **HeadObject** | Returns `ETag` and supports conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
-| **GetObject** | Returns `ETag` and supports the same conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
-| **CopyObject** | Preserves `Content-Type`, returns `ETag`, supports `x-amz-metadata-directive`, and accepts conditional copy headers. |
-| **Rate limiting** | Rate-limited requests return a `SlowDown` (`503`) response with a `Retry-After` header. |
+  | Operation / Behavior | Change |
+  | --- | --- |
+  | **URL styles** | Virtual hosted-style URLs (`https://bucket-name.[region]-s3.storage.bunnycdn.com/key`) are now supported alongside path-style URLs. |
+  | **HeadObject** | Returns `ETag` and supports conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
+  | **GetObject** | Returns `ETag` and supports the same conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
+  | **CopyObject** | Preserves `Content-Type`, returns `ETag`, supports `x-amz-metadata-directive`, and accepts conditional copy headers. |
+  | **Rate limiting** | Rate-limited requests return a `SlowDown` (`503`) response with a `Retry-After` header. |
 </Update>
 
-<Update label="2026-08-12" tags={["Shield","(New)"]}> 
+<Update label="2026-08-13" tags={["Stream","(New)"]}>
+  ## Bunny Stream Live - Closed Preview
 
-## Investigative Event Logs for Bunny Shield 
+  We've opened up bunny Stream customers to signup for our new live streaming preview. The signup banner can be found within your video libary! Once approved you'll be able to live stream at scale globally to your audiences. All managed with the new dashboard control room & API. Features include: RTMP ingest & distribution, scheduling, countdown, DVR, VOD and more.
+</Update>
 
-Bunny Shield Event Logs now support advanced filtering and grouping across Feature, Action, Rule ID, IP / Range, Country, ASN, JA4 Fingerprint, User-Agent, and URL. Combine multiple signals, such as IP, User-Agent, and JA4, to investigate related activity and uncover attack patterns across Shield features. You can also investigate events across multiple days within the 3-day retention window and export results as CSV for further analysis. 
+<Update label="2026-08-12" tags={["Shield","(New)"]}>
+  ## Investigative Event Logs for Bunny Shield
 
-[Learn more](/api-reference/shield/event-logs/search-filter-and-group-event-logs-for-a-shield-zone) 
+  Bunny Shield Event Logs now support advanced filtering and grouping across Feature, Action, Rule ID, IP / Range, Country, ASN, JA4 Fingerprint, User-Agent, and URL. Combine multiple signals, such as IP, User-Agent, and JA4, to investigate related activity and uncover attack patterns across Shield features. You can also investigate events across multiple days within the 3-day retention window and export results as CSV for further analysis.
 
+  [Learn more](/api-reference/shield/event-logs/search-filter-and-group-event-logs-for-a-shield-zone)
 </Update>
 
 <Update label="2026-08-01" tags={["Edge Scripting","(New)"]}>
@@ -76,12 +80,11 @@ Bunny Shield Event Logs now support advanced filtering and grouping across Featu
   [Learn more](/stream/player-settings)
 </Update>
 
-<Update label="2026-07-01" tags={["Edge Scripting", "(Improvement)"]}>
+<Update label="2026-07-01" tags={["Edge Scripting","(Improvement)"]}>
   ## Cache API documentation reorganized into dedicated section
 
   The Edge Scripting Cache API documentation has been restructured from a single page into a multi-page section covering the API overview and limitations, managing default and named caches, reading and writing cache entries (`match`, `put`, `delete`), and end-to-end examples including a new on-demand refresh and purge recipe. The `waitUntil` runtime reference has also been expanded with a full API signature and a cache-population example. [Learn more](/scripting/cache)
 </Update>
-
 
 <Update label="2026-07-14" tags={["CDN","(Improvement)"]}>
   ## HTTP validation for Seamless Domain Migration
