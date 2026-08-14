@@ -7,7 +7,13 @@ rss: true
 <Update label="2026-08-14" tags={["Storage","(Improvement)"]}>
   ## S3 API: virtual hosted-style URLs, conditional requests, and expanded error codes
 
-  The S3-compatible API now supports virtual hosted-style URLs (`https://bucket-name.[region]-s3.storage.bunnycdn.com/key`) alongside path-style URLs. HeadObject and GetObject return `ETag` and support conditional operations (`If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`). CopyObject preserves Content-Type, returns `ETag`, supports `x-amz-metadata-directive`, and accepts conditional copy headers. Rate-limited requests return a `SlowDown` (503) response with a `Retry-After` header. [Learn more](/storage/s3)
+| Operation / Behavior | Change |
+| --- | --- |
+| **URL styles** | Virtual hosted-style URLs (`https://bucket-name.[region]-s3.storage.bunnycdn.com/key`) are now supported alongside path-style URLs. |
+| **HeadObject** | Returns `ETag` and supports conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
+| **GetObject** | Returns `ETag` and supports the same conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
+| **CopyObject** | Preserves `Content-Type`, returns `ETag`, supports `x-amz-metadata-directive`, and accepts conditional copy headers. |
+| **Rate limiting** | Rate-limited requests return a `SlowDown` (`503`) response with a `Retry-After` header. |
 </Update>
 
 <Update label="2026-07-30" tags={["Storage","(New)"]}>
