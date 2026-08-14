@@ -4,6 +4,24 @@ description: "Latest updates and improvements for Storage."
 rss: true
 ---
 
+<Update label="2026-08-14" tags={["Storage","(Improvement)"]}>
+  ## S3 API: virtual hosted-style URLs, conditional requests, and expanded error codes
+
+| Operation / Behavior | Change |
+| --- | --- |
+| **URL styles** | Virtual hosted-style URLs (`https://bucket-name.[region]-s3.storage.bunnycdn.com/key`) are now supported alongside path-style URLs. |
+| **HeadObject** | Returns `ETag` and supports conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
+| **GetObject** | Returns `ETag` and supports the same conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
+| **CopyObject** | Preserves `Content-Type`, returns `ETag`, supports `x-amz-metadata-directive`, and accepts conditional copy headers. |
+| **Rate limiting** | Rate-limited requests return a `SlowDown` (`503`) response with a `Retry-After` header. |
+</Update>
+
+<Update label="2026-07-30" tags={["Storage","(New)"]}>
+  ## Read-only password support for S3 API
+
+  Bunny Storage's S3-compatible API now supports read-only access keys. Use a dedicated read-only secret access key for S3 connections that should only have read permissions, adding an extra layer of access control to your storage zones. [Learn more](/storage/s3)
+</Update>
+
 <Update label="2026-07-09" tags={["Storage","(New)"]}>
   ## S3 API 'Public Preview' launched
 

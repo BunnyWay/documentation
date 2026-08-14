@@ -4,7 +4,7 @@ description: "This documentation expands on our  to guide you through the integr
 ---
 
 <Info>
-  If your use case doesn’t require DRM, you can follow the same steps provided below, omit the DRM configuration part, and follow our [video storage structure guide](/docs/stream-video-storage-structure), which describes how to access your Bunny Stream videos programmatically.
+  If your use case doesn’t require DRM, you can follow the same steps provided below, omit the DRM configuration part, and follow our [video storage structure guide](/stream/storage-structure), which describes how to access your Bunny Stream videos programmatically.
 </Info>
 
 ## What you’ll need
@@ -12,7 +12,7 @@ description: "This documentation expands on our  to guide you through the integr
 Before you dive in, make sure you have the following prerequisites in place:
 
 - A [bunny.net](https://bunny.net/) account ([Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)) .
-- Ensure that the Media Cage DRM Enterprise feature is enabled in your account. If you need guidance on how to enable this feature, please refer to our [Media Cage DRM Enterprise quickstart guide](/docs/mediacage-enterprise-drm-quickstart).
+- Ensure that the Media Cage DRM Enterprise feature is enabled in your account. If you need guidance on how to enable this feature, please refer to our [Media Cage DRM Enterprise quickstart guide](/stream/quickstart-mediacage-enterprise).
 - A [Bitmovin](https://bitmovin.com/) account.
 
 ## Setting up Bitmovin player
@@ -64,19 +64,8 @@ var conf = {
     level: "debug",
   },
   network: {
-    preprocessHttpRequest: function (type, request) {
-      if (type === "drm/license/fairplay") {
-        request.headers["Content-Type"] = "application/json";
-      }
-      return Promise.resolve(request);
-    },
     preprocessHttpResponse: function (type, response) {
       switch (type) {
-        case "drm/certificate/fairplay":
-          const obj = JSON.parse(new TextDecoder().decode(response.body));
-          const { certificate } = obj;
-          response.body = base64ToArrayBuffer(certificate);
-          break;
         case "manifest/hls/variant":
           response.body = response.body.replace(
             /.*KEYFORMAT="com.apple.streamingkeydelivery"\n/,
@@ -103,38 +92,18 @@ var source = {
     },
     fairplay: {
       LA_URL:
-        "https://video.bunnycdn.com/FairPlayLicense/{{videoLibraryId}}/{{videoId}}",
+        "https://video.bunnycdn.com/FairPlay/{{videoLibraryId}}/license/?videoId={{videoId}}",
       certificateURL:
-        "https://video.bunnycdn.com/FairPlayLicense/{{videoLibraryId}}/{{videoId}}",
+        "https://video.bunnycdn.com/FairPlay/{{videoLibraryId}}/certificate",
       maxCertificateRequestRetries: 0,
       maxLicenseRequestRetries: 0,
       useUint16InitData: true,
-      licenseResponseType: "json",
       prepareContentId: (url) => {
         return url.substring(url.indexOf("skd://"));
-      },
-      prepareLicense: (license) => {
-        return license.ckc;
-      },
-      prepareMessage: (event, session) => {
-        const obj = JSON.stringify({
-          spc: btoa(String.fromCharCode.apply(null, event.message)),
-        });
-        return obj;
       },
     },
   },
 };
-
-function base64ToArrayBuffer(base64) {
-  var binary_string = window.atob(base64);
-  var len = binary_string.length;
-  var bytes = new Uint8Array(len);
-  for (var i = 0; i < len; i++) {
-    bytes[i] = binary_string.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
 
 const player = new bitmovin.player.Player(
   document.getElementById("player"),
@@ -142,6 +111,10 @@ const player = new bitmovin.player.Player(
 );
 player.load(source);
 ```
+
+<Warning>
+  Do not set `licenseResponseType: "json"` or override `prepareMessage`/`prepareLicense` to wrap the SPC/CKC in JSON. That format belongs to the deprecated `/FairPlayLicense/{library_id}/{video_id}` endpoint. The current `/FairPlay/{library_id}/license` and `/FairPlay/{library_id}/certificate` endpoints expect and return raw binary data, which is Bitmovin's default `licenseResponseType`/message handling — no overrides needed.
+</Warning>
 
 ## Finalizing integration
 

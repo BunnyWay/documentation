@@ -16,7 +16,7 @@ Bunny Stream offers two distinct media content protection tiers: **MediaCage Bas
 | Screen grab protection |  | ✅ |
 | Custom player support |  | ✅ |
 
-\*_Screen Grab Protection is not available on Widevine clients with L3 level of security. For a deeper understanding, refer to [Widevine DRM Security Levels](/docs/widevine-drm-security-levels)._
+\*_Screen Grab Protection is not available on Widevine clients with L3 level of security. For a deeper understanding, refer to [Widevine DRM Security Levels](/stream/widevine-security-levels)._
 
 ## MediaCage Basic DRM
 
@@ -49,7 +49,7 @@ In comparison to our MediaCage Basic DRM, the MediaCage Enterprise DRM protects 
 - **Automatic encryption during packaging**: Content is automatically protected during the transcoding process.
 - **Advanced encryption technologies**: Utilizes FairPlay (Apple) and Widevine (Google) for superior content encryption.
 - **Hardware-based key exchange**: Ensures secure content key is not exposed on client devices.
-- **Screen grab protection**: Prevents screenshots and screen recordings, so that content cannot be copied. Bear in mind that Screen Grab Protection is not available on Widevine clients with L3 level of security. For a deeper understanding, refer to [Widevine DRM Security Levels](/docs/widevine-drm-security-levels).
+- **Screen grab protection**: Prevents screenshots and screen recordings, so that content cannot be copied. Bear in mind that Screen Grab Protection is not available on Widevine clients with L3 level of security. For a deeper understanding, refer to [Widevine DRM Security Levels](/stream/widevine-security-levels).
 - **Premium content licensing**: Ensures that a valid play license is issued only to authenticated clients that meet protection level requirements.
 - **Adherence to industry standards**: Meets advanced industry standards for digital content protection. Tailored for Enterprise Security: Specifically designed to address the security needs of enterprise-level users.
 - **Multi-key DRM**: Multi-key DRM licensing is implemented on a per-playback-device basis, allowing multiple licenses to be issued for a single piece of video content. For example, a single playback device may receive multiple separate licenses. One for the video stream, 2 for the accompanying translated stereo audio tracks and these licenses may then renew due to total video duration; resulting in 6 DRM licenses being issued and billed for one video playback.
@@ -129,10 +129,10 @@ To illustrate, if 10,000 users each watch 15 HD videos in a month, this results 
 
 **Example:**
 
-(20,000 x 0.005) \+ (80,000 x 0.004) \+ (50,000 x 0.003) = 100 \+ 320 \+ 150 = $$570 + $$99 base fee = **\$669**
+(20,000 x 0.005) \+ (80,000 x 0.004) \+ (50,000 x 0.003) = 100 \+ 320 \+ 150 = \$570 + \$99 base fee = **\$669**
 
 <Info>
   Customizing or modifying the Bunny Player does not weaken core DRM protection. Encryption, key exchange, and download prevention are enforced by our back-end and the underlying DRM (Widevine/FairPlay) regardless of the player used.
 
-  **Screen capture (screenshots/screen recording) cannot be fully prevented on lower-security devices** e.g. Widevine L3. As is standard across the industry, DRM limits these devices to a lower resolution (480p), so any capture is capped at SD quality if set by the User. Available security levels are determined by the client and User, which is outside of Bunny's control. See [Widevine DRM Security Levels](/docs/widevine-drm-security-levels).
+  **Screen capture (screenshots/screen recording) cannot be fully prevented on lower-security devices** e.g. Widevine L3. As is standard across the industry, DRM limits these devices to a lower resolution (480p), so any capture is capped at SD quality if set by the User. Available security levels are determined by the client and User, which is outside of Bunny's control. See [Widevine DRM Security Levels](/stream/widevine-security-levels).
 </Info>
