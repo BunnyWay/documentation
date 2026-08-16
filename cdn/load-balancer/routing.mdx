@@ -1,0 +1,71 @@
+---
+title: Routing Methods
+description: How the Load Balancer selects an origin group and an origin for each request.
+---
+
+Routing happens in two independent steps. First, the Load Balancer's **group balancing method** decides which origin group handles the request. Then, that group's **origin balancing method** decides which origin inside the group receives it.
+
+The selection does not just pick a single origin. It produces a complete ordered list of all eligible origins, so the balancing methods also determine the failover order when an origin fails. See [Health and failover](/cdn/load-balancer/health-and-failover) for how that list is consumed.
+
+## Group balancing methods
+
+Set on the Load Balancer, this method decides how traffic is distributed between origin groups that share the same priority.
+
+| Method | Behavior |
+|--------|----------|
+| Round Robin (default) | Cycles through the groups sequentially. |
+| Weighted Random | Selects a group randomly, in proportion to each group's weight. |
+| Geo Location | Selects the group geographically closest to the edge server handling the request, based on each group's configured latitude and longitude. |
+| Lowest Average Latency | Selects the group whose origins currently have the lowest average response latency. |
+
+<Note>
+  Geo Location routing measures distance from the CDN edge server that received the request. Because clients are already routed to their nearest edge location, this closely tracks client geography.
+</Note>
+
+## Origin balancing methods
+
+Set per origin group, this method decides how traffic is distributed between the origins inside the group.
+
+| Method | Behavior |
+|--------|----------|
+| Round Robin (default) | Cycles through the origins sequentially. |
+| Weighted Random | Selects an origin randomly, in proportion to each origin's weight. |
+| Least Connections | Routes to the origin with the fewest requests currently in flight. |
+| Latency | Routes to the origin with the lowest response latency. |
+
+Latency is measured from real traffic as the time from sending a request to receiving the first byte of the response, weighted toward the most recent samples. Origins without recent measurements are re-tested automatically, so a recovered origin finds its way back into rotation without manual intervention.
+
+Some common choices:
+
+- **Round Robin** for identical servers that should share traffic evenly.
+- **Weighted Random** for servers with different capacities, or for shifting a small share of traffic to a new server before rolling it out fully.
+- **Least Connections** for applications with long-running or highly variable requests, where counting in-flight work balances better than counting requests.
+- **Latency** to favor whichever origin responds fastest from each edge location. Because the measurement includes the network round trip, this naturally prefers origins closer to where the traffic is, while still routing around a nearby server that is slow or overloaded.
+
+## Priority and failover tiers
+
+Origin groups are always processed in ascending priority order (lower value first). All origins from the lowest-priority tier appear in the failover list before any origin from the next tier, so higher tiers act as pure backup: they only receive traffic once every origin in the tiers before them is unavailable or has failed.
+
+Groups that share the same priority value form one tier and are balanced against each other using the group balancing method. A typical setup:
+
+| Group | Priority | Result |
+|-------|----------|--------|
+| `eu-primary` | 0 | Receives all traffic under normal conditions. |
+| `us-backup` | 10 | Only receives traffic when every origin in `eu-primary` fails. |
+
+To distribute traffic *across* both groups instead, give them the same priority; the group balancing method then decides between them for every request.
+
+## Weights
+
+Weights (1 to 255) only apply with the Weighted Random method and are relative: an origin with weight 200 receives twice the traffic of an origin with weight 100. There is no need for weights to add up to any particular total.
+
+## Per-request overrides with Edge Rules
+
+Two [Edge Rule](/cdn/edge-rules/index) actions let you override routing for matching requests:
+
+- **Use Load Balancer** routes matching requests through a specific Load Balancer, and can prefer or force a specific origin group or origin. Preferred targets are tried first with normal failover behind them; forced targets disable failover entirely.
+- **Force Sticky Session Mode** overrides the Load Balancer's [sticky session](/cdn/load-balancer/sticky-sessions) setting for matching requests.
+
+## Distribution accuracy
+
+Balancing state (round robin position, latency measurements, connection counts) is maintained independently by each edge server. Across the whole network the configured distribution holds statistically, but a single client will not observe a perfect 1-2-3 rotation, and very low-traffic zones may see uneven short-term distribution.

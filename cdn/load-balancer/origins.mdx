@@ -1,0 +1,78 @@
+---
+title: Origins and Origin Groups
+description: Configure the origin groups and origins behind your Load Balancer, including origin types, connection settings, and limits.
+---
+
+A Load Balancer contains one or more origin groups, and each origin group contains one or more origins. Groups let you organize origins into units that are balanced and failed over together, for example a primary datacenter and a backup datacenter.
+
+## Origin groups
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Name | required | Unique within the Load Balancer, up to 100 characters. |
+| Enabled | enabled | Disabled groups receive no traffic at all, including failover traffic. |
+| Weight | 100 | Relative share of traffic (1 to 255) when the group method is Weighted Random. |
+| Priority | 100 | Failover tier. Groups with a lower priority value are tried first; higher tiers only receive traffic when every origin in the lower tiers has failed. |
+| Balancing method | Round Robin | How origins inside this group are selected. See [Routing methods](/cdn/load-balancer/routing). |
+| Latitude / Longitude | 0, 0 | The group's geographic location, used by the Geo Location group balancing method. |
+| Health check | disabled | Active health monitoring for the group's origins. See [Health and failover](/cdn/load-balancer/health-and-failover). |
+
+## Origins
+
+Every origin has the following settings, plus type-specific configuration:
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Enabled | enabled | Disabled origins receive no traffic at all, including failover traffic. |
+| Weight | 100 | Relative share of traffic (1 to 255) when the group's method is Weighted Random. |
+| Type | Standard | One of the origin types below. |
+
+### Origin types
+
+| Type | Description |
+|------|-------------|
+| Standard | Any HTTP or HTTPS server, defined by an origin URL. |
+| Storage | A bunny.net [Storage Zone](/storage). |
+| Edge Script | A bunny.net [Edge Script](/scripting) of type CDN. |
+| Magic Containers | A [Magic Containers](/magic-containers) CDN endpoint. Anycast endpoints are not supported; add those as a Standard origin using the endpoint's IP address and port instead. |
+
+### Taking origins out of rotation
+
+Disable an origin to remove it from rotation without deleting its configuration. Typical reasons:
+
+- **Scheduled maintenance or deployments**: disable the origin before you start, so no new requests are routed to it while you work, then re-enable it when you are done.
+- **Incident response**: if you identify a problem with a server, disabling it removes it from rotation immediately while you investigate, without waiting for health checks to react.
+- **Staging a new server**: add the origin disabled, then enable it once the server is ready to receive traffic.
+
+Disabling an entire origin group works the same way and is useful for taking a whole location or datacenter offline at once. Disabled origins and groups receive no traffic under any circumstances, including failover.
+
+## Standard origin settings
+
+### Origin URL
+
+The origin URL must use HTTP or HTTPS, and can include a port and a path prefix that is prepended to every request path. For example, with an origin URL of `https://origin1.example.com:8443/api`, a client request for `/users` is fetched from `https://origin1.example.com:8443/api/users`.
+
+### Host header
+
+The `Host` header sent to a Standard origin is resolved in this order:
+
+1. If the Pull Zone has **Forward Host Header** enabled, the client's original host is forwarded.
+2. Otherwise, the origin's **Host Header** setting is used, if set.
+3. Otherwise, the hostname from the origin URL is used.
+
+### TLS verification
+
+When **Verify SSL** is enabled (the default), the edge validates the origin's TLS certificate and rejects the connection if validation fails. Disable it only if your origin uses a self-signed or otherwise invalid certificate.
+
+## Limits
+
+| Limit | Default |
+|-------|---------|
+| Origin groups per Load Balancer | 10 |
+| Origins per Load Balancer (across all groups) | 50 |
+
+Contact support if you need higher limits for your use case.
+
+## Updating configuration
+
+Configuration changes typically propagate to the edge network within seconds. Note that changing a Load Balancer can also reset active [sticky sessions](/cdn/load-balancer/sticky-sessions).
