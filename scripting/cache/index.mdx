@@ -4,15 +4,13 @@ sidebarTitle: Overview
 description: Fine-grained control over reading and writing from the bunny.net edge cache from Edge Scripting.
 ---
 
-## Overview
+The Cache API is an implementation of the [MSDN Cache Interface](https://developer.mozilla.org/en-US/docs/Web/API/Cache). It stores Request and Response pairs in long lived memory.
 
-The Cache API is an implementation of the [MSDN Cache Interface](https://developer.mozilla.org/en-US/docs/Web/API/Cache) to provide a persistent storage mechanism for Request / Response object pairs that are cached in long lived memory.
+The API is available globally, but cache contents do not replicate outside the originating region. A GET `/users` response cached in one region will not exist in another until a request for that resource is made from there.
 
-The Cache API is available globally but the contents of the cache do not replicate outside of the originating region. A GET `/users` response can be cached in the originating region, but will not exist in another region until a request for the resources is made from there.
+An origin can have multiple, named Cache objects, and it is up to your script to decide how cache updates happen. Items in a Cache respect the `Cache-Control` request header, which is how you control the life cycle of your caches. Entries are purged automatically a short time after they expire. Version your caches by name, and only use a cache from a version of the script that can safely operate on it.
 
-An origin can have multiple, named Cache objects. You are responsible for implementing how your script handles Cache updates. Items in a Cache respect the `Cache-Control` request header, it is expected that you will use this to control the life cycle of your caches. Cache entries will automatically be purged a short time after they expire. Make sure to version caches by name and use the caches only from the version of the script that they can safely operate on.
-
-The cache instances are shared across all domains associated with your PullZone, however they **must** be accessed via the currently requesting host name. For this reason we either recommend using the current `Request` object as they key or constructing the key using the current request url e.g. `const key = new URL(req.url).origin + "/img/example.png";`. This will ensure your caches work reliably across all domains associated with your PullZone.
+Cache instances are shared across all domains associated with your PullZone, but they **must** be accessed via the currently requesting host name. Use the current `Request` object as the key, or build the key from the current request URL, for example `const key = new URL(req.url).origin + "/img/example.png";`. Either way your caches will work reliably across every domain on the PullZone.
 
 <Info>**Note:** There is a hard limit of `100MB` per cache file.</Info>
 
@@ -69,7 +67,7 @@ BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
 });
 ```
 
-See [Examples](./examples) for more advanced recipes (HTMLRewriter integration, middleware writes, on-demand refresh and purge).
+See [Examples](./examples) for longer recipes: HTMLRewriter integration, middleware writes, and on-demand refresh and purge.
 
 ## References
 

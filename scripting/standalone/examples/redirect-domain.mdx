@@ -1,7 +1,10 @@
 ---
 title: "Redirect to another domain"
-description: "To redirect requests to a different domain, you can use the Response.redirect method. This example demonstrates how to permanently redirect (HTTP status code 301) all incoming requests to a specific URL. See example below:"
+description: "Send every request to a different domain with Response.redirect."
 ---
+
+This script redirects all incoming requests to one URL with a permanent
+redirect (HTTP status code 301).
 
 ```ts
 import * as BunnySDK from "@bunny.net/edgescript-sdk";

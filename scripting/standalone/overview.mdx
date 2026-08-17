@@ -1,24 +1,18 @@
 ---
 title: "Standalone scripts"
 sidebarTitle: "Introduction"
-description: "Standalone functions in bunny.net Edge Scripts allow you to run custom scripts as close as possible to bunny.net's CDN network. These functions act as substitutes for an origin server, enabling you to handle HTTP requests directly at the edge."
+description: "Standalone scripts take the place of an origin server and handle HTTP requests directly on the bunny.net CDN network."
 ---
 
-Standalone scripts run independently to perform specific tasks without the need for external intervention. They are useful when you need complete control over execution and state.
-
-By using standalone functions, you can serve dynamic content, implement custom logic, and manipulate requests and responses directly at the edge. This approach eliminates the need for an origin server in many scenarios, allowing you to build powerful, low-latency applications.
+A standalone script handles the request itself. It serves dynamic content, runs your logic, and shapes the response at the edge, which in many cases means you don't need an origin server at all. Running that close to the user keeps latency down, and a script handles many requests at once.
 
 ## Use cases
 
-- **REST APIs and microservices** — Handle client requests and return responses directly from the edge
-- **Dynamic UIs and landing pages** — Generate and serve content based on user interactions or geolocation
-- **AI-powered endpoints** — Process images, run chat completions, or generate embeddings
-- **Backend functions for static frontends** — Power contact forms, webhooks, and data submissions
-- **External API calls** — Send emails, transform data, or integrate with third-party services
-
-## Benefits
-
-By executing directly at the network's edge, standalone scripts reduce latency significantly, enabling faster data processing and response times. They are inherently capable of handling multiple requests simultaneously without straining resources, facilitating smooth scalability as user demands increase.
+- Serve REST APIs and microservices straight from the edge
+- Generate dynamic UIs and landing pages based on user interactions or geolocation
+- Build AI-powered endpoints that process images, run chat completions, or generate embeddings
+- Back a static frontend with contact forms, webhooks, and data submissions
+- Call external APIs to send emails, transform data, or integrate with third-party services
 
 ## The `serve` function
 
@@ -58,7 +52,7 @@ about [before cache execution](/scripting/before-cache).
 
 ## Example
 
-This example demonstrates A/B testing based on a custom header:
+This example runs an A/B test based on a custom header:
 
 ```ts
 import * as BunnySDK from "@bunny.net/edgescript-sdk";
