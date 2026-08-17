@@ -90,10 +90,6 @@ Then, under **Output → Output mode: advanced**, set your encoder to the highes
 
 When your settings are ready, start streaming from your encoder (in OBS, click **Start Streaming**). Your encoder should show a healthy bitrate and no dropped frames.
 
-<Frame caption="OBS actively streaming to Bunny.">
-  ![OBS main window streaming with a live bitrate indicator](/images/stream/live/obs-streaming.png)
-</Frame>
-
 ## Step 4: Verify the connection and preview
 
 Back on the **Add live stream** page (or the **Control Room**), the **Preview** panel confirms that Bunny is receiving your feed:
@@ -106,15 +102,7 @@ Back on the **Add live stream** page (or the **Control Room**), the **Preview** 
   **Expect a short delay.** After your encoder starts publishing, allow **at least 15-20 seconds** before the preview playback and the connected **Primary/Backup** indicators appear in the dashboard. If they don't update immediately, wait a few seconds rather than restarting your encoder. We're working to reduce this delay.
 </Info>
 
-<Frame caption="Preview showing a connected feed, ready to go live.">
-  ![Preview panel showing the incoming feed and a green Ready for live stream status](/images/stream/live/preview-ready.png)
-</Frame>
-
 From the **Control Room**, you can also click **Show Preview** to open the full-size preview player in a separate window and check playback and latency (last ping) without exposing the stream to viewers.
-
-<Frame caption="Full preview window with connection status and last ping.">
-  ![Livestream preview window showing the feed and connected status](/images/stream/live/preview-window.png)
-</Frame>
 
 ## Step 5: Go live
 
@@ -123,10 +111,6 @@ When you're happy with the preview, you're ready to broadcast:
 1. Open the **Control Room** for your stream. While your encoder is connected but you haven't started, the player shows **Live stream not active**.
 2. Click **Start Stream**.
 3. Confirm in the dialog. Note that **starting manually overrides your scheduled start time**.
-
-<Frame caption="Confirm to start broadcasting to your audience.">
-  ![Start live stream confirmation dialog](/images/stream/live/start-stream-modal.png)
-</Frame>
 
 Your stream is now live. The header shows a **Live** badge and a running duration timer, and viewers watching the embed or direct URL now see your broadcast.
 
@@ -138,10 +122,6 @@ While you're live, the **Control Room** surfaces real-time statistics so you can
 - **Status** - connection health, last ping, and which of Primary/Backup ingest is active.
 - **Live CDN bandwidth** - data served so far.
 
-<Frame caption="Real-time stats while the stream is live.">
-  ![Control Room while live, showing duration, status, and bandwidth](/images/stream/live/live-control-room.png)
-</Frame>
-
 <Note>
   If your primary ingest drops, Bunny automatically fails over to the backup endpoint (and back), so a single connection hiccup won't take your broadcast offline. Watch the **Primary & Backup** badges in the **Status** card to see which is active.
 </Note>
@@ -151,19 +131,11 @@ While you're live, the **Control Room** surfaces real-time statistics so you can
 1. When you're finished, click **End Stream** in the Control Room header.
 2. Confirm in the dialog. Once ended, the stream cannot be restarted - you'll create a new stream for your next broadcast.
 
-<Frame caption="Confirm to end the live stream.">
-  ![End live stream confirmation dialog](/images/stream/live/end-stream-modal.png)
-</Frame>
-
 If **Video on demand** was enabled, Bunny immediately begins converting the recording into a VOD asset in your library. You'll see a notice that **your VOD is currently processing - viewers can still rewatch the live stream** while it does. Once processing completes, the recording plays back like any other Bunny Stream video, and you can pick or upload a **thumbnail** and edit the **title** and details.
 
 <Note>
   During the closed preview, the VOD includes **all content ingested from your encoder** - including anything sent while the stream was still in preview, before you clicked **Start Stream**. This logic will change in public preview so the VOD reflects only the live portion.
 </Note>
-
-<Frame caption="After ending, the stream converts to an on-demand recording.">
-  ![Ended live stream with a VOD processing notice and thumbnail selection](/images/stream/live/ended-vod-processing.png)
-</Frame>
 
 ## Getting the embed code or video URL
 
