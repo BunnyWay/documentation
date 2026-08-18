@@ -12,10 +12,6 @@ Bunny Container Registry is a private, OCI-compliant container registry built in
 
 The registry is available at `registry.bunny.net`. Repositories are private to your account and namespaced by your account ID (`<account-id>/my-app`). The [bunny CLI](/cli) manages this namespace for you, so you only need your account ID when [pushing with Docker directly](#pushing-with-docker).
 
-<Tip>
-Need your account ID? Run [`bunny whoami`](/cli/commands/auth#bunny-whoami), which prints it. You can also find it in the dashboard: go to [Image Registries](https://dash.bunny.net/magic-containers/image-registries) and click **How to Push Images**.
-</Tip>
-
 <Info>
 Magic Containers only supports images built for the **linux/amd64** architecture. When building your container image, ensure you target this platform using `--platform linux/amd64`.
 </Info>
