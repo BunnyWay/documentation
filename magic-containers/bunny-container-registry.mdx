@@ -5,7 +5,7 @@ tag: Preview
 ---
 
 <Note>
-Bunny Container Registry is in **Preview**. Features and commands may change. See [Product Release Stages](/product-release-stages) for details.
+Bunny Container Registry is in **Preview**. Usage is temporarily free during the Preview phase. Features and commands may change. See [Product Release Stages](/product-release-stages) for details.
 </Note>
 
 Bunny Container Registry is a private, OCI-compliant container registry built into bunny.net. Push images from your machine or CI pipeline and they immediately show up in the Magic Containers image list, ready to deploy. No external registry or credential setup required.
@@ -83,3 +83,13 @@ bunny registry tags my-app
 ## Deploying pushed images
 
 Images pushed to the Bunny Container Registry appear automatically in the image list when you [deploy](/magic-containers/deploy) or [update](/magic-containers/update) a Magic Containers app. Select the repository and tag to deploy; no registry credentials need to be configured.
+
+## Limits
+
+The following limits apply to each account:
+
+- Repositories per account: 100.
+- Tags per account: 1,000.
+- Blobs per account: 5,000. Blobs are the layers, configs, and manifests that make up your images.
+- Maximum image size: 10 GB.
+- Maximum total storage: 100 GB.
