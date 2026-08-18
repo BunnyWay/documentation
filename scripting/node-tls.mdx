@@ -329,6 +329,8 @@ const socket = tls.connect({
 });
 ```
 
+If you have trouble storing a multi-line PEM value in a secret, store it base64-encoded instead and decode it with `atob()` before use.
+
 For HTTPS origins that require mTLS, use `fetch()` with `Deno.createHttpClient` instead. See [Client Certificates on the HTTPS page](/scripting/https-ssl-certificates#client-certificates-mtls).
 
 ## References

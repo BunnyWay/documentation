@@ -85,7 +85,7 @@ import process from "node:process";
 const client = Deno.createHttpClient({
   cert: process.env.ClientCert, // certificate presented to the origin (PEM)
   key: process.env.ClientKey,   // matching private key (PEM)
-  // caCerts: [ ... ]               // add if the origin uses a private CA
+  // caCerts: [ ... ]            // add if the origin uses a private CA
 });
 
 BunnySDK.net.http.servePullZone(async (request: Request): Promise<Response> => {
@@ -98,8 +98,9 @@ BunnySDK.net.http.servePullZone(async (request: Request): Promise<Response> => {
 });
 ```
 
-The origin's own certificate is still verified as usual. Multi-line PEM values 
-can be stored in a secret as-is.
+The origin's own certificate is still verified as usual.
+
+<Info>If you have trouble storing a multi-line PEM value in a secret, store it base64-encoded instead and decode it in the script with `atob(process.env.ClientCert)`.</Info>
 
 ## Your Pull Zone Origin
 
