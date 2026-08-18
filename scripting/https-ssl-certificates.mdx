@@ -43,10 +43,10 @@ try {
 Some origins are misconfigured in ways that every browser tolerates. The runtime handles these for you so that a fetch behaves the way it does in a browser. None of them weaken verification: the certificate chain is still checked against trusted roots on every connection, and a certificate that fails for a real reason (untrusted issuer, expired, wrong hostname) still fails.
 
 - **Missing intermediate certificates.** Many servers send only their own leaf certificate and omit the intermediate that links it to the root CA. When a certificate fails *only* for this reason, the runtime completes the chain from a built-in list of publicly disclosed intermediates, sourced from the [Common CA Database (CCADB)](https://www.ccadb.org/), then verifies the completed chain against the trusted roots.
-- **Bunny edge hostnames without their own certificate.** A hostname pointed at
-  the Bunny edge that has no SSL provisioned for that specific name (a
+- **bunny.net edge hostnames without their own certificate.** A hostname pointed at
+  the bunny.net edge that has no SSL provisioned for that specific name (a
   white-label or alias domain, often reached after a redirect) is answered with
-  one of Bunny's own edge certificates, such as `*.b-cdn.net`. When verification
+  one of bunny.net's own edge certificates, such as `*.b-cdn.net`. When verification
   fails *only* on the hostname check and the certificate provably belongs to
   bunny.net, the connection is accepted. A mismatched third-party certificate 
   is never accepted this way.
@@ -114,7 +114,7 @@ not affects `fetch()` calls to other URLs.
     The origin's certificate does not chain to a public Certificate Authority. The usual cause is a private or internal CA, or an intermediate that is not disclosed in the CCADB. Trust the CA with [`Deno.createHttpClient({ caCerts })`](#private-certificate-authorities). Public origins that merely omit a disclosed intermediate already work automatically.
   </Accordion>
   <Accordion title="NotValidForName">
-    The certificate is valid, but not for the hostname you connected to. Bunny's own edge certificates are accepted automatically.
+    The certificate is valid, but not for the hostname you connected to. bunny.net's own edge certificates are accepted automatically.
   </Accordion>
   <Accordion title="Expired">
     The origin's certificate has expired. Renew it on the origin. Expiry cannot be bypassed for external origins.
