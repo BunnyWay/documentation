@@ -80,10 +80,11 @@ Some origins require the client to present its own certificate. Pass the PEM-enc
 
 ```typescript
 import * as BunnySDK from "@bunny.net/edgescript-sdk@0.12.0";
+import process from "node:process";
 
 const client = Deno.createHttpClient({
-  cert: Deno.env.get("ClientCert"), // certificate presented to the origin (PEM)
-  key: Deno.env.get("ClientKey"),   // matching private key (PEM)
+  cert: process.env.ClientCert, // certificate presented to the origin (PEM)
+  key: process.env.ClientKey,   // matching private key (PEM)
   // caCerts: [ ... ]               // add if the origin uses a private CA
 });
 
