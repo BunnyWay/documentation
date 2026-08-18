@@ -16,6 +16,33 @@ For HTTP and HTTPS endpoints, prefer `fetch()`.
 | You want browser-like handling origins | You need low-level control of the TLS connection, or need to inspect the certificate |
 | Recommended for almost all cases | Advanced use |
 
+## Quickstart
+
+Opens an outbound TLS connection and reports whether the certificate was trusted. `tls.connect()` verifies the server certificate against the public root CAs; the callback runs once the handshake completes, and `socket.authorized` reports whether the chain was trusted:
+
+```typescript
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
+import tls from "node:tls";
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  return new Promise((resolve) => {
+    const socket = tls.connect(
+      { host: "example.com", port: 443, servername: "example.com" },
+      () => {
+        const info = `authorized=${socket.authorized} protocol=${socket.getProtocol()}`;
+        socket.end();
+        resolve(new Response(info));
+      },
+    );
+    socket.on("error", (err) =>
+      resolve(new Response(`TLS error: ${err.message}`, { status: 502 })),
+    );
+  });
+});
+```
+
+Always set `servername` so the server receives the SNI it needs to select the right certificate.
+
 ## Importing the module
 
 ```typescript
@@ -54,36 +81,9 @@ const socket = tls.connect({
 });
 ```
 
-## Quickstart
+## Examples
 
-### Example 1: Opening a connection
-
-A minimal outbound connection. `tls.connect()` verifies the server certificate against the public root CAs; the callback runs once the handshake completes, and `socket.authorized` reports whether the chain was trusted:
-
-```typescript
-import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
-import tls from "node:tls";
-
-BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
-  return new Promise((resolve) => {
-    const socket = tls.connect(
-      { host: "example.com", port: 443, servername: "example.com" },
-      () => {
-        const info = `authorized=${socket.authorized} protocol=${socket.getProtocol()}`;
-        socket.end();
-        resolve(new Response(info));
-      },
-    );
-    socket.on("error", (err) =>
-      resolve(new Response(`TLS error: ${err.message}`, { status: 502 })),
-    );
-  });
-});
-```
-
-Always set `servername` so the server receives the SNI it needs to select the right certificate.
-
-### Example 2: SSL checker
+### Example 1: SSL checker
 
 `fetch()` verifies certificates but never shows them to you. With `node:tls` you can open the connection yourself, wait for the handshake, and read what the server presented. This script exposes an endpoint that returns a JSON report about a host's certificate: who issued it, which names it covers, when it expires, and whether the chain is trusted. Point a monitor at it to be warned before a certificate runs out.
 
@@ -223,7 +223,7 @@ A few notes on the code:
 - Always set `servername` so the server receives the SNI it needs to select the right certificate. Without it, hosts serving several sites return their default certificate.
 - The endpoint answers `503` when there is a warning, so an uptime monitor can alert on the status code without parsing the body.
 
-### Example 3: Certificate pinning
+### Example 2: Certificate pinning
 
 Standard verification accepts any certificate a public CA is willing to issue for a hostname. If you send credentials to a sensitive origin, you may want to go further and only accept the exact certificate you expect. `fetch()` gives you no access to the peer certificate, but `tls.connect()` lets you pass your own `checkServerIdentity` function, which runs during the handshake before any application data is sent.
 
@@ -313,7 +313,7 @@ BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
 
 Pinning trades flexibility for assurance: when the origin rotates its certificate, the pin must be updated or requests start failing. Pin the fingerprint of a longer-lived intermediate CA (compare `cert.issuerCertificate.fingerprint256`) if the origin renews its leaf certificate often.
 
-### Example 4: Client certificates (mTLS)
+### Example 3: Client certificates (mTLS)
 
 If the server requires a client certificate, pass the PEM-encoded `cert` and `key` in the connection options, read from [environment secrets](/scripting/secrets):
 
