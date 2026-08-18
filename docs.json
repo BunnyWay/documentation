@@ -510,6 +510,7 @@
                   },
                   "scripting/html-rewriter",
                   "scripting/node-fs",
+                  "scripting/node-tls",
                   "scripting/websockets"
                 ]
               },
@@ -517,6 +518,7 @@
                 "group": "Reference",
                 "pages": [
                   "scripting/limits",
+                  "scripting/https-ssl-certificates",
                   "scripting/before-cache",
                   "scripting/api-reference"
                 ]
