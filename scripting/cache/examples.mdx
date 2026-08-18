@@ -6,7 +6,7 @@ description: End-to-end Cache API recipes for Edge Scripting.
 
 ## Quickstart
 
-Here is a practical example of caching a HTML page on the edge, but updating the content based on a query parameter.
+This example caches an HTML page at the edge, then rewrites part of it per request from a query parameter.
 
 ```typescript
 import * as BunnySDK from "@bunny.net/edgescript-sdk";
@@ -67,7 +67,7 @@ BunnySDK.net.http.serve(
 
 ## Updating a cache in middleware
 
-Here is an example of updating a cache in middleware
+This example writes to the cache from middleware when the incoming request is a POST, and reads the entry back from a standalone script.
 
 ```typescript
 import * as BunnySDK from "@bunny.net/edgescript-sdk";
@@ -211,7 +211,7 @@ BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
 
 ## References
 
-- [Cache API overview](./index) — regional behavior, limitations, and API surface.
-- [Managing caches](./managing-caches) — the global `caches` object and named cache instances.
-- [Reading & writing](./reading-writing) — `match`, `put`, `delete` method reference.
-- [Runtime: waitUntil](../runtime#waituntil) — extend the isolate lifetime for background cache writes.
+- [Cache API overview](./index): regional behavior, limitations, and API surface.
+- [Managing caches](./managing-caches): the global `caches` object and named cache instances.
+- [Reading & writing](./reading-writing): the `match`, `put`, and `delete` method reference.
+- [Runtime: waitUntil](../runtime#waituntil): extend the isolate lifetime for background cache writes.
