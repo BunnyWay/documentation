@@ -44,12 +44,12 @@ bunny deploy
 
     ```
     ℹ Astro detected, with no bunny.net adapter.
-    ? Add @bunny.net/astro-adapter and render on the edge? › (Y/n)
-    ✓ Set output: "server" and the adapter in astro.config.mjs.
+    ? Add @bunny.net/astro-adapter to astro.config.mjs? › (Y/n)
+    ✓ Added the adapter to astro.config.mjs.
 
     ℹ Running build: npm run build
     …
-    [@bunny.net/astro-adapter] Bundled to dist/index.js (653 kB, limit 10 MB).
+    [@bunny.net/astro-adapter] Bundled to dist/index.js (653 kB, limit 10.00 MB). 3 route(s) render per request.
     [@bunny.net/astro-adapter] Wrote .bunny/build.json. Deploy it with: bunny deploy
 
     ? Site name: › my-site
@@ -95,6 +95,49 @@ bunny deploy
 | `.bunny/build.json`      | What the build produced. The CLI reads it, and it is a build output     |
 
 The CLI also applies the pull zone settings the adapter asks for, and it says which ones it changed: cookies pass through, so `Astro.cookies.set()` works, and [Smart Cache](/cdn/smart-cache) goes off so the adapter's own cache headers count.
+
+### Moving from another host
+
+A project that already has an adapter keeps everything but that one line. `bunny deploy` names the adapter it found, and swaps it:
+
+```
+ℹ Astro detected, using @astrojs/cloudflare.
+? Replace @astrojs/cloudflare with @bunny.net/astro-adapter in astro.config.mjs? › (Y/n)
+✓ Replaced @astrojs/cloudflare with @bunny.net/astro-adapter in astro.config.mjs.
+```
+
+Adapter options do not carry over, because no two hosts share them. Anything the old adapter was configured with is worth reading again in [the options below](#adapter-options).
+
+### In a monorepo
+
+Run `bunny deploy` at the repository root, and it finds the projects below it:
+
+```
+ℹ This directory holds no Astro project, and 4 below it do.
+? Which one should be deployed? › docs
+```
+
+Or run it in the project's own directory, and it deploys that one. The package manager comes from the workspace, not from the directory, so a `pnpm` monorepo gets `pnpm`.
+
+## What the adapter does not change
+
+The adapter adds itself to your config, and nothing else. It does not set `output`.
+
+Since Astro 5, a project that says nothing about `output` prerenders its pages, and a page asks for the edge with `export const prerender = false`. That default is the right one, and setting `output: "server"` over it is expensive: on [astro.build](https://github.com/withastro/astro.build) it turned 4499 prerendered pages into pages that render per request, and took the script from 7.83 MB to 22.30 MB, past the limit.
+
+So the build decides what to deploy by reading the routes:
+
+| What the build found                                                      | What `bunny deploy` sends                                                 |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| A route that renders per request                                          | The script, and the files it renders from                                 |
+| Every route prerendered, and a 404 page, a redirect, or a header to apply | The same, because Bunny Storage cannot answer any of the three on its own  |
+| Every route prerendered, and none of those                                | The files alone. No script, and nothing invoked per request               |
+
+The build says which one it chose, and why. A site can also ask for the script outright. That is what a prerendered page holding a `server:defer` component needs, because Astro gives such a project the same route list as one with no island at all:
+
+```js astro.config.mjs
+adapter: bunny({ deploy: "server" }),
+```
 
 ## The everyday loop
 
@@ -425,9 +468,15 @@ bunny scripts deploy dist/index.js
 
 A deploy you run yourself puts the files at the zone root, which is where the script looks when nothing sets `BUNNY_ASSET_PREFIX`.
 
-## A static site instead
+## A site with no script
 
-If the site has no dynamic part, you do not need a script at all. Keep Astro's default `static` output, and `bunny deploy` uploads the build to a storage zone and serves it from a pull zone. Every deploy then gets its own immutable URL. The [static site hosting guide](/storage/static-site-hosting) covers that path.
+A site whose routes are all prerendered, and which has no 404 page, no redirect and no header to apply, needs no script at all. `bunny deploy` uploads the build to a storage zone and serves it from a pull zone, every deploy gets its own immutable URL, and nothing is invoked per request. The build says so:
+
+```
+[@bunny.net/astro-adapter] Every route is prerendered: `bunny deploy` uploads dist/client, and deploys no script.
+```
+
+Most sites have a 404 page, so most sites get the script even with every route prerendered. That costs one invocation per page that misses the CDN cache, and it is what makes the 404 page, the redirects and the headers work. The [static site hosting guide](/storage/static-site-hosting) covers deploying files with no adapter at all.
 
 ## What is not here yet
 
@@ -442,10 +491,25 @@ The design for all three is in [`plans/one-command-deploys.md`](https://github.c
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="bunny deploy says the bundle is too large">
-    Edge Scripting takes one file of up to 10 MB. Drop a dependency the server
-    does not need, and check what the build reports. A small Astro site lands
-    near 660 kB.
+  <Accordion title="The build says the script is too large">
+    Edge Scripting takes one file of up to 10 MB, so a build that produced more
+    than that fails, and names the packages that filled it:
+
+    ```
+    dist/index.js is 22.30 MB, and Edge Scripting takes 10.00 MB.
+
+    The largest parts of it are:
+      6.41 MB  shiki
+      2.20 MB  @astrojs/mdx
+      1.12 MB  astro
+    ```
+
+    Two things usually help. Prerender the routes that do not need a server, so
+    that the pages which pulled a package in stop being part of the script. And
+    keep a heavy dependency out of a page, and out of anything a page imports: a
+    package that only runs at build time does not belong in the script.
+
+    A small Astro site lands near 660 kB.
   </Accordion>
 
   <Accordion title="The script is too slow to start">
