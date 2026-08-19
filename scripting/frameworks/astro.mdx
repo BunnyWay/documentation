@@ -1,321 +1,406 @@
 ---
 title: "Deploy an Astro Site on Edge Scripting"
 sidebarTitle: "Astro"
-description: "Build an Astro site, keep the static output in Bunny Storage, and serve it from a standalone Edge Script that adds dynamic routes at the edge."
+description: "Run Astro's server-side rendering inside a Bunny Edge Script with a custom adapter, and serve the build assets from Bunny Storage."
 ---
 
-[Astro](https://astro.build/) builds a static site by default. This guide puts that build in a [storage zone](/storage) and serves it from a [standalone script](/scripting/standalone/overview). The script also answers an API route and rewrites part of the HTML, so the page carries data that changes on every request.
+[Astro](https://astro.build/) is a server-first framework. It renders HTML on the server, and it only ships the JavaScript a page really needs.
 
-The result is one URL that returns both the static pages and the dynamic parts.
+Edge Scripting runs Deno, and an Astro SSR build is a `(Request) => Response` handler. Those two facts fit together: the script can call Astro's own handler, so pages render per request at the edge. Static assets come from [Bunny Storage](/storage), because the edge has no build output on disk.
+
+This guide covers that setup. It ends with a simpler option for sites that are nearly all static.
+
+## Choose an approach
+
+| | Server-side rendering | Static plus a small script |
+| --- | --- | --- |
+| Astro's server runs | Yes | No |
+| Per-request pages, `Astro.request`, `Astro.cookies` | Yes | No |
+| Server endpoints in `src/pages/api/` | Yes | You write routes in the script |
+| Astro middleware | Yes | No |
+| Script size | About 600 KB | A few KB |
+| Setup | A short custom adapter | None |
+
+Use SSR when you want Astro's server features. Use the static option when the site is mostly prerendered and needs only a small dynamic edge.
 
 ## Before you start
 
 - [Node.js](https://nodejs.org/), at the version your Astro release needs. Astro 7 needs 22.12 or later.
 - The [bunny.net CLI](/cli/installation), authenticated with `bunny login`
-- [Deno](https://deno.com/), which the generated script project uses to bundle
+- A [storage zone](/storage/quickstart) for the build assets
 
-<Info>
-  If your Astro site has no dynamic parts, skip the script. Point a pull zone
-  straight at the storage zone instead, as described in the [frontend deployment
-  guides](/storage/static-site-hosting).
-</Info>
-
-## Deploy the site
+## Deploy with server-side rendering
 
 <Steps>
-  <Step title="Create the Astro site">
-    Scaffold a project and install its dependencies:
-
+  <Step title="Create the site">
     ```bash
     npm create astro@latest my-site -- --template minimal
     cd my-site
-    npm install
-    ```
-
-    Add a placeholder to `src/pages/index.astro` that the script fills in later:
-
-    ```astro
-    <p>Request time: <span data-dynamic="time">—</span></p>
+    npm install esbuild @bunny.net/edgescript-sdk
     ```
 
   </Step>
 
-  <Step title="Build the site">
+  <Step title="Write the adapter">
+    An Astro adapter tells Astro how to build for a host. It needs two files.
+
+    The first is the server entrypoint. It exposes Astro's app object, and it deliberately starts no server and reads no files:
+
+    ```js adapter/server.mjs
+    import { createApp } from "astro/app/entrypoint";
+    import { setGetEnv } from "astro/env/setup";
+
+    setGetEnv((key) => Deno.env.get(key));
+
+    const app = createApp();
+
+    /** Render a request with Astro. Returns null when no route matches. */
+    export async function render(request) {
+      const routeData = app.match(request);
+      if (!routeData) return null;
+      const response = await app.render(request, { routeData });
+      if (app.setCookieHeaders) {
+        for (const cookie of app.setCookieHeaders(response)) {
+          response.headers.append("Set-Cookie", cookie);
+        }
+      }
+      return response;
+    }
+
+    /** Render Astro's own 404 or error page for an unmatched request. */
+    export function renderFallback(request) {
+      return app.render(request);
+    }
+    ```
+
+    The second is the integration. It registers the entrypoint, and it maps bare
+    Node builtins to their `node:` form, which is what Deno accepts:
+
+    ```js adapter/index.mjs
+    import { fileURLToPath } from "node:url";
+
+    const NODE_BUILTINS = [
+      "assert", "async_hooks", "buffer", "crypto", "diagnostics_channel",
+      "events", "fs", "fs/promises", "http", "https", "module", "net", "os",
+      "path", "path/posix", "process", "querystring", "stream", "stream/web",
+      "string_decoder", "timers", "timers/promises", "tls", "tty", "url",
+      "util", "util/types", "worker_threads", "zlib",
+    ];
+
+    export default function bunnyEdge() {
+      return {
+        name: "astro-adapter-bunny-edge",
+        hooks: {
+          "astro:config:done": ({ setAdapter }) => {
+            setAdapter({
+              name: "astro-adapter-bunny-edge",
+              serverEntrypoint: fileURLToPath(
+                new URL("./server.mjs", import.meta.url),
+              ),
+              exports: ["render", "renderFallback", "app"],
+              supportedAstroFeatures: {
+                staticOutput: "stable",
+                hybridOutput: "stable",
+                serverOutput: "stable",
+                sharpImageService: "unsupported",
+              },
+            });
+          },
+          "astro:build:setup": ({ vite, target }) => {
+            if (target !== "server") return;
+            vite.resolve ??= {};
+            const aliases = NODE_BUILTINS.map((m) => ({
+              find: m,
+              replacement: `node:${m}`,
+            }));
+            if (Array.isArray(vite.resolve.alias)) {
+              vite.resolve.alias = [...vite.resolve.alias, ...aliases];
+            } else {
+              vite.resolve.alias ??= {};
+              for (const a of aliases) vite.resolve.alias[a.find] = a.replacement;
+            }
+          },
+        },
+      };
+    }
+    ```
+
+  </Step>
+
+  <Step title="Point Astro at the adapter">
+    ```js astro.config.mjs
+    import { defineConfig } from "astro/config";
+    import bunnyEdge from "./adapter/index.mjs";
+
+    export default defineConfig({
+      output: "server",
+      adapter: bunnyEdge(),
+      // sharp needs Node-only modules, so the edge build uses the no-op service.
+      image: { service: { entrypoint: "astro/assets/services/noop" } },
+    });
+    ```
+
+    <Warning>
+      Keep the no-op image service. The default `sharp` service pulls in native
+      binaries and Node-only modules, and the bundle then fails to build.
+    </Warning>
+
+  </Step>
+
+  <Step title="Write the Edge Script entry">
+    This file joins the two halves. Astro answers the routes it owns. Storage answers everything else.
+
+    ```js edge-entry.mjs
+    import * as BunnySDK from "@bunny.net/edgescript-sdk";
+    import { render, renderFallback } from "./dist/server/entry.mjs";
+
+    const STORAGE_HOST = Deno.env.get("STORAGE_HOST") ?? "storage.bunnycdn.com";
+    const STORAGE_ZONE = Deno.env.get("STORAGE_ZONE") ?? "";
+    const STORAGE_KEY = Deno.env.get("STORAGE_KEY") ?? "";
+
+    const TYPES = {
+      html: "text/html; charset=utf-8", css: "text/css; charset=utf-8",
+      js: "text/javascript; charset=utf-8",
+      json: "application/json; charset=utf-8",
+      svg: "image/svg+xml", ico: "image/x-icon", png: "image/png",
+      jpg: "image/jpeg", webp: "image/webp", woff2: "font/woff2",
+    };
+
+    function clean(pathname) {
+      return decodeURIComponent(pathname).replace(/^\/+/, "")
+        .split("/").filter((s) => s !== "." && s !== "..").join("/");
+    }
+
+    function get(object) {
+      return fetch(`https://${STORAGE_HOST}/${STORAGE_ZONE}/${object}`, {
+        headers: { AccessKey: STORAGE_KEY },
+      });
+    }
+
+    // Hashed assets never change. Prerendered HTML can, so it gets a short life.
+    function cacheControl(ext) {
+      return ext === "html"
+        ? "public, max-age=60"
+        : "public, max-age=31536000, immutable";
+    }
+
+    async function fromStorage(pathname) {
+      const base = clean(pathname);
+      const hasExt = base !== "" && base.split("/").pop().includes(".");
+
+      // A path without an extension may be a prerendered page.
+      const candidates = hasExt ? [base] : [`${base}/index.html`.replace(/^\//, ""), `${base}.html`];
+
+      for (const object of candidates) {
+        const res = await get(object);
+        if (!res.ok) continue;
+        const ext = object.split(".").pop().toLowerCase();
+        return new Response(res.body, {
+          headers: {
+            "content-type": TYPES[ext] ?? "application/octet-stream",
+            "cache-control": cacheControl(ext),
+          },
+        });
+      }
+      return null;
+    }
+
+    BunnySDK.net.http.serve(async (request) => {
+      // 1. Astro owns the route: render the page or run the endpoint, per request.
+      const rendered = await render(request);
+      if (rendered) return rendered;
+
+      // 2. Not an SSR route. Look for a prerendered page or an asset in storage.
+      const stored = await fromStorage(new URL(request.url).pathname);
+      if (stored) return stored;
+
+      // 3. Nothing matched. Let Astro render its own 404 page.
+      return renderFallback(request);
+    });
+    ```
+
+  </Step>
+
+  <Step title="Add the bundler">
+    Edge Scripting accepts one file, so bundle the entry and Astro's server output together:
+
+    ```js bundle.mjs
+    import * as esbuild from "esbuild";
+
+    await esbuild.build({
+      entryPoints: ["edge-entry.mjs"],
+      outfile: "edge/index.js",
+      bundle: true,
+      format: "esm",
+      target: "esnext",
+      platform: "neutral",
+      mainFields: ["module", "main"],
+      conditions: ["deno", "import", "module", "default"],
+      external: ["node:*"],
+      logLevel: "info",
+    });
+    ```
+
+    Build the site, then bundle it:
+
     ```bash
     npm run build
+    node bundle.mjs
     ```
 
-    Astro writes the site to `dist/`. Keep the default static output. Edge
-    Scripting does not run the Astro Node adapter, because a deployment is a
-    single JavaScript file that you write yourself.
+    A minimal site produces about 600 KB in `edge/index.js`. The [script size limit](/scripting/limits) is 10 MB.
 
   </Step>
 
-  <Step title="Create a storage zone">
-    Create the zone with the CLI:
+  <Step title="Upload the client assets">
+    Astro splits its output. `dist/server/` is now inside the bundle. `dist/client/` holds the hashed assets and any prerendered page, and it belongs in storage:
 
     ```bash
-    bunny api POST /storagezone --body '{"Name":"my-site-files","Region":"DE"}'
-    ```
-
-    The response holds two passwords. `Password` writes and reads. `ReadOnlyPassword` only reads. Keep both.
-
-    <Note>
-      You can also create the zone in the dashboard under **Storage** > **Add
-      Storage Zone**. Pick the region closest to your build machine, and read
-      the passwords from the **Access** tab.
-    </Note>
-
-  </Step>
-
-  <Step title="Upload the build">
-    Upload every file in `dist/` with the [Storage API](/storage/http). Each successful upload returns `201`:
-
-    ```bash
-    STORAGE_ZONE="my-site-files"
+    STORAGE_ZONE="my-site-assets"
     STORAGE_HOST="storage.bunnycdn.com"
     ACCESS_KEY="your-storage-zone-password"
 
-    cd dist
+    cd dist/client
     find . -type f -printf '%P\n' | while read -r file; do
       curl -X PUT "https://$STORAGE_HOST/$STORAGE_ZONE/$file" \
         -H "AccessKey: $ACCESS_KEY" \
         -H "Content-Type: application/octet-stream" \
         --data-binary "@$file"
     done
-    cd ..
+    cd ../..
     ```
 
-    Use the endpoint of your zone's region. The [HTTP page](/storage/http#storage-endpoints) lists them all.
+    Each upload returns `201`. Use the endpoint for your zone's region, which the [HTTP page](/storage/http#storage-endpoints) lists.
 
   </Step>
 
-  <Step title="Scaffold the script project">
-    Create a standalone project next to your site:
-
-    ```bash
-    bunny scripts init --name edge --type standalone --template Empty --no-github-actions
-    cd edge
-    deno install
-    ```
-
-    The template includes `build.mjs`, which bundles `src/main.ts` and every dependency into one file. Edge Scripting accepts a single file only.
-
-  </Step>
-
-  <Step title="Write the handler">
-    Replace `src/main.ts` with the handler below. It reads files from storage, fills in the dynamic values, and answers `/api/hello` itself.
-
-    ```ts src/main.ts
-    import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.12.0";
-
-    const STORAGE_HOST = Deno.env.get("STORAGE_HOST") ?? "storage.bunnycdn.com";
-    const STORAGE_ZONE = Deno.env.get("STORAGE_ZONE") ?? "";
-    const STORAGE_KEY = Deno.env.get("STORAGE_KEY") ?? "";
-
-    const TYPES: Record<string, string> = {
-      html: "text/html; charset=utf-8",
-      css: "text/css; charset=utf-8",
-      js: "text/javascript; charset=utf-8",
-      json: "application/json; charset=utf-8",
-      svg: "image/svg+xml",
-      ico: "image/x-icon",
-      png: "image/png",
-      woff2: "font/woff2",
-    };
-
-    function contentType(path: string): string {
-      const ext = path.split(".").pop()?.toLowerCase() ?? "";
-      return TYPES[ext] ?? "application/octet-stream";
-    }
-
-    // Map a URL path to a file in the storage zone.
-    function toObjectPath(pathname: string): string {
-      let p = decodeURIComponent(pathname).replace(/^\/+/, "");
-      if (p === "" || p.endsWith("/")) p += "index.html";
-      else if (!p.split("/").pop()!.includes(".")) p += "/index.html";
-      return p.split("/").filter((s) => s !== "." && s !== "..").join("/");
-    }
-
-    function fromStorage(objectPath: string): Promise<Response> {
-      return fetch(`https://${STORAGE_HOST}/${STORAGE_ZONE}/${objectPath}`, {
-        headers: { AccessKey: STORAGE_KEY },
-      });
-    }
-
-    // The values that change on every request.
-    function dynamicValues(req: Request): Record<string, string> {
-      const h = req.headers;
-      return {
-        time: new Date().toISOString(),
-        country: h.get("cdn-requestcountrycode") ?? "unknown",
-        pop: h.get("cdn-serverzone") ?? "local",
-      };
-    }
-
-    function escapeHtml(s: string): string {
-      return s.replace(/[&<>"]/g, (c) =>
-        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
-    }
-
-    // Replace the contents of every element that carries data-dynamic.
-    function injectDynamic(html: string, values: Record<string, string>): string {
-      return html.replace(
-        /(<(\w+)[^>]*\sdata-dynamic="(\w+)"[^>]*>)([\s\S]*?)(<\/\2>)/g,
-        (whole, open, _tag, key, _old, close) =>
-          key in values ? `${open}${escapeHtml(values[key])}${close}` : whole,
-      );
-    }
-
-    BunnySDK.net.http.serve(async (req: Request): Promise<Response> => {
-      const url = new URL(req.url);
-
-      if (req.method !== "GET" && req.method !== "HEAD") {
-        return new Response("Method Not Allowed", { status: 405 });
-      }
-
-      // A dynamic route. Storage is not involved.
-      if (url.pathname === "/api/hello") {
-        return Response.json(
-          { message: "Hello from the edge", ...dynamicValues(req) },
-          { headers: { "cache-control": "no-store" } },
-        );
-      }
-
-      const objectPath = toObjectPath(url.pathname);
-      const upstream = await fromStorage(objectPath);
-
-      if (!upstream.ok) {
-        return new Response("Not found", { status: 404 });
-      }
-
-      const type = contentType(objectPath);
-
-      if (type.startsWith("text/html")) {
-        const html = injectDynamic(await upstream.text(), dynamicValues(req));
-        return new Response(html, {
-          headers: { "content-type": type, "cache-control": "no-store" },
-        });
-      }
-
-      return new Response(upstream.body, {
-        headers: {
-          "content-type": type,
-          "cache-control": "public, max-age=3600",
-        },
-      });
-    });
-    ```
-
-    The script sends `no-store` for HTML, because the injected values must be
-    fresh. Static assets keep a one hour cache.
-
-  </Step>
-
-  <Step title="Create the script and set its configuration">
-    Create the script. The CLI also creates a pull zone, which gives the site its public URL:
-
+  <Step title="Create the script and configure it">
     ```bash
     bunny scripts create my-site --type standalone
     ```
 
-    Store the zone name and endpoint as [environment variables](/scripting/environment-variables), and the password as a [secret](/scripting/secrets):
+    The CLI creates a linked pull zone, which gives the site its URL. Store the zone details, and keep the password as a [secret](/scripting/secrets):
 
     ```bash
     bunny scripts env set STORAGE_HOST storage.bunnycdn.com
-    bunny scripts env set STORAGE_ZONE my-site-files
+    bunny scripts env set STORAGE_ZONE my-site-assets
     bunny scripts env set STORAGE_KEY your-read-only-password --secret
     ```
 
     <Warning>
-      Use the read-only password of the storage zone. The script only reads
-      files, so it never needs the password that can write or delete them.
+      Use the zone's read-only password. The script only reads assets, so it
+      never needs the password that can write or delete them.
     </Warning>
 
   </Step>
 
-  <Step title="Bundle and deploy">
+  <Step title="Deploy">
     ```bash
-    npm run build
-    bunny scripts deploy dist/index.ts
+    bunny scripts deploy edge/index.js
     ```
 
-    The CLI prints the live URL. Open it to see the Astro page, and open `/api/hello` to see the dynamic route.
+    Open the URL the CLI prints. Reload it: anything your page renders per request, such as a timestamp, changes every time.
 
   </Step>
 </Steps>
 
+## What runs where
+
+| Request | Handled by |
+| --- | --- |
+| A server-rendered page | Astro, inside the script |
+| A route in `src/pages/api/` | Astro, inside the script |
+| `src/middleware.ts` | Astro, on every matched route |
+| A page with `export const prerender = true` | Bunny Storage |
+| Hashed assets in `_astro/` | Bunny Storage |
+| An unknown path | Astro's 404 page |
+
+Astro's request context works as usual. `Astro.request.headers` carries the bunny.net edge headers, so middleware can read `cdn-requestcountrycode` and put the visitor's country into `Astro.locals`.
+
 ## Run it locally
 
-Start the script on your machine with Deno. Pass the same configuration as environment variables:
+Install [Deno](https://deno.com/) and run the bundle. Pass the same configuration as environment variables:
 
 ```bash
+node bundle.mjs
 STORAGE_HOST=storage.bunnycdn.com \
-STORAGE_ZONE=my-site-files \
+STORAGE_ZONE=my-site-assets \
 STORAGE_KEY=your-read-only-password \
-deno run -A src/main.ts
+deno run -A edge/index.js
 ```
 
-The script listens on `http://127.0.0.1:8080/` and reads the files from the real storage zone.
+The script listens on `http://127.0.0.1:8080/`. Use `npm run dev` for ordinary work on the site. Reach for the bundle when you want to check the edge behaviour itself.
 
-The `cdn-` request headers only exist on the bunny.net network, so `country` reads `unknown` and `pop` reads `local` while you develop.
+The `cdn-` headers only exist on the bunny.net network, so any value your code reads from them is absent locally.
 
 ## Redeploy after a change
 
-A change to the site and a change to the script follow different paths:
+| You changed | What to do |
+| --- | --- |
+| A server-rendered page, an endpoint, or middleware | `npm run build`, `node bundle.mjs`, then `bunny scripts deploy edge/index.js` |
+| A prerendered page or a static asset | `npm run build`, then upload `dist/client/` again |
 
-| You changed         | What to do                                                       |
-| ------------------- | ---------------------------------------------------------------- |
-| Astro pages or assets | Run `npm run build`, then upload `dist/` to the storage zone again |
-| The handler         | Run `npm run build` in the script project, then `bunny scripts deploy dist/index.ts` |
+Most changes touch both, so put the four commands in one script. Keep the storage password in your CI secrets, never in the repository.
 
-Combine both in one script so a deploy is a single command. Keep the storage password in your CI secrets, never in the repository.
+## A simpler option: a static build with a small script
+
+If the site is nearly all static, skip the adapter. Keep Astro's default `static` output, upload `dist/` to a storage zone, and write a short script that serves those files and adds the dynamic part itself.
+
+The script is a few KB instead of 600, and there is nothing to bundle beyond the SDK. The cost is that Astro's server never runs: no server endpoints, no middleware, and no per-request rendering. You write that logic in the script by hand.
+
+This is the right trade for a marketing site with one contact form. It is the wrong trade once you want real routes, because you end up rebuilding Astro's server yourself.
 
 ## Add your own domain
 
-The script has a pull zone, so it takes a custom hostname like any other pull zone:
+The script has a pull zone, so it takes a custom hostname:
 
 ```bash
 bunny scripts domains add www.example.com
 ```
 
-Point the hostname at bunny.net with a `CNAME` record, then enable HTTPS. See the [custom hostname guide](/cdn/custom-hostname) for the full process.
+Point the hostname at bunny.net with a `CNAME` record, then enable HTTPS. See the [custom hostname guide](/cdn/custom-hostname).
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Every page returns 404">
-    The script could not read the file from storage. Check three things: the
-    `STORAGE_ZONE` value matches the zone name, `STORAGE_KEY` holds a password
-    of that zone, and `STORAGE_HOST` matches the zone's region. A zone in
-    Frankfurt answers on `storage.bunnycdn.com`, while other regions use a
-    prefix. The [HTTP page](/storage/http#storage-endpoints) lists them.
+  <Accordion title="The bundle fails on child_process, fs, or detect-libc">
+    Something in the build wants Node-only modules. The usual cause is the
+    `sharp` image service. Set the no-op service in `astro.config.mjs`, as shown
+    above. If another dependency does it, replace that dependency or mark it
+    external and avoid the code path.
   </Accordion>
 
-  <Accordion title="The dynamic values never change">
-    The response was cached. HTML that carries per-request values needs
-    `cache-control: no-store`, as in the handler above. If a route must run
-    before the cache is checked at all, turn on [before cache
-    execution](/scripting/before-cache).
+  <Accordion title="A POST request returns 403">
+    Astro checks the request origin for server output, and rejects a form POST
+    whose `Origin` header does not match the site. This is Astro's CSRF
+    protection, not an Edge Scripting error. Send the request from the site
+    itself, or change `security.checkOrigin` in `astro.config.mjs`.
   </Accordion>
 
-  <Accordion title="The deploy fails on the bundle">
-    Edge Scripting accepts one file. Deploy the bundled output in `dist/`, not
-    `src/main.ts`. Run `deno install` once in the script project so the bundler
-    is available.
+  <Accordion title="Prerendered pages return 404">
+    Astro writes `export const prerender = true` pages to
+    `dist/client/<route>/index.html`. Check that you uploaded the whole
+    `dist/client` tree and kept its folders. The script looks for both
+    `<route>/index.html` and `<route>.html`.
   </Accordion>
 
-  <Accordion title="A page loads but its assets do not">
-    Astro references assets by absolute path, such as `/_astro/index.css`. Make
-    sure you uploaded the whole `dist/` tree and kept its folder structure. The
-    upload loop above preserves it with `find -printf '%P\n'`.
+  <Accordion title="Assets 404 but pages render">
+    Only `dist/client/` belongs in storage. Uploading `dist/` instead puts the
+    assets one level too deep, so every asset path misses. Upload from inside
+    `dist/client`.
   </Accordion>
 
-  <Accordion title="A handler that reads many files fails">
-    A script can make 50 subrequests per invocation. The handler above reads one
-    file per request, so a page with many assets is safe: each asset arrives as
-    its own request. The limit matters when one handler fetches many objects at
-    once, for example to compose a page. Read fewer files, or cache the result.
-    See [limits](/scripting/limits).
+  <Accordion title="Every request returns a storage error">
+    Check that `STORAGE_ZONE` matches the zone name, that `STORAGE_KEY` is a
+    password of that zone, and that `STORAGE_HOST` matches the zone's region.
+    A zone in Frankfurt answers on `storage.bunnycdn.com`, and other regions use
+    a prefix. A zone created seconds ago can answer `401` until it propagates.
+  </Accordion>
+
+  <Accordion title="The script is too slow to start">
+    A script has 500 ms to start. A large SSR bundle with heavy top-level work
+    can reach that. Move work out of module scope and into the request handler,
+    and drop dependencies you do not need. Check the size of `edge/index.js`
+    against the [limits](/scripting/limits).
   </Accordion>
 </AccordionGroup>
