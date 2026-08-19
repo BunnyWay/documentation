@@ -44,7 +44,7 @@ Push a local Docker image by name. The CLI tags it for the registry and pushes i
 bunny registry push my-app:latest
 ```
 
-`push` uses Docker to read the local image, so Docker must be installed and the image must exist locally.
+`push` shells out to the Docker CLI, so Docker must be installed and the image must exist in Docker's image store. Images built with Apple Container aren't visible to Docker; push those with [`container image push`](#pushing-with-apple-container) instead.
 
 </Step>
 
