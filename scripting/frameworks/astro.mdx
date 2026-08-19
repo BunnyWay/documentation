@@ -345,6 +345,15 @@ If the site has no dynamic part, you do not need a script at all. Keep Astro's d
 ## Troubleshooting
 
 <AccordionGroup>
+  <Accordion title="Astro.rewrite('/404') throws a 500">
+    A prerendered route has no server component to rewrite to. Return
+    `new Response(null, { status: 404 })` from the page instead, and the
+    adapter serves your prerendered 404 page out of Bunny Storage.
+
+    An endpoint in `src/pages/api/` keeps its own 404, so a client asking for
+    JSON is never handed a web page.
+  </Accordion>
+
   <Accordion title="Prerendered pages return 404">
     Upload `dist/client` again. `bunny-astro deploy` does the upload and the
     deploy together, so the two halves never fall out of step.
