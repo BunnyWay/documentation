@@ -192,6 +192,22 @@ That is safe, and it is the default.
 
 Optimizer only works on files your own pull zone serves, so an image on another host passes through untouched.
 
+## Large files
+
+A stored object can be fetched in pieces. The script answers a `Range` request with `206` and a `Content-Range`, and it says `Accept-Ranges: bytes` on everything it serves out of storage.
+
+That header is the part that matters. A pull zone will not answer a range from its cache, and will not slice an object, unless the origin says it accepts ranges. Without it a video is only seekable once it is fully cached.
+
+For a large file that nobody has requested yet, turn on **Optimize for large object delivery** in the pull zone's caching settings. The pull zone then fetches the object in chunks, so the first request is seekable too:
+
+```bash
+bunny api POST /pullzone/<pull-zone-id> --body '{"EnableCacheSlice": true}'
+```
+
+See [range requests](/cdn/frequently-asked-questions/range-requests) for what the CDN does with them.
+
+The script also passes `If-None-Match` and `If-Modified-Since` through, so a browser and the pull zone both revalidate with a `304` instead of downloading the object again.
+
 ## Sessions
 
 `Astro.session` works out of the box. Each session is one object in a storage zone, so every edge node reads the same value.
@@ -277,6 +293,7 @@ bunny scripts env set BUNNY_API_KEY <key> --secret
 | Static page headers, such as a CSP | Yes, applied by the script |
 | `routeRules` and cache purging | Yes, after you turn Smart Cache off |
 | Image transformation | Not yet. Optimizer cannot read from a script |
+| Range requests on a stored object | Yes, and conditional requests too |
 | `node:fs` and the other built-ins Deno provides | Yes. The file system is virtual and per isolate |
 | `astro:env` secrets | Yes, from the script's environment variables |
 | `astro preview` | Yes, with Deno |
@@ -370,6 +387,12 @@ If the site has no dynamic part, you do not need a script at all. Keep Astro's d
     Optimizer fetches the original from the pull zone's origin, and an Edge
     Script is not an origin it can read. Turn Optimizer off, and leave
     `imageService` at its default.
+  </Accordion>
+
+  <Accordion title="A video is only seekable after it fully downloads">
+    The file is not cached yet, so the pull zone fetches it as one large object.
+    Turn on **Optimize for large object delivery** in the pull zone's caching
+    settings, and it fetches the object in chunks instead.
   </Accordion>
 
   <Accordion title="Prerendered pages return 404">
