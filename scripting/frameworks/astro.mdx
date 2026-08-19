@@ -58,27 +58,22 @@ Use SSR when you want Astro's server features. Use the static option when the si
     export async function render(request) {
       const routeData = app.match(request);
       if (!routeData) return null;
-      const response = await app.render(request, { routeData });
-      if (app.setCookieHeaders) {
-        for (const cookie of app.setCookieHeaders(response)) {
-          response.headers.append("Set-Cookie", cookie);
-        }
-      }
-      return response;
+      // addCookieHeader turns Astro.cookies.set() into a Set-Cookie header.
+      return app.render(request, { routeData, addCookieHeader: true });
     }
 
     /** Render Astro's own 404 or error page for an unmatched request. */
     export function renderFallback(request) {
-      return app.render(request);
+      return app.render(request, { addCookieHeader: true });
     }
+
+    export { app };
     ```
 
     The second is the integration. It registers the entrypoint, and it maps bare
     Node builtins to their `node:` form, which is what Deno accepts:
 
     ```js adapter/index.mjs
-    import { fileURLToPath } from "node:url";
-
     const NODE_BUILTINS = [
       "assert", "async_hooks", "buffer", "crypto", "diagnostics_channel",
       "events", "fs", "fs/promises", "http", "https", "module", "net", "os",
@@ -94,9 +89,8 @@ Use SSR when you want Astro's server features. Use the static option when the si
           "astro:config:done": ({ setAdapter }) => {
             setAdapter({
               name: "astro-adapter-bunny-edge",
-              serverEntrypoint: fileURLToPath(
-                new URL("./server.mjs", import.meta.url),
-              ),
+              entrypointResolution: "auto",
+              serverEntrypoint: "./adapter/server.mjs",
               exports: ["render", "renderFallback", "app"],
               supportedAstroFeatures: {
                 staticOutput: "stable",
@@ -370,11 +364,42 @@ Point the hostname at bunny.net with a `CNAME` record, then enable HTTPS. See th
     external and avoid the code path.
   </Accordion>
 
+  <Accordion title="Astro.cookies.set() has no effect">
+    Two things can swallow the cookie. First, the adapter must pass
+    `addCookieHeader: true` to `app.render()`, as shown above. Second, a pull
+    zone created for a script has **Disable cookies** switched on, which strips
+    `Set-Cookie` from every response. Turn it off in the pull zone under
+    **General** > **Disable cookies**, or with the API:
+
+    ```bash
+    bunny api POST /pullzone/<pull-zone-id> --body '{"DisableCookies": false}'
+    ```
+
+  </Accordion>
+
+  <Accordion title="The site loses its styles after a redeploy">
+    Astro renames its CSS bundle whenever the styles change, for example
+    `_astro/index.C1x2y3.css`. Deploying the script without uploading
+    `dist/client` again leaves the new name missing from storage, so the page
+    renders unstyled. Always run both steps together.
+
+  </Accordion>
+
   <Accordion title="A POST request returns 403">
     Astro checks the request origin for server output, and rejects a form POST
     whose `Origin` header does not match the site. This is Astro's CSRF
     protection, not an Edge Scripting error. Send the request from the site
     itself, or change `security.checkOrigin` in `astro.config.mjs`.
+  </Accordion>
+
+  <Accordion title="The build warns about Astro.request.headers">
+    Middleware also runs while Astro prerenders a page, and there is no live
+    request at that point. Guard the header reads:
+
+    ```ts
+    if (context.isPrerendered) return next();
+    ```
+
   </Accordion>
 
   <Accordion title="Prerendered pages return 404">
