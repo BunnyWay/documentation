@@ -10,7 +10,7 @@ Bunny Container Registry is in **Preview**. Usage is temporarily free during the
 
 Bunny Container Registry is a private, OCI-compliant container registry built into bunny.net. Push images from your machine or CI pipeline and they immediately show up in the Magic Containers image list, ready to deploy. No external registry or credential setup required.
 
-The registry is available at `registry.bunny.net`. Repositories are private to your account and namespaced by your account ID (`<account-id>/my-app`). The [bunny CLI](/cli) manages this namespace for you, so you only need your account ID when pushing with [Docker](#pushing-with-docker) or [Apple Container](#pushing-with-apple-container) directly.
+The registry is available at `registry.bunny.net`. Repositories are private to your account and namespaced by your account ID (`<account-id>/my-app`). The [bunny.net CLI](/cli) manages this namespace for you, so you only need your account ID when pushing with [Docker](#pushing-with-docker) or [Apple Container](#pushing-with-apple-container) directly.
 
 <Info>
 Magic Containers only supports images built for the **linux/amd64** architecture. When building your container image, ensure you target this platform using `--platform linux/amd64`.
@@ -18,7 +18,7 @@ Magic Containers only supports images built for the **linux/amd64** architecture
 
 ## Quickstart
 
-The recommended way to push images is with the [bunny CLI](/cli). It handles authentication and the account namespace for you, so no registry configuration is needed.
+The recommended way to push images is with the [bunny.net CLI](/cli).
 
 <Note>
 `bunny registry` is **experimental** and may change in future releases.
@@ -26,7 +26,7 @@ The recommended way to push images is with the [bunny CLI](/cli). It handles aut
 
 <Steps>
 
-<Step title="Install the bunny CLI and log in">
+<Step title="Install the bunny.net CLI and log in">
 
 If you haven't already, [install the CLI](/cli/installation) and authenticate:
 
@@ -56,11 +56,13 @@ The image now appears in the Magic Containers image list. Select it when you [de
 
 </Steps>
 
-## Using the bunny CLI
+## Using the bunny.net CLI
 
 The [`bunny registry`](/cli/commands/registry) command pushes images and lists repositories and tags on the registry. Unlike Docker, you don't need to tag images with the registry host or your account ID: the CLI adds and hides the account namespace automatically, so you always work with the bare repository name.
 
-### Push to an explicit repository and tag
+<Steps>
+
+<Step title="Push to an explicit repository and tag">
 
 Without flags, `push` derives the repository and tag from the image name. Override either with flags:
 
@@ -68,7 +70,11 @@ Without flags, `push` derives the repository and tag from the image name. Overri
 bunny registry push my-app:dev --repository my-app --tag v1
 ```
 
-### List repositories and tags
+</Step>
+
+<Step title="List repositories and tags">
+
+Verify the push by listing what's on the registry:
 
 ```bash
 # List repositories (alias: ls)
@@ -80,11 +86,17 @@ bunny registry tags my-app
 
 `list` and `tags` talk to the registry directly and don't require Docker.
 
+</Step>
+
+</Steps>
+
 ## Pushing with Docker
 
-If you can't use the bunny CLI, for example in a CI pipeline where only Docker is available, you can push images with Docker directly. Unlike the CLI, you handle authentication and the account namespace yourself.
+If you can't use the bunny.net CLI, for example in a CI pipeline where only Docker is available, you can push images with Docker directly. Unlike the CLI, you handle authentication and the account namespace yourself.
 
-### Log in to the registry
+<Steps>
+
+<Step title="Log in to the registry">
 
 Authenticate with `token` as the username and your [API key](/account/api-keys) as the password:
 
@@ -92,7 +104,9 @@ Authenticate with `token` as the username and your [API key](/account/api-keys) 
 docker login registry.bunny.net --username token
 ```
 
-### Tag your image
+</Step>
+
+<Step title="Tag your image">
 
 Tag the image with the registry host and your account ID. Replace `my-app` with the name of your image and `<account-id>` with your account ID:
 
@@ -104,7 +118,9 @@ docker tag my-app registry.bunny.net/<account-id>/my-app:latest
 Run [`bunny whoami`](/cli/commands/auth#bunny-whoami) to get your account ID. You can also find it in the dashboard: go to [Image Registries](https://dash.bunny.net/magic-containers/image-registries) and click **How to Push Images** to see these Docker commands with your account ID already filled in.
 </Tip>
 
-### Push the image
+</Step>
+
+<Step title="Push the image">
 
 ```bash
 docker push registry.bunny.net/<account-id>/my-app:latest
@@ -112,11 +128,17 @@ docker push registry.bunny.net/<account-id>/my-app:latest
 
 Once pushed, the image appears in the Magic Containers image list, where you can select it to deploy.
 
+</Step>
+
+</Steps>
+
 ## Pushing with Apple Container
 
 [Apple Container](https://github.com/apple/container) is Apple's open-source container tool for macOS. Its registry commands work with the Bunny Container Registry the same way Docker's do: you handle authentication and the account namespace yourself.
 
-### Log in to the registry
+<Steps>
+
+<Step title="Log in to the registry">
 
 Authenticate with `token` as the username and your [API key](/account/api-keys) as the password:
 
@@ -124,7 +146,9 @@ Authenticate with `token` as the username and your [API key](/account/api-keys) 
 container registry login registry.bunny.net --username token
 ```
 
-### Build for linux/amd64
+</Step>
+
+<Step title="Build for linux/amd64">
 
 On Apple silicon, Apple Container builds images for `arm64` by default, which Magic Containers can't run. Pass `--arch amd64` when building:
 
@@ -138,13 +162,19 @@ If you already have an image built for `amd64`, tag it with the registry host an
 container image tag my-app registry.bunny.net/<account-id>/my-app:latest
 ```
 
-### Push the image
+</Step>
+
+<Step title="Push the image">
 
 ```bash
 container image push registry.bunny.net/<account-id>/my-app:latest
 ```
 
 Once pushed, the image appears in the Magic Containers image list, where you can select it to deploy.
+
+</Step>
+
+</Steps>
 
 ## Deploying pushed images
 
