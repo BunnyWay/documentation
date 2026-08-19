@@ -51,15 +51,14 @@ bunny deploy
 
 The [CLI](/cli) recognises the framework, offers the adapter if the project has none, builds the site, and creates what it needs: a storage zone for the files, a pull zone for the URL, and an Edge Script for the server. Later deploys are the same command.
 
-Each deploy is immutable, so a rollback is one step:
+Each deploy is immutable: its client files and its server bundle both stay in the storage zone, and the published script carries the name of its own files. So a rollback restores a page and its assets together, in one step:
 
 ```bash
-bunny deploy --prod     # publish to production
-bunny deploy            # publish to the preview URL
+bunny deploy            # build and publish
 bunny rollback          # back to the deploy that was live before
 ```
 
-An adapter tells the CLI what it built, in a small manifest the build writes. The CLI reads the manifest, so every adapter deploys with the same commands, and a new adapter needs no new CLI.
+An adapter tells the CLI what it built, in a small manifest the build writes. The CLI reads the manifest, so every adapter deploys with the same commands, and a new adapter needs no new CLI. [Writing an adapter](https://github.com/BunnyWay/bunny-adapters/blob/main/docs/writing-an-adapter.md) has the contract.
 
 ## What to know first
 

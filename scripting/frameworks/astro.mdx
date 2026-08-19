@@ -6,7 +6,7 @@ description: "Deploy Astro to bunny.net with one command. Server-side rendering 
 
 [Astro](https://astro.build/) is a server-first framework. It renders HTML on the server, and it ships only the JavaScript a page really needs.
 
-The [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters/tree/main/packages/astro) package runs that server inside an Edge Script. Astro renders pages and API routes per request, on a node near your visitor. The build's static files come from [Bunny Storage](/storage), and the CDN serves them.
+The [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters/tree/main/packages/astro) package runs that server inside an Edge Script. Astro renders pages and API routes per request, on a node near your visitor. The build's static files live in [Bunny Storage](/storage), and the script serves them from there.
 
 One command does all of it:
 
@@ -43,24 +43,23 @@ bunny deploy
     The CLI recognises Astro. It offers to add the adapter, builds the site, creates what the site needs, and publishes it:
 
     ```
-    Astro 5.14 detected, with no bunny.net adapter.
-    ? Add @bunny.net/astro-adapter and render on the edge? (Y/n) y
+    ℹ Astro detected, with no bunny.net adapter.
+    ? Add @bunny.net/astro-adapter and render on the edge? › (Y/n)
+    ✓ Set output: "server" and the adapter in astro.config.mjs.
 
-    Installed @bunny.net/astro-adapter, and set output: "server".
+    ℹ Running build: npm run build
+    …
+    [@bunny.net/astro-adapter] Bundled to dist/index.js (653 kB, limit 10 MB).
+    [@bunny.net/astro-adapter] Wrote .bunny/build.json. Deploy it with: bunny deploy
 
-    Running build: npm run build
-    Bundled to dist/index.js (664 kB, limit 10 MB).
-
-    ? Site name: (my-site) my-site
-    Created site "my-site".
+    ? Site name: › my-site
+    ✓ Created site "my-site".
       storage zone   sites-my-site-k3f9wq
-      pull zone      sites-my-site-k3f9wq
       edge script    my-site-k3f9wq-server
+      pull zone      sites-my-site-k3f9wq.b-cdn.net
 
-    Uploaded 42 files (1.9 MB) as deploy a1b2c3d4.
-    Published to production.
-
-    Production  https://sites-my-site-k3f9wq.b-cdn.net
+    ✓ Deployed a1b2c3d4: 42 files (1.9 MB), script 653 KB.
+    ℹ Production  https://sites-my-site-k3f9wq.b-cdn.net
     ```
 
     Open the URL. Reload it, and anything the page renders per request changes each time.
@@ -71,7 +70,7 @@ bunny deploy
     The first deploy offers one. To add it later:
 
     ```bash
-    bunny domains add www.example.com
+    bunny sites domains add www.example.com
     ```
 
     The CLI adds the hostname, prints the `CNAME` record to create, waits for DNS, and issues a free certificate.
@@ -92,58 +91,38 @@ bunny deploy
 | A storage zone           | Holds each deploy's files, and your sessions                          |
 | A pull zone              | The site's URL, its cache, and its domains                            |
 | An Edge Script           | Astro's server, published as one file                                 |
-| `bunny.jsonc`            | The site's name and build command, so later deploys need no flags      |
 | `.bunny/site.json`       | Links this directory to the site                                       |
+| `.bunny/build.json`      | What the build produced. The CLI reads it, and it is a build output     |
 
-The CLI also applies the pull zone settings the adapter asks for, and it says which ones it changed. Cookies pass through, so `Astro.cookies.set()` works. [Smart Cache](/cdn/smart-cache) goes off when your project sets `routeRules`, because Smart Cache does not cache HTML.
+The CLI also applies the pull zone settings the adapter asks for, and it says which ones it changed: cookies pass through, so `Astro.cookies.set()` works, and [Smart Cache](/cdn/smart-cache) goes off so the adapter's own cache headers count.
 
 ## The everyday loop
 
 ```bash
-bunny deploy                  # build and publish to the preview URL
-bunny deploy --prod           # publish to production
-bunny deploy --prod --open    # and open it in the browser
-bunny rollback                # back to the deploy that was live before
-bunny deployments list        # what is live, what was live, what is kept
-bunny env set STRIPE_KEY sk_live_… --secret
-bunny logs                    # what the script wrote while it ran
+bunny deploy                        # build and publish
+bunny deploy --open                 # and open it in the browser
+bunny rollback                      # back to the deploy that was live before
+bunny sites deployments list        # what is live, what was live, what is kept
+bunny sites open                    # open the live URL
 ```
 
-A deploy with no changes does nothing, and says so.
-
-### Previews
-
-`bunny deploy` without `--prod` publishes to the site's preview URL. Production keeps serving the deploy that is live.
-
-Name a preview to get another one, which is how a pull request gets its own:
-
-```bash
-bunny deploy --preview pr-42
-```
-
-A named preview keeps one URL, and each deploy to it replaces what it shows.
-
-<Note>
-  A preview for a server-rendered site is an environment, not a snapshot. One
-  Edge Script publishes one version at a time, and the rendered page and its
-  assets are one unit, so each preview URL shows the newest deploy sent to it. A
-  [static site](/storage/static-site-hosting) gets one immutable URL per deploy
-  instead.
-</Note>
+A deploy with no changes does nothing, and says so. Every deploy publishes to production; a preview URL per branch is [not built yet](#what-is-not-here-yet).
 
 ### Rolling back
 
 ```bash
-bunny deployments list
+bunny sites deployments list
 bunny rollback              # the previous deploy
 bunny rollback a1b2c3d4     # a named one
 ```
 
-Each deploy keeps both halves in storage: the files, and the server bundle that was built against them. So a rollback restores a matched pair, and it takes one step. The CLI keeps the newest 5 deploys, and `bunny deployments prune` clears the rest.
+Each deploy keeps both halves in the storage zone: the files, and the server bundle that was built against them. Neither is ever overwritten, so a rollback restores a matched pair in one step. It takes a few seconds to reach every edge node.
+
+The CLI keeps the newest 5 deploys. `bunny sites deployments prune` clears the rest.
 
 ## Configure the site
 
-`bunny deploy` writes `bunny.jsonc`, and reads it every time after that:
+`.bunny/site.json` is all a repeat deploy needs. Add a `bunny.jsonc` when you want the site's name and build command in version control:
 
 ```jsonc bunny.jsonc
 {
@@ -155,7 +134,7 @@ Each deploy keeps both halves in storage: the files, and the server bundle that 
 }
 ```
 
-Commit it. Every developer and every workflow then deploys the same way, with no flags.
+Every developer and every workflow then deploys the same way, with no flags.
 
 Build-time variables come from the command line:
 
@@ -167,29 +146,26 @@ bunny deploy --env-file .env.production
 Runtime variables belong to the script, and `astro:env` reads them:
 
 ```bash
-bunny env set STRIPE_KEY sk_live_… --secret
-bunny env list
-bunny env pull                       # into .env, for local work
+bunny scripts env set STRIPE_KEY sk_live_… --secret
+bunny scripts env list
+bunny scripts env pull                     # into .env, for local work
 ```
+
+`bunny sites show` prints the script's ID, and the commands above use the script this directory is linked to.
 
 ## Continuous integration
 
-```bash
-bunny ci init
-```
+A deploy needs an API key and nothing else, so a workflow is three lines:
 
-That writes a GitHub Actions workflow, and offers to store your API key as a repository secret. Pull requests get a preview URL as a comment. A merge to `main` publishes to production.
-
-The workflow runs the same two lines you run:
-
-```yaml
-- run: npm ci && npm run build
-- run: bunny deploy --prod
+```yaml .github/workflows/deploy.yml
+- run: npm ci
+- run: npm install -g @bunny.net/cli
+- run: bunny deploy
   env:
     BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
 ```
 
-See [GitHub Actions](/scripting/github-actions) for the details.
+Commit `.bunny/site.json` so the workflow deploys the same site you do, or pass `--name <site>`. See [GitHub Actions](/scripting/github-actions) for the details.
 
 ## Run it locally
 
@@ -208,15 +184,22 @@ It needs [Deno](https://deno.com/) 2, because Deno is the Edge Scripting runtime
 
 ```
 browser ──▶ pull zone ──▶ Edge Script (Astro's server)
-                │              │
-                │              └─ a route Astro owns ── rendered now
-                │
-                └─ an asset or a prerendered page ─▶ Bunny Storage
+                              │
+                              ├─ a route Astro owns ── rendered now
+                              │
+                              └─ an asset or a prerendered page ─▶ Bunny Storage
 ```
 
-The script sees every request the cache does not answer. It renders the routes Astro owns. For anything the build produced, it points the CDN at the file in storage, and the CDN serves it. So an asset costs the script nothing, and range requests, `304`s, and large files stay the CDN's job.
+The script sees every request the cache does not answer. It renders the routes Astro owns, and reads everything the build produced out of Bunny Storage. The adapter inlines the list of built files into the script, so a request for a path the build never produced costs no lookup at all.
 
-Each deploy is immutable. Its files go to `deploys/{id}/` in the storage zone, and its bundle goes beside them where nothing serves it. The bundle carries the name of its own directory, so a published version can only ever read the files it was built with.
+Each deploy is immutable, and it has two halves in the same storage zone:
+
+| Path                             | Holds                                       |
+| -------------------------------- | ------------------------------------------- |
+| `deploys/{id}/`                  | that deploy's client files                   |
+| `_bunny/deploys/{id}/server.js`  | that deploy's server bundle. Never served    |
+
+The CLI writes the deploy's own folder name into the top of the bundle it publishes. So a published version can only read the files it was built with, which is what makes a rollback restore a page and its assets together. An Astro server bundle names the hashed CSS file it renders, so the two really are one unit.
 
 ### What runs where
 
@@ -225,11 +208,9 @@ Each deploy is immutable. Its files go to `deploys/{id}/` in the storage zone, a
 | A server-rendered page                       | Astro, inside the script                |
 | A route in `src/pages/api/`                  | Astro, inside the script                |
 | `src/middleware.ts`                          | Astro, on every matched route           |
-| A page with `export const prerender = true`  | Bunny Storage, through the pull zone    |
-| Hashed assets in `_astro/`                   | Bunny Storage, through the pull zone    |
+| A page with `export const prerender = true`  | Bunny Storage, read by the script       |
+| Hashed assets in `_astro/`                   | Bunny Storage, read by the script       |
 | An unknown path                              | Your prerendered 404 page               |
-
-The adapter inlines the list of built files into the script, so a request for a path the build never produced costs no lookup at all.
 
 ## The edge context
 
@@ -304,10 +285,10 @@ await Astro.cache.invalidate({ tags: ["products"] });
 await Astro.cache.invalidate({ path: "/products/socks" });
 ```
 
-That calls the [purge API](/cdn/purge-cache), which is an account operation. The CLI sets the pull zone id for you, and asks before it puts an API key on the script:
+That calls the [purge API](/cdn/purge-cache), which is an account operation. The CLI sets the pull zone id for you. The key is yours to add, because it is account-wide:
 
 ```bash
-bunny env set BUNNY_API_KEY <key> --secret
+bunny scripts env set BUNNY_API_KEY <key> --secret
 ```
 
 ## Sessions
@@ -352,11 +333,17 @@ Optimizer only works on files your own pull zone serves, so an image on another 
 
 ## Large files
 
-A stored object can be fetched in pieces, and the CDN serves it from the storage zone, so `Range` requests, `206` responses, and `304`s all behave as they do for any file on Bunny Storage.
+A stored object can be fetched in pieces. The script answers a `Range` request with `206` and a `Content-Range`, and it says `Accept-Ranges: bytes` on everything it serves out of storage.
 
-For a large file that nobody has requested yet, turn on **Optimize for large object delivery** in the pull zone's caching settings. The pull zone then fetches the object in chunks, so the first request is seekable too.
+That header is the part that matters. A pull zone will not answer a range from its cache, and will not slice an object, unless the origin says it accepts ranges. Without it a video is only seekable once it is fully cached.
 
-See [range requests](/cdn/frequently-asked-questions/range-requests) for what the CDN does with them.
+For a large file that nobody has requested yet, turn on **Optimize for large object delivery** in the pull zone's caching settings, and the zone fetches the object in chunks so the first request is seekable too:
+
+```bash
+bunny api POST /pullzone/<pull-zone-id> --body '{"EnableCacheSlice": true}'
+```
+
+The script also passes `If-None-Match` and `If-Modified-Since` through, so a browser and the pull zone both revalidate with a `304` instead of downloading the object again. See [range requests](/cdn/frequently-asked-questions/range-requests) for what the CDN does with them.
 
 ## Supported features
 
@@ -422,18 +409,35 @@ No credential is ever an option. The CLI sets each one on the script, so nothing
 
 ## Moving from `bunny-astro`
 
-Earlier versions shipped a `bunny-astro` command. `bunny deploy` replaces it, and adds deploys, previews, and rollback.
+Earlier versions of the adapter shipped a `bunny-astro` command. `bunny deploy` replaces it, and adds provisioning, immutable deploys, and rollback.
 
 ```bash
-bunny link           # adopt the storage zone and script you already have
-bunny deploy --prod
+bunny deploy
 ```
 
-`bunny link` finds the resources, writes `bunny.jsonc` and `.bunny/site.json`, and moves the settings across. Your URL and your domains do not change. Then drop the `BUNNY_STORAGE_*` variables from your build environment: the site does not read them.
+That creates a **new** site: its own storage zone, script, and pull zone, and its own URL. Adopting the zone and script you already have is [not built yet](#what-is-not-here-yet), so until it is, either move to the new URL (add your domain to it with `bunny sites domains add`) or keep deploying the old pair by hand:
+
+```bash
+npm run build
+bunny storage files upload dist/client --zone my-site-assets   # or your own uploader
+bunny scripts deploy dist/index.js
+```
+
+A deploy you run yourself puts the files at the zone root, which is where the script looks when nothing sets `BUNNY_ASSET_PREFIX`.
 
 ## A static site instead
 
 If the site has no dynamic part, you do not need a script at all. Keep Astro's default `static` output, and `bunny deploy` uploads the build to a storage zone and serves it from a pull zone. Every deploy then gets its own immutable URL. The [static site hosting guide](/storage/static-site-hosting) covers that path.
+
+## What is not here yet
+
+Three things this guide's commands do not cover:
+
+- **A preview URL per branch.** Every `bunny deploy` publishes to production. A server-rendered preview has to be its own Edge Script, because one script publishes one version at a time and a page and its assets are one unit. Until then, deploy a second site for staging: `bunny deploy --name my-site-staging` from a checkout of the branch.
+- **Adopting a site you built by hand.** `bunny deploy` creates its own storage zone, script, and pull zone. There is no command yet that takes over a pair you made yourself.
+- **Logs from the command line.** Read them in the dashboard, under **Scripting** > your script > **Logs**.
+
+The design for all three is in [`plans/one-command-deploys.md`](https://github.com/BunnyWay/bunny-adapters/blob/main/plans/one-command-deploys.md).
 
 ## Troubleshooting
 
@@ -461,8 +465,7 @@ If the site has no dynamic part, you do not need a script at all. Keep Astro's d
 
   <Accordion title="A routeRules entry changes nothing">
     Smart Cache is on, and it does not cache HTML. `bunny deploy` turns it off
-    when it sees `routeRules`, so run the deploy again and read what it
-    reports.
+    and says so, so run the deploy again and read what it reports.
   </Accordion>
 
   <Accordion title="Astro.cookies.set() has no effect">
