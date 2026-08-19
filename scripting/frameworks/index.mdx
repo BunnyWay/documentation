@@ -1,0 +1,54 @@
+---
+title: "Frameworks on Edge Scripting"
+sidebarTitle: "Overview"
+description: "Run a web framework on Bunny Edge Scripting by serving the build output from Bunny Storage and the dynamic routes from a standalone script."
+---
+
+Most web frameworks produce two kinds of output: files that never change between requests, and routes that must run per request. Edge Scripting handles both when you pair it with [Bunny Storage](/storage).
+
+Keep the built files in a storage zone, and let a [standalone script](/scripting/standalone/overview) act as the origin. The script reads each file from storage and runs your dynamic code at the edge.
+
+## How it works
+
+```
+browser ──▶ pull zone ──▶ standalone Edge Script
+                              │
+                              ├─ dynamic routes ── run in the script
+                              │
+                              └─ everything else ─▶ Bunny Storage zone
+```
+
+The script is the origin of its own pull zone, so it receives every request the cache does not answer. It decides what to do with each path: build a response itself, or fetch the matching file from storage and pass it back.
+
+## When to use a script
+
+<Info>
+  If your site is fully static, you do not need a script. Point a pull zone
+  straight at the storage zone instead. See the [frontend deployment
+  guides](/storage/static-site-hosting).
+</Info>
+
+Add a standalone script when you need something that a static file cannot do:
+
+- API routes, form handlers, and webhooks
+- Responses that change per visitor, such as geolocation or A/B tests
+- Header and HTML rewriting on the way out
+- Requests to another service, such as a database or an AI model
+
+## What to know first
+
+**One file.** A deployment is a single JavaScript file, so you must bundle your script and its dependencies before you deploy. Every project from `bunny scripts init` includes a bundler for this.
+
+**Not a framework adapter.** Edge Scripting does not run a framework server such as the Astro or Next.js Node adapter. You write the request handler yourself. This keeps the script small and fast, and it is why the guides below build the site in static mode.
+
+**Cache misses only.** By default a script runs when the cache misses. Turn on [before cache execution](/scripting/before-cache) if a route must run on every request.
+
+**Limits apply.** Check the [Edge Scripting limits](/scripting/limits), in particular the 50 subrequests per request and the 10 MB script size.
+
+## Guides
+
+<CardGroup cols={2}>
+  <Card title="Astro" icon="rocket" href="/scripting/frameworks/astro">
+    Serve an Astro build from Bunny Storage and add dynamic routes at the edge.
+  </Card>
+</CardGroup>
