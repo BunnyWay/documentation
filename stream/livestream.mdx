@@ -133,10 +133,6 @@ While you're live, the **Control Room** surfaces real-time statistics so you can
 
 If **Video on demand** was enabled, Bunny immediately begins converting the recording into a VOD asset in your library. You'll see a notice that **your VOD is currently processing - viewers can still rewatch the live stream** while it does. Once processing completes, the recording plays back like any other Bunny Stream video, and you can pick or upload a **thumbnail** and edit the **title** and details.
 
-<Note>
-  During the closed preview, the VOD includes **all content ingested from your encoder** - including anything sent while the stream was still in preview, before you clicked **Start Stream**. This logic will change in public preview so the VOD reflects only the live portion.
-</Note>
-
 ## Getting the embed code or video URL
 
 Your live stream (and its VOD) can be shared or embedded exactly like a regular Bunny Stream video. From the stream's **General** tab, use the **Embed** and **Live stream links** sections to copy:
@@ -317,7 +313,9 @@ curl --request DELETE \
 </CodeGroup>
 
 <Note>
-  The **update** endpoint can only be used **before the stream is started**. The stream key can only be regenerated **before** a stream has ended. Deleting a stream removes it and all associated resources and cannot be undone.
+  The **update** endpoint can be used with no restrictions **before the stream is started**. It can only be used for updating the title and description after the stream is started. 
+  The stream key can only be regenerated **before** a stream has ended. 
+  Deleting a stream removes it and all associated resources and cannot be undone.
 </Note>
 
 ### Endpoint reference
@@ -329,7 +327,7 @@ All paths are relative to `https://video.bunnycdn.com` and require the `AccessKe
 | `POST` | `/library/{libraryId}/live` | Create a live stream. |
 | `GET` | `/library/{libraryId}/live` | List live streams (`page`, `itemsPerPage`, `search`, `orderBy`, `collectionId`). |
 | `GET` | `/library/{libraryId}/live/{streamId}` | Get a live stream by ID. |
-| `PUT` | `/library/{libraryId}/live/{streamId}` | Update a live stream. Can only be used before the stream is started. |
+| `PUT` | `/library/{libraryId}/live/{streamId}` | Update a live stream. |
 | `DELETE` | `/library/{libraryId}/live/{streamId}` | Delete a live stream and its resources. |
 | `PUT` | `/library/{libraryId}/live/{streamId}/start` | Start the stream (make it watchable). |
 | `PUT` | `/library/{libraryId}/live/{streamId}/stop` | Stop the stream (converts to VOD if `recordVod` is enabled). |
