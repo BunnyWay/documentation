@@ -43,13 +43,17 @@ A framework's SSR build produces a request handler with the shape `(Request) => 
 
 ## What to know first
 
-**One file.** A deployment is a single JavaScript file, so the framework's server output has to be bundled. An adapter does that for you. A small Astro SSR build lands near 600 kB, well inside the 10 MB [script size limit](/scripting/limits).
+**One file.** A deployment is a single JavaScript file, so the framework's server output has to be bundled. An adapter does that for you. A small Astro SSR build lands near 660 kB, well inside the 10 MB [script size limit](/scripting/limits).
 
 **Astro has an adapter. Other frameworks do not, yet.** Install
-[`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-astro-adapter) and
+[`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters) and
 Astro builds straight to a deployable script. For any other framework you write
 the handler yourself, which is workable because all an adapter really does is
 hand you the app object.
+
+The adapters live in one repository,
+[BunnyWay/bunny-adapters](https://github.com/BunnyWay/bunny-adapters). Ask there
+for the framework you need.
 
 **Node-only dependencies do not travel.** Anything that needs native binaries or the filesystem must go. Image services that use `sharp` are the usual example. Swap them for a no-op or an edge-friendly service.
 

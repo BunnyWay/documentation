@@ -6,7 +6,13 @@ description: "Run Astro's server-side rendering on bunny.net Edge Scripting with
 
 [Astro](https://astro.build/) is a server-first framework. It renders HTML on the server, and it ships only the JavaScript a page really needs.
 
-The [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-astro-adapter) package runs that server inside an Edge Script. Astro renders pages and API routes per request, on a node near your visitor. The build's static files come from [Bunny Storage](/storage).
+The [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters/tree/main/packages/astro) package runs that server inside an Edge Script. Astro renders pages and API routes per request, on a node near your visitor. The build's static files come from [Bunny Storage](/storage).
+
+<Card title="See it running" icon="rocket" href="https://astro-ssr-demo.bunny.run">
+  A live Astro site on Edge Scripting. Every page demonstrates one adapter
+  capability, and the [source is on
+  GitHub](https://github.com/BunnyWay/bunny-adapters/tree/main/examples/astro-showcase).
+</Card>
 
 ## Set up
 
@@ -48,7 +54,7 @@ The [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-astro-adapter
     | `dist/index.js` | Astro's server, bundled into the single file Edge Scripting accepts |
     | `dist/client/` | Hashed assets and any prerendered page |
 
-    A small site bundles to roughly 600 kB, against the 10 MB [script size limit](/scripting/limits).
+    A small site bundles to roughly 660 kB, against the 10 MB [script size limit](/scripting/limits).
 
   </Step>
 
@@ -91,22 +97,19 @@ The [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-astro-adapter
   </Step>
 
   <Step title="Deploy">
-    Send the static files, then the server:
-
     ```bash
     BUNNY_STORAGE_ZONE=my-site-assets \
     BUNNY_STORAGE_KEY=<write password> \
-    npx bunny-astro upload
-
-    bunny scripts deploy dist/index.js
+    npx bunny-astro deploy
     ```
 
-    Open the URL the CLI prints. Reload it, and anything the page renders per request changes each time.
+    That uploads `dist/client` and then deploys `dist/index.js`, in that order. Open the URL the CLI prints. Reload it, and anything the page renders per request changes each time.
 
     <Warning>
-      Run both commands on every deploy. Astro renames its CSS and JavaScript
-      bundles whenever they change, so deploying only the script leaves the new
-      names missing from storage, and the site loses its styles.
+      Both halves have to go out every time. Astro renames its CSS and
+      JavaScript bundles whenever they change, so deploying only the script
+      leaves the new names missing from storage, and the site loses its styles.
+      `bunny-astro deploy` never leaves the two out of step.
     </Warning>
 
   </Step>
@@ -121,9 +124,13 @@ The [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-astro-adapter
 | `src/middleware.ts` | Astro, on every matched route |
 | A page with `export const prerender = true` | Bunny Storage |
 | Hashed assets in `_astro/` | Bunny Storage |
-| An unknown path | Astro's 404 page |
+| An unknown path | Your prerendered 404 page, from Bunny Storage |
 
-Astro's request context behaves as it does on any server. `Astro.request.headers` carries the bunny.net edge headers, so middleware can read the visitor's country and put it into `Astro.locals`:
+The adapter inlines the list of built files into the script, so a request for a path the build never produced costs no storage lookup at all.
+
+## The edge context
+
+Every page gets `Astro.locals.runtime`, which carries what the bunny.net network knows about the request:
 
 ```ts src/middleware.ts
 import { defineMiddleware } from "astro:middleware";
@@ -132,9 +139,116 @@ export const onRequest = defineMiddleware((context, next) => {
   // Middleware also runs while Astro prerenders, where there is no request.
   if (context.isPrerendered) return next();
 
-  context.locals.country = context.request.headers.get("cdn-requestcountrycode") ?? "unknown";
+  context.locals.country = context.locals.runtime.country ?? "unknown";
   return next();
 });
+```
+
+| Value | What it is |
+| --- | --- |
+| `country` | The visitor's country, from `cdn-requestcountrycode` |
+| `requestId` | The bunny.net request id. Quote it in a support ticket |
+| `clientAddress` | The visitor's IP. Also `Astro.clientAddress` |
+| `waitUntil` | Keep working after the response goes out. See [waitUntil](/scripting/runtime#waituntil) |
+| `caches` | The edge [Cache API](/scripting/cache) |
+| `env` | Read a script environment variable |
+
+Add the types to your project:
+
+```ts src/env.d.ts
+type BunnyRuntime = import("@bunny.net/astro-adapter").BunnyRuntime;
+
+declare namespace App {
+  interface Locals {
+    runtime: BunnyRuntime;
+  }
+}
+```
+
+## Images
+
+Set `imageService: "bunny"` and Astro's `<Image>` component uses [Bunny Optimizer](/optimizer), which resizes and re-encodes at the edge. There is no build step, and no `sharp`:
+
+```js astro.config.mjs
+bunny({
+  imageService: "bunny",
+  image: {
+    widths: [360, 720, 1080], // used to build a srcset
+    quality: 82,
+  },
+});
+```
+
+<Warning>
+  Turn Optimizer on for the pull zone first. It is a paid feature, so the
+  adapter never enables it for you, and the default stays `"noop"`. Without
+  Optimizer the parameters are ignored and the original image is served.
+</Warning>
+
+Optimizer only works on files your own pull zone serves, so an image on another host passes through untouched.
+
+## Sessions
+
+`Astro.session` works out of the box. Each session is one object in a storage zone, so every edge node reads the same value.
+
+Give the script a second zone it may write to, and keep the asset zone read-only:
+
+```bash
+bunny api POST /storagezone --body '{"Name":"my-site-sessions","Region":"DE"}'
+bunny scripts env set BUNNY_SESSION_ZONE my-site-sessions
+bunny scripts env set BUNNY_SESSION_KEY <write password> --secret
+```
+
+<Note>
+  Bunny Storage does not expire an object, so `session.ttl` controls the cookie
+  and not the stored object. Delete old objects yourself if the zone grows.
+</Note>
+
+## Caching
+
+Astro's `routeRules` become the headers the CDN reads:
+
+```js astro.config.mjs
+export default defineConfig({
+  adapter: bunny(),
+  routeRules: {
+    "/products/[...slug]": { maxAge: 3600, swr: 600, tags: ["products"] },
+  },
+});
+```
+
+```
+Cache-Control: public, max-age=0, must-revalidate, s-maxage=3600, stale-while-revalidate=600
+CDN-Tag: products,astro-path:/products/socks
+```
+
+`s-maxage` is for the CDN and `max-age` is for the browser. Splitting them is what makes a purge take effect straight away.
+
+<Warning>
+  [Smart Cache](/cdn/smart-cache) is on by default, and it only caches known
+  static file extensions. HTML is not one of them, so a `routeRules` entry does
+  nothing while Smart Cache is on:
+
+```bash
+bunny api POST /pullzone/<pull-zone-id> --body '{"EnableSmartCache": false}'
+```
+
+</Warning>
+
+Smart Cache exists to stop a misconfigured origin caching a personal page by accident. The adapter covers that another way: it sets `Cache-Control: private, no-store` on every server-rendered response that does not set one itself, so a pull zone never applies its own expiration to a page rendered for one visitor. A route with a `routeRules` entry keeps what the rule gave it.
+
+### Purging
+
+```ts
+await Astro.cache.invalidate({ tags: ["products"] });
+await Astro.cache.invalidate({ path: "/products/socks" });
+```
+
+That calls the [purge API](/cdn/purge-cache), which is an account operation, so give the script an API key:
+
+```bash
+bunny scripts env set BUNNY_PULLZONE_ID <id>
+bunny scripts env set BUNNY_API_KEY <key> --secret
 ```
 
 ## Supported features
@@ -145,10 +259,15 @@ export const onRequest = defineMiddleware((context, next) => {
 | Server endpoints and dynamic routes | Yes |
 | Middleware | Yes |
 | `Astro.request`, `Astro.locals`, `Astro.url`, `Astro.params` | Yes |
+| `Astro.clientAddress` | Yes, from `x-forwarded-for` |
 | `Astro.cookies`, including `set()` | Yes, after you allow cookies on the pull zone |
-| Prerendered pages | Yes, served from Storage |
+| `Astro.session` | Yes, stored in a storage zone |
+| Prerendered pages, including `404.astro` | Yes, served from Storage |
+| `routeRules` and cache purging | Yes, after you turn Smart Cache off |
+| Image transformation | Yes, with Bunny Optimizer |
 | `astro:env` secrets | Yes, from the script's environment variables |
-| The `sharp` image service | No. The adapter swaps in the no-op service |
+| `astro preview` | Yes, with Deno |
+| The `sharp` image service | No. Native binaries cannot run on the edge |
 
 ## Cookies
 
@@ -166,13 +285,24 @@ Every option has a sensible default, so `bunny()` on its own is usually right.
 
 ```js astro.config.mjs
 bunny({
-  storageZone: "my-site-assets",  // otherwise read from BUNNY_STORAGE_ZONE
+  // Storage
+  storageZone: "my-site-assets", // otherwise BUNNY_STORAGE_ZONE at runtime
   storageHost: "ny.storage.bunnycdn.com", // otherwise BUNNY_STORAGE_HOST
-  outfile: "dist/index.js",       // where to write the deployable bundle
-  bundle: true,                   // false to run your own bundler
-  imageService: "noop",           // false to keep your own image service
   assetCacheControl: "public, max-age=31536000, immutable",
   pageCacheControl: "public, max-age=60",
+  serverCacheControl: "private, no-store", // for a page that sets none itself
+
+  // Features
+  imageService: "noop", // "bunny" for Optimizer, false to keep your own
+  sessions: true, // false to configure your own driver
+  cache: true, // false to configure your own cache provider
+
+  // Build
+  outfile: "dist/index.js",
+  bundle: true, // false to run your own bundler
+  assetManifest: true, // false to look up every path in Storage instead
+  external: [], // modules esbuild must not bundle
+  sourcemap: false,
 });
 ```
 
@@ -182,17 +312,14 @@ The storage password is never an option. It always comes from the environment, s
 
 Use `npm run dev` for everyday work on the site.
 
-To exercise the real edge bundle, build it and run it with [Deno](https://deno.com/):
+`npm run preview` runs the file you are about to deploy. A local storage zone stands in for Bunny Storage, so assets, prerendered pages and sessions all work with no account and no network:
 
 ```bash
 npm run build
-BUNNY_STORAGE_ZONE=my-site-assets \
-BUNNY_STORAGE_HOST=storage.bunnycdn.com \
-BUNNY_STORAGE_KEY=<read-only password> \
-deno run -A dist/index.js
+npm run preview
 ```
 
-It listens on `http://127.0.0.1:8080/` and reads the assets from the real zone. The `cdn-` headers only exist on the bunny.net network, so anything your code reads from them is absent locally.
+It needs [Deno](https://deno.com/) 2, because Deno is the Edge Scripting runtime. The `cdn-` headers only exist on the bunny.net network, so anything your code reads from them is absent locally.
 
 ## Add your own domain
 
@@ -212,26 +339,36 @@ If the site has no dynamic part, you do not need a script at all. Keep Astro's d
 
 <AccordionGroup>
   <Accordion title="Prerendered pages return 404">
-    Upload `dist/client` again. Astro writes those pages to
-    `dist/client/<route>/index.html`, and the adapter looks for both
-    `<route>/index.html` and `<route>.html`.
+    Upload `dist/client` again. `bunny-astro deploy` does the upload and the
+    deploy together, so the two halves never fall out of step.
   </Accordion>
 
   <Accordion title="Assets 404 but pages render">
     Only `dist/client` belongs in storage. Uploading `dist` instead puts every
-    asset one level too deep. `bunny-astro upload` reads the right folder by
+    asset one level too deep. `bunny-astro deploy` reads the right folder by
     default.
   </Accordion>
 
   <Accordion title="The site loses its styles after a deploy">
     The script was deployed without a fresh upload. Astro renames its CSS
     bundle whenever the styles change, so the new name is missing from storage.
-    Run `bunny-astro upload` and deploy again.
+    Run `bunny-astro deploy`, which never does one without the other.
   </Accordion>
 
   <Accordion title="Astro.cookies.set() has no effect">
     The pull zone is stripping the header. Turn off **Disable cookies**, as
     described above.
+  </Accordion>
+
+  <Accordion title="A routeRules entry changes nothing">
+    Smart Cache is on, and it does not cache HTML. Turn it off, as described
+    above.
+  </Accordion>
+
+  <Accordion title="A page shows another visitor's content">
+    Something removed the `Cache-Control` the adapter sets. Check that no edge
+    rule overrides it, and that the page is not setting a `public` directive
+    itself.
   </Accordion>
 
   <Accordion title="A POST request returns 403">
