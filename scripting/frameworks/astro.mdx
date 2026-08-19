@@ -180,10 +180,15 @@ bunny({
 ```
 
 <Warning>
-  Turn Optimizer on for the pull zone first. It is a paid feature, so the
-  adapter never enables it for you, and the default stays `"noop"`. Without
-  Optimizer the parameters are ignored and the original image is served.
+  **Optimizer cannot read from an Edge Script yet.** With Optimizer on for the
+  pull zone, every image request that misses the CDN cache answers `523 Origin
+  Connection Failed`, because Optimizer fetches from the origin and not from
+  your script. So leave `imageService` at its default for now. The service
+  writes the right URLs, and nothing serves them.
 </Warning>
+
+With Optimizer off, the parameters are ignored and the original image is served.
+That is safe, and it is the default.
 
 Optimizer only works on files your own pull zone serves, so an image on another host passes through untouched.
 
@@ -262,9 +267,16 @@ bunny scripts env set BUNNY_API_KEY <key> --secret
 | `Astro.clientAddress` | Yes, from `x-forwarded-for` |
 | `Astro.cookies`, including `set()` | Yes, after you allow cookies on the pull zone |
 | `Astro.session` | Yes, stored in a storage zone |
-| Prerendered pages, including `404.astro` | Yes, served from Storage |
+| Prerendered pages, including `404.astro` and `500.astro` | Yes, served from Storage |
+| A site under a path, with `base` | Yes |
+| `redirects`, internal and external | Yes, with the status the route asks for |
+| Locale routing with `i18n` | Yes |
+| Content collections | Yes |
+| Framework islands and `server:defer` | Yes |
+| Astro actions | Yes |
+| Static page headers, such as a CSP | Yes, applied by the script |
 | `routeRules` and cache purging | Yes, after you turn Smart Cache off |
-| Image transformation | Yes, with Bunny Optimizer |
+| Image transformation | Not yet. Optimizer cannot read from a script |
 | `node:fs` and the other built-ins Deno provides | Yes. The file system is virtual and per isolate |
 | `astro:env` secrets | Yes, from the script's environment variables |
 | `astro preview` | Yes, with Deno |
@@ -352,6 +364,12 @@ If the site has no dynamic part, you do not need a script at all. Keep Astro's d
 
     An endpoint in `src/pages/api/` keeps its own 404, so a client asking for
     JSON is never handed a web page.
+  </Accordion>
+
+  <Accordion title="Images return 523 after turning Optimizer on">
+    Optimizer fetches the original from the pull zone's origin, and an Edge
+    Script is not an origin it can read. Turn Optimizer off, and leave
+    `imageService` at its default.
   </Accordion>
 
   <Accordion title="Prerendered pages return 404">
