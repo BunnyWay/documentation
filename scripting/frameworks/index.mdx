@@ -1,7 +1,7 @@
 ---
 title: "Frameworks on Edge Scripting"
 sidebarTitle: "Overview"
-description: "Run a web framework on Bunny Edge Scripting. Render pages per request in a standalone script, and serve the build assets from Bunny Storage."
+description: "Run a web framework on Bunny Edge Scripting. Render pages per request at the edge, serve the build from Bunny Storage, and deploy it all with one command."
 ---
 
 A framework build has two halves: files that are the same for every visitor, and code that must run per request. Edge Scripting covers both when you pair it with [Bunny Storage](/storage).
@@ -32,24 +32,45 @@ Pick SSR when you want the framework's server features: per-request rendering, A
 ## How SSR works here
 
 ```
-browser ──▶ pull zone ──▶ standalone Edge Script
-                              │
-                              ├─ route the framework owns ── render it now
-                              │
-                              └─ asset or prerendered page ─▶ Bunny Storage
+browser ──▶ pull zone ──▶ Edge Script (the framework's server)
+                │              │
+                │              └─ route the framework owns ── render it now
+                │
+                └─ asset or prerendered page ─▶ Bunny Storage
 ```
 
-A framework's SSR build produces a request handler with the shape `(Request) => Response`. That is the same shape a standalone script needs, so the script can call the handler directly. The build's client assets have no filesystem at the edge, so the script reads them from storage instead.
+A framework's SSR build produces a request handler with the shape `(Request) => Response`. That is the same shape a script needs, so the script calls the handler directly.
+
+The build's client files have no filesystem at the edge. They go to a storage zone, which the site's pull zone serves. So the script renders, and the CDN delivers everything the build produced.
+
+## Deploying
+
+```bash
+bunny deploy
+```
+
+The [CLI](/cli) recognises the framework, offers the adapter if the project has none, builds the site, and creates what it needs: a storage zone for the files, a pull zone for the URL, and an Edge Script for the server. Later deploys are the same command.
+
+Each deploy is immutable, so a rollback is one step:
+
+```bash
+bunny deploy --prod     # publish to production
+bunny deploy            # publish to the preview URL
+bunny rollback          # back to the deploy that was live before
+```
+
+An adapter tells the CLI what it built, in a small manifest the build writes. The CLI reads the manifest, so every adapter deploys with the same commands, and a new adapter needs no new CLI.
 
 ## What to know first
 
 **One file.** A deployment is a single JavaScript file, so the framework's server output has to be bundled. An adapter does that for you. A small Astro SSR build lands near 660 kB, well inside the 10 MB [script size limit](/scripting/limits).
 
 **Astro has an adapter. Other frameworks do not, yet.** Install
-[`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters) and
-Astro builds straight to a deployable script. For any other framework you write
-the handler yourself, which is workable because all an adapter really does is
-hand you the app object.
+[`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters), and
+Astro builds straight to a deployable script that `bunny deploy` publishes. For
+any other framework you write the handler yourself, and deploy it with
+[`bunny scripts deploy`](/cli/commands/scripts). That is workable, because all
+an adapter really does is hand you the app object.
 
 The adapters live in one repository,
 [BunnyWay/bunny-adapters](https://github.com/BunnyWay/bunny-adapters). Ask there
