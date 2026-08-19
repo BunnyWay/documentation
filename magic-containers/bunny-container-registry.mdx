@@ -10,7 +10,7 @@ Bunny Container Registry is in **Preview**. Usage is temporarily free during the
 
 Bunny Container Registry is a private, OCI-compliant container registry built into bunny.net. Push images from your machine or CI pipeline and they immediately show up in the Magic Containers image list, ready to deploy. No external registry or credential setup required.
 
-The registry is available at `registry.bunny.net`. Repositories are private to your account and namespaced by your account ID (`<account-id>/my-app`). The [bunny CLI](/cli) manages this namespace for you, so you only need your account ID when [pushing with Docker directly](#pushing-with-docker).
+The registry is available at `registry.bunny.net`. Repositories are private to your account and namespaced by your account ID (`<account-id>/my-app`). The [bunny CLI](/cli) manages this namespace for you, so you only need your account ID when pushing with [Docker](#pushing-with-docker) or [Apple Container](#pushing-with-apple-container) directly.
 
 <Info>
 Magic Containers only supports images built for the **linux/amd64** architecture. When building your container image, ensure you target this platform using `--platform linux/amd64`.
@@ -101,7 +101,7 @@ docker tag my-app registry.bunny.net/<account-id>/my-app:latest
 ```
 
 <Tip>
-Need your account ID? Run [`bunny whoami`](/cli/commands/auth#bunny-whoami), which prints it. You can also find it in the dashboard: go to [Image Registries](https://dash.bunny.net/magic-containers/image-registries) and click **How to Push Images** to see these Docker commands with your account ID already filled in.
+Run [`bunny whoami`](/cli/commands/auth#bunny-whoami) to get your account ID. You can also find it in the dashboard: go to [Image Registries](https://dash.bunny.net/magic-containers/image-registries) and click **How to Push Images** to see these Docker commands with your account ID already filled in.
 </Tip>
 
 ### Push the image
@@ -112,9 +112,45 @@ docker push registry.bunny.net/<account-id>/my-app:latest
 
 Once pushed, the image appears in the Magic Containers image list, where you can select it to deploy.
 
+## Pushing with Apple Container
+
+[Apple Container](https://github.com/apple/container) is Apple's open-source container tool for macOS. Its registry commands work with the Bunny Container Registry the same way Docker's do: you handle authentication and the account namespace yourself.
+
+### Log in to the registry
+
+Authenticate with `token` as the username and your [API key](/account/api-keys) as the password:
+
+```bash
+container registry login registry.bunny.net --username token
+```
+
+### Build for linux/amd64
+
+On Apple silicon, Apple Container builds images for `arm64` by default, which Magic Containers can't run. Pass `--arch amd64` when building:
+
+```bash
+container build --arch amd64 --tag registry.bunny.net/<account-id>/my-app:latest .
+```
+
+If you already have an image built for `amd64`, tag it with the registry host and your account ID instead:
+
+```bash
+container image tag my-app registry.bunny.net/<account-id>/my-app:latest
+```
+
+### Push the image
+
+```bash
+container image push registry.bunny.net/<account-id>/my-app:latest
+```
+
+Once pushed, the image appears in the Magic Containers image list, where you can select it to deploy.
+
 ## Deploying pushed images
 
 Images pushed to the Bunny Container Registry appear automatically in the image list when you [deploy](/magic-containers/deploy) or [update](/magic-containers/update) a Magic Containers app. Select the repository and tag to deploy; no registry credentials need to be configured.
+
+To automate the whole flow, so every push to your repository builds an image, pushes it to the registry, and rolls it out, see [Deploy with GitHub Actions](/magic-containers/deploy-with-github-actions).
 
 ## Limits
 
