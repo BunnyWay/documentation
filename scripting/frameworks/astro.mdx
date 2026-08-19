@@ -491,6 +491,24 @@ The design for all three is in [`plans/one-command-deploys.md`](https://github.c
 ## Troubleshooting
 
 <AccordionGroup>
+  <Accordion title="The site answers 400 with an empty body">
+    The script did not start, so nothing answered the request. A large script is
+    the usual reason, and 10 MB is not the size to aim at: a script has
+    [500ms to start](/scripting/limits), and every byte of it is parsed and
+    evaluated first.
+
+    Measured in August 2026, on a standalone script in DE: the same code served
+    every request at 7.44 MB, and answered 400 to all of them at 7.83 MB. Around
+    7.5 MB the first request failed and later ones worked. How much code fits
+    depends on what it does as it loads, so treat 7.5 MB as a warning and not a
+    line.
+
+    The build warns above 7.5 MB, and `bunny deploy` asks the site for a page
+    before it reports success, so neither is silent about it. What to do is the
+    same as for a script that is too large, below. `bunny rollback` puts the
+    previous deploy back while you work on it.
+  </Accordion>
+
   <Accordion title="The build says the script is too large">
     Edge Scripting takes one file of up to 10 MB, so a build that produced more
     than that fails, and names the packages that filled it:
@@ -509,7 +527,8 @@ The design for all three is in [`plans/one-command-deploys.md`](https://github.c
     keep a heavy dependency out of a page, and out of anything a page imports: a
     package that only runs at build time does not belong in the script.
 
-    A small Astro site lands near 660 kB.
+    A small Astro site lands near 660 kB. Aim below 7.5 MB, not below 10 MB: see
+    the 400 above.
   </Accordion>
 
   <Accordion title="The script is too slow to start">
