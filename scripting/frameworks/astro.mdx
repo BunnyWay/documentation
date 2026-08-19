@@ -265,9 +265,16 @@ bunny scripts env set BUNNY_API_KEY <key> --secret
 | Prerendered pages, including `404.astro` | Yes, served from Storage |
 | `routeRules` and cache purging | Yes, after you turn Smart Cache off |
 | Image transformation | Yes, with Bunny Optimizer |
+| `node:fs` and the other built-ins Deno provides | Yes. The file system is virtual and per isolate |
 | `astro:env` secrets | Yes, from the script's environment variables |
 | `astro preview` | Yes, with Deno |
 | The `sharp` image service | No. Native binaries cannot run on the edge |
+
+## Node built-ins
+
+Edge Scripting provides most `node:` modules, so a dependency that imports one is usually fine.
+
+[`node:fs`](/scripting/node-fs) works over a virtual file system. It starts empty on every cold start, one isolate cannot see what another wrote, and what it holds counts against the script's memory. So it is a scratch pad for one request, and never a store. Anything that has to outlive a request belongs in Bunny Storage, which is where the adapter keeps assets and sessions.
 
 ## Cookies
 
@@ -378,10 +385,15 @@ If the site has no dynamic part, you do not need a script at all. Keep Astro's d
     itself, or change `security.checkOrigin` in `astro.config.mjs`.
   </Accordion>
 
-  <Accordion title="The bundle fails on child_process, fs, or detect-libc">
-    A dependency needs Node-only modules. The adapter already replaces the
-    `sharp` image service, which is the usual cause. If another dependency does
-    it, replace that dependency or keep it out of the server build.
+  <Accordion title="The bundle fails on a Node-only module">
+    Most `node:` built-ins work here, including
+    [`node:fs`](/scripting/node-fs), so check which module it is. The adapter
+    rewrites a bare `fs` to `node:fs` for you, because the runtime only answers
+    to the prefixed name.
+
+    A package with a native binary never works. `sharp` is the usual cause, and
+    the adapter already replaces it. If another dependency needs one, replace
+    that dependency or keep it out of the server build.
   </Accordion>
 
   <Accordion title="Every request returns a storage error">
