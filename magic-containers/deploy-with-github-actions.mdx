@@ -56,11 +56,11 @@ Add a step to your GitHub Actions workflow with the following inputs: `app_id`, 
     ```
   </Tab>
   <Tab title="Bunny Container Registry">
-    Log in to the [Bunny Container Registry](/magic-containers/bunny-container-registry) with `token` as the username and your API key as the password. The same API key secret authenticates both the registry push and the Magic Containers update. Store your account ID as a repository variable; it namespaces the image path.
+    <Note>
+    The [Bunny Container Registry](/magic-containers/bunny-container-registry) is in **Closed Preview**. See [Product Release Stages](/product-release-stages) for details.
+    </Note>
 
-    <Tip>
-    Run [`bunny whoami`](/cli/commands/auth#bunny-whoami) to get your account ID. You can also find it in the dashboard under [Image Registries](https://dash.bunny.net/magic-containers/image-registries) by clicking **How to Push Images**.
-    </Tip>
+    Push with the [bunny.net CLI](/cli): it authenticates the push and namespaces the image under your account, so the workflow needs no registry login step and no account ID variable. The same API key secret authenticates both the registry push and the Magic Containers update.
 
     ```yml
     name: Update container image when pushing to main
@@ -77,20 +77,16 @@ Add a step to your GitHub Actions workflow with the following inputs: `app_id`, 
         steps:
           - uses: actions/checkout@v4
 
-          - name: docker login
-            uses: docker/login-action@v3
-            with:
-              registry: registry.bunny.net
-              username: token
-              password: ${{ secrets.BUNNYNET_API_KEY }}
+          - name: Install the bunny.net CLI
+            run: npm install -g @bunny.net/cli
 
-          - name: docker build and push
-            uses: docker/build-push-action@v5
-            with:
-              context: .
-              push: true
-              platforms: linux/amd64
-              tags: registry.bunny.net/${{ vars.BUNNYNET_ACCOUNT_ID }}/my-app:${{ github.sha }}
+          - name: docker build
+            run: docker build --platform linux/amd64 --tag my-app:${{ github.sha }} .
+
+          - name: Push to the Bunny Container Registry
+            run: bunny registry push my-app:${{ github.sha }}
+            env:
+              BUNNYNET_API_KEY: ${{ secrets.BUNNYNET_API_KEY }}
 
           - name: Update container image on Magic Containers
             uses: BunnyWay/actions/container-update-image@main
