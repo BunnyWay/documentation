@@ -125,15 +125,14 @@ The adapter adds itself to your config, and nothing else. It does not set `outpu
 
 Since Astro 5, a project that says nothing about `output` prerenders its pages, and a page asks for the edge with `export const prerender = false`. That default is the right one, and setting `output: "server"` over it is expensive: on [astro.build](https://github.com/withastro/astro.build) it turned 4499 prerendered pages into pages that render per request, and took the script from 7.83 MB to 22.30 MB, past the limit.
 
-So the build decides what to deploy by reading the routes:
+So the build asks Astro what it built, and Astro answers from the routes:
 
-| What the build found                                                      | What `bunny deploy` sends                                                 |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| A route that renders per request                                          | The script, and the files it renders from                                 |
-| Every route prerendered, and a 404 page, a redirect, or a header to apply | The same, because Bunny Storage cannot answer any of the three on its own  |
-| Every route prerendered, and none of those                                | The files alone. No script, and nothing invoked per request               |
+| What Astro built                     | What `bunny deploy` sends                                    |
+| ------------------------------------ | ------------------------------------------------------------ |
+| A route that renders per request     | The script, and the files it renders from                    |
+| Every route prerendered              | The files alone. No script, and nothing invoked per request   |
 
-The build says which one it chose, and why. A site can also ask for the script outright. That is what a prerendered page holding a `server:defer` component needs, because Astro gives such a project the same route list as one with no island at all:
+The build says which one it chose. A site can also ask for the script outright. That is what a prerendered page holding a `server:defer` component needs, because Astro reports such a project as a fully prerendered one:
 
 ```js astro.config.mjs
 adapter: bunny({ deploy: "server" }),
@@ -222,6 +221,8 @@ npm run preview
 ```
 
 It needs [Deno](https://deno.com/) 2, because Deno is the Edge Scripting runtime. The `cdn-` request headers only exist on the bunny.net network, so anything your code reads from them is absent locally.
+
+A build with [no script](#a-site-with-no-script) has no file to run, so `npm run preview` serves `dist/client` from Astro's own static server. That needs no Deno.
 
 ## How it works
 
@@ -406,13 +407,13 @@ The script also passes `If-None-Match` and `If-Modified-Since` through, so a bro
 | Content collections | Yes |
 | Framework islands and `server:defer` | Yes |
 | Astro actions | Yes |
-| Static page headers, such as a CSP | Yes |
+| Static page headers, such as a CSP | Yes. In the script, or in `_headers` |
 | `routeRules` and cache purging | Yes |
 | Image transformation | Not yet. See [Images](#images) |
 | Range requests on a stored object | Yes, and conditional requests too |
 | `node:fs` and the other built-ins Deno provides | Yes. The file system is virtual and per isolate |
 | `astro:env` secrets | Yes, from the script's environment variables |
-| `astro preview` | Yes, with Deno |
+| `astro preview` | Yes. With Deno for a build that has a script |
 | The `sharp` image service | No. Native binaries cannot run on the edge |
 
 ## Node built-ins
@@ -470,13 +471,28 @@ A deploy you run yourself puts the files at the zone root, which is where the sc
 
 ## A site with no script
 
-A site whose routes are all prerendered, and which has no 404 page, no redirect and no header to apply, needs no script at all. `bunny deploy` uploads the build to a storage zone and serves it from a pull zone, every deploy gets its own immutable URL, and nothing is invoked per request. The build says so:
+A site whose routes are all prerendered needs no script, and no adapter. `bunny deploy` uploads the build, every deploy gets its own immutable URL, and nothing is invoked per request. The build says so:
 
 ```
-[@bunny.net/astro-adapter] Every route is prerendered: `bunny deploy` uploads dist/client, and deploys no script.
+[@bunny.net/astro-adapter] Every route is prerendered, so this build deploys no
+script: `bunny deploy` uploads dist/client, and the site is served as files.
 ```
 
-Most sites have a 404 page, so most sites get the script even with every route prerendered. That costs one invocation per page that misses the CDN cache, and it is what makes the 404 page, the redirects and the headers work. The [static site hosting guide](/storage/static-site-hosting) covers deploying files with no adapter at all.
+Files alone cannot answer a 404 with a page, send a redirect, or add a header. The [`bunny sites` router](/cli/commands/sites#what-the-deploy-configures) does all three, for every framework. It learns what to do from three file names, which Cloudflare Pages and Netlify read too:
+
+| The router reads | Where it comes from                                                     |
+| ---------------- | ----------------------------------------------------------------------- |
+| `404.html`       | Your own `404.astro`                                                     |
+| `_redirects`     | Written by the build, from your `redirects` config                        |
+| `_headers`       | Written by the build: your CSP, your `routeRules`, and the asset lifetime |
+
+So keeping the adapter on a prerendered site is worth it for those two files. It costs nothing at run time.
+
+Astro also writes its own `<meta http-equiv="refresh">` page for each redirect. A deploy that never reaches the router therefore still sends the visitor on. The rule in `_redirects` carries `!`, and that is what makes the router's real `301` win over the page.
+
+`npm run preview` on such a build serves `dist/client` from Astro's own static server, and needs no Deno.
+
+A site with no adapter at all works too, and [the static site hosting guide](/storage/static-site-hosting) covers it. What it loses is those two files: a redirect becomes a `<meta>` refresh, and a header cannot be set.
 
 ## What is not here yet
 
@@ -578,6 +594,19 @@ The design for all three is in [`plans/one-command-deploys.md`](https://github.c
 
     A package with a native binary never works. Replace that dependency, or
     keep it out of the server build.
+  </Accordion>
+
+  <Accordion title="A missing path shows bunny.net's error page, not mine">
+    The site's router is older than the CLI that reads your `404.html`. Update
+    it, and deploy again:
+
+    ```bash
+    bunny sites upgrade-router
+    bunny deploy
+    ```
+
+    A deploy checks this for you now: it asks the live site for a path the build
+    cannot hold, and warns when the answer was not your own page.
   </Accordion>
 
   <Accordion title="A page 404s after a deploy, and the old one worked">
