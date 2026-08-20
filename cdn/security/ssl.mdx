@@ -1,0 +1,127 @@
+---
+title: SSL
+description: 'Configure how bunny.net terminates TLS on your Pull Zone: which protocol versions are accepted and the minimum cipher-suite strength enforced during the handshake.'
+---
+
+# SSL
+
+The **SSL** settings for a Pull Zone (**CDN > your Pull Zone > Security > SSL**) control how
+bunny.net negotiates TLS with connecting clients. There are two independent controls:
+
+1. **Deprecated TLS version support**: allow or reject the old TLS 1.0 / 1.1 protocol versions.
+2. **TLS security level**: the minimum cipher-suite strength enforced during the handshake.
+
+Both are enforced at the edge during the TLS handshake and take effect once your change propagates
+across the network. They stack: a request is only served if it satisfies **both**, meaning its
+protocol version must be permitted *and* it must offer a cipher suite the level allows.
+
+---
+
+## Deprecated TLS version support
+
+TLS 1.0 (deprecated 2018) and TLS 1.1 (end-of-life March 2020) are enabled by default for maximum
+compatibility. If your zone serves sensitive data and you don't need to support old clients, turn
+them off here.
+
+| Toggle | Default | Effect when disabled |
+|--------|---------|----------------------|
+| **TLS Version 1.0** | On | The edge rejects TLS 1.0 ClientHellos |
+| **TLS Version 1.1** | On | The edge rejects TLS 1.1 ClientHellos |
+
+TLS 1.2 and TLS 1.3 are always enabled and can't be turned off.
+
+> These toggles are an allow/deny on the protocol version, evaluated independently of the TLS
+> security level below. Note that the **Compatible** and **Modern only** security levels also
+> require TLS 1.2+, so choosing either of those already rejects 1.0/1.1 regardless of these toggles.
+
+---
+
+## TLS security level
+
+Sets the **minimum** cipher-suite strength the edge will negotiate. Higher levels drop weak ciphers
+and older protocols for a stronger posture, at the cost of compatibility.
+
+| Level | Value | Min. protocol | Key exchange | Ciphers |
+|-------|:-----:|---------------|--------------|---------|
+| **Legacy** | `0` | TLS 1.0 | RSA **or** forward-secret (ECDHE) | AEAD, CBC (SHA-1 / SHA-256 / SHA-384) |
+| **Compatible** | `1` | TLS 1.2 | Forward-secret only (ECDHE) | AEAD, or CBC with SHA-256 / SHA-384 |
+| **Modern only** | `2` | TLS 1.2 | Forward-secret only (ECDHE) | AEAD only (GCM / ChaCha20-Poly1305) |
+
+Every level always rejects genuinely broken primitives: **RC4, single-DES, EXPORT-grade,
+anonymous/unauthenticated suites, MD5 MACs**, and anything under roughly 80 bits.
+
+### Ciphers served per level
+
+Suite names below use RSA authentication, matching an RSA server certificate (the common case).
+With an **ECDSA** certificate, the `ECDHE-ECDSA-*` equivalents are used instead. AES-CCM variants of
+the AEAD suites may also be offered. TLS 1.3 suites are the same at every level.
+
+**TLS 1.3 (all levels)**
+
+```
+TLS_AES_256_GCM_SHA384
+TLS_AES_128_GCM_SHA256
+TLS_CHACHA20_POLY1305_SHA256
+```
+
+**Legacy (0):** TLS 1.0, 1.1, 1.2, 1.3
+
+```
+# forward-secret AEAD (ECDHE)
+ECDHE-RSA-AES256-GCM-SHA384
+ECDHE-RSA-AES128-GCM-SHA256
+ECDHE-RSA-CHACHA20-POLY1305
+# forward-secret CBC (ECDHE)
+ECDHE-RSA-AES256-SHA384
+ECDHE-RSA-AES128-SHA256
+ECDHE-RSA-AES256-SHA          # TLS 1.0+
+ECDHE-RSA-AES128-SHA          # TLS 1.0+
+# RSA key exchange (no forward secrecy)
+AES256-GCM-SHA384
+AES128-GCM-SHA256
+AES256-SHA256
+AES128-SHA256
+AES256-SHA                    # TLS 1.0+
+AES128-SHA                    # TLS 1.0+
+```
+
+**Compatible (1):** TLS 1.2, 1.3
+
+```
+ECDHE-RSA-AES256-GCM-SHA384
+ECDHE-RSA-AES128-GCM-SHA256
+ECDHE-RSA-CHACHA20-POLY1305
+ECDHE-RSA-AES256-SHA384
+ECDHE-RSA-AES128-SHA256
+```
+
+**Modern only (2):** TLS 1.2, 1.3
+
+```
+ECDHE-RSA-AES256-GCM-SHA384
+ECDHE-RSA-AES128-GCM-SHA256
+ECDHE-RSA-CHACHA20-POLY1305
+```
+
+### Choosing a level
+
+Choose the most restrictive level your clients can actually support, so your zone exposes the
+smallest attack surface. **Modern only** gives the strongest posture and is the right choice when
+you control the clients (first-party apps) or only serve current browsers and up-to-date mobile
+devices. Drop to **Compatible** when you need to reach a wider range of older but still modern
+clients while keeping forward secrecy, and reserve **Legacy** for cases where you genuinely must
+support old hardware, embedded or OTA devices, or clients that connect without SNI. If you tighten
+the level and a client stops connecting, it only offered protocols or ciphers the new level rejects,
+so either step back down a level or update that client.
+
+---
+
+## API
+
+These settings are part of the Pull Zone update endpoint. See the API reference for the full
+request schema and examples:
+
+[Update Pull Zone](https://bunny.net/docs/api-reference/core/pull-zone/update-pull-zone)
+
+The relevant fields are `EnableTLS1` and `EnableTLS1_1` (booleans, where `false` rejects that
+protocol version), and `TlsSecurityLevel` (`0` = Legacy, `1` = Compatible, `2` = ModernOnly).
