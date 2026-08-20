@@ -1,0 +1,74 @@
+---
+title: Bunny Stream for Jekyll
+description: Embed Bunny Stream videos in Jekyll sites using the jekyll-bunny plugin.
+---
+
+The `jekyll-bunny` plugin adds a Liquid tag to your Jekyll site for embedding Bunny Stream videos with a single line.
+
+## Prerequisites
+
+- Jekyll 4.0 or higher
+- A [Bunny Stream](https://dash.bunny.net/stream) library and video ID
+
+## Installation
+
+Add the gem to your Jekyll site's `Gemfile`:
+
+```ruby
+gem "jekyll-bunny", "~> 0.1"
+```
+
+Then add it to the `plugins` list in `_config.yml`:
+
+```yaml
+plugins:
+  - jekyll-bunny
+```
+
+Run `bundle install` to install the gem.
+
+## Embed a video
+
+Use the `{% bunny %}` Liquid tag anywhere in your Jekyll content, passing your library ID and video ID:
+
+```liquid
+{% bunny LIBRARY_ID VIDEO_ID %}
+```
+
+### Example
+
+```liquid
+{% bunny 197133 dc48a09e-d9bb-420a-83d7-72dc2304c034 %}
+```
+
+This generates a responsive `<iframe>` pointing to `https://player.mediadelivery.net/embed/`.
+
+You can find your library ID and video ID in the [Bunny Stream dashboard](https://dash.bunny.net/stream).
+
+## Supported parameters
+
+Pass optional embed parameters as `key=value` pairs after the video ID:
+
+```liquid
+{% bunny 197133 dc48a09e-d9bb-420a-83d7-72dc2304c034 autoplay=true muted=true %}
+```
+
+| Parameter | Values | Description |
+| --- | --- | --- |
+| `autoplay` | `true`, `false` | Start playing automatically |
+| `loop` | `true`, `false` | Replay after the video ends |
+| `muted` | `true`, `false` | Start in mute mode |
+| `preload` | `true`, `false` | Pre-download video files |
+| `responsive` | `true`, `false` | Enable responsive sizing (default: `true`) |
+| `captions` | caption short-code | Default captions language |
+| `seek_to` | seconds | Start playback at a specific time |
+
+## GitHub Pages
+
+This plugin is compatible with Jekyll sites deployed to GitHub Pages when the site is built through a custom GitHub Actions workflow. It is not compatible with the default GitHub Pages safe-mode build.
+
+## Resources
+
+- [jekyll-bunny on RubyGems](https://rubygems.org/gems/jekyll-bunny)
+- [jekyll-bunny on GitHub](https://github.com/jchance/jekyll-bunny)
+- [Plugin demo](https://jasonchance.com/projects/jekyll-bunny/)
