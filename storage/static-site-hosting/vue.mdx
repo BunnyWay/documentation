@@ -1,189 +1,111 @@
 ---
-title: Deploy a Vue App
-sidebarTitle: Vue
-description: Deploy a Vue application to Bunny Storage with global CDN delivery
+title: "Deploy a Vue App"
+sidebarTitle: "Vue"
+description: "Build a Vue app and serve it from Bunny Storage through the bunny.net CDN, including Vue Router history mode."
 ---
 
-This guide walks through deploying a Vue application to Bunny Storage with a Pull Zone for global CDN delivery. This works with Vue CLI, Vite, and Nuxt (static export).
+Vue apps built with Vite, Vue CLI, or Nuxt all produce static files that Bunny Storage can serve. This page covers the Vue-specific parts. The deployment mechanics live in the [Bunny CLI](/storage/static-site-hosting/bunny-cli) and [manual setup](/storage/static-site-hosting/manual-setup) guides.
 
-## Deploy Your App
-
-<Steps>
-  <Step title="Build your app">
-    Run the build command for your Vue project:
-
-    <Tabs>
-      <Tab title="Vite (Vue 3)">
-        ```bash
-        npm run build
-        ```
-        This creates a `dist` folder with your production files.
-      </Tab>
-      <Tab title="Vue CLI">
-        ```bash
-        npm run build
-        ```
-        This creates a `dist` folder with your production files.
-      </Tab>
-      <Tab title="Nuxt (Static)">
-        ```bash
-        npm run generate
-        ```
-        This creates a `.output/public` folder with your static files.
-      </Tab>
-    </Tabs>
-
-  </Step>
-
-  <Step title="Create a Storage Zone">
-    1. In the Bunny dashboard, go to **Storage** → **Add Storage Zone**
-    2. Enter a name for your zone (e.g., `my-vue-app`)
-    3. Select a main storage region closest to your primary audience
-    4. Click **Add Storage Zone**
-
-    <Note>
-      Take note of your **Storage Zone Password** from the FTP & API Access section—you'll need this for uploads.
-    </Note>
-
-  </Step>
-
-  <Step title="Upload your files">
-    Open your Storage Zone and upload the contents of your build folder to the root of your storage zone:
-    
-    - **Vite/Vue CLI**: Upload contents of `dist`
-    - **Nuxt**: Upload contents of `.output/public`
-
-    <Accordion title="Automate uploads with the Storage API">
-      For CI/CD pipelines, use the Storage API:
-
-      ```bash
-      #!/bin/bash
-      STORAGE_ZONE="my-vue-app"
-      ACCESS_KEY="YOUR_STORAGE_ZONE_PASSWORD"
-      BUILD_DIR="dist"  # Use ".output/public" for Nuxt
-
-      find $BUILD_DIR -type f | while read file; do
-        remote_path="${file#$BUILD_DIR/}"
-        curl -X PUT "https://storage.bunnycdn.com/$STORAGE_ZONE/$remote_path" \
-          -H "AccessKey: $ACCESS_KEY" \
-          --data-binary "@$file"
-      done
-      ```
-    </Accordion>
-
-  </Step>
-
-  <Step title="Create a Pull Zone">
-    1. Go to **CDN** → **Add Pull Zone**
-    2. Enter a name for your Pull Zone
-    3. Set **Origin Type** to **Storage Zone**
-    4. Select the Storage Zone you created earlier
-    5. Click **Add Pull Zone**
-
-    Your app is now available at `https://your-pullzone-name.b-cdn.net`.
-
-  </Step>
-</Steps>
-
-## Configure Vue Router (History Mode)
-
-Vue apps using Vue Router in history mode need all routes to serve `index.html` so the client-side router can handle navigation. Configure this using your Storage Zone's [error handling settings](/storage/settings#error-handling).
-
-<Info>
-  If you're using Nuxt with `nuxt generate`, each route generates its own HTML
-  file, so you may not need this configuration unless you have dynamic routes.
-</Info>
-
-<Steps>
-  <Step title="Navigate to your storage zone">
-    Log in to your Bunny dashboard, go to **Storage** in the left navigation, and select your storage zone.
-  </Step>
-
-<Step title="Open Error handling settings">
-  Open the **Error handling** page.
-</Step>
-
-<Step title="Set the 404 file path">
-  Enter `/index.html` in the **404 File path** field.
-</Step>
-
-<Step title="Enable 404 to 200 rewrite">
-  Check the box for **Rewrite 404 to 200 status code** and click **Save**.
-</Step>
-
-  <Step title="Test">
-    Navigate directly to a route in your app (e.g., `/about`) to confirm it loads correctly.
-  </Step>
-</Steps>
-
-<Warning>
-  Without this configuration, refreshing or directly accessing routes like
-  `/about` or `/products/123` will return a 404 error.
-</Warning>
-
-## Add a Custom Domain
-
-To serve your Vue app from your own domain, follow the [Custom Hostname](/cdn/custom-hostname) guide.
-
-## Environment Variables
-
-If your Vue app uses environment variables for API endpoints, ensure they're set correctly for production:
+## Build
 
 <Tabs>
-  <Tab title="Vite">
-    Create a `.env.production` file:
+  <Tab title="Vite (Vue 3)">
     ```bash
-    VITE_API_URL=https://api.example.com
+    npm run build
     ```
-    
-    Access in your code:
-    ```js
-    const apiUrl = import.meta.env.VITE_API_URL
-    ```
+
+    Output: `dist`
+
   </Tab>
   <Tab title="Vue CLI">
-    Create a `.env.production` file:
     ```bash
-    VUE_APP_API_URL=https://api.example.com
+    npm run build
     ```
-    
-    Access in your code:
-    ```js
-    const apiUrl = process.env.VUE_APP_API_URL
-    ```
+
+    Output: `dist`
+
   </Tab>
-  <Tab title="Nuxt">
-    Configure in `nuxt.config.ts`:
-    ```ts
-    export default defineNuxtConfig({
-      runtimeConfig: {
-        public: {
-          apiUrl: process.env.API_URL || 'https://api.example.com'
-        }
-      }
-    })
+  <Tab title="Nuxt (static)">
+    ```bash
+    npm run generate
     ```
+
+    Output: `.output/public`
+
   </Tab>
 </Tabs>
 
-<Note>
-  Environment variables are embedded at build time. Rebuild and redeploy after
-  changing them.
-</Note>
+## Deploy
 
-## Summary
+<Tabs>
+  <Tab title="Bunny CLI">
+    ```bash
+    bunny sites create my-vue-app
+    bunny sites deploy ./dist --build "npm run build" --production
+    ```
 
-<Steps>
-  <Step title="Build">
-    Run your build command to generate production files.
-  </Step>
-  <Step title="Upload">
-    Upload your build folder contents to a Storage Zone.
-  </Step>
-  <Step title="Connect">Create a Pull Zone pointing to your Storage Zone.</Step>
-  <Step title="Configure routing">
-    Set up error handling to serve `index.html` for Vue Router history mode.
-  </Step>
-</Steps>
+    For Nuxt, deploy `.output/public` and build with `npm run generate`. See the [Bunny CLI guide](/storage/static-site-hosting/bunny-cli) for previews, rollbacks, and GitHub Actions.
 
-Your Vue app is now served globally through Bunny's CDN.
+  </Tab>
+  <Tab title="Manual">
+    Create a Storage Zone, upload the contents of your build folder to its root, and connect a Pull Zone. See [Manual setup](/storage/static-site-hosting/manual-setup) for the full walkthrough.
+  </Tab>
+</Tabs>
+
+## Vue Router history mode
+
+In history mode, Vue Router produces clean URLs like `/about` with no hash. The first request for one goes to the CDN, and nothing is stored at that path, so it returns a 404 unless you add a fallback.
+
+Set the Storage Zone's **404 File path** to `/index.html` and enable **Rewrite 404 to 200 status code**, as described in [client-side routing](/storage/static-site-hosting/manual-setup#configure-client-side-routing).
+
+<Warning>
+  Without this, refreshing on `/about` or opening a shared link to
+  `/products/123` returns a 404.
+</Warning>
+
+Hash mode (`createWebHashHistory`) keeps the route after a `#`, so every request hits `index.html` and no fallback is needed. Clean URLs are better for SEO and sharing, so prefer history mode with the fallback configured.
+
+`nuxt generate` pre-renders an HTML file per route, so a Nuxt static site needs the fallback only for routes it can't discover, such as dynamic ones.
+
+## Environment variables
+
+<Tabs>
+  <Tab title="Vite">
+    ```bash .env.production
+    VITE_API_URL=https://api.example.com
+    ```
+
+    ```js
+    const apiUrl = import.meta.env.VITE_API_URL;
+    ```
+
+  </Tab>
+  <Tab title="Vue CLI">
+    ```bash .env.production
+    VUE_APP_API_URL=https://api.example.com
+    ```
+
+    ```js
+    const apiUrl = process.env.VUE_APP_API_URL;
+    ```
+
+  </Tab>
+  <Tab title="Nuxt">
+    ```ts nuxt.config.ts
+    export default defineNuxtConfig({
+      runtimeConfig: {
+        public: {
+          apiUrl: process.env.API_URL,
+        },
+      },
+    });
+    ```
+
+  </Tab>
+</Tabs>
+
+Values are embedded at build time, so they're public and they only change when you rebuild. Keep secrets on a server, or in an [Edge Script](/scripting).
+
+## Caching
+
+Vue builds hash asset filenames, such as `main.a1b2c3.js`, so those files can cache for a year. Keep `index.html` on a short cache time, because it's the file that points at each new build's assets. See [cache configuration](/storage/static-site-hosting#cache-configuration).

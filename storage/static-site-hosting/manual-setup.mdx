@@ -1,0 +1,195 @@
+---
+title: "Set Up Static Site Hosting Manually"
+sidebarTitle: "Manual Setup"
+description: "Create a Storage Zone and Pull Zone by hand, upload a build, and serve a static site or SPA from the bunny.net CDN."
+---
+
+This guide sets up static site hosting without the [Bunny CLI](/storage/static-site-hosting/bunny-cli). You create the two resources yourself, upload your build with whichever protocol suits your pipeline, and own every setting on both zones. There are no preview deploys and no built-in rollback, so a deploy is exactly one thing: the files currently in the Storage Zone.
+
+Reach for this when you want full control of the zones, when you're deploying from a pipeline that already speaks S3 or FTP, or when your app needs the [client-side routing fallback](#configure-client-side-routing).
+
+## Set up the site
+
+<Steps>
+  <Step title="Build your site">
+    Run your framework's build and note the output folder:
+
+    ```bash
+    npm run build
+    ```
+
+    Vite, Vue CLI, and most React setups write to `dist`. Next.js static exports write to `out`, Gatsby to `public`, SvelteKit to `build`, and Eleventy to `_site`.
+
+  </Step>
+
+  <Step title="Create a Storage Zone">
+    1. In the [dashboard](https://dash.bunny.net), go to **Storage** → **Add Storage Zone**
+    2. Enter a name, such as `my-site`
+    3. Pick a main storage region close to your primary audience
+    4. Click **Add Storage Zone**
+
+    Open the zone's **Access** page and copy the **Password**. That value is the `AccessKey` for uploads, and it's also the secret key if you use the S3 API. To upload over S3, enable **S3 Compatibility** while creating the zone, since it can't be turned on afterwards.
+
+    <Warning>
+      The Storage Zone password grants full read and write access to the zone.
+      Store it as a secret in CI, and never ship it in client-side code.
+    </Warning>
+
+  </Step>
+
+  <Step title="Upload the build output">
+    Upload the *contents* of your build folder to the root of the zone, so that `index.html` lands at the top level rather than inside a `dist` folder.
+
+    <Tabs>
+      <Tab title="Dashboard">
+        Open the Storage Zone, then drag the contents of your build folder into the file manager. Good for a one-off deploy or a quick check.
+      </Tab>
+
+      <Tab title="HTTP API">
+        Each file is a `PUT` with the file as the request body:
+
+        ```bash
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        STORAGE_ZONE="my-site"
+        ENDPOINT="storage.bunnycdn.com"   # region-specific, see the note below
+        BUILD_DIR="dist"
+        ACCESS_KEY="$BUNNY_STORAGE_KEY"
+
+        upload() {
+          remote="${1#"$BUILD_DIR"/}"
+          curl -fsS -X PUT "https://$ENDPOINT/$STORAGE_ZONE/$remote" \
+            -H "AccessKey: $ACCESS_KEY" \
+            --data-binary "@$1"
+        }
+        export -f upload
+        export STORAGE_ZONE ENDPOINT BUILD_DIR ACCESS_KEY
+
+        find "$BUILD_DIR" -type f -print0 | xargs -0 -P 8 -I{} bash -c 'upload "$@"' _ {}
+        ```
+
+        `-P 8` uploads eight files at a time, which matters once a build has a few hundred assets.
+
+        <Note>
+          The endpoint depends on your zone's main region. A Frankfurt zone uses `storage.bunnycdn.com`, New York uses `ny.storage.bunnycdn.com`, and so on. See [Storage endpoints](/storage/http#storage-endpoints), or read it from the zone's **Access** page.
+        </Note>
+      </Tab>
+
+      <Tab title="S3">
+        With S3 compatibility enabled, sync the whole folder in one command and delete files that are no longer in the build:
+
+        ```bash
+        aws s3 sync ./dist s3://my-site/ \
+          --delete \
+          --endpoint-url https://de-s3.storage.bunnycdn.com \
+          --profile bunny
+        ```
+
+        Configure the profile with your Storage Zone name as the access key ID and the zone password as the secret access key. See [S3](/storage/s3) for the full setup.
+      </Tab>
+
+      <Tab title="FTP">
+        Connect with the zone name as the username and the zone password as the password, then upload the build folder's contents to the root. See [FTP](/storage/ftp) for hostnames and client settings.
+      </Tab>
+    </Tabs>
+
+  </Step>
+
+  <Step title="Create a Pull Zone">
+    1. Go to **CDN** → **Add Pull Zone**
+    2. Enter a name
+    3. Set **Origin Type** to **Storage Zone**
+    4. Select the Storage Zone you just created
+    5. Click **Add Pull Zone**
+
+    Your site is live at `https://your-pullzone-name.b-cdn.net`.
+
+    <Warning>
+      Serve the site through the Pull Zone, not the storage endpoint. The
+      storage endpoint requires your zone password and isn't built for public
+      traffic.
+    </Warning>
+
+  </Step>
+</Steps>
+
+## Configure client-side routing
+
+Skip this if every route in your site has its own HTML file. Single-page applications need it: without a fallback, opening `/dashboard` directly returns a 404, because no file exists at that path.
+
+<Steps>
+  <Step title="Open Error handling">
+    In your Storage Zone, open the **Error handling** page.
+  </Step>
+  <Step title="Set the 404 file path">
+    Enter `/index.html` in the **404 File path** field.
+  </Step>
+  <Step title="Enable the 404 to 200 rewrite">
+    Check **Rewrite 404 to 200 status code** and click **Save**.
+  </Step>
+  <Step title="Test a deep link">
+    Open a client-side route directly, such as
+    `https://your-pullzone-name.b-cdn.net/about`, and confirm your app renders
+    it.
+  </Step>
+</Steps>
+
+Requests without a file extension now serve `index.html`, and your router resolves the URL. Requests for a missing `.js`, `.css`, or image file still return a 404, so broken asset references stay visible.
+
+<Info>
+  See [Storage Zone Settings](/storage/settings#error-handling) for the full
+  error handling reference.
+</Info>
+
+## Add a custom domain
+
+1. Open the Pull Zone and go to **Hostnames**
+2. Click **Add Hostname** and enter your domain
+3. Add a CNAME record at your DNS provider pointing to `your-pullzone-name.b-cdn.net`
+4. Once DNS resolves, enable **Free SSL**, then turn on **Force SSL**
+
+See [Custom Hostname](/cdn/custom-hostname) for apex domains and certificate details.
+
+## Deploy a new build
+
+Repeat the upload, then purge. Bunny CDN doesn't watch your origin for changes, so an updated `index.html` keeps serving from cache until its `Cache-Control` lifetime expires.
+
+<Steps>
+  <Step title="Upload the new build">
+    Run the same upload step. Overwriting a file replaces it in storage.
+  </Step>
+  <Step title="Delete files the build no longer produces">
+    Uploads don't remove anything. Old hashed assets are harmless, but a stale
+    HTML file stays reachable. `aws s3 sync --delete` handles this for you.
+  </Step>
+  <Step title="Purge the Pull Zone cache">
+    ```bash
+    curl -X POST "https://api.bunny.net/pullzone/{pullZoneId}/purgeCache" \
+      -H "AccessKey: YOUR_API_KEY"
+    ```
+
+    Or click **Purge Cache** on the Pull Zone. See [Purge Cache](/cdn/purge-cache) for purging by tag.
+
+  </Step>
+</Steps>
+
+<Note>
+  Rolling back means uploading the previous build again and purging. Keep your
+  build artifacts, or use [`bunny
+  sites`](/storage/static-site-hosting/bunny-cli), which keeps every deploy and
+  rolls back in one command.
+</Note>
+
+## Set cache times
+
+Configure these on the Pull Zone under **Caching**:
+
+| File type       | Recommended cache time              |
+| --------------- | ----------------------------------- |
+| HTML            | Short (1 hour) or use cache busting |
+| JS/CSS (hashed) | Long (1 year)                       |
+| Images          | Long (1 month or more)              |
+| Fonts           | Long (1 year)                       |
+
+Hashed filenames like `main.a1b2c3.js` change on every build, so they're safe to cache indefinitely. HTML is the file that must not go stale, since it references the hashed assets.

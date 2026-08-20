@@ -1,98 +1,105 @@
 ---
-title: Frontend Deployment Guides
-sidebarTitle: Overview
-description: Deploy static sites and single-page applications to Bunny Storage with global CDN delivery
+title: "Static Site Hosting"
+sidebarTitle: "Overview"
+description: "Host static sites and single-page applications on Bunny Storage, delivered worldwide through a Pull Zone."
 ---
 
-Deploy your frontend applications to Bunny Storage and serve them globally through a Pull Zone. This guide covers the essentials for static sites and single-page applications (SPAs).
+Static site hosting on bunny.net is two resources working together. A Storage Zone holds your build output, and a Pull Zone serves it from every edge location. There's no server to run and nothing to keep warm, because the CDN answers every request.
 
-## How It Works
+## Choose how to deploy
 
-Bunny Storage combined with a Pull Zone provides a simple, fast way to host static frontends:
+<CardGroup cols={2}>
+  <Card title="Bunny CLI" icon="terminal" href="/storage/static-site-hosting/bunny-cli">
+    Run `bunny sites` to create both zones, deploy in one command, and roll back
+    to any earlier deploy.
+  </Card>
+  <Card title="Manual setup" icon="sliders" href="/storage/static-site-hosting/manual-setup">
+    Create the Storage Zone and Pull Zone yourself, upload with the API of your
+    choice, and control every setting.
+  </Card>
+</CardGroup>
 
-1. **Build** your application locally
-2. **Upload** the build output to a Storage Zone
-3. **Connect** a Pull Zone for global CDN delivery
-4. **Configure** error handling for SPA routing (if needed)
+|                        | Bunny CLI                                       | Manual setup                                  |
+| ---------------------- | ----------------------------------------------- | --------------------------------------------- |
+| Create the zones       | `bunny sites create`                            | Dashboard or Core API                         |
+| Deploy a build         | `bunny sites deploy ./dist`                     | Upload over HTTP, S3, or FTP                  |
+| Preview URL per deploy | Yes                                             | No                                            |
+| Roll back              | `bunny sites deployments publish --previous`    | Re-upload the previous build, then purge      |
+| Cache after a deploy   | Purged automatically                            | [Purge it yourself](/cdn/purge-cache)         |
+| Client-side routing    | Not built in                                    | Error handling on the Storage Zone            |
+| Zone settings          | Managed for you                                 | Yours to configure                            |
 
-## Single-Page Application Routing
+Both approaches produce the same thing: files in Bunny Storage, served through a Pull Zone. You can start with the CLI and still open the zones it created in the dashboard.
 
-Single-page applications (React, Vue, Angular, etc.) handle routing client-side. When a user navigates directly to a route like `/dashboard` or refreshes the page, the server needs to serve `index.html` instead of returning a 404.
+## Framework guides
 
-<Accordion title="Why SPAs need special configuration">
-  When your SPA loads, the JavaScript router takes over navigation. But if a
-  user: - Bookmarks a deep link like `/products/123` - Refreshes the page on
-  `/settings` - Shares a URL like `/about` The browser requests that exact path
-  from the server. Since no file exists at that path (only `index.html` and your
-  assets exist), the server returns a 404. The solution is to configure your
-  Storage Zone's error handling to serve `index.html` for missing paths,
-  allowing your client-side router to handle the URL.
-</Accordion>
+<CardGroup cols={3}>
+  <Card title="Vite" icon="bolt" href="/storage/static-site-hosting/vite">
+    Build output, base paths, and asset hashing.
+  </Card>
+  <Card title="React" icon="react" href="/storage/static-site-hosting/react">
+    React Router, environment variables, and build output.
+  </Card>
+  <Card title="Vue" icon="vuejs" href="/storage/static-site-hosting/vue">
+    Vue Router history mode, Vue CLI, and Nuxt static output.
+  </Card>
+</CardGroup>
 
-### Configure SPA Fallback
+Any framework that produces a folder of static files works, including Astro, Hugo, Eleventy, SvelteKit with a static adapter, and a plain folder of HTML.
 
-To enable client-side routing, configure the error handling settings on your Storage Zone:
+## Client-side routing
+
+Single-page applications handle routing in the browser. When someone opens `/dashboard` directly, bookmarks `/products/123`, or refreshes on `/settings`, the request reaches the CDN as that exact path. Only `index.html` and your assets exist in storage, so the response is a 404 unless you tell the Storage Zone to fall back to `index.html`.
 
 <Steps>
-  <Step title="Navigate to your storage zone">
-    Log in to your Bunny dashboard, go to **Storage** in the left navigation,
-    and select your storage zone.
+  <Step title="Open your storage zone">
+    Go to **Storage** in the [dashboard](https://dash.bunny.net) and select your
+    storage zone.
   </Step>
-  <Step title="Open Error handling settings">
+  <Step title="Open Error handling">
     Open the **Error handling** page.
   </Step>
   <Step title="Set the 404 file path">
     Enter `/index.html` in the **404 File path** field.
   </Step>
-  <Step title="Enable 404 to 200 rewrite">
-    Check the box for **Rewrite 404 to 200 status code** and click **Save**.
+  <Step title="Enable the 404 to 200 rewrite">
+    Check **Rewrite 404 to 200 status code** and click **Save**.
   </Step>
 </Steps>
 
-This serves your `index.html` for all missing paths, and your client-side router will handle the URL. Requests for files with extensions (like `.js`, `.css`, or images) that don't exist will still return a 404.
+Missing paths now serve `index.html` and your router takes over. Requests for files with an extension, such as `.js`, `.css`, or an image, still return a 404, so a broken asset reference stays visible instead of silently returning HTML.
+
+<Warning>
+  Sites created with `bunny sites` store each deploy in its own directory, so a
+  zone-wide 404 path can't point at the live deploy's `index.html`. Use the
+  manual setup for single-page applications that rely on history-mode deep
+  links.
+</Warning>
 
 <Info>
-  See the [Storage Zone Settings](/storage/settings) page for more details on
-  error handling configuration.
+  See [Storage Zone Settings](/storage/settings#error-handling) for the full
+  error handling reference.
 </Info>
 
-## Framework Guides
+## Custom domains
 
-<CardGroup cols={2}>
-  <Card title="Vite" icon="bolt" href="/storage/static-site-hosting/vite">
-    Deploy a Vite-built static site with optimal configuration.
-  </Card>
-  <Card title="React" icon="react" href="/storage/static-site-hosting/react">
-    Deploy Create React App and other React builds.
-  </Card>
-  <Card title="Vue" icon="vuejs" href="/storage/static-site-hosting/vue">
-    Deploy Vue CLI and Vite-based Vue applications.
-  </Card>
-</CardGroup>
+Both approaches serve your site on a `b-cdn.net` hostname straight away. To use your own domain, add it as a hostname on the Pull Zone and enable Free SSL. See [Custom Hostname](/cdn/custom-hostname), or run `bunny sites domains add example.com --wait` to do the same from the terminal.
 
-## Common Configuration
+## Cache configuration
 
-### Custom Domains
+Static builds cache well. Set these cache times on the Pull Zone:
 
-Add your own domain to any frontend deployment:
-
-1. In your Pull Zone, go to **Hostnames**
-2. Click **Add Hostname** and enter your domain
-3. Add a CNAME record pointing to `your-pullzone.b-cdn.net`
-4. Enable **Free SSL** for automatic HTTPS
-
-### Cache Configuration
-
-Static frontends benefit from aggressive caching. Consider these settings in your Pull Zone:
-
-| File Type       | Recommended Cache Time              |
+| File type       | Recommended cache time              |
 | --------------- | ----------------------------------- |
 | HTML            | Short (1 hour) or use cache busting |
 | JS/CSS (hashed) | Long (1 year)                       |
-| Images          | Long (1 month+)                     |
+| Images          | Long (1 month or more)              |
 | Fonts           | Long (1 year)                       |
 
 <Note>
-  Modern build tools like Vite add content hashes to filenames (e.g.,
-  `main.a1b2c3.js`), making it safe to cache these files indefinitely.
+  Build tools like Vite add a content hash to filenames, such as
+  `main.a1b2c3.js`. Hashed files are safe to cache indefinitely, because a new
+  build produces a new filename.
 </Note>
+
+Bunny CDN doesn't watch your origin for changes. After overwriting a file that's already cached, [purge the cache](/cdn/purge-cache) so visitors see the new build.

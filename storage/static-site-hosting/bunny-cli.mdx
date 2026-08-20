@@ -1,0 +1,177 @@
+---
+title: "Deploy a Static Site with the Bunny CLI"
+sidebarTitle: "Bunny CLI"
+description: "Use bunny sites to provision a Storage Zone and Pull Zone, deploy a build, preview it, and roll back."
+---
+
+`bunny sites` turns a folder of built files into a site on bunny.net. One command provisions the resources, another uploads a build, and every deploy stays addressable so you can roll back to it later.
+
+<Info>
+  The Bunny CLI is in [Public
+  Preview](/product-release-stages#stage-2-public-preview). Run the latest
+  version to get the behavior described here.
+</Info>
+
+## What a site is made of
+
+`bunny sites create` provisions three resources and wires them together:
+
+- A **Storage Zone** that holds every deploy in its own directory
+- A **Pull Zone** that serves them from the edge
+- A **router**, an [Edge Script](/scripting) middleware that maps the live hostname to the published deploy
+
+Because each deploy is a separate immutable directory, publishing and rolling back only change which directory the router points at. No files move, so both are instant.
+
+## Deploy your first site
+
+<Steps>
+  <Step title="Install the CLI and log in">
+    ```bash
+    curl -fsSL https://cli.bunny.net/install.sh | sh
+    bunny login
+    ```
+
+    See the [CLI Quickstart](/cli/quickstart) for npm installs and API key authentication.
+
+  </Step>
+
+  <Step title="Create the site">
+    ```bash
+    bunny sites create my-site
+    ```
+
+    Site names are 3 to 47 lowercase letters, digits, and dashes. The Storage Zone, Pull Zone, and `b-cdn.net` subdomain are named `sites-my-site-xxxxxx`, where the random suffix keeps the globally unique zone names from colliding. Every command still takes the clean site name.
+
+    | Flag       | Description                                                   |
+    | ---------- | ------------------------------------------------------------- |
+    | `--region` | Main storage region code, such as `DE`, `NY`, `LA`, or `SG`   |
+    | `--domain` | Attach a custom production domain after provisioning          |
+    | `--link`   | Write `.bunny/site.json` in this directory (default: `true`)  |
+
+    Creation is idempotent. If it fails partway through, run it again and the CLI reuses whatever was already provisioned.
+
+  </Step>
+
+  <Step title="Build and deploy">
+    ```bash
+    bunny sites deploy ./dist --build "npm run build"
+    ```
+
+    The CLI runs the build, uploads `./dist`, and prints a preview URL.
+
+  </Step>
+
+  <Step title="Publish it">
+    ```bash
+    bunny sites deploy ./dist --production
+    ```
+
+    Your site is live on `https://sites-my-site-xxxxxx.b-cdn.net`. Deploying content that's already uploaded skips the upload and just publishes it.
+
+  </Step>
+</Steps>
+
+## Every deploy gets a preview URL
+
+Each deploy is served at its own immutable URL, `https://sites-dpl-<id>-<suffix>.b-cdn.net`, with HTTPS and no DNS setup. Previews are root-served on their own hostname rather than under a path prefix, so client-side routers and root-absolute asset paths behave exactly as they do in production. Preview responses carry `X-Robots-Tag: noindex`.
+
+Publishing is always explicit. Pass `--production` (or `--prod`) when you want a deploy to go live.
+
+The deploy ID is your git short SHA when the working tree is clean, and an 8-character content hash otherwise. Re-deploying identical content is a no-op unless you pass `--force`. Dotfiles and `node_modules` are never uploaded.
+
+## Roll back
+
+```bash
+bunny sites deployments list                          # ● Live marks production
+bunny sites deployments publish --previous --force    # instant rollback
+bunny sites deployments publish a1b2c3d4 --force      # promote a specific deploy
+```
+
+The files are already on the CDN, so publishing an older deploy is a metadata change plus a cache purge.
+
+To clean up old deploys and their preview URLs:
+
+```bash
+bunny sites deployments prune --keep 10   # never prunes the live or previous deploy
+bunny sites deployments delete a1b2c3d4 --force
+```
+
+## Configure defaults in `bunny.jsonc`
+
+Commit a `sites` block so a deploy needs no flags:
+
+```jsonc
+{
+  "sites": {
+    "name": "my-site", // resolves the site when nothing is linked
+    "dir": "./dist", // default deploy directory
+    "build": "npm run build" // command for `deploy --build`
+  }
+}
+```
+
+Deploys are then a single command:
+
+```bash
+bunny sites deploy --build          # preview
+bunny sites deploy --build --prod   # live
+```
+
+When no directory is given, the CLI falls back to `sites.dir`, then the detected framework's output directory, then the current directory.
+
+<Note>
+  Builds run in your shell environment plus any `--env KEY=VALUE` and
+  `--env-file` overrides. There's no remote environment store, so keep
+  build-time values in your local `.env` file or in your CI secrets.
+</Note>
+
+## Add a custom domain
+
+```bash
+bunny sites domains add example.com --wait
+```
+
+`--wait` polls DNS for up to 10 minutes, then issues a free SSL certificate and forces HTTPS. If the domain is on a Bunny DNS zone in the same account, the CLI offers to create the record for you. Otherwise it prints the CNAME target to add at your provider.
+
+A custom domain is the site's production URL and nothing more. Preview deploys keep their own `b-cdn.net` hostnames.
+
+```bash
+bunny sites domains list
+bunny sites domains ssl example.com     # issue a certificate later
+bunny sites domains remove example.com
+```
+
+## Deploy from GitHub Actions
+
+```bash
+bunny sites ci init
+```
+
+This detects your framework and writes `.github/workflows/bunny-sites.yml` using the [`BunnyWay/actions/deploy-site`](https://github.com/BunnyWay/actions) action: pull requests deploy previews, and pushes to `main` go live. `sites.dir` and `sites.build` from `bunny.jsonc` override the framework preset, so CI builds and deploys exactly what a local `bunny sites deploy` does.
+
+Add your [API key](/account/api-keys) as the `BUNNY_API_KEY` repository secret. The CLI offers to run `gh secret set BUNNY_API_KEY` for you. Fork pull requests are skipped, because they have no access to secrets.
+
+Pass `--framework` to skip detection. Supported presets include `astro`, `vite`, `react-router`, `next`, `nuxt`, `sveltekit`, `vitepress`, `docusaurus`, `eleventy`, `gatsby`, `jekyll`, `hugo`, and `static`.
+
+## Manage sites
+
+```bash
+bunny sites list
+bunny sites show                  # resources, domains, current deploy
+bunny sites open                  # open the live URL (--print emits it)
+bunny sites link my-site          # write .bunny/site.json
+bunny sites upgrade-router        # republish the router with the CLI's current source
+bunny sites delete my-site        # --keep-storage keeps the files
+```
+
+Most commands resolve the site in this order: an explicit name or Storage Zone ID, then `.bunny/site.json`, then `sites.name` in `bunny.jsonc`, then an interactive prompt.
+
+## Run it in CI
+
+- Pass the site explicitly, or commit `bunny.jsonc` with `sites.name`. The interactive picker is disabled under `--output json`.
+- Pass `--force` on anything that confirms, such as `publish`, `prune`, `remove`, and `delete`. Without a TTY they error with a hint instead of hanging on a prompt.
+- `--output json` works on every command. `deploy` prints `{ id, production, preview, promoted }`. Read `promoted` rather than assuming `--production` decided it.
+
+## Client-side routing
+
+The site router serves files by path and expands directory URLs to `index.html`, so `/blog` and `/blog/` both reach `/blog/index.html`. It doesn't rewrite unknown paths to `index.html`, so a single-page application that relies on history-mode deep links needs the [manual setup](/storage/static-site-hosting/manual-setup) instead. Frameworks that pre-render a file per route, such as Astro, Hugo, Eleventy, VitePress, and Next.js static exports, work as-is.

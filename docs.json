@@ -712,6 +712,8 @@
                     "group": "Static Site Hosting",
                     "pages": [
                       "storage/static-site-hosting/index",
+                      "storage/static-site-hosting/bunny-cli",
+                      "storage/static-site-hosting/manual-setup",
                       "storage/static-site-hosting/vite",
                       "storage/static-site-hosting/react",
                       "storage/static-site-hosting/vue"
