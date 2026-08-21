@@ -46,16 +46,16 @@ The build's client files have no filesystem at the edge. They go to a storage zo
 ## Deploying
 
 ```bash
-bunny deploy
+bunny sites deploy
 ```
 
-The [CLI](/cli) recognises the framework, offers the adapter if the project has none, builds the site, and creates what it needs: a storage zone for the files, a pull zone for the URL, and an Edge Script for the server. Later deploys are the same command.
+The [CLI](/cli) recognises the framework, offers the adapter when the project renders on demand and has none, builds the site, and creates what it needs: a storage zone for the files, a pull zone for the URL, and an Edge Script for the server. Later deploys are the same command. It is the same command that deploys a directory of files, and the build decides which one this is.
 
 Each deploy is immutable: its client files and its server bundle both stay in the storage zone, and the published script carries the name of its own files. So a rollback restores a page and its assets together, in one step:
 
 ```bash
-bunny deploy            # build and publish
-bunny rollback          # back to the deploy that was live before
+bunny sites deploy                           # build and publish
+bunny sites deployments publish --previous   # back to the deploy that was live before
 ```
 
 An adapter tells the CLI what it built, in a small manifest the build writes. The CLI reads the manifest, so every adapter deploys with the same commands, and a new adapter needs no new CLI. [Writing an adapter](https://github.com/BunnyWay/bunny-adapters/blob/main/docs/writing-an-adapter.md) has the contract.
@@ -66,7 +66,7 @@ An adapter tells the CLI what it built, in a small manifest the build writes. Th
 
 **Astro has an adapter. Other frameworks do not, yet.** Install
 [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters), and
-Astro builds straight to a deployable script that `bunny deploy` publishes. For
+Astro builds straight to a deployable script that `bunny sites deploy` publishes. For
 any other framework you write the handler yourself, and deploy it with
 [`bunny scripts deploy`](/cli/commands/scripts). That is workable, because all
 an adapter really does is hand you the app object.

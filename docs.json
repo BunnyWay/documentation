@@ -1059,7 +1059,6 @@
                 "group": "Commands",
                 "pages": [
                   "cli/commands/auth",
-                  "cli/commands/deploy",
                   "cli/commands/sites",
                   "cli/commands/config",
                   "cli/commands/db",

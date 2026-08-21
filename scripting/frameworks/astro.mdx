@@ -11,7 +11,7 @@ The [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters/tree
 One command does all of it:
 
 ```bash
-bunny deploy
+bunny sites deploy
 ```
 
 <Card title="See it running" icon="rocket" href="https://astro-ssr-demo.bunny.run">
@@ -33,24 +33,24 @@ bunny deploy
 
   </Step>
 
-  <Step title="Run bunny deploy">
+  <Step title="Run bunny sites deploy">
     From your Astro project:
 
     ```bash
-    bunny deploy
+    bunny sites deploy
     ```
 
-    The CLI recognises Astro. It offers to add the adapter, builds the site, creates what the site needs, and publishes it:
+    The CLI reads your project. A project that renders a page on demand is offered the adapter, and the command then builds the site, creates what the site needs, and publishes it:
 
     ```
-    ℹ Astro detected, with no bunny.net adapter.
+    ℹ This Astro project renders on demand: src/pages/api/time.ts sets prerender = false.
     ? Add @bunny.net/astro-adapter to astro.config.mjs? › (Y/n)
     ✓ Added the adapter to astro.config.mjs.
 
     ℹ Running build: npm run build
     …
     [@bunny.net/astro-adapter] Bundled to dist/index.js (653 kB, limit 10.00 MB). 3 route(s) render per request.
-    [@bunny.net/astro-adapter] Wrote .bunny/build.json. Deploy it with: bunny deploy
+    [@bunny.net/astro-adapter] Wrote .bunny/build.json. Deploy it with: bunny sites deploy
 
     ? Site name: › my-site
     ✓ Created site "my-site".
@@ -96,9 +96,24 @@ bunny deploy
 
 The CLI also applies the pull zone settings the adapter asks for, and it says which ones it changed: cookies pass through, so `Astro.cookies.set()` works, and [Smart Cache](/cdn/smart-cache) goes off so the adapter's own cache headers count.
 
+### When the adapter is offered
+
+Only a project that asks for a server is offered one. Any one of these counts as asking:
+
+| The signal                                          | What it means                                      |
+| --------------------------------------------------- | -------------------------------------------------- |
+| A route under `src/pages/` sets `prerender = false` | That one route renders per request                 |
+| The config sets `output: "server"`                  | Every page renders per request                     |
+| The config names another host's adapter             | The project renders on demand somewhere else today |
+| `@bunny.net/astro-adapter` is already a dependency  | Somebody installed it and stopped                  |
+
+A project with none of these prerenders every page. `bunny sites deploy` uploads the build, the site is served as files, and the adapter is never mentioned. That is the right answer for such a site: a site with no server should not carry a megabyte of one.
+
+The first signal is the one that matters most. `astro build` stops with its own error when a route opts out of prerendering and no adapter is installed, so the offer arrives before that failure.
+
 ### Moving from another host
 
-A project that already has an adapter keeps everything but that one line. `bunny deploy` names the adapter it found, and swaps it:
+A project that already has an adapter keeps everything but that one line. `bunny sites deploy` names the adapter it found, and swaps it:
 
 ```
 ℹ Astro detected, using @astrojs/cloudflare.
@@ -110,7 +125,7 @@ Adapter options do not carry over, because no two hosts share them. Anything the
 
 ### In a monorepo
 
-Run `bunny deploy` at the repository root, and it finds the projects below it:
+Run `bunny sites deploy` at the repository root, and it finds the projects below it:
 
 ```
 ℹ This directory holds no Astro project, and 4 below it do.
@@ -127,7 +142,7 @@ Since Astro 5, a project that says nothing about `output` prerenders its pages, 
 
 So the build asks Astro what it built, and Astro answers from the routes:
 
-| What Astro built                     | What `bunny deploy` sends                                    |
+| What Astro built                     | What `bunny sites deploy` sends                              |
 | ------------------------------------ | ------------------------------------------------------------ |
 | A route that renders per request     | The script, and the files it renders from                    |
 | Every route prerendered              | The files alone. No script, and nothing invoked per request   |
@@ -141,11 +156,10 @@ adapter: bunny({ deploy: "server" }),
 ## The everyday loop
 
 ```bash
-bunny deploy                        # build and publish
-bunny deploy --open                 # and open it in the browser
-bunny rollback                      # back to the deploy that was live before
-bunny sites deployments list        # what is live, what was live, what is kept
-bunny sites open                    # open the live URL
+bunny sites deploy                           # build and publish
+bunny sites deployments list                 # what is live, what was live, what is kept
+bunny sites deployments publish --previous   # back to the deploy that was live before
+bunny sites open                             # open the live URL in the browser
 ```
 
 A deploy with no changes does nothing, and says so. Every deploy publishes to production; a preview URL per branch is [not built yet](#what-is-not-here-yet).
@@ -154,8 +168,8 @@ A deploy with no changes does nothing, and says so. Every deploy publishes to pr
 
 ```bash
 bunny sites deployments list
-bunny rollback              # the previous deploy
-bunny rollback a1b2c3d4     # a named one
+bunny sites deployments publish --previous    # the previous deploy
+bunny sites deployments publish a1b2c3d4     # a named one
 ```
 
 Each deploy keeps both halves in the storage zone: the files, and the server bundle that was built against them. Neither is ever overwritten, so a rollback restores a matched pair in one step. It takes a few seconds to reach every edge node.
@@ -181,9 +195,11 @@ Every developer and every workflow then deploys the same way, with no flags.
 Build-time variables come from the command line:
 
 ```bash
-bunny deploy --env PUBLIC_API=https://api.example.com
-bunny deploy --env-file .env.production
+bunny sites deploy --build --env PUBLIC_API=https://api.example.com
+bunny sites deploy --build --env-file .env.production
 ```
+
+They apply to the build, so they need `--build`. A deploy without it says so rather than ignoring them.
 
 Runtime variables belong to the script, and `astro:env` reads them:
 
@@ -202,10 +218,12 @@ A deploy needs an API key and nothing else, so a workflow is three lines:
 ```yaml .github/workflows/deploy.yml
 - run: npm ci
 - run: npm install -g @bunny.net/cli
-- run: bunny deploy
+- run: bunny sites deploy --build
   env:
     BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
 ```
+
+`--build` is what runs the build here. A workflow has nobody to ask, so an unattended deploy never offers one, and it deploys what the build wrote.
 
 Commit `.bunny/site.json` so the workflow deploys the same site you do, or pass `--name <site>`. See [GitHub Actions](/scripting/github-actions) for the details.
 
@@ -318,7 +336,7 @@ A page that sets no `Cache-Control` gets `private, no-store`. That matters: a pu
 <Note>
   [Smart Cache](/cdn/smart-cache) only caches known static file extensions, and
   HTML is not one of them, so a `routeRules` entry does nothing while it is on.
-  `bunny deploy` turns it off for you when your project sets `routeRules`, and
+  `bunny sites deploy` turns it off for you when your project sets `routeRules`, and
   reports the change.
 </Note>
 
@@ -453,10 +471,10 @@ No credential is ever an option. The CLI sets each one on the script, so nothing
 
 ## Moving from `bunny-astro`
 
-Earlier versions of the adapter shipped a `bunny-astro` command. `bunny deploy` replaces it, and adds provisioning, immutable deploys, and rollback.
+Earlier versions of the adapter shipped a `bunny-astro` command. `bunny sites deploy` replaces it, and adds provisioning, immutable deploys, and rollback.
 
 ```bash
-bunny deploy
+bunny sites deploy
 ```
 
 That creates a **new** site: its own storage zone, script, and pull zone, and its own URL. Adopting the zone and script you already have is [not built yet](#what-is-not-here-yet), so until it is, either move to the new URL (add your domain to it with `bunny sites domains add`) or keep deploying the old pair by hand:
@@ -471,11 +489,11 @@ A deploy you run yourself puts the files at the zone root, which is where the sc
 
 ## A site with no script
 
-A site whose routes are all prerendered needs no script, and no adapter. `bunny deploy` uploads the build, every deploy gets its own immutable URL, and nothing is invoked per request. The build says so:
+A site whose routes are all prerendered needs no script, and no adapter. `bunny sites deploy` uploads the build, every deploy gets its own immutable URL, and nothing is invoked per request. The build says so:
 
 ```
 [@bunny.net/astro-adapter] Every route is prerendered, so this build deploys no
-script: `bunny deploy` uploads dist/client, and the site is served as files.
+script: `bunny sites deploy` uploads dist/client, and the site is served as files.
 ```
 
 Files alone cannot answer a 404 with a page, send a redirect, or add a header. The [`bunny sites` router](/cli/commands/sites#what-the-deploy-configures) does all three, for every framework. It learns what to do from three file names, which Cloudflare Pages and Netlify read too:
@@ -498,8 +516,8 @@ A site with no adapter at all works too, and [the static site hosting guide](/st
 
 Three things this guide's commands do not cover:
 
-- **A preview URL per branch.** Every `bunny deploy` publishes to production. A server-rendered preview has to be its own Edge Script, because one script publishes one version at a time and a page and its assets are one unit. Until then, deploy a second site for staging: `bunny deploy --name my-site-staging` from a checkout of the branch.
-- **Adopting a site you built by hand.** `bunny deploy` creates its own storage zone, script, and pull zone. There is no command yet that takes over a pair you made yourself.
+- **A preview URL per branch.** A build that renders per request publishes to production, and the command says so. Such a preview has to be its own Edge Script, because one script publishes one version at a time, and a page and its assets are one unit. Until then, deploy a second site for staging: `bunny sites deploy --name my-site-staging` from a checkout of the branch. A build with every route prerendered is a static deploy, and every one of those already gets [its own preview URL](/cli/commands/sites#immutable-deploys).
+- **Adopting a site you built by hand.** `bunny sites deploy` creates its own storage zone, script, and pull zone. There is no command yet that takes over a pair you made yourself.
 - **Logs from the command line.** Read them in the dashboard, under **Scripting** > your script > **Logs**.
 
 The design for all three is in [`plans/one-command-deploys.md`](https://github.com/BunnyWay/bunny-adapters/blob/main/plans/one-command-deploys.md).
@@ -519,9 +537,10 @@ The design for all three is in [`plans/one-command-deploys.md`](https://github.c
     depends on what it does as it loads, so treat 7.5 MB as a warning and not a
     line.
 
-    The build warns above 7.5 MB, and `bunny deploy` asks the site for a page
+    The build warns above 7.5 MB, and `bunny sites deploy` asks the site for a page
     before it reports success, so neither is silent about it. What to do is the
-    same as for a script that is too large, below. `bunny rollback` puts the
+    same as for a script that is too large, below. `bunny sites deployments
+    publish --previous` puts the
     previous deploy back while you work on it.
   </Accordion>
 
@@ -563,13 +582,13 @@ The design for all three is in [`plans/one-command-deploys.md`](https://github.c
   </Accordion>
 
   <Accordion title="A routeRules entry changes nothing">
-    Smart Cache is on, and it does not cache HTML. `bunny deploy` turns it off
+    Smart Cache is on, and it does not cache HTML. `bunny sites deploy` turns it off
     and says so, so run the deploy again and read what it reports.
   </Accordion>
 
   <Accordion title="Astro.cookies.set() has no effect">
-    The pull zone is stripping the header. `bunny deploy` turns **Disable
-    cookies** off for you. Run `bunny deploy` again, and check the settings it
+    The pull zone is stripping the header. `bunny sites deploy` turns **Disable
+    cookies** off for you. Run `bunny sites deploy` again, and check the settings it
     reports.
   </Accordion>
 
@@ -602,7 +621,7 @@ The design for all three is in [`plans/one-command-deploys.md`](https://github.c
 
     ```bash
     bunny sites upgrade-router
-    bunny deploy
+    bunny sites deploy
     ```
 
     A deploy checks this for you now: it asks the live site for a path the build
@@ -610,7 +629,8 @@ The design for all three is in [`plans/one-command-deploys.md`](https://github.c
   </Accordion>
 
   <Accordion title="A page 404s after a deploy, and the old one worked">
-    Roll back while you look: `bunny rollback`. Each deploy keeps its own files
+    Roll back while you look: `bunny sites deployments publish --previous`.
+    Each deploy keeps its own files
     and its own bundle, so the previous version comes back whole.
   </Accordion>
 

@@ -1,22 +1,34 @@
 ---
 title: bunny sites
 sidebarTitle: sites
-description: "Host a static site on bunny.net. Every deploy is immutable and gets its own preview URL, and the 404 page, the redirects and the headers come from the build."
+description: "Deploy a site to bunny.net with one command: a directory of files, or a build that renders each page per request. Every static deploy is immutable and gets its own preview URL."
 ---
 
-`bunny sites` hosts a directory of files on bunny.net. Each site is three resources, provisioned and wired together for you:
+`bunny sites` hosts a site on bunny.net. Each site is three resources, provisioned and wired together for you:
 
-| Resource         | What it does                                                     |
-| ---------------- | ---------------------------------------------------------------- |
-| A storage zone   | Holds every deploy's files                                       |
-| A pull zone      | The site's URL, its cache, and its domains                       |
-| A router script  | An [Edge Script](/scripting) that maps a request to a deploy      |
+| Resource        | What it does                                                |
+| --------------- | ----------------------------------------------------------- |
+| A storage zone  | Holds every deploy's files                                  |
+| A pull zone     | The site's URL, its cache, and its domains                  |
+| An Edge Script  | The static site's router, or the build's own server          |
 
 Zones are named `sites-<name>-<suffix>`. The prefix groups them in the dashboard. The suffix is there because zone names are global across bunny.net. The commands take the clean site name.
 
-For a project that renders per request, use [`bunny deploy`](/cli/commands/deploy) instead. It creates the same shape of site, with the build's own server as the script.
+The [Edge Script](/scripting) is what the two kinds of site differ by:
 
-## Deploy a directory
+- A **static** site's script is the router this CLI writes. It maps each request to the deploy that answers it, and it serves the deploy's own `404.html`, `_redirects` and `_headers`.
+- A site that **renders per request** runs the build's own server in the script. Its client files still come from [Bunny Storage](/storage), and each deploy keeps its own server bundle, so publishing an earlier deploy restores its pages and its assets together.
+
+One command deploys both. `bunny sites deploy` reads `.bunny/build.json`, the manifest a [framework adapter](https://github.com/BunnyWay/bunny-adapters) writes, and takes the path it names. The CLI knows no framework: it reads the manifest, so a new adapter needs no new CLI.
+
+```bash
+bunny sites deploy                 # build if needed, then deploy
+bunny sites deploy --build         # run the project's own build first
+bunny sites deploy ./dist          # deploy a directory of files
+bunny sites deploy --production    # publish a static deploy as the live site
+```
+
+## Deploy this project
 
 <Steps>
   <Step title="Log in">
@@ -25,12 +37,89 @@ For a project that renders per request, use [`bunny deploy`](/cli/commands/deplo
     ```
   </Step>
 
+  <Step title="Run the command in your project">
+    ```bash
+    bunny sites deploy
+    ```
+
+    With no site linked yet, the command offers to create one. A project that renders pages on demand also gets an offer to add the bunny.net adapter for its framework:
+
+    ```
+    ℹ This Astro project renders on demand: src/pages/api/time.ts sets prerender = false.
+    ? Add @bunny.net/astro-adapter to astro.config.mjs? › (Y/n)
+
+    ? Site name: › my-site
+    ✓ Created site "my-site".
+    ✓ Deployed a1b2c3d4: 42 files (1.9 MB), script 653 KB.
+    ℹ Production  https://sites-my-site-k3f9wq.b-cdn.net
+    ```
+
+  </Step>
+
+  <Step title="Add your domain">
+    The site's first deploy offers one. To add it later:
+
+    ```bash
+    bunny sites domains add www.example.com
+    ```
+
+  </Step>
+</Steps>
+
+Nothing above asks for a password. The CLI creates the storage zone, so it already holds the credentials. It sets them on the script as [secrets](/scripting/secrets).
+
+Every deploy goes to its own directory in the storage zone. So publishing an earlier one restores its pages, and the files those pages name, together.
+
+## A project that renders per request
+
+The build writes `.bunny/build.json`, and the deploy acts on it. It uploads the client files and publishes the script. It also applies the pull zone settings the adapter asks for, and sets the variables the script reads.
+
+Then it asks the live site for a page. A green line above a URL that answers `400` is the worst thing this command can do, so a script that does not start is reported instead:
+
+```
+⚠ The site answered 400, so the script is not serving.
+  The script is 8.2 MB, and a script has 500 ms to start. Every byte is parsed first.
+  The deploy before it is still there: bunny sites deployments publish --previous
+```
+
+One script serves one release, so such a deploy publishes to production, and the command says so. Preview environments for a site that renders per request are not built yet.
+
+<Info>
+  `bunny sites create` provisions a static site. For a project that renders per
+  request, let `bunny sites deploy` create the site: it needs the build manifest
+  to know what the site runs, and `create` runs no build.
+</Info>
+
+### When the adapter is offered
+
+Only a project that asks for a server hears about an adapter. Any one of these counts as asking:
+
+| The signal                                                    | What it means                                        |
+| ------------------------------------------------------------- | ---------------------------------------------------- |
+| The config names another vendor's adapter                     | The project renders on demand somewhere else today   |
+| The config sets `output: "server"`                            | Every page renders per request                       |
+| The bunny.net adapter is already a dependency                 | Somebody installed it and stopped                    |
+| A route under `src/pages/` sets `prerender = false`           | That one route renders per request                   |
+
+A project with none of these prerenders every page. It deploys as a directory of files, it is never offered an adapter, and its config is never edited.
+
+The last signal is the one that matters most. Since Astro 5 a project prerenders every page unless a page opts out, and `astro build` stops with its own error when a page opts out and no adapter is installed. Reading the routes puts the offer before that failure.
+
+### A build that renders nothing
+
+A build with no route to render per request writes no script at all. The deploy is the files, and the site is served by the static router below: it answers a miss with the build's own `404.html`, and it reads `_redirects` and `_headers` from the deploy.
+
+The build says which of the two it produced, and why.
+
+## Deploy a directory
+
+<Steps>
   <Step title="Deploy">
     ```bash
     bunny sites deploy ./dist
     ```
 
-    With no site linked yet, the command offers to create one. The deploy lands on its own preview URL, and the first deploy of a site offers to publish it.
+    The deploy lands on its own preview URL, and the first deploy of a site offers to publish it.
 
   </Step>
 
@@ -44,7 +133,7 @@ For a project that renders per request, use [`bunny deploy`](/cli/commands/deplo
   </Step>
 </Steps>
 
-## Immutable deploys
+### Immutable deploys
 
 Every deploy uploads to its own directory in the storage zone, and gets a pull zone of its own. That is a permanent HTTPS URL, and it needs no DNS or certificate setup:
 
@@ -63,9 +152,11 @@ bunny sites deployments publish --previous   # instant rollback
 bunny sites deployments prune --keep 10      # delete old deploys and their preview URLs
 ```
 
+A rollback of a site that renders per request reads that deploy's stored server bundle back out of storage. So the pages and the files they name come back together.
+
 ## What the deploy configures
 
-The router reads three file names out of the deploy it is serving. Cloudflare Pages and Netlify read the same three. So a build that already writes them works here unchanged, and the router knows no framework.
+A static site's router reads three file names out of the deploy it is serving. Cloudflare Pages and Netlify read the same three. So a build that already writes them works here unchanged, and the router knows no framework.
 
 | File in the deploy | What the router does with it                                                        |
 | ------------------ | ----------------------------------------------------------------------------------- |
@@ -78,6 +169,8 @@ The router reads three file names out of the deploy it is serving. Cloudflare Pa
   error page instead of your site's. So `bunny sites deploy` asks the published
   site for a path it cannot hold. It warns you when the answer is not your page.
 </Warning>
+
+A site that renders per request gets none of this. Its script is the build's own server, and the build decides what it answers with.
 
 ### `_redirects`
 
@@ -149,9 +242,10 @@ bunny sites create my-site --region NY   # store the files in New York (default:
 bunny sites create my-site --domain example.com
 
 # Deploy
-bunny sites deploy                       # detects the framework, offers to build, then deploys
-bunny sites deploy ./dist --production
+bunny sites deploy                       # build if needed, then deploy
 bunny sites deploy --build               # run the configured or detected build first
+bunny sites deploy ./dist --production
+bunny sites deploy --name my-site --region NY   # create the site this deploy needs, unattended
 
 # Inspect
 bunny sites list
@@ -176,7 +270,9 @@ With none given, the site resolves in this order:
 2. `sites.name` in `bunny.jsonc`
 3. An interactive picker, which offers to link the directory
 
-A run that cannot prompt reports an error instead. That is `--output json`, no TTY, or `--force` on a destructive command.
+A run that cannot prompt reports an error instead. That is `--output json`, no TTY, or `--force` on a destructive command. A `--name` is an instruction, so an unattended run with one creates the site and needs nothing else.
+
+A build and a site have to be the same kind. A script's type is fixed when it is created, so a static site cannot run a build's server, and a site that renders per request cannot serve a directory of files. The deploy names the mismatch, and it stops before it uploads anything.
 
 Preconfigure the `sites` block in `bunny.jsonc` and a deploy needs no arguments:
 
@@ -194,16 +290,26 @@ Preconfigure the `sites` block in `bunny.jsonc` and a deploy needs no arguments:
 bunny sites deploy --build --prod
 ```
 
+A `dir` here is an instruction: deploy these files. The command then offers no adapter, and it deploys the directory whatever the project holds.
+
 Site state lives at `_bunny/site.json` inside the storage zone, which the router never serves. `.bunny/site.json` is only a local pointer. So a fresh clone can `bunny sites link`, and go on where the last machine stopped.
+
+<Info>
+  In a monorepo, run `bunny sites deploy` at the repository root, and it finds the
+  framework projects below it. Or run it in a project's own directory to deploy
+  that one. The package manager comes from the workspace, so a `pnpm` monorepo
+  gets `pnpm`.
+</Info>
 
 ## Flags
 
 | Flag                                   | Commands                                                   | Description                                                                     |
 | -------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | `--region`, `--domain`                 | `create`                                                   | Storage region (default `DE`); custom production domain to attach                |
+| `--name`, `--region`                   | `deploy`                                                   | Site name and storage region, for a site this deploy creates                     |
 | `--site`                               | `deploy`, `ci init`, `deployments publish`                 | Site name or storage zone ID                                                    |
 | `--build [cmd]`, `--env`, `--env-file` | `deploy`                                                   | Build before deploying; build-time environment overrides                        |
-| `--production`, `--prod`               | `deploy`                                                   | Publish as the live site instead of a preview only                              |
+| `--production`, `--prod`               | `deploy`                                                   | Publish a static deploy as the live site. A build that renders per request always publishes |
 | `--force`                              | `deploy`                                                   | Deploy even when the content is unchanged                                        |
 | `--previous`                           | `deployments publish`                                      | Publish the previous deploy                                                      |
 | `--keep`                               | `deployments prune`                                        | Recent deploys to keep (default 5; live and previous are always kept)            |
