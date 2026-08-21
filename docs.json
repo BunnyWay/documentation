@@ -479,6 +479,13 @@
                 ]
               },
               {
+                "group": "Frameworks",
+                "pages": [
+                  "scripting/frameworks/index",
+                  "scripting/frameworks/astro"
+                ]
+              },
+              {
                 "group": "Deployment",
                 "pages": [
                   "scripting/deployments",
@@ -1053,6 +1060,7 @@
                 "group": "Commands",
                 "pages": [
                   "cli/commands/auth",
+                  "cli/commands/sites",
                   "cli/commands/config",
                   "cli/commands/db",
                   "cli/commands/scripts",

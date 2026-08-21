@@ -6,6 +6,18 @@ description: Deploy static sites and single-page applications to Bunny Storage w
 
 Deploy your frontend applications to Bunny Storage and serve them globally through a Pull Zone. This guide covers the essentials for static sites and single-page applications (SPAs).
 
+## One command, or by hand
+
+The [Bunny CLI](/cli) does all of the below for you, and adds what a storage zone cannot do on its own:
+
+```bash
+bunny sites deploy ./dist --production
+```
+
+That creates the storage zone and the pull zone. It uploads each deploy to a directory of its own, gives it a permanent preview URL, and publishes instantly. It also reads three files out of your build: a `404.html` that answers a missing path, a `_redirects` file, and a `_headers` file. See [`bunny sites`](/cli/commands/sites).
+
+The rest of this page is the same deployment done by hand.
+
 ## How It Works
 
 Bunny Storage combined with a Pull Zone provides a simple, fast way to host static frontends:
@@ -70,6 +82,36 @@ This serves your `index.html` for all missing paths, and your client-side router
   </Card>
 </CardGroup>
 
+<Info>
+  Does your site also need API routes or per-visitor responses? Put an [Edge
+  Script in front of the storage zone](/scripting/frameworks) instead of a plain
+  pull zone.
+</Info>
+
+## Redirects and Headers
+
+A storage zone holds objects, and nothing else. It cannot answer a missing path with your own page, send a redirect, or add a response header. Three ways to get those:
+
+<CardGroup cols={2}>
+  <Card title="bunny sites" icon="terminal" href="/cli/commands/sites#what-the-deploy-configures">
+    Deploy with the CLI, and its router reads `404.html`, `_redirects`, and
+    `_headers` out of your build. The same file names Cloudflare Pages and
+    Netlify read
+  </Card>
+  <Card title="Edge Rules" icon="route" href="/cdn/edge-rules">
+    Redirect, rewrite, and set headers on the pull zone itself, one rule at a
+    time, in the dashboard or the API
+  </Card>
+  <Card title="A custom 404 page" icon="triangle-alert" href="/cdn/custom-404-page">
+    Upload `bunnycdn_errors/404.html` to the root of the storage zone. One page
+    per zone, and it needs no script
+  </Card>
+  <Card title="An Edge Script" icon="code" href="/scripting/frameworks">
+    Write the routing yourself, when your site needs a rule no list of rules can
+    express
+  </Card>
+</CardGroup>
+
 ## Common Configuration
 
 ### Custom Domains
@@ -96,3 +138,7 @@ Static frontends benefit from aggressive caching. Consider these settings in you
   Modern build tools like Vite add content hashes to filenames (e.g.,
   `main.a1b2c3.js`), making it safe to cache these files indefinitely.
 </Note>
+
+Bunny Storage sends no `Cache-Control` header of its own. So the pull zone's cache expiration decides how long a file is kept, at the edge and in the browser. That one expiration covers every file in the zone. HTML therefore wants the short end of the table above, and a hashed file wants the long one.
+
+To give each of the two its own lifetime, the response has to carry the header. `bunny sites` does that per file: a page gets a minute, and a directory named in `_headers` gets a year. By hand, there are two ways. Write an [Edge Rule](/cdn/edge-rules) per path, or turn the zone's cache override off and set the header from an [Edge Script](/scripting). While the override is on, it replaces whatever the origin or the script returns.

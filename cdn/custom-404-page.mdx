@@ -30,7 +30,36 @@ When using a Storage Zone as your Pull Zone origin, you can configure a custom 4
       └── 404.html
 ```
 
+The folder is only read at the root of the storage zone. A copy inside a sub-folder is ignored, even when your requests are rewritten into that sub-folder:
+
+```
+/your-storage-zone/
+  ├── bunnycdn_errors/
+  │   └── 404.html          ✓ answers every missing path
+  └── releases/v2/
+      └── bunnycdn_errors/
+          └── 404.html      ✗ never read
+```
+
+## What a visitor gets
+
+- The response status is `404`, not `200`. Your page is the body of a real 404.
+- The page carries `Cache-Control: no-cache`, so the CDN caches no missing path, and every one of them reaches the origin.
+- While the zone ignores query strings, which is its default, `?v=2` is not a way to re-test a path. Request a new path instead.
+
+One error page belongs to one zone, so it answers every hostname the zone serves. A pull zone you use as a staging URL shows the production page.
+
 <Note>
   This feature only works when your Pull Zone origin is a Bunny Storage Zone.
   For external origins, configure 404 handling on your origin server.
 </Note>
+
+<Info>
+  An [Edge Script](/scripting) on the zone changes nothing here. The uploaded
+  page still answers a missing path. A script that answers the path itself wins,
+  because the request never reaches storage. So a script is how a site serves a
+  **different** error page per deploy, per hostname, or per environment. One
+  folder in one zone cannot do that. [`bunny
+  sites`](/cli/commands/sites#what-the-deploy-configures) does it with the
+  `404.html` from your build.
+</Info>
