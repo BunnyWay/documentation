@@ -175,6 +175,18 @@
                     ]
                   },
                   {
+                    "group": "Load Balancer",
+                    "pages": [
+                      "cdn/load-balancer/index",
+                      "cdn/load-balancer/origins",
+                      "cdn/load-balancer/routing",
+                      "cdn/load-balancer/sticky-sessions",
+                      "cdn/load-balancer/health-and-failover",
+                      "cdn/load-balancer/statistics",
+                      "cdn/load-balancer/pricing"
+                    ]
+                  },
+                  {
                     "group": "Performance",
                     "pages": [
                       "cdn/performance/index",
