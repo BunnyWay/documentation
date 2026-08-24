@@ -14,7 +14,7 @@ In most cases, videos become playable within **10–15 seconds**, regardless of 
 JIT automatically adapts to different resolutions, bitrates, devices, and network conditions. This ensures a smooth playback experience across a wide range of environments, helping improve viewer engagement and retention. When content is instantly accessible and optimized for each viewer, users are more likely to stay, interact, and return.
 
 <Info>
-  Just-in-Time (JIT) encoding is only supported by the Bunny player. We cannot guarantee it will work with 3rd party or custom video players. 
+  Just-in-Time (JIT) encoding is only supported by the Bunny player. We cannot guarantee it will work with 3rd party or custom video players.
 </Info>
 
 #### Performance Considerations
@@ -60,6 +60,28 @@ If using FFmpeg to encode your video, enable fast-start MP4 output with:
 ```text
 ffmpeg -i input.mp4 -c copy -movflags +faststart output.mp4
 ```
+
+#### Resumable (TUS) upload FAQ
+
+Common questions about how authorization and resumability behave when uploading files (for example, large sources on slow connections) that will be processed by JIT encoding.
+
+<AccordionGroup>
+  <Accordion title="Is AuthorizationExpire validated on every request, or only when the upload is created?">
+    `AuthorizationExpire` is validated at the start of **every** `POST`, `HEAD`, and `PATCH` request — not only at upload creation. It is **not** rechecked during an active `PATCH`, so a chunk that is already streaming will not be interrupted mid-request if the signature expires while data is in flight.
+  </Accordion>
+
+  <Accordion title="Can I re-sign an existing video GUID to resume an in-progress upload instead of creating a new video object?">
+    Yes. The same video GUID can be re-signed and used to resume through the existing TUS upload URL — there is no need to create a new video object.
+
+    Note, however, that a fresh signature does **not** extend the upload resource's original expiry. Re-signing lets you continue an existing upload; it does not reset the clock on how long that upload remains available.
+  </Accordion>
+
+  <Accordion title="How long does an incomplete TUS upload stay resumable, and what's returned once it expires?">
+    An incomplete upload remains resumable until the `AuthorizationExpire` value that was used when it was created, or after roughly **48 hours of inactivity** — whichever comes first.
+
+    Once it expires, requesting the upload returns `404 Not Found` (not `410`).
+  </Accordion>
+</AccordionGroup>
 
 ## Multiple output codec support
 
