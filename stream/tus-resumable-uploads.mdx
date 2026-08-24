@@ -5,7 +5,7 @@ description: "Upload videos to Bunny Stream using the TUS protocol for resumable
 
 The TUS resumable upload endpoint allows resumable and presigned uploads of video files. This enables end-users to upload directly to Bunny Stream and greatly improves reliability on poor networks and mobile connections.
 
-The endpoint uses the open [tus protocol](https://tus.io/) for resumable file uploads. Before a video can be uploaded through the TUS endpoint, a video object must be created through the [Create Video](/api-reference/stream) API call to obtain the video ID.
+The endpoint uses the open [TUS Protocol](https://tus.io/) for resumable file uploads. Before a video can be uploaded through the TUS endpoint, a video object must be created through the [Create Video](/api-reference/stream) API call to obtain the video ID.
 
 ## TUS endpoint
 
@@ -445,7 +445,7 @@ const upload = new tus.Upload(file, {
 
 #### Resumable (TUS) upload FAQ
 
-Common questions about how authorization and resumability behave when uploading video with TUS. 
+Common questions about how authorization and resumability behave when uploading video with the TUS resumable protocol. 
 
 <AccordionGroup>
   <Accordion title="Is AuthorizationExpire validated on every request, or only when the upload is created?">
@@ -455,7 +455,7 @@ Common questions about how authorization and resumability behave when uploading 
   <Accordion title="Can I re-sign an existing video GUID to resume an in-progress upload instead of creating a new video object?">
     Yes. The same video GUID can be re-signed and used to resume through the existing TUS upload URL - there is no need to create a new video object.
 
-    Note that a newly generated signature does **not** extend the upload resource's original expiry. Re-signing lets you continue an existing upload; it does not reset the clock on how long that upload remains available.
+    Note that a new generated signature does **not** extend the upload resource's original expiry. Re-signing lets you continue an existing upload; it does not reset the clock on how long that upload remains available.
   </Accordion>
 
   <Accordion title="How long does an incomplete TUS upload stay resumable, and what's returned once it expires?">
