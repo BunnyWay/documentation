@@ -1,0 +1,339 @@
+---
+title: Node:TLS
+sidebarTitle: node:tls
+description: Open low-level TLS client connections from Edge Scripts with the Node.js-compatible node:tls module, and learn when to use it instead of fetch().
+---
+
+## Overview
+
+Edge Scripting supports the client side of the Node.js `node:tls` module, so a script can open an outbound TLS connection and speak any protocol over it, not just HTTP. It also gives you access to things `fetch()` hides: the peer certificate, the negotiated protocol and cipher, and the ability to present a client certificate or pin a specific server certificate.
+
+For HTTP and HTTPS endpoints, prefer `fetch()`.
+
+| Use `fetch()` when… | Use `node:tls` when… |
+| --- | --- |
+| Talking to an HTTP or HTTPS endpoint | Speaking a non-HTTP protocol over TLS |
+| You want browser-like handling origins | You need low-level control of the TLS connection, or need to inspect the certificate |
+| Recommended for almost all cases | Advanced use |
+
+## Quickstart
+
+Opens an outbound TLS connection and reports whether the certificate was trusted. `tls.connect()` verifies the server certificate against the public root CAs; the callback runs once the handshake completes, and `socket.authorized` reports whether the chain was trusted:
+
+```typescript
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
+import tls from "node:tls";
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  return new Promise((resolve) => {
+    const socket = tls.connect(
+      { host: "example.com", port: 443, servername: "example.com" },
+      () => {
+        const info = `authorized=${socket.authorized} protocol=${socket.getProtocol()}`;
+        socket.end();
+        resolve(new Response(info));
+      },
+    );
+    socket.on("error", (err) =>
+      resolve(new Response(`TLS error: ${err.message}`, { status: 502 })),
+    );
+  });
+});
+```
+
+Always set `servername` so the server receives the SNI it needs to select the right certificate.
+
+## Importing the module
+
+```typescript
+import tls from "node:tls";
+```
+
+The module exposes the following client-side API:
+
+| Export | Description |
+| --- | --- |
+| `connect()` | Open an outbound TLS client connection. |
+| `TLSSocket` | The socket type a connection produces. |
+| `checkServerIdentity()` | Verify that a certificate matches a hostname. |
+| `createSecureContext()` | Build TLS options for a connection. |
+| `rootCertificates` | The built-in list of trusted root CAs. |
+| `setDefaultCACertificates()` | Override the default CA list. |
+| `getCiphers()` | Returns an array with the names of the supported TLS ciphers. The names are lower-case. |
+| Constants | `DEFAULT_MIN_VERSION` (`TLSv1.2`), `DEFAULT_MAX_VERSION` (`TLSv1.3`), and the other standard constants. |
+
+## Certificate verification
+
+If you must use `node:tls` against an origin with a private CA or a missing intermediate, supply the certificate yourself with the connection's `ca` option:
+
+```typescript
+import tls from "node:tls";
+
+const socket = tls.connect({
+  host: "internal.example.com",
+  port: 8883,
+  servername: "internal.example.com",
+  ca: [
+    `-----BEGIN CERTIFICATE-----
+...your CA or intermediate certificate (PEM)...
+-----END CERTIFICATE-----`,
+  ],
+});
+```
+
+## Examples
+
+### Example 1: SSL checker
+
+`fetch()` verifies certificates but never shows them to you. With `node:tls` you can open the connection yourself, wait for the handshake, and read what the server presented. This script exposes an endpoint that returns a JSON report about a host's certificate: who issued it, which names it covers, when it expires, and whether the chain is trusted. Point a monitor at it to be warned before a certificate runs out.
+
+```typescript
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
+import tls from "node:tls";
+
+const WARN_DAYS = 14;
+
+interface CertReport {
+  host: string;
+  port: number;
+  authorized: boolean;
+  authorizationError?: string;
+  protocol: string | null;
+  cipher: string;
+  subject?: string;
+  issuer?: string;
+  altNames: string[];
+  validFrom?: string;
+  validTo?: string;
+  daysUntilExpiry?: number;
+  fingerprint256?: string;
+  warning?: string;
+}
+
+/**
+ * Opens a TLS connection to host:port and resolves with a report about the
+ * certificate once the handshake completes.
+ */
+function checkCertificate(host: string, port: number): Promise<CertReport> {
+  return new Promise((resolve, reject) => {
+    const socket = tls.connect(
+      {
+        host,
+        port,
+        servername: host,
+        // Complete the handshake even if verification fails, so we can
+        // report *why* instead of just failing. `authorized` tells us the result.
+        rejectUnauthorized: false,
+      },
+      () => {
+        const cert = socket.getPeerCertificate();
+        const validTo = cert?.valid_to ? new Date(cert.valid_to) : undefined;
+        const daysUntilExpiry = validTo
+          ? Math.floor((validTo.getTime() - Date.now()) / 86_400_000)
+          : undefined;
+
+        const report: CertReport = {
+          host,
+          port,
+          authorized: socket.authorized,
+          authorizationError: socket.authorizationError?.toString(),
+          protocol: socket.getProtocol(), // e.g. "TLSv1.3"
+          cipher: socket.getCipher().name,
+          subject: cert?.subject?.CN,
+          issuer: cert?.issuer?.O ?? cert?.issuer?.CN,
+          altNames: (cert?.subjectaltname ?? "")
+            .split(", ")
+            .filter(Boolean)
+            .map((n) => n.replace(/^DNS:/, "")),
+          validFrom: cert?.valid_from,
+          validTo: cert?.valid_to,
+          daysUntilExpiry,
+          fingerprint256: cert?.fingerprint256,
+        };
+
+        if (!socket.authorized) {
+          report.warning = "Certificate chain is not trusted";
+        } else if (daysUntilExpiry !== undefined && daysUntilExpiry < 0) {
+          report.warning = "Certificate has expired";
+        } else if (daysUntilExpiry !== undefined && daysUntilExpiry <= WARN_DAYS) {
+          report.warning = `Certificate expires in ${daysUntilExpiry} days`;
+        }
+
+        socket.end();
+        resolve(report);
+      },
+    );
+
+    socket.on("error", reject);
+    socket.setTimeout(8000, () => {
+      socket.destroy();
+      reject(new Error("TLS connection timed out"));
+    });
+  });
+}
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const url = new URL(request.url);
+  const host = url.searchParams.get("host");
+  const port = Number(url.searchParams.get("port") ?? "443");
+
+  if (!host) {
+    return new Response("Missing ?host= parameter", { status: 400 });
+  }
+
+  try {
+    const report = await checkCertificate(host, port);
+    return new Response(JSON.stringify(report, null, 2), {
+      // 200 when healthy, 503 when something needs attention,
+      // so uptime monitors can alert on the status code alone.
+      status: report.warning ? 503 : 200,
+      headers: { "content-type": "application/json" },
+    });
+  } catch (err) {
+    return new Response(
+      JSON.stringify({ host, port, error: err.message }),
+      { status: 502, headers: { "content-type": "application/json" } },
+    );
+  }
+});
+```
+
+Calling `/?host=example.com` returns something like:
+
+```json
+{
+  "host": "example.com",
+  "port": 443,
+  "authorized": true,
+  "protocol": "TLSv1.3",
+  "cipher": "TLS_AES_256_GCM_SHA384",
+  "subject": "example.com",
+  "issuer": "DigiCert Inc",
+  "altNames": ["example.com", "www.example.com"],
+  "validFrom": "Jan 15 00:00:00 2026 GMT",
+  "validTo": "Jan 15 23:59:59 2027 GMT",
+  "daysUntilExpiry": 151,
+  "fingerprint256": "AB:CD:12:..."
+}
+```
+
+A few notes on the code:
+
+- `rejectUnauthorized: false` is used here on purpose. This endpoint only *reports* on a certificate and never sends data to the host, so completing the handshake for an untrusted certificate is safe and lets the report explain the failure through `authorized` and `authorizationError`. Do not use this option when you actually talk to the origin.
+- Always set `servername` so the server receives the SNI it needs to select the right certificate. Without it, hosts serving several sites return their default certificate.
+- The endpoint answers `503` when there is a warning, so an uptime monitor can alert on the status code without parsing the body.
+
+### Example 2: Certificate pinning
+
+Standard verification accepts any certificate a public CA is willing to issue for a hostname. If you send credentials to a sensitive origin, you may want to go further and only accept the exact certificate you expect. `fetch()` gives you no access to the peer certificate, but `tls.connect()` lets you pass your own `checkServerIdentity` function, which runs during the handshake before any application data is sent.
+
+The function below first performs the standard hostname check, then compares the certificate's SHA-256 fingerprint to a pinned value stored as an [environment secret](/scripting/secrets). Returning an `Error` aborts the connection:
+
+```typescript
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
+import tls from "node:tls";
+import process from "node:process";
+
+const ORIGIN_HOST = "api.example.com";
+// SHA-256 fingerprint of the expected certificate, e.g.
+// "AB:CD:12:...". Get it with:
+//   openssl s_client -connect api.example.com:443 </dev/null 2>/dev/null \
+//     | openssl x509 -noout -fingerprint -sha256
+const PINNED_FINGERPRINT = process.env.PinnedFingerprint;
+const API_TOKEN = process.env.ApiToken;
+
+function pinnedRequest(path: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: Uint8Array[] = [];
+
+    const socket = tls.connect(
+      {
+        host: ORIGIN_HOST,
+        port: 443,
+        servername: ORIGIN_HOST,
+        checkServerIdentity(hostname, cert) {
+          // Keep the standard hostname check...
+          const err = tls.checkServerIdentity(hostname, cert);
+          if (err) return err;
+          // ...and additionally require the exact certificate we pinned.
+          if (cert.fingerprint256 !== PINNED_FINGERPRINT) {
+            return new Error(
+              `Certificate fingerprint mismatch: got ${cert.fingerprint256}`,
+            );
+          }
+        },
+      },
+      () => {
+        // Only reached when the pin matched. Safe to send the token.
+        socket.write(
+          `GET ${path} HTTP/1.1\r\n` +
+            `Host: ${ORIGIN_HOST}\r\n` +
+            `Authorization: Bearer ${API_TOKEN}\r\n` +
+            `Connection: close\r\n\r\n`,
+        );
+      },
+    );
+
+    socket.on("data", (chunk) => chunks.push(chunk));
+    socket.on("end", () => {
+      const raw = new TextDecoder().decode(concat(chunks));
+      resolve(raw.split("\r\n\r\n")[1] ?? ""); // body only
+    });
+    socket.on("error", reject);
+    socket.setTimeout(8000, () => {
+      socket.destroy();
+      reject(new Error("TLS connection timed out"));
+    });
+  });
+}
+
+function concat(chunks: Uint8Array[]): Uint8Array {
+  const out = new Uint8Array(chunks.reduce((n, c) => n + c.length, 0));
+  let offset = 0;
+  for (const c of chunks) {
+    out.set(c, offset);
+    offset += c.length;
+  }
+  return out;
+}
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  if (!PINNED_FINGERPRINT || !API_TOKEN) {
+    return new Response("Pin or token not configured", { status: 500 });
+  }
+
+  try {
+    const body = await pinnedRequest("/v1/account");
+    return new Response(body, { headers: { "content-type": "application/json" } });
+  } catch (err) {
+    return new Response(`Pinned request failed: ${err.message}`, { status: 502 });
+  }
+});
+```
+
+Pinning trades flexibility for assurance: when the origin rotates its certificate, the pin must be updated or requests start failing. Pin the fingerprint of a longer-lived intermediate CA (compare `cert.issuerCertificate.fingerprint256`) if the origin renews its leaf certificate often.
+
+### Example 3: Client certificates (mTLS)
+
+If the server requires a client certificate, pass the PEM-encoded `cert` and `key` in the connection options, read from [environment secrets](/scripting/secrets):
+
+```typescript
+import process from "node:process";
+
+const socket = tls.connect({
+  host: "mqtt.example.com",
+  port: 8883,
+  servername: "mqtt.example.com",
+  cert: process.env.ClientCert,
+  key: process.env.ClientKey,
+});
+```
+
+<Info>If you have trouble storing a multi-line PEM value in a secret, store it base64-encoded instead and decode it in the script with `atob(process.env.ClientCert)`.</Info>
+
+For HTTPS origins that require mTLS, use `fetch()` with `Deno.createHttpClient` instead. See [Client Certificates on the HTTPS page](/scripting/https-ssl-certificates#client-certificates-mtls).
+
+## References
+
+- [`node:tls` on nodejs.org](https://nodejs.org/api/tls.html)
+- [HTTPS & SSL Certificates](/scripting/https-ssl-certificates)

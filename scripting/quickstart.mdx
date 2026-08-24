@@ -24,14 +24,14 @@ description: "Create and deploy your first Edge Script in minutes."
           ![](/images/docs/68f18ff3816d5947d7acd499028840c65c3e6c7dc5461a8e81d1f8807cc3548e-image.png)
         </Frame>
 
-        Standalone scripts run independently and handle HTTP requests directly at the edge without an origin server. They're ideal for REST APIs, UI applications, and data processing.
+        Standalone scripts handle HTTP requests directly at the edge, without an origin server behind them. Use them for REST APIs, UI applications, and data processing.
 
         [Learn more about standalone scripts](/scripting/standalone/overview)
       </Tab>
       <Tab title="Middleware">
         Select **Middleware** type and then **Default middleware** template.
 
-        Middleware scripts intercept and modify requests and responses as they flow through the CDN. They're perfect for authentication, header manipulation, and content transformation.
+        Middleware scripts intercept and modify requests and responses as they flow through the CDN. Use them for authentication, header manipulation, and content transformation.
 
         [Learn more about middleware scripts](/scripting/middleware/overview)
       </Tab>
@@ -42,13 +42,13 @@ description: "Create and deploy your first Edge Script in minutes."
   </Step>
 
   <Step title="Explore the script editor">
-    An underlying pull zone is automatically set up for your script, making it accessible from the outside through a unique URL. Your new script starts with a placeholder function that issues a simple "Hello from" when accessed through its URL.
+    A pull zone is created for your script, so it is reachable from the outside through a unique URL. The script starts with a placeholder function that returns "Hello from" when you open that URL.
 
     <Frame>
       ![](/images/docs/da2454f3d77252f3af19246fb567d36fcd0d40a767a564e238f3f481d3f4fcb5-image.png)
     </Frame>
 
-    The bottom left panel is a preview pane where you can input a URL and execute the script currently open in the editor. Executing the script here doesn't alter the actual deployed script, allowing you to safely test and refine your code before publishing.
+    The bottom left panel is a preview pane where you can enter a URL and run the script currently open in the editor. Running it here doesn't change the deployed script, so you can test your code before publishing it.
 
     <Frame>
       ![](/images/docs/23d1b7ac94614fa713ed6fb811bc5284d46539c1c2b8b0019d7ca6a344c9f7c0-image.png)
@@ -60,14 +60,13 @@ description: "Create and deploy your first Edge Script in minutes."
       ![](/images/docs/d5c773703340b197b87dbc664e48ae7fc0eae31d410d70ad2fca4acbb07994da-image.png)
     </Frame>
 
-    It serves as a crucial debugging aid, providing real-time insights into the script's performance and helping you identify any issues or confirm operations through the log outputs.
+    Use it to trace what the script did on the last run and to confirm it behaved the way you expected.
 
   </Step>
 
 <Step title="Edit and test your script">
-  Edit your script to customize its functionality. You can replace the
-  placeholder with your desired code. Use the provided URL to test your script
-  and ensure your changes work as expected.
+  Replace the placeholder with your own code, then open the script URL to check
+  that your changes work.
 </Step>
 
   <Step title="Save and publish">
@@ -77,7 +76,7 @@ description: "Create and deploy your first Edge Script in minutes."
       ![](/images/docs/a3a37ccbb4b2fbbad74ad195292713e3875f727a99bb2bba411cc3e7c11e977a-image.png)
     </Frame>
 
-    Once you save and publish your changes, they are applied immediately, allowing for real-time updates and modifications.
+    Published changes take effect immediately.
 
   </Step>
 </Steps>

@@ -5,20 +5,84 @@ tag: Preview
 ---
 
 <Note>
-Bunny Container Registry is in **Preview**. Features and commands may change. See [Product Release Stages](/product-release-stages) for details.
+Bunny Container Registry is in **Preview**. Usage is temporarily free during the Preview phase. Features and commands may change. See [Product Release Stages](/product-release-stages) for details.
 </Note>
 
 Bunny Container Registry is a private, OCI-compliant container registry built into bunny.net. Push images from your machine or CI pipeline and they immediately show up in the Magic Containers image list, ready to deploy. No external registry or credential setup required.
 
-The registry is available at `registry.bunny.net`. Repositories are private to your account and namespaced by your account ID (`<account-id>/my-app`).
+The registry is available at `registry.bunny.net`. Repositories are private to your account and namespaced by your account ID (`<account-id>/my-app`). The [bunny CLI](/cli) manages this namespace for you, so you only need your account ID when [pushing with Docker directly](#pushing-with-docker).
 
 <Info>
 Magic Containers only supports images built for the **linux/amd64** architecture. When building your container image, ensure you target this platform using `--platform linux/amd64`.
 </Info>
 
-You can push images in two ways: with Docker directly, or with the [bunny CLI](/cli). The CLI is the easier option: it handles authentication and the account namespace for you, so no configuration is needed.
+## Quickstart
 
-## Using Docker
+The recommended way to push images is with the [bunny CLI](/cli). It handles authentication and the account namespace for you, so no registry configuration is needed.
+
+<Note>
+`bunny registry` is **experimental** and may change in future releases.
+</Note>
+
+<Steps>
+
+<Step title="Install the bunny CLI and log in">
+
+If you haven't already, [install the CLI](/cli/installation) and authenticate:
+
+```bash
+bunny login
+```
+
+</Step>
+
+<Step title="Push your image">
+
+Push a local Docker image by name. The CLI tags it for the registry and pushes it under your account namespace automatically:
+
+```bash
+bunny registry push my-app:latest
+```
+
+`push` uses Docker to read the local image, so Docker must be installed and the image must exist locally.
+
+</Step>
+
+<Step title="Deploy it">
+
+The image now appears in the Magic Containers image list. Select it when you [deploy](/magic-containers/deploy) or [update](/magic-containers/update) an app; no registry credentials need to be configured.
+
+</Step>
+
+</Steps>
+
+## Using the bunny CLI
+
+The [`bunny registry`](/cli/commands/registry) command pushes images and lists repositories and tags on the registry. Unlike Docker, you don't need to tag images with the registry host or your account ID: the CLI adds and hides the account namespace automatically, so you always work with the bare repository name.
+
+### Push to an explicit repository and tag
+
+Without flags, `push` derives the repository and tag from the image name. Override either with flags:
+
+```bash
+bunny registry push my-app:dev --repository my-app --tag v1
+```
+
+### List repositories and tags
+
+```bash
+# List repositories (alias: ls)
+bunny registry list
+
+# List tags for a repository
+bunny registry tags my-app
+```
+
+`list` and `tags` talk to the registry directly and don't require Docker.
+
+## Pushing with Docker
+
+If you can't use the bunny CLI, for example in a CI pipeline where only Docker is available, you can push images with Docker directly. Unlike the CLI, you handle authentication and the account namespace yourself.
 
 ### Log in to the registry
 
@@ -37,7 +101,7 @@ docker tag my-app registry.bunny.net/<account-id>/my-app:latest
 ```
 
 <Tip>
-Not sure where to find your account ID? Go to [Image Registries](https://dash.bunny.net/magic-containers/image-registries) in the dashboard and click **How to Push Images**. You'll see these Docker commands with your account ID already filled in, ready to copy.
+Need your account ID? Run [`bunny whoami`](/cli/commands/auth#bunny-whoami), which prints it. You can also find it in the dashboard: go to [Image Registries](https://dash.bunny.net/magic-containers/image-registries) and click **How to Push Images** to see these Docker commands with your account ID already filled in.
 </Tip>
 
 ### Push the image
@@ -48,38 +112,16 @@ docker push registry.bunny.net/<account-id>/my-app:latest
 
 Once pushed, the image appears in the Magic Containers image list, where you can select it to deploy.
 
-## Using the bunny CLI
-
-<Note>
-`bunny registry` is **experimental** and may change in future releases.
-</Note>
-
-The [`bunny registry`](/cli/commands/registry) command pushes images and lists repositories and tags on the registry. Unlike Docker, you don't need to tag images with the registry host or your account ID: the CLI adds and hides the account namespace automatically, so you always work with the bare repository name.
-
-### Push an image
-
-```bash
-# Push, deriving the repository and tag from the image name
-bunny registry push my-app:latest
-
-# Push to an explicit repository and tag
-bunny registry push my-app:dev --repository my-app --tag v1
-```
-
-`push` uses Docker to read the local image, so Docker must be installed and the image must exist locally.
-
-### List repositories and tags
-
-```bash
-# List repositories (alias: ls)
-bunny registry list
-
-# List tags for a repository
-bunny registry tags my-app
-```
-
-`list` and `tags` talk to the registry directly and don't require Docker.
-
 ## Deploying pushed images
 
 Images pushed to the Bunny Container Registry appear automatically in the image list when you [deploy](/magic-containers/deploy) or [update](/magic-containers/update) a Magic Containers app. Select the repository and tag to deploy; no registry credentials need to be configured.
+
+## Limits
+
+The following limits apply to each account:
+
+- Repositories per account: 100.
+- Tags per account: 1,000.
+- Blobs per account: 5,000. Blobs are the layers, configs, and manifests that make up your images.
+- Maximum image size: 10 GB.
+- Maximum total storage: 100 GB.

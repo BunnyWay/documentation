@@ -3,7 +3,7 @@ title: Environment Variables
 description: "Environment variables are used to store information or configuration data that your script requires at runtime."
 ---
 
-Environment variables are used to store information or configuration data that your script requires at runtime. They enable you to manage any values separate from the script code. This separation ensures that variable values are not exposed and stored in your scripts or version control systems but rather configured in the runtime.
+Environment variables hold configuration data that your script reads at runtime. Because the values live outside the code, they never end up committed to your script or your version control system.
 
 <Note>
   For sensitive data such as API keys, passwords, or tokens, use [environment
@@ -13,7 +13,7 @@ Environment variables are used to store information or configuration data that y
 
 ## Adding environment variables
 
-To add environment variables to your script, follow these steps:
+To add a variable to your script:
 
 1. Log in to the [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
 2. Select **Edge Platform**, click on **Scripting**, and select the script.
@@ -24,13 +24,13 @@ To add environment variables to your script, follow these steps:
 
 ![](/images/docs/6890047328f8c5e9d652f9405138062ff8e04f515d719b8cd8d8cccdc9ad0db2-image.png)
 
-3. Click **Save**.
+4. Click **Save**.
 
 ## Using environment variables
 
-You can access environment variable value in the script code using node process module or using Deno.env.
+Read the value in your script with either the Node.js `process` module or `Deno.env`.
 
-The following script example shows how to access an environment variable value using node process module:
+This example uses the `process` module:
 
 ```ts
 import * as BunnySDK from "@bunny.net/edgescript-sdk";
@@ -50,7 +50,7 @@ BunnySDK.net.http.serve(
 );
 ```
 
-The following script example shows script code with same logic but using Deno.env to access variable value:
+This one does the same thing with `Deno.env`:
 
 ```ts
 import * as BunnySDK from "@bunny.net/edgescript-sdk";

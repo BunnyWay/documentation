@@ -8,20 +8,16 @@ back to the client."
 tag: New
 ---
 
-Middleware scripts act as intermediaries within the CDN request workflow, allowing you to insert custom logic that modifies requests or responses as they pass through the CDN.
+Middleware scripts sit inside the CDN request flow. Your logic runs on requests on their way in and on responses on their way out, so you can change how traffic behaves without touching your backend, and the work happens at the edge rather than on your origin.
 
 ## Use cases
 
-- **Authentication and authorization** — Verify credentials and manage session tokens at the edge
-- **Header injection and manipulation** — Add, modify, or remove HTTP headers on requests and responses
-- **Response body transformation** — Rewrite HTML, inject scripts, or modify content before delivery
-- **A/B testing and feature flags** — Route users to different versions based on headers or cookies
-- **Request routing and redirects** — Direct traffic based on path, geolocation, or custom logic
-- **Security enhancements** — Implement rate limiting, IP filtering, or bot protection
-
-## Benefits
-
-Middleware scripts provide the flexibility to integrate complex logic into the CDN request flow without modifying backend infrastructure. By processing requests and responses directly at the edge, these scripts improve the overall speed and efficiency of content delivery while reducing reliance on backend processing power.
+- Verify credentials and manage session tokens at the edge
+- Add, modify, or remove HTTP headers on requests and responses
+- Rewrite HTML, inject scripts, or otherwise change the response body before delivery
+- Run A/B tests and feature flags, routing users based on headers or cookies
+- Route or redirect requests based on path, geolocation, or your own logic
+- Apply rate limiting, IP filtering, or bot protection
 
 ## The `servePullZone` function
 
@@ -97,8 +93,8 @@ If your PullZone is configured to execute script before cache, you'll have
 access to this function.
 </Info>
 
-Intercepts requests before they are returned to the user even after you return a
-cached response.
+Intercepts responses before they are returned to the user, including responses
+served from the cache.
 
 ```ts
 onClientResponse(
@@ -154,12 +150,11 @@ onOriginResponse(
 
 - Return `Promise<Response>` with the (modified) response to send to the client
 
-## Enable Before Cache Scripts
+## Enable before cache scripts
 <Badge color="orange" icon="sparkles">Preview</Badge>
 
-To enable Middleware script to run before cache, you'll need to enable it at 
-your PullZone level. Navigate to your Pull Zone, then go to **General** >
-**Origin** and enable **Run script before cache**.
+Before cache execution is turned on per Pull Zone. Navigate to your Pull Zone,
+then go to **General** > **Origin** and enable **Run script before cache**.
 
 <Info>
 Learn more about [before cache execution](/scripting/before-cache).
@@ -175,12 +170,10 @@ If your PullZone is configured to execute script before cache, you'll run the
 </Info>
 
 1. **`onClientRequest`** - Called before the request is sent to the cache. Modify the request or return a response to short-circuit.
-2. **`onOriginRequest`** - Called before the request is sent to the origin (so
-if the cache is giving a *MISS*). Modify the request or return a response to short-circuit.
+2. **`onOriginRequest`** - Called before the request is sent to the origin, so only when the cache returns a *MISS*. Modify the request or return a response to short-circuit.
 3. **Origin fetch** - The request is sent to your origin server.
 4. **`onOriginResponse`** - Called after the origin responds. Modify the response before it's sent to the client and cached.
-3. **`onClientResponse`** - Called just before a Response is sent to the client
-expect if you short circuit it at the `onClientRequest` layer.
+5. **`onClientResponse`** - Called just before a response is sent to the client, unless you short-circuited at the `onClientRequest` layer.
 
 ```mermaid
 sequenceDiagram
@@ -196,7 +189,7 @@ sequenceDiagram
 
 ## Example
 
-This example implements access control based on feature flags and adds a custom header to responses:
+This example gates a route behind a feature flag and adds a custom header to responses:
 
 ```ts
 import * as BunnySDK from "@bunny.net/edgescript-sdk";
