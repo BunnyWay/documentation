@@ -455,7 +455,7 @@ Common questions about how authorization and resumability behave when uploading 
   <Accordion title="Can I re-sign an existing video GUID to resume an in-progress upload instead of creating a new video object?">
     Yes. The same video GUID can be re-signed and used to resume through the existing TUS upload URL - there is no need to create a new video object.
 
-    Note, however, that a fresh signature does **not** extend the upload resource's original expiry. Re-signing lets you continue an existing upload; it does not reset the clock on how long that upload remains available.
+    Note that a newly generated signature does **not** extend the upload resource's original expiry. Re-signing lets you continue an existing upload; it does not reset the clock on how long that upload remains available.
   </Accordion>
 
   <Accordion title="How long does an incomplete TUS upload stay resumable, and what's returned once it expires?">
