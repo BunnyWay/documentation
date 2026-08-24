@@ -1,50 +1,70 @@
 ---
 title: "Android SDK"
+description: "Integrate Bunny Stream into your Android apps with the Kotlin SDK — playback, uploads, camera capture, and embed view token authentication."
 ---
 
-> ## Documentation Index
->
-> Fetch the complete documentation index at: [https://bunny.net/docs/llms.txt](https://bunny.net/docs/llms.txt) Use this file to discover all available pages before exploring further.
+The Bunny Stream Android SDK lets you quickly integrate the Bunny Stream player, uploads, and video management into your Android applications.
 
-# Token authentication with Mobile SDKs
+## Key Features
 
-When using the Stream Mobile SDKs, **two authentication layers exist**:
+- **Complete API Integration:** Full support for the Bunny REST Stream API
+- **Efficient Video Upload:** TUS protocol implementation for reliable, resumable uploads
+- **Advanced Video Player:** Custom-built player with full Bunny CDN integration
+- **Camera Upload Support:** Built-in capabilities for recording and uploading videos directly from the device camera
+- **Type-Safe API:** Fully typed Kotlin API for compile-time safety
+- **Background Processing:** Support for background uploads and downloads
+- **Comprehensive Error Handling:** Detailed error information and recovery options
 
-- **Embed View Token Authentication**: controls access to the video
-- **CDN Token Authentication**: protects delivery from Bunny CDN and is handled automatically by the SDK
+## What is the Bunny Stream Android SDK?
 
-This document focuses on **Embed View Token Authentication**, which must be handled by a **customer-managed backend or Edge Script** containing custom business logic that decides whether a certain client is allowed to play back a video by returning an embedded view token.
+Bunny Stream is an Android library designed to seamlessly integrate Bunny's powerful video streaming capabilities into your Android applications. The library provides a robust set of tools for video management, playback, uploading, and camera-based video uploads, all through an intuitive **Kotlin API**.
 
-## Embed View Token Authentication
+<Card title="Android SDK" horizontal href="https://github.com/BunnyWay/bunny-stream-android">
+</Card>
 
-### Purpose
+## Token authentication
+
+When using the Android SDK, **two authentication layers exist**:
+
+- **Embed View Token Authentication** — controls access to the video.
+- **CDN Token Authentication** — protects delivery from Bunny CDN and is handled automatically by the SDK.
+
+This section focuses on **Embed View Token Authentication**, which must be handled by a **customer-managed backend or Edge Script** containing custom business logic that decides whether a client is allowed to play back a video by returning an embed view token.
+
+### Embed View Token Authentication
+
+Embed View Token Authentication:
 
 - Authorizes a viewer to play a specific video
-- Enforced at the **Stream API level**
-- Required for private or restricted videos
+- Is enforced at the **Stream API level**
+- Is required for private or restricted videos
 
-### Mobile SDK Responsibility
+**Android SDK responsibility**
 
-- **The customer backend generates the token**
-- The mobile app requests the token and passes it to the SDK player element
-- The SDK uses the token for playback; **CDN token signing happens automatically**
+- The **customer backend generates the token**.
+- The app requests the token and passes it to the `PlayVideo` call.
+- The SDK uses the token for playback; **CDN token signing happens automatically**.
 
-## Supported Authentication Methods
+### Supported authentication methods
 
-| Method | Mobile SDK |
+| Method | Android SDK |
 | --- | --- |
 | Embed View Token Authentication | Supported via customer backend |
 | CDN Token Authentication | Automatic |
 | Client-side token signing | Not supported |
 
-## Backend Requirements
+<Warning>
+  The **Video Library API Key** must **never** be included in your Android app. It is a secret that only your backend or Edge Script should hold.
+</Warning>
 
-The backend (or Edge Script) must:
+### Backend requirements
 
-- Securely store the **Video Library API Key** as it serves as a secret that must not be stored in the mobile app
-- Authenticate the mobile app user with custom business logic
-- Generate embed view token by following the [token authentication signing procedure](/docs/stream/token-authentication#signing-procedure) (token security key is your Video Library API Key)
-- Return a `token` and `expires` values in response:
+Your backend (or Edge Script) must:
+
+- Securely store the **Video Library API Key**, as it serves as a secret that must not be stored in the mobile app.
+- Authenticate the app user with your custom business logic.
+- Generate the embed view token by following the [token authentication signing procedure](/docs/stream/token-authentication#signing-procedure) (the token security key is your Video Library API Key).
+- Return `token` and `expires` values in the response:
 
 ```json
 {
@@ -53,9 +73,11 @@ The backend (or Edge Script) must:
 }
 ```
 
-Tokens should be **short-lived** (1–5 minutes recommended), unless you have a specific use-case for which longer expiration could be used.
+<Note>
+  Tokens should be **short-lived** (1–5 minutes recommended), unless you have a specific use case that requires a longer expiration.
+</Note>
 
-### Edge Script Example
+### Edge Script example
 
 Below is an example Edge Script that generates embed view tokens. Store `VIDEO_LIBRARY_API_KEY` as an **Edge Script Secret**.
 
@@ -131,7 +153,7 @@ function generateEmbedViewToken(
 }
 ```
 
-## Android SDK Usage
+### Android SDK usage
 
 The `PlayVideo` call supports token parameters:
 
@@ -145,35 +167,22 @@ PlayVideo(
 )
 ```
 
-**Flow:**
+**Flow**
 
-1. Request embed token from backend
-2. Receive `{ token, expires }`
-3. Pass values to `PlayVideo`
+<Steps>
+  <Step title="Request the embed token">
+    Call your backend or Edge Script from the app to request a token for the target `videoId`.
+  </Step>
+  <Step title="Receive the token">
+    Your backend returns `{ token, expires }`.
+  </Step>
+  <Step title="Play the video">
+    Pass the `token` and `expires` values to the `PlayVideo` call.
+  </Step>
+</Steps>
 
-## iOS SDK Usage
+## Important notes
 
-The `BunnyStreamPlayer` initializer supports token parameters:
-
-```swift
-BunnyStreamPlayer(
-    ...
-    videoId: "abc123",
-    token: token,
-    expires: expires
-    ...
-
-)
-```
-
-**Flow:**
-
-1. Request embed token from backend
-2. Receive `{ token, expires }`
-3. Initialize player with token data
-
-## Important Notes
-
-- The **Video Library API Key** must **never** be included in mobile apps
-- Embed View Token Authentication is **required** if you don't want to publicly expose your videos
-- CDN Token Authentication is applied to CDN URLs automatically if turned on in the video library
+- The **Video Library API Key** must **never** be included in mobile apps.
+- Embed View Token Authentication is **required** if you don't want to publicly expose your videos.
+- CDN Token Authentication is applied to CDN URLs automatically if it is turned on in the video library.
