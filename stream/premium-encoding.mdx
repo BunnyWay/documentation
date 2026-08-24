@@ -79,7 +79,7 @@ Common questions about how authorization and resumability behave when uploading 
   <Accordion title="How long does an incomplete TUS upload stay resumable, and what's returned once it expires?">
     An incomplete upload remains resumable until the `AuthorizationExpire` value that was used when it was created, or after roughly **48 hours of inactivity** - whichever comes first.
 
-    Once it expires, requesting the upload returns `404 Not Found` (not `410`).
+    Once it expires, requesting the upload returns `404 Not Found `(not `410`).
   </Accordion>
 </AccordionGroup>
 
