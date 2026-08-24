@@ -22,8 +22,7 @@ Standard encoding is included at no extra cost, so enabling additional resolutio
 | 480p (ED 842 x 480) 360p (nHD 640 x 360) 240p (EGA 352 x 240) | \$0.025                  |
 
 ### Storage & CDN
-#### [Stream Storage and CDN Calculator](https://bunny.net/pricing/stream/#:~:text=Calculate%20your%20monthly%20bill)
-#### Storage
+
 Storage is billed on what a video generates during encoding, not only on the size of the file you uploaded. Each enabled resolution is stored separately, and **MP4 fallback**, **Keep original files**, preview animations, thumbnails, and captions all add more on top, so a library can easily hold several times the footage you sent it. [Video storage usage](/stream/encoding#video-storage-usage) shows which of these is taking the space for a given video.
 
 These encoding options apply to videos uploaded after they are set, so switching one off does not shrink videos that are already encoded. Use [Cleanup unconfigured resolutions](/api-reference/stream/manage-videos/cleanup-unconfigured-resolutions) to remove files that existing videos no longer need.
@@ -46,6 +45,9 @@ Replication storage rates are in additiona to the default region's storage rate,
 Delivery is billed on the bandwidth served to your viewers. Each video library is delivered on either the Standard or the Volume tier, and the two are priced differently: Standard is billed by the region the traffic is served in, while Volume is billed at a single worldwide rate that decreases with monthly volume. See [Delivery Tiers](/stream/delivery-tiers).
 
 #### [CDN](https://bunny.net/pricing/cdn/)
+<Info>
+  [*Stream Storage and CDN Calculator*](https://bunny.net/pricing/stream/#:~:text=Calculate%20your%20monthly%20bill)
+</Info>
 
 #### Standard network
 
