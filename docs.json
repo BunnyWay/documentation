@@ -646,7 +646,8 @@
                       "stream/mobile-sdk-token-authentication",
                       "untitled-page",
                       "untitled-page-2"
-                    ]
+                    ],
+                    "expanded": true
                   },
                   "stream/expo-video",
                   "stream/embedding",
