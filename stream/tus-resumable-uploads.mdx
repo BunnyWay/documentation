@@ -5,9 +5,9 @@ description: "Upload videos to Bunny Stream using the TUS protocol for resumable
 
 The TUS resumable upload endpoint allows resumable and presigned uploads of video files. This enables end-users to upload directly to Bunny Stream and greatly improves reliability on poor networks and mobile connections.
 
-The endpoint uses the open [TUS Protocol](https://tus.io/) for resumable file uploads. Before a video can be uploaded through the TUS endpoint, a video object must be created through the [Create Video](/api-reference/stream) API call to obtain the video ID.
+The endpoint uses the open [TUS Protocol](https://tus.io/) for resumable file uploads. Before a video can be uploaded through the TUS endpoint, a video object must be created through the [Create Video API](/api-reference/stream) call to obtain the video ID.
 
-## TUS endpoint
+## TUS upload API endpoint
 
 ```text
 https://video.bunnycdn.com/tusupload
@@ -15,9 +15,9 @@ https://video.bunnycdn.com/tusupload
 
 ## How it works
 
-1. **Create a video object** using the [Create Video](/api-reference/stream) API to get a `videoId`.
-2. **Generate a presigned signature** on your server using SHA256.
-3. **Upload the file** from the client using a TUS client library with the presigned credentials.
+1. **Create a video object** using the [Create Video API](/api-reference/stream) to get a `videoId`.
+2. **Generate a pre-signed signature** on your server using SHA256.
+3. **Upload the file** from the client using a TUS client library with the pre-signed credentials.
 
 This approach allows secure direct uploads from end-users without exposing your API key.
 
