@@ -643,7 +643,6 @@
                     "group": "Mobile SDK",
                     "pages": [
                       "stream/mobile-sdk",
-                      "stream/mobile-sdk-token-authentication",
                       "untitled-page",
                       "untitled-page-2"
                     ],
