@@ -16,8 +16,8 @@ https://video.bunnycdn.com/tusupload
 ## How it works
 
 1. **Create a video object** using the [Create Video API](/api-reference/stream) to get a `videoId`.
-2. **Generate a pre-signed signature** on your server using SHA256.
-3. **Upload the file** from the client using a TUS client library with the pre-signed credentials.
+2. **Generate a presigned signature** on your server using SHA256.
+3. **Upload the file** from the client using a TUS client library with the presigned credentials.
 
 This approach allows secure direct uploads from end-users without exposing your API key.
 
