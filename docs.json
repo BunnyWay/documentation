@@ -643,8 +643,8 @@
                     "group": "Mobile SDK",
                     "pages": [
                       "stream/mobile-sdk",
-                      "untitled-page",
-                      "untitled-page-2"
+                      "Android-SDK",
+                      "iOS-SDK"
                     ],
                     "expanded": true
                   },
