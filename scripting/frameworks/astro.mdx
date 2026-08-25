@@ -14,6 +14,14 @@ One command does all of it:
 bunny lab deploy astro
 ```
 
+<Warning>
+  The adapter is a lab project, and it is not on npm yet. `npm install
+  @bunny.net/astro-adapter` does not work: build it from
+  [BunnyWay/bunny-adapters](https://github.com/BunnyWay/bunny-adapters) and add
+  it to your project by path. Its options and its build output can change
+  without notice, so do not run it in production yet.
+</Warning>
+
 <Note>
   `bunny lab` holds commands we are still shaping, so the flags and the output
   can change between CLI releases. There are two, and no more: `bunny lab deploy
