@@ -15,11 +15,10 @@ bunny lab deploy astro
 ```
 
 <Warning>
-  The adapter is a lab project, and it is not on npm yet. `npm install
-  @bunny.net/astro-adapter` does not work: build it from
-  [BunnyWay/bunny-adapters](https://github.com/BunnyWay/bunny-adapters) and add
-  it to your project by path. Its options and its build output can change
-  without notice, so do not run it in production yet.
+  The adapter is a lab project. It is on npm as
+  [`@bunny.net/astro-adapter`](https://www.npmjs.com/package/@bunny.net/astro-adapter),
+  at version 0.1.0. Pin the version you install, because its options and its
+  build output can change in a minor release. Do not run it in production yet.
 </Warning>
 
 <Note>
@@ -79,6 +78,9 @@ bunny lab deploy astro
     ```
 
     Open the URL. Reload it, and anything the page renders per request changes each time.
+
+    The first prompt installs the adapter from npm. To add it yourself, run
+    `npx astro add @bunny.net/astro-adapter` before you deploy.
 
     The app's name comes from your `package.json`. Pass `--name` to choose one.
 
