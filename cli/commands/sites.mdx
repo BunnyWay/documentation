@@ -1,0 +1,266 @@
+---
+title: bunny sites
+sidebarTitle: sites
+description: "Deploy a directory of files to bunny.net with one command. Every deploy is immutable, and publishing or rolling back is instant."
+---
+
+`bunny sites` hosts a site on bunny.net. Each site is three resources, provisioned and wired together for you:
+
+| Resource       | What it does                               |
+| -------------- | ------------------------------------------ |
+| A storage zone | Holds every deploy's files                 |
+| A pull zone    | The site's URL, its cache, and its domains |
+| An Edge Script | The site's router, which this CLI writes   |
+
+Zones are named `sites-<name>-<suffix>`. The prefix groups them in the dashboard. The suffix is there because zone names are global across bunny.net. The commands take the clean site name.
+
+The [Edge Script](/scripting) is the router this CLI writes. It maps each request to the deploy that answers it, and it serves the deploy's own `404.html`, `_redirects` and `_headers`.
+
+```bash
+bunny sites deploy ./dist          # deploy a directory, and publish it as the live site
+bunny sites deploy --build         # run the project's own build first
+```
+
+<Info>
+  A build that renders pages per request is a different shape, and this command
+  does not deploy one. [`bunny lab deploy astro`](/cli/commands/lab) deploys an
+  Astro project as an Edge Script, with its client build in Bunny Storage.
+</Info>
+
+## Deploy this project
+
+<Steps>
+  <Step title="Log in">
+    ```bash
+    bunny login
+    ```
+  </Step>
+
+  <Step title="Run the command in your project">
+    ```bash
+    bunny sites deploy --build
+    ```
+
+    With no site linked yet, the command offers to create one:
+
+    ```
+    ? Site name: › my-site
+    ✓ Created site "my-site".
+    ✓ Deployed a1b2c3d4: 42 files (1.9 MB).
+    ℹ Preview  https://sites-dpl-a1b2c3d4-x9k2mq.b-cdn.net
+    ? Publish this deploy as the live site? › (Y/n)
+    ```
+
+  </Step>
+
+  <Step title="Add your domain">
+    The site's first deploy offers one. To add it later:
+
+    ```bash
+    bunny sites domains add www.example.com
+    ```
+
+  </Step>
+</Steps>
+
+Nothing above asks for a password. The CLI creates the storage zone, so it already holds the credentials. It sets them on the script as [secrets](/scripting/secrets).
+
+Every deploy goes to its own directory in the storage zone. So publishing an earlier one restores its pages, and the files those pages name, together.
+
+## Deploy a directory
+
+<Steps>
+  <Step title="Deploy">
+    ```bash
+    bunny sites deploy ./dist
+    ```
+
+    The files go up, and the deploy becomes the live site. A site with no linked directory is created first, or picked.
+
+  </Step>
+
+  <Step title="Roll back, when you need to">
+    ```bash
+    bunny sites deployments publish --previous
+    ```
+
+    Publishing points the router at another deploy and purges the cache. Nothing moves, so going live and rolling back are both instant.
+
+  </Step>
+</Steps>
+
+### Immutable deploys
+
+Every deploy uploads to its own directory in the storage zone, and stays there. Publishing only moves the router's pointer, so any past deploy goes live again with nothing re-uploaded.
+
+A deploy serves from the site's root, not under a path prefix. So a client-side router and a root-absolute asset work with no configuration.
+
+The deploy ID is the git short SHA when the working tree is clean, and a content hash otherwise. So re-deploying identical content is a no-op. Use `--force` to override that.
+
+```bash
+bunny sites deployments list                 # ● Live / ○ Previous, created, source, files, size
+bunny sites deployments publish a1b2c3d4     # promote a past deploy
+bunny sites deployments publish --previous   # instant rollback
+bunny sites deployments prune --keep 10      # delete old deploys (never the live or previous one)
+```
+
+## What the deploy configures
+
+The site's router reads three file names out of the deploy it is serving. Cloudflare Pages and Netlify read the same three. So a build that already writes them works here unchanged, and the router knows no framework.
+
+| File in the deploy | What the router does with it                                      |
+| ------------------ | ----------------------------------------------------------------- |
+| `404.html`         | Answers a path the deploy does not hold, at status 404            |
+| `_redirects`       | Sends a redirect with a real status                               |
+| `_headers`         | Adds response headers, which Bunny Storage cannot hold on its own |
+
+<Warning>
+  Without a `404.html` in the deploy, a missing path answers with bunny.net's
+  own error page instead of your site's. So `bunny sites deploy` asks the
+  published site for a path it cannot hold. It warns you when the answer is not
+  your page.
+</Warning>
+
+### `_redirects`
+
+One rule per line: a path, a target, and an optional status. Lines starting with `#` are comments.
+
+```
+# dist/_redirects
+/old            /about
+/gone           /about       302
+/blog/*         /news/:splat 301
+/moved          /about       301!
+```
+
+- The default status is `301`. `302`, `303`, `307` and `308` are read too. A rewrite (`200`) is not supported.
+- A trailing `*` in the path is captured, and `:splat` in the target is replaced with it.
+- A rule applies only where the deploy holds no file at that path, so a real file always wins. `!` after the status forces the rule ahead of the file.
+- A path matches with or without its trailing slash, so `/about` and `/about/` are one rule.
+
+### `_headers`
+
+A line starting with `/` opens a block, and the indented `Name: value` lines below it belong to that block. Where two blocks match one path, the later one wins that header name.
+
+```
+# dist/_headers
+/*
+  X-Frame-Options: SAMEORIGIN
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/admin/
+  X-Robots-Tag: noindex
+```
+
+### Caching
+
+The router sets `Cache-Control` on every response, because Bunny Storage sends none for HTML:
+
+| What                      | How long                  |
+| ------------------------- | ------------------------- |
+| A page, and any document  | `public, max-age=60`      |
+| Anything else             | `public, max-age=2592000` |
+| A missing page            | `no-cache`                |
+| Anything `_headers` names | Whatever `_headers` says  |
+
+Publishing purges the whole zone, so a promoted deploy answers at once. A purge does not reach a browser, which is why a page keeps only the one minute. A file whose name carries a content hash never changes. Name that directory in `_headers`, and the browser keeps it for a year.
+
+<Info>
+  A site created by an earlier CLI has an earlier router. `bunny sites deploy`
+  republishes it when it lags, and `bunny sites upgrade-router` does it on
+  demand.
+</Info>
+
+## Custom domains
+
+A custom domain is the site's production URL. Previews never depend on one.
+
+```bash
+bunny sites domains add shop.example.com          # prints the DNS record to create
+bunny sites domains add shop.example.com --wait   # add, wait for DNS, then issue SSL
+bunny sites domains list
+bunny sites domains remove shop.example.com --force
+```
+
+## Every command
+
+```bash
+# Provision
+bunny sites create                       # prompts for a name
+bunny sites create my-site --region NY   # store the files in New York (default: DE)
+bunny sites create my-site --domain example.com
+
+# Deploy
+bunny sites deploy ./dist                # deploy a directory of files
+bunny sites deploy --build               # run the configured or detected build first
+bunny sites deploy --name my-site --region NY   # create the site this deploy needs, unattended
+
+# Inspect
+bunny sites list
+bunny sites show                         # resources, domains, SSL state, current deploy
+bunny sites open --print
+
+# Maintain
+bunny sites ci init                      # GitHub Actions: deploy on push to main
+bunny sites link my-site
+bunny sites unlink
+bunny sites upgrade-router
+bunny sites delete my-site --keep-storage
+```
+
+## Which site a command acts on
+
+Most commands take the site as an optional positional. `deploy`, `ci init`, and `deployments publish` use `--site`. Either accepts the site name or its storage zone ID.
+
+With none given, the site resolves in this order:
+
+1. The directory's linked site, in `.bunny/site.json`
+2. `sites.name` in `bunny.jsonc`
+3. An interactive picker, which offers to link the directory
+
+A run that cannot prompt reports an error instead. That is `--output json`, no TTY, or `--force` on a destructive command. A `--name` is an instruction, so an unattended run with one creates the site and needs nothing else.
+
+Preconfigure the `sites` block in `bunny.jsonc` and a deploy needs no arguments:
+
+```jsonc
+{
+  "sites": {
+    "name": "my-site",
+    "build": "npm run build",
+    "dir": "dist",
+  },
+}
+```
+
+```bash
+bunny sites deploy --build
+```
+
+A `dir` here is an instruction: deploy these files. The command then offers no adapter, and it deploys the directory whatever the project holds.
+
+Site state lives at `_bunny/site.json` inside the storage zone, which the router never serves. `.bunny/site.json` is only a local pointer. So a fresh clone can `bunny sites link`, and go on where the last machine stopped.
+
+<Info>
+  In a monorepo, run `bunny sites deploy` at the repository root, and it finds
+  the framework projects below it. Or run it in a project's own directory to
+  deploy that one. The package manager comes from the workspace, so a `pnpm`
+  monorepo gets `pnpm`.
+</Info>
+
+## Flags
+
+| Flag                                   | Commands                                                   | Description                                                                    |
+| -------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `--region`, `--domain`                 | `create`                                                   | Storage region (default `DE`); custom production domain to attach              |
+| `--name`, `--region`                   | `deploy`                                                   | Site name and storage region, for a site this deploy creates                   |
+| `--site`                               | `deploy`, `ci init`, `deployments publish`                 | Site name or storage zone ID                                                   |
+| `--build [cmd]`, `--env`, `--env-file` | `deploy`                                                   | Build before deploying; build-time environment overrides                       |
+| `--force`                              | `deploy`                                                   | Deploy even when the content is unchanged                                      |
+| `--previous`                           | `deployments publish`                                      | Publish the previous deploy                                                    |
+| `--keep`                               | `deployments prune`                                        | Recent deploys to keep (default 5; live and previous are always kept)          |
+| `--ssl`, `--wait`, `--force-ssl`       | `domains add`                                              | Issue SSL now; wait for DNS then issue it; `--no-force-ssl` keeps HTTP working |
+| `--framework`                          | `ci init`                                                  | Framework preset for the workflow's build steps                                |
+| `--print`                              | `open`                                                     | Print the URL instead of opening a browser                                     |
+| `--link`                               | `create`, `deploy`, `show`, `ci init`, `deployments`       | Link the directory to the site; `--no-link` never links                        |
+| `--keep-storage`                       | `delete`                                                   | Delete the pull zone and router, and keep the files                            |
+| `--force`, `-f`                        | `deployments publish`, `prune`, `domains remove`, `delete` | Skip the confirmation prompt                                                   |

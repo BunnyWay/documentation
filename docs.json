@@ -1060,6 +1060,8 @@
                 "group": "Commands",
                 "pages": [
                   "cli/commands/auth",
+                  "cli/commands/sites",
+                  "cli/commands/lab",
                   "cli/commands/config",
                   "cli/commands/db",
                   "cli/commands/scripts",
