@@ -1,0 +1,755 @@
+---
+title: "Deploy an Astro Site on Edge Scripting"
+sidebarTitle: "Astro"
+description: "Deploy Astro to bunny.net with one command. Server-side rendering runs on Edge Scripting, and the build's files come from Bunny Storage."
+---
+
+[Astro](https://astro.build/) is a server-first framework. It renders HTML on the server, and it ships only the JavaScript a page really needs.
+
+The [`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters/tree/main/packages/astro) package runs that server inside an Edge Script. Astro renders pages and API routes per request, on a node near your visitor. The build's static files live in [Bunny Storage](/storage), and the script serves them from there.
+
+One command does all of it:
+
+```bash
+bunny lab deploy astro
+```
+
+<Note>
+  `bunny lab` holds commands we are still shaping, so the flags and the output
+  can change between CLI releases. There are two, and no more: `bunny lab deploy
+  astro` and `bunny lab undeploy astro`.
+</Note>
+
+<Card
+  title="See it running"
+  icon="rocket"
+  href="https://astro-ssr-demo.bunny.run"
+>
+  A live Astro site on Edge Scripting. Every page demonstrates one adapter
+  capability, and the [source is on
+  GitHub](https://github.com/BunnyWay/bunny-adapters/tree/main/examples/astro-showcase).
+</Card>
+
+## Deploy your first site
+
+<Steps>
+  <Step title="Install the CLI and log in">
+    ```bash
+    curl -fsSL https://cli.bunny.net/install.sh | sh
+    bunny login
+    ```
+
+    See [installation](/cli/installation) for npm, Bun, and Windows.
+
+  </Step>
+
+  <Step title="Run bunny lab deploy astro">
+    From your Astro project:
+
+    ```bash
+    bunny lab deploy astro
+    ```
+
+    The command puts the adapter in, builds the site, creates what the site needs, and publishes it:
+
+    ```
+    ? Add @bunny.net/astro-adapter to this project? › (Y/n)
+    ✓ Added the adapter to astro.config.mjs.
+
+    ℹ Running: npm run build
+    …
+    [@bunny.net/astro-adapter] Bundled to dist/index.js (653 kB, limit 10.00 MB). 3 route(s) render per request.
+    [@bunny.net/astro-adapter] Wrote .bunny/build.json. Deploy it with: bunny lab deploy astro
+
+    ℹ Applied the pull zone settings: cookies on, Smart Cache off, cache override off.
+    ℹ Set 4 script variable(s): BUNNY_STORAGE_ZONE, BUNNY_STORAGE_HOST, BUNNY_STORAGE_KEY, BUNNY_PULLZONE_ID.
+    ✓ Deployed a1b2c3d4: 42 files (1.9 MB), script 653 KB.
+    ℹ   https://astro-my-app-k3f9wq.b-cdn.net
+      storage zone   astro-my-app-k3f9wq
+      edge script    86793
+      pull zone      6411574
+    ```
+
+    Open the URL. Reload it, and anything the page renders per request changes each time.
+
+    The app's name comes from your `package.json`. Pass `--name` to choose one.
+
+  </Step>
+
+  <Step title="Take it down again">
+    One command deletes the pull zone, the Edge Script, and the storage zone:
+
+    ```bash
+    bunny lab undeploy astro
+    ```
+
+    It lists the three resources, and asks you to type the app's name. `--keep-storage` keeps the files.
+
+  </Step>
+</Steps>
+
+<Note>
+  Nothing above asks for a password. The CLI creates the storage zone, so it
+  already holds the credentials, and it sets them on the script as
+  [secrets](/scripting/secrets).
+</Note>
+
+### What the deploy created
+
+| Resource            | What it does                                                        |
+| ------------------- | ------------------------------------------------------------------- |
+| A storage zone      | Holds each deploy's files, and your sessions                        |
+| A pull zone         | The app's URL and its cache. The Edge Script is its origin          |
+| An Edge Script      | Astro's server, published as one file                               |
+| `.bunny/astro.json` | Links this directory to those three. Keep it out of commits         |
+| `.bunny/build.json` | What the build produced. The CLI reads it, and it is a build output |
+
+All three are named after your app: `astro-my-app-k3f9wq`. The suffix is there because a storage zone name and a pull zone name are unique across all of bunny.net.
+
+The CLI also applies the pull zone settings the adapter asks for, and it says which ones it changed: cookies pass through, so `Astro.cookies.set()` works, [Smart Cache](/cdn/smart-cache) goes off so the adapter's own cache headers count, and the zone's cache override goes off so those headers reach a visitor unchanged.
+
+### Add your own domain
+
+The two commands do not attach one. Add it to the app's pull zone in the dashboard, under **CDN** > your pull zone > **Hostnames**, and the free certificate is one click from there.
+
+### What the deploy needs from you
+
+Three things, and only the first is usually a surprise:
+
+| What                                        | Why                                                                          |
+| ------------------------------------------- | ---------------------------------------------------------------------------- |
+| **Astro 7**                                 | The adapter's peer range is `^7.0.0`                                         |
+| **No module-level state**                   | Each request may reach a different node, and a different isolate             |
+| **A route, not a fetch, for your own data** | A page that fetches its own API route pays for a second trip through the CDN |
+
+[Code your project may need to change](#code-your-project-may-need-to-change) covers all three, with what each one looks like when it goes wrong.
+
+### Moving from another host
+
+A project that already has an adapter keeps everything but that one line. The command names the adapter it found, swaps it in the config, and uninstalls the package:
+
+```
+? Replace @astrojs/node with @bunny.net/astro-adapter? › (Y/n)
+✓ Replaced @astrojs/node with @bunny.net/astro-adapter in astro.config.mjs.
+```
+
+Uninstalling matters as much as the swap. `@astrojs/node@9` requires `astro@^5`, so leaving it in `package.json` after an upgrade to Astro 7 makes every later `npm install` in that project fail, with an error about peer ranges that says nothing about adapters.
+
+Adapter options do not carry over, because no two hosts share them. Anything the old adapter was configured with is worth reading again in [the options below](#adapter-options).
+
+### In a monorepo
+
+Run the command at the repository root, and it finds the projects below it:
+
+```
+ℹ This directory holds no Astro project, and 4 below it do.
+? Which one should be deployed? › docs
+```
+
+Or name one: `bunny lab deploy astro ./docs`. The package manager comes from the workspace, not from the directory, so a `pnpm` monorepo gets `pnpm`.
+
+## What the adapter does not change
+
+The adapter adds itself to your config, and nothing else. It does not set `output`.
+
+Since Astro 5, a project that says nothing about `output` prerenders its pages, and a page asks for the edge with `export const prerender = false`. That default is the right one, and setting `output: "server"` over it is expensive: on [astro.build](https://github.com/withastro/astro.build) it turned 4499 prerendered pages into pages that render per request, and took the script from 7.83 MB to 22.30 MB, past the limit.
+
+So the build asks Astro what it built, and Astro answers from the routes:
+
+| What Astro built                 | Which command deploys it                                               |
+| -------------------------------- | ---------------------------------------------------------------------- |
+| A route that renders per request | `bunny lab deploy astro`: the script, and the files it renders from    |
+| Every route prerendered          | `bunny sites deploy`: the files alone, and nothing invoked per request |
+
+The build says which one it chose. A site can also ask for the script outright. That is what a prerendered page holding a `server:defer` component needs, because Astro reports such a project as a fully prerendered one:
+
+```js astro.config.mjs
+adapter: bunny({ deploy: "server" }),
+```
+
+## Code your project may need to change
+
+Most Astro projects deploy as they stand. Three things do not, and no deploy
+command can fix them for you. Both `withastro/astro/examples/ssr` and
+`render-examples/astro-ssr` met at least one.
+
+### Astro 7
+
+The adapter's peer range is `astro@^7.0.0`. An older project stops before
+anything is installed:
+
+```
+✖ This project uses Astro 5, and @bunny.net/astro-adapter needs Astro 7.
+Upgrade Astro first, and run its own migration:
+
+  npx @astrojs/upgrade
+```
+
+Run that, read [Astro's upgrade
+guide](https://docs.astro.build/en/guides/upgrade-to/v7/), and deploy again. A
+framework major moves APIs, so the upgrade is yours to take, with your own tests
+in front of you.
+
+`render-examples/astro-ssr` ships Astro 5, so it needs this step. Without the
+check, `npm install` answers with an `ERESOLVE` about peer ranges that names no
+version to move to.
+
+### State in a module does not survive a request
+
+Each request may reach a different edge node, and a different isolate. So a value
+held at module scope is gone by the next request:
+
+```js
+// src/models/session.ts — this empties between requests on the edge
+export const userCartItems = new Map();
+```
+
+`withastro/astro/examples/ssr` keeps its shopping cart in exactly that. Deployed
+as it stands, the cart accepts every item and shows none:
+
+```bash
+curl -X POST https://your-app.b-cdn.net/api/cart -d '{"id":1,"name":"Cereal"}'
+# {"ok":true}
+curl https://your-app.b-cdn.net/api/cart
+# {"items":[]}
+```
+
+Nothing errors, which is what makes it worth knowing before you deploy. Use
+[`Astro.session`](#sessions) instead. It writes to the app's own storage zone, so
+every node reads the same value, and the deploy sets it up:
+
+```js
+export async function POST({ session, request }) {
+  const item = await request.json();
+  const cart = (await session.get("cart")) ?? [];
+  await session.set("cart", [...cart, item]);
+  return Response.json({ ok: true });
+}
+```
+
+A database is the other answer. [Bunny SQL](/database) is one, and any
+HTTP-reachable database is another.
+
+This is not a bunny.net rule. Any host that runs your server in more than one
+place has it, and a single long-lived Node process is what hid it.
+
+### Do not fetch your own site to reach your own route
+
+A page that calls its own API route over HTTP works, and costs more than it looks:
+
+```js
+// src/pages/index.astro — one page render, two trips through the CDN
+const products = await fetch(new URL("/api/products", Astro.url)).then((r) =>
+  r.json(),
+);
+```
+
+The request leaves the script, goes out through the CDN, and comes back into the
+same script. `withastro/astro/examples/ssr` does this on every page. Import the
+data instead, and the page renders in one pass:
+
+```js
+import { products } from "../models/db";
+```
+
+Keep the API route for the browser to call. The page does not need it.
+
+### A form POST answers 403
+
+That is Astro, not the platform. `security.checkOrigin` is on by default for
+`output: "server"`, and it rejects a form POST whose `Origin` header does not
+match the site. A browser always sends the header; `curl` has to be told to:
+
+```bash
+curl -X POST https://your-app.b-cdn.net/login \
+  -H "Origin: https://your-app.b-cdn.net" \
+  -d 'user=x'
+```
+
+Astro's [`security.checkOrigin`](https://docs.astro.build/en/reference/configuration-reference/#securitycheckorigin)
+is where to turn it off, if a machine client really has to POST a form.
+
+## The everyday loop
+
+```bash
+bunny lab deploy astro                # build and publish
+bunny lab deploy astro --no-build     # publish the build already on disk
+bunny lab deploy astro --force        # publish again when nothing changed
+bunny lab undeploy astro              # delete the app and everything it runs on
+```
+
+A deploy with no changes does nothing, and says so. Every deploy publishes to production; a preview URL per branch is [not built yet](#what-is-not-here-yet).
+
+Each deploy goes into its own folder in the storage zone, and the folder's name is written into the top of the bundle. So a published release can only read the files it was built against, and the files go up before the script is published: a script published first would render pages naming files that are not there yet.
+
+There is no rollback. One Edge Script publishes one version at a time, and the two commands do not keep the older versions to go back to — every deploy folder but the current one and the one before it is deleted after a publish. To go back, deploy the commit you want:
+
+```bash
+git checkout <the commit that worked>
+bunny lab deploy astro
+```
+
+### Configure the app
+
+`.bunny/astro.json` is all a repeat deploy needs, and the command adds `.bunny/` to your `.gitignore`. A deploy from a fresh clone, or from CI, names the app instead:
+
+```bash
+bunny lab deploy astro --name my-app
+```
+
+Build-time variables belong to your own build. Set them in the shell, and the build inherits them:
+
+```bash
+PUBLIC_API=https://api.example.com bunny lab deploy astro
+```
+
+Runtime variables belong to the script, and `astro:env` reads them:
+
+```bash
+bunny scripts env set STRIPE_KEY sk_live_… --secret
+bunny scripts env list
+bunny scripts env pull                     # into .env, for local work
+```
+
+Those need the script's ID, which the deploy prints and `.bunny/astro.json` keeps.
+
+## Continuous integration
+
+A deploy needs an API key and nothing else, so a workflow is three lines:
+
+```yaml .github/workflows/deploy.yml
+- run: npm ci
+- run: npm install -g @bunny.net/cli
+- run: bunny lab deploy astro --name my-app --yes
+  env:
+    BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+```
+
+Two flags earn their place there. `--name` says which app to deploy to, because `.bunny/` is git-ignored and a runner has no state file. `--yes` lets the command install the adapter and edit the Astro config without asking: without it, an unattended run prints the two changes and stops, rather than rewriting your source in silence.
+
+Commit the adapter and the config change once, from your own machine, and the workflow then needs neither flag's permission — only `--name`.
+
+Add `--output json` when a later step reads the result. See [GitHub Actions](/scripting/github-actions) for the details.
+
+## Run it locally
+
+Use `npm run dev` for everyday work on the site. It is Astro's dev server, and the adapter stays out of the way.
+
+`npm run preview` runs the file you are about to deploy. A local storage zone stands in for Bunny Storage, so assets, prerendered pages, and sessions all work with no account and no network:
+
+```bash
+npm run build
+npm run preview
+```
+
+It needs [Deno](https://deno.com/) 2, because Deno is the Edge Scripting runtime. The `cdn-` request headers only exist on the bunny.net network, so anything your code reads from them is absent locally.
+
+A build with [no script](#a-site-with-no-script) has no file to run, so `npm run preview` serves `dist/client` from Astro's own static server. That needs no Deno.
+
+## How it works
+
+```
+browser ──▶ pull zone ──▶ Edge Script (Astro's server)
+                              │
+                              ├─ a route Astro owns ── rendered now
+                              │
+                              └─ an asset or a prerendered page ─▶ Bunny Storage
+```
+
+The script sees every request the cache does not answer. It renders the routes Astro owns, and reads everything the build produced out of Bunny Storage. The adapter inlines the list of built files into the script, so a request for a path the build never produced costs no lookup at all.
+
+Each deploy is immutable, and it has two halves in the same storage zone:
+
+| Path                            | Holds                                     |
+| ------------------------------- | ----------------------------------------- |
+| `deploys/{id}/`                 | that deploy's client files                |
+| `_bunny/deploys/{id}/server.js` | that deploy's server bundle. Never served |
+
+The CLI writes the deploy's own folder name into the top of the bundle it publishes. So a published version can only read the files it was built with, which is what makes a rollback restore a page and its assets together. An Astro server bundle names the hashed CSS file it renders, so the two really are one unit.
+
+### What runs where
+
+| Request                                     | Handled by                        |
+| ------------------------------------------- | --------------------------------- |
+| A server-rendered page                      | Astro, inside the script          |
+| A route in `src/pages/api/`                 | Astro, inside the script          |
+| `src/middleware.ts`                         | Astro, on every matched route     |
+| A page with `export const prerender = true` | Bunny Storage, read by the script |
+| Hashed assets in `_astro/`                  | Bunny Storage, read by the script |
+| An unknown path                             | Your prerendered 404 page         |
+
+## The edge context
+
+Every page gets `Astro.locals.runtime`, which carries what the bunny.net network knows about the request:
+
+```ts src/middleware.ts
+import { defineMiddleware } from "astro:middleware";
+
+export const onRequest = defineMiddleware((context, next) => {
+  // Middleware also runs while Astro prerenders, where there is no request.
+  if (context.isPrerendered) return next();
+
+  context.locals.country = context.locals.runtime.country ?? "unknown";
+  return next();
+});
+```
+
+| Value           | What it is                                                                              |
+| --------------- | --------------------------------------------------------------------------------------- |
+| `country`       | The visitor's country, from `cdn-requestcountrycode`                                    |
+| `requestId`     | The bunny.net request id. Quote it in a support ticket                                  |
+| `clientAddress` | The visitor's IP. Also `Astro.clientAddress`                                            |
+| `waitUntil`     | Keep working after the response goes out. See [waitUntil](/scripting/runtime#waituntil) |
+| `caches`        | The edge [Cache API](/scripting/cache)                                                  |
+| `env`           | Read a script environment variable                                                      |
+
+Add the types to your project:
+
+```ts src/env.d.ts
+type BunnyRuntime = import("@bunny.net/astro-adapter").BunnyRuntime;
+
+declare namespace App {
+  interface Locals {
+    runtime: BunnyRuntime;
+  }
+}
+```
+
+## Caching
+
+Astro's `routeRules` become the headers the CDN reads:
+
+```js astro.config.mjs
+export default defineConfig({
+  adapter: bunny(),
+  routeRules: {
+    "/products/[...slug]": { maxAge: 3600, swr: 600, tags: ["products"] },
+  },
+});
+```
+
+```
+Cache-Control: public, max-age=0, must-revalidate, s-maxage=3600, stale-while-revalidate=600
+CDN-Tag: products,astro-path:/products/socks
+```
+
+`s-maxage` is for the CDN and `max-age` is for the browser. Splitting them is what makes a purge take effect straight away.
+
+A page that sets no `Cache-Control` gets `private, no-store`. That matters: a pull zone applies its own expiration to a response that carries no directive, and a page rendered for one visitor must never reach another. A route with a `routeRules` entry keeps what the rule gave it.
+
+<Note>
+  [Smart Cache](/cdn/smart-cache) only caches known static file extensions, and
+  HTML is not one of them, so a `routeRules` entry does nothing while it is on.
+  `bunny lab deploy astro` turns it off for you when your project sets
+  `routeRules`, and reports the change.
+</Note>
+
+### Purging
+
+```ts
+await Astro.cache.invalidate({ tags: ["products"] });
+await Astro.cache.invalidate({ path: "/products/socks" });
+```
+
+That calls the [purge API](/cdn/purge-cache), which is an account operation. The CLI sets the pull zone id for you. The key is yours to add, because it is account-wide:
+
+```bash
+bunny scripts env set BUNNY_API_KEY <key> --secret
+```
+
+## Sessions
+
+`Astro.session` works with no setup. Each session is one object in the site's storage zone, so every edge node reads the same value, and nothing serves those objects to the web.
+
+```astro
+---
+const cart = (await Astro.session.get("cart")) ?? [];
+---
+```
+
+<Note>
+  Bunny Storage does not expire an object, so `session.ttl` controls the cookie
+  and not the stored object. Delete old objects yourself if the zone grows.
+</Note>
+
+Pass `sessions: false` to configure your own driver.
+
+## Images
+
+Set `imageService: "bunny"` and Astro's `<Image>` component uses [Bunny Optimizer](/optimizer), which resizes and re-encodes at the edge. There is no build step, and no `sharp`:
+
+```js astro.config.mjs
+bunny({
+  imageService: "bunny",
+  image: {
+    widths: [360, 720, 1080], // used to build a srcset
+    quality: 82,
+  },
+});
+```
+
+<Warning>
+  **Image transformation on a script-backed site is not ready yet.** Turn
+  Optimizer on today and an image request that misses the cache can answer `523
+  Origin Connection Failed`. We are fixing it. Until then, leave `imageService`
+  at its default: the parameters are ignored, and the original image is served.
+</Warning>
+
+Optimizer only works on files your own pull zone serves, so an image on another host passes through untouched.
+
+## Large files
+
+A stored object can be fetched in pieces. The script answers a `Range` request with `206` and a `Content-Range`, and it says `Accept-Ranges: bytes` on everything it serves out of storage.
+
+That header is the part that matters. A pull zone will not answer a range from its cache, and will not slice an object, unless the origin says it accepts ranges. Without it a video is only seekable once it is fully cached.
+
+For a large file that nobody has requested yet, turn on **Optimize for large object delivery** in the pull zone's caching settings, and the zone fetches the object in chunks so the first request is seekable too:
+
+```bash
+bunny api POST /pullzone/<pull-zone-id> --body '{"EnableCacheSlice": true}'
+```
+
+The script also passes `If-None-Match` and `If-Modified-Since` through, so a browser and the pull zone both revalidate with a `304` instead of downloading the object again. See [range requests](/cdn/frequently-asked-questions/range-requests) for what the CDN does with them.
+
+## Supported features
+
+| Astro feature                                                | Supported                                       |
+| ------------------------------------------------------------ | ----------------------------------------------- |
+| Server-rendered pages                                        | Yes                                             |
+| Server endpoints and dynamic routes                          | Yes                                             |
+| Middleware                                                   | Yes                                             |
+| `Astro.request`, `Astro.locals`, `Astro.url`, `Astro.params` | Yes                                             |
+| `Astro.clientAddress`                                        | Yes, from `x-forwarded-for`                     |
+| `Astro.cookies`, including `set()`                           | Yes                                             |
+| `Astro.session`                                              | Yes, in the site's storage zone                 |
+| Prerendered pages, including `404.astro` and `500.astro`     | Yes, served from Storage                        |
+| A site under a path, with `base`                             | Yes                                             |
+| `redirects`, internal and external                           | Yes, with the status the route asks for         |
+| Locale routing with `i18n`                                   | Yes                                             |
+| Content collections                                          | Yes                                             |
+| Framework islands and `server:defer`                         | Yes                                             |
+| Astro actions                                                | Yes                                             |
+| Static page headers, such as a CSP                           | Yes. In the script, or in `_headers`            |
+| `routeRules` and cache purging                               | Yes                                             |
+| Image transformation                                         | Not yet. See [Images](#images)                  |
+| Range requests on a stored object                            | Yes, and conditional requests too               |
+| `node:fs` and the other built-ins Deno provides              | Yes. The file system is virtual and per isolate |
+| `astro:env` secrets                                          | Yes, from the script's environment variables    |
+| `astro preview`                                              | Yes. With Deno for a build that has a script    |
+| The `sharp` image service                                    | No. Native binaries cannot run on the edge      |
+
+## Node built-ins
+
+Edge Scripting provides most `node:` modules, so a dependency that imports one is usually fine.
+
+[`node:fs`](/scripting/node-fs) works over a virtual file system. It starts empty on every cold start, one isolate cannot see what another wrote, and what it holds counts against the script's memory. So it is a scratch pad for one request, and never a store. Anything that has to outlive a request belongs in Bunny Storage, which is where the adapter keeps files and sessions.
+
+A package with a native binary never works. `sharp` is the usual one, and the adapter already replaces it.
+
+## Adapter options
+
+Every option has a sensible default, so `bunny()` on its own is usually right.
+
+```js astro.config.mjs
+bunny({
+  // Caching
+  assetCacheControl: "public, max-age=31536000, immutable",
+  pageCacheControl: "public, max-age=60",
+  serverCacheControl: "private, no-store", // for a page that sets none itself
+
+  // Features
+  imageService: "noop", // "bunny" for Optimizer, false to keep your own
+  sessions: true, // false to configure your own driver
+  cache: true, // false to configure your own cache provider
+
+  // Build
+  outfile: "dist/index.js",
+  bundle: true, // false to run your own bundler
+  assetManifest: true, // false to look up every path in Storage instead
+  external: [], // modules esbuild must not bundle
+  sourcemap: false,
+});
+```
+
+No credential is ever an option. The CLI sets each one on the script, so nothing reaches the bundle or your configuration file.
+
+## Moving from `bunny-astro`
+
+Earlier versions of the adapter shipped a `bunny-astro` command.
+`bunny lab deploy astro` replaces it, and adds provisioning and teardown.
+
+```bash
+bunny lab deploy astro
+```
+
+That creates a **new** app: its own storage zone, script, and pull zone, and its own URL. Adopting the zone and script you already have is [not built yet](#what-is-not-here-yet), so until it is, either move your domain to the new pull zone in the dashboard, or keep deploying the old pair by hand:
+
+```bash
+npm run build
+bunny storage files upload dist/client --zone my-site-assets   # or your own uploader
+bunny scripts deploy dist/index.js
+```
+
+A deploy you run yourself puts the files at the zone root, which is where the script looks when nothing sets `BUNNY_ASSET_PREFIX`.
+
+## A site with no script
+
+A site whose routes are all prerendered needs no script, and no adapter. `bunny sites deploy` uploads the build and publishes it, every deploy stays immutable under its own ID, and nothing is invoked per request. The build says so:
+
+```
+[@bunny.net/astro-adapter] Every route is prerendered, so this build deploys no
+script: `bunny sites deploy` uploads dist/client, and the site is served as files.
+```
+
+Files alone cannot answer a 404 with a page, send a redirect, or add a header. The [`bunny sites` router](/cli/commands/sites#what-the-deploy-configures) does all three, for every framework. It learns what to do from three file names, which Cloudflare Pages and Netlify read too:
+
+| The router reads | Where it comes from                                                       |
+| ---------------- | ------------------------------------------------------------------------- |
+| `404.html`       | Your own `404.astro`                                                      |
+| `_redirects`     | Written by the build, from your `redirects` config                        |
+| `_headers`       | Written by the build: your CSP, your `routeRules`, and the asset lifetime |
+
+So keeping the adapter on a prerendered site is worth it for those two files. It costs nothing at run time.
+
+Astro also writes its own `<meta http-equiv="refresh">` page for each redirect. A deploy that never reaches the router therefore still sends the visitor on. The rule in `_redirects` carries `!`, and that is what makes the router's real `301` win over the page.
+
+`npm run preview` on such a build serves `dist/client` from Astro's own static server, and needs no Deno.
+
+A site with no adapter at all works too, and [the static site hosting guide](/storage/static-site-hosting) covers it. What it loses is those two files: a redirect becomes a `<meta>` refresh, and a header cannot be set.
+
+## What is not here yet
+
+Three things this guide's commands do not cover:
+
+- **Rollback.** One Edge Script publishes one version at a time, and the two commands keep no older version to return to. Deploy the commit you want instead: `git checkout <commit> && bunny lab deploy astro`.
+- **A preview URL per branch.** Every deploy publishes to production. A preview has to be its own Edge Script, because a page and the files it names are one unit. Until then, deploy a second app for staging: `bunny lab deploy astro --name my-app-staging` from a checkout of the branch.
+- **A custom domain from the command line.** Add it to the app's pull zone in the dashboard, under **CDN** > your pull zone > **Hostnames**.
+- **Adopting an app you built by hand.** The command creates its own storage zone, script, and pull zone. There is nothing yet that takes over a pair you made yourself.
+- **Logs from the command line.** Read them in the dashboard, under **Scripting** > your script > **Logs**.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The site answers 400 with an empty body">
+    The script did not start, so nothing answered the request. A large script is
+    the usual reason, and 10 MB is not the size to aim at: a script has
+    [500ms to start](/scripting/limits), and every byte of it is parsed and
+    evaluated first.
+
+    Measured in August 2026, on a standalone script in DE: the same code served
+    every request at 7.44 MB, and answered 400 to all of them at 7.83 MB. Around
+    7.5 MB the first request failed and later ones worked. How much code fits
+    depends on what it does as it loads, so treat 7.5 MB as a warning and not a
+    line.
+
+    The build warns above 7.5 MB, and `bunny lab deploy astro` asks the site for a
+    page before it reports success, so neither is silent about it. What to do is
+    the same as for a script that is too large, below. Deploy the last commit that
+    worked to put the site back while you work on it.
+
+  </Accordion>
+
+  <Accordion title="The build says the script is too large">
+    Edge Scripting takes one file of up to 10 MB, so a build that produced more
+    than that fails, and names the packages that filled it:
+
+    ```
+    dist/index.js is 22.30 MB, and Edge Scripting takes 10.00 MB.
+
+    The largest parts of it are:
+      6.41 MB  shiki
+      2.20 MB  @astrojs/mdx
+      1.12 MB  astro
+    ```
+
+    Two things usually help. Prerender the routes that do not need a server, so
+    that the pages which pulled a package in stop being part of the script. And
+    keep a heavy dependency out of a page, and out of anything a page imports: a
+    package that only runs at build time does not belong in the script.
+
+    A small Astro site lands near 660 kB. Aim below 7.5 MB, not below 10 MB: see
+    the 400 above.
+
+  </Accordion>
+
+<Accordion title="The script is too slow to start">
+  A script has 500 ms to start. Move work out of module scope and into the
+  request handler, and drop dependencies you do not need. See the
+  [limits](/scripting/limits).
+</Accordion>
+
+  <Accordion title="Astro.rewrite('/404') throws a 500">
+    A prerendered route has no server component to rewrite to. Return
+    `new Response(null, { status: 404 })` from the page instead, and your
+    prerendered 404 page is served out of Bunny Storage.
+
+    An endpoint in `src/pages/api/` keeps its own 404, so a client asking for
+    JSON is never handed a web page.
+
+  </Accordion>
+
+<Accordion title="A routeRules entry changes nothing">
+  Smart Cache is on, and it does not cache HTML. `bunny lab deploy astro` turns
+  it off and says so, so run the deploy again and read what it reports.
+</Accordion>
+
+<Accordion title="Astro.cookies.set() has no effect">
+  The pull zone is stripping the header. `bunny lab deploy astro` turns
+  **Disable cookies** off for you. Run it again, and check the settings it
+  reports.
+</Accordion>
+
+<Accordion title="A page shows another visitor's content">
+  Something removed the `Cache-Control` the adapter sets. Check that no edge
+  rule overrides it, and that the page is not setting a `public` directive
+  itself.
+</Accordion>
+
+<Accordion title="A POST request returns 403">
+  Astro checks the request origin for server output, and rejects a form POST
+  whose `Origin` header does not match the site. This is Astro's CSRF
+  protection, not an Edge Scripting error. Send the request from the site
+  itself, or change `security.checkOrigin` in `astro.config.mjs`.
+</Accordion>
+
+  <Accordion title="The bundle fails on a Node-only module">
+    Most `node:` built-ins work here, including
+    [`node:fs`](/scripting/node-fs), so check which module it is. The adapter
+    rewrites a bare `fs` to `node:fs` for you, because the runtime only answers
+    to the prefixed name.
+
+    A package with a native binary never works. Replace that dependency, or
+    keep it out of the server build.
+
+  </Accordion>
+
+  <Accordion title="A missing path shows bunny.net's error page, not mine">
+    The request never reached the script, so Astro's own `404.astro` never
+    rendered. Read the script's logs in the dashboard, under **Scripting** > your
+    script > **Logs**: a script that fails as it starts answers this way.
+
+    A deploy checks this for you: it asks the live site for a path the build
+    cannot hold, and warns when the answer came from bunny.net rather than from
+    Astro.
+
+  </Accordion>
+
+  <Accordion title="A page 404s after a deploy, and the old one worked">
+    Deploy the last commit that worked, and compare the two builds:
+
+    ```bash
+    git checkout <the commit that worked>
+    bunny lab deploy astro
+    ```
+
+    A route that renders per request answers from the script, so check the
+    script's logs first. A prerendered page answers from the storage zone, so
+    check that the build still writes it.
+
+  </Accordion>
+
+  <Accordion title="Images return 523">
+    Optimizer cannot transform images for a script-backed site yet. Leave
+    `imageService` at its default. See [Images](#images).
+  </Accordion>
+</AccordionGroup>

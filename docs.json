@@ -479,6 +479,13 @@
                 ]
               },
               {
+                "group": "Frameworks",
+                "pages": [
+                  "scripting/frameworks/index",
+                  "scripting/frameworks/astro"
+                ]
+              },
+              {
                 "group": "Deployment",
                 "pages": [
                   "scripting/deployments",
