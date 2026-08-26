@@ -4,10 +4,50 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-08-21" tags={["CDN","(New)"]}>
+  ## EEA Routing Filter for Pull Zones
+
+  Pull Zones now support a European Economic Area (EEA) routing filter that routes all traffic exclusively through 26 PoPs across EU member states plus Iceland and Norway. Use this filter when you need GDPR-compliant data residency across the full EEA. [Learn more](/cdn/performance/routing-filters)
+</Update>
+  
+<Update label="2026-08-21" tags={["CDN","(New)"]}>
+  ## TLS Security Levels for Pull Zones
+
+  Pull Zones now support Legacy, Compatible, and Modern only TLS security profiles, configurable per zone. Set the minimum cipher-suite strength to balance stronger security with the client compatibility each workload requires. [Learn more](/cdn/security/ssl)
+</Update>
+
+<Update label="2026-08-14" tags={["Storage","(Improvement)"]}>
+  ## S3 API compatibility improvements
+
+  The S3 API now supports virtual hosted-style URLs alongside path-style URLs, adds `ETag` and conditional request support to `HeadObject` and `GetObject`, improves `CopyObject` with content-type preservation, metadata directives, and conditional copy headers, and returns a standard `SlowDown` (`503`) response with a `Retry-After` header when requests are rate limited.
+</Update>
+
+<Update label="2026-08-13" tags={["Stream","(New)"]}>
+  ## Bunny Stream Live - Closed Preview
+
+  We've opened up bunny Stream customers to signup for our new live streaming preview. The signup banner can be found within your video library! Once approved you'll be able to live stream at scale globally to your audiences. All managed with the new dashboard control room & API. Features include: RTMP ingest & distribution, scheduling, countdown, DVR, VOD and more.
+</Update>
+
+<Update label="2026-08-12" tags={["Shield","(New)"]}>
+  ## Investigative Event Logs for Bunny Shield
+
+  Bunny Shield Event Logs now support advanced filtering and grouping across Feature, Action, Rule ID, IP / Range, Country, ASN, JA4 Fingerprint, User-Agent, and URL. Combine multiple signals, such as IP, User-Agent, and JA4, to investigate related activity and uncover attack patterns across Shield features. You can also investigate events across multiple days within the 3-day retention window and export results as CSV for further analysis.
+
+  [Learn more](/api-reference/shield/event-logs/search-filter-and-group-event-logs-for-a-shield-zone)
+</Update>
+
+<Update label="2026-08-01" tags={["Edge Scripting","(New)"]}>
+  ## Connect a Bunny Database from the Edge Scripting creation flow
+
+  You can now connect a Bunny Database directly from the Edge Scripting creation flow. Create a new database or pick an existing one, and we'll automatically add the connection credentials (`BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN`) as script secrets. There's also a new Database CRUD API script template available to get you started.
+
+  ![Add Database](/images/changelog/edge-scripting-add-database.png)
+</Update>
+
 <Update label="2026-07-16" tags={["CLI","(New)"]}>
   ## Cloud sandbox environments via Bunny CLI
 
-  The Bunny CLI now supports creating and managing on-demand cloud sandbox environments backed by Bunny Magic Containers. Each sandbox is a fully isolated Ubuntu container with Node.js, Bun, Python, and Claude Code pre-installed, with 10 GB of persistent storage. Create, SSH into, copy files, expose public URLs, and manage environment variables — all from the CLI. [Learn more](/cli/commands/sandbox)
+  The Bunny CLI now supports creating and managing on-demand cloud sandbox environments backed by Bunny Magic Containers. Each sandbox is a fully isolated Ubuntu container with Node.js, Bun, Python, and Claude Code pre-installed, with 10 GB of persistent storage. Create, SSH into, copy files, expose public URLs, and manage environment variables, all from the CLI. [Learn more](/cli/commands/sandbox)
 </Update>
 
 <Update label="2026-07-31" tags={["CDN","(New)"]}>
@@ -16,16 +56,22 @@ rss: true
   Pull Zones now support an IP Family Policy that controls which address families (IPv4, IPv6, or both) are advertised and which edge servers are eligible to serve the zone. Four policies are available: IPv4 Only, Dual Stack (default), Dual Stack Prefer IPv6, and IPv6 Only. Token authentication IP locking now also supports IPv6 addresses, binding at the client's `/64` prefix. [Learn more](/cdn/ip-family-policy)
 </Update>
 
+<Update label="2026-07-30" tags={["Storage","(New)"]}>
+  ## Read-only password support for S3 API
+
+  Bunny Storage's S3-compatible API now supports read-only access keys. Use a dedicated read-only secret access key for S3 connections that should only have read permissions, adding an extra layer of access control to your storage zones. [Learn more](/storage/s3)
+</Update>
+
 <Update label="2026-07-30" tags={["Shield","(New)"]}>
   ## Verified bot customization for Shield Zones
 
-  Bunny Shield now lets you control how verified bots are handled per Shield Zone — allow, block, or take no action — with per-bot and per-category overrides across seven categories: SEO, AI Scraper, AI Tool, Tool, Ads, Preview, and Social. Verification supports both reverse DNS and published IP range checks, and verified bot categories are exposed to the Rule Engine via the `VERIFIED_BOT_CATEGORY` variable for custom WAF rules. [Learn more](/shield/verified-bots)
+  Bunny Shield now lets you control how verified bots are handled per Shield Zone. allow, block, or take no action, with per-bot and per-category overrides across seven categories: SEO, AI Scraper, AI Tool, Tool, Ads, Preview, and Social. Verification supports both reverse DNS and published IP range checks, and verified bot categories are exposed to the Rule Engine via the `VERIFIED_BOT_CATEGORY` variable for custom WAF rules. [Learn more](/shield/verified-bots)
 </Update>
 
 <Update label="2026-07-28" tags={["Edge Scripting","(New)"]}>
   ## Before cache execution for Edge Scripts (Preview)
 
-  Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. When enabled on a Pull Zone, middleware scripts gain two new hooks — `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support this mode, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
+  Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. When enabled on a Pull Zone, middleware scripts gain two new hooks. `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support this mode, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
 </Update>
 
 <Update label="2026-07-16" tags={["Stream","(Improvement)"]}>
@@ -35,24 +81,24 @@ rss: true
 
   The TV experience feels native, with the video title and thumbnail on screen and player colors and captions appearance (color, font, size, language) synced from the embed.
 
-  Viewers keep full playback control while casting — audio track selection works before and during a session, and playback rate changes apply on the TV. Session handling is seamless too: playback continues from the current position when casting starts and transfers back on stop, with page reloads, replays after the video ends with a smoother experience overall.
+  Viewers keep full playback control while casting. audio track selection works before and during a session, and playback rate changes apply on the TV. Session handling is seamless too: playback continues from the current position when casting starts and transfers back on stop, with page reloads, replays after the video ends with a smoother experience overall.
 
   [Learn more](/stream/player-settings)
 </Update>
 
-<Update label="2026-07-01" tags={["Edge Scripting", "(Improvement)"]}>
+<Update label="2026-07-01" tags={["Edge Scripting","(Improvement)"]}>
   ## Cache API documentation reorganized into dedicated section
 
   The Edge Scripting Cache API documentation has been restructured from a single page into a multi-page section covering the API overview and limitations, managing default and named caches, reading and writing cache entries (`match`, `put`, `delete`), and end-to-end examples including a new on-demand refresh and purge recipe. The `waitUntil` runtime reference has also been expanded with a full API signature and a cache-population example. [Learn more](/scripting/cache)
 </Update>
 
-
 <Update label="2026-07-14" tags={["CDN","(Improvement)"]}>
   ## HTTP validation for Seamless Domain Migration
 
   Seamless Domain Migration now supports HTTP (file-based) validation alongside the existing DNS (TXT record) method for issuing SSL certificates before pointing your domain to bunny.net. Choose DNS if you control your domain's DNS records, or HTTP if you can place a challenge file on the server your domain currently points to. [Learn more](/cdn/seamless-migration)
+</Update>
 
-<Update label="2026-07-10" tags={["Scripting","(New)"]}>
+<Update label="2026-07-10" tags={["Edge Scripting","(New)"]}>
   ## Symbolic links, timestamps, and permissions in Edge Scripting
 
   The Edge Scripting Node.js file system module now supports symbolic links (`symlink()`, `readlink()`, `lstat()`), returns correct file timestamps (`atime`, `mtime`, `ctime`, `birthtime`), and enforces owner-level file and directory permissions (`chmod()`, `access()`, `Stats.mode`). [Learn more](/scripting/node-fs)
@@ -68,6 +114,8 @@ rss: true
   ## AVIF, HEIC and HEIF are now GAAVIF, HEIC and HEIF are now GA
 
   Support for AVIF, HEIC and HEIF as input formats, and AVIF as an output format, has been promoted to [General Availability](/product-release-stages)Support for AVIF, HEIC and HEIF as input formats, and AVIF as an output format, has been promoted to [General Availability](/product-release-stages). [Learn more](/optimizer/dynamic-images/formats)
+</Update>
+
 <Update label="2026-06-25" tags={["Edge Scripting","(New)"]}>
   ## Edge Scripting Runtime API and `waitUntil` documentation
 
@@ -232,7 +280,7 @@ rss: true
   Transcribing language model has been upgraded to v1.2.0 for faster and higher quality transcriptions. [Learn more](/stream/transcribing)
 </Update>
 
-<Update label="2026-03-27" tags={["New"]}>
+<Update label="2026-03-27" tags={["Stream", "(New)"]}>
   ## Free encoding
 
   Increased capacity and performance improvements to Stream Free encoding for faster transcoding and shorter queue time. [Learn more](/stream/encoding)
