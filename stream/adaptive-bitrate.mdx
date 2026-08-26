@@ -28,3 +28,19 @@ Framerate, or frames per second (fps), dictates the frequency at which video fra
 ## Adaptive bitrate streaming
 
 Adaptive bitrate streaming optimizes video resolution and framerate based on the viewer's network bandwidth. This technology allows users with high bandwidth to enjoy high-quality streams, whereas those with limited bandwidth can reduce the resolution and framerate to suit their constraints. Adaptive bitrate streaming enhances the user experience by minimizing buffering and ensuring smooth playback under varying network condition
+
+## How the player selects a quality
+
+Adaptive bitrate streaming is enabled automatically in the Bunny Stream player. There is nothing to opt in to: the player picks a rendition from the HLS manifest when playback starts and keeps re-evaluating that choice for as long as the video plays.
+
+- **Playback often starts below the highest available quality.** Before the first segments arrive, the player has nothing to measure the connection with, so it starts cautiously and steps up as it learns how fast segments download. A video that opens at 480p and reaches 1080p a few seconds later is working as designed — starting low is what keeps startup fast and avoids stalling on a connection that turns out to be slower than it first appeared.
+- **Throughput and buffer health are the signals.** The player reacts to how quickly segments download and how well the buffer stays filled. A fast connection that briefly stutters can still trigger a step down, and the player steps back up once the connection looks stable again.
+- **Player size and device hardware are not inputs.** The selected rendition is not capped by the size of the player element or the screen, and CPU, GPU and memory are not taken into account. A small player on a fast connection can still be served a high-resolution rendition.
+- **Renditions never exceed the resolution of the source file.** Bunny Stream does not upscale. Adding 1080p to your library's [enabled resolutions](/stream/encoding#enabled-resolutions) will not produce a 1080p rendition for a 360p upload, and re-encoding an existing video will not create renditions above what the original file contains. If a video tops out lower than you expect, check the resolution of the file you uploaded.
+- **Multiple codecs are negotiated by the client.** When a library is encoded to more than one output codec, each codec is published as its own set of renditions in the manifest, and the client picks a codec it reports support for. Enabling an additional codec does not change which resolution the player selects.
+
+If the starting quality looks poor on large screens, raising the bitrate of your lower renditions in [Resolution bitrates](/stream/encoding#resolution-bitrates), or narrowing a large gap between renditions by enabling an intermediate resolution, will improve the picture before the player ramps up.
+
+<Info>
+  Third-party players that load the HLS manifest directly implement their own adaptive bitrate logic, so how quickly quality ramps up is decided by that player, not by Bunny Stream. If you need to control the starting quality or pin a resolution in such a setup, configure it in the player you are using.
+</Info>

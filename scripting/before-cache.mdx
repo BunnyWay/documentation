@@ -6,9 +6,9 @@ every request, instead of only executing when the cache is missed."
 tag: Preview
 ---
 
-By default, edge scripts run **after** the cache. Cached responses are served
-directly by the CDN without invoking your script, which keeps cached traffic as
-fast and efficient as possible.
+By default, edge scripts run **after** the cache. The CDN serves cached
+responses directly, without invoking your script, so cached traffic is not
+slowed down by script execution.
 
 With before cache execution enabled, your script runs on **every request**,
 before the cache lookup. This gives you full control over the request flow at

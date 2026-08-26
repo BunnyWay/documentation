@@ -108,7 +108,6 @@
                     "group": "Affiliate Program",
                     "pages": [
                       "billing/affiliate-program",
-                      "billing/affiliate-faq",
                       "billing/affiliate-best-practices",
                       "billing/affiliate-guidelines"
                     ]
@@ -188,6 +187,7 @@
                   {
                     "group": "Security",
                     "pages": [
+                      "cdn/security/ssl",
                       "cdn/security/hotlink-protection",
                       "cdn/security/geographic-blocking",
                       {
@@ -511,6 +511,7 @@
                   },
                   "scripting/html-rewriter",
                   "scripting/node-fs",
+                  "scripting/node-tls",
                   "scripting/websockets"
                 ]
               },
@@ -518,6 +519,7 @@
                 "group": "Reference",
                 "pages": [
                   "scripting/limits",
+                  "scripting/https-ssl-certificates",
                   "scripting/before-cache",
                   "scripting/api-reference"
                 ]
@@ -2221,7 +2223,12 @@
     },
     {
       "source": "/frequently-asked-questions",
-      "destination": "/billing/affiliate-faq",
+      "destination": "/billing/affiliate-program",
+      "permanent": true
+    },
+    {
+      "source": "/billing/affiliate-faq",
+      "destination": "/billing/affiliate-program",
       "permanent": true
     },
     {

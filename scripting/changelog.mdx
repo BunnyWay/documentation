@@ -4,10 +4,18 @@ description: Latest updates and improvements to Edge Scripting.
 rss: true
 ---
 
+<Update label="2026-08-01" tags={["New"]}>
+  ## Connect a Bunny Database from the Edge Scripting creation flow
+
+  You can now connect a Bunny Database directly from the Edge Scripting creation flow. Create a new database or pick an existing one, and we'll automatically add the connection credentials (`BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN`) as script secrets. There's also a new Database CRUD API script template available to get you started.
+
+  ![Add Database](/images/changelog/edge-scripting-add-database.png)
+</Update>
+
 <Update label="2026-07-28" tags={["New"]}>
   ## Before cache execution (Preview)
 
-  Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. Enable it per Pull Zone under **General** > **Origin** > **Run script before cache**. Middleware scripts gain two new hooks — `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support before cache execution, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
+  Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. Enable it per Pull Zone under **General** > **Origin** > **Run script before cache**. Middleware scripts gain two new hooks: `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support before cache execution, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
 </Update>
 
 <Update label="2026-07-10" tags={["New"]}>
@@ -25,7 +33,7 @@ rss: true
 <Update label="2026-06-25" tags={["New"]}>
   ## Runtime API and `waitUntil`
 
-  New Runtime API reference documenting the `waitUntil` function, which extends script isolate lifetime after a request finishes — ideal for keeping WebSocket connections alive and running background work. The WebSocket guide now includes a `waitUntil` usage example. [Learn more](/scripting/runtime)
+  New Runtime API reference documenting the `waitUntil` function, which extends script isolate lifetime after a request finishes. It is useful for keeping WebSocket connections alive and running background work. The WebSocket guide now includes a `waitUntil` usage example. [Learn more](/scripting/runtime)
 </Update>
 
 <Update label="2026-03-26" tags={["New"]}>

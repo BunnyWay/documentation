@@ -19,7 +19,7 @@ await cache.put(
 
 This caches the string `content` under the key `/example.html` for 60 seconds.
 
-## Instance Methods
+## Instance methods
 
 ### Delete
 
@@ -31,7 +31,7 @@ The `delete()` method finds the Cache entry whose key matches the request and re
 await cache.delete(request);
 ```
 
-Unlike the browser Cache API, Bunny Edge Scripting does not support the options bag (`ignoreSearch`, `ignoreMethod`, `ignoreVary`). To get equivalent behaviour, normalize the key at `put()` time — e.g. strip query strings from the URL before calling `put()`.
+Unlike the browser Cache API, Bunny Edge Scripting does not support the options bag (`ignoreSearch`, `ignoreMethod`, `ignoreVary`). To get equivalent behaviour, normalize the key at `put()` time, for example by stripping query strings from the URL before calling `put()`.
 
 #### Parameters
 
@@ -128,6 +128,6 @@ See [Updating a cache in middleware](./examples#updating-a-cache-in-middleware) 
 
 ## References
 
-- [Examples](./examples) — end-to-end recipes: cache-aside, middleware writes, refresh and purge.
-- [Managing caches](./managing-caches) — the global `caches` object and named cache instances.
-- [Cache API overview](./index) — regional behavior, limitations, and API surface.
+- [Examples](./examples): end-to-end recipes for cache-aside, middleware writes, and refresh and purge.
+- [Managing caches](./managing-caches): the global `caches` object and named cache instances.
+- [Cache API overview](./index): regional behavior, limitations, and API surface.

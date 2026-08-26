@@ -6,7 +6,7 @@ tag: "Public preview"
 Bunny Storage supports an S3-compatible API, allowing you to use familiar S3 tools, libraries, and workflows with your storage zones. Use existing S3 tools and scripts, leverage popular S3 libraries across all programming languages, migrate from AWS S3 with minimal code changes, and work with S3 GUI tools.
 
 <Info>
-  S3 compatibility is currently in public preview. S3 compatibility must be enabled during storage zone creation and cannot be changed afterward.
+  S3 compatibility is currently in public preview. Currently, S3 compatibility can only be enabled when creating a new storage zone and cannot be enabled on an existing storage zone. Support for enabling S3 compatibility on existing storage zones is currently in development.
 </Info>
 
 ## Creating a storage zone with S3 compatibility
@@ -35,7 +35,7 @@ The credentials you need to connect via S3 are located in the **Access** tab:
 - **Region**: `de` (Frankfurt), `ny` (New York), `sg` (Singapore), `uk` (London), <br />`se` (Stockholm), `la` (Los angeles),`jh` (Johannesburg) & `syd` (Sydney)
 
 <Note>
-  Bunny Storage only supports path-style URLs (e.g., `https://[region]-s3.storage.bunnycdn.com/bucket-name/key`). Virtual hosted-style URLs (e.g., `bucket-name.s3.region.amazonaws.com`) are not supported.
+  Bunny Storage supports both path-style URLs (e.g., `https://[region]-s3.storage.bunnycdn.com/bucket-name/key`) and virtual hosted-style URLs (e.g., `https://bucket-name.[region]-s3.storage.bunnycdn.com/key`).
 </Note>
 
 ### Content Type Detection
@@ -180,7 +180,7 @@ Bunny Storage provides comprehensive S3 API compatibility for all your storage n
 
 - **PUT Object**: Create and update objects
 - **GET Object**: Read objects (range requests supported)
-- **DELETE Object**: Delete objects (single and batch operations)
+- **DELETE Object**: Delete objects (single object only — batch `DeleteObjects` is not supported)
 - **COPY Object**: Copy objects between locations
 - **HEAD Object**: Get object metadata
 - **PRESIGN Object**: Generate object URL expiry time (Set in seconds - default 1 hour)
@@ -201,7 +201,7 @@ Bunny Storage provides full support for S3 multipart uploads, enabling efficient
 | --- | --- |
 | ✅ [`CreateMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html) | ✅ Multipart session creation<br />✅ Returns UploadId<br />✅ System Metadata:<br />    ✅ Content-Type (with automatic detection from file extension)<br />    ✅ Content-Type stored in session for final object<br />✅ Automatic replication session creation<br />❌ Storage class selection<br />❌ Cache-Control, Content-Disposition, etc.<br />❌ SSE/SSE-C encryption<br />❌ Object tagging<br />❌ Object locking<br />❌ ACL headers |
 | ✅ [`UploadPart`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html) | ✅ Part upload (up to 10,000 parts)<br />✅ Returns ETag (part checksum)<br />✅ Automatic replication of parts<br />✅ Content-MD5 validation<br />❌ SSE/SSE-C encryption |
-| ✅ [`UploadPartCopy`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html) | ✅ Copy within same storage zone<br />✅ Part size up to 5 GB<br />✅ Range copy (source object must be greater than 5 MB)<br />✅ Supported headers:<br />    ✅ x-amz-copy-source<br />    ✅ x-amz-copy-source-range (optional, format: bytes=first-last)<br />❌ Cross-zone copying<br />❌ Conditional source headers<br />❌ Server-side encryption<br />❌ Bucket-owner verification<br />❌ Requester payer<br />❌ ACL grants |
+| ✅ [`UploadPartCopy`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html) | ✅ Copy within same storage zone<br />✅ Part size up to 5 GB<br />✅ Range copy (source object must be greater than 5 MB)<br />✅ Supported headers:<br />    ✅ x-amz-copy-source<br />    ✅ x-amz-copy-source-range (optional, format: bytes=first-last)<br />✅ Conditional source headers:<br />    ✅ x-amz-copy-source-if-match<br />    ✅ x-amz-copy-source-if-modified-since<br />    ✅ x-amz-copy-source-if-none-match<br />    ✅ x-amz-copy-source-if-unmodified-since<br />❌ Cross-zone copying<br />❌ Server-side encryption<br />❌ Bucket-owner verification<br />❌ Requester payer<br />❌ ACL grants |
 | ✅ [`ListParts`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html) | ✅ Query Parameters:<br />    ✅ max-parts (default 1000)<br />    ✅ part-number-marker<br />✅ Returns part ETag and size<br />✅ Pagination support<br />✅ IsTruncated flag |
 | ✅ [`CompleteMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html) | ✅ Finalizes multipart upload<br />✅ Validates all parts present<br />✅ Validates part ETags<br />✅ Creates final object with combined checksum<br />✅ Final checksum format: `MD5(part1+part2+...)-{partCount}`<br />✅ Applies Content-Type from session<br />✅ Automatic replication of completed object<br />✅ Cleanup of part files<br />✅ Returns ETag, Location, Bucket, Key<br />❌ Checksums in response |
 | ✅ [`AbortMultipartUpload`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html) | ✅ Cancels multipart upload<br />✅ Deletes all uploaded parts |
@@ -213,11 +213,11 @@ Below is a detailed list of implemented object-level operations with their suppo
 
 | API Name | Features |
 | --- | --- |
-| ✅ [`HeadObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html) | ✅ Basic metadata retrieval<br />✅ Response headers:<br />    ✅ Content-Type<br />    ✅ Content-Length<br />    ✅ Last-Modified<br />❌ ETag<br />❌ Conditional Operations:<br />    ❌ If-Match<br />    ❌ If-Modified-Since<br />    ❌ If-None-Match<br />    ❌ If-Unmodified-Since<br />❌ Range queries<br />❌ SSE-C encryption headers |
-| ✅ [`GetObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html) | ✅ Full object download<br />✅ Response headers:<br />    ✅ Content-Type<br />    ✅ Content-Length<br />✅ Range requests (byte ranges)<br />✅ Multipart object download<br />❌ Conditional Operations:<br />    ❌ If-Match<br />    ❌ If-Modified-Since<br />    ❌ If-None-Match<br />    ❌ If-Unmodified-Since<br />❌ SSE-C encryption<br />❌ Versioning support |
+| ✅ [`HeadObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html) | ✅ Basic metadata retrieval<br />✅ Response headers:<br />    ✅ Content-Type<br />    ✅ Content-Length<br />    ✅ Last-Modified<br />    ✅ ETag<br />✅ Conditional Operations:<br />    ✅ If-Match<br />    ✅ If-Modified-Since<br />    ✅ If-None-Match<br />    ✅ If-Unmodified-Since<br />❌ Range queries<br />❌ SSE-C encryption headers |
+| ✅ [`GetObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html) | ✅ Full object download<br />✅ Response headers:<br />    ✅ Content-Type<br />    ✅ Content-Length<br />    ✅ Last-Modified<br />    ✅ ETag<br />✅ Range requests (byte ranges)<br />✅ Multipart object download<br />✅ Conditional Operations:<br />    ✅ If-Match<br />    ✅ If-Modified-Since<br />    ✅ If-None-Match<br />    ✅ If-Unmodified-Since<br />❌ SSE-C encryption<br />❌ Versioning support |
 | ✅ [`PutObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html) | ✅ Object upload<br />✅ System Metadata:<br />    ✅ Content-Type (with automatic detection)<br />    ✅ Content-Length<br />✅ Checksum validation:<br />    ✅ x-amz-checksum-sha256 (Base64 encoded)<br />✅ Automatic replication to configured zones<br />❌ Storage Class selection<br />❌ Additional headers:<br />    ❌ Cache-Control<br />    ❌ Content-Disposition<br />    ❌ Content-Encoding<br />    ❌ Expires<br />    ❌ Content-Language<br />❌ SSE encryption<br />❌ SSE-C encryption<br />❌ Object tagging:<br />    ❌ x-amz-tagging<br />❌ Object locking<br />❌ ACL headers:<br />    ❌ x-amz-acl<br />    ❌ x-amz-grant-\* |
 | ✅ [`DeleteObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html) | ✅ Single object deletion<br />❌ Multi-factor authentication<br />❌ Object Locking<br />❌ Request Payer |
-| ✅ [`CopyObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html) | ✅ Object copy within same storage zone<br />✅ Object size up to 5 GB<br />✅ Response fields:<br />    ✅ LastModified<br />    ✅ ChecksumSHA256 (Base64 encoded)<br />✅ Source object checksum validation<br />❌ Content-Type preservation<br />❌ ETag in response<br />❌ Cross-zone copying<br />❌ Metadata directive:<br />    ❌ x-amz-metadata-directive<br />❌ Conditional copy operations<br />❌ Storage class selection<br />❌ SSE/SSE-C encryption<br />❌ Tagging |
+| ✅ [`CopyObject`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html) | ✅ Object copy within same storage zone<br />✅ Object size up to 5 GB<br />✅ Response fields:<br />    ✅ LastModified<br />    ✅ ChecksumSHA256 (Base64 encoded)<br />✅ Source object checksum validation<br />✅ Content-Type preservation<br />✅ ETag in response<br />✅ Metadata directive:<br />    ✅ x-amz-metadata-directive (custom user metadata is not copied, as custom metadata is not yet supported)<br />✅ Conditional copy operations:<br />    ✅ x-amz-copy-source-if-match<br />    ✅ x-amz-copy-source-if-modified-since<br />    ✅ x-amz-copy-source-if-none-match<br />    ✅ x-amz-copy-source-if-unmodified-since<br />❌ Cross-zone copying<br />❌ Storage class selection<br />❌ SSE/SSE-C encryption<br />❌ Tagging |
 | ✅ [`ListObjects`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjects.html) | ✅ Query Parameters:<br />    ✅ delimiter<br />    ✅ encoding-type<br />    ✅ marker<br />    ✅ max-keys<br />    ✅ prefix<br />✅ Common prefix support |
 | ✅ [`ListObjectsV2`](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html) | ✅ Query Parameters:<br />    ✅ prefix<br />    ✅ delimiter<br />    ✅ max-keys<br />    ✅ continuation-token<br />    ✅ start-after<br />✅ Common prefix support<br />❌ fetch-owner |
 | ✅ `Presign` | ✅ Configuration:<br />    ✅ expires-in<br />    ✅ Signing algorithm AWS4-HMAC-SHA256 |
@@ -266,7 +266,7 @@ S3 compatibility is currently available in the following regions:
 - Johannesburg (JH)
 - Sydney (SYD)
 
-Additional regions will be added in the future.
+Additional regions will be added in the future. Regions that do not yet support S3 have no `[region]-s3` endpoint, and requests to their storage host return `501 NotImplemented`.
 
 <Note>
   S3 compatibility cannot be changed after storage zone creation.
@@ -276,13 +276,13 @@ Additional regions will be added in the future.
 
 The following S3 features are limited by:
 
-- **CORS Configuration**: Cross-Origin Resource Sharing settings (must be handled at the CDN level)
+- **CORS Configuration**: CORS is not configurable — the S3 endpoint always responds with `Access-Control-Allow-Origin: *`. To control CORS, front the storage zone with a pull zone and configure it at the CDN level for file delivery.
 - **Versioning**: Object versioning is not supported
 - **ACLs**: Access Control Lists are not supported
 - **Server-Side Encryption**: SSE/SSE-C encryption is not currently supported
 - **Object Tagging**: Object and bucket tagging is not supported
 - **Lifecycle Policies**: Automatic lifecycle transitions are not supported
-- **Conditional Requests**: If-Match, If-Modified-Since headers not yet supported for GET/HEAD
+- **Custom Metadata**: User-defined metadata (`x-amz-meta-*`) is not supported, so it is not carried over by `CopyObject`
 - **Multipart Limits**: Maximum 10,000 parts per upload
 - **Multipart Session Expiry**: Sessions expire after 10 days
 - **Presigned URLs**: Minimum time: 1 second | Maximum time: 7 days (604800 seconds)
@@ -298,16 +298,22 @@ Bunny Storage returns standard S3 error codes:
 | Error Code | HTTP Status | Description |
 | --- | --- | --- |
 | `NoSuchKey` | 404 | The specified file, folder, or multipart upload does not exist |
-| `InvalidSecurity` | 403 | Signature validation failed (incorrect bucket name, access key, or secret key) |
+| `NoSuchBucket` | 404 | The specified storage zone does not exist |
+| `SignatureDoesNotMatch` | 403 | The request signature does not match (usually an incorrect secret access key) |
+| `AccessDenied` | 403 | Missing or malformed `Authorization` header, or credentials that do not match the target storage zone |
+| `PreconditionFailed` | 412 | A conditional header (`If-Match`, `If-Unmodified-Since`, `x-amz-copy-source-if-*`) did not hold |
+| `BadDigest` | 400 | The supplied `x-amz-checksum-sha256` or `Content-MD5` does not match the uploaded data |
 | `InvalidRequest` | 400 | Invalid request parameters or headers |
+| `NotImplemented` | 501 | The requested operation is not implemented (for example `DeleteObjects`), or S3 is not supported by the storage region — see [Regional availability](#regional-availability) |
 | `InternalError` | 500 | Internal server error |
-| `ServiceUnavailable` | 503 | S3 compatibility is not enabled for this storage zone |
+| `ServiceUnavailable` | 403 | S3 compatibility is not enabled for this storage zone |
+| `SlowDown` | 503 | Rate limit exceeded. The response includes a `Retry-After` header (in seconds) — wait for that interval, then retry with exponential backoff. See [Limits](#limits) |
 
 ## Best Practices
 
 1. [**Use an SDK**](https://docs.aws.amazon.com/AmazonS3/latest/API/sdk-general-information-section.html) to interact with the S3 api
 2. **Enable Replication** for at least one additional region
-3. **Implement retry logic** for transient failures
+3. **Implement retry logic** for transient failures, honouring the `Retry-After` header on `SlowDown` responses
 4. **Use multipart uploads** for objects larger than 100MB
 5. **Include Content-Type headers** when uploading, or rely on automatic detection
 6. **Handle pagination properly** when listing objects or parts (max 1000 per request)
