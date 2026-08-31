@@ -65,7 +65,14 @@ BunnySDK.net.http.serve(async (request: Request) => {
 
 ## Send the first event immediately
 
-The client receives nothing until your script writes the first byte, and this includes the response headers. A script that waits 15 seconds for its first event gives the client 15 seconds of silence, and the connection looks broken. Write one event as soon as the stream opens.
+<Warning>
+  The client receives no part of the response until your script writes the first
+  byte, and this includes the response headers. A script that waits 15 seconds
+  for its first event gives the client 15 seconds of silence, and the connection
+  looks broken.
+</Warning>
+
+Write one event as soon as the stream opens, as the example above does. Do not open the stream and then wait for the first real update.
 
 ## Keep the isolate alive
 

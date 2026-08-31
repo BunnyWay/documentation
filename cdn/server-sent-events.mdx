@@ -14,11 +14,29 @@ SSE works with every origin type:
 - [Edge Scripting](/scripting/server-sent-events), which streams events from a script.
 - [Magic Containers](/magic-containers/endpoints#cdn), through a CDN endpoint.
 
+Three rules keep a stream healthy on the edge network:
+
+- **Send the first event immediately.** Nothing reaches the client before the first byte.
+- **Send data at least every 30 seconds.** The edge closes a stream that carries no data for approximately two minutes.
+- **Let the client reconnect.** We promise no maximum duration, and a closed stream ends with a connection error, not with a clean end of the response.
+
+The sections below explain each rule.
+
+## Send the first event immediately
+
+<Warning>
+  Send the first event as soon as the connection opens, and do not wait for the
+  first real update. With [Edge Scripting](/scripting/server-sent-events), the
+  client receives no part of the response until the script writes the first
+  byte, and this includes the response headers. Until that byte arrives, a
+  healthy stream looks the same as a connection that failed.
+</Warning>
+
+An event that carries the current state works well as the first event. A comment line, or an event with an empty payload, is sufficient when you have no state to send.
+
 ## Keep the stream active
 
 The edge closes a connection that carries no data for approximately two minutes. This is the only duration limit that applies to an event stream. As long as data flows, the connection stays open.
-
-Send the first event as soon as the connection opens. The client receives nothing until your origin writes the first byte, and this includes the response headers.
 
 Send a heartbeat at least every 30 seconds when you have no events to deliver. An SSE comment line is sufficient, because the client ignores it:
 
