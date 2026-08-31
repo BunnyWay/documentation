@@ -18,6 +18,8 @@ SSE works with every origin type:
 
 The edge closes a connection that carries no data for approximately two minutes. This is the only duration limit that applies to an event stream. As long as data flows, the connection stays open.
 
+Send the first event as soon as the connection opens. The client receives nothing until your origin writes the first byte, and this includes the response headers.
+
 Send a heartbeat at least every 30 seconds when you have no events to deliver. An SSE comment line is sufficient, because the client ignores it:
 
 ```text
@@ -27,7 +29,8 @@ Send a heartbeat at least every 30 seconds when you have no events to deliver. A
 
 <Warning>
   We do not guarantee a maximum connection duration. An edge server can close a
-  stream at any time, for example during maintenance. Always let the client
+  stream at any time, for example during maintenance. The client sees a
+  connection error, not a clean end of the response, so always let the client
   reconnect.
 </Warning>
 

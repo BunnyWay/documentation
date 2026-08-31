@@ -9,7 +9,7 @@ The [CDN page on Server-Sent Events](/cdn/server-sent-events) describes how the 
 
 ## Quickstart
 
-This example sends one event every 15 seconds. The interval also acts as the heartbeat that keeps the connection open.
+This example sends one event immediately, and one more every 15 seconds. The interval also acts as the heartbeat that keeps the connection open.
 
 ```typescript
 import * as BunnySDK from "@bunny.net/edgescript-sdk";
@@ -30,14 +30,19 @@ BunnySDK.net.http.serve(async (request: Request) => {
     start(controller) {
       let id = 0;
 
-      timer = setInterval(() => {
+      const send = () => {
         id += 1;
         controller.enqueue(
           encoder.encode(
             `id: ${id}\nevent: tick\ndata: ${new Date().toISOString()}\n\n`,
           ),
         );
-      }, HEARTBEAT_MS);
+      };
+
+      // Send the first event at once. The client waits until this byte.
+      send();
+
+      timer = setInterval(send, HEARTBEAT_MS);
     },
     cancel() {
       clearInterval(timer);
@@ -57,6 +62,10 @@ BunnySDK.net.http.serve(async (request: Request) => {
   });
 });
 ```
+
+## Send the first event immediately
+
+The client receives nothing until your script writes the first byte, and this includes the response headers. A script that waits 15 seconds for its first event gives the client 15 seconds of silence, and the connection looks broken. Write one event as soon as the stream opens.
 
 ## Keep the isolate alive
 
