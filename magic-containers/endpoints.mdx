@@ -64,9 +64,12 @@ A CDN endpoint delivers [Server-Sent Events](/cdn/server-sent-events) without ex
 
 Three points apply to a container that serves an event stream:
 
+- Send `Cache-Control: no-cache` with the stream. A CDN endpoint caches an event stream like any other response, and a container that sends no `Cache-Control` gets the pull zone's default cache time. See [Keep the event stream out of the cache](/cdn/server-sent-events#keep-the-event-stream-out-of-the-cache).
 - Send a heartbeat at least every 30 seconds, and flush every event immediately. See [Keep the stream active](/cdn/server-sent-events#keep-the-stream-active).
 - A [rolling update](/magic-containers/rolling-updates) or a scale-in closes the streams that the instance holds. Handle `SIGTERM` and close the streams cleanly, as described in [Graceful Shutdown](/magic-containers/graceful-shutdown). The client then reconnects to another instance.
 - Enable [sticky sessions](#sticky-sessions) if the stream depends on state that only one instance holds.
+
+The heartbeat is what a CDN endpoint needs, because the edge closes a stream that carries no data. An [Anycast endpoint](#anycast) reaches your container without the edge in the path, so that rule does not apply to it. A CDN endpoint is still the better choice for an event stream in almost every case: it terminates TLS, it puts the connection on the edge network close to the client, and the heartbeat that keeps it open is a few bytes.
 
 ## Anycast
 
