@@ -1,0 +1,71 @@
+---
+title: "Server-Sent Events (SSE)"
+sidebarTitle: "Server-Sent Events"
+description: "Bunny CDN supports Server-Sent Events. Learn how event streams behave on the edge network, and which limits apply to them."
+---
+
+Server-Sent Events (SSE) is a one-way stream of text from a server to a client. The server keeps the HTTP response open and writes events into it, and the client reads them with the [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) API. Applications use it for live dashboards, progress updates, notifications, AI token streams, and MCP servers.
+
+Bunny CDN supports SSE. There is no setting to enable, because an event stream is a standard HTTP response with the `text/event-stream` content type. The edge streams each event to the client as soon as your origin writes it.
+
+SSE works with every origin type:
+
+- Your own origin server.
+- [Edge Scripting](/scripting/server-sent-events), which streams events from a script.
+- [Magic Containers](/magic-containers/endpoints#cdn), through a CDN endpoint.
+
+## Keep the stream active
+
+The edge closes a connection that carries no data for approximately two minutes. This is the only duration limit that applies to an event stream. As long as data flows, the connection stays open.
+
+Send a heartbeat at least every 30 seconds when you have no events to deliver. An SSE comment line is sufficient, because the client ignores it:
+
+```text
+: heartbeat
+
+```
+
+<Warning>
+  We do not guarantee a maximum connection duration. An edge server can close a
+  stream at any time, for example during maintenance. Always let the client
+  reconnect.
+</Warning>
+
+Give each event an `id` field. After a disconnect, `EventSource` reconnects automatically and sends the last identifier in the `Last-Event-ID` request header, which lets your origin continue from that point:
+
+```text
+id: 42
+event: price
+data: {"symbol":"BUNNY","value":128.4}
+
+```
+
+## Do not cache an event stream
+
+A cached event stream serves stale events to later clients, and the events stop. Keep the stream out of the cache:
+
+- Send `Cache-Control: no-cache` from your origin. Bunny follows this header and does not cache the response.
+- Do not apply an [Override Cache Time](/cdn/edge-rules/custom-cache-time) Edge Rule to the path that serves the stream.
+
+If you use [Request Coalescing](/cdn/request-coalescing), give each client its own URL, for example with a session or user query string parameter. Coalescing joins simultaneous requests for the same URL into one origin request, which is correct for a shared feed, but not for a per-user stream.
+
+## Origin requirements
+
+- Send the response headers immediately. Bunny waits 60 seconds for your origin to start the response, and returns a `504 Gateway Timeout` if nothing arrives. This limit applies only until the headers arrive, not to the stream that follows. You can change it with Safehop. See [502 and 504 errors](/cdn/connectivity#502-and-504-errors).
+- Write and flush each event immediately. Output buffering in your framework or your origin web server holds events back, and the client receives them late or in one block.
+- Remove any request time limit on the origin route that serves the stream.
+
+## Costs and limits
+
+An event stream is a standard HTTP request, and it uses the standard request pipeline. Bunny bills the data it transfers at the [normal CDN bandwidth rate](/cdn/pricing). The [WebSocket connection limits](/cdn/websockets#connection-limits) and the WebSocket connection-time price do not apply to an event stream.
+
+If an [Edge Script](/scripting/server-sent-events) produces the stream, the script also bills [CPU time and requests](/scripting/pricing). It does not bill the time the connection stays open.
+
+## SSE or WebSockets
+
+| Use SSE when                                    | Use [WebSockets](/cdn/websockets) when              |
+| ----------------------------------------------- | --------------------------------------------------- |
+| Only the server sends data.                     | The client and the server both send data.           |
+| Text events are sufficient.                     | You need binary frames.                             |
+| You want automatic reconnection in the browser. | You control reconnection in your own client.        |
+| You want plain HTTP, with no setting to enable. | You accept a per-zone connection limit and a separate price. |

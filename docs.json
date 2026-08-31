@@ -252,6 +252,7 @@
                   "cdn/seamless-migration",
                   "cdn/custom-404-page",
                   "cdn/websockets",
+                  "cdn/server-sent-events",
                   {
                     "group": "Frequently Asked Questions",
                     "pages": [
@@ -512,7 +513,8 @@
                   "scripting/html-rewriter",
                   "scripting/node-fs",
                   "scripting/node-tls",
-                  "scripting/websockets"
+                  "scripting/websockets",
+                  "scripting/server-sent-events"
                 ]
               },
               {

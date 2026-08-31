@@ -58,6 +58,16 @@ To enable sticky sessions:
 
 3. Click **Add Endpoint**.
 
+### Server-Sent Events
+
+A CDN endpoint delivers [Server-Sent Events](/cdn/server-sent-events) without extra configuration, because an event stream is standard HTTP traffic. Your container writes the events, and the edge streams them to the client.
+
+Three points apply to a container that serves an event stream:
+
+- Send a heartbeat at least every 30 seconds, and flush every event immediately. See [Keep the stream active](/cdn/server-sent-events#keep-the-stream-active).
+- A [rolling update](/magic-containers/rolling-updates) or a scale-in closes the streams that the instance holds. Handle `SIGTERM` and close the streams cleanly, as described in [Graceful Shutdown](/magic-containers/graceful-shutdown). The client then reconnects to another instance.
+- Enable [sticky sessions](#sticky-sessions) if the stream depends on state that only one instance holds.
+
 ## Anycast
 
 Anycast endpoints map your container to an Anycast IP address, routing requests to the nearest node for improved performance.

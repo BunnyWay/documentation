@@ -1,0 +1,94 @@
+---
+title: "Server-Sent Events"
+description: "Stream Server-Sent Events from an Edge Script, and keep the isolate alive while the connection is open."
+---
+
+An Edge Script can answer a request with a stream of [Server-Sent Events](/cdn/server-sent-events). The script returns a `Response` that holds a `ReadableStream`, and the edge delivers each event to the client as the script writes it.
+
+The [CDN page on Server-Sent Events](/cdn/server-sent-events) describes how the network treats an event stream, including the heartbeat the connection needs and the caching rules. This page describes what a script must do.
+
+## Quickstart
+
+This example sends one event every 15 seconds. The interval also acts as the heartbeat that keeps the connection open.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+const HEARTBEAT_MS = 15_000;
+
+BunnySDK.net.http.serve(async (request: Request) => {
+  const encoder = new TextEncoder();
+  let timer: number;
+  let onClosed: () => void;
+
+  // Resolves when the client goes away and the runtime cancels the stream.
+  const closed = new Promise<void>((resolve) => {
+    onClosed = resolve;
+  });
+
+  const stream = new ReadableStream({
+    start(controller) {
+      let id = 0;
+
+      timer = setInterval(() => {
+        id += 1;
+        controller.enqueue(
+          encoder.encode(
+            `id: ${id}\nevent: tick\ndata: ${new Date().toISOString()}\n\n`,
+          ),
+        );
+      }, HEARTBEAT_MS);
+    },
+    cancel() {
+      clearInterval(timer);
+      onClosed();
+    },
+  });
+
+  // It is important to call waitUntil; otherwise the script may be evicted
+  // while the stream is still open.
+  Bunny.v1.waitUntil(closed);
+
+  return new Response(stream, {
+    headers: {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+    },
+  });
+});
+```
+
+## Keep the isolate alive
+
+The isolate that answers a request can be evicted once the handler returns. An event stream lives longer than the handler, so pass a promise to [`waitUntil`](/scripting/runtime#waituntil) that resolves only when the stream ends. Without it, the script can stop in the middle of a stream.
+
+Always resolve the promise when the stream closes. A promise that never settles holds the isolate open after the client has gone.
+
+## Event format
+
+Each event is one or more lines, and a blank line ends it. Write `\n\n` at the end of every event, or the client holds the data and waits for more.
+
+```typescript
+controller.enqueue(encoder.encode(`id: 42\ndata: ${JSON.stringify(payload)}\n\n`));
+```
+
+To resume after a disconnect, read the `Last-Event-ID` header that the client sends on reconnection:
+
+```typescript
+const lastId = request.headers.get("last-event-id");
+```
+
+## Limits
+
+The [Edge Scripting limits](/scripting/limits) apply to a script that streams events, with two points to note:
+
+- The 30-second CPU time limit measures processor time, not the time a connection stays open. A stream that waits between events uses almost no CPU time.
+- Pricing follows the same rule. Edge Scripting bills [CPU time and requests](/scripting/pricing), not connection time.
+
+Keep the work inside the stream small. A script that builds each event with a subrequest reaches the subrequest limit of the request quickly.
+
+## References
+
+- [Server-Sent Events on the CDN](/cdn/server-sent-events)
+- [WebSockets](/scripting/websockets), for two-way communication
+- [Runtime - waitUntil](/scripting/runtime#waituntil)
