@@ -4,16 +4,22 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
-<Update label="2026-08-14" tags={["Storage","(Improvement)"]}>
-  ## S3 API: virtual hosted-style URLs, conditional requests, and expanded error codes
+<Update label="2026-08-21" tags={["CDN","(New)"]}>
+  ## EEA Routing Filter for Pull Zones
 
-  | Operation / Behavior | Change |
-  | --- | --- |
-  | **URL styles** | Virtual hosted-style URLs (`https://bucket-name.[region]-s3.storage.bunnycdn.com/key`) are now supported alongside path-style URLs. |
-  | **HeadObject** | Returns `ETag` and supports conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
-  | **GetObject** | Returns `ETag` and supports the same conditional operations: `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`. |
-  | **CopyObject** | Preserves `Content-Type`, returns `ETag`, supports `x-amz-metadata-directive`, and accepts conditional copy headers. |
-  | **Rate limiting** | Rate-limited requests return a `SlowDown` (`503`) response with a `Retry-After` header. |
+  Pull Zones now support a European Economic Area (EEA) routing filter that routes all traffic exclusively through 26 PoPs across EU member states plus Iceland and Norway. Use this filter when you need GDPR-compliant data residency across the full EEA. [Learn more](/cdn/performance/routing-filters)
+</Update>
+  
+<Update label="2026-08-21" tags={["CDN","(New)"]}>
+  ## TLS Security Levels for Pull Zones
+
+  Pull Zones now support Legacy, Compatible, and Modern only TLS security profiles, configurable per zone. Set the minimum cipher-suite strength to balance stronger security with the client compatibility each workload requires. [Learn more](/cdn/security/ssl)
+</Update>
+
+<Update label="2026-08-14" tags={["Storage","(Improvement)"]}>
+  ## S3 API compatibility improvements
+
+  The S3 API now supports virtual hosted-style URLs alongside path-style URLs, adds `ETag` and conditional request support to `HeadObject` and `GetObject`, improves `CopyObject` with content-type preservation, metadata directives, and conditional copy headers, and returns a standard `SlowDown` (`503`) response with a `Retry-After` header when requests are rate limited.
 </Update>
 
 <Update label="2026-08-13" tags={["Stream","(New)"]}>
@@ -41,7 +47,7 @@ rss: true
 <Update label="2026-07-16" tags={["CLI","(New)"]}>
   ## Cloud sandbox environments via Bunny CLI
 
-  The Bunny CLI now supports creating and managing on-demand cloud sandbox environments backed by Bunny Magic Containers. Each sandbox is a fully isolated Ubuntu container with Node.js, Bun, Python, and Claude Code pre-installed, with 10 GB of persistent storage. Create, SSH into, copy files, expose public URLs, and manage environment variables — all from the CLI. [Learn more](/cli/commands/sandbox)
+  The Bunny CLI now supports creating and managing on-demand cloud sandbox environments backed by Bunny Magic Containers. Each sandbox is a fully isolated Ubuntu container with Node.js, Bun, Python, and Claude Code pre-installed, with 10 GB of persistent storage. Create, SSH into, copy files, expose public URLs, and manage environment variables, all from the CLI. [Learn more](/cli/commands/sandbox)
 </Update>
 
 <Update label="2026-07-31" tags={["CDN","(New)"]}>
@@ -59,13 +65,13 @@ rss: true
 <Update label="2026-07-30" tags={["Shield","(New)"]}>
   ## Verified bot customization for Shield Zones
 
-  Bunny Shield now lets you control how verified bots are handled per Shield Zone — allow, block, or take no action — with per-bot and per-category overrides across seven categories: SEO, AI Scraper, AI Tool, Tool, Ads, Preview, and Social. Verification supports both reverse DNS and published IP range checks, and verified bot categories are exposed to the Rule Engine via the `VERIFIED_BOT_CATEGORY` variable for custom WAF rules. [Learn more](/shield/verified-bots)
+  Bunny Shield now lets you control how verified bots are handled per Shield Zone. allow, block, or take no action, with per-bot and per-category overrides across seven categories: SEO, AI Scraper, AI Tool, Tool, Ads, Preview, and Social. Verification supports both reverse DNS and published IP range checks, and verified bot categories are exposed to the Rule Engine via the `VERIFIED_BOT_CATEGORY` variable for custom WAF rules. [Learn more](/shield/verified-bots)
 </Update>
 
 <Update label="2026-07-28" tags={["Edge Scripting","(New)"]}>
   ## Before cache execution for Edge Scripts (Preview)
 
-  Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. When enabled on a Pull Zone, middleware scripts gain two new hooks — `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support this mode, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
+  Edge Scripts can now run **before** the CDN cache layer, giving you full control over every request instead of only executing on cache misses. When enabled on a Pull Zone, middleware scripts gain two new hooks. `onClientRequest` (intercept requests before the cache lookup) and `onClientResponse` (modify responses before they reach the client, including cached ones). Standalone scripts also support this mode, running on every request and deciding how responses are cached. [Learn more](/scripting/before-cache)
 </Update>
 
 <Update label="2026-07-16" tags={["Stream","(Improvement)"]}>
@@ -75,7 +81,7 @@ rss: true
 
   The TV experience feels native, with the video title and thumbnail on screen and player colors and captions appearance (color, font, size, language) synced from the embed.
 
-  Viewers keep full playback control while casting — audio track selection works before and during a session, and playback rate changes apply on the TV. Session handling is seamless too: playback continues from the current position when casting starts and transfers back on stop, with page reloads, replays after the video ends with a smoother experience overall.
+  Viewers keep full playback control while casting. audio track selection works before and during a session, and playback rate changes apply on the TV. Session handling is seamless too: playback continues from the current position when casting starts and transfers back on stop, with page reloads, replays after the video ends with a smoother experience overall.
 
   [Learn more](/stream/player-settings)
 </Update>
@@ -92,7 +98,7 @@ rss: true
   Seamless Domain Migration now supports HTTP (file-based) validation alongside the existing DNS (TXT record) method for issuing SSL certificates before pointing your domain to bunny.net. Choose DNS if you control your domain's DNS records, or HTTP if you can place a challenge file on the server your domain currently points to. [Learn more](/cdn/seamless-migration)
 </Update>
 
-<Update label="2026-07-10" tags={["Scripting","(New)"]}>
+<Update label="2026-07-10" tags={["Edge Scripting","(New)"]}>
   ## Symbolic links, timestamps, and permissions in Edge Scripting
 
   The Edge Scripting Node.js file system module now supports symbolic links (`symlink()`, `readlink()`, `lstat()`), returns correct file timestamps (`atime`, `mtime`, `ctime`, `birthtime`), and enforces owner-level file and directory permissions (`chmod()`, `access()`, `Stats.mode`). [Learn more](/scripting/node-fs)
@@ -274,7 +280,7 @@ rss: true
   Transcribing language model has been upgraded to v1.2.0 for faster and higher quality transcriptions. [Learn more](/stream/transcribing)
 </Update>
 
-<Update label="2026-03-27" tags={["New"]}>
+<Update label="2026-03-27" tags={["Stream", "(New)"]}>
   ## Free encoding
 
   Increased capacity and performance improvements to Stream Free encoding for faster transcoding and shorter queue time. [Learn more](/stream/encoding)
