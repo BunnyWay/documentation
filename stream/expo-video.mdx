@@ -41,36 +41,35 @@ Bunny Player supports features like Picture-in-Picture and background audio on t
       }
     }
     ```
-
   </Step>
   <Step title="Play a video">
     Every processed Bunny Stream video has an HLS playlist at a predictable URL:
 
-    ```
+    ```text
     https://{pullZone}/{videoId}/playlist.m3u8
     ```
 
-    Find your Pull Zone hostname under **Stream > API** in the bunny.net dashboard.
+    Find your Pull Zone hostname under **Stream \> API** in the bunny.net dashboard.
 
     Pass the HLS URL to `useVideoPlayer` and render a `VideoView`:
 
     ```tsx
     import { useVideoPlayer, VideoView } from "expo-video";
     import { useWindowDimensions } from "react-native";
-
+    
     const PULL_ZONE = "vz-abc123-456.b-cdn.net";
     const VIDEO_ID = "your-video-guid";
-
+    
     export default function VideoScreen() {
       const { width } = useWindowDimensions();
-
+    
       const player = useVideoPlayer(
         `https://${PULL_ZONE}/${VIDEO_ID}/playlist.m3u8`,
         (p) => {
           p.loop = false;
         }
       );
-
+    
       return (
         <VideoView
           player={player}
@@ -84,27 +83,24 @@ Bunny Player supports features like Picture-in-Picture and background audio on t
     ```
 
     That's it. The player handles adaptive bitrate selection automatically, choosing the best quality for the device's connection.
-
   </Step>
 </Steps>
 
 <Note>
-  A complete working example with a video list screen, detail screen, chapter
-  navigation, and caption picker is available at
-  [bunny-stream-expo](https://github.com/jamie-at-bunny/bunny-stream-expo).
+  A complete working example with a video list screen, detail screen, chapter navigation, and caption picker is available at [bunny-stream-expo](https://github.com/jamie-at-bunny/bunny-stream-expo).
 </Note>
 
 ## URL structure
 
 Every processed video is accessible via predictable URLs built from your Pull Zone hostname and the video's GUID:
 
-| Resource         | URL pattern                                        |
-| ---------------- | -------------------------------------------------- |
-| HLS playlist     | `https://{pullZone}/{videoId}/playlist.m3u8`       |
-| Thumbnail        | `https://{pullZone}/{videoId}/{thumbnailFileName}` |
-| Animated preview | `https://{pullZone}/{videoId}/preview.webp`        |
-| MP4 fallback     | `https://{pullZone}/{videoId}/play_{height}p.mp4`  |
-| Captions         | `https://{pullZone}/{videoId}/captions/{lang}.vtt` |
+| Resource | URL pattern |
+| --- | --- |
+| HLS playlist | `https://{pullZone}/{videoId}/playlist.m3u8` |
+| Thumbnail | `https://{pullZone}/{videoId}/{thumbnailFileName}` |
+| Animated preview | `https://{pullZone}/{videoId}/preview.webp` |
+| MP4 fallback | `https://{pullZone}/{videoId}/play_{height}p.mp4` |
+| Captions | `https://{pullZone}/{videoId}/captions/{lang}.vtt` |
 
 ## Fetching video metadata
 
@@ -125,8 +121,7 @@ async function getVideo(videoId: string) {
 ```
 
 <Warning>
-  The `AccessKey` is a secret. In a production app, proxy API calls through your
-  backend so the key never reaches the client.
+  The `AccessKey` is a secret. In a production app, proxy API calls through your backend so the key never reaches the client.
 </Warning>
 
 The response includes fields you can pass directly to the player:
@@ -228,11 +223,7 @@ const selectTrack = (track: SubtitleTrack | null) => {
 If your library has [MediaCage Enterprise DRM](/stream/quickstart-mediacage-enterprise) enabled, `expo-video` can request play licenses directly from Bunny's license servers using the `drm` source option.
 
 <Info>
-  The license endpoints apply the same referrer protection and token
-  authentication as the player embed view. If either is enabled in your library
-  settings, include the corresponding headers or query parameters in your
-  requests. See [Embedded view token auth](/stream/token-authentication) for
-  details.
+  The license endpoints apply the same referrer protection and token authentication as the player embed view. If either is enabled in your library settings, include the corresponding headers or query parameters in your requests. See [Embedded view token auth](/stream/token-authentication) for details.
 </Info>
 
 On iOS, use FairPlay with Bunny's certificate and license endpoints:

@@ -645,8 +645,10 @@
                     "group": "Mobile SDK",
                     "pages": [
                       "stream/mobile-sdk",
-                      "stream/mobile-sdk-token-authentication"
-                    ]
+                      "stream/android-sdk",
+                      "stream/ios-sdk"
+                    ],
+                    "expanded": true
                   },
                   "stream/expo-video",
                   "stream/embedding",
