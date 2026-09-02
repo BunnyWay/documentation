@@ -1,225 +1,97 @@
 ---
-title: Deploy
-description: Choose from Magic, Single region, or Advanced deployment options.
+title: Deploy an App
+sidebarTitle: Deploy
+description: Deploy a containerized application to Magic Containers from a single page. Pick an image, configure endpoints, volumes, and environment variables, choose a region, and deploy.
 ---
 
-Magic Containers offers three deployment options: Magic deployment for effortless global provisioning, Single region for fast deployment without auto-scaling, and Advanced for full control over regions and scaling based on user activity. Before deploying, you'll need a [private container registry](/magic-containers/image-registries) configured.
+Deploying to Magic Containers happens on a single page. You pick a container image, configure the container, choose a region, and click **Deploy**. If you need more regions or different scaling settings, you can configure them after your app is deployed.
 
-# Magic deployment
-
-<Frame>
-  ![](/images/docs/a7425adfd3e165ff54bce0d5b569cd08fb2cafe6ebea61fa9a38fa8d69ec1bcf-Screenshot_2025-05-27_at_11.23.38.png)
-</Frame>
-
-**Magic deployment** is the simplest way to get your app up and running. It leverages the power of Magic Containers AI to handle global provisioning efficiently and cost-effectively.
-
-Magic Containers AI will automatically analyze your app's requirements, determine the optimal deployment regions, and provision your app globally in just a few clicks. This approach ensures the best possible performance while minimizing costs.
-
-<Card
-  title="Magic Containers Quickstart"
-  href="/magic-containers/quickstart"
-  icon="rocket"
-  horizontal
-/>
-
-# Single region deployment
-
-**Single region deployment** gives you full control over provisioning settings, allowing you to deploy to the closest single region without the worry of any scaling. This is ideal for scenarios where you are wanting fast deployment and no auto-scaling.
+Public images from Docker Hub and GitHub work out of the box. To deploy a private image, connect the registry first. See [Image Registries](/magic-containers/image-registries).
 
 <Steps>
-  <Step title="Login to bunny.net">
-    Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
+  <Step title="Open the Deploy App page">
+    In the [bunny.net dashboard](https://dash.bunny.net), go to **Magic Containers** and click **+ Add App**.
+
+    <Frame>
+      ![Deploy App page in Magic Containers](/images/magic-containers/deploy-app.png)
+    </Frame>
+
+    The page opens with one empty container named `Container-1`. When you select an image, the container is renamed after the image automatically. Click the pencil icon to give it a different name.
   </Step>
 
-  <Step title="Add a new app">
-    Select **Magic Containers** and click the **Add App** button.
+  <Step title="Select a container image">
+    Use the search field to find a container image. The search covers every registry connected to your account: the public Docker Hub and GitHub registries, plus any private Docker Hub or GitHub registries you've added. The registry chips above the search field show which registries are included. Click **+ Add Registry** to connect a private registry without leaving the page.
+
+    Once you select an image, its available tags are displayed. If a `latest` tag exists, it is selected automatically. Click any other tag to switch, or use the search button to find a tag that isn't listed.
 
     <Frame>
-      ![](/images/docs/c19bb3012eb95af51d13b459983d89e94a1ffd2064bafcea65b44a3925ec2e9e-image.png)
+      ![Container configuration with image, endpoints, volumes, and environment variables](/images/magic-containers/deploy-app-container.png)
     </Frame>
 
+    <Info>
+      Magic Containers only supports images built for the **linux/amd64** architecture.
+    </Info>
   </Step>
 
-  <Step title="Select Single region deployment">
-    Select the **Single region deployment** option, define the name of your app, and click **Next Step**.
+  <Step title="Configure endpoints">
+    Endpoints define how your container is reachable from the internet. Two endpoint types are available:
 
-    <Frame>
-      ![](/images/docs/f05ba05a8cc798498c7dbe489345e62c5c98ce26c0bcd0b548a9afcbe66a01bc-Screenshot_2025-05-27_at_12.50.46.png)
-    </Frame>
+    - **CDN**: routes traffic through bunny.net's CDN edge network. Best for HTTP(S) services that benefit from caching and global distribution.
+    - **Anycast IP**: exposes your container directly on a globally anycast IP. Better suited for non-HTTP protocols or latency-sensitive TCP and UDP services.
 
+    Click **+ CDN** or **+ Anycast IP** to add an endpoint, then give it a name and set the container port. This is the port your application listens on inside the container. Add more endpoints if your app exposes multiple ports.
+
+    When an image declares known ports, an endpoint is pre-filled for you. Review it before deploying.
+
+    <Warning>
+      Endpoints make your container publicly accessible. Only create endpoints for services that are meant to be public-facing, such as web servers or APIs. **Do not expose private services** such as databases, caches, or internal APIs through an endpoint.
+    </Warning>
+
+    See [Endpoints](/magic-containers/endpoints) for details on each endpoint type.
   </Step>
 
-  <Step title="Configure App region">
-    After selecting Single region deployment, configure your **App region**. You will be presented with your closest region preselected and a list of all available regions.
+  <Step title="Add persistent volumes (optional)">
+    If your container needs to write data that should survive restarts and redeployments, click **+ Volume** under **Persistent volumes**. Give the volume a name, set the mount path inside the container, and set its size in GB.
 
-    <Frame>
-      ![](/images/docs/7c91eefa4bdc3531dba7cb24599ba7ae9c70d97989fa122d5a86eebdb2c66a3f-Screenshot_2025-06-30_at_15.21.40.png)
-    </Frame>
-
-    After configuring the **App region** settings, click **Next Step.**
-
-    <Frame>
-      ![](/images/docs/6b64dc8cd01863d95de9c06351ec9421fe52f9283dbe14dc06813164d046a82f-Screenshot_2025-06-30_at_15.22.16.png)
-    </Frame>
-
+    Leave this section empty if your container is stateless. See [Persistent Volumes](/magic-containers/persistent-volumes) for how volumes behave across regions and instances.
   </Step>
 
-  <Step title="Add your container">
-    Click **Add Container**.
+  <Step title="Set environment variables">
+    Under **Environment variables**, configure any runtime settings your container needs. Click **+ Variable** to add a key and value one at a time, or click **Raw editor** to paste multiple variables in `KEY=value` form.
 
-    <Frame>
-      ![](/images/docs/24b51224d1bbe27f2a261b7adc07434f699871f294faa6bb6e743521060b51b9-Single_region_-_container.png)
-    </Frame>
+    For public Docker Hub images, Magic Containers inspects the image metadata and pre-fills known environment variables with their default values. Review each one before deploying. Pay special attention to:
 
-    If you want your app to be available on the internet, you need to set up edge endpoints. Go to the **Endpoints** tab and click **Add New Endpoint**.
+    - **Passwords and secrets**: replace any placeholder values with strong, unique secrets. Never leave default or example passwords in production.
+    - **Paths and ports**: confirm that pre-filled values match your actual container configuration.
 
-    <Frame>
-      ![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
-    </Frame>
-
-    - You need to name the endpoint (it must have a unique name).
-    - Decide how you want to expose the app, either using CDN or Anycast.
-    - Define the container port, which is the port on which the application is listening inside the container.
-    - Specify whether your application inside the container uses SSL for origin (only CDN setting).
-
-    Click **Add endpoint**, and then click **Add Container**.
-
+    See [Environment Variables](/magic-containers/environment-variables) for more.
   </Step>
 
-  <Step title="Review and create">
-    Review your settings. If everything looks good, click **Next Step**.
+  <Step title="Add more containers (optional)">
+    Click **+ Add container** to add another container to the same app. Each container gets its own image, endpoints, volumes, and environment variables.
+
+    All containers in an app run in the same pod and share a network namespace, so they can reach each other on `localhost`. They must listen on different ports. See [Multi-Container Apps](/magic-containers/multi-container).
+  </Step>
+
+  <Step title="Name your app and pick a region">
+    Under **App name**, enter a name for the app. The name of the first image is pre-filled as a default.
+
+    Under **Region**, the region geographically closest to you is selected automatically. Change it if you need to deploy closer to your users or a specific data source. See [Regions](/magic-containers/regions) for the full list.
+
+    After deploying, you can add regions and configure scaling from the app's **Regions and Scaling** settings. See [Autoscaling](/magic-containers/autoscaling).
+  </Step>
+
+  <Step title="Deploy">
+    Once everything looks good, click **Deploy**. Your app is created, the containers are scheduled, and the endpoints are activated.
+
+    You'll be taken to the app overview where you can monitor the deployment status.
 
     <Frame>
-      ![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
+      ![App overview page](/images/docs/088796ede6fd82ee1b4a899568fcb21b77a13c6f394f40ae0a5b1b5e4f1cedab-image.png)
     </Frame>
-
-    Click **Confirm and Create**.
-
-    <Frame>
-      ![](/images/docs/5729c360c08606e07c12293f8feb22e98394689c830a8068f2fd26675693bcad-image.png)
-    </Frame>
-
-    You will be navigated to the overview screen of your app. The processing button should turn green, indicating that your app is being deployed.
-
-    <Frame>
-      ![](/images/docs/94ef88fec4933b4e13cda07cad4689dbfcb852ece64eb52babb602214f530231-image.png)
-    </Frame>
-
-    Your application is now deployed and can be accessed by clicking here:
-
-    <Frame>
-      ![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
-    </Frame>
-
-    The provisioner will take your region settings into account and deploy your app accordingly.
-
   </Step>
 </Steps>
 
-# Advanced deployment
-
-<Frame>
-  ![](/images/docs/0b2c9b8e4451f8756fb4c187d3acbc6eb98bc4426b4a549263a156c2d2c8d83d-Advanced_Deployment.png)
-</Frame>
-
-**Advanced deployment** gives you full control over provisioning settings, allowing you to customize the deployment regions and react to user activity. This level of customization is ideal for scenarios where you have specific geographical requirements or want to optimize your deployment strategy based on user behavior.
-
-<Steps>
-  <Step title="Login to bunny.net">
-    Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
-  </Step>
-
-  <Step title="Add a new app">
-    Select **Magic Containers** and click the **Add App** button.
-
-    <Frame>
-      ![](/images/docs/c19bb3012eb95af51d13b459983d89e94a1ffd2064bafcea65b44a3925ec2e9e-image.png)
-    </Frame>
-
-  </Step>
-
-  <Step title="Select Advanced deployment">
-    Select the **Advanced deployment** option, define the name of your app, and click **Next Step**.
-
-    <Frame>
-      ![](/images/docs/98705a609aca2581e6d48dc9bd560193d2a128da47679f48a154a9355769a8fd-Screenshot_2025-05-27_at_11.27.18.png)
-    </Frame>
-
-  </Step>
-
-  <Step title="Configure Region Settings">
-    You will be presented with a list of all available regions. For each region, you can set whether it is a base region or a standard region:
-
-    - **Base region**: Regions where your app will always be deployed. You must select at least one base region. Standard accounts have no maximum, while trial accounts are limited to three regions. See [Limits](/magic-containers/limits#trial-accounts).
-    - **Enabled region**: The provisioning system will actively monitor user locations and behavior. If it identifies active users in a specific region, it will dynamically deploy the app to accommodate the user traffic. Conversely, if there is no user activity in a region, the app will not be deployed in that area.
-
-    <Frame>
-      ![](/images/docs/f3476bf7b00a1dc409c5125c37ed65b90d1f255b6099a9a119944ea9833580aa-Screenshot_2025-06-30_at_15.58.52.png)
-    </Frame>
-
-    Based on your settings, the provisioner will react to user activity as follows:
-
-    - If the **Enabled Regions** and **Base Regions** are equal, the provisioner will use Static Provisioning. In this mode, the regions deployed over time will remain the same.
-    - If the sets are different, the provisioner will use **Auto Provisioning**. Regions are chosen based on end-user activity. If users are active in a region, the app will be deployed there. If there are no active users in a region, the app won't be deployed.
-
-    After configuring the region settings, click **Next Step.**
-
-  </Step>
-
-  <Step title="Configure instances and add container">
-    Set the minimum and maximum number of instances (maximum is 10 per region on a standard account, 3 on a [trial account](/magic-containers/limits#trial-accounts)), and click **Add New Container**.
-
-    <Frame>
-      ![](/images/docs/d348d268a258d52cc4b66ff09458184bdebd3ee196e0edc1a590d952246ea39a-image.png)
-    </Frame>
-
-    Select the provisioning type.
-
-    <Frame>
-      ![](/images/docs/064da8f98d9fe1db4a596eda7e97a4217831873772c3b2fa2ca9f0156720a29e-image.png)
-    </Frame>
-
-    If you want your app to be available on the internet, you need to set up edge endpoints. Go to the **Endpoints** tab and click **Add New Endpoint**.
-
-    <Frame>
-      ![](/images/docs/7d42129d7cc77e29db24f66ace83f264fd629282dac2140c0e701b059894a5e6-image.png)
-    </Frame>
-
-    - You need to name the endpoint (it must have a unique name).
-    - Decide how you want to expose the app, either using CDN or Anycast.
-    - Define the container port, which is the port on which the application is listening inside the container.
-    - Specify whether your application inside the container uses SSL for origin (only CDN setting).
-
-    Click **Add endpoint**, and then click **Add Container**.
-
-  </Step>
-
-  <Step title="Review and create">
-    Review your settings. If everything looks good, click **Next Step**.
-
-    <Frame>
-      ![](/images/docs/aab12e2eb0c3404e4b24f164b6f73cd2586760988b27ca14726125af5671bb2c-image.png)
-    </Frame>
-
-    Click **Confirm and Create**.
-
-    <Frame>
-      ![](/images/docs/5729c360c08606e07c12293f8feb22e98394689c830a8068f2fd26675693bcad-image.png)
-    </Frame>
-
-    You will be navigated to the overview screen of your app. The processing button should turn green, indicating that your app is being deployed.
-
-    <Frame>
-      ![](/images/docs/94ef88fec4933b4e13cda07cad4689dbfcb852ece64eb52babb602214f530231-image.png)
-    </Frame>
-
-    Your application is now deployed and can be accessed by clicking here:
-
-    <Frame>
-      ![](/images/docs/8ef79c614b1402619f36e3556b3eda7d76674394d20716e73fe2290f79fbde51-image.png)
-    </Frame>
-
-    The provisioner will take your region settings into account and deploy your app accordingly.
-
-  </Step>
-</Steps>
+<Info>
+  Trial accounts must add valid payment card details before deploying, and are limited to one application, three regions, and three instances per region. See [Limits](/magic-containers/limits#trial-accounts).
+</Info>
