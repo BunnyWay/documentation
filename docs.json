@@ -353,6 +353,7 @@
                   "magic-containers/rolling-updates",
                   "magic-containers/deployment-strategies",
                   "magic-containers/graceful-shutdown",
+                  "magic-containers/restart-policy",
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
                   "magic-containers/app-metadata"
