@@ -294,7 +294,6 @@
                   "magic-containers/index",
                   "magic-containers/quickstart",
                   "magic-containers/templates",
-                  "magic-containers/quick-deploy",
                   {
                     "group": "Use Cases",
                     "hidden": true,
@@ -1382,6 +1381,11 @@
     },
     {
       "source": "/magic-containers-how-to-deploy-your-app",
+      "destination": "/magic-containers/deploy",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/quick-deploy",
       "destination": "/magic-containers/deploy",
       "permanent": true
     },
