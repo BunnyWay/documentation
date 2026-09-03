@@ -931,6 +931,12 @@
                 ]
               },
               {
+                "group": "Tools",
+                "pages": [
+                  "database/tools/database-client"
+                ]
+              },
+              {
                 "group": "Reference",
                 "pages": [
                   "database/limits",
