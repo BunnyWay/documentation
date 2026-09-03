@@ -1,0 +1,146 @@
+---
+title: "Database Migrations"
+sidebarTitle: "Migrations"
+description: "Version your Bunny Database schema with SQL migration files applied by the Bunny CLI."
+---
+
+Schema changes have to reach every environment in the order you wrote them. `bunny db migrations` keeps those changes as plain `.sql` files in your repository, applies them in filename order, and records what has run so the same file never applies twice.
+
+<Note>
+  Bunny Database is currently in [Public
+  Preview](/product-release-stages#stage-2-public-preview). Features and APIs
+  may evolve during this period.
+</Note>
+
+## Prerequisites
+
+- The [Bunny CLI](/cli/installation) installed, and `bunny login` completed
+- A database. If you don't have one, [create one](/database/quickstart)
+
+Migration commands resolve their target the same way the rest of `bunny db` does, so run `bunny db link` once in your project and every command below works without a database ID. See [database resolution](/cli/commands/db#database-resolution) for the full order.
+
+## Quickstart
+
+<Steps>
+
+<Step title="Create a migration">
+
+```bash
+bunny db migrations create add_users_table
+```
+
+The CLI writes `migrations/0001_add_users_table.sql`. That filename is the migration's identity and it sets the order the migration runs in, so leave it alone once you've applied it.
+
+</Step>
+
+<Step title="Write the SQL">
+
+The new file holds a comment and nothing else. Add your statements to it:
+
+```sql migrations/0001_add_users_table.sql
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL
+);
+```
+
+`apply` rejects a migration with no statements, so an empty file can't record itself as done.
+
+</Step>
+
+<Step title="Preview what will run">
+
+```bash
+bunny db migrations apply --dry-run
+```
+
+A dry run reads your files and the recorded history, prints the migrations it would run, and writes nothing to the database.
+
+</Step>
+
+<Step title="Apply the migrations">
+
+```bash
+bunny db migrations apply
+```
+
+Pending migrations run in filename order. The CLI sends each file as one atomic batch together with its tracking row, so a migration either lands and gets recorded or neither happens. It also defers foreign keys for the batch, which is what makes table rebuilds work.
+
+A failing migration stops the run and leaves everything after it pending.
+
+</Step>
+
+<Step title="Check the history">
+
+```bash
+bunny db migrations list
+```
+
+</Step>
+
+</Steps>
+
+## How migrations are tracked
+
+The CLI records each applied migration in a `__bunny_migrations` table, along with a checksum of the file it applied. The `__` prefix keeps that table out of [studio](/cli/commands/db#bunny-db-studio) and REST introspection, so it stays out of your way when you browse the schema.
+
+`bunny db migrations list` only ever reads, and it never creates the tracking table, so you can check a database's state without changing it.
+
+## Migration states
+
+`list` reports every migration in one of five states:
+
+| State          | Meaning                                                |
+| -------------- | ------------------------------------------------------ |
+| `Applied`      | On disk and recorded, with matching checksums          |
+| `Pending`      | On disk, with no record of a run                       |
+| `Modified`     | Recorded, and the file has changed since it ran        |
+| `Missing`      | Recorded, and the file has gone from disk              |
+| `Out of order` | Pending, and sorts before a migration that already ran |
+
+The last three are drift: your files and the database disagree about what has happened. Drift usually means someone edited or deleted an applied migration, or a branch introduced a migration numbered below one that production has already run.
+
+`apply` refuses to run against a drifted history and changes nothing. Fix the files where you can. When the drift is expected, say you rewrote history on a development database on purpose, `--allow-drift` applies anyway:
+
+```bash
+bunny db migrations apply --allow-drift
+```
+
+## Use with an ORM
+
+If your ORM already generates SQL migration files, point `apply` at its output directory and skip writing migrations by hand. The CLI falls back to `drizzle/` when a `migrations/` directory doesn't exist and you pass no `--dir`, so [drizzle-kit](https://orm.drizzle.team/docs/kit-overview) output works with no configuration:
+
+```bash
+drizzle-kit generate
+bunny db migrations apply
+```
+
+For any other layout, name the directory and the glob:
+
+```bash
+# Explicit directory
+bunny db migrations apply --dir drizzle
+
+# One SQL file per subdirectory
+bunny db migrations apply --dir drizzle --pattern "*/migration.sql"
+```
+
+`bunny db migrations create` never writes into an ORM's output directory, even when it detects one. A hand-authored file there would bypass the ORM's own journal and the two would drift apart.
+
+## Run migrations in CI
+
+`apply` prompts for confirmation only when stdin is an interactive terminal, so a CI job won't hang waiting on an answer. Pass credentials directly to skip the API lookup and token generation:
+
+```bash
+bunny db migrations apply \
+  --url "$BUNNY_DATABASE_URL" \
+  --token "$BUNNY_DATABASE_AUTH_TOKEN" \
+  --force
+```
+
+The CLI parses every migration file before the first write, so a malformed file near the end of the run fails the job before anything reaches the database.
+
+## Command reference
+
+See [`bunny db migrations`](/cli/commands/db#bunny-db-migrations) for every subcommand, flag, and alias.
