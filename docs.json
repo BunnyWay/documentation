@@ -931,6 +931,12 @@
                 ]
               },
               {
+                "group": "Tools",
+                "pages": [
+                  "database/migrations"
+                ]
+              },
+              {
                 "group": "Reference",
                 "pages": [
                   "database/limits",
