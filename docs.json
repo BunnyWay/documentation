@@ -1212,6 +1212,11 @@
   },
   "redirects": [
     {
+      "source": "/stream/livestream",
+      "destination": "/stream/live",
+      "permanent": true
+    },
+    {
       "source": "/stream/smart-chapters",
       "destination": "/stream/smart-generate",
       "permanent": true
