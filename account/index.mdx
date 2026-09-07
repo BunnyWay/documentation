@@ -1,6 +1,6 @@
 ---
-title: Personal Details
-description: Manage your personal details, billing address, and company information.
+title: Billing Details
+description: Manage your billing details, billing address, and company information.
 ---
 
 The [Account Settings](https://dash.bunny.net/account/settings) page lets you manage your personal information, billing address, and company details.
@@ -52,3 +52,34 @@ Optional fields for business accounts:
 </Frame>
 
 After making changes, click **Update Account Details** to save.
+
+## When a billing address change appears on your invoice
+
+Changing your billing address takes effect from the **next billing cycle**, not the current one. The first invoice showing your new details is therefore issued **two months** after the month you made the change.
+
+### Why
+
+Billing at bunny.net is based on live usage. At the start of each monthly cycle, your billing details are loaded and fixed for that cycle, and all usage recorded during the month is billed against them. The invoice issued on the 1st of the following month covers the previous month's usage, with the details that were in place when that month began.
+
+Because the current cycle has already loaded its details, an address updated mid-month applies from the following cycle onwards.
+
+### Example
+
+You update your billing address on 15 July:
+
+| Date | What happens | Details used |
+| --- | --- | --- |
+| 15 July | You save the new billing address | — |
+| 1 August | Invoice issued for **July usage** | Old address |
+| 1 August | August cycle begins and loads your billing details | New address |
+| 1 September | Invoice issued for **August usage** | New address |
+
+The 1 August invoice covers usage from a cycle that started before the change, so it correctly reflects the details held at that time. The 1 September invoice is the first to show the new address.
+
+### Quick reference
+
+| You changed your address in… | First invoice with the new details |
+| --- | --- |
+| Any day in July | 1 September |
+| Any day in August | 1 October |
+| Any day in September | 1 November |
