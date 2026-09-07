@@ -933,6 +933,7 @@
               {
                 "group": "Tools",
                 "pages": [
+                  "database/tools/database-client",
                   "database/migrations"
                 ]
               },
