@@ -313,9 +313,7 @@ curl --request DELETE \
 </CodeGroup>
 
 <Note>
-  The **update** endpoint can be used with no restrictions **before the stream is started**. It can only be used for updating the title and description after the stream is started. 
-  The stream key can only be regenerated **before** a stream has ended. 
-  Deleting a stream removes it and all associated resources and cannot be undone.
+  The **update** endpoint can be used with no restrictions **before the stream is started**. It can only be used for updating the title and description after the stream is started. The stream key can only be regenerated **before** a stream has ended. Deleting a stream removes it and all associated resources and cannot be undone.
 </Note>
 
 ### Endpoint reference
@@ -348,7 +346,7 @@ All paths are relative to `https://video.bunnycdn.com` and require the `AccessKe
   - **Prestream Trailer** so viewers can watch a looping video with a countdown before the live stream starts.
   - **DVR** meaning viewers can rewind during the live stream a set amount of time.
   - **Watermarking** rendered into the live video stream. This is unique to the live stream library, meaning a clean version is generated for VOD so you can apply a different watermark to your VOD.
-  - **RTMP distribution** for co-streaming live to other platforms in parallel.
+  - **RTMP Output** for co-streaming live to other platforms in parallel.
   - **VOD** is re-encoded, meaning all of Bunny Stream's VOD features - such as Premium encoding, Transcription, Smart generate, and eDRM - are supported for the VOD.
 - Configure **player UI and authentication** (allowed/blocked domains, token, and CDN authentication) in your **player and security video library settings**.
 - Automate stream creation and control with the [Live Stream API](#automate-with-the-live-stream-api) - create, start, stop, monitor, and manage streams programmatically.
