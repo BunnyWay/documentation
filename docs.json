@@ -1120,7 +1120,7 @@
                 "pages": [
                   "api-reference/core/index",
                   "api-reference/core/errors",
-                  "api-reference/core/statistics"
+                  "api-reference/core/statistics-date-ranges"
                 ]
               },
               {
