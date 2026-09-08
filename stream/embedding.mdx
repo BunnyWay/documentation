@@ -3,238 +3,152 @@ title: "Embedding videos"
 description: "Bunny Stream is designed for developers and content creators to easily upload, process, and display videos within any application or website. Once your videos have been processed, you can embed them by using our lightweight embed player, enabling seamless playback across all devices and browsers."
 ---
 
-Once a video has finished processing, you can embed it on any page using the Bunny Stream player. This page covers the iframe URL pattern, sizing tips, and code samples for common frameworks.
+Once a video has finished processing, you can embed it on any page using the Bunny Stream player. This page covers the iframe URL pattern, sizing, and player parameters.
 
-## How to embed a video?
+## How to embed a video
 
-Embedding a video involves placing an `<iframe>` element on your webpage. By referencing the correct Bunny Stream embed url and including your video library and video IDs, you can display your video anywhere you like. Each embedded video is accessed via the following URL pattern:
+Place an `<iframe>` element on your webpage using the following URL pattern. Replace `{video_library_id}` and `{video_id}` with your video library and video IDs:
 
-```text theme={null}
-https://player.mediadelivery.net/embed/`{video_library_id}`/`{video_id}`
+```text
+https://player.mediadelivery.net/embed/{video_library_id}/{video_id}
 ```
 
-Bunny Stream’s embed player will automatically adjust to fill the full width and height of the `<iframe>`. For best results, we recommend using a responsive layout. If a fixed aspect ratio is required, a common approach is to use a container with a `position:absolute;top:0;width:100%;height:100%;` style, maintaining a standard 16:9 format or your desired ratio.
+You can generate embed code on the video's details page in the dashboard. This code is a starting example: adapt its dimensions and styling to your video and your site's layout.
 
-Example code:
+```html
+<iframe
+  src="https://player.mediadelivery.net/embed/{video_library_id}/{video_id}"
+  title="Video player"
+  loading="lazy"
+  style="display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 0;"
+  allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+  allowfullscreen>
+</iframe>
+```
 
-<CodeGroup>
-  ```javascript JavaScript theme={null}
-  <div style={{ position: "relative", paddingTop: "56.25%" }}>
-    <iframe
-      src="https://player.mediadelivery.net/embed/759/eb1c4f77-0cda-46be-b47d-1118ad7c2ffe?autoplay=true"
-      loading="lazy"
-      style={{
-        border: "none",
-        position: "absolute",
-        top: "0",
-        height: "100%",
-        width: "100%",
-      }}
-      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-      allowFullScreen="true"
-    ></iframe>
-  </div>
-  ```
-</CodeGroup>
+## Sizing and aspect ratio
 
-<CodeGroup>
-  ```javascript JavaScript theme={null}
+The Stream player is responsive and automatically fills the width and height of its iframe. You can style the iframe like any other HTML element to match your video and the requirements of your site.
+
+### Portrait video
+
+Portrait (9:16) video needs no special player configuration. Set the iframe's aspect ratio to match the video and the player fills it:
+
+```html
+<iframe
+  src="https://player.mediadelivery.net/embed/{video_library_id}/{video_id}"
+  title="Video player"
+  loading="lazy"
+  style="display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; border: 0;"
+  allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+  allowfullscreen>
+</iframe>
+```
+
+Change `aspect-ratio` to match your video, such as `16 / 9` for landscape or `1 / 1` for square video. Constrain the container width to suit your layout.
+
+`aspect-ratio` is supported by all current browsers. If you need to support older browsers, size a wrapper with padding instead and stretch the iframe inside it:
+
+```html
+<div style="position: relative; padding-top: 56.25%;">
   <iframe
-    src="https://player.mediadelivery.net/embed/256380/d9d9ab1f-fc9f-4488-9c26-4ffc653c0024?autoplay=true&loop=false&muted=false&preload=true&responsive=false"
+    src="https://player.mediadelivery.net/embed/{video_library_id}/{video_id}"
+    title="Video player"
     loading="lazy"
-    style={{
-      border: "0",
-      position: "absolute",
-      top: "0",
-      height: "100%",
-      width: "100%",
-    }}
-    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-    allowFullScreen="true"
-  ></iframe>
-  ```
-</CodeGroup>
-
-The embed code for a particular video can be generated on the video details page in the dashboard.
-
-## How to embed vertical portrait (9:16) mobile video
-
-The Stream player is responsive and automatically adapts to the size of its container, so it plays just as well in portrait as it does in landscape. The embed code you generate in the dashboard is only an example — the player runs inside a standard `<iframe>`, which you can style like any other HTML element to set its dimensions and aspect ratio. Adjust it to match your video and the requirements of the site you're embedding into.
-
-Portrait (9:16) is common for mobile-first content, short-form clips, and social-style players. The two examples below show how to size the iframe for vertical video — pick whichever suits your target browsers and layout:
-
-* **Option 1 — direct aspect-ratio (recommended):** simpler markup, modern browsers only.
-* **Option 2 — wrapper div:** broader browser support, and useful when you need to layer captions, overlays, or buttons on top of the player.
-
-#### Option 1: Direct aspect-ratio (recommended)
-
-For modern browsers, you can apply `aspect-ratio` directly to the iframe and skip the wrapper div entirely.
-
-```html theme={null}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portrait Video</title>
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
- 
-    body {
-      background: #000;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
- 
-    iframe {
-      width: min(100vw, calc(100vh * 9 / 16));
-      aspect-ratio: 9 / 16;
-      border: 0;
-      display: block;
-    }
-  </style>
-</head>
-<body>
-  <iframe
-    src="https://player.mediadelivery.net/embed/{library_id}/{video_id}?autoplay=true&loop=true&muted=true&preload=true&responsive=true"
-    loading="lazy"
-    allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen;"
-    allowfullscreen="true">
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+    allowfullscreen>
   </iframe>
-</body>
-</html>
+</div>
 ```
 
-The key CSS properties are:
+The padding percentage is height divided by width: `56.25%` for 16:9, `177.78%` for 9:16.
 
-* `aspect-ratio: 9 / 16` - locks the iframe to portrait proportions
-* `width: min(100vw, calc(100vh * 9 / 16))` - scales the player to fill the viewport without overflow on any screen size
-* `display: block` - removes the default inline gap beneath the iframe
+## Embedding restrictions
 
-<Note>
-  This approach requires a browser that supports the `aspect-ratio` CSS property (Chrome 88+, Firefox 89+, Safari 15+). For broader compatibility, use Option 2 below.
-</Note>
+Settings outside the embed code can stop the player from loading. Check them when an embed shows a 403 error.
 
-#### Option 2: Wrapper div
+**Allowed and blocked domains.** The library security settings can restrict playback to specific domains. The player identifies the embedding site from the `Referer` header of the iframe request, and matches its hostname against the lists. See [Security options](/stream/security-options#domains) for how entries are matched.
 
-If you need to support older browsers or want more control (e.g. overlaying UI elements on top of the player), use a wrapper div instead.
+**Referrer policy.** Browsers send the page origin to a cross-origin iframe by default, which is all the domain check needs. If your site sets a stricter policy, such as `Referrer-Policy: no-referrer` or `same-origin`, the iframe request arrives without a referrer and is treated as direct access. It is then blocked when **Block Direct URL File Access** is enabled. Override the policy on the iframe itself:
 
-```html theme={null}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portrait Video</title>
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
- 
-    body {
-      background: #000;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
- 
-    .video-wrapper {
-      position: relative;
-      width: min(100vw, calc(100vh * 9 / 16));
-      aspect-ratio: 9 / 16;
-    }
- 
-    .video-wrapper iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-  </style>
-</head>
-<body>
-  <div class="video-wrapper">
-    <iframe
-      src="https://player.mediadelivery.net/embed/{library_id}/{video_id}?autoplay=true&loop=true&muted=true&preload=true&responsive=true"
-      loading="lazy"
-      allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen;"
-      allowfullscreen="true">
-    </iframe>
-  </div>
-</body>
-</html>
+```html
+<iframe referrerpolicy="strict-origin-when-cross-origin" ...>
 ```
 
-The wrapper approach works by:
+This sends only the origin, never the full page URL.
 
-1. Sizing the **wrapper div** to the correct portrait dimensions
-2. Stretching the **iframe** to fill it absolutely with `position: absolute; width: 100%; height: 100%` Use this approach when you need to layer overlays, captions, or buttons on top of the player.
+**Content Security Policy.** If your site sends a `Content-Security-Policy` header, allow the player origin in `frame-src`, for example `frame-src https://player.mediadelivery.net`.
+
+**Token authentication.** If the library has embed view token authentication enabled, the iframe URL must carry a valid `token` and `expires` pair. See [Embedded view token authentication](/stream/token-authentication).
 
 ## Parameters
 
 By default, many of the player’s controls and behaviors, such as captions, autoplay, and preload, can be configured on a global scale within the Player tab of your Bunny Stream library settings. Adjusting these default configurations ensures that any video embedded from that library inherits the same baseline behavior, providing a consistent user experience across all embedded instances.
 
-<img src="https://mintcdn.com/bunnynet-cb9733c2-stream-portrait-video-nathan/t1wsE4unUof78DuW/images/docs/d267314b297a80462b1668920e710619e6a80d7c2e1e9ad1b9491b4ccbdcda84-image.png?fit=max&auto=format&n=t1wsE4unUof78DuW&q=85&s=3fae5478e555918f109b2ec55908d3fe" alt="" width="1432" height="886" data-path="images/docs/d267314b297a80462b1668920e710619e6a80d7c2e1e9ad1b9491b4ccbdcda84-image.png" />
+![](/images/docs/d267314b297a80462b1668920e710619e6a80d7c2e1e9ad1b9491b4ccbdcda84-image.png)
 
 However, you can also fine-tune or override these defaults on a per-embed basis by adding query parameters directly to the embed or direct play URL. This flexibility allows you to tailor the playback experience for specific pages or use-cases without affecting the global settings of your library.
 
 ## Supported Parameters
 
-Below is a concise table summarizing each parameter, its possible values, a brief description, and the default value.
+Boolean parameters accept `true`, `false`, `1` or `0`. Where the default is a library setting, the parameter overrides that setting for the individual embed.
 
-| **Parameter**          | **Values**                                     | **Description**                                                                                                                                                                                                                                                                                                                           | **Default Value** |
-| ---------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| **`autoplay`**         | `true`, `false`                                | Controls whether the video should start playing automatically. Due to browser restrictions on auto-play, this may not always work.                                                                                                                                                                                                        | `true`            |
-| **`captions`**         | `caption short-code string`<br />`-auto`       | Controls the default captions file that will be shown. By passing the caption code, the player will automatically load these captions. By default, the player remembers the user's last selection or does not load captions. Use in combination with `-auto`after the country code for the captions to display automatically on playback. | *N/A*             |
-| **`preload`**          | `true`, `false`                                | Controls whether the video files are preloaded. When set to `true`, the player immediately starts downloading the video so playback begins more quickly.                                                                                                                                                                                  | `true`            |
-| **`t`**                | `Xs` ,`1h20m45s` , `hh:mm:ss`<br />, `numeric` | Sets the video start time. Supports multiple formats: hours/minutes/seconds notation, `hh:mm:ss` format, or a simple numeric value interpreted as seconds.                                                                                                                                                                                | *N/A*             |
-| **`chromecast`**       | `true`, `false`                                | Enables or disables Chromecast support within the player.                                                                                                                                                                                                                                                                                 | *N/A*             |
-| **`disableAirplay`**   | `true`, `false`                                | Disables AirPlay support when set to `true`.                                                                                                                                                                                                                                                                                              | *N/A*             |
-| **`disableIosPlayer`** | `true`, `false`                                | Disables the native iOS player (used typically for fullscreen handling on iOS).                                                                                                                                                                                                                                                           | *N/A*             |
-| **`showHeatmap`**      | `true`, `false`                                | Displays a heatmap on the progress bar when set to `true`, highlighting viewer engagement at different points in the video.                                                                                                                                                                                                               | *N/A*             |
-| **`muted`**            | `true`, `false`                                | If set to `true`, the player starts in mute mode (no sound). This is often used for autoplay scenarios.                                                                                                                                                                                                                                   | *N/A*             |
-| **`loop`**             | `true`, `false`                                | Replays the video automatically after it ends, creating a continuous loop.                                                                                                                                                                                                                                                                | *N/A*             |
-| **`playsinline`**      | `true`, `false`                                | Allows the video to play inline on mobile devices rather than forcing fullscreen playback.                                                                                                                                                                                                                                                | *N/A*             |
-| **`showSpeed`**        | `true`, `false`                                | Shows a speed control within the player, allowing playback rate adjustments.                                                                                                                                                                                                                                                              | *N/A*             |
-| **`rememberPosition`** | `true`, `false`                                | Controls whether the player remembers the last playback position for the viewer within their browser. If set to `true`, the player stores the last position and attempts to resume from that point when the viewer returns. When `false`, the video always starts from the beginning.                                                     | `false`           |
-| `compactControls`      | `true`, `false`                                | Enables compact UI view for the bunny player, allowing more space for video on desktop and mobile browsers.                                                                                                                                                                                                                               | `false`           |
+| **Parameter**          | **Values**                                        | **Description**                                                                                                                                                                                                                                | **Default Value**                    |
+| ---------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| **`autoplay`**         | `true`, `false`                                   | Starts playback automatically. Browsers block unmuted autoplay unless the viewer has interacted with the page, so combine it with `muted=true` for reliable results.                                                                            | `true`                               |
+| **`muted`**            | `true`, `false`                                   | Starts the player muted. Takes precedence over a remembered mute preference.                                                                                                                                                                   | `false`                              |
+| **`loop`**             | `true`, `false`                                   | Replays the video automatically after it ends.                                                                                                                                                                                                 | `false`                              |
+| **`preload`**          | `true`, `false`                                   | Starts downloading the video before playback is requested so it starts faster.                                                                                                                                                                 | `true`                               |
+| **`t`**                | `30s`, `1h20m45s`, `hh:mm:ss`, `numeric`          | Sets the start time. Accepts hours/minutes/seconds notation, `hh:mm:ss`, or a plain number of seconds.                                                                                                                                         | `0`                                  |
+| **`captions`**         | caption language code, for example `en` or `en-auto` | Turns on the captions track with this language code when playback starts, overriding the viewer's remembered captions preference. Auto-generated (transcribed) captions use the language code with an `-auto` suffix, for example `en-auto`.                    | remembered preference, else off      |
+| **`lang`**             | UI language code, for example `de`                | Sets the language of the player interface.                                                                                                                                                                                                     | library setting, else `en`           |
+| **`playsinline`**      | `true`, `false`                                   | Plays the video inline on iPhone. When `false`, iOS opens its native fullscreen player on play.                                                                                                                                                | `true`                               |
+| **`disableIosPlayer`** | `true`, `false`                                   | Forces inline playback on iPhone even when `playsinline=false`, so the native iOS player is never used.                                                                                                                                        | `false`                              |
+| **`chromecast`**       | `true`, `false`                                   | Shows or hides the Chromecast button.                                                                                                                                                                                                          | library player controls setting      |
+| **`disableAirPlay`**   | `true`, `false`                                   | Hides the AirPlay button when set to `true`. AirPlay is only offered when it is enabled in the library player controls.                                                                                                                       | `false`                              |
+| **`showSpeed`**        | `true`, `false`                                   | Shows the playback speed control. Not available for live streams.                                                                                                                                                                              | `true`                               |
+| **`showHeatmap`**      | `true`, `false`                                   | Shows an engagement heatmap on the progress bar. Not shown together with `compactControls`.                                                                                                                                                    | library setting                      |
+| **`compactControls`**  | `true`, `false`                                   | Enables the compact control bar, leaving more space for the video on desktop and mobile.                                                                                                                                                       | library setting                      |
+| **`rememberPosition`** | `true`, `false`                                   | Stores the last playback position in the viewer's browser and resumes from it on the next visit. When `false`, the video always starts from the beginning.                                                                                     | library setting                      |
+| **`rememberSettings`** | `true`, `false`                                   | Stores viewer preferences (captions, volume, mute, speed, time display and playback position) in the browser. When `false`, nothing is saved or restored, including the position.                                                              | `true`                               |
+| **`levelCap`**         | `true`, `false`                                   | Caps the selected video quality at the player's rendered size so a small player does not download high resolutions.                                                                                                                            | `false`                              |
+| **`nativeHls`**        | `off`, `auto`, `safari`                           | Lets Safari play the HLS stream natively instead of through the player's HLS engine, which enables the audio track menu in iOS native fullscreen. `auto` applies on iPhone and iOS WebViews only. `safari` applies to every Safari, at the cost of quality selection and `levelCap`. Ignored for DRM videos. | `off`                                |
 
-## Direct play URL query parameter example
+## Direct play URL
 
-```bash theme={null}
+The direct play URL is a standalone page that hosts the player, for use when you want to link to a video rather than embed it:
+
+```text
+https://player.mediadelivery.net/play/{video_library_id}/{video_id}
+```
+
+The page wraps the same embed player in a full-window layout and carries Open Graph metadata, so the link unfurls with the video title and thumbnail when shared on social platforms and in chat apps. It accepts the same query parameters as the embed URL:
+
+```text
 https://player.mediadelivery.net/play/{video_library_id}/{video_id}?t=30s
 ```
 
-This example uses a query parameter which means the direct play URL will start video playback at 30 seconds.
+This example starts playback at 30 seconds.
 
 ## Player keyboard shortcuts
 
 Bunny Stream player has support for the following keyboard shortcuts.
 
-| Key    | Action                               |
-| ------ | ------------------------------------ |
-| 0 to 9 | Seek from 0 to 90% respectively      |
-| space  | Toggle playback                      |
-| K      | Toggle playback                      |
-| ←      | Seek backward by the seekTime option |
-| →      | Seek forward by the seekTime option  |
-| ↑      | Increase volume                      |
-| ↓      | Decrease volume                      |
-| M      | Toggle mute                          |
-| F      | Toggle fullscreen                    |
-| C      | Toggle captions                      |
-| L      | Toggle loop                          |
+| Key    | Action                          |
+| ------ | ------------------------------- |
+| 0 to 9 | Seek to 0% to 90% of the video  |
+| space  | Toggle playback                 |
+| K      | Toggle playback                 |
+| ← or J | Seek backward 10 seconds        |
+| → or L | Seek forward 10 seconds         |
+| ↑      | Increase volume                 |
+| ↓      | Decrease volume                 |
+| M      | Toggle mute                     |
+| F      | Toggle fullscreen               |
+| C      | Toggle captions                 |
+| <      | Decrease playback speed         |
+| >      | Increase playback speed         |
 
 ## Custom integration
 
