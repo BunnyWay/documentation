@@ -100,6 +100,7 @@
                     "pages": [
                       "billing/add-funds",
                       "billing/auto-recharge",
+                      "billing/negative-balance",
                       "billing/billing-history",
                       "billing/sales-tax"
                     ]
