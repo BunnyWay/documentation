@@ -294,7 +294,6 @@
                   "magic-containers/index",
                   "magic-containers/quickstart",
                   "magic-containers/templates",
-                  "magic-containers/quick-deploy",
                   {
                     "group": "Use Cases",
                     "hidden": true,
@@ -353,6 +352,7 @@
                   "magic-containers/rolling-updates",
                   "magic-containers/deployment-strategies",
                   "magic-containers/graceful-shutdown",
+                  "magic-containers/restart-policy",
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
                   "magic-containers/app-metadata"
@@ -932,6 +932,13 @@
                 ]
               },
               {
+                "group": "Tools",
+                "pages": [
+                  "database/tools/database-client",
+                  "database/migrations"
+                ]
+              },
+              {
                 "group": "Reference",
                 "pages": [
                   "database/limits",
@@ -1206,6 +1213,11 @@
   },
   "redirects": [
     {
+      "source": "/stream/livestream",
+      "destination": "/stream/live",
+      "permanent": true
+    },
+    {
       "source": "/stream/smart-chapters",
       "destination": "/stream/smart-generate",
       "permanent": true
@@ -1382,6 +1394,11 @@
     },
     {
       "source": "/magic-containers-how-to-deploy-your-app",
+      "destination": "/magic-containers/deploy",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/quick-deploy",
       "destination": "/magic-containers/deploy",
       "permanent": true
     },

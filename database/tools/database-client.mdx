@@ -1,0 +1,381 @@
+---
+title: "Bunny Database Client"
+sidebarTitle: "Database Client"
+description: "Query Bunny Database from Edge Scripting, Bun, and Node with the dependency-free @bunny.net/database-client SQL client."
+---
+
+`@bunny.net/database-client` is a small SQL client for Bunny Database. It has no dependencies, and `fetch` is the only runtime API it touches, so the same code runs on [Bunny Edge Scripting](/scripting) (Deno), Bun, and Node.
+
+<Note>
+  Bunny Database is currently in [Public
+  Preview](/product-release-stages#stage-2-public-preview). Features and APIs
+  may evolve during this period.
+</Note>
+
+<Warning>
+  **Server-side only. Never ship this to a browser or any other untrusted client.**
+
+  An auth token grants access to the whole database, and this client sends raw SQL. Put either one in client-side code and every visitor can read and write every table, whatever your UI happens to offer them. [Why not the browser](#why-not-the-browser) has the details.
+</Warning>
+
+## Install
+
+<CodeGroup>
+
+```bash npm
+npm install @bunny.net/database-client
+```
+
+```bash pnpm
+pnpm add @bunny.net/database-client
+```
+
+```bash yarn
+yarn add @bunny.net/database-client
+```
+
+```bash bun
+bun add @bunny.net/database-client
+```
+
+</CodeGroup>
+
+## Quickstart
+
+`connect()` reads `BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN` from the environment. Edge Scripting already sets both, `bunny db quickstart --lang typescript` prints them for you, and `bunny db create --token --save-env` writes them straight to `.env`:
+
+```ts
+import { connect } from "@bunny.net/database-client";
+
+const db = connect();
+
+const user = await db.prepare("SELECT * FROM users WHERE id = ?").bind(1).first();
+```
+
+Pass them explicitly when you need to:
+
+```ts
+const db = connect({
+  url: "libsql://your-db.lite.bunnydb.net",
+  authToken: "your-token",
+});
+```
+
+Runnable examples for Edge Scripting, Bun, Node, Hono, Next.js, Astro, and SvelteKit live in [`packages/database-client/examples`](https://github.com/BunnyWay/cli/tree/main/packages/database-client/examples).
+
+## API
+
+### `connect(config?)`
+
+Returns a `Database`. Every option is optional.
+
+| Option      | Type                     | Default                     | Description                                                                           |
+| ----------- | ------------------------ | --------------------------- | ------------------------------------------------------------------------------------- |
+| `url`       | `string`                 | `BUNNY_DATABASE_URL`        | `libsql://`, `https://`, or `http://` connection URL.                                 |
+| `authToken` | `string`                 | `BUNNY_DATABASE_AUTH_TOKEN` | Sent as `Authorization: Bearer <token>`.                                              |
+| `fetch`     | `typeof fetch`           | global `fetch`              | Override for testing, tracing, or a custom agent.                                     |
+| `headers`   | `Record<string, string>` | none                        | Extra headers on every request.                                                       |
+| `signal`    | `AbortSignal`            | none                        | Applied to every request.                                                             |
+| `timeout`   | `number`                 | none                        | Milliseconds before a single request is aborted. A positive integer up to 2147483647. |
+
+The client rewrites a `libsql://` URL to `https://`. It rejects credentials in the URL, both `user:pass@` and an `authToken` query parameter, so pass `authToken` instead. Dropping a token silently would leave you debugging an unexplained 401.
+
+Every request carries `User-Agent: bunny-database-client`. The client matches header names case-insensitively, so your own `User-Agent` replaces that default and only one of the two goes out.
+
+Without `timeout` a request waits as long as the runtime allows, which on an edge function means a hung fetch can burn the whole invocation. `timeout` and `signal` compose: whichever fires first aborts the request.
+
+### `db.prepare(sql)`
+
+Returns a `Statement`. Statements are immutable, so you can keep one around and bind it as often as you like.
+
+```ts
+const byId = db.prepare("SELECT * FROM users WHERE id = ?");
+
+const alice = await byId.bind(1).first();
+const bob = await byId.bind(2).first();
+```
+
+Pass a row type to have it flow through every execution of that statement. See [Types](#types).
+
+### ``db.sql`...` ``
+
+A template literal that binds every interpolated value, so the shortest way to write a query is also the parameterized one:
+
+```ts
+const note = await db.sql`SELECT * FROM notes WHERE id = ${id}`.first();
+```
+
+Each `${...}` becomes a `?` placeholder, and the client binds the value without ever splicing it into the SQL string. It returns a `Statement`, so everything under [Executing](#executing) applies unchanged.
+
+Values follow the same rules as `bind()`, with one exception: an interpolated object throws. Inside a template it is nearly always a mistake, so named parameters go through `bind()`.
+
+Pass a row type the same way as `prepare()`, as ``db.sql<User>`...` ``.
+
+SQLite parameterizes values and nothing else, so a table or column name that has to vary belongs in the SQL string you build with `prepare()`.
+
+### `statement.bind(...values)`
+
+Binds parameters and returns a new statement. Accepts `null`, `boolean`, `number`, `bigint`, `string`, and `Uint8Array`.
+
+Pass values in order for `?` placeholders:
+
+```ts
+await db.prepare("SELECT * FROM users WHERE id = ? AND active = ?").bind(1, true).all();
+```
+
+Pass a single object for SQLite's named forms, `:name`, `@name`, and `$name`:
+
+```ts
+await db
+  .prepare("SELECT * FROM users WHERE id = :id AND active = :active")
+  .bind({ id: 1, active: true })
+  .all();
+```
+
+Names may carry the sigil or leave it off, so `{ id: 1 }` and `{ ":id": 1 }` both bind `:id`. One statement uses one style, and mixing positional values with an object in the same `bind()` call throws. The client will not pick a winner for you.
+
+`undefined` throws. A mistyped property such as `bind(user.nmae)` surfaces at the call site, and nothing writes NULL on your behalf. Pass `null` when you mean NULL.
+
+Any other value throws, because SQLite has nowhere to put it. `Date` gets its own message pointing at `.toISOString()` and `.getTime()`. The client will not choose for you, since each one puts something different in the column.
+
+The client sends an integer `number` as INTEGER for as long as it fits exactly, up to 2^53. Past that every double is a whole number, so the client sends it as REAL and SQLite stores the value as is. Pass a `bigint` when you need an exact integer that large. Bigints must fit SQLite's signed 64-bit range.
+
+### Executing
+
+Four ways to run a statement:
+
+```ts
+const rows = await db.prepare("SELECT id, name FROM users").all();
+// [{ id: 1, name: "Alice" }, { id: 2, name: "Bob" }]
+
+const row = await db.prepare("SELECT * FROM users WHERE id = ?").bind(1).first();
+// { id: 1, name: "Alice" }  or  null
+
+const name = await db.prepare("SELECT name FROM users WHERE id = ?").bind(1).first("name");
+// "Alice"  or  null
+
+const rawRows = await db.prepare("SELECT id, name FROM users").raw();
+// [[1, "Alice"], [2, "Bob"]]
+```
+
+`run()` returns rows plus write metadata:
+
+```ts
+const result = await db
+  .prepare("INSERT INTO users (name) VALUES (?) RETURNING id")
+  .bind("Carol")
+  .run();
+
+// {
+//   rows: [{ id: 3 }],
+//   columns: ["id"],
+//   rowsAffected: 1,
+//   lastInsertRowid: 3,
+// }
+```
+
+`runRaw()` returns the same metadata with rows as positional arrays. Reach for it when a result may contain two columns of the same name, since object rows keep only the last one:
+
+```ts
+const result = await db.prepare("SELECT a.id, b.id FROM a JOIN b").runRaw();
+// { rows: [[1, 99]], columns: ["id", "id"], rowsAffected: 0, lastInsertRowid: null }
+```
+
+Statements do nothing until one of these is called, so `prepare()` and `bind()` are safe to pass around.
+
+### `db.batch(statements, options?)`
+
+Runs every statement in one transaction and one round trip. All of them commit or none do.
+
+```ts
+const [inserted, count] = await db.batch([
+  db.prepare("INSERT INTO users (name) VALUES (?)").bind("Dan"),
+  db.prepare("SELECT COUNT(*) AS c FROM users"),
+]);
+```
+
+You get one `Result` per statement you passed, in order. `batchRaw()` does the same with positional rows. If any statement fails the transaction rolls back and `batch()` throws that statement's error, with `error.batchIndex` set to the position of the statement that failed.
+
+The batch is the transaction, so the client rejects a statement of your own that starts with `BEGIN`, `COMMIT`, `END`, or `ROLLBACK` before anything reaches the server. Savepoints are fine.
+
+`{ mode: "immediate" }` opens the transaction with `BEGIN IMMEDIATE`, which takes the write lock up front. SQLite's default, `deferred`, takes it at the first write instead, so a batch that reads and then writes can fail with `SQLITE_BUSY` if another writer got in between. Use `immediate` for batches you know will write. `exclusive` is also accepted.
+
+`batch()` infers each result's row type from its statement, so a `prepare<User>(...)` statement comes back as `Result<User>` even next to untyped ones. See [Types](#types).
+
+`{ foreignKeys: false }` brackets the transaction with `PRAGMA foreign_keys=off` and `=on`. Schema changes need it: SQLite's table rebuild procedure and several `ALTER TABLE` forms require enforcement genuinely off, and deferring it to commit is not enough. `bunny db migrations apply` runs this way.
+
+```ts
+await db.batch(
+  [
+    db.prepare("CREATE TABLE users_new (id INTEGER PRIMARY KEY, email TEXT NOT NULL)"),
+    db.prepare("INSERT INTO users_new SELECT id, email FROM users"),
+    db.prepare("DROP TABLE users"),
+    db.prepare("ALTER TABLE users_new RENAME TO users"),
+  ],
+  { foreignKeys: false, mode: "immediate" },
+);
+```
+
+Keep that order: build the replacement under a temporary name, drop the original, then rename. Renaming the original out of the way first looks equivalent and breaks your other tables. With foreign keys off, SQLite rewrites every `REFERENCES users` to follow the rename, so those references end up pointing at the table you are about to drop.
+
+### `db.exec(sql)`
+
+Runs a multi-statement script. It takes no parameters and returns no rows, so it is mostly for setting up a schema.
+
+```ts
+await db.exec(`
+  CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT NOT NULL);
+  CREATE INDEX IF NOT EXISTS users_name ON users (name);
+`);
+```
+
+Anything you need to replay on another database or another machine belongs in migrations (`bunny db migrations`).
+
+### Errors
+
+Everything throws `DatabaseError`:
+
+```ts
+import { DatabaseError } from "@bunny.net/database-client";
+
+try {
+  await db.prepare("INSERT INTO users (email) VALUES (?)").bind("dupe@example.com").run();
+} catch (error) {
+  if (error instanceof DatabaseError && error.code === "SQLITE_CONSTRAINT") {
+    // handle the duplicate
+  }
+}
+```
+
+| Property     | Description                                                                          |
+| ------------ | ------------------------------------------------------------------------------------ |
+| `message`    | The server's message, or a description of the local validation failure.              |
+| `code`       | SQLite code (`SQLITE_CONSTRAINT`), or a client code (`UNAUTHORIZED`, `URL_MISSING`). |
+| `status`     | HTTP status, set when the failure came from the transport and not from SQL.          |
+| `batchIndex` | Position of the failing statement, when one of your statements in `batch()` failed.  |
+
+Failures that happen before any SQL runs are wrapped too, so a single `catch (error) { if (error instanceof DatabaseError) ... }` covers the whole surface. A stray `TypeError` never reaches your handler:
+
+| `code`     | Cause                                                                |
+| ---------- | -------------------------------------------------------------------- |
+| `NETWORK`  | DNS, TLS, connection refused, or a response that isn't JSON.         |
+| `TIMEOUT`  | The `timeout` deadline elapsed.                                      |
+| `ABORTED`  | The `signal` you passed was aborted.                                 |
+| `PROTOCOL` | The server answered 200 with a body that is not a pipeline response. |
+
+For these three, `error.cause` holds the runtime's original error.
+
+## Types
+
+Integers come back as `number` for as long as they fit exactly, and as `bigint` beyond `Number.MAX_SAFE_INTEGER`. The client never rounds a value to make it fit.
+
+| SQLite  | JavaScript                      |
+| ------- | ------------------------------- |
+| NULL    | `null`                          |
+| INTEGER | `number`, or `bigint` past 2^53 |
+| REAL    | `number`                        |
+| TEXT    | `string`                        |
+| BLOB    | `Uint8Array`                    |
+
+SQLite has no boolean type. `bind(true)` stores `1`, and reads back as `1`.
+
+Rows are typed as `Record<string, SqlValue>` by default. Pass your own shape to skip the cast:
+
+```ts
+interface User {
+  id: number;
+  name: string;
+}
+
+const users = await db.prepare("SELECT id, name FROM users").all<User>();
+```
+
+Or type the statement once and let every execution of it inherit the shape:
+
+```ts
+const byId = db.prepare<User>("SELECT id, name FROM users WHERE id = ?");
+
+const alice = await byId.bind(1).first(); // User | null
+const both = await byId.bind(1).all(); // User[]
+```
+
+A type argument on the executor still wins over the statement's, so `all<Row>()` on a `Statement<User>` gives you rows back untyped.
+
+That type is an assertion. Nothing validates the rows against it at runtime, so it is only ever as accurate as your SQL.
+
+## Edge Scripting
+
+Edge Scripting runs Deno, so you can import straight from npm. A standalone script serves requests through the Edge Scripting SDK:
+
+```ts
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
+import { connect } from "npm:@bunny.net/database-client";
+
+const db = connect();
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const users = await db.prepare("SELECT id, name FROM users LIMIT 10").all();
+  return Response.json(users);
+});
+```
+
+Building the client at module scope is fine. `connect()` opens no socket and does no I/O, so there is nothing to warm up or tear down per request.
+
+An Edge Script is also the right place to hold a database token. The code and its environment stay on bunny.net's edge, and the browser only ever sees the response you chose to return.
+
+See [Edge Scripting](/database/connect/scripting) for step-by-step instructions on connecting your script to Bunny Database.
+
+## Security
+
+### Why not the browser
+
+The client only uses `fetch`, so it would happily run in a browser. It still should not go there.
+
+A database auth token authorizes the connection, so anything holding it can run whatever SQL that token allows against any table. In client-side code the token shows up in the network tab, in the JS bundle, in `localStorage`, and to any injected script. Once it leaks, a visitor can do everything you can, `DROP TABLE` included.
+
+`bunny db tokens create` defaults to full access with no expiry, so the token you are most likely to have lying around is the worst one to lose.
+
+Read-only tokens narrow the damage without fixing it:
+
+```bash
+bunny db tokens create --read-only --expiry 30d
+```
+
+That still hands over every row of every table, because the token authorizes the connection and not the query, and SQLite has no row-level security to fall back on.
+
+### What to do instead
+
+Keep the token on your server and expose only the queries you want to allow. Usually that means an Edge Script sitting in front of the database:
+
+```ts
+// Edge Script: the token stays here, the browser gets only this shape.
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
+import { connect } from "npm:@bunny.net/database-client";
+
+const db = connect();
+
+BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+  const url = new URL(request.url);
+  const author = url.searchParams.get("author");
+  if (!author) return new Response("author required", { status: 400 });
+
+  // Parameterized, and scoped to the columns and rows the caller may see.
+  const posts = await db
+    .prepare("SELECT id, title FROM posts WHERE author = ? AND published = 1 LIMIT 50")
+    .bind(author)
+    .all();
+
+  return Response.json(posts);
+});
+```
+
+The browser calls your endpoint, and your endpoint decides what SQL runs.
+
+### Handling tokens
+
+- Keep tokens in environment variables and out of source. `connect()` reads `BUNNY_DATABASE_URL` and `BUNNY_DATABASE_AUTH_TOKEN`, so a token never has to appear in code at all.
+- The client rejects credentials in the connection URL, because URLs end up in logs, referrers, and error reports. Pass `authToken` instead.
+- Prefer short-lived tokens (`bunny db tokens create --expiry 12h`) and the narrowest authorization that works. If one does leak, `bunny db tokens invalidate` revokes every token for the database.
+- `DatabaseError` carries the server's message and SQLite code, so passing one straight back to a client can leak schema details. Log it and return something generic.
+
+See [Authorization](/database/connect/authorization) for how tokens are issued and scoped, and [`bunny db`](/cli/commands/db) for the full command reference.
