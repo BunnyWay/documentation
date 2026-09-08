@@ -4,13 +4,13 @@ sidebarTitle: Statistics
 description: What date ranges the Statistics API endpoints accept, their defaults, and when you can request hourly vs. daily data.
 ---
 
-# Statistics API - Date Ranges & Granularity
+## Statistics API - Date Ranges & Granularity
 
 This document explains how to use `dateFrom`, `dateTo`, and `hourly` when calling
 the Statistics endpoints, what happens if you omit them, and how far back each
 endpoint lets you query.
 
-## The general rule
+### The general rule
 
 Most statistics endpoints accept:
 
@@ -28,13 +28,13 @@ request is rejected:
 
 > *"Cannot request statistics older than 1 year."*
 
-### If you don't specify a date range
+#### If you don't specify a date range
 
 - `hourly=true` and no dates given -> defaults to the **last 30 days**.
 - `hourly=false` (or omitted) and no dates given -> defaults to the **last month**.
 - If only `dateFrom` is given, `dateTo` defaults to now.
 
-### How dates are interpreted
+#### How dates are interpreted
 
 - Ranges are normally rounded to whole days - `dateFrom` down to the start of
   that day, `dateTo` up to the end of that day - so you always get complete days
@@ -43,7 +43,7 @@ request is rejected:
   with `hourly=true`) if you want the exact hour-level range you asked for instead
   of it being rounded to day boundaries.
 
-## Endpoint reference
+### Endpoint reference
 
 | Endpoint | Route | Default range if unspecified | Max range length | Oldest data you can request |
 |---|---|---|---|---|
@@ -53,7 +53,7 @@ request is rejected:
 | [Origin Shield Queue Statistics](/api-reference/core/statistics/get-origin-shield-queue-statistics) | `GET /api/pullzone/{id}/originshield/queuestatistics` | Last 30 days (hourly) / last month (daily) | No extra cap beyond the general rule | 30 days (hourly) / 1 year (daily) |
 | [SafeHop Statistics](/api-reference/core/statistics/get-safehop-statistics) | `GET /api/pullzone/{id}/safehop/statistics` | Last 30 days (hourly) / last month (daily) | No extra cap beyond the general rule | 30 days (hourly) / 1 year (daily) |
 
-## Practical guidance
+### Practical guidance
 
 - **Need the last month or less, broken down by hour?** Use `hourly=true` - this
   works for any range within the last 30 days.
