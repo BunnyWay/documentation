@@ -4,7 +4,7 @@ sidebarTitle: Statistics date ranges
 description: The date ranges the Statistics API endpoints accept, what they default to, and when you can request hourly data.
 ---
 
-Every Statistics endpoint takes the same three query parameters to shape the data it returns. `dateFrom` and `dateTo` set the range, and `hourly` picks the granularity. This page covers what each one does, what happens when you leave them out, and how far back each endpoint lets you look.
+Every Statistics endpoint except for [Get DNS Query Statistics](/api-reference/core/dns-zone/get-dns-query-statistics) takes the same three query parameters to shape the data it returns. `dateFrom` and `dateTo` set the range, and `hourly` picks the granularity. This page covers what each one does, what happens when you leave them out, and how far back each endpoint lets you look.
 
 ## Granularity and how far back you can go
 
@@ -27,7 +27,7 @@ Data older than one year isn't available through these endpoints at either granu
 ## Defaults when you omit the dates
 
 - `hourly=true` with no dates returns the last 30 days.
-- `hourly=false`, or no `hourly` parameter, with no dates returns the last month.
+- `hourly=false`, or no `hourly` parameter, with no dates returns data starting from the same day on the proceeding month.
 - `dateFrom` on its own sets `dateTo` to now.
 
 ## How the API reads your dates
