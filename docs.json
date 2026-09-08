@@ -352,6 +352,7 @@
                   "magic-containers/rolling-updates",
                   "magic-containers/deployment-strategies",
                   "magic-containers/graceful-shutdown",
+                  "magic-containers/restart-policy",
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
                   "magic-containers/app-metadata"
@@ -933,6 +934,7 @@
               {
                 "group": "Tools",
                 "pages": [
+                  "database/tools/database-client",
                   "database/migrations"
                 ]
               },
@@ -1211,6 +1213,11 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/stream/livestream",
+      "destination": "/stream/live",
+      "permanent": true
+    },
     {
       "source": "/stream/smart-chapters",
       "destination": "/stream/smart-generate",

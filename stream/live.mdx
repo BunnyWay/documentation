@@ -1,7 +1,11 @@
 ---
-title: "Live Streaming Quickstart"
+title: "Stream Live "
 description: "Create, configure, and broadcast your first bunny.net live stream - from RTMP setup in OBS to going live and converting the recording to VOD."
 hidden: true
+keywords:
+  - "Live"
+  - "Live Stream"
+  - "RTMP"
 ---
 
 <Info>
@@ -16,7 +20,7 @@ Before you begin, make sure you have the following in place:
 
 - A [bunny.net](https://bunny.net/) account with live streaming enabled for the closed preview ([log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
 - A new **video library** in Bunny Stream. Create it first by following the [Stream Quickstart](/docs/stream/quickstart).
-- An **RTMP-capable encoder**. This guide uses [OBS Studio](https://obsproject.com/), a free, cross-platform encoder, but any encoder that supports RTMP/RTMPS ingest will work.
+- An **RTMP-capable encoder**. This guide uses [OBS Studio](https://obsproject.com/), a free, cross-platform encoder, but any encoder that supports RTMP will work.
 - A stable upload connection with enough bandwidth for your target quality (see [Recommended encoder settings](#step-3-configure-your-encoder)).
 
 <Note>
@@ -65,7 +69,7 @@ Use these settings as a starting point for your encoder, depending on the target
 
 | Setting | 1080p | 2160p / 4K |
 | --- | --- | --- |
-| **Protocol** | RTMP/S | RTMP/S |
+| **Protocol** | RTMP | RTMP |
 | **Bitrate** | 5,000 - 8,000 kbps | 8,000 - 25,000 kbps |
 | **Video resolution** | 1920 × 1080 (1080p) | 3840 × 2160 (2160p, UHD) |
 | **Frame rate** | Max 60fps | Max 30fps |
@@ -313,9 +317,7 @@ curl --request DELETE \
 </CodeGroup>
 
 <Note>
-  The **update** endpoint can be used with no restrictions **before the stream is started**. It can only be used for updating the title and description after the stream is started. 
-  The stream key can only be regenerated **before** a stream has ended. 
-  Deleting a stream removes it and all associated resources and cannot be undone.
+  The **update** endpoint can be used with no restrictions **before the stream is started**. It can only be used for updating the title and description after the stream is started. The stream key can only be regenerated **before** a stream has ended. Deleting a stream removes it and all associated resources and cannot be undone.
 </Note>
 
 ### Endpoint reference
@@ -348,13 +350,19 @@ All paths are relative to `https://video.bunnycdn.com` and require the `AccessKe
   - **Prestream Trailer** so viewers can watch a looping video with a countdown before the live stream starts.
   - **DVR** meaning viewers can rewind during the live stream a set amount of time.
   - **Watermarking** rendered into the live video stream. This is unique to the live stream library, meaning a clean version is generated for VOD so you can apply a different watermark to your VOD.
-  - **RTMP distribution** for co-streaming live to other platforms in parallel.
+  - **RTMP Output** for co-streaming live to other platforms in parallel.
   - **VOD** is re-encoded, meaning all of Bunny Stream's VOD features - such as Premium encoding, Transcription, Smart generate, and eDRM - are supported for the VOD.
 - Configure **player UI and authentication** (allowed/blocked domains, token, and CDN authentication) in your **player and security video library settings**.
 - Automate stream creation and control with the [Live Stream API](#automate-with-the-live-stream-api) - create, start, stop, monitor, and manage streams programmatically.
 
-## Not currently supported by Live Stream during closed preview
+## Limits
 
+- 12 hour maximum live duration limit
+- 3 concurrent live stream events per bunny account during closed preview
+
+## Not currently supported by Stream Live during closed preview
+
+- RTMPS ingest
 - Live statistics
 - SRT ingest
 - Low-latency HLS live streaming
