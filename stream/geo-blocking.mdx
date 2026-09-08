@@ -31,7 +31,7 @@ You can use one mode or the other, but not both at the same time. This keeps the
     - To **allow only specific countries**, add them under **Allowlisted countries**. Everyone else is blocked.
     - To **block specific countries**, add them under **Blocked countries**. Everyone else is allowed.
 
-    As you add countries, they appear as markers on the map - green for allowlisted, red for blocked - so you can confirm your coverage at a glance. As soon as you add a country to one panel, the other panel is disabled, and the dropdown shows _Unavailable while allowlisting is in use_ or _Unavailable while blocking is in use_.
+    As you add countries, they appear as markers on the map - green for allowlisted, red for blocked - so you can confirm your coverage at a glance. As soon as you add a country to one list, the other list is disabled, and the dropdown shows _Unavailable while allowlisting is in use_ or _Unavailable while blocking is in use_.
   </Step>
   <Step title="Save your settings">
     Click **Save Settings** to apply the rule. The button stays inactive until you've added at least one country. To change modes later, remove every country from the active panel to re-enable the other one.
@@ -60,7 +60,7 @@ Use a **blocklist** when your default should be _allow_ — for example, when yo
 ## Combine with token authentication for stricter control
 
 <Warning>
-  Country detection is based on the viewer's IP address, which can be masked with a VPN or proxy. Geo-blocking is a strong first layer, but it is not tamper-proof on its own. For stricter enforcement, pair it with [token authentication](/docs/stream/token-authentication), which can restrict signed playback URLs by country and time and is far harder to bypass.
+  Country detection is based on the viewer's IP address, which can be masked with a VPN or proxy. Geo-blocking is a strong first layer, but it is not tamper-proof on its own. For stricter enforcement, pair it with [token authentication](/docs/stream/token-authentication), which can restrict signed playback URLs and expiry time and is far harder to bypass.
 </Warning>
 
 ## Related
