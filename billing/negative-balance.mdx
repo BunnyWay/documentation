@@ -12,7 +12,19 @@ bunny.net is a prepaid service. Charges are deducted from your balance as you us
 
 ## Why a balance can go negative
 
-Usage is billed after it happens, in short intervals. If you use more between two billing runs than your remaining balance covers, the balance goes below zero. Charges for stored data, such as Storage and Stream storage, continue as long as the data is stored.
+Usage is billed after it happens, in short intervals. If you use more between two billing runs than your remaining balance covers, the balance goes below zero.
+
+Some charges don't depend on traffic. They continue while your balance is negative, for as long as the resource exists or the feature is enabled. These include:
+
+- Storage zones and Stream video storage, billed per GB stored
+- Magic Containers persistent volumes and attached Anycast IPs
+- Database storage
+- The MediaCage Enterprise DRM base fee on video libraries where it is enabled
+- Bunny Optimizer, billed per pull zone
+- Bunny Shield Advanced and Business plans
+- The [\$1 minimum monthly usage](/billing/add-funds#minimum-monthly-usage)
+
+To stop these charges, delete the resources or disable the features you no longer need.
 
 ## What happens when your balance reaches zero
 
@@ -25,7 +37,7 @@ Usage is billed after it happens, in short intervals. If you use more between tw
 
 All your services go offline. Your files and configuration are kept, and you can still log in to the dashboard to top up.
 
-Usage charges stop because the services stop. Charges for stored data continue, and the [\$1 minimum monthly usage](/billing/add-funds#minimum-monthly-usage) still applies, so your balance can continue to fall while the account is disabled. To stop storage charges, delete the storage zones or video libraries you no longer need.
+Usage charges stop because the services stop. Charges for stored data and the minimum monthly usage continue, so your balance can continue to fall while the account is disabled. To stop them, delete the resources or disable the features listed above that you no longer need.
 
 ## Restoring your account
 
