@@ -14,14 +14,16 @@ bunny.net is a prepaid service. Charges are deducted from your balance as you us
 
 Usage is billed after it happens, in short intervals. If you use more between two billing runs than your remaining balance covers, the balance goes below zero.
 
-Some charges don't depend on traffic. They continue while your balance is negative, for as long as the resource exists or the feature is enabled. These include:
+## Charges that continue
+
+Some charges don't depend on traffic. They continue while your balance is negative and while your account is disabled, for as long as the resource exists or the feature is enabled:
 
 - Storage zones and Stream video storage, billed per GB stored
 - Magic Containers persistent volumes and attached Anycast IPs
 - Database storage
 - The MediaCage Enterprise DRM base fee on video libraries where it is enabled
 - Bunny Optimizer, billed per pull zone
-- Bunny Shield Advanced and Business plans
+- Bunny Shield Advanced and Business plans (paused while your account is disabled)
 - The [\$1 minimum monthly usage](/billing/add-funds#minimum-monthly-usage)
 
 To stop these charges, delete the resources or disable the features you no longer need.
@@ -37,7 +39,7 @@ To stop these charges, delete the resources or disable the features you no longe
 
 All your services go offline. Your files and configuration are kept, and you can still log in to the dashboard to top up.
 
-Usage charges stop because the services stop. Recurring charges continue: files stored in Storage and Stream, Magic Containers persistent volumes and Anycast IPs, Database storage, the MediaCage Enterprise DRM base fee, Bunny Optimizer, and the minimum monthly usage. Your balance can continue to fall while the account is disabled. To stop these charges, delete the resources or disable the features you no longer need.
+Usage charges stop because the services stop. The [charges listed above](#charges-that-continue) continue, so your balance can keep falling while the account is disabled.
 
 ## Restoring your account
 
