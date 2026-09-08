@@ -1,0 +1,63 @@
+---
+title: Statistics API - Date Ranges & Granularity
+sidebarTitle: Statistics
+description: What date ranges the Statistics API endpoints accept, their defaults, and when you can request hourly vs. daily data.
+---
+
+# Statistics API - Date Ranges & Granularity
+
+This document explains how to use `dateFrom`, `dateTo`, and `hourly` when calling
+the Statistics endpoints, what happens if you omit them, and how far back each
+endpoint lets you query.
+
+## The general rule
+
+Most statistics endpoints accept:
+
+- `dateFrom` / `dateTo` - the date range you want data for
+- `hourly` - `true` for hour-by-hour data points, `false` (default) for daily data points
+
+**Hourly data is only available for the last 30 days.** If you request
+`hourly=true` with a `dateFrom` older than 30 days, the request is rejected:
+
+> *"Cannot request hourly statistics older than 30 days. Use daily granularity instead."*
+
+**Daily data can be requested for up to the last 1 year.** If you request
+daily granularity (`hourly=false`) with a `dateFrom` older than 1 year, the
+request is rejected:
+
+> *"Cannot request statistics older than 1 year."*
+
+### If you don't specify a date range
+
+- `hourly=true` and no dates given -> defaults to the **last 30 days**.
+- `hourly=false` (or omitted) and no dates given -> defaults to the **last month**.
+- If only `dateFrom` is given, `dateTo` defaults to now.
+
+### How dates are interpreted
+
+- Ranges are normally rounded to whole days - `dateFrom` down to the start of
+  that day, `dateTo` up to the end of that day - so you always get complete days
+  of data back, even if you pass a time-of-day component.
+- `GET /api/statistics` supports an `exactRange=true` flag (only relevant together
+  with `hourly=true`) if you want the exact hour-level range you asked for instead
+  of it being rounded to day boundaries.
+
+## Endpoint reference
+
+| Endpoint | Route | Default range if unspecified | Max range length | Oldest data you can request |
+|---|---|---|---|---|
+| [Get Statistics](/api-reference/core/statistics/get-statistics) | `GET /api/statistics` | Last 30 days (hourly) / last month (daily) | **40 days** | 30 days (hourly) / 1 year (daily) |
+| [Get Statistics](/api-reference/core/statistics/get-statistics) (`loadLatest=true`) | `GET /api/statistics` | - | **1 day** | - |
+| [Optimizer Statistics](/api-reference/core/statistics/get-optimizer-statistics) | `GET /api/pullzone/{id}/optimizer/statistics` | Last 30 days (hourly) / last month (daily) | No extra cap beyond the general rule | 30 days (hourly) / 1 year (daily) |
+| [Origin Shield Queue Statistics](/api-reference/core/statistics/get-origin-shield-queue-statistics) | `GET /api/pullzone/{id}/originshield/queuestatistics` | Last 30 days (hourly) / last month (daily) | No extra cap beyond the general rule | 30 days (hourly) / 1 year (daily) |
+| [SafeHop Statistics](/api-reference/core/statistics/get-safehop-statistics) | `GET /api/pullzone/{id}/safehop/statistics` | Last 30 days (hourly) / last month (daily) | No extra cap beyond the general rule | 30 days (hourly) / 1 year (daily) |
+
+## Practical guidance
+
+- **Need the last month or less, broken down by hour?** Use `hourly=true` - this
+  works for any range within the last 30 days.
+- **Need data older than 30 days?** Use daily granularity (`hourly=false` or
+  omit it) - this works for any range within the last year.
+- **Need data older than 1 year?** Not currently available through these
+  endpoints, regardless of granularity.
