@@ -593,6 +593,7 @@
                     "group": "Security",
                     "pages": [
                       "stream/security",
+                      "untitled-page",
                       "stream/security-options",
                       "stream/token-authentication"
                     ]
