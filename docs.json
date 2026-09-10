@@ -503,7 +503,6 @@
                   "scripting/runtime",
                   {
                     "group": "Cache API",
-                    "tag": "Preview",
                     "pages": [
                       "scripting/cache/index",
                       "scripting/cache/managing-caches",
