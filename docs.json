@@ -750,7 +750,8 @@
                 "pages": [
                   "shield/index",
                   "shield/quickstart",
-                  "shield/pricing"
+                  "shield/pricing",
+                  "shield/changelog"
                 ]
               },
               {
@@ -1213,11 +1214,6 @@
     ]
   },
   "redirects": [
-    {
-      "source": "/shield/changelog",
-      "destination": "/changelog?tags=Shield",
-      "permanent": true
-    },
     {
       "source": "/stream/livestream",
       "destination": "/stream/live",
