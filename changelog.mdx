@@ -22,6 +22,12 @@ rss: true
   `@bunny.net/database-client` is a dependency-free SQL client for Bunny Database. The same code runs on [Edge Scripting](/scripting), Bun, and Node. It supports prepared statements, tagged-template queries, batched statements that roll back together, and row types inferred from each statement. [Read the announcement](https://bunny.net/blog/query-bunny-database-with-fetch-and-nothing-else/) or [learn more](/database/tools/database-client).
 </Update>
 
+<Update label="2026-08-31" tags={["Edge Scripting","(New)"]}>
+  ## Server-Sent Events with Edge Scripting
+
+  An Edge Script can answer a request with a stream of Server-Sent Events by returning a `Response` that holds a `ReadableStream`, and the edge delivers each event as the script writes it. Return the response before you await anything, write the first event as soon as the stream opens, and pass a promise to `waitUntil` that resolves when the stream ends so the isolate is not evicted mid-stream. [Learn more](/scripting/server-sent-events)
+</Update>
+
 <Update label="2026-08-21" tags={["CDN","(New)"]}>
   ## EEA Routing Filter for Pull Zones
 
@@ -135,7 +141,7 @@ rss: true
 </Update>
 
 <Update label="2026-06-25" tags={["Edge Scripting","(New)"]}>
-  ## Edge Scripting Runtime API and `waitUntil` documentation
+  ## `waitUntil`
 
   New Runtime API reference page for Edge Scripting, documenting the `waitUntil` function that allows scripts to continue running after a request completes — useful for maintaining WebSocket connections and background tasks. The WebSocket guide has also been updated with a practical `waitUntil` example. [Learn more](/scripting/runtime)
 </Update>
@@ -422,6 +428,12 @@ rss: true
   ## SQL API
 
   Execute SQL queries against your Bunny Database over HTTP using the SQL API. [Learn more](/database/connect/sql-api)
+</Update>
+
+<Update label="2026-01-19" tags={["Edge Scripting","(New)"]}>
+  ## WebSockets with Edge Scripting
+
+  Call `request.upgradeWebSocket()` in an Edge Script to hold a two-way, low-latency connection open between your script and connected clients. Enable WebSockets on the Pull Zone first, then handle the `open`, `message`, and `close` events and send frames back with `socket.send()`. [Learn more](/scripting/websockets)
 </Update>
 
 <Update label="2026-01-19" tags={["Database","(New)"]}>
