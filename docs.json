@@ -750,7 +750,8 @@
                 "pages": [
                   "shield/index",
                   "shield/quickstart",
-                  "shield/pricing"
+                  "shield/pricing",
+                  "shield/changelog"
                 ]
               },
               {
@@ -2320,7 +2321,7 @@
     },
     {
       "source": "/stream-changelog-2",
-      "destination": "/stream",
+      "destination": "/changelog?tags=Stream",
       "permanent": true
     },
     {
