@@ -31,8 +31,14 @@ The Statistics tab provides a range of metrics that give you a comprehensive vie
 - **Latency**: Latency measures the time it takes for a request to travel from the source to the destination and receive a response. In the context of Magic Containers, it indicates the responsiveness of your application.
 - **Instances and active regions**: This metric provides insights into the number of instances running your application and the active regions where these instances are distributed.
 - **Traffic served**: This measures the amount of data served by your application, providing insights into its overall usage.
-- **CPU usage**: The central processing unit (CPU) monitors your application's usage, helping you understand the computational load.
-- **Memory usage**: Tracks the memory consumption of your application, highlighting its memory usage patterns.
+- **CPU usage**: Shows the processing power your application consumes, measured **relative to your application's CPU limit** rather than as an absolute number of cores. On the [dynamic runtime](/magic-containers/limits), that limit is 8 CPUs, so a reading represents utilization against all 8 CPUs: `100%` corresponds to the full 8-CPU limit and `12.5%` corresponds to a single full core. To convert a reading into absolute cores, multiply it by the CPU limit — for example, `cores = CPU usage (%) ÷ 100 × 8`. The value is averaged over the selected time window, so short bursts can push it well above the container's steady-state usage.
+- **Memory usage**: Tracks the memory consumption of your application as an **absolute value** (for example, in MB), highlighting its memory usage patterns.
+
+<Note>
+  CPU usage is scaled to your application's CPU limit, while **memory usage is reported as an absolute value**. If you compare CPU usage directly against the number of cores you measure from inside your container, it will look higher — for example, roughly 12.5× higher on the dynamic runtime — because it is expressed as a percentage of the 8-CPU limit rather than as raw cores.
+
+  This metric is intended for monitoring and is **not** the basis for billing. Billing is calculated separately from the actual CPU time (CPU-seconds) your containers consume, so it is unaffected by how CPU usage is scaled here. See [Pricing](/magic-containers/pricing) for details.
+</Note>
 
 # Configuring display options
 
