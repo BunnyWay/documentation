@@ -7,9 +7,9 @@ description: "Embed the Bunny Stream player in a Vue or Nuxt app and control pla
 import Install from "/snippets/stream/player-js-install.mdx";
 import Types from "/snippets/stream/player-js-types.mdx";
 
-The Bunny Player is an iframe you control through [player.js](https://github.com/embedly/player.js), a small library that wraps the `postMessage` protocol the player speaks. This guide builds a `BunnyPlayer` component that renders the iframe, emits player events, and exposes the player instance for controlling playback.
+The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. This guide builds a `BunnyPlayer` component that renders the iframe, emits its events, and exposes that object.
 
-The component is written so that it also works under Nuxt server rendering: player.js is imported in `onMounted`, because it reads `window` when imported, and the iframe is rendered only after the library is available, because a `Player` must exist before its iframe finishes loading.
+The component also works under Nuxt server rendering. player.js is imported in `onMounted`, because it reads `window` when imported, and the iframe renders only after the library is available, because a `Player` has to exist before its iframe finishes loading.
 
 ## Quickstart
 
@@ -120,10 +120,10 @@ The component is written so that it also works under Nuxt server rendering: play
     </style>
     ```
 
-    In Nuxt, save the file under `components/` and it is auto-imported. No `<ClientOnly>` wrapper is needed: the server renders the placeholder, and the browser swaps in the iframe.
+    In Nuxt, save it under `components/` and it's auto-imported. No `<ClientOnly>` wrapper is needed: the server renders the placeholder and the browser swaps in the iframe.
   </Step>
   <Step title="Render a video">
-    Pass the library ID and video GUID. Both are shown on the video's page in the dashboard, and in the embed code it generates.
+    Pass the library ID and video GUID from the video's page in the dashboard:
 
     ```vue
     <script setup lang="ts">
@@ -140,13 +140,13 @@ The component is written so that it also works under Nuxt server rendering: play
     </template>
     ```
 
-    `params` accepts any of the [player parameters](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
+    `params` accepts any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
   </Step>
 </Steps>
 
 ## Control playback
 
-The `ready` event carries the `Player` instance. Keep it in a `shallowRef`, so Vue does not wrap the instance in a deep reactive proxy, and call its methods from your own controls:
+The `ready` event carries the `Player`. Keep it in a `shallowRef`, so Vue doesn't wrap the instance in a deep reactive proxy, and call its methods from your own controls:
 
 ```vue
 <script setup lang="ts">
@@ -176,24 +176,24 @@ function toggle() {
 </template>
 ```
 
-Getters are asynchronous because the answer comes back from the iframe. They take a callback instead of returning a value:
+Getters take a callback, because the answer comes back from the iframe:
 
 ```ts
 player.value?.getCurrentTime((seconds) => console.log(seconds));
 player.value?.getDuration((seconds) => console.log(seconds));
 ```
 
-Playback speed is not a named method in player.js. Send the command directly, as described in [Playback rate](/stream/playback-api#playback-rate):
+player.js has no method for playback speed, so send the command directly (see [Playback rate](/stream/playback-api#playback-rate)):
 
 ```ts
 player.value?.send({ method: "setPlaybackRate", value: 1.5 });
 ```
 
-Browsers block unmuted `play()` calls until the viewer has interacted with the page. Call `mute()` first if playback must start without a click. See [Playback control API](/stream/playback-api) for every method and event.
+Browsers block unmuted `play()` until the viewer has interacted with the page, so call `mute()` first if playback has to start without a click. [Playback control API](/stream/playback-api) lists every method and event.
 
 ## Track progress
 
-`timeupdate` fires several times a second with the current position and duration. Throttle it before writing to your backend:
+`timeupdate` fires several times a second with `{ seconds, duration }`. Throttle it before writing to your backend:
 
 ```vue
 <script setup lang="ts">
@@ -220,15 +220,15 @@ function onTimeUpdate({ seconds, duration }: { seconds: number; duration: number
 </template>
 ```
 
-Passing the saved position back as the `t` parameter resumes playback from where the viewer left off.
+Pass the saved position back as the `t` parameter to resume from there.
 
 ## Multiple players on one page
 
-player.js matches the `ready` message to an iframe by its `src`. Two iframes embedding the same video with identical URLs confuse it. Add a unique parameter to each so every `src` differs, for example `:params="{ instance: useId() }"`. The player ignores parameters it does not recognise.
+player.js matches the `ready` message to an iframe by its `src`, so two iframes with identical URLs confuse it. Give each one a parameter the player ignores, such as `:params="{ instance: useId() }"`.
 
 ## Load player.js from the CDN instead
 
-To skip the npm dependency, load the hosted script and read `window.playerjs`. In Nuxt, add it to `nuxt.config.ts`:
+To skip the npm dependency, load the hosted build and read `window.playerjs`. In Nuxt, add it to `nuxt.config.ts`:
 
 ```ts nuxt.config.ts
 export default defineNuxtConfig({
@@ -240,7 +240,7 @@ export default defineNuxtConfig({
 });
 ```
 
-In a plain Vue app, add the `<script>` tag to `index.html`. Then replace the dynamic import in `onMounted` with `playerjs.value = window.playerjs`, and declare the global:
+In a plain Vue app, add the `<script>` tag to `index.html`. Replace the dynamic import in `onMounted` with `playerjs.value = window.playerjs` and declare the global:
 
 ```ts
 declare global {
@@ -254,17 +254,17 @@ declare global {
 
 <AccordionGroup>
   <Accordion title="ReferenceError: window is not defined">
-    player.js is being imported during server rendering. Keep the `import("player.js")` inside `onMounted`, as the component above does. A static `import playerjs from "player.js"` at the top of `<script setup>` runs on the server in Nuxt.
+    player.js is being imported during server rendering. Keep `import("player.js")` inside `onMounted`. A static `import playerjs from "player.js"` at the top of `<script setup>` runs on the server in Nuxt.
   </Accordion>
   <Accordion title="The ready event never fires">
-    The iframe finished loading before the `Player` was created. Render the iframe only after player.js has loaded, as the component above does, so the two happen in the same update.
+    The iframe finished loading before the `Player` existed. Render the iframe only after player.js has loaded, as the component above does, so both happen in the same update.
 
-    The player also refuses messages from a page whose origin does not match the iframe's `Referer`. If your site sets `Referrer-Policy: no-referrer`, add `referrerpolicy="strict-origin-when-cross-origin"` to the iframe. See [Requirements](/stream/playback-api#requirements).
+    The player also drops messages from a page whose origin doesn't match the iframe's `Referer`. If your site sets `Referrer-Policy: no-referrer`, add `referrerpolicy="strict-origin-when-cross-origin"` to the iframe. See [Requirements](/stream/playback-api#requirements).
   </Accordion>
   <Accordion title="Events fire twice after changing the video">
-    Each `Player` registers a global `message` listener that is never removed. Guard callbacks with a flag that the watcher cleanup flips to `false`, as in the component above, so only the current instance forwards events.
+    Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the watcher cleanup keeps stale instances quiet, so check that yours flips it.
   </Accordion>
   <Accordion title="The iframe shows a 403">
-    The library's allowed domains, direct access block, or token authentication is rejecting the embed. Check the [embedding restrictions](/stream/embedding#embedding-restrictions) for each setting.
+    The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
   </Accordion>
 </AccordionGroup>

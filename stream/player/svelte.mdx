@@ -7,9 +7,9 @@ description: "Embed the Bunny Stream player in a Svelte or SvelteKit app and con
 import Install from "/snippets/stream/player-js-install.mdx";
 import Types from "/snippets/stream/player-js-types.mdx";
 
-The Bunny Player is an iframe you control through [player.js](https://github.com/embedly/player.js), a small library that wraps the `postMessage` protocol the player speaks. This guide builds a `BunnyPlayer` component with Svelte 5 runes that renders the iframe, forwards player events as callback props, and hands you the player instance for controlling playback.
+The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. This guide builds a `BunnyPlayer` component with Svelte 5 runes that renders the iframe, forwards its events as callback props, and hands you that object.
 
-The component is written so that it also works under SvelteKit server rendering: player.js is imported in `onMount`, because it reads `window` when imported, and the iframe is rendered only after the library is available, because a `Player` must exist before its iframe finishes loading.
+The component also works under SvelteKit server rendering. player.js is imported in `onMount`, because it reads `window` when imported, and the iframe renders only after the library is available, because a `Player` has to exist before its iframe finishes loading.
 
 ## Quickstart
 
@@ -118,10 +118,10 @@ The component is written so that it also works under SvelteKit server rendering:
     </style>
     ```
 
-    The `{#key src}` block replaces the iframe when the video changes, which re-runs the effect with a fresh `Player`. The callback props are read inside the event handlers rather than during the effect itself, so passing a new inline function does not re-create the player.
+    `{#key src}` replaces the iframe when the video changes, so the effect runs again with a fresh `Player`. The callback props are read inside the event handlers, so passing a new inline function doesn't re-create the player.
   </Step>
   <Step title="Render a video">
-    Pass the library ID and video GUID. Both are shown on the video's page in the dashboard, and in the embed code it generates. In SvelteKit, load the video ID in `+page.server.ts` and pass it through `data`:
+    Load the video ID in `+page.server.ts` and pass it through `data`:
 
     ```svelte src/routes/lessons/[id]/+page.svelte
     <script lang="ts">
@@ -141,13 +141,13 @@ The component is written so that it also works under SvelteKit server rendering:
     />
     ```
 
-    The library ID is already visible in every embed URL, so it is safe to expose with a `PUBLIC_` variable. `params` accepts any of the [player parameters](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
+    The library ID already appears in every embed URL, so a `PUBLIC_` variable is fine. `params` accepts any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
   </Step>
 </Steps>
 
 ## Control playback
 
-`onready` receives the `Player` instance. Keep it in state and call its methods from your own controls:
+`onready` hands you the `Player`. Keep it in state and call its methods from your own controls:
 
 ```svelte
 <script lang="ts">
@@ -173,24 +173,24 @@ The component is written so that it also works under SvelteKit server rendering:
 <button onclick={() => player?.mute()}>Mute</button>
 ```
 
-Getters are asynchronous because the answer comes back from the iframe. They take a callback instead of returning a value:
+Getters take a callback, because the answer comes back from the iframe:
 
 ```ts
 player?.getCurrentTime((seconds) => console.log(seconds));
 player?.getDuration((seconds) => console.log(seconds));
 ```
 
-Playback speed is not a named method in player.js. Send the command directly, as described in [Playback rate](/stream/playback-api#playback-rate):
+player.js has no method for playback speed, so send the command directly (see [Playback rate](/stream/playback-api#playback-rate)):
 
 ```ts
 player?.send({ method: "setPlaybackRate", value: 1.5 });
 ```
 
-Browsers block unmuted `play()` calls until the viewer has interacted with the page. Call `mute()` first if playback must start without a click. See [Playback control API](/stream/playback-api) for every method and event.
+Browsers block unmuted `play()` until the viewer has interacted with the page, so call `mute()` first if playback has to start without a click. [Playback control API](/stream/playback-api) lists every method and event.
 
 ## Track progress
 
-`timeupdate` fires several times a second with the current position and duration. Throttle it before writing to your backend, for example through a form action or an API route:
+`timeupdate` fires several times a second with `{ seconds, duration }`. Throttle it before writing to your backend, for example through an API route:
 
 ```svelte
 <script lang="ts">
@@ -219,21 +219,21 @@ Browsers block unmuted `play()` calls until the viewer has interacted with the p
 />
 ```
 
-Passing the saved position back as the `t` parameter resumes playback from where the viewer left off.
+Pass the saved position back as the `t` parameter to resume from there.
 
 ## Multiple players on one page
 
-player.js matches the `ready` message to an iframe by its `src`. Two iframes embedding the same video with identical URLs confuse it. Add a unique parameter to each so every `src` differs, for example `params={{ instance: crypto.randomUUID() }}` computed once per component. The player ignores parameters it does not recognise.
+player.js matches the `ready` message to an iframe by its `src`, so two iframes with identical URLs confuse it. Give each one a parameter the player ignores, such as `params={{ instance: crypto.randomUUID() }}` computed once per component.
 
 ## Load player.js from the CDN instead
 
-To skip the npm dependency, load the hosted script in `src/app.html` and read `window.playerjs`:
+To skip the npm dependency, load the hosted build in `src/app.html`:
 
 ```html src/app.html
 <script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
 ```
 
-Then replace the dynamic import in `onMount` with `playerjs = window.playerjs`, and declare the global in `src/app.d.ts`:
+Replace the dynamic import in `onMount` with `playerjs = window.playerjs` and declare the global in `src/app.d.ts`:
 
 ```ts src/app.d.ts
 declare global {
@@ -249,17 +249,17 @@ export {};
 
 <AccordionGroup>
   <Accordion title="ReferenceError: window is not defined">
-    player.js is being imported during server rendering. Keep the `import("player.js")` inside `onMount`, as the component above does. A static `import playerjs from "player.js"` at the top of the script block runs on the server in SvelteKit.
+    player.js is being imported during server rendering. Keep `import("player.js")` inside `onMount`. A static `import playerjs from "player.js"` at the top of the script block runs on the server in SvelteKit.
   </Accordion>
   <Accordion title="onready never fires">
-    The iframe finished loading before the `Player` was created. Render the iframe only after player.js has loaded, as the component above does, so the two happen in the same update.
+    The iframe finished loading before the `Player` existed. Render the iframe only after player.js has loaded, as the component above does, so both happen in the same update.
 
-    The player also refuses messages from a page whose origin does not match the iframe's `Referer`. If your site sets `Referrer-Policy: no-referrer`, add `referrerpolicy="strict-origin-when-cross-origin"` to the iframe. See [Requirements](/stream/playback-api#requirements).
+    The player also drops messages from a page whose origin doesn't match the iframe's `Referer`. If your site sets `Referrer-Policy: no-referrer`, add `referrerpolicy="strict-origin-when-cross-origin"` to the iframe. See [Requirements](/stream/playback-api#requirements).
   </Accordion>
   <Accordion title="Events fire twice after changing the video">
-    Each `Player` registers a global `message` listener that is never removed. Guard callbacks with a flag that the effect cleanup flips to `false`, as in the component above, so only the current instance forwards events.
+    Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the effect cleanup keeps stale instances quiet, so check that yours flips it.
   </Accordion>
   <Accordion title="The iframe shows a 403">
-    The library's allowed domains, direct access block, or token authentication is rejecting the embed. Check the [embedding restrictions](/stream/embedding#embedding-restrictions) for each setting.
+    The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
   </Accordion>
 </AccordionGroup>
