@@ -628,7 +628,16 @@
                       "stream/player-settings",
                       "stream/player",
                       "stream/playback-api",
-                      "stream/custom-head-html-migration-guide"
+                      "stream/custom-head-html-migration-guide",
+                      {
+                        "group": "Frameworks",
+                        "pages": [
+                          "stream/player/react",
+                          "stream/player/nextjs",
+                          "stream/player/vue",
+                          "stream/player/svelte"
+                        ]
+                      }
                     ]
                   },
                   {
