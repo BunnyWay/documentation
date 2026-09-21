@@ -122,6 +122,28 @@ player.setLoop(true);
 player.getLoop((value) => console.log("getLoop", value));
 ```
 
+`setPlaybackRate`: number - Set the playback speed. Example:
+
+```js
+player.setPlaybackRate(1.5);
+```
+
+`getPlaybackRate`: number - Get the current playback speed. Example:
+
+```js
+player.getPlaybackRate((rate) => console.log("getPlaybackRate", rate));
+```
+
+<Info>
+
+The playback rate methods need player.js 0.1.2 or later. On earlier versions, and on the upstream Embedly build, send the command instead:
+
+```js
+player.send({ method: "setPlaybackRate", value: 1.5 });
+```
+
+</Info>
+
 `off`: Remove an event listener. If the listener is specified it should remove only that listener, otherwise remove all listeners. Example:
 
 ```js
@@ -140,20 +162,6 @@ player.on("play", () => console.log("play"));
 ```js
 player.supports("method", "getDuration");
 player.supports("event", "ended");
-```
-
-### Playback rate
-
-The player can change playback speed, but the hosted player.js library only builds methods for the standard player.js names, so `player.setPlaybackRate()` is `undefined`. Send the command instead:
-
-```js
-player.send({ method: "setPlaybackRate", value: 1.5 });
-```
-
-Listen for `playbackratechange` to read the rate back. The callback receives the new rate:
-
-```js
-player.on("playbackratechange", (rate) => console.log("playbackRate", rate));
 ```
 
 ## Events
@@ -199,28 +207,31 @@ data: {
 
 `seeked` - Fires when the video has been seeked by the user.
 
-`playbackratechange` - Fires when the playback rate changes. The callback receives the new rate. See [Playback rate](#playback-rate) for how to set it.
+`playbackratechange` - Fires when the playback rate changes. The callback receives the new rate:
 
-`error` - Fires when a command fails. Example:
+```js
+player.on("playbackratechange", (rate) => console.log("playbackRate", rate));
+```
+
+`error` - Fires when a command fails, and when the media itself fails to play. A failed command carries a code and a message. A media error carries an empty payload. Example:
 
 ```js
 data: {
-  code: 3,
-  msg: "Not supported"
+  code: 2,
+  msg: 'Invalid Method "foo"'
 }
 ```
 
-| Code | Meaning |
-| --- | --- |
-| `2` | The method name is not valid. |
-| `3` | The method is not supported by this player. |
-| `5` | The underlying call threw. Most often a `play()` the browser refused because autoplay was blocked. |
+| Code | Meaning | Message |
+| --- | --- | --- |
+| `2` | The method name is not valid. | `Invalid Method "foo"` |
+| `5` | The call threw. Most often a `play()` the browser refused because autoplay was blocked. | The text of the thrown error. |
 
 ## Requirements
 
 The control API only works when the player runs inside an iframe. Nothing is sent on a direct playback URL.
 
-The player accepts messages only from the parent origin it sees in `document.referrer`. A page that suppresses the referrer, such as one using `referrerpolicy="no-referrer"`, cannot control the player. This is the same policy that governs the library domain allow-list, so set it on the iframe as described in [Embedding restrictions](/stream/embedding#embedding-restrictions):
+Separately, if your library restricts playback to specific domains, the embed needs a referrer to load at all. Keep a policy on the iframe that sends the origin, as described in [Embedding restrictions](/stream/embedding#embedding-restrictions):
 
 ```html
 <iframe referrerpolicy="strict-origin-when-cross-origin" ...>
