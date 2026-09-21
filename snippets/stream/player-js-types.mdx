@@ -15,6 +15,7 @@ declare module "player.js" {
 
   export type TimeUpdate = { seconds: number; duration: number };
   export type Progress = { percent: number; seconds: number; duration: number };
+  /** Present when a command fails. Empty when the media itself errors. */
   export type PlayerError = { code: number; msg: string };
 
   export class Player {
@@ -24,7 +25,7 @@ declare module "player.js" {
     on(event: "timeupdate", callback: (data: TimeUpdate) => void): void;
     on(event: "progress", callback: (data: Progress) => void): void;
     on(event: "playbackratechange", callback: (rate: number) => void): void;
-    on(event: "error", callback: (error: PlayerError) => void): void;
+    on(event: "error", callback: (error?: PlayerError) => void): void;
     on(event: PlayerEvent, callback: (data?: unknown) => void): void;
     off(event: PlayerEvent, callback?: (...args: unknown[]) => void): void;
     supports(kind: "method" | "event", name: string | string[]): boolean;

@@ -625,8 +625,8 @@
                   {
                     "group": "Bunny Player",
                     "pages": [
-                      "stream/player-settings",
                       "stream/player",
+                      "stream/player-settings",
                       "stream/playback-api",
                       "stream/custom-head-html-migration-guide",
                       {

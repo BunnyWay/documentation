@@ -165,7 +165,7 @@ player.getCurrentTime((seconds) => console.log(seconds));
 player.getDuration((seconds) => console.log(seconds));
 ```
 
-player.js has no method for playback speed, so send the command directly (see [Playback rate](/stream/playback-api#playback-rate)):
+The `player.js` package on npm has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()` and `getPlaybackRate()`; see [Methods](/stream/playback-api#methods).
 
 ```tsx
 player.send({ method: "setPlaybackRate", value: 1.5 });
@@ -237,8 +237,6 @@ declare global {
 <AccordionGroup>
   <Accordion title="onReady never fires">
     The `Player` has to exist before the iframe finishes loading. Creating it in `useEffect` in the render that mounts the iframe is early enough in a client-rendered app. Server-rendered iframe HTML can finish loading before your JavaScript runs; the [Next.js guide](/stream/player/nextjs) handles that case.
-
-    The player also drops messages from a page whose origin doesn't match the iframe's `Referer`. If your site sets `Referrer-Policy: no-referrer`, add `referrerPolicy="strict-origin-when-cross-origin"` to the iframe. See [Requirements](/stream/playback-api#requirements).
   </Accordion>
   <Accordion title="Events fire twice after changing the video">
     Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the effect cleanup keeps stale instances quiet, so check that yours flips it.

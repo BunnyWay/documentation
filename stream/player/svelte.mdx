@@ -180,7 +180,7 @@ player?.getCurrentTime((seconds) => console.log(seconds));
 player?.getDuration((seconds) => console.log(seconds));
 ```
 
-player.js has no method for playback speed, so send the command directly (see [Playback rate](/stream/playback-api#playback-rate)):
+The `player.js` package on npm has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()` and `getPlaybackRate()`; see [Methods](/stream/playback-api#methods).
 
 ```ts
 player?.send({ method: "setPlaybackRate", value: 1.5 });
@@ -253,8 +253,6 @@ export {};
   </Accordion>
   <Accordion title="onready never fires">
     The iframe finished loading before the `Player` existed. Render the iframe only after player.js has loaded, as the component above does, so both happen in the same update.
-
-    The player also drops messages from a page whose origin doesn't match the iframe's `Referer`. If your site sets `Referrer-Policy: no-referrer`, add `referrerpolicy="strict-origin-when-cross-origin"` to the iframe. See [Requirements](/stream/playback-api#requirements).
   </Accordion>
   <Accordion title="Events fire twice after changing the video">
     Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the effect cleanup keeps stale instances quiet, so check that yours flips it.
