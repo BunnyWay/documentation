@@ -110,6 +110,18 @@ player.setCurrentTime(50);
 player.getCurrentTime((value) => console.log("getCurrentTime", value));
 ```
 
+`setLoop`: boolean - Set whether the media should replay when it reaches the end. Example:
+
+```js
+player.setLoop(true);
+```
+
+`getLoop`: boolean - Determine whether the media is set to loop. Example:
+
+```js
+player.getLoop((value) => console.log("getLoop", value));
+```
+
 `off`: Remove an event listener. If the listener is specified it should remove only that listener, otherwise remove all listeners. Example:
 
 ```js
@@ -130,29 +142,43 @@ player.supports("method", "getDuration");
 player.supports("event", "ended");
 ```
 
+### Playback rate
+
+The player can change playback speed, but the hosted player.js library only builds methods for the standard player.js names, so `player.setPlaybackRate()` is `undefined`. Send the command instead:
+
+```js
+player.send({ method: "setPlaybackRate", value: 1.5 });
+```
+
+Listen for `playbackratechange` to read the rate back. The callback receives the new rate:
+
+```js
+player.on("playbackratechange", (rate) => console.log("playbackRate", rate));
+```
+
 ## Events
 
-The Bunny Stream Player provides a set of events that can be used to enhance and customize your media playback experience. These events can be attached using the `on`method in the player.js script.
+The Bunny Stream Player provides a set of events that can be used to enhance and customize your media playback experience. These events can be attached using the `on` method in the player.js script.
 
 ### Event list
 
-The Bunny Stream Player emits the following player.js events that can be attached using the `on`method:
+The Bunny Stream Player emits the following player.js events that can be attached using the `on` method:
 
-`ready`- Fired when the media is ready to receive commands.
+`ready` - Fires when the media is ready to receive commands. This fires whether or not you are listening for it. Its payload carries `src`, `events` and `methods`, which is what makes `supports` accurate.
 
 <Info>
 
-As outlined in the PlayerJs Spec, there may be inconsistencies if multiple players on the page have the same source `src`. To address this, append a UUID or a timestamp to the iframe's `src`to ensure all players on the page have a unique source.
+As outlined in the PlayerJs Spec, there may be inconsistencies if multiple players on the page have the same source `src`. To address this, append a UUID or a timestamp to the iframe's `src` to ensure all players on the page have a unique source.
 
 </Info>
 
-fired when the media is ready to receive commands. This is fired regardless of listening to the event. Note: As outlined in the PlayerJs Spec, you may run into inconsistencies if you have multiple players on the page with the same `src`. To get around this, simply append a UUID or a timestamp to the iframe's src to guarantee that all players on the page have a unique `src`.
-
-`progress`- Fires when the media is loading additional media for playback. Example:
+`progress` - Fires when the media is loading additional media for playback. Example:
 
 ```js
-{
-  "percent": 0.8
+data: {
+  percent: 0.8,
+  seconds: 32,
+  duration: 40
 }
 ```
 
@@ -165,12 +191,37 @@ data: {
 }
 ```
 
-`play`- Fires when the video starts to play.
+`play` - Fires when the video starts to play.
 
-`pause`- Fires when the video is paused.
+`pause` - Fires when the video is paused.
 
-`ended`- Fires when the video is finished.
+`ended` - Fires when the video is finished.
 
 `seeked` - Fires when the video has been seeked by the user.
 
-`error` - Fires when an error occurs.
+`playbackratechange` - Fires when the playback rate changes. The callback receives the new rate. See [Playback rate](#playback-rate) for how to set it.
+
+`error` - Fires when a command fails. Example:
+
+```js
+data: {
+  code: 3,
+  msg: "Not supported"
+}
+```
+
+| Code | Meaning |
+| --- | --- |
+| `2` | The method name is not valid. |
+| `3` | The method is not supported by this player. |
+| `5` | The underlying call threw. Most often a `play()` the browser refused because autoplay was blocked. |
+
+## Requirements
+
+The control API only works when the player runs inside an iframe. Nothing is sent on a direct playback URL.
+
+The player accepts messages only from the parent origin it sees in `document.referrer`. A page that suppresses the referrer, such as one using `referrerpolicy="no-referrer"`, cannot control the player. This is the same policy that governs the library domain allow-list, so set it on the iframe as described in [Embedding restrictions](/stream/embedding#embedding-restrictions):
+
+```html
+<iframe referrerpolicy="strict-origin-when-cross-origin" ...>
+```
