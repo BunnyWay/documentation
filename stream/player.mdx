@@ -1,82 +1,95 @@
 ---
-title: "Player"
-description: " Welcome to our Bunny Stream video player with modern interface and improved performance."
+title: "Bunny Player"
+sidebarTitle: "Player"
+description: "The video player that ships with every Bunny Stream library: what it supports, how to embed it, and how to control it from your own code."
 ---
 
-The new Bunny Stream video player is ready to power your video experiences! It's enabled by default for all new video libraries.
+Bunny Player is the video player included with every Bunny Stream library. It runs at `player.mediadelivery.net`, plays your library's HLS output with adaptive bitrate, and needs no player code on your side. Embed it with an iframe, style it from the dashboard, and control it from your page with a small JavaScript API.
 
-## Quickstart
+## Embed a video
 
-**How to enable the video player** for existing video libraries from your Bunny Stream dashboard:
+Every processed video has an embed URL built from the library ID and video GUID:
 
-1. Log into your **Bunny.net** account
-2. Navigate to **Stream** from the side bar
-3. Select the **Video Library** you would like to utilize the new player on
-4. Click on **Player Settings**
-5. Toggle off **'Enable legacy player'**
-   <Frame>
-     <img
-       alt="Enable legacy player toggle in PlayerSettings"
-       src="/images/Screenshot2026-03-12at10.52.17.png"
-       className="dark:hidden"
-     />
-     <img
-       alt="Enable legacy player toggle in PlayerSettings"
-       src="/images/Screenshot2026-03-12at10.52.17-1.png"
-       className="hidden dark:block"
-     />
-   </Frame>
-6. Your video library **Videos and embed codes** will now reflect the new video player
-7. **Update your embed URLs to use the new player endpoint:**<br />player.mediadelivery.net/embed/
-8. **Enjoy!**
+```text
+https://player.mediadelivery.net/embed/{video_library_id}/{video_id}
+```
 
-## API
+```html
+<iframe
+  src="https://player.mediadelivery.net/embed/{video_library_id}/{video_id}"
+  title="Video player"
+  loading="lazy"
+  style="display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 0;"
+  allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+  allowfullscreen>
+</iframe>
+```
 
-You can also activate the new player over API on your video library using the following **cURL commands** via the [Update Video Library](/api-reference/core/stream-video-library/update-video-library) endpoint.
+[Embedding videos](/stream/embedding) covers sizing, per-embed parameters such as `autoplay` and `captions`, the direct play URL for sharing a link, and the security settings that can block an embed.
+
+## What the player does
+
+- Adaptive HLS playback with a quality menu, and optional native HLS in Safari.
+- Captions, including auto-generated transcription tracks, and an audio track menu for videos with several languages.
+- Chapters and moments on the progress bar, with thumbnail previews on hover.
+- Playback speed control, a watch-time heatmap, and a resume-where-you-left-off option, each configurable per library.
+- Picture-in-picture, fullscreen, Chromecast, and AirPlay.
+- [Keyboard shortcuts](/stream/embedding#player-keyboard-shortcuts) for playback, seeking, volume, captions, and speed.
+- An interface translated into 27 languages besides English, selected with the `lang` parameter.
+- [MediaCage DRM](/stream/drm) and [VAST ads](/stream/vast).
+
+Each playback session feeds the [statistics](/stream/statistics) in your dashboard.
+
+## Customise the look and defaults
+
+[Player settings](/stream/player-settings) in the dashboard set the colours, logo, controls, and default behaviour for every embed in a library. Query parameters on the embed URL override those defaults for a single embed.
+
+## Control playback from your page
+
+The player speaks the [player.js](https://github.com/embedly/player.js) protocol, so your page can play, pause, seek, mute, and listen for events such as `timeupdate` and `ended`. [Playback control API](/stream/playback-api) lists every method and event, and the framework guides show a working component for each stack:
+
+<CardGroup cols={2}>
+  <Card title="React" href="/stream/player/react" />
+  <Card title="Next.js" href="/stream/player/nextjs" />
+  <Card title="Vue and Nuxt" href="/stream/player/vue" />
+  <Card title="Svelte and SvelteKit" href="/stream/player/svelte" />
+</CardGroup>
+
+## Native apps
+
+For iOS and Android apps, the [iOS SDK](/stream/ios-sdk) and [Android SDK](/stream/android-sdk) play the same HLS output through the platform's native video stack. To play your library through Bitmovin, Shaka, or another web player, see [Third-party players](/stream/players).
+
+## Legacy player
+
+Libraries created before Bunny Player launched may still run the previous Plyr-based player at `iframe.mediadelivery.net`. Embed URLs on that host keep working while the legacy player is enabled for the library.
+
+<Note>
+  The legacy player is deprecated and will be removed in early 2027. Move your embeds to `player.mediadelivery.net` before then. If you customised it with custom head HTML, the [migration guide](/stream/custom-head-html-migration-guide) maps the old selectors to the new ones.
+</Note>
+
+To switch a library between players in the dashboard, open **Stream**, select the library, open **Player Settings**, and toggle **Enable legacy player**.
+
+<Frame>
+  <img
+    alt="Enable legacy player toggle in Player Settings"
+    src="/images/Screenshot2026-03-12at10.52.17.png"
+    className="dark:hidden"
+  />
+  <img
+    alt="Enable legacy player toggle in Player Settings"
+    src="/images/Screenshot2026-03-12at10.52.17-1.png"
+    className="hidden dark:block"
+  />
+</Frame>
+
+The same switch is `PlayerVersion` on the [Update Video Library](/api-reference/core/stream-video-library/update-video-library) endpoint, where `2` is Bunny Player and `1` is the legacy player:
 
 ```bash
 curl https://api.bunny.net/videolibrary/<library_id> \
   -X POST \
   -H 'authorization: <token>' \
   -H 'content-type: application/json' \
-  -d '{"PlayerVersion": <version>}'
+  -d '{"PlayerVersion": 2}'
 ```
 
-| Value | Description |
-| --- | --- |
-| `2` | Enable the new video player |
-| `1` | Disable and revert to the legacy player |
-
-**Note:** Updating the video library via the dashboard or API does not automatically update your existing embed URLs. To use the new player endpoint, update your embed URLs to: player.mediadelivery.net/embed/
-
-## About
-
-**Why we built the new video player**
-
-The player uses a modern and flexible technology that helps us deliver a better video experience for you. Here’s what that means:
-
-**A custom, modern Interface**
-
-The player offers a clean, intuitive interface that works seamlessly across desktops, tablets, and mobile devices. It’s fully customizable, allowing us to deliver a user experience that matches the quality of our content
-
-**Fast and responsive performance**
-
-The player is optimized for performance. Video controls feel smooth and responsive, and playback starts quickly without delays or glitches.
-
-**A consistent experience across browsers**
-
-No matter what browser you use; whether it’s Chrome, Safari, Firefox, or Edge you’ll get a consistent and reliable experience. The interface and functionality remain the same everywhere
-
-**Designed for accessibility**
-
-The player is built to be inclusive. It supports screen readers, keyboard navigation, and other accessibility features so that everyone can enjoy our content with ease
-
-## Notes
-
-- The new video player uses a new player URL for both Embed URL iframe and Direct Play URLs [https://player.mediadelivery.net](https://player.mediadelivery.net) 
-- Your pre-existing player Embed URL iframe and Direct Play URLs will still work [https://iframe.mediadelivery.net](https://iframe.mediadelivery.net)
-- You can still swap your video library back to the previous player by enabling the legacy player within player settings
-
-<Note>
-  If you use [Custom Head HTML within the legacy player - check out our guide for migrating.](/stream/custom-head-html-migration-guide)
-</Note>
+Changing the player does not rewrite embed codes you have already published. Update those URLs to `player.mediadelivery.net/embed/` yourself.

@@ -1,0 +1,268 @@
+---
+title: "Use Bunny Player with Vue and Nuxt"
+sidebarTitle: "Vue and Nuxt"
+description: "Embed the Bunny Stream player in a Vue or Nuxt app and control playback with player.js events and methods."
+---
+
+import Install from "/snippets/stream/player-js-install.mdx";
+import Types from "/snippets/stream/player-js-types.mdx";
+
+The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. This guide builds a `BunnyPlayer` component that renders the iframe, emits its events, and exposes that object.
+
+The component also works under Nuxt server rendering. player.js is imported in `onMounted`, because it reads `window` when imported, and the iframe renders only after the library is available, because a `Player` has to exist before its iframe finishes loading.
+
+## Quickstart
+
+<Steps>
+  <Step title="Install player.js">
+    <Install />
+
+    <Types />
+  </Step>
+  <Step title="Create the component">
+    ```vue components/BunnyPlayer.vue
+    <script setup lang="ts">
+    import { computed, onMounted, ref, shallowRef, watch } from "vue";
+    import type { Player, TimeUpdate } from "player.js";
+
+    type PlayerJs = (typeof import("player.js"))["default"];
+
+    const props = withDefaults(
+      defineProps<{
+        libraryId: string;
+        videoId: string;
+        /** Player parameters such as autoplay, muted, captions, or t. */
+        params?: Record<string, string | number | boolean>;
+        title?: string;
+      }>(),
+      { title: "Video player" },
+    );
+
+    const emit = defineEmits<{
+      ready: [player: Player];
+      play: [];
+      pause: [];
+      ended: [];
+      timeupdate: [time: TimeUpdate];
+    }>();
+
+    const iframe = ref<HTMLIFrameElement | null>(null);
+    const playerjs = shallowRef<PlayerJs | null>(null);
+    const player = shallowRef<Player | null>(null);
+
+    const src = computed(() => {
+      const query = new URLSearchParams(
+        Object.entries(props.params ?? {}).map(([key, value]) => [key, String(value)]),
+      ).toString();
+      return `https://player.mediadelivery.net/embed/${props.libraryId}/${props.videoId}${query ? `?${query}` : ""}`;
+    });
+
+    onMounted(async () => {
+      // player.js reads window when imported, so load it in the browser only.
+      playerjs.value = (await import("player.js")).default;
+    });
+
+    // The iframe is keyed by src, so this runs for every new iframe element,
+    // right after it is inserted and before it has finished loading.
+    watch(
+      iframe,
+      (el, _previous, onCleanup) => {
+        if (!el || !playerjs.value) return;
+
+        // player.js has no teardown API. This flag stops stale listeners
+        // from firing after the video changes or the component unmounts.
+        let active = true;
+        const instance = new playerjs.value.Player(el);
+
+        instance.on("ready", () => active && emit("ready", instance));
+        instance.on("play", () => active && emit("play"));
+        instance.on("pause", () => active && emit("pause"));
+        instance.on("ended", () => active && emit("ended"));
+        instance.on("timeupdate", (time) => active && emit("timeupdate", time));
+
+        player.value = instance;
+        onCleanup(() => {
+          active = false;
+          player.value = null;
+        });
+      },
+      { flush: "post" },
+    );
+
+    defineExpose({ player });
+    </script>
+
+    <template>
+      <iframe
+        v-if="playerjs"
+        ref="iframe"
+        :key="src"
+        :src="src"
+        :title="title"
+        class="bunny-player"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen
+      />
+      <!-- Hold the space until player.js is loaded so the iframe cannot
+           finish loading before the Player exists. -->
+      <div v-else class="bunny-player" aria-hidden="true" />
+    </template>
+
+    <style scoped>
+    .bunny-player {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      background: #000;
+    }
+    </style>
+    ```
+
+    In Nuxt, save it under `components/` and it's auto-imported. No `<ClientOnly>` wrapper is needed: the server renders the placeholder and the browser swaps in the iframe.
+  </Step>
+  <Step title="Render a video">
+    Pass the library ID and video GUID from the video's page in the dashboard:
+
+    ```vue
+    <script setup lang="ts">
+    import BunnyPlayer from "./components/BunnyPlayer.vue";
+    </script>
+
+    <template>
+      <BunnyPlayer
+        library-id="12345"
+        video-id="your-video-guid"
+        :params="{ autoplay: false, preload: true }"
+        @ended="console.log('Video finished')"
+      />
+    </template>
+    ```
+
+    `params` accepts any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
+  </Step>
+</Steps>
+
+## Control playback
+
+The `ready` event carries the `Player`. Keep it in a `shallowRef`, so Vue doesn't wrap the instance in a deep reactive proxy, and call its methods from your own controls:
+
+```vue
+<script setup lang="ts">
+import { ref, shallowRef } from "vue";
+import type { Player } from "player.js";
+import BunnyPlayer from "./components/BunnyPlayer.vue";
+
+const player = shallowRef<Player | null>(null);
+const playing = ref(false);
+
+function toggle() {
+  playing.value ? player.value?.pause() : player.value?.play();
+}
+</script>
+
+<template>
+  <BunnyPlayer
+    library-id="12345"
+    video-id="your-video-guid"
+    @ready="player = $event"
+    @play="playing = true"
+    @pause="playing = false"
+  />
+  <button @click="toggle">{{ playing ? "Pause" : "Play" }}</button>
+  <button @click="player?.setCurrentTime(0)">Restart</button>
+  <button @click="player?.mute()">Mute</button>
+</template>
+```
+
+Getters take a callback, because the answer comes back from the iframe:
+
+```ts
+player.value?.getCurrentTime((seconds) => console.log(seconds));
+player.value?.getDuration((seconds) => console.log(seconds));
+```
+
+The `player.js` package on npm has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()` and `getPlaybackRate()`; see [Methods](/stream/playback-api#methods).
+
+```ts
+player.value?.send({ method: "setPlaybackRate", value: 1.5 });
+```
+
+Browsers block unmuted `play()` until the viewer has interacted with the page, so call `mute()` first if playback has to start without a click. [Playback control API](/stream/playback-api) lists every method and event.
+
+## Track progress
+
+`timeupdate` fires several times a second with `{ seconds, duration }`. Throttle it before writing to your backend:
+
+```vue
+<script setup lang="ts">
+import BunnyPlayer from "./components/BunnyPlayer.vue";
+
+const props = defineProps<{ videoId: string; resumeAt?: number }>();
+let lastSaved = 0;
+
+function onTimeUpdate({ seconds, duration }: { seconds: number; duration: number }) {
+  if (seconds - lastSaved < 5) return;
+  lastSaved = seconds;
+  saveProgress(props.videoId, seconds, duration);
+}
+</script>
+
+<template>
+  <BunnyPlayer
+    library-id="12345"
+    :video-id="videoId"
+    :params="resumeAt ? { t: resumeAt } : undefined"
+    @timeupdate="onTimeUpdate"
+    @ended="markComplete(videoId)"
+  />
+</template>
+```
+
+Pass the saved position back as the `t` parameter to resume from there.
+
+## Multiple players on one page
+
+player.js matches the `ready` message to an iframe by its `src`, so two iframes with identical URLs confuse it. Give each one a parameter the player ignores, such as `:params="{ instance: useId() }"`.
+
+## Load player.js from the CDN instead
+
+To skip the npm dependency, load the hosted build and read `window.playerjs`. In Nuxt, add it to `nuxt.config.ts`:
+
+```ts nuxt.config.ts
+export default defineNuxtConfig({
+  app: {
+    head: {
+      script: [{ src: "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js" }],
+    },
+  },
+});
+```
+
+In a plain Vue app, add the `<script>` tag to `index.html`. Replace the dynamic import in `onMounted` with `playerjs.value = window.playerjs` and declare the global:
+
+```ts
+declare global {
+  interface Window {
+    playerjs: (typeof import("player.js"))["default"];
+  }
+}
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="ReferenceError: window is not defined">
+    player.js is being imported during server rendering. Keep `import("player.js")` inside `onMounted`. A static `import playerjs from "player.js"` at the top of `<script setup>` runs on the server in Nuxt.
+  </Accordion>
+  <Accordion title="The ready event never fires">
+    The iframe finished loading before the `Player` existed. Render the iframe only after player.js has loaded, as the component above does, so both happen in the same update.
+  </Accordion>
+  <Accordion title="Events fire twice after changing the video">
+    Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the watcher cleanup keeps stale instances quiet, so check that yours flips it.
+  </Accordion>
+  <Accordion title="The iframe shows a 403">
+    The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
+  </Accordion>
+</AccordionGroup>
