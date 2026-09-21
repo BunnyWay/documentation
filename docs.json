@@ -1212,15 +1212,21 @@
         ]
       },
       {
-        "product": "Partner API Reference",
+        "product": "Partners",
         "icon": "handshake",
-        "description": "Manage customers, pricing, and billing via the Partner Portal API",
+        "description": "Manage customers, pricing, and billing as a bunny.net partner",
         "tabs": [
           {
             "tab": "Documentation",
             "groups": [
               {
-                "group": "Partner Portal API",
+                "group": "Documentation",
+                "pages": [
+                  "partners/index"
+                ]
+              },
+              {
+                "group": "API Reference",
                 "openapi": {
                   "source": "https://core-api-public-docs.b-cdn.net/docs/v3/PartnerPortal.json",
                   "directory": "api-reference/partner"
