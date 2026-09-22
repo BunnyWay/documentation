@@ -1,19 +1,22 @@
 ---
 title: Burrow Smart Routing
 description: Optimize uncached requests with intelligent path selection
-tag: "Preview"
 ---
 
 Burrow Smart Routing accelerates uncached, origin-bound requests by dynamically choosing the fastest, most reliable paths across Bunny's global backbone network.
 
 The internet relies on a fragile system of cables, infrastructure, and partnerships. Network outages, congestion, and cable cuts happen regularly and can cause severe connectivity issues. Burrow helps your traffic avoid these problems by intelligently routing requests around issues in real time.
 
-## How to enable
+<Info>
+  Burrow is a usage-based feature, not included in the Optimizer base fee. See [Burrow pricing](/optimizer/burrow-smart-routing#burrow-pricing) for details.
+</Info>
+
+## How to enable Burrow
 
 1. Open your **Pull Zone** settings
 2. Navigate to **Optimizer**
 3. **Enable Bunny Optimizer** if not already enabled
-4. Open the **Burrow** tab and click **Enable**
+4. Open the **Burrow** tab and click **Enable Burrow Smart Routing**
 
 <Frame>
   ![Enable Burrow Smart
@@ -26,7 +29,11 @@ Your uncached traffic will immediately start using intelligent path selection ac
   If Origin Shield is enabled on the same Pull Zone, uncached requests are routed through the selected Origin Shield location and are not affected by Burrow Smart Routing.
 </Info>
 
-## How it works
+<Warning>
+  Burrow Smart Routing is supported only on Pull Zones with a single origin hosted outside the bunny.net network. Don't enable it for a Pull Zone that uses a Bunny Storage Zone origin, which already sits inside our network, or a load balancer origin, which spreads requests across several origins.
+</Warning>
+
+## How Burrow works
 
 Burrow is an always-on, self-optimizing routing engine built into the bunny.net network infrastructure. When a request isn't in cache, Burrow:
 
@@ -58,16 +65,32 @@ Cached traffic continues to be served instantly from the edge as usual.
 
 Burrow is particularly beneficial for API traffic, real-time applications, personalized content, e-commerce transactions, and SaaS applications where users are geographically distributed or far from your origin server.
 
-## Pricing
+## Active origin probing
+<Badge color="orange" icon="sparkles">Preview</Badge>
 
-**During early access:** Free with no traffic limitations
+Active origin probing periodically tests origin connection quality from edge locations with lightweight checks. This allows Burrow to map optimal paths ahead of time, ensuring the routing engine is always prepared with up-to-date network information, even during low-traffic periods.
 
-**After early access:**
+This feature is particularly beneficial for smaller projects that don't generate enough traffic volume for Burrow to learn patterns organically. Unlike Burrow Smart Routing, which needs no changes on your side once enabled, active origin probing requires serving a probe file from your origin.
 
-- 50 GB/month of uncached traffic included with Optimizer
-- $0.06/GB for additional uncached traffic beyond the free tier
-- Only uncached, origin-bound requests count toward usage
-- Cached requests are not counted
+### How to enable Active origin probing
+
+1. Open your **Pull Zone** settings
+2. Navigate to **Optimizer**
+3. Enable **Bunny Optimizer** and **Burrow Smart Routing** if not already enabled
+4. Click **Active origin probing** to open the configuration window
+5. Download the **Probe File** and configure your origin to serve it at `/.well-known/bunny-burrow-probe.txt`
+6. Test that the file is reachable
+7. Once the file is reachable, click **Enable Active Probing**
+
+<Frame>
+  ![Enable Burrow Active origin probing](/images/optimizer/enable-burrow-active-probing.png)
+</Frame>
+
+### How Active origin probing works
+
+When Burrow sees traffic for a Pull Zone, it checks whether up-to-date information is available for the origin. If not, it starts probing the origin from bunny.net's edge network. If a Pull Zone receives no traffic at all, no probes are sent, as there is nothing to optimize.
+
+Probes are sent with the `User-Agent` header `BunnyBurrowActiveProbe/1.0`. The `Host` header follows your Pull Zone configuration, so it carries the same value the CDN uses when it fetches content from your origin. Probes are lightweight and infrequent, but the probe frequency may change, so don't rely on a specific rate.
 
 ## Performance monitoring
 
@@ -76,10 +99,9 @@ View Burrow's impact in your Bunny Optimizer Statistics:
 - **Total time saved:** Cumulative milliseconds saved across all requests
 - **Average time saved per request:** Per-request performance improvement
 
-## Active Origin Probing
+## Burrow pricing
 
-<Note>Coming soon</Note>
-
-Active probing will periodically test origin connection quality from edge locations with lightweight checks. This allows Burrow to map optimal paths ahead of time, ensuring the routing engine is always prepared with up-to-date network information, even during low-traffic periods.
-
-This feature is particularly beneficial for smaller projects that don't generate enough traffic volume for Burrow to learn patterns organically.
+- 50 GB/month of uncached traffic included with Optimizer
+- \$0.06/GB for additional uncached traffic beyond the free tier
+- Only uncached, origin-bound requests count toward usage
+- Cached requests are not counted
