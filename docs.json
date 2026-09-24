@@ -521,6 +521,7 @@
                 "group": "Reference",
                 "pages": [
                   "scripting/limits",
+                  "scripting/regions",
                   "scripting/https-ssl-certificates",
                   "scripting/before-cache",
                   "scripting/api-reference"
