@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
     libraryId: BUNNY_LIBRARY_ID,
     expirationTime,
     signature,
-    embedUrl: `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${video.guid}`,
+    embedUrl: `https://player.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${video.guid}`,
   } satisfies UploadCredentials);
 }
 ```
