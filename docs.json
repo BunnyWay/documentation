@@ -833,7 +833,8 @@
                   "optimizer/image-classes",
                   "optimizer/watermarking",
                   "optimizer/burrow-smart-routing",
-                  "optimizer/html-prerender"
+                  "optimizer/html-prerender",
+                  "optimizer/agent-readability"
                 ]
               },
               {
