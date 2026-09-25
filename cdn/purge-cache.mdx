@@ -5,7 +5,7 @@ description: Clear cached content from your Pull Zone to serve fresh files from 
 
 Purge cached files when you need visitors to see updated content immediately rather than waiting for cache expiration.
 
-You can purge the entire Pull Zone, or purge only files matching a specific tag.
+You can purge the entire Pull Zone, only files with a specific tag, or specific URLs. The dashboard supports full and tag purges. URL purges are available through the [API](#purge-by-url).
 
 <Warning>
   Purging large zones puts temporary load on your origin server while content is
@@ -49,21 +49,11 @@ You can also purge cache programmatically. See the [Core API reference](/api-ref
 
 ### Full Pull Zone purge
 
-```bash
-curl -X POST "https://api.bunny.net/pullzone/{id}/purgeCache" \
-  -H "AccessKey: YOUR_API_KEY"
-```
+Use the [Purge Cache](/api-reference/core/pull-zone/purge-cache) endpoint without a `CacheTag` to clear every cached file in the Pull Zone.
 
 ### Purge by tag
 
-Tag responses from your origin with the `CDN-Tag` header, then purge all files matching that tag:
-
-```bash
-curl -X POST "https://api.bunny.net/pullzone/{id}/purgeCache" \
-  -H "AccessKey: YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"CacheTag": "product-123"}'
-```
+Tag responses from your origin with the `CDN-Tag` header. Then use the [Purge Cache](/api-reference/core/pull-zone/purge-cache) endpoint with `CacheTag` set to purge all files matching that tag.
 
 Useful for invalidating all assets related to a specific product, user, or category without clearing your entire cache.
 
@@ -71,7 +61,14 @@ Useful for invalidating all assets related to a specific product, user, or categ
   `CDN-Tag` header values are limited to 1024 bytes. Longer values are truncated.
 </Note>
 
-To purge a specific URL across all pull zones, use the Purge URL endpoint in the [Core API](/api-reference/core).
+### Purge by URL
+
+Use the [Purge URL](/api-reference/core/purge/purge-url) endpoint to purge a single file or a path prefix.
+
+The URL you send decides the purge type, which also decides the [rate limit](#rate-limits) that applies:
+
+- **Exact**: a URL without wildcards, where the path does not end with `/` or `exactPath` is `true`. For example, `https://example.com/image.png`.
+- **Prefix**: the URL contains a `*`, or the path ends with `/` and `exactPath` is `false`. For example, `https://example.com/images/*` or `https://example.com/assets/`.
 
 ## Rate limits
 
@@ -84,28 +81,12 @@ Purge requests are rate-limited using a token bucket mechanism:
 - Each purge item consumes 1 token
 - Tokens refill steadily over time
 
+Every purge counts toward one of two purge types:
+
+- **Exact**: an [exact URL purge](#purge-by-url) or a [purge by tag](#purge-by-tag)
+- **Prefix**: a [prefix URL purge](#purge-by-url) or a [full Pull Zone purge](#full-pull-zone-purge)
+
 If a request exceeds the available rate limit, the API returns a `429 Too Many Requests` response with guidance on when to retry.
-
-### Purge types
-
-Purge requests are classified into one of the following types:
-
-**Exact Purge**
-
-A single URL without wildcards where the path does not end with `/`.
-
-```
-https://example.com/image.png
-```
-
-**Prefix (Wildcard) Purge**
-
-The URL contains a `*`, or the path ends with `*` or `/`.
-
-```
-https://example.com/images/*
-https://example.com/assets/
-```
 
 ### Default rate limits
 
