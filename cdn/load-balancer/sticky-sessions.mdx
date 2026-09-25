@@ -1,0 +1,33 @@
+---
+title: Sticky Sessions
+description: Keep returning visitors pinned to the same origin using cookies.
+---
+
+Sticky sessions route repeat requests from the same visitor to the same origin. Use them when your application keeps per-user state on the origin server, such as login sessions or shopping carts that are not shared between backends.
+
+Sticky sessions are configured on the Load Balancer and are disabled by default. Sessions are tracked with a client cookie.
+
+## How it works
+
+When cookie stickiness is enabled, the first response to a visitor sets an encrypted cookie named `bunny_lb_{id}` that records which origin served them. Subsequent requests carrying a valid cookie are routed to that origin, bypassing the balancing method.
+
+The cookie is a session cookie (it expires when the browser closes) and is set with `HttpOnly` and `SameSite=Lax`. The `Secure` flag is added when the request arrives over HTTPS. Its content is encrypted, so it cannot be read or forged by the client.
+
+## When a session breaks
+
+A sticky session is an optimization, never a guarantee. The visitor is re-balanced to a new origin (and receives a fresh cookie) whenever:
+
+- The pinned origin is unhealthy, disabled, or temporarily failing. Health always wins over stickiness.
+- The Load Balancer configuration changes. Edits to the Load Balancer, its groups, or its origins can invalidate active sessions.
+- The visitor's IP address changes. Sessions are bound to the client's network address, which limits cookie theft but means clients that switch networks are re-balanced.
+
+Design your application to tolerate a visitor occasionally landing on a different origin, for example by using a shared session store.
+
+## Interactions
+
+<Warning>
+  Sticky sessions are automatically disabled on Pull Zones that have [Request Coalescing](/cdn/request-coalescing) enabled. Coalescing shares one origin fetch between many concurrent clients, which is incompatible with per-visitor origin pinning.
+</Warning>
+
+- Stickiness only applies to requests that reach the origin. Cached responses are served from the edge regardless of the cookie.
+- The [Force Sticky Session Mode Edge Rule](/cdn/load-balancer/routing#per-request-overrides-with-edge-rules) can enable or disable stickiness for specific requests.

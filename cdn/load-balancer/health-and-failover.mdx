@@ -1,0 +1,56 @@
+---
+title: Health and Failover
+description: How origin health is monitored and how the Load Balancer fails over when an origin becomes unavailable.
+---
+
+The Load Balancer combines two layers of protection: active health checks that remove failing origins from rotation globally, and passive failure detection that reacts to problems observed in live traffic. Together they route traffic around outages without any manual intervention.
+
+## Health checks
+
+Health checks are configured per origin group and are disabled by default.
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Enabled | disabled | Turns active health monitoring on for all origins in the group. |
+| Path | `/` | The path probed on each origin, up to 500 characters. |
+
+When enabled, the bunny.net monitoring network periodically sends a `GET` request to the configured path on every origin in the group. Each origin is either **Healthy** or **Degraded**:
+
+- Healthy origins participate in routing normally.
+- Degraded origins are removed from rotation across the entire edge network until the health check passes again.
+
+The current health status of every origin is visible in your Load Balancer configuration and via the API.
+
+<Tip>
+  Point the health check path at a lightweight endpoint such as `/healthz` rather than a heavy page. A good health endpoint also verifies the services your application depends on, such as its database or cache, and returns an error when any of them is unavailable. This lets an origin that is still serving traffic but cannot function correctly pull itself out of rotation until it is fully healthy again.
+</Tip>
+
+<Note>
+  Disabling health checks on a group immediately resets all of its origins to Healthy, so any origin that was removed from rotation starts receiving traffic again.
+</Note>
+
+## Passive failure detection
+
+Independently of health checks, every edge server tracks failures it observes in live traffic. An origin that fails repeatedly in a short period is temporarily taken out of rotation on that edge server and automatically re-tested. A successful response puts the origin back into full rotation.
+
+This layer works even with health checks disabled, and reacts faster than any active probe can, but its view is local to each edge server.
+
+## Failover
+
+For every request, the routing methods produce a complete ordered list of eligible origins (see [Routing methods](/cdn/load-balancer/routing)). The request goes to the first origin; if that fails, the Load Balancer moves down the list:
+
+- **Connection-level failures** (DNS errors, refused connections, TLS failures, timeouts) always trigger failover to the next origin. Nothing reached your origin, so any request can be safely retried elsewhere.
+- **HTTP 5xx responses from the origin** trigger failover only for requests that are safe to replay: requests without a body, excluding `POST`, `PUT`, and `PATCH`. For non-replayable requests, the origin's own error response is returned to the client instead, so a state-changing request is never delivered to two origins.
+- Failover stops as soon as response data has been streamed to the client.
+
+The failover chain is time-limited, so a request fails fast rather than working through a long list of slow origins indefinitely. Your Pull Zone's own origin retry settings (retry count, delay, and conditions) apply to the final origin in the chain.
+
+### When everything is failing
+
+The Load Balancer prefers degraded service over no service. If no origin passes the health filters, a request is still attempted against unhealthy origins as a last resort rather than being failed outright. Only origins and groups you have explicitly disabled are never used.
+
+If every eligible origin has been tried and failed, the client receives a `502 Bad Gateway` response.
+
+## Logging failures
+
+Each failed origin attempt is recorded in your Pull Zone's [origin error logs](/cdn/logging/origin-errors) with the specific cause (such as `dns_lookup`, `http_timeout`, or `ssl_error`), or `loadbalanced_origin_failure` as a general fallback. Per-origin failure counts, broken down by status code, are also available in [statistics](/cdn/load-balancer/statistics).
