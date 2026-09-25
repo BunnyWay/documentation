@@ -1,0 +1,76 @@
+---
+title: "Geo-blocking"
+description: "Control which countries can stream videos from your Bunny Stream library using a country allowlist or blocklist."
+sidebarTitle: "Geo-blocking"
+hidden: true
+---
+
+Geo-blocking lets you control who can watch your videos based on the viewer's country. It works at the video library level and applies to every video the library delivers, giving you a single place to enforce licensing, regional-rights, or compliance rules across your whole catalog.
+
+You can configure geo-blocking in one of two mutually exclusive modes:
+
+- **Allowlist** - only the countries you add can connect and stream. Every other country is blocked.
+- **Blocklist** - the countries you add are rejected. Every other country can stream.
+
+You can use one mode or the other, but not both at the same time. This keeps the rules simple: either you are naming the only countries allowed in, or you are naming the only countries blocked out.
+
+<Note>
+  Geo-blocking is configured per video library. If you deliver content through several libraries, repeat the setup for each library you want to restrict.
+</Note>
+
+## Configure geo-blocking
+
+<Steps>
+  <Step title="Open your video library">
+    In the [bunny.net dashboard](https://dash.bunny.net), go to **Stream** and select the video library you want to restrict. The library's delivery hostname (for example, `https://your-library.b-cdn.net`) is shown at the top of the page.
+  </Step>
+  <Step title="Open the Geo-blocking screen">
+    In the library menu, open **Security > Geo-blocking**. You'll see a world map above two panels: **Allowlisted countries** and **Blocked countries**.
+  </Step>
+  <Step title="Choose your mode and add countries">
+    Decide whether you want an allowlist or a blocklist, then add countries to that panel using its **Select countries** dropdown.
+
+    - To **allow only specific countries**, add them under **Allowlisted countries**. Everyone else is blocked.
+    - To **block specific countries**, add them under **Blocked countries**. Everyone else is allowed.
+
+    As you add countries, they appear as markers on the map - green for allowlisted, red for blocked - so you can confirm your coverage at a glance. As soon as you add a country to one list, the other list is disabled, and the dropdown shows _Unavailable while allowlisting is in use_ or _Unavailable while blocking is in use_.
+  </Step>
+  <Step title="Save your settings">
+    Click **Save Settings** to apply the rule. The button stays inactive until you've added at least one country. To change modes later, remove every country from the active panel to re-enable the other one.
+  </Step>
+</Steps>
+
+## How geo-blocking works
+
+When a viewer requests a video, bunny.net determines their country from their IP address and checks it against your library's rule:
+
+- In **allowlist** mode, the request is allowed only if the viewer's country is on the list. All other countries are rejected and cannot stream.
+- In **blocklist** mode, the request is rejected if the viewer's country is on the list. All other countries are allowed to stream.
+
+A rejected viewer cannot connect to the stream, so playback fails for every video in the library rather than for a single file.
+
+<Note>
+  A country can belong to only one list at a time. Because the two modes are mutually exclusive, a country you add to one panel is automatically excluded from the other.
+</Note>
+
+## Choosing between allowlist and blocklist
+
+Use an **allowlist** when your default should be _deny_ — for example, when you're licensed to distribute in only a handful of territories and want everywhere else closed off. Adding a small set of countries is quicker and safer than trying to block every country you don't serve.
+
+Use a **blocklist** when your default should be _allow_ — for example, when your content is available almost everywhere and you only need to exclude a few specific countries for legal or contractual reasons.
+
+## Combine with token authentication for stricter control
+
+<Warning>
+  Country detection is based on the viewer's IP address, which can be masked with a VPN or proxy. Geo-blocking is a strong first layer, but it is not tamper-proof on its own. For stricter enforcement, pair it with [token authentication](/docs/stream/token-authentication), which can restrict signed playback URLs by expiry time and is far harder to bypass.
+</Warning>
+
+## Related
+
+<Card title="Stream Security" icon="shield" horizontal href="/docs/stream/security">
+  Review the full set of Bunny Stream security controls, including embed view and CDN token authentication.
+</Card>
+
+<Card title="Embedded view token authentication" icon="key" horizontal href="/docs/stream/token-authentication">
+  Sign your embeds and restrict playback by expiry time, and more.
+</Card>
