@@ -29,9 +29,9 @@ Your uncached traffic will immediately start using intelligent path selection ac
   If Origin Shield is enabled on the same Pull Zone, uncached requests are routed through the selected Origin Shield location and are not affected by Burrow Smart Routing.
 </Info>
 
-<Warning>
-  Burrow Smart Routing is supported only on Pull Zones with a single origin hosted outside the bunny.net network. Don't enable it for a Pull Zone that uses a Bunny Storage Zone origin, which already sits inside our network, or a load balancer origin, which spreads requests across several origins.
-</Warning>
+<Info>
+  Burrow Smart Routing is supported only on Pull Zones with a single origin hosted outside the bunny.net network. It is not applied to Pull Zones that use a Bunny Storage Zone origin, a load balancer origin, Perma-Cache, or Standalone Edge Scripts.
+</Info>
 
 ## How Burrow works
 
@@ -78,7 +78,7 @@ This feature is particularly beneficial for smaller projects that don't generate
 2. Navigate to **Optimizer**
 3. Enable **Bunny Optimizer** and **Burrow Smart Routing** if not already enabled
 4. Click **Active origin probing** to open the configuration window
-5. Download the **Probe File** and configure your origin to serve it at `/.well-known/bunny-burrow-probe.txt`
+5. Download the **Probe File** and configure your origin to serve it at `/.well-known/bunny-burrow-probe.txt`. The file must be publicly available
 6. Test that the file is reachable
 7. Once the file is reachable, click **Enable Active Probing**
 
@@ -88,9 +88,13 @@ This feature is particularly beneficial for smaller projects that don't generate
 
 ### How Active origin probing works
 
-When Burrow sees traffic for a Pull Zone, it checks whether up-to-date information is available for the origin. If not, it starts probing the origin from bunny.net's edge network. If a Pull Zone receives no traffic at all, no probes are sent, as there is nothing to optimize.
+Burrow probes your origin only when your Pull Zone receives traffic. When a request arrives, Burrow checks whether it has recent routing data for the origin. If it doesn't, it starts sending probes from bunny.net's edge network. If a Pull Zone receives no traffic anywhere in the world, Burrow sends no probes, because there is nothing to optimize and Burrow is designed to keep extra traffic to your origin to a minimum. Probes are lightweight and infrequent, but the probe frequency may change, so don't rely on a specific rate.
 
-Probes are sent with the `User-Agent` header `BunnyBurrowActiveProbe/1.0`. The `Host` header follows your Pull Zone configuration, so it carries the same value the CDN uses when it fetches content from your origin. Probes are lightweight and infrequent, but the probe frequency may change, so don't rely on a specific rate.
+Probes are sent with the `User-Agent` header `BunnyBurrowActiveProbe/1.0`. The `Host` header follows your Pull Zone configuration, so it carries the same value the CDN uses when it fetches content from your origin.
+
+<Info>
+  When **Forward host header** is enabled, or the Pull Zone uses [CDN Acceleration](/cdn/cdn-acceleration), the reachability test in the configuration window has no visitor request to take the hostname from. It uses the first custom hostname you added instead, or the system hostname if there is none, and skips wildcard hostnames.
+</Info>
 
 ## Performance monitoring
 
