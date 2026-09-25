@@ -1,0 +1,88 @@
+---
+title: "Frameworks on Edge Scripting"
+sidebarTitle: "Overview"
+description: "Run a web framework on Bunny Edge Scripting. Render pages per request at the edge, serve the build from Bunny Storage, and deploy it all with one command."
+---
+
+A framework build has two halves: files that are the same for every visitor, and code that must run per request. Edge Scripting covers both when you pair it with [Bunny Storage](/storage).
+
+A [standalone script](/scripting/standalone/overview) is the origin of its own pull zone, so it sees every request the cache does not answer. Keep the build assets in a storage zone, and let the script decide what each path needs.
+
+## Two patterns
+
+<CardGroup cols={2}>
+  <Card title="Server-side rendering" icon="server">
+    The framework's own server runs inside the script. It renders pages and runs
+    API routes per request, exactly as it does on a Node host.
+  </Card>
+  <Card title="Static plus a small script" icon="file-code">
+    The framework prerenders everything. The script serves those files and adds
+    a little dynamic behaviour of its own.
+  </Card>
+</CardGroup>
+
+Pick SSR when you want the framework's server features: per-request rendering, API routes, middleware, and cookies. Pick the static pattern when the site is nearly all static and you only need a small dynamic edge.
+
+<Info>
+  If the site has no dynamic part at all, you do not need a script. Point a pull
+  zone straight at the storage zone. See the [frontend deployment
+  guides](/storage/static-site-hosting).
+</Info>
+
+## How SSR works here
+
+```
+browser ──▶ pull zone ──▶ Edge Script (the framework's server)
+                │              │
+                │              └─ route the framework owns ── render it now
+                │
+                └─ asset or prerendered page ─▶ Bunny Storage
+```
+
+A framework's SSR build produces a request handler with the shape `(Request) => Response`. That is the same shape a script needs, so the script calls the handler directly.
+
+The build's client files have no filesystem at the edge. They go to a storage zone, which the site's pull zone serves. So the script renders, and the CDN delivers everything the build produced.
+
+## Deploying
+
+```bash
+bunny lab deploy astro       # build and publish
+bunny lab undeploy astro     # delete the app and everything it runs on
+```
+
+The [CLI](/cli) puts the adapter in, builds the site, and creates what it needs: a storage zone for the files, an Edge Script for the server, and the pull zone the script is the origin of. Later deploys are the same command. See [`bunny lab`](/cli/commands/lab) for the reference.
+
+`lab` says the interface is still being shaped, so a workflow built on either command should expect to be updated.
+
+Each deploy's client files go into their own folder in the storage zone, and the published script carries that folder's name. So a release can only read the files it was built against. There is no rollback: one Edge Script publishes one version at a time, so going back means deploying the commit you want.
+
+A build that prerenders every page needs no server, and [`bunny sites deploy`](/cli/commands/sites) deploys it as a directory of files.
+
+An adapter tells the CLI what it built, in a small manifest the build writes. The CLI reads the manifest, so it deploys an adapter without knowing anything about the framework, and a new adapter needs no new CLI. [Writing an adapter](https://github.com/BunnyWay/bunny-adapters/blob/main/docs/writing-an-adapter.md) has the contract.
+
+## What to know first
+
+**One file.** A deployment is a single JavaScript file, so the framework's server output has to be bundled. An adapter does that for you. A small Astro SSR build lands near 660 kB, well inside the 10 MB [script size limit](/scripting/limits).
+
+**Astro has an adapter. Other frameworks do not, yet.** Install
+[`@bunny.net/astro-adapter`](https://github.com/BunnyWay/bunny-adapters), and
+Astro builds straight to a deployable script that `bunny lab deploy astro`
+publishes. It needs Astro 7. For any other framework you write the handler
+yourself, and deploy it with [`bunny scripts deploy`](/cli/commands/scripts).
+That is workable, because all an adapter really does is hand you the app object.
+
+The adapters live in one repository,
+[BunnyWay/bunny-adapters](https://github.com/BunnyWay/bunny-adapters). Ask there
+for the framework you need.
+
+**Node-only dependencies do not travel.** Anything that needs native binaries or the filesystem must go. Image services that use `sharp` are the usual example. Swap them for a no-op or an edge-friendly service.
+
+**Cache misses only.** By default a script runs when the cache misses. Turn on [before cache execution](/scripting/before-cache) if every request must reach the framework.
+
+## Guides
+
+<CardGroup cols={2}>
+  <Card title="Astro" icon="rocket" href="/scripting/frameworks/astro">
+    Render Astro per request at the edge with the official adapter.
+  </Card>
+</CardGroup>

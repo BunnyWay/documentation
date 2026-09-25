@@ -1,0 +1,159 @@
+---
+title: bunny lab
+sidebarTitle: lab
+description: "Deploy an Astro project that renders pages per request, with one command. Astro's server runs on Edge Scripting, and the client build comes from Bunny Storage."
+---
+
+`bunny lab` holds commands we are still shaping. The name is the warning: the flags and the output can change between CLI releases, so a workflow built on one should expect to be updated.
+
+Astro is the first, and it has two commands and no more:
+
+```bash
+bunny lab deploy astro       # build this project, then deploy it
+bunny lab undeploy astro     # delete the app and the resources it runs on
+```
+
+Server-side rendering only. A build that prerenders every page is a directory of files, and [`bunny sites deploy`](/cli/commands/sites) deploys one; this command refuses it and says which command to run.
+
+<Info>
+  The full Astro guide is at [Deploy an Astro
+  site](/scripting/frameworks/astro). This page is the command reference.
+</Info>
+
+## Deploy
+
+<Steps>
+  <Step title="Log in">
+    ```bash
+    bunny login
+    ```
+  </Step>
+
+  <Step title="Run the command in your Astro project">
+    ```bash
+    bunny lab deploy astro
+    ```
+
+    ```
+    ? Add @bunny.net/astro-adapter to this project? › (Y/n)
+    ✓ Added the adapter to astro.config.mjs.
+
+    ℹ Running: npm run build
+    …
+    ℹ Applied the pull zone settings: cookies on, Smart Cache off, cache override off.
+    ℹ Set 4 script variable(s): BUNNY_STORAGE_ZONE, BUNNY_STORAGE_HOST, BUNNY_STORAGE_KEY, BUNNY_PULLZONE_ID.
+    ✓ Deployed a1b2c3d4: 42 files (1.9 MB), script 653 KB.
+    ℹ   https://astro-my-app-k3f9wq.b-cdn.net
+      storage zone   astro-my-app-k3f9wq
+      edge script    86793
+      pull zone      6411574
+    ```
+
+  </Step>
+</Steps>
+
+Nothing above asks for a password. The CLI creates the storage zone, so it already holds the credentials. It sets them on the script as [secrets](/scripting/secrets).
+
+## What it creates
+
+Three resources, all named after your app:
+
+| Resource       | Name                          | Holds                                   |
+| -------------- | ----------------------------- | --------------------------------------- |
+| A storage zone | `astro-<app>-<suffix>`        | The client build, one folder per deploy |
+| An Edge Script | `astro-<app>-<suffix>-server` | Astro's server, published as one file   |
+| A pull zone    | `astro-<app>-<suffix>`        | The app's URL. The script is its origin |
+
+The suffix is there because a storage zone name and a pull zone name are unique across all of bunny.net. The app name comes from `--name`, then `.bunny/astro.json`, then your `package.json`.
+
+The script is the pull zone's **origin**, so nothing sits between a request and the code. That is the difference from `bunny sites`, where the script is a router in front of a storage origin.
+
+`.bunny/astro.json` links this directory to those three resources, and the command adds `.bunny/` to your `.gitignore`. It is a pointer, not a source of truth: `--name` finds the same resources by name, which is what a fresh clone or a CI runner does.
+
+## What one deploy does
+
+1. **Finds the project.** A monorepo root is not one, so it offers the projects below it.
+2. **Checks the Astro version.** The adapter needs Astro 7. An older project stops here, and the message names `npx @astrojs/upgrade`.
+3. **Puts the adapter in.** It installs `@bunny.net/astro-adapter` and sets it in the Astro config. Another host's adapter is replaced, and its package uninstalled.
+4. **Builds**, unless `--no-build`.
+5. **Reads `.bunny/build.json`.** It has to say `kind: "ssr"`.
+6. **Reads the bundle.** Over 10 MB the platform refuses it, so this refuses first, before any resource exists.
+7. **Finds or creates the three resources.** Each is looked up before it is made, so a half-finished create re-runs cleanly.
+8. **Applies the pull zone settings.** What the manifest asks for, and the zone's cache override off.
+9. **Sets the script's variables.**
+10. **Uploads the client build, then publishes the code.** In that order, always.
+11. **Purges, waits, purges.**
+12. **Asks the site for a page**, and for a path it does not hold.
+13. **Deletes every deploy folder** but this one and the one before it.
+
+A deploy that changes nothing does nothing, and says so. `--force` publishes it again.
+
+<Warning>
+  A green line above a URL that answers `400` is the worst thing this command can
+  do, so a script that does not start is reported instead:
+
+```
+⚠ The site answered 400, so the script is not serving.
+  The script is 8.2 MB, and a script has 500 ms to start. Every byte is parsed first.
+```
+
+A script has 500 ms to start, and every byte of it is parsed first. Measured in
+August 2026: the same code served every request at 7.4 MB, and none at 7.8 MB,
+well under the documented 10 MB limit.
+
+</Warning>
+
+## Undeploy
+
+```bash
+bunny lab undeploy astro                    # this directory's app
+bunny lab undeploy astro --name my-app      # by name, with no state file
+bunny lab undeploy astro --keep-storage     # keep the files
+```
+
+It lists the three resources first, then asks you to type the app's name:
+
+```
+ℹ "my-app" is made of:
+  pull zone      6411574
+  edge script    86793
+  storage zone   astro-my-app-k3f9wq
+
+? Delete "my-app" (its pull zone, Edge Script, and ALL uploaded files)? This cannot be undone. › (y/N)
+```
+
+The pull zone goes first, because it is the only public thing. A resource the API already reports as missing counts as deleted, so a run that failed halfway can simply be repeated.
+
+## Unattended runs
+
+```bash
+bunny lab deploy astro --name my-app --yes --output json
+bunny lab undeploy astro --name my-app --force
+```
+
+`--yes` is what lets the command install the adapter and edit the Astro config without asking. Without it, an unattended run prints the two changes and stops: a deploy command that silently rewrites your source in CI is worse than one that refuses.
+
+`--output json` carries the deploy's ID, its URL, its sizes, whether the site is serving, and every variable the CLI could not set.
+
+## Every command
+
+```bash
+bunny lab deploy astro [dir]
+bunny lab deploy astro --name my-app          # the app's name
+bunny lab deploy astro --region NY            # storage region for a new app (default: DE)
+bunny lab deploy astro --no-build             # deploy the build already on disk
+bunny lab deploy astro --yes                  # add the adapter without asking
+bunny lab deploy astro --force                # deploy again when nothing changed
+
+bunny lab undeploy astro [dir]
+bunny lab undeploy astro --name my-app
+bunny lab undeploy astro --keep-storage
+bunny lab undeploy astro --force
+```
+
+## What is not here yet
+
+- **Rollback.** One Edge Script publishes one version at a time. Deploy the commit you want instead.
+- **A preview URL per branch.** Every deploy publishes to production. Deploy a second app for staging: `--name my-app-staging`.
+- **A custom domain from the command line.** Add it to the app's pull zone in the dashboard, under **CDN** > your pull zone > **Hostnames**.
+- **Any framework but Astro.** SvelteKit and Next.js are planned.
