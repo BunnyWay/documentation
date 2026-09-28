@@ -1117,6 +1117,7 @@
                   "cli/commands/config",
                   "cli/commands/db",
                   "cli/commands/scripts",
+                  "cli/commands/sites",
                   "cli/commands/sandbox",
                   {
                     "group": "Registry",
