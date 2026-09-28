@@ -1,0 +1,29 @@
+---
+title: "Deploy Brunch to Bunny Storage"
+sidebarTitle: "Brunch"
+description: "Build a Brunch site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Brunch compiles and bundles your assets into `public` with a production build.
+
+<Warning>
+  Brunch is no longer maintained, and the `brunch` package on npm now belongs
+  to a new owner. Pin the last release, `brunch@4.0.2`, as a dev dependency so
+  `npx brunch` runs your local copy:
+
+  ```bash
+  npm install -D brunch@4.0.2
+  ```
+</Warning>
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npx brunch build --production` |
+| Output directory | `public` |
+
+<Deploy name="my-brunch-site" build="npx brunch build --production" />
+
+<CustomDomain />

@@ -1,0 +1,32 @@
+---
+title: "Deploy Sphinx to Bunny Storage"
+sidebarTitle: "Sphinx"
+description: "Build a Sphinx site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Sphinx builds HTML documentation from reStructuredText or Markdown. The CLI detects Sphinx from a `conf.py` at the project root and builds into `_build/html`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `sphinx-build -b html . _build/html` |
+| Output directory | `_build/html` |
+
+## Configure Sphinx
+
+If your `conf.py` sits in a `docs` or `source` folder, set the build and output directory in `bunny.jsonc`:
+
+```jsonc bunny.jsonc
+{
+  "sites": {
+    "build": "sphinx-build -b html docs docs/_build/html",
+    "dir": "docs/_build/html"
+  }
+}
+```
+
+<Deploy name="my-sphinx-site" build="sphinx-build -b html . _build/html" />
+
+<CustomDomain />

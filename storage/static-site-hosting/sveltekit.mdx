@@ -1,0 +1,48 @@
+---
+title: "Deploy SvelteKit to Bunny Storage"
+sidebarTitle: "SvelteKit"
+description: "Build a SvelteKit site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+SvelteKit's static adapter prerenders your app into `build`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `build` |
+
+## Configure SvelteKit
+
+Install the static adapter:
+
+```bash
+npm install -D @sveltejs/adapter-static
+```
+
+Use it in `svelte.config.js`:
+
+```js svelte.config.js
+import adapter from "@sveltejs/adapter-static";
+
+export default {
+  kit: {
+    adapter: adapter(),
+  },
+};
+```
+
+Then prerender every page, and write each one as a folder with an `index.html`, in `src/routes/+layout.js`:
+
+```js src/routes/+layout.js
+export const prerender = true;
+export const trailingSlash = "always";
+```
+
+Without `trailingSlash`, SvelteKit writes `/about` as `about.html`, and a request for `/about` returns a 404.
+
+<Deploy name="my-sveltekit-site" build="npm run build" />
+
+<CustomDomain />

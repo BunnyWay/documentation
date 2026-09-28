@@ -1,0 +1,19 @@
+---
+title: "Deploy Astro to Bunny Storage"
+sidebarTitle: "Astro"
+description: "Build a Astro site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Astro builds static HTML by default, and writes every page to `dist`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+
+<Deploy name="my-astro-site" build="npm run build" />
+
+<CustomDomain />

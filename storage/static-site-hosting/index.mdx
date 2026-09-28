@@ -1,91 +1,139 @@
 ---
-title: Frontend Deployment Guides
+title: Host a static site on Bunny Storage
 sidebarTitle: Overview
-description: Deploy static sites and single-page applications to Bunny Storage with global CDN delivery
+description: Deploy static sites and single-page apps to Bunny Storage and serve them through Bunny CDN, with the Bunny CLI or by hand.
 ---
 
-Deploy your frontend applications to Bunny Storage and serve them globally through a Pull Zone. This guide covers the essentials for static sites and single-page applications (SPAs).
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
 
-## How It Works
+A static site on bunny.net is a storage zone that holds your built files, with a pull zone in front that serves them from the CDN. You can set that up with the [Bunny CLI](/cli), which detects your framework, runs the build, and uploads the output, or you can create the zones in the dashboard and upload the files yourself.
 
-Bunny Storage combined with a Pull Zone provides a simple, fast way to host static frontends:
+## Deploy with the Bunny CLI
 
-1. **Build** your application locally
-2. **Upload** the build output to a Storage Zone
-3. **Connect** a Pull Zone for global CDN delivery
-4. **Configure** error handling for SPA routing (if needed)
+<Warning>
+  `bunny sites` is experimental and available only in the Bunny CLI. Commands,
+  flags, and behaviour may change, so [open an
+  issue](https://github.com/BunnyWay/cli/issues) if something breaks. The
+  storage zone and pull zone behind each site appear in the dashboard under
+  **Storage** and **CDN**.
+</Warning>
 
-## Single-Page Application Routing
+From your project root:
 
-Single-page applications (React, Vue, Angular, etc.) handle routing client-side. When a user navigates directly to a route like `/dashboard` or refreshes the page, the server needs to serve `index.html` instead of returning a 404.
+```bash
+bunny sites create my-site
+bunny sites deploy --build
+```
 
-<Accordion title="Why SPAs need special configuration">
-  When your SPA loads, the JavaScript router takes over navigation. But if a
-  user: - Bookmarks a deep link like `/products/123` - Refreshes the page on
-  `/settings` - Shares a URL like `/about` The browser requests that exact path
-  from the server. Since no file exists at that path (only `index.html` and your
-  assets exist), the server returns a 404. The solution is to configure your
-  Storage Zone's error handling to serve `index.html` for missing paths,
-  allowing your client-side router to handle the URL.
-</Accordion>
+`bunny sites create` makes the storage zone and pull zone and links your directory to the site. `bunny sites deploy --build` detects your framework, runs its build with the package manager from your lockfile (Bun, pnpm, Yarn, or npm), and publishes the output directory. Each deploy is kept, so `bunny sites deployments publish --previous` rolls back to the last one.
 
-### Configure SPA Fallback
+Run `bunny sites ci init` to add a GitHub Actions workflow that deploys on every push to `main`. See [`bunny sites`](/cli/commands/sites) for every command.
 
-To enable client-side routing, configure the error handling settings on your Storage Zone:
+### Site configuration
+
+When detection doesn't fit your project, add a `sites` block to `bunny.jsonc` at your project root. Every field is optional:
+
+```jsonc bunny.jsonc
+{
+  "sites": {
+    "name": "my-site",
+    "build": "npm run build",
+    "dir": "dist",
+    "spa": true
+  }
+}
+```
+
+| Field   | Description                                                                 |
+| ------- | --------------------------------------------------------------------------- |
+| `name`  | The site this directory deploys to                                          |
+| `build` | The command `bunny sites deploy --build` runs                               |
+| `dir`   | The directory to deploy, relative to `bunny.jsonc`                          |
+| `spa`   | Serve `index.html` for unknown paths, for apps with client-side routing     |
+
+`bunny sites ci init` reads the same file, so GitHub Actions builds and deploys what you deploy locally.
+
+## Framework guides
+
+Each guide lists the build command and output directory, any config your framework needs for static output, and the steps for both the CLI and a manual deploy.
+
+### JavaScript frameworks
+
+<Columns cols={4}>
+  <Card title="Analog" icon="code" href="/storage/static-site-hosting/analog" />
+  <Card title="Angular" icon="/logo/frameworks/angular.svg" href="/storage/static-site-hosting/angular" />
+  <Card title="Astro" icon="/logo/frameworks/astro.svg" href="/storage/static-site-hosting/astro" />
+  <Card title="Brunch" icon="code" href="/storage/static-site-hosting/brunch" />
+  <Card title="Ember" icon="/logo/frameworks/ember.svg" href="/storage/static-site-hosting/ember" />
+  <Card title="Next.js" icon="/logo/frameworks/nextjs.svg" href="/storage/static-site-hosting/nextjs" />
+  <Card title="Nuxt" icon="/logo/frameworks/nuxt.svg" href="/storage/static-site-hosting/nuxt" />
+  <Card title="Preact" icon="/logo/frameworks/preact.svg" href="/storage/static-site-hosting/preact" />
+  <Card title="Qwik" icon="/logo/frameworks/qwik.svg" href="/storage/static-site-hosting/qwik" />
+  <Card title="React" icon="/logo/frameworks/react.svg" href="/storage/static-site-hosting/react" />
+  <Card title="React Router" icon="/logo/frameworks/react-router.svg" href="/storage/static-site-hosting/react-router" />
+  <Card title="SolidStart" icon="/logo/frameworks/solid.svg" href="/storage/static-site-hosting/solidstart" />
+  <Card title="SvelteKit" icon="/logo/frameworks/svelte.svg" href="/storage/static-site-hosting/sveltekit" />
+  <Card title="Vite" icon="/logo/frameworks/vite.svg" href="/storage/static-site-hosting/vite" />
+  <Card title="Vue" icon="/logo/frameworks/vue.svg" href="/storage/static-site-hosting/vue" />
+</Columns>
+
+### Static site generators
+
+<Columns cols={4}>
+  <Card title="Elder.js" icon="code" href="/storage/static-site-hosting/elderjs" />
+  <Card title="Eleventy" icon="/logo/frameworks/eleventy.svg" href="/storage/static-site-hosting/eleventy" />
+  <Card title="Gatsby" icon="/logo/frameworks/gatsby.svg" href="/storage/static-site-hosting/gatsby" />
+  <Card title="Gridsome" icon="/logo/frameworks/gridsome.svg" href="/storage/static-site-hosting/gridsome" />
+  <Card title="Hexo" icon="/logo/frameworks/hexo.svg" href="/storage/static-site-hosting/hexo" />
+  <Card title="Hugo" icon="/logo/frameworks/hugo.svg" href="/storage/static-site-hosting/hugo" />
+  <Card title="Jekyll" icon="/logo/frameworks/jekyll.svg" href="/storage/static-site-hosting/jekyll" />
+  <Card title="Pelican" icon="/logo/frameworks/pelican.svg" href="/storage/static-site-hosting/pelican" />
+  <Card title="Zola" icon="/logo/frameworks/zola.svg" href="/storage/static-site-hosting/zola" />
+</Columns>
+
+### Documentation
+
+<Columns cols={4}>
+  <Card title="Docusaurus" icon="/logo/frameworks/docusaurus.svg" href="/storage/static-site-hosting/docusaurus" />
+  <Card title="MkDocs" icon="book-open" href="/storage/static-site-hosting/mkdocs" />
+  <Card title="Sphinx" icon="/logo/frameworks/sphinx.svg" href="/storage/static-site-hosting/sphinx" />
+  <Card title="VitePress" icon="/logo/frameworks/vitepress.svg" href="/storage/static-site-hosting/vitepress" />
+</Columns>
+
+### Other
+
+<Columns cols={4}>
+  <Card title="Blazor WebAssembly" icon="/logo/frameworks/blazor.svg" href="/storage/static-site-hosting/blazor" />
+  <Card title="Static HTML" icon="/logo/frameworks/html.svg" href="/storage/static-site-hosting/static-html" />
+</Columns>
+
+## Single-page apps
+
+Single-page apps (React, Vue, Angular, and others) handle routing in the browser. When someone opens a deep link such as `/dashboard` or refreshes the page, the request has to return `index.html` so the router can take over.
+
+The Bunny CLI sets this up for frameworks that build single-page apps, and asks when a build looks like one. For a manual deploy, configure your storage zone:
 
 <Steps>
-  <Step title="Navigate to your storage zone">
-    Log in to your Bunny dashboard, go to **Storage** in the left navigation,
-    and select your storage zone.
+  <Step title="Open your storage zone">
+    In the [bunny.net dashboard](https://dash.bunny.net), go to **Storage** and select your storage zone.
   </Step>
-  <Step title="Open Error handling settings">
+  <Step title="Open Error handling">
     Open the **Error handling** page.
   </Step>
-  <Step title="Set the 404 file path">
-    Enter `/index.html` in the **404 File path** field.
-  </Step>
-  <Step title="Enable 404 to 200 rewrite">
-    Check the box for **Rewrite 404 to 200 status code** and click **Save**.
+  <Step title="Serve index.html for missing paths">
+    Enter `/index.html` in the **404 File path** field, check **Rewrite 404 to 200 status code**, and click **Save**.
   </Step>
 </Steps>
 
-This serves your `index.html` for all missing paths, and your client-side router will handle the URL. Requests for files with extensions (like `.js`, `.css`, or images) that don't exist will still return a 404.
+Requests for missing files with an extension, such as `.js`, `.css`, or images, still return a 404. See [Storage zone settings](/storage/settings#error-handling) for details.
 
-<Info>
-  See the [Storage Zone Settings](/storage/settings) page for more details on
-  error handling configuration.
-</Info>
+<CustomDomain />
 
-## Framework Guides
+## Cache configuration
 
-<CardGroup cols={2}>
-  <Card title="Vite" icon="bolt" href="/storage/static-site-hosting/vite">
-    Deploy a Vite-built static site with optimal configuration.
-  </Card>
-  <Card title="React" icon="react" href="/storage/static-site-hosting/react">
-    Deploy Create React App and other React builds.
-  </Card>
-  <Card title="Vue" icon="vuejs" href="/storage/static-site-hosting/vue">
-    Deploy Vue CLI and Vite-based Vue applications.
-  </Card>
-</CardGroup>
+Static frontends benefit from long cache times on assets. Consider these settings in your pull zone:
 
-## Common Configuration
-
-### Custom Domains
-
-Add your own domain to any frontend deployment:
-
-1. In your Pull Zone, go to **Hostnames**
-2. Click **Add Hostname** and enter your domain
-3. Add a CNAME record pointing to `your-pullzone.b-cdn.net`
-4. Enable **Free SSL** for automatic HTTPS
-
-### Cache Configuration
-
-Static frontends benefit from aggressive caching. Consider these settings in your Pull Zone:
-
-| File Type       | Recommended Cache Time              |
+| File type       | Recommended cache time              |
 | --------------- | ----------------------------------- |
 | HTML            | Short (1 hour) or use cache busting |
 | JS/CSS (hashed) | Long (1 year)                       |
@@ -93,6 +141,6 @@ Static frontends benefit from aggressive caching. Consider these settings in you
 | Fonts           | Long (1 year)                       |
 
 <Note>
-  Modern build tools like Vite add content hashes to filenames (e.g.,
-  `main.a1b2c3.js`), making it safe to cache these files indefinitely.
+  Build tools such as Vite add content hashes to filenames (for example,
+  `main.a1b2c3.js`), so these files are safe to cache indefinitely.
 </Note>

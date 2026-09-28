@@ -1,0 +1,19 @@
+---
+title: "Deploy Pelican to Bunny Storage"
+sidebarTitle: "Pelican"
+description: "Build a Pelican site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Pelican turns the Markdown or reStructuredText in `content` into a static site in `output`. The CLI detects Pelican from `pelicanconf.py`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `pelican content` |
+| Output directory | `output` |
+
+<Deploy name="my-pelican-site" build="pelican content" />
+
+<CustomDomain />

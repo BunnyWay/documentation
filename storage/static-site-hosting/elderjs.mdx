@@ -1,0 +1,19 @@
+---
+title: "Deploy Elder.js to Bunny Storage"
+sidebarTitle: "Elder.js"
+description: "Build a Elder.js site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Elder.js generates static pages from Svelte templates. The `build` script in the Elder.js template writes the site to `public`. Elder.js hasn't had a release since 2022.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `public` |
+
+<Deploy name="my-elder-site" build="npm run build" />
+
+<CustomDomain />

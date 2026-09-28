@@ -1,0 +1,33 @@
+---
+title: "Deploy VitePress to Bunny Storage"
+sidebarTitle: "VitePress"
+description: "Build a VitePress site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+VitePress builds your docs into `.vitepress/dist`, inside the folder that holds your content.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `.vitepress/dist` |
+
+## Configure VitePress
+
+The CLI expects `.vitepress` at the project root. If your docs live in a `docs` folder, set the output directory in `bunny.jsonc`:
+
+```jsonc bunny.jsonc
+{
+  "sites": {
+    "dir": "docs/.vitepress/dist"
+  }
+}
+```
+
+Leave `cleanUrls` off. With it on, VitePress writes `about.html` and links to `/about`, which returns a 404.
+
+<Deploy name="my-vitepress-site" build="npm run build" />
+
+<CustomDomain />

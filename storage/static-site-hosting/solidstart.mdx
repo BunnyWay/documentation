@@ -1,0 +1,39 @@
+---
+title: "Deploy SolidStart to Bunny Storage"
+sidebarTitle: "SolidStart"
+description: "Build a SolidStart site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+SolidStart's static preset prerenders your app into `.output/public`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `.output/public` |
+
+## Configure SolidStart
+
+Set the static preset in `vite.config.ts`, and turn on link crawling so every page is prerendered:
+
+```ts vite.config.ts
+import { defineConfig } from "vite";
+import { nitro } from "nitro/vite";
+import { solidStart } from "@solidjs/start/config";
+
+export default defineConfig({
+  plugins: [solidStart(), nitro()],
+  nitro: {
+    preset: "static",
+    prerender: { crawlLinks: true },
+  },
+});
+```
+
+This is the SolidStart 2 config. On SolidStart 1, set `server: { preset: "static" }` in `app.config.ts`.
+
+<Deploy name="my-solidstart-site" build="npm run build" />
+
+<CustomDomain />

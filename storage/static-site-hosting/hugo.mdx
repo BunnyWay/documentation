@@ -1,0 +1,23 @@
+---
+title: "Deploy Hugo to Bunny Storage"
+sidebarTitle: "Hugo"
+description: "Build a Hugo site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Hugo writes your site to `public`. The CLI detects Hugo from `hugo.toml` or `hugo.yaml`, or from a `config.toml` next to a `content` folder, and needs `hugo` installed to run the build.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `hugo --minify` |
+| Output directory | `public` |
+
+## Configure Hugo
+
+Set `baseURL` in your Hugo config to the URL your site will be served from.
+
+<Deploy name="my-hugo-site" build="hugo --minify" />
+
+<CustomDomain />

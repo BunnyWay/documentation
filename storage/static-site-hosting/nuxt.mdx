@@ -1,0 +1,19 @@
+---
+title: "Deploy Nuxt to Bunny Storage"
+sidebarTitle: "Nuxt"
+description: "Build a Nuxt site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+`nuxi generate` prerenders every route of your Nuxt app into `.output/public`. To run Nuxt with a server, deploy it with [Magic Containers](/magic-containers/guides/nuxt).
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npx nuxi generate` |
+| Output directory | `.output/public` |
+
+<Deploy name="my-nuxt-site" build="npx nuxi generate" />
+
+<CustomDomain />
