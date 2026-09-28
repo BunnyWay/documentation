@@ -58,12 +58,19 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "bunny.net",
+                "group": "Get Started",
                 "pages": [
                   "index",
                   "quickstart",
-                  "faq",
-                  "changelog"
+                  "changelog",
+                  "faq"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "product-release-stages",
+                  "domains"
                 ]
               },
               {
@@ -113,13 +120,6 @@
                       "billing/affiliate-guidelines"
                     ]
                   }
-                ]
-              },
-              {
-                "group": "Product",
-                "pages": [
-                  "product-release-stages",
-                  "domains"
                 ]
               }
             ]
