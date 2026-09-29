@@ -51,9 +51,10 @@ The primary streams changes to all active replicas in real-time. Replica lag dep
 Replicas track their current version. If a replica knows it has version 3 but the primary has version 4, the replica will proxy requests to the primary until it receives the updated data.
 
 <Note>
-  Read-your-writes consistency is not guaranteed when reading from replicas. If
-  your application requires reading data immediately after writing, direct those
-  reads to the primary or account for potential replication lag.
+  A connection always sees its own writes, but a read on a different connection
+  or a different application instance may not observe a recent write yet. If
+  your application needs a read to include a specific earlier write, see
+  [Read-after-write across instances](/database/replication#read-after-write-across-instances).
 </Note>
 
 ## Failover behavior
