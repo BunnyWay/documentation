@@ -176,6 +176,18 @@
                     ]
                   },
                   {
+                    "group": "Load Balancer",
+                    "pages": [
+                      "cdn/load-balancer/index",
+                      "cdn/load-balancer/origins",
+                      "cdn/load-balancer/routing",
+                      "cdn/load-balancer/sticky-sessions",
+                      "cdn/load-balancer/health-and-failover",
+                      "cdn/load-balancer/statistics",
+                      "cdn/load-balancer/pricing"
+                    ]
+                  },
+                  {
                     "group": "Performance",
                     "pages": [
                       "cdn/performance/index",
@@ -521,6 +533,7 @@
                 "group": "Reference",
                 "pages": [
                   "scripting/limits",
+                  "scripting/regions",
                   "scripting/https-ssl-certificates",
                   "scripting/before-cache",
                   "scripting/api-reference"
@@ -842,7 +855,8 @@
                   "optimizer/image-classes",
                   "optimizer/watermarking",
                   "optimizer/burrow-smart-routing",
-                  "optimizer/html-prerender"
+                  "optimizer/html-prerender",
+                  "optimizer/agent-readability"
                 ]
               },
               {
@@ -1214,6 +1228,34 @@
                 },
                 "pages": [
                   "api-reference/database/index"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Partners",
+        "icon": "handshake",
+        "description": "Manage customers, pricing, and billing as a bunny.net partner",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Documentation",
+                "pages": [
+                  "partners/index"
+                ]
+              },
+              {
+                "group": "API Reference",
+                "openapi": {
+                  "source": "https://core-api-public-docs.b-cdn.net/docs/v3/PartnerPortal.json",
+                  "directory": "api-reference/partner"
+                },
+                "pages": [
+                  "api-reference/partner/index"
                 ]
               }
             ]

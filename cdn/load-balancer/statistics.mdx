@@ -1,0 +1,41 @@
+---
+title: Statistics
+description: Monitor per-origin traffic, latency, failures, and failover behavior for your Load Balancers.
+---
+
+Every Load Balancer records detailed statistics about the traffic it routes, broken down per origin and per origin group. Use them to verify your traffic distribution, spot a slow or failing origin, and understand how often failover happens.
+
+Statistics are available in the dashboard and through the API. See the [API reference](/api-reference/core) for the endpoint details.
+
+## Summary metrics
+
+| Metric | Description |
+|--------|-------------|
+| Total requests | Requests handled by the Load Balancer. Requests served from the CDN cache are not included. |
+| Total traffic | Bytes served from your origins through the Load Balancer. |
+| Average origin RTT | Representative origin response time (time to first byte) across all origins. |
+| Requests with failover | How many requests needed more than one origin before succeeding, and the average number of extra origins tried. |
+| All origins exhausted | Requests that failed on every origin and returned `502` to the client. |
+| Sticky session hits | Requests routed by an existing [sticky session](/cdn/load-balancer/sticky-sessions) instead of the balancing method. |
+| Requests by method | Request counts per HTTP method. |
+
+## Per-origin time series
+
+- **Requests by origin and by origin group**: how traffic was distributed. Use this to confirm weights and priorities behave as intended.
+- **Traffic by origin**: bytes served per origin.
+- **Origin latency**: response time per origin, as mean and 50th, 90th, 95th, and 99th percentiles.
+- **Origin failures**: failed attempts per origin, broken down by status code. Connection-level failures (timeouts, refused connections) are reported as `502` or `504`.
+
+## Interpreting the numbers
+
+**Requests are attributed to the origin that produced the served response.** Attempts that failed and were failed over to another origin are not counted as requests for the failing origin; they appear in that origin's failure counts instead. If you compare bunny statistics with your own origin access logs, the difference corresponds to the attempts that failed over.
+
+**Failures count attempts, not client errors.** A single client request that fails over across three origins records a failure on the first two and a request on the third, while the client sees one successful response.
+
+## Time ranges
+
+Statistics can be grouped daily or hourly. A single query can cover up to 90 days. The account-level overview shows month-to-date totals for every Load Balancer, including how many Pull Zones each one is attached to.
+
+## Billing usage
+
+The usage endpoint reports month-to-date billable requests against the included allowance for each Load Balancer, along with when the allowance resets. See [Pricing](/cdn/load-balancer/pricing) for how requests are billed.

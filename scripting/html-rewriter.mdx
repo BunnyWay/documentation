@@ -16,7 +16,7 @@ be buffered in memory.
 A short middleware example:
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -513,7 +513,7 @@ The following CSS selectors are supported, based on the
 ### Rewrite links
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -533,7 +533,7 @@ BunnySDK.net.http.servePullZone()
 ### Inject a script
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -550,7 +550,7 @@ BunnySDK.net.http.servePullZone()
 ### Remove elements
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -574,7 +574,7 @@ BunnySDK.net.http.servePullZone()
 Handlers can return a `Promise` for async operations like sub-requests.
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -595,7 +595,7 @@ BunnySDK.net.http.servePullZone()
 Instead of inline objects, you can define handler classes and pass instances to `.on()` or `.onDocument()`.
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 class AttributeRewriter {
   #attrName;
@@ -624,7 +624,7 @@ BunnySDK.net.http.servePullZone()
 #### Document handler class
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 class StripComments {
   comments(comment) {
@@ -649,7 +649,7 @@ BunnySDK.net.http.servePullZone()
 Class methods can be `async` just like inline handlers.
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 class IncludeExpander {
   async element(el) {
@@ -674,7 +674,7 @@ BunnySDK.net.http.servePullZone()
 Chain multiple `.on()` calls to handle different elements independently.
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {

@@ -1,9 +1,31 @@
 ---
 title: Replication
-description: Learn how Bunny Database separates storage from compute and replicates data across regions for low-latency access.
+description: Learn how Bunny Database replicates data across regions, what consistency it guarantees between reads and writes, and how to make a read wait for a specific write.
 ---
 
 Bunny Database separates data storage (at rest) from data processing (in compute instances). This separation allows compute resources to be allocated dynamically in different regions while keeping data safely stored in its designated location.
+
+Replication between regions is asynchronous: a write committed on the primary takes a short time to become visible on each replica. This page explains how replication works, how to configure regions, what the database guarantees, and how to get a stronger guarantee when your application needs one.
+
+If you have seen two requests return different data for the same query, start with [What is not guaranteed](#what-is-not-guaranteed).
+
+## How replication works
+
+Every database has one **primary** that accepts all writes, and any number of **replicas** that serve reads.
+
+- A **read** is normally served by the replica you connect to, from its local copy of the data. Nothing leaves the region, so it is fast.
+- A **write** is always forwarded to the primary, wherever you send it. The primary commits it, assigns it a position in the write-ahead log, and streams it to the replicas, which apply it in order.
+
+Because replicas apply writes shortly after the primary commits them, a replica can be a little behind. The gap depends on the network latency between regions and is usually small, but it is never guaranteed to be zero.
+
+<Info>
+  **Reads inside a transaction go to the primary.** Once you open an explicit
+  transaction with `BEGIN`, every statement on that connection, including plain
+  `SELECT` statements, is forwarded to the primary until the transaction ends.
+  This is slower, but it keeps the transaction's view of the data consistent.
+</Info>
+
+## Regions
 
 Configure regions from the Dashboard or the [Bunny CLI](/cli/quickstart):
 
@@ -25,7 +47,7 @@ Configure regions from the Dashboard or the [Bunny CLI](/cli/quickstart):
   </Tab>
 </Tabs>
 
-## Storage location
+### Storage location
 
 Data can be stored at rest in:
 
@@ -38,16 +60,176 @@ Data can be stored at rest in:
 
 If a database doesn't receive any requests, it will be moved to object storage and removed from all active regions to optimize costs.
 
-## Enabled regions
+### Enabled regions
 
 <Frame>
   ![Enabled Regions](/images/database/replication/enabled-regions.png)
 </Frame>
 
-### Replication regions
+**Primary regions** handle write operations. You can select multiple regions, but only one is active at a time. The active primary region is automatically chosen based on latency. If a database becomes idle, the primary region may change when it's reactivated.
 
-Replication regions function as dynamically provisioned read replicas, offering fast, low-latency data access while proxying write operations to the primary region.
+**Replication regions** function as dynamically provisioned read replicas, offering fast, low-latency data access while proxying write operations to the primary region.
 
-### Primary regions
+## What is guaranteed
 
-The primary region handles write operations. You can select multiple regions, but only one is active at a time. The active primary region is automatically chosen based on latency. If a database becomes idle, the primary region may change when it's reactivated.
+**Transactions are serializable.** A transaction sees a frozen view of the database and is fully isolated from other transactions in flight, on the primary and on replicas alike.
+
+**A connection always sees its own writes.** If you write and then read on the same connection, the read observes that write. The database does this by making the read wait until the replica has caught up to your write, so you get a short delay rather than a stale answer.
+
+**Reads on a replica move forward, never backward.** Once a connection has observed a value, later reads on that replica return that value or a newer one. They do not revert to an older state.
+
+## What is not guaranteed
+
+**Two different connections may see different points in time.** The own-writes guarantee covers one connection. It says nothing about a second connection, and nothing at all about a connection from a different instance of your application.
+
+This is the case that surprises people, so it is worth stating plainly:
+
+<Warning>
+  If instance A commits a write and receives a successful `COMMIT`, an
+  independent read started afterwards on instance B **may not** observe that
+  write yet.
+</Warning>
+
+**There is no global ordering between instances.** Two instances need not be in sync at any moment, and neither is "ahead" of the other in any way you can rely on.
+
+This is a property of asynchronous replication, not a defect, and it is the normal trade-off for serving reads locally. When your application needs the stronger guarantee, use the replication index described below.
+
+## Read-after-write across instances
+
+To guarantee that a read observes a specific earlier write, pass a **replication index** along with the read. The replication index is the position of that write in the log. The replica waits until it has applied at least that position before answering.
+
+This is a *wait*, not a reroute. The read is still served locally, it just does not answer early.
+
+<Steps>
+
+<Step title="Read the index from the write's response">
+
+Every statement result returned by the [SQL API](/database/connect/sql-api) carries a `replication_index` field. After a write, it holds the position of that commit:
+
+```json
+{
+  "type": "ok",
+  "response": {
+    "type": "execute",
+    "result": {
+      "cols": [],
+      "rows": [],
+      "affected_row_count": 1,
+      "replication_index": "42"
+    }
+  }
+}
+```
+
+<Note>
+  The value is a JSON **string**, not a number, because a log position can
+  exceed what JSON integers represent safely. Keep it as a string or parse it
+  into a 64-bit integer. Do not put it through a 32-bit or floating-point type.
+</Note>
+
+</Step>
+
+<Step title="Carry the index to wherever the read happens">
+
+Store it wherever your application already passes state between requests and instances: a session record, a cookie, a claim in an auth token, or a cache entry.
+
+This step is yours to build, because only your application knows which reads depend on which writes. A load balancer cannot work it out.
+
+</Step>
+
+<Step title="Pass the index with the read">
+
+Send it as `replication_index` on the statement:
+
+```json
+{
+  "requests": [
+    {
+      "type": "execute",
+      "stmt": {
+        "sql": "SELECT * FROM course_access WHERE user_id = ?",
+        "args": [{ "type": "text", "value": "u_123" }],
+        "replication_index": "42"
+      }
+    },
+    { "type": "close" }
+  ]
+}
+```
+
+The replica blocks until it has applied position 42, then runs the query. The result is guaranteed to include the write that produced that index.
+
+You can send the value as a string or as a number. Responses always use a string.
+
+</Step>
+
+</Steps>
+
+### Worked example
+
+Consider revoking a user's access, where the revocation must be visible immediately on every instance:
+
+1. Instance A runs `DELETE FROM course_access WHERE user_id = 'u_123'` and gets back `replication_index: "42"`.
+2. Instance A writes `42` into the user's session record.
+3. Instance B handles the user's next request, reads `42` from the session, and sends its access check with `replication_index: "42"`.
+4. Instance B's replica waits until it has applied position 42, then runs the check. The revocation is visible.
+
+Without step 3, the check on instance B might run against a replica that has not yet applied the deletion, and the user keeps access for a moment longer.
+
+### When to use it
+
+Passing an index makes a read wait, so it trades latency for certainty. The delay is however far behind the replica happens to be at that moment.
+
+Use it for reads where stale data is actually harmful:
+
+- Permission and access checks after a change
+- Reading back a record straight after creating it, on a different instance
+- Showing a user the result of an action they just took
+
+Leave it off for reads where being slightly behind is fine:
+
+- Listings, search results, feeds
+- Analytics and dashboards
+- Any read that does not depend on a recent write
+
+Applying it to every read gives up much of the benefit of regional replicas, so target the specific reads that need it.
+
+### Client support
+
+The `replication_index` field is part of the [SQL API](/database/connect/sql-api), and you can set it from any client that lets you build requests yourself.
+
+Support for setting `replication_index` on reads varies between the libSQL SDKs, and some do not expose the field. If yours does not, send those specific queries through the SQL API directly and keep using the SDK for everything else.
+
+## Troubleshooting
+
+<AccordionGroup>
+
+<Accordion title="Two requests return different results for the same query">
+
+The two requests were most likely served by different connections, and possibly by replicas in different regions. Each replica answers from its own copy of the data, and nothing guarantees that two replicas are at the same position at the same moment.
+
+If the second request must see what the first one wrote, pass the write's `replication_index` with the read as described in [Read-after-write across instances](#read-after-write-across-instances).
+
+</Accordion>
+
+<Accordion title="A read still returns old data long after the write">
+
+Replication lag is normally short, so a read that returns hours-old data is usually not waiting on replication. Check these causes first:
+
+- **An open transaction.** A transaction sees a frozen view of the database from the moment it starts. A connection that has kept a transaction open for a long time keeps returning that old view until the transaction ends.
+- **A cache in front of the database.** An application cache, an HTTP cache, or an ORM identity map can return the earlier answer without ever querying the database.
+- **A different database.** Confirm both requests use the same database URL, for example that one environment is not pointing at a staging copy.
+
+To confirm whether the replica has the write, repeat the read with the write's `replication_index`. If it returns the new data promptly, the replica had already caught up and the stale answer came from somewhere else. If the read blocks for a long time instead, the replica genuinely has not applied that position. That is not expected. [Contact support](https://bunny.net/contact) with the database ID, the region, and the replication index.
+
+</Accordion>
+
+<Accordion title="Why is a read replica eventually consistent?">
+
+Replicas receive changes from the primary asynchronously. The primary confirms a write as soon as it is committed locally, without waiting for every replica to apply it. This keeps writes fast and lets each region serve reads without a round trip to the primary, at the cost that a replica can briefly answer from a slightly older state.
+
+Within one connection the database hides this from you by making reads wait for that connection's own writes. Across connections and instances, you decide which reads must wait, by passing a `replication_index`.
+
+</Accordion>
+
+</AccordionGroup>

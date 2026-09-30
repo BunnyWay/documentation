@@ -4,6 +4,34 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-09-30" tags={["CDN","(New)"]}>
+  ## CDN Load Balancer
+
+  Load Balancer distributes uncached Pull Zone requests across multiple origin servers. Configure origin groups with priority-based failover tiers, choose from routing methods like Round Robin, Weighted Random, Geo Location, and Lowest Average Latency, and enable active health checks to automatically remove failing origins from rotation. Sticky sessions pin returning visitors to the same origin using cookies, and per-origin statistics track traffic, latency, and failures. Each Load Balancer costs \$9.50/month and includes 50 million requests. [Learn more](/cdn/load-balancer/index)
+</Update>
+
+<Update label="2026-09-29" tags={["Edge Scripting","(New)"]}>
+  ## Connect a Bunny Storage Zone when creating an Edge Script
+
+  You can now create or connect a Bunny Storage Zone when creating an Edge Script. We'll automatically add the connection credentials (`BUNNY_STORAGE_ZONE_NAME`, `BUNNY_STORAGE_HOSTNAME`, and `BUNNY_STORAGE_ACCESS_KEY`) as script secrets.
+
+  ![Add Storage Zone](/images/changelog/edge-scripting-add-storage-zone.png)
+</Update>
+
+<Update label="2026-09-22" tags={["Optimizer","(New)"]}>
+  ## Agent Readability (Public Preview)
+
+  Agent Readability, a Bunny Optimizer feature, has been released in public preview. It makes your website easier and more efficient for AI systems to consume by serving clean, focused, token-efficient Markdown content and an llms.txt file, without changing the experience for human visitors.
+  [Learn more](/optimizer/agent-readability)
+</Update>
+
+<Update label="2026-09-22" tags={["Optimizer","(New)"]}>
+  ## Burrow Active Origin Probing (Public Preview)
+
+  Burrow active origin probing has been released in public preview. Burrow periodically tests origin connection quality from the edge with lightweight checks, so it can map optimal paths even when a Pull Zone sees little traffic.
+  [Learn more](/optimizer/burrow-smart-routing#active-origin-probing)
+</Update>
+
 <Update label="2026-09-17" tags={["Optimizer","(Improvement)"]}>
   ## Burrow Smart Routing is now GA
 
