@@ -22,15 +22,12 @@ One script can use both types of hooks.
 
 ## Choose a hook
 
-| Hook               | Runs                                    | Runs on a cache HIT | Needs **Run script before cache** | Example uses                                                                      |
-| ------------------ | --------------------------------------- | ------------------- | --------------------------------- | --------------------------------------------------------------------------------- |
-| `onClientRequest`  | Before the cache lookup                 | Yes                 | Yes                               | Verify credentials, rate limiting, IP filtering, bot protection, A/B tests, redirects |
+| Hook               | Runs                                    | Runs on a cache HIT | Needs **Run script before cache** | Example uses (not a complete list) |
+| ------------------ | --------------------------------------- | ------------------- | --------------------------------- | ---------------------------------- |
+| `onClientRequest`  | Before the cache lookup                 | Yes                 | Yes                               | [Verify credentials](/scripting/middleware/examples/protect-cached-content), rate limiting, IP filtering, bot protection, A/B tests, redirects |
 | `onOriginRequest`  | Before the request goes to the origin   | No                  | No                                | Add or remove headers on the request to the origin, such as a secret the origin checks |
-| `onOriginResponse` | After the origin responds, before cache | No                  | No                                | Rewrite HTML or the response body, set headers that are cached with the response  |
+| `onOriginResponse` | After the origin responds, before cache | No                  | No                                | [Rewrite HTML or the response body](/scripting/middleware/examples/modify-body), set headers that are cached with the response  |
 | `onClientResponse` | Before the response goes to the client  | Yes                 | Yes                               | Add headers to every response, including cached responses                         |
-
-These are examples, not a complete list. For a complete access control example,
-see [Protect cached content](/scripting/middleware/examples/protect-cached-content).
 
 <Warning>
   Origin hooks run only on a cache MISS. The CDN serves a cached response
