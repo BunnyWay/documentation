@@ -21,7 +21,7 @@ For HTTP and HTTPS endpoints, prefer `fetch()`.
 Opens an outbound TLS connection and reports whether the certificate was trusted. `tls.connect()` verifies the server certificate against the public root CAs; the callback runs once the handshake completes, and `socket.authorized` reports whether the chain was trusted:
 
 ```typescript
-import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.13.0";
 import tls from "node:tls";
 
 BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
@@ -88,7 +88,7 @@ const socket = tls.connect({
 `fetch()` verifies certificates but never shows them to you. With `node:tls` you can open the connection yourself, wait for the handshake, and read what the server presented. This script exposes an endpoint that returns a JSON report about a host's certificate: who issued it, which names it covers, when it expires, and whether the chain is trusted. Point a monitor at it to be warned before a certificate runs out.
 
 ```typescript
-import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.13.0";
 import tls from "node:tls";
 
 const WARN_DAYS = 14;
@@ -230,7 +230,7 @@ Standard verification accepts any certificate a public CA is willing to issue fo
 The function below first performs the standard hostname check, then compares the certificate's SHA-256 fingerprint to a pinned value stored as an [environment secret](/scripting/secrets). Returning an `Error` aborts the connection:
 
 ```typescript
-import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.1";
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.13.0";
 import tls from "node:tls";
 import process from "node:process";
 

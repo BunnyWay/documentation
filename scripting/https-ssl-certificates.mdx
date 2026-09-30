@@ -15,7 +15,7 @@ Most of the time this needs no thought.
 Fetching an external HTTPS URL works out of the box:
 
 ```typescript
-import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.12.0";
+import * as BunnySDK from "npm:@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone(async (request: Request): Promise<Response> => {
   const res = await fetch("https://api.example.com/data.json");
@@ -79,7 +79,7 @@ The certificate you supply is added to the trust store for that client only. Hos
 Some origins require the client to present its own certificate. Pass the PEM-encoded certificate and private key to `Deno.createHttpClient` and use that client for the fetch. Store both as [environment secrets](/scripting/secrets) so they never appear in your source code:
 
 ```typescript
-import * as BunnySDK from "@bunny.net/edgescript-sdk@0.12.0";
+import * as BunnySDK from "@bunny.net/edgescript-sdk@0.13.0";
 import process from "node:process";
 
 const client = Deno.createHttpClient({

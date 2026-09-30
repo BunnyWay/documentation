@@ -1,0 +1,127 @@
+---
+title: "Edge Scripting Regions"
+sidebarTitle: "Regions and PoPs"
+description: "The bunny.net points of presence where Edge Scripts run, listed with their PoP codes."
+---
+
+Edge Scripts run on a subset of the bunny.net global network. When a request
+reaches a Pull Zone that has a script attached, the script executes on the
+nearest point of presence (PoP) that supports Edge Scripting. Requests that
+reach a PoP without Edge Scripting are forwarded to the nearest supported
+location before your code runs.
+
+## Available locations
+
+Edge Scripting is available on **72 points of presence** as of September 24,
+2026. The network changes over time, so this list may lag a little behind.
+
+The table lists every location in alphabetical order, with the country and the
+PoP code bunny.net uses to identify it.
+
+| City          | Country              | PoP code |
+| ------------- | -------------------- | -------- |
+| Adelaide      | Australia            | `ADL`    |
+| Almaty        | Kazakhstan           | `KZ`     |
+| Amsterdam     | Netherlands          | `AMS`    |
+| Ashburn       | United States        | `ASB`    |
+| Athens        | Greece               | `GR`     |
+| Auckland      | New Zealand          | `AUC`    |
+| Baghdad       | Iraq                 | `IQ`     |
+| Bangkok       | Thailand             | `TH`     |
+| Belgrade      | Serbia               | `RS`     |
+| Bogota        | Colombia             | `CO`     |
+| Boston        | United States        | `BO`     |
+| Brasilia      | Brazil               | `BS`     |
+| Bratislava    | Slovakia             | `SK`     |
+| Brisbane      | Australia            | `BRB`    |
+| Brussels      | Belgium              | `BE`     |
+| Bucharest     | Romania              | `BU`     |
+| Budapest      | Hungary              | `HU`     |
+| Buenos Aires  | Argentina            | `AR`     |
+| Charlotte     | United States        | `CLT`    |
+| Chicago       | United States        | `IL`     |
+| Curitiba      | Brazil               | `CWB`    |
+| Dallas        | United States        | `TX`     |
+| Denver        | United States        | `DEN`    |
+| Dubai         | United Arab Emirates | `AE`     |
+| Fortaleza     | Brazil               | `FO`     |
+| Frankfurt     | Germany              | `DE`     |
+| Fujairah      | United Arab Emirates | `FU`     |
+| Helsinki      | Finland              | `FI`     |
+| Hong Kong     | Hong Kong            | `HK`     |
+| Houston       | United States        | `HOU`    |
+| Istanbul      | Türkiye              | `TR`     |
+| Jakarta       | Indonesia            | `ID`     |
+| Johannesburg  | South Africa         | `JH`     |
+| Kuwait City   | Kuwait               | `KWI`    |
+| Kyiv          | Ukraine              | `UA`     |
+| Lima          | Peru                 | `PE`     |
+| Ljubljana     | Slovenia             | `LJ`     |
+| London        | United Kingdom       | `UK`     |
+| Los Angeles   | United States        | `LA`     |
+| Madrid        | Spain                | `ES`     |
+| Marseille     | France               | `MS`     |
+| Melbourne     | Australia            | `MEL`    |
+| Mexico City   | Mexico               | `MX`     |
+| Miami         | United States        | `MI`     |
+| Milan         | Italy                | `IT`     |
+| Minneapolis   | United States        | `MSP`    |
+| Montreal      | Canada               | `MN`     |
+| Moscow        | Russia               | `RU`     |
+| New York City | United States        | `NY`     |
+| Paris         | France               | `FR`     |
+| Perth         | Australia            | `PER`    |
+| Phoenix       | United States        | `PHX`    |
+| Porto Alegre  | Brazil               | `PA`     |
+| Prague        | Czechia              | `CZ`     |
+| Quito         | Ecuador              | `EC`     |
+| Riga          | Latvia               | `LV`     |
+| San Jose      | United States        | `SIL`    |
+| Sao Paulo     | Brazil               | `BR`     |
+| Seattle       | United States        | `WA`     |
+| Seoul         | South Korea          | `KR`     |
+| Singapore     | Singapore            | `SG`     |
+| Sofia         | Bulgaria             | `BG`     |
+| Stockholm     | Sweden               | `SE`     |
+| Sydney        | Australia            | `SYD`    |
+| Taipei        | Taiwan               | `TW`     |
+| Tel Aviv      | Israel               | `ISR`    |
+| Tokyo         | Japan                | `JP`     |
+| Toronto       | Canada               | `CA`     |
+| Vancouver     | Canada               | `VA`     |
+| Vienna        | Austria              | `AT`     |
+| Zagreb        | Croatia              | `HR`     |
+| Zurich        | Switzerland          | `CH`     |
+
+## Finding the PoP that ran your script
+
+Every response served through bunny.net carries a `Server` header in the form
+`BunnyCDN-{PoP code}-{Server ID}`. The PoP code matches the codes in the table
+above, so you can confirm where a request was handled:
+
+```bash
+curl -sI https://example.b-cdn.net/ | grep -i '^server:'
+```
+
+```
+Server: BunnyCDN-UK-12
+```
+
+In this example the request was served by a server in the London (`UK`)
+location.
+
+Inside a script, read the `CDN-ServerZone` request header to get the PoP code
+of the location running your code:
+
+```ts
+const pop = request.headers.get("CDN-ServerZone");
+```
+
+The [Route by country](/scripting/standalone/examples/geo-routing) example shows
+how to react to the visitor's location from inside a script.
+
+## Related resources
+
+- [Limits](/scripting/limits) - Execution limits that apply on every location
+- [Deployments](/scripting/deployments) - How a new version reaches every PoP
+- [Global Network Regions](/cdn/regions) - Coverage of the full CDN network
