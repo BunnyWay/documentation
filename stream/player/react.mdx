@@ -236,7 +236,9 @@ declare global {
 
 <AccordionGroup>
   <Accordion title="onReady never fires">
-    The `Player` has to exist before the iframe finishes loading. Creating it in `useEffect` in the render that mounts the iframe is early enough in a client-rendered app. Server-rendered iframe HTML can finish loading before your JavaScript runs; the [Next.js guide](/stream/player/nextjs) handles that case.
+    player.js has to be loaded before the iframe finishes loading. It caches the iframe's `ready` message when it's imported, so a `Player` created afterwards still connects. In a client-rendered app, importing it with the component is early enough. Server-rendered iframe HTML can finish loading before your JavaScript runs; the [Next.js guide](/stream/player/nextjs) handles that case.
+
+    `ready` is also delayed while the tab is hidden, and fires once it becomes visible.
   </Accordion>
   <Accordion title="Events fire twice after changing the video">
     Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the effect cleanup keeps stale instances quiet, so check that yours flips it.
