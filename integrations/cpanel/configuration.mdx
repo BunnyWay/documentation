@@ -21,12 +21,12 @@ systemctl restart bunnynet-cpanel-daemon
 
 | Key | Description |
 | :--- | :--- |
-| `BUNNYNET_API_KEY` | Your bunny.net account API key. Available in [dash.bunny.net](https://dash.bunny.net). |
+| `BUNNYNET_API_KEY` | Your bunny.net account API key. Available in [dash.bunny.net](https://dash.bunny.net/account/api-key). |
 | `WHM_API_KEY` | The WHM API token. Automatically generated during setup. Managed in **WHM > Development > Manage API Tokens**. |
 
 ## Optional settings
 
-| Key | Description | Default |
+| Key | Description | Default value |
 | :--- | :--- | :--- |
 | `NS1` | Primary nameserver | `kiki.bunny.net` |
 | `NS2` | Secondary nameserver | `coco.bunny.net` |
@@ -37,9 +37,9 @@ systemctl restart bunnynet-cpanel-daemon
 
 ## DNS cluster settings
 
-The DNS cluster configuration is available in **WHM > Clusters > DNS Cluster**. In addition to the API key and DNS role, you can enable:
+The DNS cluster configuration is available in **WHM > Clusters > DNS Cluster**. In addition to the API key, you can enable:
 
-- **Sync all DNS zones** — Automatically synchronize all existing DNS zones to the cluster. Enable this if you want all current zones to be pushed to bunny.net DNS when setting up the cluster.
+- **Sync all DNS zones** — Automatically synchronize all existing DNS zones to the cluster. Enable this if you want all DNS zones to be pushed to Bunny DNS.
 
 <Frame>
   ![DNS Cluster configuration](/images/integrations/cpanel/dns-cluster-config.png)
@@ -50,8 +50,8 @@ The DNS cluster configuration is available in **WHM > Clusters > DNS Cluster**. 
 You can configure bunny.net features per hosting package in **WHM > Packages > Edit a Package**. The following options are available under the **bunny.net** section:
 
 - **Max bunny.net websites** — Limit the number of websites that can use bunny.net per account
-- **Bunny Optimizer** — Enable or disable image optimization for the package
-- **Bunny Shield** — Enable or disable DDoS protection and WAF for the package
+- **Bunny Optimizer** — Allow users to enable and manage Bunny Optimizer
+- **Bunny Shield** — Allow users to manage DDoS protection and WAF
 
 <Warning>
   Make sure to set **Max bunny.net websites** to at least `1`. Setting it to `0` will prevent customers on that package from enabling bunny.net for any of their websites. Use `-1` for unlimited.
