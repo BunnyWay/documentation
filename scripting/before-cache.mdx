@@ -28,6 +28,20 @@ Navigate to your Pull Zone, then go to **General** > **Origin** and enable
 For standalone scripts, you can use the same Pull Zone toggle or enable it
 directly in the script settings.
 
+With the [Update Pull Zone](/api-reference/core/pull-zone/update-pull-zone)
+API, set `EdgeScriptExecutionPhase` to `2` to enable before cache execution.
+The default value, `0`, runs the script after the cache.
+
+## Access control
+
+To block requests to cached content, you must enable before cache execution.
+In the default mode, the CDN serves a cache HIT without the script. A check
+that runs only on a cache MISS does not protect content that is already
+cached.
+
+For a complete, tested example, see
+[Protect cached content](/scripting/middleware/examples/protect-cached-content).
+
 ## Middleware scripts
 
 When before cache execution is enabled, middleware scripts gain access to two
@@ -38,6 +52,8 @@ additional hooks that run on the client side of the cache:
   directly.
 - **`onClientResponse`**: runs just before the response is sent to the
   client, including responses served from the cache.
+
+If before cache execution is off, these hooks do not run, and no error shows.
 
 ```ts
 import * as BunnySDK from "@bunny.net/edgescript-sdk@0.13.0";
@@ -67,6 +83,33 @@ whether and how responses are cached.
 See [Standalone scripts](/scripting/standalone/overview) for details.
 
 ## Workflow
+
+### Default
+
+The script runs only on a cache MISS.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Cache
+    participant Script
+    participant Origin
+
+    Client->>Cache: Request
+    alt Cache HIT
+        Cache-->>Client: Cached response
+    else Cache MISS
+        Cache->>Script: Request
+        Script->>Origin: Request
+        Origin-->>Script: Response
+        Script-->>Cache: Response
+        Cache-->>Client: Response
+    end
+```
+
+### Before cache execution
+
+The script runs on every request, before the cache lookup.
 
 ```mermaid
 sequenceDiagram

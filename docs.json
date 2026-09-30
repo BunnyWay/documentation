@@ -473,7 +473,8 @@
                         "group": "Examples",
                         "pages": [
                           "scripting/middleware/examples/modify-headers",
-                          "scripting/middleware/examples/modify-body"
+                          "scripting/middleware/examples/modify-body",
+                          "scripting/middleware/examples/protect-cached-content"
                         ]
                       }
                     ]
