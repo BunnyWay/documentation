@@ -292,7 +292,9 @@ Keep the placeholder. `beforeInteractive` does not guarantee the script has run 
     player.js is being imported on the server. Keep `import("player.js")` inside `useEffect`. A static `import playerjs from "player.js"` at the top of a Client Component still runs during server rendering.
   </Accordion>
   <Accordion title="onReady never fires">
-    The iframe finished loading before the `Player` existed, which happens when the iframe is part of the server-rendered HTML. Render it only after player.js has loaded, as the component above does.
+    The iframe finished loading before player.js was loaded, which happens when the iframe is part of the server-rendered HTML. Render it only after player.js has loaded, as the component above does. A `Player` created after that still connects, because player.js caches the iframe's `ready` message.
+
+    `ready` is also delayed while the tab is hidden, and fires once it becomes visible.
   </Accordion>
   <Accordion title="Events fire twice after changing the video">
     Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the effect cleanup keeps stale instances quiet, so check that yours flips it.

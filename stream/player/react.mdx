@@ -165,7 +165,7 @@ player.getCurrentTime((seconds) => console.log(seconds));
 player.getDuration((seconds) => console.log(seconds));
 ```
 
-The `player.js` package on npm has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()` and `getPlaybackRate()`; see [Methods](/stream/playback-api#methods).
+The `player.js` package on npm (0.1.0) has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()`, `getPlaybackRate()` and the `playbackratechange` event from version 0.1.2; see [Methods](/stream/playback-api#methods).
 
 ```tsx
 player.send({ method: "setPlaybackRate", value: 1.5 });
@@ -201,18 +201,6 @@ export function Lesson({ videoId }: { videoId: string }) {
 ```
 
 Pass the saved position back as `params={{ t: savedSeconds }}` to resume from there.
-
-## Multiple players on one page
-
-player.js matches the `ready` message to an iframe by its `src`, so two iframes with identical URLs confuse it. Give each one a parameter the player ignores:
-
-```tsx
-import { useId } from "react";
-
-const id = useId();
-
-<BunnyPlayer libraryId="12345" videoId="your-video-guid" params={{ instance: id }} />
-```
 
 ## Load player.js from the CDN instead
 
