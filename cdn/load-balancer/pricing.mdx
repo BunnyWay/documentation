@@ -1,0 +1,34 @@
+---
+title: Load Balancer Pricing
+sidebarTitle: Pricing
+description: How Load Balancers are billed, including the monthly fee, included requests, and overage rates.
+---
+
+Each Load Balancer is billed a flat monthly fee that includes a generous request allowance, with a per-million rate for requests beyond it.
+
+| Item | Price |
+|------|-------|
+| Monthly fee, per Load Balancer | \$9.50 |
+| Included requests, per Load Balancer per month | 50 million |
+| Additional requests | \$0.65 per million |
+
+## What counts as a request
+
+Only requests that actually reach the Load Balancer are counted: cache misses and other requests that require an origin. Requests served from the CDN cache are not counted, so a well-cached zone typically sends only a small fraction of its total traffic through the Load Balancer.
+
+## How billing works
+
+- **Billing is per Load Balancer.** Attaching one Load Balancer to five Pull Zones incurs a single monthly fee, and requests from all attached zones share the same 50 million request allowance.
+- **The monthly fee is prorated.** You only pay for the time a Load Balancer exists: creating one mid-month charges the remainder of the month, and deleting one stops the charge immediately.
+- **The request allowance resets monthly.** Usage counts from the first of each calendar month (UTC), and every month starts with a fresh 50 million included requests. The allowance is per calendar month and unused requests do not roll over.
+- **Overage is exact.** Additional requests are billed at \$0.65 per million, prorated to the actual request count rather than rounded up to whole millions.
+
+For example, a Load Balancer that handles 62 million origin requests in a full month costs \$9.50 plus 12 million additional requests at \$0.65 per million, or \$17.30 in total.
+
+<Note>
+  The monthly fee applies from the moment a Load Balancer is created, even before it is attached to a Pull Zone. Delete Load Balancers you no longer use.
+</Note>
+
+## Tracking usage
+
+Month-to-date request usage against the included allowance is available per Load Balancer in the dashboard and through the usage API, including the exact time the allowance resets. See [Statistics](/cdn/load-balancer/statistics) for the full monitoring options.
