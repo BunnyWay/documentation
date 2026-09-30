@@ -4,15 +4,13 @@ sidebarTitle: Overview
 description: Fine-grained control over reading and writing from the bunny.net edge cache from Edge Scripting.
 ---
 
-## Overview
+The Cache API is an implementation of the [MSDN Cache Interface](https://developer.mozilla.org/en-US/docs/Web/API/Cache). It stores Request and Response pairs in long lived memory.
 
-The Cache API is an implementation of the [MSDN Cache Interface](https://developer.mozilla.org/en-US/docs/Web/API/Cache) to provide a persistent storage mechanism for Request / Response object pairs that are cached in long lived memory.
+The API is available globally, but cache contents do not replicate outside the originating region. A GET `/users` response cached in one region will not exist in another until a request for that resource is made from there.
 
-The Cache API is available globally but the contents of the cache do not replicate outside of the originating region. A GET `/users` response can be cached in the originating region, but will not exist in another region until a request for the resources is made from there.
+An origin can have multiple, named Cache objects, and it is up to your script to decide how cache updates happen. Items in a Cache respect the `Cache-Control` header on the response you pass to `put()`, which is how you control the life cycle of your caches. Entries are purged automatically a short time after they expire. Version your caches by name, and only use a cache from a version of the script that can safely operate on it.
 
-An origin can have multiple, named Cache objects. You are responsible for implementing how your script handles Cache updates. Items in a Cache respect the `Cache-Control` request header, it is expected that you will use this to control the life cycle of your caches. Cache entries will automatically be purged a short time after they expire. Make sure to version caches by name and use the caches only from the version of the script that they can safely operate on.
-
-The cache instances are shared across all domains associated with your PullZone, however they **must** be accessed via the currently requesting host name. For this reason we either recommend using the current `Request` object as they key or constructing the key using the current request url e.g. `const key = new URL(req.url).origin + "/img/example.png";`. This will ensure your caches work reliably across all domains associated with your PullZone.
+Cache instances are shared across all domains associated with your PullZone, but they **must** be accessed via the currently requesting host name. Use the current `Request` object as the key, or build the key from the current request URL, for example `const key = new URL(req.url).origin + "/img/example.png";`. Either way your caches will work reliably across every domain on the PullZone.
 
 <Info>**Note:** There is a hard limit of `100MB` per cache file.</Info>
 
@@ -29,12 +27,30 @@ API surface limits:
 
 We recommend versioning your cache names (e.g. `cache:v1`, `cache:v2`) so that a cache is completely purged when updating scripts.
 
+## Pull Zone cache settings
+
+The Cache API is not independent of the Pull Zone. The **Cache expiration time** setting of the connected Pull Zone also applies to entries your script writes.
+
+If **Cache expiration time** is set to **Override: do not cache**, `cache.put()` resolves without an error, but it stores no entry. A later `cache.match()` for the same key returns `undefined`.
+
+<Warning>
+  Do not set **Override: do not cache** to keep the CDN from caching the responses your script returns. This also stops the Cache API from storing entries.
+</Warning>
+
+To cache entries in your script, but not the responses it returns:
+
+1. In the Pull Zone, click **Caching** and set **Cache expiration time** to **Respect origin Cache-Control**.
+2. Set a `Cache-Control` header with a TTL, such as `max-age=60`, on each response you pass to `cache.put()`.
+3. Set `Cache-Control: no-cache` on the responses your script returns to the client.
+
+The [Examples](./examples) page uses this pattern.
+
 ## Quickstart
 
 A minimal cache-aside pattern: look up by URL, generate on miss, write back in the background.
 
 ```typescript
-import * as BunnySDK from "@bunny.net/edgescript-sdk@0.12.0";
+import * as BunnySDK from "@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
   const url = new URL(request.url);
@@ -69,7 +85,43 @@ BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
 });
 ```
 
-See [Examples](./examples) for more advanced recipes (HTMLRewriter integration, middleware writes, on-demand refresh and purge).
+See [Examples](./examples) for longer recipes: HTMLRewriter integration, middleware writes, and on-demand refresh and purge.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="cache.put() succeeds, but cache.match() returns undefined">
+    1. Check the **Cache expiration time** setting of the connected Pull Zone. If it is **Override: do not cache**, set it to **Respect origin Cache-Control**. See [Pull Zone cache settings](#pull-zone-cache-settings).
+    2. Make sure the response you store has a `Cache-Control` header with a TTL, such as `max-age=60`.
+    3. Use the same key for `put()` and `match()`. Build the key from the hostname of the current request, and normalize the method to `GET`.
+    4. Test the write and the read in the same request, and `await` the `put()`. Cache contents do not replicate between regions, so two separate requests can reach different regions.
+
+    This diagnostic script writes an entry and reads it back in one request:
+
+    ```typescript
+    import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+    BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+      const cache = await caches.open("cache:diagnostic");
+      const key = new Request(new URL("/cache-test", request.url).toString(), {
+        method: "GET",
+      });
+
+      await cache.put(
+        key,
+        new Response("ok", { headers: { "Cache-Control": "max-age=60" } }),
+      );
+      const hit = await cache.match(key);
+
+      return new Response(hit ? "HIT" : "MISS", {
+        headers: { "Cache-Control": "no-cache" },
+      });
+    });
+    ```
+
+    If this returns `MISS`, the problem is in the Pull Zone configuration, not in your script.
+  </Accordion>
+</AccordionGroup>
 
 ## References
 

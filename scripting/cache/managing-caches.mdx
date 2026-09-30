@@ -1,12 +1,12 @@
 ---
 title: Managing caches
 sidebarTitle: Managing caches
-description: The global caches object — accessing the default cache and opening named caches.
+description: The global caches object, covering the default cache and how to open named caches.
 ---
 
 ## Default cache
 
-The `caches.default` API is strongly influenced by the web browsers’ Cache API Interface and gives you a single, unnamed cache shared across requests.
+The `caches.default` API follows the web browsers' Cache API interface closely. It gives you a single, unnamed cache shared across requests.
 
 ```typescript
 await caches.default.match(request);
@@ -36,6 +36,6 @@ await cache.match(request);
 
 ## References
 
-- [Reading & writing](./reading-writing) — `match`, `put`, `delete` method reference.
-- [Examples](./examples) — end-to-end recipes using named and default caches.
-- [Cache API overview](./index) — regional behavior, limitations, and API surface.
+- [Reading & writing](./reading-writing): the `match`, `put`, and `delete` method reference.
+- [Examples](./examples): end-to-end recipes using named and default caches.
+- [Cache API overview](./index): regional behavior, limitations, and API surface.

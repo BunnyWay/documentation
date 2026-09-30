@@ -1,0 +1,47 @@
+---
+title: Restart Policy
+description: "Understand when Magic Containers restarts a failed container, and how long it waits between the attempts."
+---
+
+If a container fails, Magic Containers restarts it automatically. You do not configure this behavior. The platform detects the failure in a few seconds.
+
+## What counts as a failure
+
+The platform restarts the container in these cases:
+
+- The main process exits with a non-zero exit code.
+- The application uses more memory than the [instance limit](/magic-containers/limits), so the platform stops it (out of memory).
+- The [startup or liveness health check](/magic-containers/health-checks) fails as many times as its failure threshold.
+- The application writes more than 10 GB to [ephemeral storage](/magic-containers/limits), so the platform evicts the pod.
+
+Exit codes 137 and 143 are an exception. They show that the process stopped after a stop signal, for example during a [graceful shutdown](/magic-containers/graceful-shutdown). The platform treats these as an intentional stop, and not as a failure.
+
+## Delay between the attempts
+
+The platform waits a few seconds before each restart. The delay grows with each attempt:
+
+| Attempt | Delay        |
+| ------- | ------------ |
+| 1       | About 6 s    |
+| 5       | About 10 s   |
+| 10      | About 16 s   |
+
+The delay increases by approximately one second per attempt. It does not double.
+
+<Info>
+A container that fails again and again therefore restarts quickly. The platform makes no long pause between the attempts.
+</Info>
+
+## When the platform stops the attempts
+
+Each pod has a deadline for the restarts. The default deadline is different for a pod with a persistent volume. When the deadline expires, the platform stops the attempts, and it removes the pod.
+
+## How to correct a restart loop
+
+While the platform restarts the container, the application status stays **Processing**. Open the region, and then the pod, to read the error message and the live logs. For the steps, refer to [Troubleshooting](/magic-containers/troubleshooting).
+
+Correct the cause, and then deploy the new image or configuration. The platform creates new pods, and the restarts start again from the first attempt.
+
+## Effect on your data
+
+A restart gives the container a new, empty file system. Files in ephemeral storage are lost. Data on a [persistent volume](/magic-containers/persistent-volumes) stays available.

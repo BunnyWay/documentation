@@ -14,7 +14,8 @@ Although patch releases may still be issued for the previous minor version, it i
 
 | Plugin version | Initial release date | Supported until  |
 | -------------- | -------------------- | ---------------- |
-| 3.0.x          | 2026-03-12           | Today + 6 Months |
+| 3.1.x          | 2026-06-25           | Today + 6 Months |
+| 3.0.x          | 2026-03-12           | 2026-12-25       |
 | 2.3.x          | 2025-05-07           | 2026-09-12       |
 | 2.2.x          | 2024-04-03           | 2025-11-07       |
 | 2.1.x          | 2024-03-20           | 2024-09-20       |
@@ -28,16 +29,16 @@ However, a new plugin minor version will not support a PHP version under the Ubu
 
 While bug reports related to pre-release PHP versions (e.g., PHP 8.6) are welcome, the plugin does not provide full support for such versions until they are officially released. Compatibility with major PHP releases cannot be guaranteed until official PHP changelogs are finalized.
 
-| PHP Version   | Support for 2.2.x | Support for 2.3.x | Support for 3.0.x |
-| ------------- | ----------------- | ----------------- | ----------------- |
-| 8.5           | No                | Yes               | Yes               |
-| 8.4           | Yes               | Yes               | Yes               |
-| 8.3           | Yes               | Yes               | Yes               |
-| 8.2           | Yes               | Yes               | Yes               |
-| 8.1           | Yes               | Yes               | Yes               |
-| 8.0           | Yes               | No                | No                |
-| 7.4           | Yes               | No                | No                |
-| 7.3 and below | No                | No                | No                |
+| PHP Version   | Support for 3.1.x | Support for 3.0.x | Support for 2.3.x | Support for 2.2.x |
+| ------------- | ----------------- | ----------------- | ----------------- | ----------------- |
+| 8.5           | Yes               | Yes               | Yes               | No                |
+| 8.4           | Yes               | Yes               | Yes               | Yes               |
+| 8.3           | Yes               | Yes               | Yes               | Yes               |
+| 8.2           | Yes               | Yes               | Yes               | Yes               |
+| 8.1           | Yes               | Yes               | Yes               | Yes               |
+| 8.0           | No                | No                | No                | Yes               |
+| 7.4           | No                | No                | No                | Yes               |
+| 7.3 and below | No                | No                | No                | No                |
 
 ## WordPress
 
@@ -45,11 +46,13 @@ Each minor version supports WordPress versions released up to six months before 
 
 For example, if a plugin version is released in May 2025, it will support all WordPress versions released from November 2024 onward. Older WordPress versions, even if they remain technically functional, are not officially supported beyond this six-month backward compatibility window.
 
-| WordPress Version | WP Release Date | Support for 2.2.x | Support for 2.3.x | Support for 3.0.x |
-| ----------------- | --------------- | ----------------- | ----------------- | ----------------- |
-| 6.9               | 2025-12-02      | Yes               | Yes               | Yes               |
-| 6.8               | 2025-04-15      | Yes               | Yes               | No                |
-| 6.7               | 2024-11-12      | Yes               | Yes               | No                |
-| 6.6               | 2024-07-16      | Yes               | No                | No                |
-| 6.5               | 2024-04-02      | Yes               | No                | No                |
-| 6.4 and below     | 2023-11-07      | No                | No                | No                |
+| WordPress Version | WP Release Date | Support for 3.1.x | Support for 3.0.x | Support for 2.3.x | Support for 2.2.x |
+| ----------------- | --------------- | ----------------- | ----------------- | ----------------- | ----------------- |
+| 7.1               | 2026-08-19      | Yes               | Yes               | Yes               | -                 |
+| 7.0               | 2026-05-20      | Yes               | Yes               | Yes               | -                 |
+| 6.9               | 2025-12-02      | Yes               | Yes               | Yes               | -                 |
+| 6.8               | 2025-04-15      | No                | No                | Yes               | Yes               |
+| 6.7               | 2024-11-12      | No                | No                | Yes               | Yes               |
+| 6.6               | 2024-07-16      | No                | No                | No                | Yes               |
+| 6.5               | 2024-04-02      | No                | No                | No                | Yes               |
+| 6.4 and below     | 2023-11-07      | No                | No                | No                | No                |

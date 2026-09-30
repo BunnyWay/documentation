@@ -1,0 +1,72 @@
+---
+title: "Server-Sent Events (SSE)"
+sidebarTitle: "Server-Sent Events"
+description: "Bunny CDN supports Server-Sent Events. Learn how event streams behave on the edge network, and which limits apply to them."
+---
+
+Server-Sent Events (SSE) stream text from a server to a client over a standard HTTP response. Applications use them for live dashboards, progress updates, notifications, and AI token streams.
+
+Bunny CDN supports SSE, and there is no setting to enable. An event stream is an ordinary HTTP response with the `text/event-stream` content type, and the edge delivers each event as soon as your origin writes it.
+
+SSE works with every origin type:
+
+- Your own origin server.
+- [Edge Scripting](/scripting/server-sent-events).
+- [Magic Containers](/magic-containers/endpoints#server-sent-events), through a CDN endpoint.
+
+## Keep the stream out of the cache
+
+<Warning>
+  **Send `Cache-Control: no-cache` from your origin.** An event stream is cached
+  like any other response. An origin that sends no `Cache-Control` gets the pull
+  zone's default cache time of 1 month.
+</Warning>
+
+A cached stream is no longer a stream. Later clients receive a recording of the first client's events, all at once, followed by the end of the response. The browser then reconnects, receives the same recording, and loops.
+
+Two settings cache a stream even when your origin asks for no caching:
+
+- An [Override Cache Time](/cdn/edge-rules/custom-cache-time) Edge Rule that matches the path of the stream.
+- **Ignore Query Strings** on the pull zone. The cache key is then the path alone, so a per-user stream selected by a query parameter is served to every user.
+
+[Request Coalescing](/cdn/request-coalescing) joins simultaneous requests for the same URL into one origin request. This is correct for a shared feed, but not for a per-user stream. Give each client its own URL when you use it.
+
+## Keep the stream active
+
+The edge closes a connection that carries no data for approximately two minutes. This is the only duration limit on an event stream, and the connection stays open as long as data flows.
+
+Send a heartbeat at least every 30 seconds when you have no events to deliver. An SSE comment line is sufficient, because the client ignores it and the bytes reset the timer:
+
+```text
+: heartbeat
+
+```
+
+<Warning>
+  There is no guaranteed maximum duration. An edge server can close a stream at
+  any time, for example during maintenance. The client sees a connection error
+  and not a clean end of the response, so always let the client reconnect.
+</Warning>
+
+Give each event an `id` field. The client sends the last identifier back in the `Last-Event-ID` header when it reconnects, which lets your origin continue from that point.
+
+## Origin requirements
+
+- **Send the first event immediately.** Nothing reaches the client before the first byte, and until it arrives a healthy stream looks the same as a failed connection. An event that carries the current state works well as the first event, and a comment line is sufficient when you have no state to send.
+- **Send the response headers immediately.** Bunny waits 60 seconds for your origin to start the response, and returns a `504 Gateway Timeout` with error code `106` if nothing arrives. The limit applies only until the headers arrive, and not to the stream that follows. See [502 and 504 errors](/cdn/connectivity#502-and-504-errors).
+- **Flush each event.** Output buffering in your framework or your web server holds events back, and the client receives them late or in one block.
+- **Remove any request time limit** on the origin route that serves the stream.
+
+## Pricing
+
+An event stream is a standard HTTP request, and Bunny bills the data it transfers at the [normal CDN bandwidth rate](/cdn/pricing). The [WebSocket connection limits](/cdn/websockets#connection-limits) and the WebSocket connection-time price do not apply.
+
+An [Edge Script](/scripting/server-sent-events) that produces the stream also bills [CPU time and requests](/scripting/pricing), and not the time the connection stays open.
+
+## SSE or WebSockets
+
+| Use SSE when                                    | Use [WebSockets](/cdn/websockets) when                      |
+| ----------------------------------------------- | ----------------------------------------------------------- |
+| Only the server sends data.                     | The client and the server both send data.                   |
+| Text events are sufficient.                     | You need binary frames.                                     |
+| You want plain HTTP, with no setting to enable. | You accept a per-zone connection limit and a separate price. |

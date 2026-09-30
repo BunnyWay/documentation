@@ -1,6 +1,6 @@
 ---
-title: Personal Details
-description: Manage your personal details, billing address, and company information.
+title: Billing Details
+description: Manage your billing details, billing address, and company information.
 ---
 
 The [Account Settings](https://dash.bunny.net/account/settings) page lets you manage your personal information, billing address, and company details.
@@ -39,6 +39,17 @@ Your billing address appears on invoices. All fields are required:
   form](/images/accounts-and-billing/account-settings-billing-details.png)
 </Frame>
 
+### Address verification
+
+When you enter or update your billing address, we verify it against an international address database before it is saved. This keeps your invoices valid and ensures we apply the correct [tax rate](/billing/taxation).
+
+We check that the address is real and that its parts are consistent with each other. If an address cannot be verified, it is not saved and you will see an error describing what did not match.
+
+<Note>
+  If your address is correct but still cannot be verified, [contact
+  support](https://bunny.net/contact/) and we will review it manually.
+</Note>
+
 ## Company
 
 Optional fields for business accounts:
@@ -52,3 +63,32 @@ Optional fields for business accounts:
 </Frame>
 
 After making changes, click **Update Account Details** to save.
+
+## When billing details changes appear on your invoice
+
+Changes to your billing details apply from the next billing cycle, not the current one. The invoice for the current month still shows your previous details.
+
+### Why
+
+At the start of each month, we save your billing details and use them for all usage in that month. The invoice for that month, issued during the following month, shows those details.
+
+A change made during the month doesn't affect the billing details already in use, so it applies from the next cycle.
+
+### Example
+
+You update your billing address on 15 July:
+
+| Date | What happens | Details used |
+| --- | --- | --- |
+| 15 July | You save the new billing address | — |
+| 1 August | August cycle starts with your new details | New address |
+| August | Invoice for July usage | Old address |
+| September | Invoice for August usage | New address |
+
+### Quick reference
+
+| You change your details in… | First invoice with the new details |
+| --- | --- |
+| July | September |
+| August | October |
+| September | November |

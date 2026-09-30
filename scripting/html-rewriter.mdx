@@ -2,22 +2,21 @@
 title: HTMLRewriter
 sidebarTitle: HTMLRewriter
 description: Transform HTML responses on the edge with streaming, selector-based rewriting.
-tag: Preview
 ---
 
 ## Overview
 
-`HTMLRewriter` lets you modify HTML responses as they stream through
-your edge script. It parses HTML on the fly and calls your handler functions when
-it encounters matching elements, comments, or text without buffering the entire
-document in memory.
+`HTMLRewriter` lets you modify HTML responses as they stream through your edge
+script. It parses the HTML on the fly and calls your handler functions when it
+meets matching elements, comments, or text, so the whole document never has to
+be buffered in memory.
 
 ## Quickstart
 
-A simple middleware example:
+A short middleware example:
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -127,7 +126,7 @@ const transformed = rewriter.transform(response);
 
 ---
 
-## Handler Types
+## Handler types
 
 ### Element
 
@@ -142,7 +141,7 @@ Passed to `element` handlers. Represents an HTML opening tag.
 | `removed` | `boolean` | Whether the element has been removed (readonly). |
 | `attributes` | `IterableIterator<[string, string]>` | Iterable of `[name, value]` pairs (readonly). |
 
-#### Attribute Methods
+#### Attribute methods
 
 ##### `getAttribute(name)`
 
@@ -175,7 +174,7 @@ Sets the value of the attribute with the given name. Adds the attribute if it do
   The attribute value.
 </ParamField>
 
-**Returns:** `Element` — the element itself, for chaining.
+**Returns:** `Element`, the element itself, for chaining.
 
 ##### `removeAttribute(name)`
 
@@ -185,7 +184,7 @@ Removes the attribute with the given name. No-op if the attribute does not exist
   The attribute name.
 </ParamField>
 
-**Returns:** `Element` — the element itself, for chaining.
+**Returns:** `Element`, the element itself, for chaining.
 
 Setters return the element itself, so calls can be chained:
 
@@ -195,7 +194,7 @@ el.setAttribute("class", "new")
   .removeAttribute("style");
 ```
 
-#### Content Mutation Methods
+#### Content mutation methods
 
 All content mutation methods accept `content` as a `string`, `ReadableStream<Uint8Array>`, or `Response`,
 and an optional `options` object. They all return `Element` for chaining.
@@ -249,7 +248,7 @@ el.before("<hr>", { html: true })
   .after("<hr>", { html: true });
 ```
 
-#### Removal Methods
+#### Removal methods
 
 ##### `remove()`
 
@@ -263,7 +262,7 @@ Removes the element's opening and closing tags but keeps the inner content in pl
 
 **Returns:** `Element`
 
-#### End Tag Handler
+#### End tag handler
 
 ##### `onEndTag(handler)`
 
@@ -479,7 +478,7 @@ end.append("<!-- generated -->", { html: true });
 
 ---
 
-## Supported CSS Selectors
+## Supported CSS selectors
 
 The following CSS selectors are supported, based on the
 [W3C Selectors Level 4](https://www.w3.org/TR/selectors-4/) specification.
@@ -511,10 +510,10 @@ The following CSS selectors are supported, based on the
 
 ## Examples
 
-### Rewrite Links
+### Rewrite links
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -531,10 +530,10 @@ BunnySDK.net.http.servePullZone()
   });
 ```
 
-### Inject a Script
+### Inject a script
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -548,10 +547,10 @@ BunnySDK.net.http.servePullZone()
   });
 ```
 
-### Remove Elements
+### Remove elements
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -570,12 +569,12 @@ BunnySDK.net.http.servePullZone()
   });
 ```
 
-### Async Handler
+### Async handler
 
 Handlers can return a `Promise` for async operations like sub-requests.
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -591,12 +590,12 @@ BunnySDK.net.http.servePullZone()
   });
 ```
 
-### Class-Based Handlers
+### Class-based handlers
 
 Instead of inline objects, you can define handler classes and pass instances to `.on()` or `.onDocument()`.
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 class AttributeRewriter {
   #attrName;
@@ -622,10 +621,10 @@ BunnySDK.net.http.servePullZone()
   });
 ```
 
-#### Document Handler Class
+#### Document handler class
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 class StripComments {
   comments(comment) {
@@ -645,12 +644,12 @@ BunnySDK.net.http.servePullZone()
   });
 ```
 
-#### Async Class Handler
+#### Async class handler
 
 Class methods can be `async` just like inline handlers.
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 class IncludeExpander {
   async element(el) {
@@ -670,12 +669,12 @@ BunnySDK.net.http.servePullZone()
   });
 ```
 
-### Multiple Selectors
+### Multiple selectors
 
 Chain multiple `.on()` calls to handle different elements independently.
 
 ```js
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.11.2";
+import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http.servePullZone()
   .onOriginResponse(async ({ response }) => {
@@ -699,7 +698,7 @@ BunnySDK.net.http.servePullZone()
   });
 ```
 
-# References
+## References
 
 - [Edge Side Includes](https://www.w3.org/TR/esi-lang) - W3 Reference of ESI.
 - [W3C Selectors 4 Specification](https://www.w3.org/TR/selectors-4/)

@@ -1,22 +1,76 @@
 ---
 title: "Logs"
-description: "Logs are a critical component of Magic Containers and are accessible through the dedicated Logs tab on the Dashboard."
+description: "View live and historic application, system, and HTTP logs for your Magic Containers application, and filter them by container, pod, region, or request details."
 ---
 
+Logs for a Magic Containers application live under **Logging** in the left-side menu of the application. The **Logs** page shows what is happening in your application right now and what happened over the past few days. The **Settings** page is where you configure log forwarding.
+
+The Logs page is split into three tabs:
+
+| Tab | What it shows | History |
+| --- | --- | --- |
+| Application | Output your containers write to stdout and stderr | Up to 5 days |
+| System | Events produced by the platform, such as deployments and scaling | Up to 5 days |
+| HTTP | Requests served by the CDN endpoints of your application | Up to 3 days |
+
+All three tabs stream new entries live. Use the pause button next to the search box to freeze the view while you read, and the date picker to look back at earlier entries. Click any row to expand it and see more detail about that entry.
+
+## Application logs
+
+The **Application** tab shows everything your containers write to stdout and stderr. If your application prints a log level along with the message, the level shows up as its own column so errors and warnings stand out from the rest.
+
 <Frame>
-  ![](/images/docs/72f43c673e579bb04c74ef3cd240a594098962b9739355736928d817d9220d4f-image.png)
+  ![Application logs tab showing live container output with log levels](/images/magic-containers/application-logs.png)
 </Frame>
 
-This single interface provides both platform-level (system) logs and application-level (app) logs. System logs reveal the internal events and decisions made by the Magic Containers infrastructure, such as successful or failed container starts, networking issues, or health check responses. App logs consist of the standard output and error streams from the containers themselves, showing any messages your software generates.
+Logs are kept for up to 5 days. The date picker sets the range you want to look at, and the live stream keeps adding new rows at the bottom while the range includes today.
 
-Because logs are live-streamed, you can only view them in real time. The platform currently does not retain historical logs, so troubleshooting is most effective when you keep the log view open while reproducing the problem in your application. To quickly pinpoint issues, you can narrow your scope by focusing on a specific region, pod, or container within the pod. You can also switch between system logs and app logs to determine whether a malfunction originates in the platform’s orchestration layer or your application code.
+You can narrow the view with the following filters:
 
-# Filtering logs
+- **Container** to see the output of a single container in a pod.
+- **Pod** to focus on one pod.
+- **Region** to check whether a problem is limited to one location.
+- **Keyword search** to find a specific message.
 
-Filtering logs by application or region is also helpful if you manage many deployments across different environments.
+Narrowing down to a single region is a quick way to spot regional issues, like network latency or a hardware constraint in one location. If the same error shows up across pods and regions at the same time, the cause is more likely in the application itself.
+
+## System logs
+
+The **System** tab shows the events the platform generates while running your application. This includes deployments, image pulls, container starts and stops, scaling, and networking setup. These logs are the place to look when a deployment does not go as expected or a container keeps restarting.
 
 <Frame>
-  ![](/images/docs/f7e435f3b010b1db1c8b01c743889f0453e5102df37e61e56810420fa6192153-image.png)
+  ![System logs tab showing platform events for a deployment](/images/magic-containers/system-logs.png)
 </Frame>
 
-Narrowing down the view to a single location can highlight specific regional issues, like network latency or hardware constraints. If the entire application experiences recurring difficulties, switching to a broader application-level view will reveal whether the problem occurs in multiple pods and regions simultaneously.
+System logs work the same way as application logs. They are kept for up to 5 days, each row expands to show more detail, and the same filters apply: container, pod, region, and keyword search.
+
+Switching between the Application and System tabs is often the fastest way to tell whether a problem comes from the platform or from your code. If the System tab shows a healthy deployment and the Application tab shows errors, the issue is in the application. If the System tab shows a failed start or a health check problem, start there.
+
+## HTTP logs
+
+The **HTTP** tab appears when your application has CDN endpoints. It shows the requests those endpoints served, with the status code, cache status, edge location, client IP, path, and response size for each one.
+
+<Frame>
+  ![HTTP logs tab showing CDN requests with status and cache result](/images/magic-containers/http-logs.png)
+</Frame>
+
+HTTP logs are kept for up to 3 days. Each row expands to show more detail about the request.
+
+HTTP logs have their own set of filters:
+
+- **Pull zone**
+- **HTTP status code**
+- **Cache status**
+- **Country**
+- **Edge location**
+- **URL**
+- **User agent**
+- **Keyword search**
+
+Filtering by status code is a good starting point when users report errors. Pair it with the cache status to see whether the failing requests reached your containers or were answered from the cache.
+
+## Settings
+
+The **Settings** page under Logging is where you set up log forwarding. Forwarding sends your application and system logs to a Syslog endpoint you control, so you can keep them longer than 5 days or feed them into your own monitoring tools. See [Log Forwarding](/magic-containers/log-forwarding) for the setup steps.
+
+HTTP logs are not forwarded from here. They belong to the pull zone that serves the endpoint, so forwarding for them is configured on the pull zone itself. See [CDN log forwarding](/cdn/logging/forwarding) for details.

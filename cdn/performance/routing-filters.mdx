@@ -9,7 +9,7 @@ This is primarily useful for GDPR compliance and data residency requirements whe
 
 ## How it works
 
-When you enable a routing filter (such as European Union), all requests to your Pull Zone are routed exclusively to PoPs within that region. Users outside the filtered region are also routed to those same locations.
+When you enable a routing filter (such as European Union or the European Economic Area), all requests to your Pull Zone are routed exclusively to PoPs within that region. Users outside the filtered region are also routed to those same locations.
 
 <Info>
   Combining multiple routing filters creates a cross-section. Traffic is only
@@ -18,7 +18,7 @@ When you enable a routing filter (such as European Union), all requests to your 
 
 ## Available filters
 
-### European Union
+### European Union (EU)
 
 Routes all traffic exclusively through 24 PoPs within EU member states:
 
@@ -27,6 +27,26 @@ Routes all traffic exclusively through 24 PoPs within EU member states:
   Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg,
   Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain, and Sweden.
 </Accordion>
+
+### European Economic Area (EEA)
+
+The EEA extends the EU single market to three non-EU countries (Iceland, Liechtenstein, and Norway), all of which have adopted the GDPR. Choose this filter when you need the same data-residency guarantees as the EU filter but also want to serve users in these additional countries.
+
+Routes all traffic exclusively through 26 PoPs, covering every EU PoP plus Iceland and Norway:
+
+<Accordion title="EEA countries with PoPs">
+  Austria, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Finland, France,
+  Germany, Greece, Hungary, Iceland, Ireland, Italy, Latvia, Lithuania,
+  Luxembourg, Netherlands, Norway, Poland, Portugal, Romania, Slovakia,
+  Slovenia, Spain, and Sweden.
+</Accordion>
+
+<Info>
+  Liechtenstein is part of the EEA but currently has no bunny.net PoP. Because the
+  EEA contains every EU country, the EEA filter is a superset of the EU filter,
+  so selecting **both** is equivalent to selecting EU alone. Switzerland and the
+  United Kingdom are **not** part of the EEA and are excluded by this filter.
+</Info>
 
 ## Enabling Routing Filters
 
@@ -44,10 +64,10 @@ The filter applies to both Standard and High Volume tier zones automatically.
   routed to the nearest PoP within the filter, not the nearest global PoP.
 </Warning>
 
-For example, with the EU filter enabled:
+For example, with the EU or EEA filter enabled:
 
-- **EU users**: Excellent performance with 24 local PoPs
-- **Non-EU users**: Routed to EU PoPs, negating most CDN performance benefits
+- **EU / EEA users**: Excellent performance with local PoPs (24 for EU, 26 for EEA)
+- **Everyone else**: Routed into the filtered region, negating most CDN performance benefits
 
 Only enable Routing Filters if you have specific compliance requirements that outweigh the global performance trade-off.
 

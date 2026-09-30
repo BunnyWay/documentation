@@ -100,6 +100,7 @@
                     "pages": [
                       "billing/add-funds",
                       "billing/auto-recharge",
+                      "billing/negative-balance",
                       "billing/billing-history",
                       "billing/sales-tax"
                     ]
@@ -199,6 +200,7 @@
                   {
                     "group": "Security",
                     "pages": [
+                      "cdn/security/ssl",
                       "cdn/security/hotlink-protection",
                       "cdn/security/geographic-blocking",
                       {
@@ -263,6 +265,7 @@
                   "cdn/seamless-migration",
                   "cdn/custom-404-page",
                   "cdn/websockets",
+                  "cdn/server-sent-events",
                   {
                     "group": "Frequently Asked Questions",
                     "pages": [
@@ -304,7 +307,6 @@
                   "magic-containers/index",
                   "magic-containers/quickstart",
                   "magic-containers/templates",
-                  "magic-containers/quick-deploy",
                   {
                     "group": "Use Cases",
                     "hidden": true,
@@ -363,6 +365,7 @@
                   "magic-containers/rolling-updates",
                   "magic-containers/deployment-strategies",
                   "magic-containers/graceful-shutdown",
+                  "magic-containers/restart-policy",
                   "magic-containers/sandbox",
                   "magic-containers/multi-container",
                   "magic-containers/app-metadata"
@@ -512,7 +515,6 @@
                   "scripting/runtime",
                   {
                     "group": "Cache API",
-                    "tag": "Preview",
                     "pages": [
                       "scripting/cache/index",
                       "scripting/cache/managing-caches",
@@ -522,13 +524,17 @@
                   },
                   "scripting/html-rewriter",
                   "scripting/node-fs",
-                  "scripting/websockets"
+                  "scripting/node-tls",
+                  "scripting/websockets",
+                  "scripting/server-sent-events"
                 ]
               },
               {
                 "group": "Reference",
                 "pages": [
                   "scripting/limits",
+                  "scripting/regions",
+                  "scripting/https-ssl-certificates",
                   "scripting/before-cache",
                   "scripting/api-reference"
                 ]
@@ -652,8 +658,10 @@
                     "group": "Mobile SDK",
                     "pages": [
                       "stream/mobile-sdk",
-                      "stream/mobile-sdk-token-authentication"
-                    ]
+                      "stream/android-sdk",
+                      "stream/ios-sdk"
+                    ],
+                    "expanded": true
                   },
                   "stream/expo-video",
                   "stream/embedding",
@@ -755,7 +763,8 @@
                 "pages": [
                   "shield/index",
                   "shield/quickstart",
-                  "shield/pricing"
+                  "shield/pricing",
+                  "shield/changelog"
                 ]
               },
               {
@@ -837,7 +846,8 @@
                   "optimizer/image-classes",
                   "optimizer/watermarking",
                   "optimizer/burrow-smart-routing",
-                  "optimizer/html-prerender"
+                  "optimizer/html-prerender",
+                  "optimizer/agent-readability"
                 ]
               },
               {
@@ -934,6 +944,13 @@
                   "database/connect/sql-api",
                   "database/connect/scripting",
                   "database/connect/magic-containers"
+                ]
+              },
+              {
+                "group": "Tools",
+                "pages": [
+                  "database/tools/database-client",
+                  "database/migrations"
                 ]
               },
               {
@@ -1119,7 +1136,8 @@
                 },
                 "pages": [
                   "api-reference/core/index",
-                  "api-reference/core/errors"
+                  "api-reference/core/errors",
+                  "api-reference/core/statistics-date-ranges"
                 ]
               },
               {
@@ -1206,10 +1224,43 @@
             ]
           }
         ]
+      },
+      {
+        "product": "Partners",
+        "icon": "handshake",
+        "description": "Manage customers, pricing, and billing as a bunny.net partner",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Documentation",
+                "pages": [
+                  "partners/index"
+                ]
+              },
+              {
+                "group": "API Reference",
+                "openapi": {
+                  "source": "https://core-api-public-docs.b-cdn.net/docs/v3/PartnerPortal.json",
+                  "directory": "api-reference/partner"
+                },
+                "pages": [
+                  "api-reference/partner/index"
+                ]
+              }
+            ]
+          }
+        ]
       }
     ]
   },
   "redirects": [
+    {
+      "source": "/stream/livestream",
+      "destination": "/stream/live",
+      "permanent": true
+    },
     {
       "source": "/stream/smart-chapters",
       "destination": "/stream/smart-generate",
@@ -1387,6 +1438,11 @@
     },
     {
       "source": "/magic-containers-how-to-deploy-your-app",
+      "destination": "/magic-containers/deploy",
+      "permanent": true
+    },
+    {
+      "source": "/magic-containers/quick-deploy",
       "destination": "/magic-containers/deploy",
       "permanent": true
     },
@@ -2307,7 +2363,7 @@
     },
     {
       "source": "/stream-changelog-2",
-      "destination": "/stream",
+      "destination": "/changelog?tags=Stream",
       "permanent": true
     },
     {
