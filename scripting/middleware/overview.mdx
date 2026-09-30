@@ -5,20 +5,32 @@ description: "Middleware scripts allow you to transform and modify HTTP requests
 and responses as they flow through the CDN. Manipulate requests before they
 reach your origin server or the cache and alter responses before they are sent 
 back to the client."
-tag: New
 ---
 
 Middleware scripts sit inside the CDN request flow. Your logic runs on requests on their way in and on responses on their way out, so you can change how traffic behaves without touching your backend, and the work happens at the edge rather than on your origin.
 
-## Use cases
+A middleware script can run at two points in the request flow:
 
-- Verify credentials and manage session tokens at the edge. See
-  [Protect cached content](/scripting/middleware/examples/protect-cached-content).
-- Add, modify, or remove HTTP headers on requests and responses
-- Rewrite HTML, inject scripts, or otherwise change the response body before delivery
-- Run A/B tests and feature flags, routing users based on headers or cookies
-- Route or redirect requests based on path, geolocation, or your own logic
-- Apply rate limiting, IP filtering, or bot protection
+- **Origin hooks** (`onOriginRequest`, `onOriginResponse`) run between the cache
+  and your origin. They run only on a cache MISS. This is the default.
+- **Client hooks** (`onClientRequest`, `onClientResponse`) run between the
+  client and the cache. They run on every request, including cache hits. To use
+  them, enable **Run script before cache** in your Pull Zone, under
+  **General** > **Origin**. See [before cache execution](/scripting/before-cache).
+
+One script can use both types of hooks.
+
+## Choose a hook
+
+| Hook               | Runs                                    | Runs on a cache HIT | Needs **Run script before cache** | Example uses                                                                      |
+| ------------------ | --------------------------------------- | ------------------- | --------------------------------- | --------------------------------------------------------------------------------- |
+| `onClientRequest`  | Before the cache lookup                 | Yes                 | Yes                               | Verify credentials, rate limiting, IP filtering, bot protection, A/B tests, redirects |
+| `onOriginRequest`  | Before the request goes to the origin   | No                  | No                                | Add or remove headers on the request to the origin, such as a secret the origin checks |
+| `onOriginResponse` | After the origin responds, before cache | No                  | No                                | Rewrite HTML or the response body, set headers that are cached with the response  |
+| `onClientResponse` | Before the response goes to the client  | Yes                 | Yes                               | Add headers to every response, including cached responses                         |
+
+These are examples, not a complete list. For a complete access control example,
+see [Protect cached content](/scripting/middleware/examples/protect-cached-content).
 
 <Warning>
   Origin hooks run only on a cache MISS. The CDN serves a cached response
@@ -62,19 +74,6 @@ servePullZone(options: { url: string }): PullZoneHandler
   bunny.net, requests are proxied to the origin configured in your Pull Zone
   settings.
 </Info>
-
-## Choose a hook
-
-| Hook               | Runs                                    | Runs on a cache HIT | Needs before cache execution |
-| ------------------ | --------------------------------------- | ------------------- | ---------------------------- |
-| `onClientRequest`  | Before the cache lookup                 | Yes                 | Yes                          |
-| `onOriginRequest`  | Before the request goes to the origin   | No                  | No                           |
-| `onOriginResponse` | After the origin responds, before cache | No                  | No                           |
-| `onClientResponse` | Before the response goes to the client  | Yes                 | Yes                          |
-
-- To allow or block requests, use `onClientRequest`.
-- To change what goes into the cache, use `onOriginResponse`.
-- To change every response that a client gets, use `onClientResponse`.
 
 ## Middleware methods
 
