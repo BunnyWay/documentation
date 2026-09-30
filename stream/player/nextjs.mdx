@@ -283,7 +283,7 @@ declare global {
 }
 ```
 
-Keep the placeholder. A server-rendered iframe can still finish loading before hydration.
+Keep the placeholder. `beforeInteractive` does not guarantee the script has run before a server-rendered iframe finishes loading, so the gate is still needed with the hosted build.
 
 ## Troubleshooting
 
