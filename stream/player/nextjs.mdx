@@ -7,7 +7,7 @@ description: "Embed the Bunny Stream player in a Next.js app with a client compo
 import Install from "/snippets/stream/player-js-install.mdx";
 import Types from "/snippets/stream/player-js-types.mdx";
 
-The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. Server rendering adds two constraints. player.js reads `window` the moment it's imported, so it has to be imported in the browser. And a `Player` only connects if it exists before its iframe finishes loading, which server-rendered iframe HTML can do before your JavaScript hydrates.
+The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. Server rendering adds two constraints. player.js reads `window` the moment it's imported, so it has to be imported in the browser. And it has to be loaded before the iframe finishes loading. player.js caches the iframe's `ready` message when it's imported, so a `Player` created afterwards still connects. If the iframe loads first, as server-rendered HTML can, the `Player` never becomes ready.
 
 The component below renders a placeholder on the server, loads player.js in an effect, then mounts the iframe and creates the `Player` in the same commit. It uses the App Router and works unchanged with the Pages Router. The [React guide](/stream/player/react) covers the client-only version.
 
