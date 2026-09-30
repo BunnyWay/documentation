@@ -112,6 +112,8 @@ The Response you want to match up to the request.
 
 A `Promise` that resolves with `undefined`.
 
+The promise can resolve without storing an entry. This happens when the connected Pull Zone has **Cache expiration time** set to **Override: do not cache**. See [Pull Zone cache settings](./index#pull-zone-cache-settings).
+
 #### Exceptions
 
 Can throw an exception if there is an issue accessing the underlying cache storage.
