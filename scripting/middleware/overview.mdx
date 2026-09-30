@@ -59,7 +59,6 @@ servePullZone(options: { url: string }): PullZoneHandler
 The `servePullZone` function returns a `PullZoneHandler` object with chainable middleware methods:
 
 ### `onClientRequest`
-<Badge color="orange" icon="sparkles">Preview</Badge>
 
 <Info>
 If your PullZone is configured to execute script before cache, you'll have
@@ -86,7 +85,6 @@ onClientRequest(
   hitting the cache
 
 ### `onClientResponse` 
-<Badge color="orange" icon="sparkles">Preview</Badge>
 
 <Info>
 If your PullZone is configured to execute script before cache, you'll have
@@ -151,7 +149,6 @@ onOriginResponse(
 - Return `Promise<Response>` with the (modified) response to send to the client
 
 ## Enable before cache scripts
-<Badge color="orange" icon="sparkles">Preview</Badge>
 
 Before cache execution is turned on per Pull Zone. Navigate to your Pull Zone,
 then go to **General** > **Origin** and enable **Run script before cache**.
