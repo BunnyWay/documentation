@@ -192,7 +192,7 @@ export function LessonPlayer({ libraryId, videoId }: { libraryId: string; videoI
 }
 ```
 
-Getters take a callback, because the answer comes back from the iframe: `player.getCurrentTime((seconds) => ...)`. The `player.js` package on npm has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()` and `getPlaybackRate()`; see [Methods](/stream/playback-api#methods).
+Getters take a callback, because the answer comes back from the iframe: `player.getCurrentTime((seconds) => ...)`. The `player.js` package on npm (0.1.0) has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()`, `getPlaybackRate()` and the `playbackratechange` event from version 0.1.2; see [Methods](/stream/playback-api#methods).
 
 ```tsx
 player.send({ method: "setPlaybackRate", value: 1.5 });
