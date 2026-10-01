@@ -40,7 +40,9 @@ For more information about the underlying levels, see the [OWASP CRS paranoia-le
 
 ## Custom rule fundamentals
 
-A WAF rule is structured into four main sections, each playing a vital role in the request evaluation process:
+Every custom WAF rule is built from four parts: a variable that tells the engine where to look in a request, an operator that defines the match condition, optional transformations that normalize the data before comparison, and a response action for matches.
+
+Each playing a vital role in the request evaluation process:
 
 - **Variable**: This section specifies the parts of the HTTP request that the Rule Engine should examine. By defining a Variable, you instruct the WAF on where to look within the request, such as headers, URIs, or parameters.
 - **Operator**: Operator defines the condition or logic that triggers a match against the specified Variable (_and Variable Value_). It determines how the extracted data is compared to a given value, using operations like equality, pattern matching, or range checking.
