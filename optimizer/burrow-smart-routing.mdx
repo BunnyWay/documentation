@@ -90,7 +90,8 @@ This feature is particularly beneficial for smaller projects that don't generate
 
 Burrow probes your origin only when your Pull Zone receives traffic. When a request arrives, Burrow checks whether it has recent routing data for the origin. If it doesn't, it starts sending probes from bunny.net's edge network. If a Pull Zone receives no traffic anywhere in the world, Burrow sends no probes, because there is nothing to optimize and Burrow is designed to keep extra traffic to your origin to a minimum. Probes are lightweight and infrequent, but the probe frequency may change, so don't rely on a specific rate.
 
-Probes are sent with the `User-Agent` header `BunnyBurrowActiveProbe/1.0`. The `Host` header follows your Pull Zone configuration, so it carries the same value the CDN uses when it fetches content from your origin.
+Probes are sent with the `User-Agent` header `BunnyBurrowActiveProbe/1.0` and without an `Accept` header.
+The `Host` header follows your Pull Zone configuration, so it carries the same value the CDN uses when it fetches content from your origin.
 
 <Info>
   When **Forward host header** is enabled, or the Pull Zone uses [CDN Acceleration](/cdn/cdn-acceleration), the reachability test in the configuration window has no visitor request to take the hostname from. It uses the first custom hostname you added instead, or the system hostname if there is none, and skips wildcard hostnames.
