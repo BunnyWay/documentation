@@ -11,6 +11,10 @@ The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player
 
 The component also works under SvelteKit server rendering. player.js is imported in `onMount`, because it reads `window` when imported, and the iframe renders only after the library is available, because player.js has to be loaded before the iframe finishes loading.
 
+<Card title="SvelteKit example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-sveltekit" horizontal>
+  A SvelteKit app built around this component, with custom controls and an event log. It plays a demo video after `bun install` and `bun dev`.
+</Card>
+
 ## Quickstart
 
 <Steps>
