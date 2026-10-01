@@ -258,6 +258,7 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "cdn/request-headers-to-origin",
                   "cdn/custom-hostname",
                   "cdn/cdn-acceleration",
                   "cdn/verify-configuration",
