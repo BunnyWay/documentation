@@ -5,26 +5,44 @@ description: "Middleware scripts allow you to transform and modify HTTP requests
 and responses as they flow through the CDN. Manipulate requests before they
 reach your origin server or the cache and alter responses before they are sent 
 back to the client."
-tag: New
 ---
 
 Middleware scripts sit inside the CDN request flow. Your logic runs on requests on their way in and on responses on their way out, so you can change how traffic behaves without touching your backend, and the work happens at the edge rather than on your origin.
 
-## Use cases
+A middleware script can run at two points in the request flow:
 
-- Verify credentials and manage session tokens at the edge
-- Add, modify, or remove HTTP headers on requests and responses
-- Rewrite HTML, inject scripts, or otherwise change the response body before delivery
-- Run A/B tests and feature flags, routing users based on headers or cookies
-- Route or redirect requests based on path, geolocation, or your own logic
-- Apply rate limiting, IP filtering, or bot protection
+- **Origin hooks** (`onOriginRequest`, `onOriginResponse`) run between the cache
+  and your origin. They run only on a cache MISS. This is the default.
+- **Client hooks** (`onClientRequest`, `onClientResponse`) run between the
+  client and the cache. They run on every request, including cache hits. To use
+  them, enable **Run script before cache** in your Pull Zone, under
+  **General** > **Origin**. See [before cache execution](/scripting/before-cache).
+
+One script can use both types of hooks.
+
+## Choose a hook
+
+| Hook               | Runs                                    | Runs on a cache HIT | Needs **Run script before cache** | Example uses (not a complete list) |
+| ------------------ | --------------------------------------- | ------------------- | --------------------------------- | ---------------------------------- |
+| `onClientRequest`  | Before the cache lookup                 | Yes                 | Yes                               | [Verify credentials](/scripting/middleware/examples/protect-cached-content), rate limiting, IP filtering, bot protection, A/B tests, redirects |
+| `onOriginRequest`  | Before the request goes to the origin   | No                  | No                                | Add or remove headers on the request to the origin, such as a secret the origin checks |
+| `onOriginResponse` | After the origin responds, before cache | No                  | No                                | [Rewrite HTML or the response body](/scripting/middleware/examples/modify-body), set headers that are cached with the response  |
+| `onClientResponse` | Before the response goes to the client  | Yes                 | Yes                               | Add headers to every response, including cached responses                         |
+
+<Warning>
+  Origin hooks run only on a cache MISS. The CDN serves a cached response
+  without them. An access check in `onOriginRequest` does not protect cached
+  content. For access control, enable
+  [before cache execution](/scripting/before-cache), and put the check in
+  `onClientRequest`.
+</Warning>
 
 ## The `servePullZone` function
 
 The `servePullZone` function creates a middleware handler that integrates with your Pull Zone. It returns a chainable object for adding request and response middleware.
 
 ```ts
-import * as BunnySDK from "@bunny.net/edgescript-sdk";
+import * as BunnySDK from "@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http
   .servePullZone({ url: "https://your-origin.com" })
@@ -61,8 +79,9 @@ The `servePullZone` function returns a `PullZoneHandler` object with chainable m
 ### `onClientRequest`
 
 <Info>
-If your PullZone is configured to execute script before cache, you'll have
-access to this function.
+This hook runs only when your Pull Zone has
+[before cache execution](/scripting/before-cache) enabled. If it is off, the
+hook does not run, and no error shows.
 </Info>
 
 Intercepts requests before they are sent to the cache. You can modify the request
@@ -80,15 +99,16 @@ onClientRequest(
 
 **Return value:**
 
-- Return `Promise<Request>` to continue to the origin with the (modified) request
+- Return `Promise<Request>` to continue to the cache lookup with the
+  (modified) request. On a cache MISS, the request then goes to the origin.
 - Return `Promise<Response>` to short-circuit and respond immediately without
-  hitting the cache
+  hitting the cache. `onClientResponse` does not run for this response.
 
 ### `onClientResponse` 
 
 <Info>
-If your PullZone is configured to execute script before cache, you'll have
-access to this function.
+This hook runs only when your Pull Zone has
+[before cache execution](/scripting/before-cache) enabled.
 </Info>
 
 Intercepts responses before they are returned to the user, including responses
@@ -112,7 +132,7 @@ to the client.
 
 ### `onOriginRequest`
 
-Intercepts requests before they are sent to the origin server. You can modify the request or short-circuit by returning a response directly.
+Intercepts requests before they are sent to the origin server. It runs only on a cache MISS. You can modify the request or short-circuit by returning a response directly.
 
 ```ts
 onOriginRequest(
@@ -127,7 +147,7 @@ onOriginRequest(
 **Return value:**
 
 - Return `Promise<Request>` to continue to the origin with the (modified) request
-- Return `Promise<Response>` to short-circuit and respond immediately without hitting the origin
+- Return `Promise<Response>` to short-circuit and respond immediately without hitting the origin. The CDN handles this response like an origin response, so it can be cached.
 
 ### `onOriginResponse`
 
@@ -162,8 +182,8 @@ Learn more about [before cache execution](/scripting/before-cache).
 When a client makes a request to a Pull Zone, the request passes through middleware at different stages:
 
 <Info>
-If your PullZone is configured to execute script before cache, you'll run the
-`onClientRequest` and `onClientResponse` if those are registered.
+`onClientRequest` and `onClientResponse` run only when your Pull Zone has
+before cache execution enabled.
 </Info>
 
 1. **`onClientRequest`** - Called before the request is sent to the cache. Modify the request or return a response to short-circuit.
@@ -179,21 +199,27 @@ sequenceDiagram
     participant Origin
 
     Client->>Cache: onClientRequest
-    Cache->>Origin: onOriginRequest
-    Origin-->>Cache: onOriginResponse
-    Cache-->>Client: onClientResponse
+    alt Cache HIT
+        Cache-->>Client: onClientResponse
+    else Cache MISS
+        Cache->>Origin: onOriginRequest
+        Origin-->>Cache: onOriginResponse
+        Cache-->>Client: onClientResponse
+    end
 ```
 
 ## Example
 
-This example gates a route behind a feature flag and adds a custom header to responses:
+This example gates a route behind a feature flag, and adds a custom header to
+responses from the origin. The flag check runs in `onClientRequest`, so it also
+applies to cached responses. Enable before cache execution to run it.
 
 ```ts
-import * as BunnySDK from "@bunny.net/edgescript-sdk";
+import * as BunnySDK from "@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http
   .servePullZone({ url: "https://echo.free.beeceptor.com/" })
-  .onOriginRequest((ctx) => {
+  .onClientRequest((ctx) => {
     const optFT = ctx.request.headers.get("feature-flags");
     const featureFlags = optFT
       ? optFT.split(",").map((v) => v.trimStart())
@@ -203,18 +229,18 @@ BunnySDK.net.http
     const path = new URL(ctx.request.url).pathname;
     if (path === "/d") {
       if (!featureFlags.includes("route-d-preview")) {
-        // Short-circuit: return response without hitting origin
+        // Short-circuit: return response without the cache or the origin
         return Promise.resolve(
           new Response("You cannot use this route.", { status: 400 }),
         );
       }
     }
 
-    // Continue to origin with the request
+    // Continue to the cache lookup with the request
     return Promise.resolve(ctx.request);
   })
   .onOriginResponse((ctx) => {
-    // Add custom header to response
+    // Add custom header to the response before it is cached
     ctx.response.headers.append("X-Via", "MyMiddleware");
     return Promise.resolve(ctx.response);
   });
