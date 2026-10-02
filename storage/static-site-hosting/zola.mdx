@@ -1,0 +1,23 @@
+---
+title: "Deploy Zola to Bunny Storage"
+sidebarTitle: "Zola"
+description: "Build a Zola site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Zola writes your site to `public`. The CLI detects Zola from a `config.toml` next to a `templates` folder, and needs `zola` installed to run the build.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `zola build` |
+| Output directory | `public` |
+
+## Configure Zola
+
+Set `base_url` in `config.toml` to the URL your site will be served from.
+
+<Deploy name="my-zola-site" build="zola build" />
+
+<CustomDomain />

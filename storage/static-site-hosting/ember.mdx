@@ -1,0 +1,22 @@
+---
+title: "Deploy Ember to Bunny Storage"
+sidebarTitle: "Ember"
+description: "Build a Ember site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import SpaRouting from "/snippets/static-sites/spa-routing.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Ember CLI builds your app into `dist`. The `build` script in a new Ember project runs a production build.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+
+<Deploy name="my-ember-site" build="npm run build" />
+
+<SpaRouting />
+
+<CustomDomain />

@@ -1,0 +1,31 @@
+---
+title: "Deploy Eleventy to Bunny Storage"
+sidebarTitle: "Eleventy"
+description: "Build a Eleventy site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Eleventy writes your site to `_site`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `_site` |
+
+## Configure Eleventy
+
+The CLI runs your `build` script. Add one to `package.json` if your project doesn't have it:
+
+```json package.json
+{
+  "scripts": {
+    "build": "npx @11ty/eleventy"
+  }
+}
+```
+
+<Deploy name="my-eleventy-site" build="npm run build" />
+
+<CustomDomain />

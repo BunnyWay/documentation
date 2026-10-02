@@ -1,0 +1,42 @@
+---
+title: "Deploy Blazor WebAssembly to Bunny Storage"
+sidebarTitle: "Blazor WebAssembly"
+description: "Build a Blazor WebAssembly site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import SpaRouting from "/snippets/static-sites/spa-routing.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+A Blazor WebAssembly app publishes to `bin/Release/net<version>/publish/wwwroot` as static files that run in the browser.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `dotnet publish -c Release` |
+| Output directory | `bin/Release/net10.0/publish/wwwroot` |
+
+## Configure Blazor WebAssembly
+
+The CLI doesn't detect Blazor, so describe the build in `bunny.jsonc` at your project root. Change `net10.0` to match your target framework:
+
+```jsonc bunny.jsonc
+{
+  "sites": {
+    "build": "dotnet publish -c Release",
+    "dir": "bin/Release/net10.0/publish/wwwroot",
+    "spa": true
+  }
+}
+```
+
+When you set up GitHub Actions, pass the framework to `bunny sites ci init`:
+
+```bash
+bunny sites ci init --framework blazor
+```
+
+<Deploy name="my-blazor-site" build="dotnet publish -c Release" />
+
+<SpaRouting />
+
+<CustomDomain />

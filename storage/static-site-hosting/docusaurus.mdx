@@ -1,0 +1,23 @@
+---
+title: "Deploy Docusaurus to Bunny Storage"
+sidebarTitle: "Docusaurus"
+description: "Build a Docusaurus site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Docusaurus builds a static HTML page for every doc and blog post into `build`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `build` |
+
+## Configure Docusaurus
+
+Set `url` and `baseUrl` in `docusaurus.config.js` to match where the site is served, for example `url: "https://docs.example.com"` and `baseUrl: "/"`. Leave `trailingSlash` unset, or set it to `true`. With `false`, Docusaurus writes `about.html` and links to `/about`, which returns a 404.
+
+<Deploy name="my-docusaurus-site" build="npm run build" />
+
+<CustomDomain />

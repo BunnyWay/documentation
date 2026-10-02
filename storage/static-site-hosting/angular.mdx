@@ -1,0 +1,34 @@
+---
+title: "Deploy Angular to Bunny Storage"
+sidebarTitle: "Angular"
+description: "Build a Angular site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import SpaRouting from "/snippets/static-sites/spa-routing.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+The Angular application builder writes your app to `dist/<project>/browser`, where `<project>` is the name in `angular.json`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `dist/<project>/browser` |
+
+## Configure Angular
+
+The Bunny CLI deploys `dist` for Angular by default. Point it at the `browser` folder in `bunny.jsonc` at your project root:
+
+```jsonc bunny.jsonc
+{
+  "sites": {
+    "dir": "dist/my-app/browser"
+  }
+}
+```
+
+<Deploy name="my-angular-site" build="npm run build" />
+
+<SpaRouting />
+
+<CustomDomain />

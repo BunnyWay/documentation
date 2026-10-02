@@ -58,12 +58,19 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "bunny.net",
+                "group": "Get Started",
                 "pages": [
                   "index",
                   "quickstart",
-                  "faq",
-                  "changelog"
+                  "changelog",
+                  "faq"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "product-release-stages",
+                  "domains"
                 ]
               },
               {
@@ -113,13 +120,6 @@
                       "billing/affiliate-guidelines"
                     ]
                   }
-                ]
-              },
-              {
-                "group": "Product",
-                "pages": [
-                  "product-release-stages",
-                  "domains"
                 ]
               }
             ]
@@ -740,9 +740,56 @@
                     "group": "Static Site Hosting",
                     "pages": [
                       "storage/static-site-hosting/index",
-                      "storage/static-site-hosting/vite",
-                      "storage/static-site-hosting/react",
-                      "storage/static-site-hosting/vue"
+                      {
+                        "group": "JavaScript Frameworks",
+                        "pages": [
+                          "storage/static-site-hosting/analog",
+                          "storage/static-site-hosting/angular",
+                          "storage/static-site-hosting/astro",
+                          "storage/static-site-hosting/brunch",
+                          "storage/static-site-hosting/ember",
+                          "storage/static-site-hosting/nextjs",
+                          "storage/static-site-hosting/nuxt",
+                          "storage/static-site-hosting/preact",
+                          "storage/static-site-hosting/qwik",
+                          "storage/static-site-hosting/react",
+                          "storage/static-site-hosting/react-router",
+                          "storage/static-site-hosting/solidstart",
+                          "storage/static-site-hosting/sveltekit",
+                          "storage/static-site-hosting/vite",
+                          "storage/static-site-hosting/vue"
+                        ]
+                      },
+                      {
+                        "group": "Static Site Generators",
+                        "pages": [
+                          "storage/static-site-hosting/elderjs",
+                          "storage/static-site-hosting/eleventy",
+                          "storage/static-site-hosting/gatsby",
+                          "storage/static-site-hosting/gridsome",
+                          "storage/static-site-hosting/hexo",
+                          "storage/static-site-hosting/hugo",
+                          "storage/static-site-hosting/jekyll",
+                          "storage/static-site-hosting/pelican",
+                          "storage/static-site-hosting/zola"
+                        ]
+                      },
+                      {
+                        "group": "Documentation",
+                        "pages": [
+                          "storage/static-site-hosting/docusaurus",
+                          "storage/static-site-hosting/mkdocs",
+                          "storage/static-site-hosting/sphinx",
+                          "storage/static-site-hosting/vitepress"
+                        ]
+                      },
+                      {
+                        "group": "Other",
+                        "pages": [
+                          "storage/static-site-hosting/blazor",
+                          "storage/static-site-hosting/static-html"
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -1092,6 +1139,7 @@
                   "cli/commands/config",
                   "cli/commands/db",
                   "cli/commands/scripts",
+                  "cli/commands/sites",
                   "cli/commands/sandbox",
                   {
                     "group": "Registry",

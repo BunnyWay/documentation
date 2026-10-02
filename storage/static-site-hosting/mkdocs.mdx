@@ -1,0 +1,19 @@
+---
+title: "Deploy MkDocs to Bunny Storage"
+sidebarTitle: "MkDocs"
+description: "Build a MkDocs site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+`mkdocs build` turns your Markdown into a static site in `site`. The CLI detects MkDocs from `mkdocs.yml`, and needs `mkdocs` installed to run the build.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `mkdocs build` |
+| Output directory | `site` |
+
+<Deploy name="my-mkdocs-site" build="mkdocs build" />
+
+<CustomDomain />

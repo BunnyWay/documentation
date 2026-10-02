@@ -1,0 +1,37 @@
+---
+title: "Deploy Next.js to Bunny Storage"
+sidebarTitle: "Next.js"
+description: "Build a Next.js site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Next.js can export your app as static HTML, CSS, and JavaScript into `out`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `out` |
+
+## Configure Next.js
+
+Turn on static export in your Next.js config (`next.config.ts` in new projects), and write each page as a folder with an `index.html`:
+
+```js next.config.mjs
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "export",
+  trailingSlash: true,
+};
+
+export default nextConfig;
+```
+
+Without `trailingSlash`, Next.js writes `/about` as `about.html`, and a request for `/about` returns a 404.
+
+A static export can't use features that need a server, such as API routes or the default image optimiser. See the [Next.js static exports guide](https://nextjs.org/docs/app/guides/static-exports) for the full list. To run Next.js with a server, deploy it with [Magic Containers](/magic-containers/guides/nextjs).
+
+<Deploy name="my-next-site" build="npm run build" />
+
+<CustomDomain />

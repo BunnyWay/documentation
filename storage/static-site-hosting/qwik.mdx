@@ -1,0 +1,29 @@
+---
+title: "Deploy Qwik to Bunny Storage"
+sidebarTitle: "Qwik"
+description: "Build a Qwik site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Qwik City's static adapter prerenders your routes into `dist`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+
+## Configure Qwik
+
+Add the static adapter:
+
+```bash
+npm run qwik add static
+```
+
+Then set `origin` in `adapters/static/vite.config.ts` to the URL your site will be served from.
+
+<Deploy name="my-qwik-site" build="npm run build" />
+
+<CustomDomain />
