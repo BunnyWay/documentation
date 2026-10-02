@@ -17,6 +17,11 @@ Post-cache execution remains the default. Enable before cache execution when
 you need per-request logic, such as authentication, tenant-aware routing, or
 custom caching rules.
 
+<Warning>
+  Overriding the default handling of `/.well-known/*` paths in your script can
+  break ACME challenges and prevent automated certificate renewal.
+</Warning>
+
 ## Enable before cache execution
 
 Before cache execution is enabled at the Pull Zone level and applies to the
