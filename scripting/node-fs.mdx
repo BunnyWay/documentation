@@ -11,25 +11,22 @@ No breaking changes are expected, but additional features will be implemented so
 
 ## Overview
 
-Edge Scripting provides support for the Node.js file system API through the
-`node:fs` and `node:fs/promises` modules. This allows you to read, write, and
-manipulate files and directories within your Edge Scripts.
+Edge Scripting supports the Node.js file system API through the `node:fs` and
+`node:fs/promises` modules, so you can read, write, and manipulate files and
+directories from inside an Edge Script.
 
-The file system API is based on Deno's sandboxed environment with Node.js
-compatibility, supporting both the modern Promise-based API (`node:fs/promises`)
-and the traditional callback-based API (`node:fs`). 
+The implementation sits on Deno's sandboxed environment with Node.js
+compatibility. Both the Promise-based API (`node:fs/promises`) and the older
+callback-based API (`node:fs`) work. We recommend the Promise-based one for the
+cleaner async/await syntax.
 
-We recommend using the Promise-based API for cleaner async/await syntax.
 
+## Virtual file system
 
-## Virtual File System
+Every script gets a virtual file system for file operations. It lives in the
+virtual memory available to the worker.
 
-Each script has now access to a Virtual File System that allow to handle
-file based operations.
-
-This file system lives on the Virtual Memory available of the worker.
-
-Currently the file directory is composed of two folder:
+The directory tree currently has two folders:
 
 ```
 / # Root directory
@@ -42,26 +39,23 @@ You can create directories anywhere. Permissions are enforced for the owner (use
 All files are opened in `w+`.
 
 <Info>
-We suggest you to avoid creating directory in root directory `/` as we are going
-to create new folders with differents functions, like `/dev/*` and other read
-only directories.
+Avoid creating directories in the root directory `/`. We plan to add folders
+there for other functions, such as `/dev/*` and other read only directories.
 </Info>
 
-In the Virtual File System, paths are limited to **4096 chars**, for instance
-`foo/bar` is 7 characters. It's also limited to **48 segments** (`a/b/c` is 3
-segments).
+Paths in the virtual file system are limited to **4096 characters** (`foo/bar`
+counts as 7) and to **48 segments** (`a/b/c` is 3 segments).
 
-Capacity checks for creating, copying and moving are done before the
-operation. This can result in trying to copy a large file resulting in an out of
-memory error, even though there is space left to create new files or
-directories.
+Capacity checks for creating, copying and moving happen before the operation
+runs. Copying a large file can therefore fail with an out of memory error even
+though there is still space to create new files or directories.
 
 
-## Importing the Module
+## Importing the module
 
-EdgeScripting supports both the modern Promise-based API and the traditional callback-based API.
+EdgeScripting supports both the Promise-based API and the callback-based API.
 
-### Promise-based API (Recommended)
+### Promise-based API (recommended)
 
 ```typescript
 import * as fs from "node:fs/promises";
@@ -88,16 +82,15 @@ fs.readFile("/tmp/file.txt", "utf-8", (err, data) => {
 
 ## Limitations
 
-EdgeScripting's file system implementation operates in a sandboxed environment
-with limitations. 
-Understanding these constraints is essential for building reliable applications.
+The file system runs in a sandbox, which constrains what it can do. The
+following sections cover where it differs from Node.js.
 
 <Info>
 Always handle file system errors gracefully. The sandboxed environment may
 behave differently from traditional Node.js environments.
 </Info>
 
-### Symbolic Links and Hard Links
+### Symbolic links and hard links
 
 Symbolic links are supported. `symlink()`, `symlinkSync()`, `readlink()`, `readlinkSync()`, and `lstat()` work as expected.
 
@@ -105,11 +98,12 @@ Symbolic links are supported. `symlink()`, `symlinkSync()`, `readlink()`, `readl
 Hard links are not supported. `link()` and `linkSync()` will throw errors.
 </Warning>
 
-### File Statistics - Timestamps
+### File statistics and timestamps
 
 All `Stats` timestamp properties are supported and return correct values:
 
 **Reliable Stats properties:**
+
 - `size` - File size in bytes
 - `isFile()` - Check if entry is a file
 - `isDirectory()` - Check if entry is a directory
@@ -119,7 +113,7 @@ All `Stats` timestamp properties are supported and return correct values:
 - `atimeMs`, `mtimeMs`, `ctimeMs` - Millisecond timestamps
 - `birthtime` - File creation time
 
-### File and Directory Permissions
+### File and directory permissions
 
 File and directory permissions are supported for the **owner (user)** bits. `chmod()` and `chmodSync()` work, and `Stats.mode` reflects the permissions you set. `access()` respects owner-level read, write, and execute bits.
 
@@ -130,7 +124,7 @@ File and directory permissions are supported for the **owner (user)** bits. `chm
 </Info>
 
 
-### File Watching
+### File watching
 
 File system watching is not supported.
 
@@ -146,7 +140,7 @@ The following operations are unavailable:
 be mindful of performance implications and CPU time limits.
 
 
-### Performance Considerations
+### Performance considerations
 
 <Note>
 **Memory limits:** The whole Virtual FileSystem lives inside your script memory.
@@ -164,9 +158,9 @@ Leverage streaming to avoid allocating too much memory at a time.
 
 ## Quickstart
 
-Here are practical examples showing common file system patterns in EdgeScripting.
+Common file system patterns in EdgeScripting.
 
-### Example 1: Reading a File
+### Example 1: Reading a file
 
 ```typescript
 import * as fs from "node:fs/promises";
@@ -188,7 +182,7 @@ BunnySDK.net.http.serve(async (request: Request) => {
 });
 ```
 
-### Example 2: Writing a File
+### Example 2: Writing a file
 
 ```typescript
 import * as fs from "node:fs/promises";
@@ -214,7 +208,7 @@ BunnySDK.net.http.serve(async (request: Request) => {
 });
 ```
 
-### Example 3: Working with Directories
+### Example 3: Working with directories
 
 ```typescript
 import * as fs from "node:fs/promises";
@@ -240,7 +234,7 @@ BunnySDK.net.http.serve(async (request: Request) => {
 });
 ```
 
-### Example 4: Error Handling Patterns
+### Example 4: Error handling patterns
 
 ```typescript
 import * as fs from "node:fs/promises";
@@ -276,12 +270,12 @@ BunnySDK.net.http.serve(async (request: Request) => {
 });
 ```
 
-### Example 5: Using FileHandle for Chunked Reading
+### Example 5: Using FileHandle for chunked reading
 
 
 <Warning>
-This is not an optimized script at all. This is more to show an example of
-chunked reading, please avoid using something similar in production.
+This script is not optimized. It shows how chunked reading works, so please
+don't run anything like it in production.
 </Warning>
 
 ```typescript
@@ -438,7 +432,7 @@ BunnySDK.net.http.serve(async (request: Request) => {
 });
 ```
 
-### Example 6: Symbolic Links
+### Example 6: Symbolic links
 
 ```typescript
 import * as fs from "node:fs/promises";

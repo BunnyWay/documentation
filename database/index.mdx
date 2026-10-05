@@ -24,6 +24,7 @@ Bunny Database is a fully managed relational database service built on libSQL, a
 - **SQLite compatibility**: Use standard SQL syntax and leverage existing SQLite knowledge, tools, and libraries
 - **Global replication**: Replicate your database across multiple regions for low-latency access worldwide
 - **Multiple connection options**: Connect via HTTP API, native SDKs, or popular ORMs
+- **Versioned migrations**: Track schema changes as SQL files and apply them with the Bunny CLI
 - **Edge integration**: Works seamlessly with Edge Scripting and Magic Containers
 - **Fully managed**: No infrastructure to maintain with automatic scaling and replication
 - **Usage-based billing**: Stays idle when inactive, so you only pay for what you use
@@ -51,6 +52,9 @@ Bunny Database integrates with other bunny.net developer platform services:
 <CardGroup cols={2}>
   <Card title="Quickstart" icon="rocket" href="/database/quickstart">
     Create your first database and run queries in minutes
+  </Card>
+  <Card title="Migrations" icon="git-branch" href="/database/migrations">
+    Version your schema as SQL files and apply them with the Bunny CLI
   </Card>
   <Card title="SQL API" icon="code" href="/database/connect/sql-api">
     Connect directly using the HTTP-based SQL API

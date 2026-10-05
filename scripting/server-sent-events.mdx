@@ -1,0 +1,117 @@
+---
+title: "Server-Sent Events"
+description: "Stream Server-Sent Events from an Edge Script, and keep the isolate alive while the connection is open."
+---
+
+An Edge Script can answer a request with a stream of [Server-Sent Events](/cdn/server-sent-events). The script returns a `Response` that holds a `ReadableStream`, and the edge delivers each event as the script writes it.
+
+The [CDN page](/cdn/server-sent-events) describes how the network treats an event stream, including the heartbeat and the caching rules. This page describes what a script must do.
+
+## Quickstart
+
+This example sends one event immediately, and one more every 15 seconds. The interval also acts as the heartbeat that keeps the connection open.
+
+```typescript
+import * as BunnySDK from "@bunny.net/edgescript-sdk";
+
+const HEARTBEAT_MS = 15_000;
+
+BunnySDK.net.http.serve(async (request: Request) => {
+  const encoder = new TextEncoder();
+  let timer: number;
+  let onClosed: () => void;
+
+  // Resolves when the client goes away and the runtime cancels the stream.
+  const closed = new Promise<void>((resolve) => {
+    onClosed = resolve;
+  });
+
+  const stream = new ReadableStream({
+    start(controller) {
+      let id = 0;
+
+      const send = () => {
+        id += 1;
+        controller.enqueue(
+          encoder.encode(
+            `id: ${id}\nevent: tick\ndata: ${new Date().toISOString()}\n\n`,
+          ),
+        );
+      };
+
+      // Send the first event at once. The client waits until this byte.
+      send();
+
+      timer = setInterval(send, HEARTBEAT_MS);
+    },
+    cancel() {
+      clearInterval(timer);
+      onClosed();
+    },
+  });
+
+  // It is important to call waitUntil; otherwise the script may be evicted
+  // while the stream is still open.
+  Bunny.v1.waitUntil(closed);
+
+  return new Response(stream, {
+    headers: {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+    },
+  });
+});
+```
+
+## Return the response before you wait
+
+Return the `Response` at once, and let the stream fill in afterwards. A script that waits before it returns is treated as a slow origin: the edge allows 60 seconds for a response to start, and answers with `504 Gateway Timeout` when nothing arrives. This applies to any `await` before the `return`, and a subrequest is the common case.
+
+```typescript
+// Wrong. If the subrequest takes longer than 60 seconds, the client gets a 504
+// and never sees the stream.
+const upstream = await fetch(slowOrigin);
+return new Response(upstream.body, { headers });
+```
+
+```typescript
+// Right. The response goes back at once, and the subrequest runs inside the
+// stream, so a slow origin delays an event instead of failing the request.
+const stream = new ReadableStream({
+  async start(controller) {
+    const upstream = await fetch(slowOrigin);
+    // ... write events from the upstream body
+  },
+});
+return new Response(stream, { headers });
+```
+
+<Warning>
+  Write the first event as soon as the stream opens, and do not wait for the
+  first real update. The client receives no part of the response until your
+  script writes the first byte, and this includes the response headers.
+</Warning>
+
+## Keep the isolate alive
+
+The isolate that answers a request can be evicted once the handler returns. An event stream lives longer than the handler, so pass a promise to [`waitUntil`](/scripting/runtime#waituntil) that resolves only when the stream ends. Without it, the script can stop in the middle of a stream.
+
+Always resolve that promise when the stream closes. A promise that never settles holds the isolate open after the client has gone.
+
+## Caching
+
+A stream that a script returns is not cached, and it needs no `Cache-Control` header. The edge serves every request to a standalone script from the script itself.
+
+Set `Cache-Control: no-cache` anyway if the same code also runs behind a pull zone as [middleware](/scripting/middleware/overview), where the normal [caching rules](/cdn/server-sent-events#keep-the-stream-out-of-the-cache) apply.
+
+## Limits
+
+The [Edge Scripting limits](/scripting/limits) apply, with one point to note: the 30-second CPU time limit measures processor time, and not the time a connection stays open. A stream that waits between events uses almost no CPU time. [Pricing](/scripting/pricing) follows the same rule.
+
+Keep the work inside the stream small. A script that builds each event with a subrequest reaches the subrequest limit quickly.
+
+## References
+
+- [Server-Sent Events on the CDN](/cdn/server-sent-events)
+- [WebSockets](./websockets), for two-way communication
+- [Runtime - waitUntil](./runtime#waituntil)

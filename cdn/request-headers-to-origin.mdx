@@ -1,0 +1,88 @@
+---
+title: Request headers sent to your origin
+description: When bunny.net fetches content from your origin, it forwards the visitor's request headers and adds the headers below.
+sidebarTitle: Request headers
+---
+
+# Request headers sent to your origin
+
+When bunny.net fetches content from your origin, it forwards the visitor's request headers and adds the headers below. Header names are case-insensitive. Origins that support HTTP/2 receive them in lowercase.
+
+## Headers added to every origin request
+
+| Header | Example | Description |
+|---|---|---|
+| `Host` | `origin.example.com` | The origin host header configured on your pull zone: the visitor's hostname when **Forward Host Header** is enabled, otherwise your custom origin host header, otherwise the hostname of your origin URL. HTTPS origins also receive it as the TLS SNI name. |
+| `X-Real-IP` | `203.0.113.42` | The visitor's IP address (IPv4 or IPv6). |
+| `X-Forwarded-For` | `203.0.113.42` | The visitor's IP address. bunny.net always sends a single address and discards any `X-Forwarded-For` sent by the visitor. |
+| `X-Forwarded-Proto` | `https` | The protocol the visitor used to connect to bunny.net: `http` or `https`. |
+| `Via` | `BunnyCDN` | Always `BunnyCDN`. |
+| `CDN-PullZoneId` | `1234567` | The ID of your pull zone. |
+| `CDN-RequestId` | `9b2f61d0c4e84a1fb3a7e2d55c08f6a1` | A unique ID for the request. Without Origin Shield it matches the `CDN-RequestId` response header the visitor receives. |
+| `CDN-Host` | `cdn.example.com` | The hostname the visitor requested. bunny.net does not send `X-Forwarded-Host`. |
+| `CDN-RequestCountryCode` | `DE` | The visitor's country as an ISO 3166-1 alpha-2 code, based on the visitor's IP address. |
+| `CDN-RequestStateCode` | `CA` | The visitor's state or region, the subdivision part of an ISO 3166-2 code. Sent only when it is known. |
+| `CDN-MobileDevice` | `false` | `true` when the visitor's User-Agent identifies a mobile device. |
+| `CDN-JA4` | `t13d1516h2_8daaf6152771_02713d6af862` | The JA4 TLS fingerprint of the visitor's connection. Sent for HTTPS requests only. |
+| `CDN-ServerId` | `1272` | The ID of the bunny.net server that sent the request to your origin. |
+| `CDN-ServerZone` | `DE` | The region code of that server. |
+| `CDN-ConnectionId` | `27292055773` | An internal connection identifier on that server. |
+| `CDN-LoopCount` | `1` | The number of bunny.net hops the request has made: `1` when the edge connects directly, `2` through Origin Shield. bunny.net rejects requests that loop through it more than four times. |
+| `CDN-ProxyVer` | `1.71` | The version of the bunny.net proxy software. |
+| `Accept-Encoding` | `zstd, br, gzip` | Set by bunny.net. See [Compression](#compression). |
+
+
+
+
+### Compression
+
+bunny.net replaces the visitor's `Accept-Encoding` header on every request except POST requests and WebSocket upgrades, which keep the visitor's value:
+
+- `zstd, br, gzip` when fetching compressible files, such as HTML, CSS, JavaScript, JSON, XML, SVG, fonts, documents and paths without a file extension, so your origin can return a compressed response.
+- `identity` for everything else, such as images, video, archives, range requests, and PUT, PATCH or DELETE requests.
+- If all compression types are disabled on your pull zone, bunny.net forwards the single encoding the visitor supports best: `zstd`, then `br`, then `gzip`.
+
+## Headers added by specific features
+
+| Header | When it is sent |
+|---|---|
+| `Range` | **Optimize for video** is enabled. bunny.net fetches large files in fixed-size byte ranges and caches each part. HTML, CSS, JavaScript, JSON, XML, SVG, ICO, M3U8 and font files are always fetched whole. |
+| `If-None-Match`, `If-Modified-Since` | bunny.net is revalidating an expired cached file that had an `ETag` or `Last-Modified` header. Respond with `304 Not Modified` to keep the cached copy. |
+| `Authorization`, `X-Amz-Date`, `X-Amz-Content-SHA256` | S3 authentication is enabled. bunny.net signs the request with AWS Signature Version 4 and replaces any `Authorization` header sent by the visitor. |
+| `Upgrade: websocket`, `Connection: upgrade` | WebSockets are enabled and the visitor opens a WebSocket connection. |
+| `CDN-DnsZoneId` | The pull zone serves a CDN-accelerated bunny.net DNS record. Contains the ID of the DNS zone. |
+| `CDN-Bot` | Bunny Shield is enabled and the visitor's User-Agent matches a known bot, for example `Googlebot; category=SEO; verified=yes; action=ignore`. `verified` is `yes`, `no` or `unverifiable`. `action` is `allow` when a Shield override allows the bot, otherwise `ignore`. |
+| Any header | A **Set Request Header** edge rule matches. Edge rules run after bunny.net adds its headers, so they can change or remove (with an empty value) any header on this page, including `Host`. |
+
+## Origin Shield
+
+With Origin Shield enabled, your origin is contacted by the Origin Shield location rather than the location that received the visitor's request:
+
+- `CDN-ServerId`, `CDN-ServerZone` and `CDN-ConnectionId` describe the Origin Shield server.
+- `CDN-LoopCount` is `2`.
+- `CDN-RequestId` is assigned by the Origin Shield location, so it differs from the `CDN-RequestId` the visitor receives.
+- `X-Real-IP`, `X-Forwarded-For`, `CDN-RequestCountryCode`, `CDN-RequestStateCode`, `CDN-JA4` and `CDN-Bot` still describe the visitor.
+
+## Headers bunny.net changes or removes
+
+bunny.net forwards the visitor's other request headers unchanged, including `User-Agent`, `Accept`, `Accept-Language`, `Referer`, `Cookie`, `Authorization` and custom headers. These are changed or removed:
+
+- `X-Forwarded-For`, `X-Real-IP` and `Via` sent by the visitor are replaced.
+- `Host` and `Accept-Encoding` are replaced as described above.
+- Hop-by-hop headers (`Connection`, `Keep-Alive`, `TE`, `Expect` and `Upgrade`) are not forwarded, except for WebSocket upgrades.
+- For GET and HEAD requests, the visitor's `Range`, `If-Range`, `If-Match`, `If-Unmodified-Since`, `If-None-Match` and `If-Modified-Since` headers are not forwarded, because bunny.net fetches and caches the response itself. HEAD requests are sent to your origin as GET.
+- Header names that contain an underscore (`_`) are dropped.
+- `X-HTTP-Method-Override` is forwarded only on POST requests.
+
+## Requests from other bunny.net services
+
+- **Perma-Cache:** on a Perma-Cache miss, Bunny Storage fetches the file from your origin with the same headers. A second, background request then copies the file into your Perma-Cache storage zone. Both come from Bunny Storage servers.
+- **Prerender and Markdown conversion:** the converter requests the page through bunny.net again, so your origin receives a normal origin request with the converter's `User-Agent`.
+- **Edge Scripting:** requests made with `fetch()` in your script use the headers your script sets.
+
+
+
+## Notes
+
+- bunny.net does not send `X-Forwarded-Host`, `X-Forwarded-Port`, `Forwarded` or `True-Client-IP`. Use `CDN-Host` and `X-Real-IP` instead.
+- Treat the `CDN-*` headers that describe the visitor (country, state, JA4 fingerprint, bot) as informational, and don't rely on them alone for access control.

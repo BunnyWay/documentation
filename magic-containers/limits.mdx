@@ -34,7 +34,7 @@ Once an application consumes 10 GB of ephemeral storage, the container/pod will 
 
 </Info>
 
-Magic Containers automatically attempts to restart a container if it detects a failure.
+Magic Containers automatically attempts to restart a container if it detects a failure. For the number of attempts, and for the delay between them, refer to the [Restart Policy](/magic-containers/restart-policy).
 
 ## CPU core detection
 
@@ -108,8 +108,6 @@ For other applications, look for thread or worker count configuration options an
 <Tip>
 When in doubt, explicitly set thread counts to 8 in your application configuration rather than relying on auto-detection. This ensures consistent and optimal performance on Magic Containers.
 </Tip>
-
-The system will attempt to restart the container up to 10 times before giving up.
 
 # Port Limits
 

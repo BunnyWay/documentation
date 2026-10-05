@@ -9,49 +9,95 @@ Automate your deployments by integrating Magic Containers with GitHub Actions. W
 
 - An application already deployed on the Magic Containers platform
 - A GitHub repository containing a Dockerfile or valid build context
-- Container registry credentials (use `GITHUB_TOKEN` for GitHub Container Registry, or personal access tokens for DockerHub)
+- Container registry credentials (`GITHUB_TOKEN` for GitHub Container Registry, your bunny.net API key for the [Bunny Container Registry](/magic-containers/bunny-container-registry), or a personal access token for DockerHub)
 
 ## Quickstart
 
 Add a step to your GitHub Actions workflow with the following inputs: `app_id`, `api_key`, `container`, and `image_tag`. This triggers a rolling update whenever a new image is built and pushed.
 
-```yml
-name: Update container image when pushing to main
+<Tabs>
+  <Tab title="GitHub Container Registry">
+    ```yml
+    name: Update container image when pushing to main
 
-on:
-  push:
-    branches:
-      - "main"
+    on:
+      push:
+        branches:
+          - "main"
 
-jobs:
-  build:
-    name: Build and deploy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    jobs:
+      build:
+        name: Build and deploy
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
 
-      - name: docker login
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          - name: docker login
+            uses: docker/login-action@v3
+            with:
+              registry: ghcr.io
+              username: ${{ github.actor }}
+              password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: docker build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          - name: docker build and push
+            uses: docker/build-push-action@v5
+            with:
+              context: .
+              push: true
+              tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
 
-      - name: Update container image on Magic Containers
-        uses: BunnyWay/actions/container-update-image@main
-        with:
-          app_id: ${{ vars.APP_ID }}
-          api_key: ${{ secrets.BUNNYNET_API_KEY }}
-          container: app
-          image_tag: "${{ github.sha }}"
-```
+          - name: Update container image on Magic Containers
+            uses: BunnyWay/actions/container-update-image@main
+            with:
+              app_id: ${{ vars.APP_ID }}
+              api_key: ${{ secrets.BUNNYNET_API_KEY }}
+              container: app
+              image_tag: "${{ github.sha }}"
+    ```
+  </Tab>
+  <Tab title="Bunny Container Registry">
+    <Note>
+    The [Bunny Container Registry](/magic-containers/bunny-container-registry) is in **Closed Preview**. See [Product Release Stages](/product-release-stages) for details.
+    </Note>
+
+    Push with the [bunny.net CLI](/cli): it authenticates the push and namespaces the image under your account, so the workflow needs no registry login step and no account ID variable. The same API key secret authenticates both the registry push and the Magic Containers update.
+
+    ```yml
+    name: Update container image when pushing to main
+
+    on:
+      push:
+        branches:
+          - "main"
+
+    jobs:
+      build:
+        name: Build and deploy
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+
+          - name: Install the bunny.net CLI
+            run: npm install -g @bunny.net/cli
+
+          - name: docker build
+            run: docker build --platform linux/amd64 --tag my-app:${{ github.sha }} .
+
+          - name: Push to the Bunny Container Registry
+            run: bunny registry push my-app:${{ github.sha }}
+            env:
+              BUNNYNET_API_KEY: ${{ secrets.BUNNYNET_API_KEY }}
+
+          - name: Update container image on Magic Containers
+            uses: BunnyWay/actions/container-update-image@main
+            with:
+              app_id: ${{ vars.APP_ID }}
+              api_key: ${{ secrets.BUNNYNET_API_KEY }}
+              container: app
+              image_tag: "${{ github.sha }}"
+    ```
+  </Tab>
+</Tabs>
 
 ## Inputs
 

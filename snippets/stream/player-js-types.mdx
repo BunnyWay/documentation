@@ -1,0 +1,54 @@
+player.js ships without types. Add a declaration file anywhere your `tsconfig.json` includes, for example `player.js.d.ts`. It covers the methods and events the Bunny Player supports:
+
+```ts player.js.d.ts
+declare module "player.js" {
+  export type PlayerEvent =
+    | "ready"
+    | "play"
+    | "pause"
+    | "ended"
+    | "timeupdate"
+    | "progress"
+    | "seeked"
+    | "error"
+    | "playbackratechange";
+
+  export type TimeUpdate = { seconds: number; duration: number };
+  export type Progress = { percent: number; seconds: number; duration: number };
+  /** Present when a command fails. Empty when the media itself errors. */
+  export type PlayerError = { code: number; msg: string };
+
+  export class Player {
+    constructor(iframe: HTMLIFrameElement | string);
+
+    on(event: "ready", callback: () => void): void;
+    on(event: "timeupdate", callback: (data: TimeUpdate) => void): void;
+    on(event: "progress", callback: (data: Progress) => void): void;
+    on(event: "playbackratechange", callback: (rate: number) => void): void;
+    on(event: "error", callback: (error?: PlayerError) => void): void;
+    on(event: PlayerEvent, callback: (data?: unknown) => void): void;
+    off(event: PlayerEvent, callback?: (...args: unknown[]) => void): void;
+    supports(kind: "method" | "event", name: string | string[]): boolean;
+    /** Send a raw command, for methods player.js does not expose such as setPlaybackRate. */
+    send(message: { method: string; value?: unknown }): void;
+
+    play(): void;
+    pause(): void;
+    mute(): void;
+    unmute(): void;
+    setVolume(percent: number): void;
+    setCurrentTime(seconds: number): void;
+    setLoop(loop: boolean): void;
+
+    getPaused(callback: (paused: boolean) => void): void;
+    getMuted(callback: (muted: boolean) => void): void;
+    getVolume(callback: (percent: number) => void): void;
+    getDuration(callback: (seconds: number) => void): void;
+    getCurrentTime(callback: (seconds: number) => void): void;
+    getLoop(callback: (loop: boolean) => void): void;
+  }
+
+  const playerjs: { Player: typeof Player };
+  export default playerjs;
+}
+```

@@ -3,53 +3,48 @@ title: Runtime
 description: The runtime APIs available on the bunny.net platform.
 ---
 
+The bunny.net EdgeScript Runtime is based on Deno, so you can use a subset of
+what is available from Deno or Node. On top of that, we provide functions that
+change how the script behaves in our environment or bind it to other bunny.net
+services.
 
-## Runtime
+## waitUntil
 
-The bunny.net EdgeScript Runtime is based on Deno, so you can use a subset of what
-is available from Deno or Node. Given the environment where we run
-EdgeScripts, we also provide functions you can use to alter the behavior of
-the script or bind to other bunny.net Services.
+The `waitUntil` function extends the life of the isolate running a request. Use
+it when a script needs to keep working after the request it answered has
+finished. Even when no other requests are routed to the script, the invocation
+stays alive.
 
+It is useful for holding [WebSocket](./websockets) connections open, refreshing
+a cache entry in the background, or firing off telemetry once the response has
+gone back to the client.
 
-### waitUntil
-
-The `waitUntil` function allows you to extend the duration of the isolate
-running a request. It can be useful when you want a script to continue doing
-work after the request it answered has finished. Even if no other requests are
-being routed to this script, it will extend the duration of this script
-invocation.
-
-It can be quite useful if you want to maintain [WebSocket](./websockets)
-connections, refresh a cache entry in the background, or fire off telemetry
-after the response has been returned to the client.
-
-#### Signature
+### Signature
 
 ```typescript
 Bunny.v1.waitUntil(promise: Promise<unknown>): void;
 ```
 
-#### Parameters
+### Parameters
 
 <ParamField body="promise" type="Promise<unknown>" required>
   A promise representing background work. The isolate will stay alive until
   this promise settles (resolves or rejects).
 </ParamField>
 
-#### Returns
+### Returns
 
-`void` — `waitUntil` does not return a value.
+`void`. `waitUntil` does not return a value.
 
 <Note>
 You can call `waitUntil` multiple times; the script will only be evicted once
 every given promise has been resolved.
 </Note>
 
-#### Example
+### Example
 
-Return the response to the client immediately while a slower task — here,
-populating the cache — finishes in the background.
+Return the response to the client immediately while a slower task, in this case
+populating the cache, finishes in the background.
 
 ```typescript
 import * as BunnySDK from "@bunny.net/edgescript-sdk";
@@ -69,8 +64,8 @@ BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
     { headers: { "Cache-Control": "s-maxage=60" } },
   );
 
-  // Don't block the response on the cache write — let it finish after we
-  // return. The isolate stays alive until cache.put() resolves.
+  // Don't block the response on the cache write. Let it finish after we
+  // return; the isolate stays alive until cache.put() resolves.
   Bunny.v1.waitUntil(cache.put(cacheKey, fresh.clone()));
 
   return fresh;
