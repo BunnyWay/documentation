@@ -1,0 +1,105 @@
+---
+title: Import & Export
+description: Import and export data to and from Bunny Database
+---
+
+<Warning>
+  The import and export features described on this page are experimental and may change in a future release.
+</Warning>
+
+## Export
+
+You can export your entire database as a SQL dump file. This is useful for backups, migrations, or local development.
+
+### Using cURL
+
+Download a SQL dump from your Bunny Database endpoint:
+
+```bash
+curl -L \
+  -H "Authorization: Bearer YOUR_DB_TOKEN" \
+  "https://YOUR_DATABASE_ENDPOINT/dump" \
+  -o backup.sql
+```
+
+Replace:
+- `YOUR_DB_TOKEN` with your database access token (Full Access required)
+- `YOUR_DATABASE_ENDPOINT` with your database URL (e.g., `your-database-id.lite.bunnydb.net`)
+
+### Convert to SQLite file
+
+Once you have the SQL dump, you can convert it to a SQLite database file for local use:
+
+```bash
+sqlite3 backup.sqlite < backup.sql
+```
+
+This creates a `backup.sqlite` file that you can open with any SQLite client or use in your local development environment.
+
+## Import
+
+You can import data into Bunny Database using SQL statements. There are several ways to do this depending on your use case.
+
+### Using the Dashboard SQL Editor
+
+1. From your database page in the Bunny dashboard, open the **SQL Editor** tab
+2. Paste your SQL statements (CREATE TABLE, INSERT, etc.)
+3. Click **Run** to execute the statements
+
+This method works best for smaller imports or quick data additions.
+
+### Using the CLI
+
+If you have a SQL file to import, you can use the Bunny CLI shell:
+
+```bash
+bunny db shell --name your-database-name < import.sql
+```
+
+Or run the shell interactively and paste your SQL:
+
+```bash
+bunny db shell --name your-database-name
+```
+
+### Using an SDK
+
+For programmatic imports, use one of the [official SDKs](/database/quickstart#install-an-sdk-and-connect) to execute your SQL statements:
+
+<Tabs>
+  <Tab title="TypeScript">
+    ```typescript
+    import { createClient } from "@libsql/client/web";
+    import { readFileSync } from "fs";
+
+    const client = createClient({
+      url: "libsql://your-database-id.lite.bunnydb.net",
+      authToken: "your-access-token",
+    });
+
+    // Read and execute SQL file
+    const sql = readFileSync("import.sql", "utf-8");
+    const statements = sql.split(";").filter((s) => s.trim());
+
+    for (const statement of statements) {
+      await client.execute(statement);
+    }
+    ```
+  </Tab>
+  <Tab title="Bash (SQL API)">
+    ```bash
+    # Execute SQL statements via the HTTP API
+    curl -X POST \
+      -H "Authorization: Bearer YOUR_DB_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d '{"statements": ["CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)", "INSERT INTO users VALUES (1, '\''Kit'\'')"]}' \
+      "https://YOUR_DATABASE_ENDPOINT"
+    ```
+  </Tab>
+</Tabs>
+
+## Best practices
+
+- **Test imports locally first**: Before importing into a production database, test your SQL dump against a local SQLite instance to catch any syntax errors
+- **Use transactions for large imports**: Wrap large imports in a transaction to ensure atomicity and improve performance
+- **Back up before major changes**: Always export a backup before performing large imports or schema changes
