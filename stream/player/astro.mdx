@@ -215,10 +215,12 @@ import { loadPlayerjs } from "../lib/load-playerjs";
 
 async connectedCallback() {
   const iframe = this.querySelector("iframe");
-  if (this.player || !iframe?.dataset.src) return;
+  const src = iframe?.dataset.src;
+  if (!iframe || !src) return;
+  delete iframe.dataset.src;
 
   const playerjs = await loadPlayerjs();
-  iframe.src = iframe.dataset.src;
+  iframe.src = src;
   const player = new playerjs.Player(iframe);
   this.player = player;
   // ...register events as before
