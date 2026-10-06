@@ -33,7 +33,6 @@ It assumes a client-rendered app, such as one built with Vite. For server render
     export type BunnyPlayerProps = {
       libraryId: string;
       videoId: string;
-      /** Player parameters such as autoplay, muted, captions, or t. */
       params?: Record<string, string | number | boolean>;
       title?: string;
       onReady?: (player: Player) => void;
@@ -71,20 +70,21 @@ It assumes a client-rendered app, such as one built with Vite. For server render
         const iframe = iframeRef.current;
         if (!iframe) return;
 
-        // player.js has no teardown API. This flag stops stale listeners
-        // from firing after the video changes or the component unmounts.
-        let active = true;
+        // player.js never removes the window listener each Player adds,
+        // so grab it while constructing and remove it on cleanup.
+        let onMessage: EventListener = () => {};
+        const addEvent = playerjs.addEvent;
+        playerjs.addEvent = (elem, type, handler) => addEvent(elem, type, (onMessage = handler));
         const player = new playerjs.Player(iframe);
+        playerjs.addEvent = addEvent;
 
-        player.on("ready", () => active && handlers.current.onReady?.(player));
-        player.on("play", () => active && handlers.current.onPlay?.());
-        player.on("pause", () => active && handlers.current.onPause?.());
-        player.on("ended", () => active && handlers.current.onEnded?.());
-        player.on("timeupdate", (time) => active && handlers.current.onTimeUpdate?.(time));
+        player.on("ready", () => handlers.current.onReady?.(player));
+        player.on("play", () => handlers.current.onPlay?.());
+        player.on("pause", () => handlers.current.onPause?.());
+        player.on("ended", () => handlers.current.onEnded?.());
+        player.on("timeupdate", (time) => handlers.current.onTimeUpdate?.(time));
 
-        return () => {
-          active = false;
-        };
+        return () => window.removeEventListener("message", onMessage);
       }, [src]);
 
       return (
@@ -231,9 +231,6 @@ declare global {
     player.js has to be loaded before the iframe finishes loading. It caches the iframe's `ready` message on import, and a `Player` created later still connects. In a client-rendered app, importing it with the component is early enough. Server-rendered HTML can load the iframe before your JavaScript runs, which the [Next.js guide](/stream/player/nextjs) handles.
 
     A hidden tab also holds `ready` back until the viewer switches to it.
-  </Accordion>
-  <Accordion title="Events fire twice after changing the video">
-    Each `Player` leaves a `message` listener on `window` for good. The `active` flag in the effect cleanup silences old instances. Check that yours flips it.
   </Accordion>
   <Accordion title="The iframe shows a 403">
     The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
