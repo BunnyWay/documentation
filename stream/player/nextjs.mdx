@@ -252,7 +252,7 @@ export function LessonPlayer({ libraryId, videoId, resumeAt }: { libraryId: stri
       videoId={videoId}
       params={resumeAt ? { t: resumeAt } : undefined}
       onTimeUpdate={({ seconds, duration }) => {
-        if (seconds - lastSaved.current < 5) return;
+        if (Math.abs(seconds - lastSaved.current) < 5) return;
         lastSaved.current = seconds;
         void saveProgress(videoId, seconds, duration);
       }}

@@ -101,7 +101,7 @@ Browsers block unmuted `play()` before the viewer has clicked anything. Mute fir
 let lastSaved = 0;
 
 player.on("timeupdate", ({ seconds, duration }) => {
-  if (seconds - lastSaved < 5) return;
+  if (Math.abs(seconds - lastSaved) < 5) return;
   lastSaved = seconds;
   void saveProgress(seconds, duration);
 });

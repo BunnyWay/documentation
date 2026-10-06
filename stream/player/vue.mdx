@@ -215,7 +215,7 @@ const props = defineProps<{ videoId: string; resumeAt?: number }>();
 let lastSaved = 0;
 
 function onTimeUpdate({ seconds, duration }: { seconds: number; duration: number }) {
-  if (seconds - lastSaved < 5) return;
+  if (Math.abs(seconds - lastSaved) < 5) return;
   lastSaved = seconds;
   saveProgress(props.videoId, seconds, duration);
 }
@@ -254,7 +254,10 @@ export function loadPlayerjs() {
     const script = document.createElement("script");
     script.src = "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js";
     script.onload = () => resolve(window.playerjs);
-    script.onerror = reject;
+    script.onerror = (error) => {
+      loading = undefined;
+      reject(error);
+    };
     document.head.append(script);
   });
   return loading;

@@ -194,7 +194,7 @@ export function Lesson({ videoId }: { videoId: string }) {
       libraryId="12345"
       videoId={videoId}
       onTimeUpdate={({ seconds, duration }) => {
-        if (seconds - lastSaved.current < 5) return;
+        if (Math.abs(seconds - lastSaved.current) < 5) return;
         lastSaved.current = seconds;
         saveProgress(videoId, seconds, duration);
       }}
@@ -226,7 +226,10 @@ export function loadPlayerjs() {
     const script = document.createElement("script");
     script.src = "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js";
     script.onload = () => resolve(window.playerjs);
-    script.onerror = reject;
+    script.onerror = (error) => {
+      loading = undefined;
+      reject(error);
+    };
     document.head.append(script);
   });
   return loading;
