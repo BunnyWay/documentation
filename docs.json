@@ -634,6 +634,13 @@
                 ]
               },
               {
+                "group": "Migrate",
+                "pages": [
+                  "stream/migrate-from-cloudflare-stream",
+                  "stream/migrate-from-mux"
+                ]
+              },
+              {
                 "group": "Playback",
                 "pages": [
                   {
