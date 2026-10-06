@@ -263,22 +263,39 @@ Pass the saved position back as the `t` parameter to resume.
 
 ## Load player.js from the CDN instead
 
-To drop the npm dependency, load our hosted build in `src/app.html`.
+To drop the npm dependency, load our hosted build from the component.
 
-```html src/app.html
-<script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
-```
+```ts src/lib/load-playerjs.ts
+type PlayerJs = (typeof import("player.js"))["default"];
 
-Swap the dynamic import in `onMount` for `playerjs = window.playerjs` and declare the global in `src/app.d.ts`.
-
-```ts src/app.d.ts
 declare global {
   interface Window {
-    playerjs: (typeof import("player.js"))["default"];
+    playerjs: PlayerJs;
   }
 }
 
-export {};
+let loading: Promise<PlayerJs> | undefined;
+
+export function loadPlayerjs() {
+  loading ??= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js";
+    script.onload = () => resolve(window.playerjs);
+    script.onerror = reject;
+    document.head.append(script);
+  });
+  return loading;
+}
+```
+
+Swap the dynamic import in `onMount` for the loader.
+
+```ts src/lib/components/BunnyPlayer.svelte
+import { loadPlayerjs } from "../load-playerjs";
+
+onMount(async () => {
+  playerjs = await loadPlayerjs();
+});
 ```
 
 ## Troubleshooting

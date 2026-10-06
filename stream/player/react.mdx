@@ -208,21 +208,32 @@ Pass the saved position back as `params={{ t: savedSeconds }}` to resume.
 
 ## Load player.js from the CDN instead
 
-To drop the npm dependency, load our hosted build in `<head>`, where it runs before your components mount.
+To drop the npm dependency, load our hosted build from the component.
 
-```html index.html
-<script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
-```
+```ts lib/load-playerjs.ts
+type PlayerJs = (typeof import("player.js"))["default"];
 
-Swap `import playerjs from "player.js"` for `const playerjs = window.playerjs` and declare the global.
-
-```ts
 declare global {
   interface Window {
-    playerjs: (typeof import("player.js"))["default"];
+    playerjs: PlayerJs;
   }
 }
+
+let loading: Promise<PlayerJs> | undefined;
+
+export function loadPlayerjs() {
+  loading ??= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js";
+    script.onload = () => resolve(window.playerjs);
+    script.onerror = reject;
+    document.head.append(script);
+  });
+  return loading;
+}
 ```
+
+Hold `playerjs` in state, set it from `loadPlayerjs()` in an effect, and render a placeholder until it loads, as the [Next.js component](/stream/player/nextjs#quickstart) does.
 
 ## Troubleshooting
 

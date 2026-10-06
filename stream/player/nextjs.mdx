@@ -279,27 +279,27 @@ With [embed view token authentication](/stream/token-authentication) on, the URL
 
 ## Load player.js from the CDN instead
 
-To drop the npm dependency, load our hosted build in the root layout. `beforeInteractive` puts `window.playerjs` in place before anything hydrates.
+To drop the npm dependency, load our hosted build from the component with `next/script`.
 
-```tsx app/layout.tsx
+Replace the `import("player.js")` effect with a `<Script>` next to the placeholder.
+
+```tsx components/bunny-player.tsx
 import Script from "next/script";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+if (!playerjs) {
   return (
-    <html lang="en">
-      <body>
-        {children}
-        <Script
-          src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
-          strategy="beforeInteractive"
-        />
-      </body>
-    </html>
+    <>
+      <Script
+        src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
+        onReady={() => setPlayerjs(window.playerjs)}
+      />
+      <div style={frameStyle} aria-hidden="true" />
+    </>
   );
 }
 ```
 
-Swap the dynamic import for `setPlayerjs(window.playerjs)` and declare the global.
+Then declare the global.
 
 ```ts
 declare global {
@@ -308,8 +308,6 @@ declare global {
   }
 }
 ```
-
-Keep the placeholder. `beforeInteractive` makes no promise that the script runs before a server-rendered iframe loads.
 
 ## Troubleshooting
 
