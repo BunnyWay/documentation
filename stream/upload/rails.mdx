@@ -6,6 +6,7 @@ description: "Upload video from the browser straight to Bunny Stream over TUS, w
 
 import TusBrowser from "/snippets/stream/tus-upload-browser.mdx";
 import TusStatus from "/snippets/stream/tus-upload-status.mdx";
+import UploadAuthWarning from "/snippets/stream/upload-auth-warning.mdx";
 
 Rails never sees the video file. It creates the video in Bunny Stream and signs an upload, and the browser sends the file to us over [TUS](/stream/tus-resumable-uploads). With import maps, none of it needs a JavaScript build.
 
@@ -16,13 +17,25 @@ Rails never sees the video file. It creates the video in Bunny Stream and signs 
 ## Quickstart
 
 <Steps>
+  <Step title="Add import maps">
+    A default `rails new` app already uses import maps. An app made with `rails new --minimal` has no JavaScript set up, so add them.
+
+    ```bash
+    bundle add importmap-rails
+    bin/rails importmap:install
+    ```
+  </Step>
   <Step title="Add your library credentials">
     ```bash .env
     BUNNY_STREAM_LIBRARY_ID=
     BUNNY_STREAM_API_KEY=
     ```
 
-    Copy both from your library's **API** page. The example loads them with `dotenv-rails` in development.
+    Copy both from your library's **API** page. Rails won't read `.env` on its own, so load it with `dotenv-rails` in development.
+
+    ```bash
+    bundle add dotenv-rails --group development
+    ```
   </Step>
   <Step title="Create the Bunny Stream module">
     `sign_upload` hashes the library ID, API key, expiry, and video ID with SHA-256. The key never leaves this module.
@@ -33,7 +46,15 @@ Rails never sees the video file. It creates the video in Bunny Stream and signs 
     module BunnyStream
       extend self
 
-      class Error < StandardError; end
+      class Error < StandardError
+        # :not_found when Bunny Stream has no such video, :bad_gateway for anything else.
+        attr_reader :status
+
+        def initialize(message, status = :bad_gateway)
+          super(message)
+          @status = status
+        end
+      end
 
       # The status of a video still waiting for its file.
       CREATED = 0
@@ -73,7 +94,10 @@ Rails never sees the video file. It creates the video in Bunny Stream and signs 
         request.body = body.to_json if body
 
         response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |http| http.request(request) }
-        raise Error, "Bunny Stream returned #{response.code}: #{response.body}" unless response.is_a?(Net::HTTPSuccess)
+        unless response.is_a?(Net::HTTPSuccess)
+          status = response.is_a?(Net::HTTPNotFound) ? :not_found : :bad_gateway
+          raise Error.new("Bunny Stream returned #{response.code}: #{response.body}", status)
+        end
 
         JSON.parse(response.body)
       end
@@ -85,16 +109,22 @@ Rails never sees the video file. It creates the video in Bunny Stream and signs 
     ```ruby app/controllers/application_controller.rb
     class ApplicationController < ActionController::Base
       rescue_from BunnyStream::Error do |error|
-        render json: { error: error.message }, status: :bad_gateway
+        render json: { error: error.message }, status: error.status
       end
     end
     ```
   </Step>
-  <Step title="Add the API routes">
+  <Step title="Add the routes">
+    <UploadAuthWarning />
+
     ```ruby config/routes.rb
-    namespace :api do
-      resources :uploads, only: :create
-      resources :videos, only: :show
+    Rails.application.routes.draw do
+      root "home#show"
+
+      namespace :api do
+        resources :uploads, only: :create
+        resources :videos, only: :show
+      end
     end
     ```
 
@@ -103,6 +133,8 @@ Rails never sees the video file. It creates the video in Bunny Stream and signs 
     ```ruby app/controllers/api/uploads_controller.rb
     class Api::UploadsController < ApplicationController
       def create
+        # Require a signed-in user here. This route is public and creates videos in your library.
+        # Before re-signing a videoId, check that the user owns it.
         title = params.require(:title)
         video_id = params[:videoId]
         video_id = BunnyStream.create_video(title) unless resumable?(video_id)
@@ -123,16 +155,36 @@ Rails never sees the video file. It creates the video in Bunny Stream and signs 
     ```ruby app/controllers/api/videos_controller.rb
     class Api::VideosController < ApplicationController
       def show
+        # Require a signed-in user here, and check that they own this video ID. The route is public.
         render json: BunnyStream.video(params[:id])
       end
     end
     ```
   </Step>
   <Step title="Upload from the browser">
-    jsDelivr's `+esm` build bundles tus-js-client into one file, which an import map can pin.
+    The page needs a file input and somewhere to show the result. The default layout already renders `csrf_meta_tags` and `javascript_importmap_tags`.
+
+    ```ruby app/controllers/home_controller.rb
+    class HomeController < ApplicationController
+      def show; end
+    end
+    ```
+
+    ```erb app/views/home/show.html.erb
+    <input type="file" id="video-file" accept="video/*">
+    <div id="video-output"></div>
+    ```
+
+    Pin the upload code and tus-js-client, and import the upload code. Keep any pins and imports you already have. jsDelivr's `+esm` build bundles tus-js-client into one file, which an import map can pin.
 
     ```ruby config/importmap.rb
+    pin "application"
+    pin_all_from "app/javascript/components", under: "components"
     pin "tus-js-client", to: "https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/+esm"
+    ```
+
+    ```js app/javascript/application.js
+    import "components/video_uploader";
     ```
 
     The `X-CSRF-Token` header carries the token from `csrf_meta_tags`. Rails rejects the `POST` without it.
@@ -163,6 +215,8 @@ Rails never sees the video file. It creates the video in Bunny Stream and signs 
 ## Play it once it's encoded
 
 <TusStatus />
+
+Start the server with `bin/rails server`, open http://localhost:3000, and choose a video.
 
 ## Before you deploy
 

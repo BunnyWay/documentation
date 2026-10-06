@@ -6,6 +6,7 @@ description: "Upload video from the browser straight to Bunny Stream over TUS, w
 
 import TusBrowser from "/snippets/stream/tus-upload-browser.mdx";
 import TusStatus from "/snippets/stream/tus-upload-status.mdx";
+import UploadAuthWarning from "/snippets/stream/upload-auth-warning.mdx";
 
 Django creates the video in Bunny Stream and signs an upload. The browser sends the file to us over [TUS](/stream/tus-resumable-uploads), and your API key stays in the server's environment. Everything here runs on Django and the standard library.
 
@@ -16,6 +17,20 @@ Django creates the video in Bunny Stream and signs an upload. The browser sends 
 ## Quickstart
 
 <Steps>
+  <Step title="Create the uploads app">
+    These paths assume a project made with `django-admin startproject config .`. Create an app for the upload code and register it, so Django finds its templates and static files.
+
+    ```bash
+    python manage.py startapp uploads
+    ```
+
+    ```python config/settings.py
+    INSTALLED_APPS = [
+        # ...
+        "uploads",
+    ]
+    ```
+  </Step>
   <Step title="Add your library credentials">
     ```bash .env
     BUNNY_STREAM_LIBRARY_ID=
@@ -45,7 +60,10 @@ Django creates the video in Bunny Stream and signs an upload. The browser sends 
 
 
     class BunnyStreamError(Exception):
-        pass
+        def __init__(self, message: str, status: int = 502):
+            super().__init__(message)
+            # 404 when Bunny Stream has no such video, 502 for anything else.
+            self.status = status
 
 
     def _config() -> tuple[str, str]:
@@ -64,7 +82,10 @@ Django creates the video in Bunny Stream and signs an upload. The browser sends 
             with urlopen(request, timeout=30) as response:
                 return json.load(response)
         except HTTPError as error:
-            raise BunnyStreamError(f"Bunny Stream returned {error.code}: {error.read().decode()}") from error
+            raise BunnyStreamError(
+                f"Bunny Stream returned {error.code}: {error.read().decode()}",
+                404 if error.code == 404 else 502,
+            ) from error
         except URLError as error:
             raise BunnyStreamError(f"Could not reach Bunny Stream: {error.reason}") from error
 
@@ -98,19 +119,29 @@ Django creates the video in Bunny Stream and signs an upload. The browser sends 
     ```
   </Step>
   <Step title="Add the views">
-    `create_upload` re-signs an unfinished video when the browser sends its ID, and creates a new one otherwise.
+    <UploadAuthWarning />
+
+    `index` renders the page. `create_upload` re-signs an unfinished video when the browser sends its ID, and creates a new one otherwise.
 
     ```python uploads/views.py
     import json
 
-    from django.http import HttpRequest, JsonResponse
+    from django.http import HttpRequest, HttpResponse, JsonResponse
+    from django.shortcuts import render
     from django.views.decorators.http import require_GET, require_POST
 
     from . import bunny_stream
 
 
+    @require_GET
+    def index(request: HttpRequest) -> HttpResponse:
+        return render(request, "uploads/index.html")
+
+
     @require_POST
     def create_upload(request: HttpRequest) -> JsonResponse:
+        # Require a signed-in user here. This route is public and creates videos in your library.
+        # Before re-signing a videoId, check that the user owns it.
         try:
             payload = json.loads(request.body)
         except json.JSONDecodeError:
@@ -134,10 +165,11 @@ Django creates the video in Bunny Stream and signs an upload. The browser sends 
 
     @require_GET
     def video_status(request: HttpRequest, video_id: str) -> JsonResponse:
+        # Require a signed-in user here, and check that they own this video ID. The route is public.
         try:
             return JsonResponse(bunny_stream.get_video(video_id))
         except bunny_stream.BunnyStreamError as error:
-            return JsonResponse({"error": str(error)}, status=502)
+            return JsonResponse({"error": str(error)}, status=error.status)
 
 
     def _can_resume(video_id: str) -> bool:
@@ -147,12 +179,17 @@ Django creates the video in Bunny Stream and signs an upload. The browser sends 
             return False
     ```
 
+    Add the three routes next to the admin route that `startproject` created.
+
     ```python config/urls.py
+    from django.contrib import admin
     from django.urls import path
 
     from uploads import views
 
     urlpatterns = [
+        path("admin/", admin.site.urls),
+        path("", views.index),
         path("api/uploads", views.create_upload),
         path("api/videos/<str:video_id>", views.video_status),
     ]
@@ -162,8 +199,19 @@ Django creates the video in Bunny Stream and signs an upload. The browser sends 
     Render the CSRF token into the page. The CSRF middleware rejects the `POST` without it.
 
     ```html uploads/templates/uploads/index.html
-    <meta name="csrf-token" content="{{ csrf_token }}">
-    <script type="module" src="{% static 'uploads/video-uploader.js' %}"></script>
+    {% load static %}<!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="csrf-token" content="{{ csrf_token }}">
+        <title>Upload to Bunny Stream</title>
+        <script type="module" src="{% static 'uploads/video-uploader.js' %}"></script>
+      </head>
+      <body>
+        <input type="file" id="video-file" accept="video/*">
+        <div id="video-output"></div>
+      </body>
+    </html>
     ```
 
     There's no build step. tus-js-client comes from jsDelivr, and the token travels as `X-CSRFToken`.
@@ -193,6 +241,8 @@ Django creates the video in Bunny Stream and signs an upload. The browser sends 
 ## Play it once it's encoded
 
 <TusStatus />
+
+Start the server with `uv run --env-file .env manage.py runserver`, open http://localhost:8000, and choose a video.
 
 ## Before you deploy
 

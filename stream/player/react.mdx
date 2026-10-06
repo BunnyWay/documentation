@@ -169,7 +169,7 @@ player.getCurrentTime((seconds) => console.log(seconds));
 player.getDuration((seconds) => console.log(seconds));
 ```
 
-Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` from 0.1.2 ([Methods](/stream/playback-api#methods)).
+Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` ([Methods](/stream/playback-api#methods)).
 
 ```tsx
 player.send({ method: "setPlaybackRate", value: 1.5 });

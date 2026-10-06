@@ -20,11 +20,19 @@ With [embed view token authentication](/stream/token-authentication) on, Bunny P
 
 ## Turn on token authentication
 
-On your library's **Security** page, enable **Embed view token authentication** and copy the key. Unsigned embeds start returning 403 straight away. Deploy the signing code first.
+On your library's **Security** page, enable **Embed view token authentication**. Copy the key from the **Token authentication key** card below it. The field there is labelled **API key**, but it's a different value from the library's API key on the **API** page.
+
+The same key signs CDN token authentication URLs for the library, so resetting it breaks both.
+
+Unsigned embeds start returning 403 straight away. Deploy the signing code first.
 
 ## Sign the URL
 
 The token is a hex SHA-256 of the key, video ID, and expiry, joined with nothing between them. The expiry is Unix time in seconds.
+
+<Warning>
+  Check that the viewer may watch the video before you sign its URL. The page or route that signs is a public endpoint, so anyone can request it with any video ID from your library. Without that check, token authentication protects nothing. The comment in each example below marks where the check goes.
+</Warning>
 
 <Tabs>
   <Tab title="Next.js">
@@ -47,16 +55,26 @@ The token is a hex SHA-256 of the key, video ID, and expiry, joined with nothing
     }
     ```
 
-    `await connection()` makes the page render per request. Without it, Next.js can prerender a token at build time.
+    `await connection()` signs a fresh URL on every request. Without it, Next.js can prerender a token at build time. Call it, and read `params`, in a component inside `<Suspense>`. With Cache Components on, as in a new `create-next-app` project, request data outside `<Suspense>` fails the build.
 
     ```tsx app/videos/[id]/page.tsx
+    import { Suspense } from "react";
     import { connection } from "next/server";
     import { signEmbedUrl } from "@/lib/bunny-stream";
 
-    export default async function VideoPage({ params }: { params: Promise<{ id: string }> }) {
+    export default function VideoPage({ params }: { params: Promise<{ id: string }> }) {
+      return (
+        <Suspense>
+          <SignedPlayer params={params} />
+        </Suspense>
+      );
+    }
+
+    async function SignedPlayer({ params }: { params: Promise<{ id: string }> }) {
       await connection();
       const { id } = await params;
-      // Check that the viewer may watch this video before signing.
+      // Check that the signed-in viewer may watch this video before signing.
+      // Anyone can request this with any video ID, so never skip the check.
       const { src } = signEmbedUrl(id);
 
       return (
@@ -74,16 +92,21 @@ The token is a hex SHA-256 of the key, video ID, and expiry, joined with nothing
     For playback control, pass `token` and `expires` to the [Next.js guide](/stream/player/nextjs)'s component through `params`.
   </Tab>
   <Tab title="Nuxt">
-    Private `runtimeConfig`, outside `public`, only exists on the server. Set it with `NUXT_BUNNY_STREAM_LIBRARY_ID` and `NUXT_BUNNY_STREAM_TOKEN_AUTH_KEY`.
+    Private `runtimeConfig`, outside `public`, only exists on the server. Set it with `NUXT_BUNNY_STREAM_LIBRARY_ID` and `NUXT_BUNNY_STREAM_TOKEN_AUTH_KEY`. `nuxt dev` and `nuxt preview` read them from `.env`. The production server doesn't, so set them in your host's environment.
+
+    Add the two keys to the config you already have.
 
     ```ts nuxt.config.ts
     export default defineNuxtConfig({
+      // ...keep your existing options, such as compatibilityDate.
       runtimeConfig: {
         bunnyStreamLibraryId: "",
         bunnyStreamTokenAuthKey: "",
       },
     });
     ```
+
+    The signing code imports `node:crypto`. Run `npm install -D @types/node` so `nuxt typecheck` can find its types.
 
     ```ts server/utils/bunny-stream.ts
     import { createHash } from "node:crypto";
@@ -106,7 +129,8 @@ The token is a hex SHA-256 of the key, video ID, and expiry, joined with nothing
 
     ```ts server/api/embed/[id].get.ts
     export default defineEventHandler((event) => {
-      // Check that the viewer may watch this video before signing.
+      // Check that the signed-in viewer may watch this video before signing.
+      // Anyone can request this with any video ID, so never skip the check.
       return signEmbedUrl(getRouterParam(event, "id")!);
     });
     ```
@@ -132,34 +156,58 @@ The token is a hex SHA-256 of the key, video ID, and expiry, joined with nothing
     </template>
     ```
 
+    Mount it on a page. If `app/app.vue` still shows the welcome screen, replace it with `<NuxtPage />`.
+
+    ```vue app/pages/videos/[id].vue
+    <script setup lang="ts">
+    const id = useRoute().params.id as string;
+    </script>
+
+    <template>
+      <SignedPlayer :video-id="id" />
+    </template>
+    ```
+
     For playback control, pass `token` and `expires` to the [Vue and Nuxt guide](/stream/player/vue)'s component through `params`.
   </Tab>
   <Tab title="SvelteKit">
-    Put `BUNNY_STREAM_LIBRARY_ID` and `BUNNY_STREAM_TOKEN_AUTH_KEY` in `.env`. SvelteKit won't let browser code import anything under `src/lib/server`.
+    Put `BUNNY_STREAM_LIBRARY_ID` and `BUNNY_STREAM_TOKEN_AUTH_KEY` in `.env`, and declare them in `src/env.ts`. Without `public: true`, they're only importable from server code.
+
+    ```ts src/env.ts
+    import { defineEnvVars } from "@sveltejs/kit/env";
+
+    export const variables = defineEnvVars({
+      BUNNY_STREAM_LIBRARY_ID: {},
+      BUNNY_STREAM_TOKEN_AUTH_KEY: {},
+    });
+    ```
+
+    Install `@types/node` as a dev dependency for the `node:crypto` types. SvelteKit won't let browser code import anything under `src/lib/server`.
 
     ```ts src/lib/server/bunny-stream.ts
     import { createHash } from "node:crypto";
-    import { env } from "$env/dynamic/private";
+    import { BUNNY_STREAM_LIBRARY_ID, BUNNY_STREAM_TOKEN_AUTH_KEY } from "$app/env/private";
 
     const TOKEN_TTL_SECONDS = 60 * 60;
 
     export function signEmbedUrl(videoId: string): { url: string; expires: number } {
       const expires = Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS;
       const token = createHash("sha256")
-        .update(`${env.BUNNY_STREAM_TOKEN_AUTH_KEY}${videoId}${expires}`)
+        .update(`${BUNNY_STREAM_TOKEN_AUTH_KEY}${videoId}${expires}`)
         .digest("hex");
       const query = new URLSearchParams({ token, expires: String(expires) });
 
-      return { url: `https://player.mediadelivery.net/embed/${env.BUNNY_STREAM_LIBRARY_ID}/${videoId}?${query}`, expires };
+      return { url: `https://player.mediadelivery.net/embed/${BUNNY_STREAM_LIBRARY_ID}/${videoId}?${query}`, expires };
     }
     ```
 
     ```ts src/routes/videos/[id]/+page.server.ts
-    import { signEmbedUrl } from "$lib/server/bunny-stream";
+    import { signEmbedUrl } from "#lib/server/bunny-stream.ts";
     import type { PageServerLoad } from "./$types";
 
     export const load: PageServerLoad = ({ params }) => {
-      // Check that the viewer may watch this video before signing.
+      // Check that the signed-in viewer may watch this video before signing.
+      // Anyone can request this with any video ID, so never skip the check.
       return { embed: signEmbedUrl(params.id) };
     };
     ```
@@ -190,11 +238,11 @@ Anyone holding a signed URL can play it until it expires. We use an hour in the 
 
 <AccordionGroup>
   <Accordion title="The iframe shows a 403">
-    Check the inputs. The key comes from the **Security** page, and it's a separate value from the API key. The video ID must match the URL, and `expires` must be in seconds.
+    Check the inputs. The key comes from the **Token authentication key** card on the **Security** page, not the library's API key on the **API** page. The video ID must match the URL, and `expires` must be in seconds.
 
     With a good token, look at the library's [embedding restrictions](/stream/embedding#embedding-restrictions).
   </Accordion>
   <Accordion title="Every visitor gets the same expired link">
-    The page was rendered once and cached. Call `await connection()` in Next.js, and check the route isn't prerendered in Nuxt or SvelteKit.
+    The page was rendered once and cached. In Next.js, call `await connection()` in the component that signs, inside `<Suspense>`. Check the route isn't prerendered in Nuxt or SvelteKit.
   </Accordion>
 </AccordionGroup>

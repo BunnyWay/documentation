@@ -1,4 +1,4 @@
-We start encoding when the last chunk arrives. Poll your status route until `status` reaches `4` (finished), `5` or `6` (failed), then embed `embedUrl`.
+We start encoding when the last chunk arrives. Poll your status route until `status` reaches `4` (finished), `5` or `6` (failed), then embed `embedUrl`. This goes in the same file too.
 
 ```js
 const FINISHED = 4;
@@ -31,3 +31,54 @@ export function watchVideo(videoId, { onChange, onError }) {
 ```
 
 `encodeProgress` gives you a percentage to show in the meantime. A [webhook](/stream/webhooks) tells your server when encoding finishes.
+
+Then wire both to the page's `#video-file` input and `#video-output` element. Picking another file cancels the current upload.
+
+```js
+const input = document.querySelector("#video-file");
+const output = document.querySelector("#video-output");
+let cancel = () => {};
+
+function show(video) {
+  if (FAILED.includes(video.status)) {
+    output.textContent = "Bunny Stream could not encode the video.";
+  } else if (video.status !== FINISHED) {
+    output.textContent = `Encoding… ${video.encodeProgress}%`;
+  } else {
+    const player = Object.assign(document.createElement("iframe"), {
+      src: video.embedUrl,
+      allow: "autoplay; encrypted-media; picture-in-picture; fullscreen",
+      allowFullscreen: true,
+    });
+    output.replaceChildren(player);
+  }
+}
+
+input.addEventListener("change", async () => {
+  const file = input.files[0];
+  if (!file) return;
+
+  cancel();
+  const controller = new AbortController();
+  let stopWatching = () => {};
+  cancel = () => {
+    controller.abort();
+    stopWatching();
+  };
+
+  const onError = (error) => (output.textContent = error.message);
+  output.textContent = "Uploading… 0%";
+  try {
+    await uploadVideo(file, {
+      signal: controller.signal,
+      onProgress: (percent) => (output.textContent = `Uploading… ${percent}%`),
+      onSuccess: (videoId) => {
+        stopWatching = watchVideo(videoId, { onChange: show, onError });
+      },
+      onError,
+    });
+  } catch (error) {
+    if (!controller.signal.aborted) onError(error);
+  }
+});
+```
