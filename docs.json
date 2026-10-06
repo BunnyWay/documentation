@@ -624,7 +624,15 @@
                       "stream/dashboard",
                       "stream/http-api",
                       "stream/url-fetch",
-                      "stream/tus-resumable-uploads"
+                      "stream/tus-resumable-uploads",
+                      {
+                        "group": "Frameworks",
+                        "pages": [
+                          "stream/upload/laravel",
+                          "stream/upload/rails",
+                          "stream/upload/django"
+                        ]
+                      }
                     ]
                   },
                   "stream/collections",
@@ -649,7 +657,10 @@
                           "stream/player/react",
                           "stream/player/nextjs",
                           "stream/player/vue",
-                          "stream/player/svelte"
+                          "stream/player/svelte",
+                          "stream/player/astro",
+                          "stream/player/javascript",
+                          "stream/player/signed-embeds"
                         ]
                       }
                     ]

@@ -1,0 +1,207 @@
+---
+title: "Use Bunny Player with Astro"
+sidebarTitle: "Astro"
+description: "Embed the Bunny Stream player in an Astro site with a custom element, and control playback with player.js events and methods."
+---
+
+import Install from "/snippets/stream/player-js-install.mdx";
+import Types from "/snippets/stream/player-js-types.mdx";
+
+The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. Astro ships no JavaScript by default, so this guide wraps the iframe in a `<bunny-player>` custom element. Astro renders the iframe on the server, and the element attaches player.js in the browser and re-dispatches the player's events as DOM events.
+
+<Card title="Astro example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-astro" horizontal>
+  An Astro site built around this component, with custom controls and an event log. It plays a demo video after `bun install` and `bun dev`.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Install player.js">
+    <Install />
+
+    <Types />
+  </Step>
+  <Step title="Create the component">
+    player.js has to be listening before the iframe finishes loading. The component renders the embed URL into `data-src`, and the element copies it to `src` in the same step that creates the `Player`.
+
+    ```astro src/components/BunnyPlayer.astro
+    ---
+    type Props = {
+      libraryId: string;
+      videoId: string;
+      /** Player parameters such as autoplay, muted, captions, or t. */
+      params?: Record<string, string | number | boolean>;
+      title?: string;
+    };
+
+    const { libraryId, videoId, params = {}, title = "Video player" } = Astro.props;
+
+    const query = new URLSearchParams(
+      Object.entries(params).map(([key, value]) => [key, String(value)]),
+    ).toString();
+    const src = `https://player.mediadelivery.net/embed/${libraryId}/${videoId}${query ? `?${query}` : ""}`;
+    ---
+
+    <bunny-player>
+      <iframe
+        data-src={src}
+        title={title}
+        loading="lazy"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen></iframe>
+    </bunny-player>
+
+    <script>
+      // Astro runs this in the browser only, so player.js can read window on import.
+      import playerjs, { type Player } from "player.js";
+
+      class BunnyPlayerElement extends HTMLElement {
+        player: Player | null = null;
+
+        connectedCallback() {
+          const iframe = this.querySelector("iframe");
+          if (this.player || !iframe?.dataset.src) return;
+
+          iframe.src = iframe.dataset.src;
+          const player = new playerjs.Player(iframe);
+          this.player = player;
+
+          player.on("ready", () => this.emit("ready", player));
+          player.on("play", () => this.emit("play"));
+          player.on("pause", () => this.emit("pause"));
+          player.on("ended", () => this.emit("ended"));
+          player.on("timeupdate", (time) => this.emit("timeupdate", time));
+        }
+
+        private emit(type: string, detail?: unknown) {
+          this.dispatchEvent(new CustomEvent(type, { detail }));
+        }
+      }
+
+      customElements.define("bunny-player", BunnyPlayerElement);
+    </script>
+
+    <style>
+      bunny-player {
+        display: block;
+      }
+
+      iframe {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border: 0;
+        background: #000;
+      }
+    </style>
+    ```
+
+    Each `<bunny-player>` gets its own `Player`, so a page can hold several.
+  </Step>
+  <Step title="Render it from a page">
+    ```astro src/pages/index.astro
+    ---
+    import BunnyPlayer from "../components/BunnyPlayer.astro";
+    ---
+
+    <BunnyPlayer
+      libraryId={import.meta.env.PUBLIC_BUNNY_LIBRARY_ID}
+      videoId={import.meta.env.PUBLIC_BUNNY_VIDEO_ID}
+      params={{ preload: true }}
+    />
+    ```
+
+    The library ID is in every embed URL anyway, so a `PUBLIC_` variable is fine. `params` takes any [player parameter](/stream/embedding#supported-parameters).
+  </Step>
+</Steps>
+
+## Control playback
+
+The `ready` event carries the `Player` as its `detail`. Wire your controls up from there:
+
+```astro
+<BunnyPlayer libraryId={libraryId} videoId={videoId} />
+<button type="button" id="toggle">Play / pause</button>
+<button type="button" id="restart">Restart</button>
+
+<script>
+  import type { Player } from "player.js";
+
+  document.querySelector("bunny-player")!.addEventListener("ready", (event) => {
+    const player = (event as CustomEvent<Player>).detail;
+
+    document.querySelector("#toggle")!.addEventListener("click", () => {
+      // Ask the player, because viewers can also use its own controls.
+      player.getPaused((paused) => (paused ? player.play() : player.pause()));
+    });
+    document.querySelector("#restart")!.addEventListener("click", () => player.setCurrentTime(0));
+  });
+</script>
+```
+
+Getters take a callback, because the answer comes back from the iframe. The npm build of player.js (0.1.0) has no playback speed method, so send the command directly:
+
+```ts
+player.send({ method: "setPlaybackRate", value: 1.5 });
+```
+
+Browsers block unmuted `play()` until the viewer interacts with the page, so call `player.mute()` first for playback without a click. [Playback control API](/stream/playback-api) lists every method and event.
+
+## Track progress
+
+`timeupdate` fires several times a second with `{ seconds, duration }`. Throttle it before writing to your backend:
+
+```ts
+import type { TimeUpdate } from "player.js";
+
+let lastSaved = 0;
+
+document.querySelector("bunny-player")!.addEventListener("timeupdate", (event) => {
+  const { seconds, duration } = (event as CustomEvent<TimeUpdate>).detail;
+  if (seconds - lastSaved < 5) return;
+  lastSaved = seconds;
+  void saveProgress(seconds, duration);
+});
+```
+
+Pass the saved position back as `params={{ t: savedSeconds }}` to resume from there.
+
+## Signed embed URLs
+
+With [embed view token authentication](/stream/token-authentication), sign the URL in the page frontmatter and pass `token` and `expires` through `params`. The page must be [rendered on demand](https://docs.astro.build/en/guides/on-demand-rendering/), or every visitor gets the token from build time. [Sign embed URLs on the server](/stream/player/signed-embeds) has the signing function.
+
+## Load player.js from the CDN instead
+
+Load the build bunny.net hosts in your layout's `<head>`. `is:inline` stops Astro bundling it, so it runs before the component's script:
+
+```astro
+<script is:inline src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
+```
+
+Replace the import with `const playerjs = window.playerjs`, and declare the global:
+
+```ts
+declare global {
+  interface Window {
+    playerjs: (typeof import("player.js"))["default"];
+  }
+}
+```
+
+The hosted build adds `setPlaybackRate()` and the `playbackratechange` event; see [Methods](/stream/playback-api#methods).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The ready event never fires">
+    The iframe loaded before player.js was listening. Keep the URL in `data-src` and let the element set `src`. An iframe rendered with `src` starts loading straight from the HTML, before any module script runs.
+
+    A hidden tab also holds back `ready` until the viewer switches to it.
+  </Accordion>
+  <Accordion title="Controls stop working after a view transition">
+    With `<ClientRouter />`, page scripts run once. The element upgrades each new `<bunny-player>`, and your `ready` listener stays on the old one. Register listeners inside `document.addEventListener("astro:page-load", ...)`.
+  </Accordion>
+  <Accordion title="The iframe shows a 403">
+    The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
+  </Accordion>
+</AccordionGroup>

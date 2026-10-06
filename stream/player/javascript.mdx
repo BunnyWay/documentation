@@ -1,0 +1,152 @@
+---
+title: "Use Bunny Player with JavaScript"
+sidebarTitle: "JavaScript"
+description: "Embed the Bunny Stream player with plain JavaScript or TypeScript, no framework, and control playback with player.js events and methods."
+---
+
+import Install from "/snippets/stream/player-js-install.mdx";
+import Types from "/snippets/stream/player-js-types.mdx";
+
+The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. Without a framework, the whole integration is one function that appends the iframe and returns the `Player`.
+
+<Card title="JavaScript example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-vanilla" horizontal>
+  A Vite app with no framework, with custom controls and an event log. It plays a demo video after `bun install` and `bun dev`.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Install player.js">
+    <Install />
+
+    <Types />
+  </Step>
+  <Step title="Create the player function">
+    player.js has to be listening before the iframe finishes loading, so the function creates the `Player` in the same step it adds the iframe.
+
+    ```ts src/bunny-player.ts
+    import playerjs, { type Player } from "player.js";
+
+    export type BunnyPlayerOptions = {
+      libraryId: string;
+      videoId: string;
+      /** Player parameters such as autoplay, muted, captions, or t. */
+      params?: Record<string, string | number | boolean>;
+      title?: string;
+    };
+
+    export function createBunnyPlayer(
+      container: HTMLElement,
+      { libraryId, videoId, params, title = "Video player" }: BunnyPlayerOptions,
+    ): Player {
+      const query = new URLSearchParams(
+        Object.entries(params ?? {}).map(([key, value]) => [key, String(value)]),
+      ).toString();
+
+      const iframe = document.createElement("iframe");
+      iframe.src = `https://player.mediadelivery.net/embed/${libraryId}/${videoId}${query ? `?${query}` : ""}`;
+      iframe.title = title;
+      iframe.loading = "lazy";
+      iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      iframe.allowFullscreen = true;
+      iframe.style.cssText = "display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; background: #000;";
+      container.append(iframe);
+
+      return new playerjs.Player(iframe);
+    }
+    ```
+  </Step>
+  <Step title="Mount it">
+    ```ts src/main.ts
+    import { createBunnyPlayer } from "./bunny-player";
+
+    const player = createBunnyPlayer(document.querySelector("#player")!, {
+      libraryId: "12345",
+      videoId: "your-video-guid",
+      params: { preload: true },
+    });
+
+    player.on("ready", () => console.log("ready"));
+    ```
+
+    `params` takes any [player parameter](/stream/embedding#supported-parameters).
+  </Step>
+</Steps>
+
+## Control playback
+
+Wait for `ready`, then call the player's methods from your own controls:
+
+```ts
+player.on("ready", () => {
+  document.querySelector("#toggle")!.addEventListener("click", () => {
+    // Ask the player, because viewers can also use its own controls.
+    player.getPaused((paused) => (paused ? player.play() : player.pause()));
+  });
+  document.querySelector("#restart")!.addEventListener("click", () => player.setCurrentTime(0));
+});
+```
+
+Getters take a callback, because the answer comes back from the iframe. The npm build of player.js (0.1.0) has no playback speed method, so send the command directly:
+
+```ts
+player.send({ method: "setPlaybackRate", value: 1.5 });
+```
+
+Browsers block unmuted `play()` until the viewer interacts with the page, so call `player.mute()` first for playback without a click. [Playback control API](/stream/playback-api) lists every method and event.
+
+## Track progress
+
+`timeupdate` fires several times a second with `{ seconds, duration }`. Throttle it before writing to your backend:
+
+```ts
+let lastSaved = 0;
+
+player.on("timeupdate", ({ seconds, duration }) => {
+  if (seconds - lastSaved < 5) return;
+  lastSaved = seconds;
+  void saveProgress(seconds, duration);
+});
+```
+
+Pass the saved position back as `params: { t: savedSeconds }` to resume from there.
+
+## Use it without a bundler
+
+Load the build bunny.net hosts in `<head>`, then create the `Player` in a script straight after the iframe. Classic scripts run as the browser parses them, so both run before the iframe loads:
+
+```html
+<head>
+  <script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
+</head>
+<body>
+  <iframe
+    id="player"
+    src="https://player.mediadelivery.net/embed/12345/your-video-guid"
+    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+    allowfullscreen
+  ></iframe>
+  <script>
+    const player = new playerjs.Player(document.querySelector("#player"));
+    player.on("ready", () => console.log("ready"));
+  </script>
+</body>
+```
+
+The hosted build adds `setPlaybackRate()` and the `playbackratechange` event; see [Methods](/stream/playback-api#methods).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The ready event never fires">
+    The iframe loaded before player.js was listening. This happens when the iframe is in the HTML and the `Player` is created from a module or `defer` script, which runs after parsing. Create the iframe from the same script, as `createBunnyPlayer` does.
+
+    A hidden tab also holds back `ready` until the viewer switches to it.
+  </Accordion>
+  <Accordion title="Events fire twice after replacing the video">
+    Every `Player` adds a `message` listener to `window` that is never removed. Guard each player's handlers with a flag, and flip it when you remove that player's iframe.
+  </Accordion>
+  <Accordion title="The iframe shows a 403">
+    The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
+  </Accordion>
+</AccordionGroup>

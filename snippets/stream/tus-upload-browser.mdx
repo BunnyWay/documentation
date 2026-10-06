@@ -1,0 +1,43 @@
+tus-js-client sends the credentials as headers on every TUS request. Storing the video ID per file lets a reload resume into the same video:
+
+```js
+// Remembers which Bunny video a file was going into, so a reload can resume it.
+const videoKey = (file) => `bunny-video:${file.name}:${file.size}:${file.lastModified}`;
+
+export async function uploadVideo(file, { onProgress, onSuccess, onError }) {
+  const key = videoKey(file);
+  const savedVideoId = localStorage.getItem(key);
+  const credentials = await requestUpload(file.name, savedVideoId);
+  localStorage.setItem(key, credentials.videoId);
+
+  const upload = new tus.Upload(file, {
+    endpoint: "https://video.bunnycdn.com/tusupload",
+    retryDelays: [0, 3000, 5000, 10000, 20000, 60000],
+    removeFingerprintOnSuccess: true,
+    headers: {
+      AuthorizationSignature: credentials.signature,
+      AuthorizationExpire: String(credentials.expirationTime),
+      VideoId: credentials.videoId,
+      LibraryId: credentials.libraryId,
+    },
+    metadata: { filetype: file.type, title: file.name },
+    onProgress: (sent, total) => onProgress(Math.floor((sent / total) * 100)),
+    onSuccess: () => {
+      localStorage.removeItem(key);
+      onSuccess(credentials.videoId);
+    },
+    onError,
+  });
+
+  // A stored upload URL belongs to one video, so only resume into the same one.
+  const [previous] = await upload.findPreviousUploads();
+  if (previous && credentials.videoId === savedVideoId) {
+    upload.resumeFromPreviousUpload(previous);
+  }
+  upload.start();
+
+  return upload;
+}
+```
+
+`upload.abort()` pauses and `upload.start()` carries on from the last chunk Bunny Stream acknowledged. A re-signed video keeps its original TUS upload expiry; see the [TUS FAQ](/stream/tus-resumable-uploads#resumable-tus-upload-faq).

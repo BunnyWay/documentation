@@ -1,0 +1,202 @@
+---
+title: "Sign Bunny Player embed URLs on the server"
+sidebarTitle: "Signed embed URLs"
+description: "Play videos from a library with embed view token authentication in Next.js, Nuxt, or SvelteKit, by signing the embed URL on the server so the key never reaches the browser."
+---
+
+With [embed view token authentication](/stream/token-authentication) on, Bunny Player only loads embed URLs that carry a valid `token` and `expires`. Anyone with the token authentication key can sign a link to any video in the library, so sign on the server and send the browser only the finished URL.
+
+<CardGroup cols={3}>
+  <Card title="Next.js" icon="/logo/frameworks/nextjs.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/player-token-auth-nextjs">
+    Signs in a Server Component.
+  </Card>
+  <Card title="Nuxt" icon="/logo/frameworks/vue.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/player-token-auth-nuxt">
+    Uses a server route.
+  </Card>
+  <Card title="SvelteKit" icon="/logo/frameworks/svelte.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/player-token-auth-sveltekit">
+    Signs in a `load` function.
+  </Card>
+</CardGroup>
+
+## Turn on token authentication
+
+Open your library's **Security** page, turn on **Embed view token authentication**, and copy the token authentication key. Existing embeds return a 403 from then on, so ship the signing code first.
+
+## Sign the URL
+
+The token is the hex SHA-256 of the key, video ID, and expiry with no separators. The expiry is a Unix timestamp in seconds.
+
+<Tabs>
+  <Tab title="Next.js">
+    Set `BUNNY_STREAM_LIBRARY_ID` and `BUNNY_STREAM_TOKEN_AUTH_KEY` in `.env.local`. The `server-only` import fails the build if a Client Component imports this file:
+
+    ```ts lib/bunny-stream.ts
+    import "server-only";
+    import { createHash } from "node:crypto";
+
+    const TOKEN_TTL_SECONDS = 60 * 60;
+
+    export function signEmbedUrl(videoId: string): { src: string; expires: number } {
+      const libraryId = process.env.BUNNY_STREAM_LIBRARY_ID!;
+      const key = process.env.BUNNY_STREAM_TOKEN_AUTH_KEY!;
+      const expires = Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS;
+      const token = createHash("sha256").update(`${key}${videoId}${expires}`).digest("hex");
+      const query = new URLSearchParams({ token, expires: String(expires) });
+
+      return { src: `https://player.mediadelivery.net/embed/${libraryId}/${videoId}?${query}`, expires };
+    }
+    ```
+
+    Sign from a Server Component. `await connection()` makes Next.js render per request, so it never bakes a build-time token into the page:
+
+    ```tsx app/videos/[id]/page.tsx
+    import { connection } from "next/server";
+    import { signEmbedUrl } from "@/lib/bunny-stream";
+
+    export default async function VideoPage({ params }: { params: Promise<{ id: string }> }) {
+      await connection();
+      const { id } = await params;
+      // Check that the viewer may watch this video before signing.
+      const { src } = signEmbedUrl(id);
+
+      return (
+        <iframe
+          src={src}
+          title="Video player"
+          style={{ width: "100%", aspectRatio: "16 / 9", border: 0 }}
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowFullScreen
+        />
+      );
+    }
+    ```
+
+    To control playback, pass `token` and `expires` to the component from the [Next.js guide](/stream/player/nextjs) through `params`.
+  </Tab>
+  <Tab title="Nuxt">
+    Declare private `runtimeConfig`, outside `public`, and set it with `NUXT_BUNNY_STREAM_LIBRARY_ID` and `NUXT_BUNNY_STREAM_TOKEN_AUTH_KEY`:
+
+    ```ts nuxt.config.ts
+    export default defineNuxtConfig({
+      runtimeConfig: {
+        bunnyStreamLibraryId: "",
+        bunnyStreamTokenAuthKey: "",
+      },
+    });
+    ```
+
+    ```ts server/utils/bunny-stream.ts
+    import { createHash } from "node:crypto";
+
+    const TOKEN_TTL_SECONDS = 60 * 60;
+
+    export function signEmbedUrl(videoId: string): { url: string; expires: number } {
+      const { bunnyStreamLibraryId, bunnyStreamTokenAuthKey } = useRuntimeConfig();
+      // Nuxt parses NUXT_* values, so a numeric library ID arrives as a number.
+      const libraryId = String(bunnyStreamLibraryId);
+      const expires = Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS;
+      const token = createHash("sha256").update(`${bunnyStreamTokenAuthKey}${videoId}${expires}`).digest("hex");
+
+      return {
+        url: `https://player.mediadelivery.net/embed/${libraryId}/${videoId}?token=${token}&expires=${expires}`,
+        expires,
+      };
+    }
+    ```
+
+    ```ts server/api/embed/[id].get.ts
+    export default defineEventHandler((event) => {
+      // Check that the viewer may watch this video before signing.
+      return signEmbedUrl(getRouterParam(event, "id")!);
+    });
+    ```
+
+    `useFetch` calls the route during server rendering, so the signed URL arrives with the page and the browser reuses it from the payload:
+
+    ```vue app/components/SignedPlayer.vue
+    <script setup lang="ts">
+    const props = defineProps<{ videoId: string }>();
+    const { data: embed, error } = await useFetch(`/api/embed/${props.videoId}`);
+    </script>
+
+    <template>
+      <p v-if="error">Could not sign the embed URL: {{ error.message }}</p>
+      <iframe
+        v-else-if="embed"
+        :src="embed.url"
+        title="Video player"
+        style="width: 100%; aspect-ratio: 16 / 9; border: 0"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen
+      />
+    </template>
+    ```
+
+    To control playback, pass `token` and `expires` to the component from the [Vue and Nuxt guide](/stream/player/vue) through `params`.
+  </Tab>
+  <Tab title="SvelteKit">
+    Set `BUNNY_STREAM_LIBRARY_ID` and `BUNNY_STREAM_TOKEN_AUTH_KEY` in `.env`. SvelteKit refuses to bundle anything under `src/lib/server` into browser code:
+
+    ```ts src/lib/server/bunny-stream.ts
+    import { createHash } from "node:crypto";
+    import { env } from "$env/dynamic/private";
+
+    const TOKEN_TTL_SECONDS = 60 * 60;
+
+    export function signEmbedUrl(videoId: string): { url: string; expires: number } {
+      const expires = Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS;
+      const token = createHash("sha256")
+        .update(`${env.BUNNY_STREAM_TOKEN_AUTH_KEY}${videoId}${expires}`)
+        .digest("hex");
+      const query = new URLSearchParams({ token, expires: String(expires) });
+
+      return { url: `https://player.mediadelivery.net/embed/${env.BUNNY_STREAM_LIBRARY_ID}/${videoId}?${query}`, expires };
+    }
+    ```
+
+    A `+page.server.ts` load function runs on the server for every request:
+
+    ```ts src/routes/videos/[id]/+page.server.ts
+    import { signEmbedUrl } from "$lib/server/bunny-stream";
+    import type { PageServerLoad } from "./$types";
+
+    export const load: PageServerLoad = ({ params }) => {
+      // Check that the viewer may watch this video before signing.
+      return { embed: signEmbedUrl(params.id) };
+    };
+    ```
+
+    ```svelte src/routes/videos/[id]/+page.svelte
+    <script lang="ts">
+      let { data } = $props();
+    </script>
+
+    <iframe
+      src={data.embed.url}
+      title="Video player"
+      style="width: 100%; aspect-ratio: 16 / 9; border: 0"
+      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+      allowfullscreen
+    ></iframe>
+    ```
+
+    To control playback, pass `token` and `expires` to the component from the [Svelte and SvelteKit guide](/stream/player/svelte) through `params`.
+  </Tab>
+</Tabs>
+
+## Choose an expiry
+
+A signed URL plays for anyone who has it until it expires. The examples use an hour so they're easy to try. A shorter window limits how long a copied link keeps working, and every page load signs a fresh one.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The iframe shows a 403">
+    Check the signing inputs. The key is the token authentication key from the **Security** page, which is not the API key. The video ID must match the one in the URL, and `expires` must be in seconds.
+
+    If the token is right, check the library's allowed domains and direct access settings. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
+  </Accordion>
+  <Accordion title="Every visitor gets the same expired link">
+    The page was rendered once and cached. In Next.js, call `await connection()` before signing. In Nuxt and SvelteKit, make sure the route isn't prerendered.
+  </Accordion>
+</AccordionGroup>

@@ -105,6 +105,14 @@ signature = hashlib.sha256(signature_string.encode()).hexdigest()
 
 ### Examples
 
+The framework guides build a complete upload flow with pause, resume after a reload, and playback once the video has encoded:
+
+<CardGroup cols={3}>
+  <Card title="Laravel" icon="/logo/frameworks/laravel.svg" href="/stream/upload/laravel" />
+  <Card title="Rails" icon="/logo/frameworks/rubyonrails.svg" href="/stream/upload/rails" />
+  <Card title="Django" icon="/logo/frameworks/django.svg" href="/stream/upload/django" />
+</CardGroup>
+
 Once you have the presigned credentials from your server, use a TUS client library to upload the file. The official [tus-js-client](https://github.com/tus/tus-js-client) is recommended for browser uploads.
 
 **Install the TUS client:**

@@ -1,0 +1,182 @@
+---
+title: "Upload videos to Bunny Stream from Rails"
+sidebarTitle: "Rails"
+description: "Upload video from the browser straight to Bunny Stream over TUS, with a Rails backend that creates each video and signs the upload."
+---
+
+import TusBrowser from "/snippets/stream/tus-upload-browser.mdx";
+import TusStatus from "/snippets/stream/tus-upload-status.mdx";
+
+The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resumable-uploads), in chunks that survive a dropped connection or a reload. Rails creates the video and signs the upload, so your API key stays on the server and the file never touches it.
+
+<Card title="Rails example on GitHub" icon="/logo/frameworks/rubyonrails.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-rails" horizontal>
+  A Rails 8 app with pause, resume after a reload, and playback once encoded. It uses import maps, so there's no JavaScript build.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Add your library credentials">
+    Both values are on your library's **API** page. The API key can delete videos, so keep it out of git.
+
+    ```bash .env
+    BUNNY_STREAM_LIBRARY_ID=
+    BUNNY_STREAM_API_KEY=
+    ```
+
+    The example loads `.env` in development with `dotenv-rails`. In production, set the variables on the host.
+  </Step>
+  <Step title="Create the Bunny Stream module">
+    The signature is the hex SHA-256 of the library ID, API key, expiry, and video ID, with no separators.
+
+    ```ruby app/models/bunny_stream.rb
+    require "net/http"
+
+    module BunnyStream
+      extend self
+
+      class Error < StandardError; end
+
+      # The status of a video still waiting for its file.
+      CREATED = 0
+
+      # Bunny checks the expiry on every TUS request, so leave room for slow uploads.
+      SIGNATURE_TTL = 24.hours
+
+      def video(video_id)
+        video = stream(Net::HTTP::Get, "/#{ERB::Util.url_encode(video_id)}")
+
+        {
+          status: video["status"],
+          encodeProgress: video["encodeProgress"],
+          embedUrl: "https://player.mediadelivery.net/embed/#{library_id}/#{video_id}"
+        }
+      end
+
+      def create_video(title)
+        stream(Net::HTTP::Post, "", { title: }).fetch("guid")
+      end
+
+      def sign_upload(video_id)
+        expiration_time = SIGNATURE_TTL.from_now.to_i
+        signature = Digest::SHA256.hexdigest("#{library_id}#{api_key}#{expiration_time}#{video_id}")
+
+        { videoId: video_id, libraryId: library_id, expirationTime: expiration_time, signature: }
+      end
+
+      private
+
+      def library_id = ENV.fetch("BUNNY_STREAM_LIBRARY_ID")
+      def api_key = ENV.fetch("BUNNY_STREAM_API_KEY")
+
+      def stream(verb, path, body = nil)
+        uri = URI("https://video.bunnycdn.com/library/#{library_id}/videos#{path}")
+        request = verb.new(uri, "AccessKey" => api_key, "Accept" => "application/json", "Content-Type" => "application/json")
+        request.body = body.to_json if body
+
+        response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |http| http.request(request) }
+        raise Error, "Bunny Stream returned #{response.code}: #{response.body}" unless response.is_a?(Net::HTTPSuccess)
+
+        JSON.parse(response.body)
+      end
+    end
+    ```
+
+    Turn its errors into JSON once, in the base controller:
+
+    ```ruby app/controllers/application_controller.rb
+    class ApplicationController < ActionController::Base
+      rescue_from BunnyStream::Error do |error|
+        render json: { error: error.message }, status: :bad_gateway
+      end
+    end
+    ```
+  </Step>
+  <Step title="Add the API routes">
+    ```ruby config/routes.rb
+    namespace :api do
+      resources :uploads, only: :create
+      resources :videos, only: :show
+    end
+    ```
+
+    The uploads controller signs a new video. If the browser sends the ID of an earlier upload that Bunny Stream is still waiting on, it re-signs that video so the upload can resume:
+
+    ```ruby app/controllers/api/uploads_controller.rb
+    class Api::UploadsController < ApplicationController
+      def create
+        title = params.require(:title)
+        video_id = params[:videoId]
+        video_id = BunnyStream.create_video(title) unless resumable?(video_id)
+
+        render json: BunnyStream.sign_upload(video_id)
+      end
+
+      private
+
+      def resumable?(video_id)
+        video_id.present? && BunnyStream.video(video_id)[:status] == BunnyStream::CREATED
+      rescue BunnyStream::Error
+        false
+      end
+    end
+    ```
+
+    ```ruby app/controllers/api/videos_controller.rb
+    class Api::VideosController < ApplicationController
+      def show
+        render json: BunnyStream.video(params[:id])
+      end
+    end
+    ```
+  </Step>
+  <Step title="Upload from the browser">
+    Pin tus-js-client from jsDelivr. The `+esm` build is a single file, which is what an import map needs:
+
+    ```ruby config/importmap.rb
+    pin "tus-js-client", to: "https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/+esm"
+    ```
+
+    Rails rejects a `POST` without a CSRF token, so read it from `csrf_meta_tags` in your layout and send it along:
+
+    ```js app/javascript/components/video_uploader.js
+    import * as tus from "tus-js-client";
+
+    async function requestUpload(title, videoId) {
+      const response = await fetch("/api/uploads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content,
+        },
+        body: JSON.stringify({ title, videoId }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? "Could not create the upload");
+
+      return body;
+    }
+    ```
+
+    <TusBrowser />
+  </Step>
+</Steps>
+
+## Play the video once it has encoded
+
+<TusStatus />
+
+## Before you deploy
+
+The routes have no auth check, so anyone can create videos in your library. Add a `before_action` that requires a signed-in user, and record which user owns each video ID.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The TUS request returns 401">
+    The signature doesn't match the headers. Check that the library ID and API key belong to the same library, and restart the server after changing `.env`.
+  </Accordion>
+  <Accordion title="/api/uploads returns 422 with InvalidAuthenticityToken">
+    The request is missing the CSRF token. Check that the layout renders `csrf_meta_tags` and the `fetch` sends `X-CSRF-Token`.
+  </Accordion>
+</AccordionGroup>

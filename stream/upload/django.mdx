@@ -1,0 +1,212 @@
+---
+title: "Upload videos to Bunny Stream from Django"
+sidebarTitle: "Django"
+description: "Upload video from the browser straight to Bunny Stream over TUS, with a Django backend that creates each video and signs the upload."
+---
+
+import TusBrowser from "/snippets/stream/tus-upload-browser.mdx";
+import TusStatus from "/snippets/stream/tus-upload-status.mdx";
+
+The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resumable-uploads), in chunks that survive a dropped connection or a reload. Django creates the video and signs the upload, so your API key stays on the server and the file never touches it.
+
+<Card title="Django example on GitHub" icon="/logo/frameworks/django.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-django" horizontal>
+  A Django 6 app with pause, resume after a reload, and playback once encoded. It runs with `uv run` and needs nothing beyond Django.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Add your library credentials">
+    Both values are on your library's **API** page. The API key can delete videos, so keep it out of git.
+
+    ```bash .env
+    BUNNY_STREAM_LIBRARY_ID=
+    BUNNY_STREAM_API_KEY=
+    ```
+
+    Django doesn't read `.env` itself. Start the server with `uv run --env-file .env manage.py runserver`, or export the variables.
+  </Step>
+  <Step title="Create the Bunny Stream module">
+    The module uses `urllib` from the standard library. The signature is the hex SHA-256 of the library ID, API key, expiry, and video ID, with no separators.
+
+    ```python uploads/bunny_stream.py
+    import hashlib
+    import json
+    import os
+    import time
+    from typing import Any
+    from urllib.error import HTTPError, URLError
+    from urllib.parse import quote
+    from urllib.request import Request, urlopen
+
+    # The status of a video still waiting for its file.
+    STATUS_CREATED = 0
+
+    # Bunny checks the expiry on every TUS request, so leave room for slow uploads.
+    SIGNATURE_TTL_SECONDS = 24 * 60 * 60
+
+
+    class BunnyStreamError(Exception):
+        pass
+
+
+    def _config() -> tuple[str, str]:
+        return os.environ["BUNNY_STREAM_LIBRARY_ID"], os.environ["BUNNY_STREAM_API_KEY"]
+
+
+    def _stream(path: str, *, method: str = "GET", body: dict[str, Any] | None = None) -> dict[str, Any]:
+        library_id, api_key = _config()
+        request = Request(
+            f"https://video.bunnycdn.com/library/{library_id}/videos{path}",
+            method=method,
+            data=json.dumps(body).encode() if body is not None else None,
+            headers={"AccessKey": api_key, "Accept": "application/json", "Content-Type": "application/json"},
+        )
+        try:
+            with urlopen(request, timeout=30) as response:
+                return json.load(response)
+        except HTTPError as error:
+            raise BunnyStreamError(f"Bunny Stream returned {error.code}: {error.read().decode()}") from error
+        except URLError as error:
+            raise BunnyStreamError(f"Could not reach Bunny Stream: {error.reason}") from error
+
+
+    def get_video(video_id: str) -> dict[str, Any]:
+        library_id, _ = _config()
+        video = _stream(f"/{quote(video_id, safe='')}")
+
+        return {
+            "status": video["status"],
+            "encodeProgress": video["encodeProgress"],
+            "embedUrl": f"https://player.mediadelivery.net/embed/{library_id}/{video_id}",
+        }
+
+
+    def create_video(title: str) -> str:
+        return _stream("", method="POST", body={"title": title})["guid"]
+
+
+    def sign_upload(video_id: str) -> dict[str, Any]:
+        library_id, api_key = _config()
+        expiration_time = int(time.time()) + SIGNATURE_TTL_SECONDS
+        signature = hashlib.sha256(f"{library_id}{api_key}{expiration_time}{video_id}".encode()).hexdigest()
+
+        return {
+            "videoId": video_id,
+            "libraryId": library_id,
+            "expirationTime": expiration_time,
+            "signature": signature,
+        }
+    ```
+  </Step>
+  <Step title="Add the views">
+    The upload view signs a new video. If the browser sends the ID of an earlier upload that Bunny Stream is still waiting on, it re-signs that video so the upload can resume:
+
+    ```python uploads/views.py
+    import json
+
+    from django.http import HttpRequest, JsonResponse
+    from django.views.decorators.http import require_GET, require_POST
+
+    from . import bunny_stream
+
+
+    @require_POST
+    def create_upload(request: HttpRequest) -> JsonResponse:
+        try:
+            payload = json.loads(request.body)
+        except json.JSONDecodeError:
+            payload = None
+        if not isinstance(payload, dict):
+            return JsonResponse({"error": "Send a JSON object"}, status=400)
+
+        title = payload.get("title")
+        if not isinstance(title, str) or not title.strip():
+            return JsonResponse({"error": "title is required"}, status=400)
+
+        try:
+            video_id = payload.get("videoId")
+            if not (isinstance(video_id, str) and _can_resume(video_id)):
+                video_id = bunny_stream.create_video(title)
+
+            return JsonResponse(bunny_stream.sign_upload(video_id))
+        except bunny_stream.BunnyStreamError as error:
+            return JsonResponse({"error": str(error)}, status=502)
+
+
+    @require_GET
+    def video_status(request: HttpRequest, video_id: str) -> JsonResponse:
+        try:
+            return JsonResponse(bunny_stream.get_video(video_id))
+        except bunny_stream.BunnyStreamError as error:
+            return JsonResponse({"error": str(error)}, status=502)
+
+
+    def _can_resume(video_id: str) -> bool:
+        try:
+            return bunny_stream.get_video(video_id)["status"] == bunny_stream.STATUS_CREATED
+        except bunny_stream.BunnyStreamError:
+            return False
+    ```
+
+    ```python config/urls.py
+    from django.urls import path
+
+    from uploads import views
+
+    urlpatterns = [
+        path("api/uploads", views.create_upload),
+        path("api/videos/<str:video_id>", views.video_status),
+    ]
+    ```
+  </Step>
+  <Step title="Upload from the browser">
+    Django rejects a `POST` without a CSRF token, so render one into the page:
+
+    ```html uploads/templates/uploads/index.html
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <script type="module" src="{% static 'uploads/video-uploader.js' %}"></script>
+    ```
+
+    With no build step, import tus-js-client from jsDelivr and send the token as `X-CSRFToken`:
+
+    ```js uploads/static/uploads/video-uploader.js
+    import * as tus from "https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/+esm";
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    async function requestUpload(title, videoId) {
+      const response = await fetch("/api/uploads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+        body: JSON.stringify({ title, videoId }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? "Could not create the upload");
+
+      return body;
+    }
+    ```
+
+    <TusBrowser />
+  </Step>
+</Steps>
+
+## Play the video once it has encoded
+
+<TusStatus />
+
+## Before you deploy
+
+The views have no auth check, so anyone can create videos in your library. Wrap them with `login_required`, and record which user owns each video ID. The example's `settings.py` is development-only, so set `DJANGO_SECRET_KEY`, `DEBUG = False`, and `ALLOWED_HOSTS` as well.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The TUS request returns 401">
+    The signature doesn't match the headers. Check that the library ID and API key belong to the same library, and restart the server after changing `.env`.
+  </Accordion>
+  <Accordion title="/api/uploads returns 403 with CSRF verification failed">
+    The request is missing the CSRF token. Check that the template renders the `csrf-token` meta tag and the `fetch` sends `X-CSRFToken`.
+  </Accordion>
+</AccordionGroup>
