@@ -1,13 +1,15 @@
-tus-js-client sends the credentials as headers with every request. The video ID goes into `localStorage` against the file, which is how a reload finds its way back to the same upload.
+tus-js-client sends the credentials as headers with every request. The video ID goes into `localStorage` against the file, which is how a reload finds its way back to the same upload. Add this to the same file.
 
 ```js
 // Remembers which Bunny video a file was going into, so a reload can resume it.
 const videoKey = (file) => `bunny-video:${file.name}:${file.size}:${file.lastModified}`;
 
-export async function uploadVideo(file, { onProgress, onSuccess, onError }) {
+// Aborting `signal` cancels the upload, even while it still waits on your server.
+export async function uploadVideo(file, { signal, onProgress, onSuccess, onError }) {
   const key = videoKey(file);
   const savedVideoId = localStorage.getItem(key);
   const credentials = await requestUpload(file.name, savedVideoId);
+  if (signal?.aborted) return null;
   localStorage.setItem(key, credentials.videoId);
 
   const upload = new tus.Upload(file, {
@@ -31,9 +33,11 @@ export async function uploadVideo(file, { onProgress, onSuccess, onError }) {
 
   // A stored upload URL belongs to one video, so only resume into the same one.
   const [previous] = await upload.findPreviousUploads();
+  if (signal?.aborted) return null;
   if (previous && credentials.videoId === savedVideoId) {
     upload.resumeFromPreviousUpload(previous);
   }
+  signal?.addEventListener("abort", () => upload.abort());
   upload.start();
 
   return upload;
@@ -42,4 +46,4 @@ export async function uploadVideo(file, { onProgress, onSuccess, onError }) {
 
 `abort()` pauses. `start()` picks up from the last chunk we acknowledged.
 
-A 401 from the TUS endpoint means the signature doesn't match the headers. Check that the library ID and API key belong to the same library. Re-signing keeps the upload's original expiry, as the [TUS FAQ](/stream/tus-resumable-uploads#resumable-tus-upload-faq) explains.
+A 401 from the TUS endpoint means the signature doesn't match the headers. Check that the library ID and API key belong to the same library. A 400 means the expiry has already passed. Re-signing keeps the upload's original expiry, as the [TUS FAQ](/stream/tus-resumable-uploads#resumable-tus-upload-faq) explains.

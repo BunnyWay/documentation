@@ -131,35 +131,51 @@ The component below renders a placeholder on the server, loads player.js in an e
 
     The placeholder is a black 16:9 box. To show a poster until the script loads, use the video's thumbnail from [Video storage structure](/stream/storage-structure).
   </Step>
+  <Step title="Set the library ID">
+    Add your library ID to `.env.local`. It's on the library's **API** page in the dashboard.
+
+    ```bash .env.local
+    NEXT_PUBLIC_BUNNY_LIBRARY_ID=123456
+    ```
+
+    The library ID is public in every embed URL, which makes a `NEXT_PUBLIC_` variable safe. Restart the dev server after changing it.
+  </Step>
   <Step title="Render it from a Server Component">
-    A Server Component can fetch the video and pass it straight in.
+    A Server Component can fetch the video and pass it straight in. `params` is request data, so read it in a component inside `<Suspense>`. With Cache Components on, as in a new `create-next-app` project, reading it outside `<Suspense>` fails the build.
 
     ```tsx app/lessons/[id]/page.tsx
+    import { Suspense } from "react";
     import { BunnyPlayer } from "@/components/bunny-player";
     import { getLesson } from "@/lib/lessons";
 
-    export default async function LessonPage({
-      params,
-    }: {
-      params: Promise<{ id: string }>;
-    }) {
+    export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
+      return (
+        <main>
+          <Suspense>
+            <Lesson params={params} />
+          </Suspense>
+        </main>
+      );
+    }
+
+    async function Lesson({ params }: { params: Promise<{ id: string }> }) {
       const { id } = await params;
       const lesson = await getLesson(id);
 
       return (
-        <main>
+        <>
           <h1>{lesson.title}</h1>
           <BunnyPlayer
             libraryId={process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID!}
             videoId={lesson.videoId}
             params={{ autoplay: false, preload: true }}
           />
-        </main>
+        </>
       );
     }
     ```
 
-    The library ID is public in every embed URL, which makes a `NEXT_PUBLIC_` variable safe. `params` takes any [player parameter](/stream/embedding#supported-parameters).
+    The `params` prop on `BunnyPlayer` takes any [player parameter](/stream/embedding#supported-parameters).
   </Step>
 </Steps>
 
@@ -196,7 +212,7 @@ export function LessonPlayer({ libraryId, videoId }: { libraryId: string; videoI
 }
 ```
 
-Getters answer through a callback, as in `player.getCurrentTime((seconds) => ...)`. Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` from 0.1.2 ([Methods](/stream/playback-api#methods)).
+Getters answer through a callback, as in `player.getCurrentTime((seconds) => ...)`. Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` ([Methods](/stream/playback-api#methods)).
 
 ```tsx
 player.send({ method: "setPlaybackRate", value: 1.5 });
@@ -208,11 +224,15 @@ The [Playback control API](/stream/playback-api) lists every method and event.
 
 `timeupdate` fires several times a second. Throttle it before calling a Server Action.
 
+A Server Action is a public POST endpoint, and anyone can call it with any arguments. Read the user from the session inside the action, never from its arguments, and validate the values before you write them.
+
 ```ts app/actions.ts
 "use server";
 
 export async function saveProgress(videoId: string, seconds: number, duration: number) {
-  // Persist to your database, keyed by the signed-in user.
+  // Require a signed-in user here, read from the session. Anyone can call this
+  // action with any arguments, so check the user may watch videoId too.
+  // Then persist to your database, keyed by that user.
 }
 ```
 
@@ -296,6 +316,9 @@ Keep the placeholder. `beforeInteractive` makes no promise that the script runs 
 <AccordionGroup>
   <Accordion title="ReferenceError: window is not defined">
     player.js is being imported on the server. Keep `import("player.js")` inside `useEffect`. A static `import playerjs from "player.js"` at the top of a Client Component still runs during server rendering.
+  </Accordion>
+  <Accordion title="The build fails with uncached or runtime data during prerendering">
+    The page reads `params` or other request data outside `<Suspense>`, and Cache Components is on. Keep the page synchronous and read the data in an async child inside `<Suspense>`, as the lesson page above does.
   </Accordion>
   <Accordion title="onReady never fires">
     The iframe loaded before player.js, which happens when it's part of the server-rendered HTML. Render it only once player.js has loaded, as the component above does.

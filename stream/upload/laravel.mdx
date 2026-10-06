@@ -6,6 +6,7 @@ description: "Upload video from the browser straight to Bunny Stream over TUS, w
 
 import TusBrowser from "/snippets/stream/tus-upload-browser.mdx";
 import TusStatus from "/snippets/stream/tus-upload-status.mdx";
+import UploadAuthWarning from "/snippets/stream/upload-auth-warning.mdx";
 
 Video files are large and PHP's upload limits are small. Here the file never reaches PHP. Laravel creates the video and signs an upload, then the browser sends the file to us over [TUS](/stream/tus-resumable-uploads) in resumable chunks.
 
@@ -98,6 +99,19 @@ Video files are large and PHP's upload limits are small. Here the file never rea
 
   </Step>
   <Step title="Add the API routes">
+    <UploadAuthWarning />
+
+    Register `routes/api.php` in `bootstrap/app.php`. API routes skip the CSRF check, which keeps the browser side simple.
+
+    ```php bootstrap/app.php
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ```
+
     ```php routes/api.php
     <?php
 
@@ -108,8 +122,6 @@ Video files are large and PHP's upload limits are small. Here the file never rea
     Route::post('/uploads', UploadController::class);
     Route::get('/videos/{id}', VideoController::class);
     ```
-
-    Run `php artisan install:api` first if the app has no `routes/api.php`. API routes skip the CSRF check, which keeps the browser side simple.
 
     Pass a `videoId` from an unfinished upload and the controller re-signs that video. Anything else gets a new one.
 
@@ -129,17 +141,23 @@ Video files are large and PHP's upload limits are small. Here the file never rea
 
         public function __invoke(Request $request): JsonResponse
         {
+            // Require a signed-in user here. This route is public and creates videos in your library.
+            // Before re-signing a videoId, check that the user owns it.
             $data = $request->validate([
                 'title' => ['required', 'string'],
                 'videoId' => ['nullable', 'string'],
             ]);
 
-            $videoId = $data['videoId'] ?? null;
-            if (! $videoId || ! $this->canResume($videoId)) {
-                $videoId = $this->bunny->createVideo($data['title']);
-            }
+            try {
+                $videoId = $data['videoId'] ?? null;
+                if (! $videoId || ! $this->canResume($videoId)) {
+                    $videoId = $this->bunny->createVideo($data['title']);
+                }
 
-            return response()->json($this->bunny->signUpload($videoId));
+                return response()->json($this->bunny->signUpload($videoId));
+            } catch (RequestException $error) {
+                return response()->json(['error' => $error->getMessage()], 502);
+            }
         }
 
         private function canResume(string $videoId): bool
@@ -159,20 +177,58 @@ Video files are large and PHP's upload limits are small. Here the file never rea
     namespace App\Http\Controllers;
 
     use App\Services\BunnyStream;
+    use Illuminate\Http\Client\RequestException;
     use Illuminate\Http\JsonResponse;
 
     class VideoController extends Controller
     {
         public function __invoke(BunnyStream $bunny, string $id): JsonResponse
         {
-            return response()->json($bunny->getVideo($id));
+            // Require a signed-in user here, and check that they own this video ID. The route is public.
+            try {
+                return response()->json($bunny->getVideo($id));
+            } catch (RequestException $error) {
+                // 404 when Bunny Stream has no such video, 502 for anything else.
+                $status = $error->response->status() === 404 ? 404 : 502;
+
+                return response()->json(['error' => $error->getMessage()], $status);
+            }
         }
     }
     ```
   </Step>
   <Step title="Upload from the browser">
+    Serve the page from `/`, with a file input and somewhere to show the result.
+
+    ```php routes/web.php
+    <?php
+
+    use Illuminate\Support\Facades\Route;
+
+    Route::view('/', 'upload');
+    ```
+
+    ```blade resources/views/upload.blade.php
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Upload to Bunny Stream</title>
+        @vite('resources/js/app.js')
+    </head>
+    <body>
+        <input type="file" id="video-file" accept="video/*">
+        <div id="video-output"></div>
+    </body>
+    </html>
+    ```
+
+    ```js resources/js/app.js
+    import "./video-uploader";
+    ```
+
     ```bash
-    npm install tus-js-client
+    bun add tus-js-client
     ```
 
     ```js resources/js/video-uploader.js
@@ -185,7 +241,8 @@ Video files are large and PHP's upload limits are small. Here the file never rea
         body: JSON.stringify({ title, videoId }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.message ?? "Could not create the upload");
+      // Validation errors come back as `message`, Bunny Stream errors as `error`.
+      if (!response.ok) throw new Error(body.error ?? body.message ?? "Could not create the upload");
 
       return body;
     }
@@ -199,14 +256,16 @@ Video files are large and PHP's upload limits are small. Here the file never rea
 
 <TusStatus />
 
+Start the app with `composer run dev`, open http://localhost:8000, and choose a video.
+
 ## Before you deploy
 
-Put the routes behind `auth:sanctum` or your own middleware, and store which user owns each video ID. As written, anyone can fill your library.
+Put the routes behind `auth:sanctum` (`php artisan install:api` adds Sanctum) or your own middleware, and store which user owns each video ID. As written, anyone can fill your library.
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="/api/uploads returns 404">
-    Laravel isn't loading `routes/api.php`. Run `php artisan install:api`. If you changed `.env` after caching the config, run `php artisan config:clear` too.
+    Laravel isn't loading `routes/api.php`. Check that `withRouting` in `bootstrap/app.php` has the `api:` line. If you changed `.env` after caching the config, run `php artisan config:clear` too.
   </Accordion>
 </AccordionGroup>

@@ -124,13 +124,49 @@ SvelteKit renders it on the server without changes. The component imports player
 
     `{#key src}` replaces the iframe when the video changes, and the effect runs again with a fresh `Player`. Callback props are read inside the event handlers, which means a new inline function won't re-create the player.
   </Step>
+  <Step title="Add your library ID">
+    Create `.env` with the library ID from your library's **API** page.
+
+    ```bash .env
+    PUBLIC_BUNNY_LIBRARY_ID=12345
+    ```
+
+    Declare it in `src/env.ts`. `public: true` lets browser code import it, and `static: true` inlines it at build time.
+
+    ```ts src/env.ts
+    import { defineEnvVars } from "@sveltejs/kit/env";
+
+    export const variables = defineEnvVars({
+      PUBLIC_BUNNY_LIBRARY_ID: { public: true, static: true },
+    });
+    ```
+  </Step>
   <Step title="Render a video">
-    Load the video ID in `+page.server.ts` and pass it through `data`.
+    Load the video ID in `+page.server.ts`.
+
+    ```ts src/routes/lessons/[id]/+page.server.ts
+    import { error } from "@sveltejs/kit";
+    import type { PageServerLoad } from "./$types";
+
+    // Swap this for your database.
+    const lessons: Record<string, { title: string; videoId: string }> = {
+      intro: { title: "Introduction", videoId: "your-video-guid" },
+    };
+
+    export const load: PageServerLoad = ({ params }) => {
+      const lesson = lessons[params.id];
+      if (!lesson) error(404, "Lesson not found");
+
+      return { lesson };
+    };
+    ```
+
+    The page reads it from `data`.
 
     ```svelte src/routes/lessons/[id]/+page.svelte
     <script lang="ts">
-      import BunnyPlayer from "$lib/components/BunnyPlayer.svelte";
-      import { PUBLIC_BUNNY_LIBRARY_ID } from "$env/static/public";
+      import BunnyPlayer from "#lib/components/BunnyPlayer.svelte";
+      import { PUBLIC_BUNNY_LIBRARY_ID } from "$app/env/public";
 
       let { data } = $props();
     </script>
@@ -145,7 +181,7 @@ SvelteKit renders it on the server without changes. The component imports player
     />
     ```
 
-    The library ID is public in every embed URL, which makes a `PUBLIC_` variable safe. `params` takes any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
+    The library ID is public in every embed URL, so it is safe to send to the browser. `params` takes any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
   </Step>
 </Steps>
 
@@ -156,7 +192,7 @@ SvelteKit renders it on the server without changes. The component imports player
 ```svelte
 <script lang="ts">
   import type { Player } from "player.js";
-  import BunnyPlayer from "$lib/components/BunnyPlayer.svelte";
+  import BunnyPlayer from "#lib/components/BunnyPlayer.svelte";
 
   let player: Player | null = $state.raw(null);
   let playing = $state(false);
@@ -184,7 +220,7 @@ player?.getCurrentTime((seconds) => console.log(seconds));
 player?.getDuration((seconds) => console.log(seconds));
 ```
 
-Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` from 0.1.2 ([Methods](/stream/playback-api#methods)).
+Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` ([Methods](/stream/playback-api#methods)).
 
 ```ts
 player?.send({ method: "setPlaybackRate", value: 1.5 });
@@ -198,7 +234,7 @@ Browsers block unmuted `play()` before the viewer has clicked anything. Call `mu
 
 ```svelte
 <script lang="ts">
-  import BunnyPlayer from "$lib/components/BunnyPlayer.svelte";
+  import BunnyPlayer from "#lib/components/BunnyPlayer.svelte";
 
   let { videoId, resumeAt }: { videoId: string; resumeAt?: number } = $props();
   let lastSaved = 0;
