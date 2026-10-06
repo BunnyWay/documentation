@@ -1,4 +1,4 @@
-Bunny Stream encodes the video once the last chunk lands. Poll the status route until `status` is `4` (finished) or a failure (`5` or `6`), then put `embedUrl` in an iframe:
+We start encoding when the last chunk arrives. Poll your status route until `status` reaches `4` (finished), `5` or `6` (failed), then embed `embedUrl`.
 
 ```js
 const FINISHED = 4;
@@ -30,4 +30,4 @@ export function watchVideo(videoId, { onChange, onError }) {
 }
 ```
 
-`encodeProgress` is a percentage you can show while the viewer waits. To track encoding server-side, use a [webhook](/stream/webhooks).
+`encodeProgress` gives you a percentage to show in the meantime. A [webhook](/stream/webhooks) tells your server when encoding finishes.

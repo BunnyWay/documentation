@@ -7,13 +7,13 @@ description: "Embed the Bunny Stream player with plain JavaScript or TypeScript,
 import Install from "/snippets/stream/player-js-install.mdx";
 import Types from "/snippets/stream/player-js-types.mdx";
 
-The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. Without a framework, the whole integration is one function that appends the iframe and returns the `Player`.
+With no framework, Bunny Player comes down to one function. It appends the iframe and returns a [player.js](https://github.com/embedly/player.js) `Player` for talking to it.
 
 <Card title="JavaScript example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-vanilla" horizontal>
-  A Vite app with no framework, with custom controls and an event log. It plays a demo video after `bun install` and `bun dev`.
+  Vite and TypeScript, with custom controls and an event log. `bun install && bun dev` plays a demo video.
 </Card>
 
-## Quickstart
+## Build it
 
 <Steps>
   <Step title="Install player.js">
@@ -22,7 +22,7 @@ The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player
     <Types />
   </Step>
   <Step title="Create the player function">
-    player.js has to be listening before the iframe finishes loading, so the function creates the `Player` in the same step it adds the iframe.
+    The `Player` has to exist before the iframe finishes loading. Creating both in one function takes care of the order.
 
     ```ts src/bunny-player.ts
     import playerjs, { type Player } from "player.js";
@@ -75,7 +75,6 @@ The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player
 
 ## Control playback
 
-Wait for `ready`, then call the player's methods from your own controls:
 
 ```ts
 player.on("ready", () => {
@@ -87,17 +86,17 @@ player.on("ready", () => {
 });
 ```
 
-Getters take a callback, because the answer comes back from the iframe. The npm build of player.js (0.1.0) has no playback speed method, so send the command directly:
+Getters answer through a callback, since the value comes back from the iframe. Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap:
 
 ```ts
 player.send({ method: "setPlaybackRate", value: 1.5 });
 ```
 
-Browsers block unmuted `play()` until the viewer interacts with the page, so call `player.mute()` first for playback without a click. [Playback control API](/stream/playback-api) lists every method and event.
+Browsers block unmuted `play()` before the viewer has clicked anything. Mute first if playback has to start on its own. The [Playback control API](/stream/playback-api) lists every method and event.
 
 ## Track progress
 
-`timeupdate` fires several times a second with `{ seconds, duration }`. Throttle it before writing to your backend:
+`timeupdate` fires several times a second. Throttle it before it reaches your backend.
 
 ```ts
 let lastSaved = 0;
@@ -109,11 +108,11 @@ player.on("timeupdate", ({ seconds, duration }) => {
 });
 ```
 
-Pass the saved position back as `params: { t: savedSeconds }` to resume from there.
+Pass the saved position back as `params: { t: savedSeconds }` to resume.
 
 ## Use it without a bundler
 
-Load the build bunny.net hosts in `<head>`, then create the `Player` in a script straight after the iframe. Classic scripts run as the browser parses them, so both run before the iframe loads:
+We host a build of player.js that adds `setPlaybackRate()` and the `playbackratechange` event ([Methods](/stream/playback-api#methods)). Classic scripts run as the browser parses them, which puts both scripts ahead of the iframe's load.
 
 ```html
 <head>
@@ -133,18 +132,16 @@ Load the build bunny.net hosts in `<head>`, then create the `Player` in a script
 </body>
 ```
 
-The hosted build adds `setPlaybackRate()` and the `playbackratechange` event; see [Methods](/stream/playback-api#methods).
-
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="The ready event never fires">
-    The iframe loaded before player.js was listening. This happens when the iframe is in the HTML and the `Player` is created from a module or `defer` script, which runs after parsing. Create the iframe from the same script, as `createBunnyPlayer` does.
+    The iframe loaded before player.js was listening. Module and `defer` scripts run after parsing, by which time an iframe in the HTML may be done. Create the iframe from script, as `createBunnyPlayer` does.
 
-    A hidden tab also holds back `ready` until the viewer switches to it.
+    A hidden tab also holds `ready` back until the viewer switches to it.
   </Accordion>
   <Accordion title="Events fire twice after replacing the video">
-    Every `Player` adds a `message` listener to `window` that is never removed. Guard each player's handlers with a flag, and flip it when you remove that player's iframe.
+    Each `Player` leaves a `message` listener on `window` for good. Guard its handlers with a flag and flip it when you remove the iframe.
   </Accordion>
   <Accordion title="The iframe shows a 403">
     The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).

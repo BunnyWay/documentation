@@ -7,17 +7,17 @@ description: "Upload video from the browser straight to Bunny Stream over TUS, w
 import TusBrowser from "/snippets/stream/tus-upload-browser.mdx";
 import TusStatus from "/snippets/stream/tus-upload-status.mdx";
 
-The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resumable-uploads), in chunks that survive a dropped connection or a reload. Laravel creates the video and signs the upload, so your API key stays on the server and the file never touches it.
+Video files are large and PHP's upload limits are small. Here the file never reaches PHP. Laravel creates the video and signs an upload, then the browser sends the file to us over [TUS](/stream/tus-resumable-uploads) in resumable chunks.
 
 <Card title="Laravel example on GitHub" icon="/logo/frameworks/laravel.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-laravel" horizontal>
-  A Laravel 13 app with pause, resume after a reload, and playback once encoded. No database needed.
+  Laravel 13, Vite, and tus-js-client. No database.
 </Card>
 
-## Quickstart
+## Build it
 
 <Steps>
   <Step title="Add your library credentials">
-    Both values are on your library's **API** page. The API key can delete videos, so keep it out of git.
+    Copy both from your library's **API** page. The API key can delete videos, and belongs in `.env` only.
 
     ```bash .env
     BUNNY_STREAM_LIBRARY_ID=
@@ -32,7 +32,7 @@ The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resum
     ```
   </Step>
   <Step title="Create the Bunny Stream service">
-    The signature is the hex SHA-256 of the library ID, API key, expiry, and video ID, with no separators.
+    The upload signature is a SHA-256 of the library ID, API key, expiry, and video ID.
 
     ```php app/Services/BunnyStream.php
     <?php
@@ -96,7 +96,6 @@ The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resum
     }
     ```
 
-    The `#[Config]` attributes let the container build the service, so any controller can type-hint it.
   </Step>
   <Step title="Add the API routes">
     ```php routes/api.php
@@ -110,9 +109,9 @@ The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resum
     Route::get('/videos/{id}', VideoController::class);
     ```
 
-    A new app needs `php artisan install:api` to load `routes/api.php`. Laravel serves these routes under `/api` and skips the CSRF check.
+    Run `php artisan install:api` first if the app has no `routes/api.php`. API routes skip the CSRF check, which keeps the browser side simple.
 
-    The upload controller signs a new video. If the browser sends the ID of an earlier upload that Bunny Stream is still waiting on, it re-signs that video so the upload can resume:
+    Pass a `videoId` from an unfinished upload and the controller re-signs that video. Anything else gets a new one.
 
     ```php app/Http/Controllers/UploadController.php
     <?php
@@ -154,8 +153,6 @@ The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resum
     }
     ```
 
-    The video controller returns the status the browser polls after the upload:
-
     ```php app/Http/Controllers/VideoController.php
     <?php
 
@@ -174,13 +171,9 @@ The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resum
     ```
   </Step>
   <Step title="Upload from the browser">
-    Install the client:
-
     ```bash
     npm install tus-js-client
     ```
-
-    Then ask your API for credentials and hand them to tus-js-client:
 
     ```js resources/js/video-uploader.js
     import * as tus from "tus-js-client";
@@ -202,21 +195,18 @@ The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resum
   </Step>
 </Steps>
 
-## Play the video once it has encoded
+## Play it once it's encoded
 
 <TusStatus />
 
 ## Before you deploy
 
-The routes have no auth check, so anyone can create videos in your library. Add middleware such as `auth:sanctum`, and record which user owns each video ID.
+Put the routes behind `auth:sanctum` or your own middleware, and store which user owns each video ID. As written, anyone can fill your library.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="The TUS request returns 401">
-    The signature doesn't match the headers. Check that the library ID and API key belong to the same library, and run `php artisan config:clear` if the config is cached.
-  </Accordion>
   <Accordion title="/api/uploads returns 404">
-    Laravel isn't loading `routes/api.php`. Run `php artisan install:api`.
+    Laravel isn't loading `routes/api.php`. Run `php artisan install:api`. If you changed `.env` after caching the config, run `php artisan config:clear` too.
   </Accordion>
 </AccordionGroup>

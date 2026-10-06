@@ -7,27 +7,25 @@ description: "Upload video from the browser straight to Bunny Stream over TUS, w
 import TusBrowser from "/snippets/stream/tus-upload-browser.mdx";
 import TusStatus from "/snippets/stream/tus-upload-status.mdx";
 
-The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resumable-uploads), in chunks that survive a dropped connection or a reload. Django creates the video and signs the upload, so your API key stays on the server and the file never touches it.
+Django creates the video in Bunny Stream and signs an upload. The browser sends the file to us over [TUS](/stream/tus-resumable-uploads), and your API key stays in the server's environment. Everything here runs on Django and the standard library.
 
 <Card title="Django example on GitHub" icon="/logo/frameworks/django.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-django" horizontal>
-  A Django 6 app with pause, resume after a reload, and playback once encoded. It runs with `uv run` and needs nothing beyond Django.
+  Django 6, no database, started with one `uv run` command.
 </Card>
 
-## Quickstart
+## Build it
 
 <Steps>
   <Step title="Add your library credentials">
-    Both values are on your library's **API** page. The API key can delete videos, so keep it out of git.
-
     ```bash .env
     BUNNY_STREAM_LIBRARY_ID=
     BUNNY_STREAM_API_KEY=
     ```
 
-    Django doesn't read `.env` itself. Start the server with `uv run --env-file .env manage.py runserver`, or export the variables.
+    Copy both from your library's **API** page. Django won't read `.env` on its own, and `uv run --env-file .env manage.py runserver` loads it for you.
   </Step>
   <Step title="Create the Bunny Stream module">
-    The module uses `urllib` from the standard library. The signature is the hex SHA-256 of the library ID, API key, expiry, and video ID, with no separators.
+    `urllib` covers the two API calls. The upload signature is a SHA-256 of the library ID, API key, expiry, and video ID.
 
     ```python uploads/bunny_stream.py
     import hashlib
@@ -100,7 +98,7 @@ The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resum
     ```
   </Step>
   <Step title="Add the views">
-    The upload view signs a new video. If the browser sends the ID of an earlier upload that Bunny Stream is still waiting on, it re-signs that video so the upload can resume:
+    `create_upload` re-signs an unfinished video when the browser sends its ID, and creates a new one otherwise.
 
     ```python uploads/views.py
     import json
@@ -161,14 +159,14 @@ The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resum
     ```
   </Step>
   <Step title="Upload from the browser">
-    Django rejects a `POST` without a CSRF token, so render one into the page:
+    Render the CSRF token into the page. The CSRF middleware rejects the `POST` without it.
 
     ```html uploads/templates/uploads/index.html
     <meta name="csrf-token" content="{{ csrf_token }}">
     <script type="module" src="{% static 'uploads/video-uploader.js' %}"></script>
     ```
 
-    With no build step, import tus-js-client from jsDelivr and send the token as `X-CSRFToken`:
+    There's no build step. tus-js-client comes from jsDelivr, and the token travels as `X-CSRFToken`.
 
     ```js uploads/static/uploads/video-uploader.js
     import * as tus from "https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/+esm";
@@ -192,21 +190,18 @@ The browser sends the file straight to Bunny Stream over [TUS](/stream/tus-resum
   </Step>
 </Steps>
 
-## Play the video once it has encoded
+## Play it once it's encoded
 
 <TusStatus />
 
 ## Before you deploy
 
-The views have no auth check, so anyone can create videos in your library. Wrap them with `login_required`, and record which user owns each video ID. The example's `settings.py` is development-only, so set `DJANGO_SECRET_KEY`, `DEBUG = False`, and `ALLOWED_HOSTS` as well.
+Wrap both views in `login_required` and record who owns each video ID. The example's `settings.py` is for development, and production needs `DJANGO_SECRET_KEY`, `DEBUG = False`, and `ALLOWED_HOSTS`.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="The TUS request returns 401">
-    The signature doesn't match the headers. Check that the library ID and API key belong to the same library, and restart the server after changing `.env`.
-  </Accordion>
   <Accordion title="/api/uploads returns 403 with CSRF verification failed">
-    The request is missing the CSRF token. Check that the template renders the `csrf-token` meta tag and the `fetch` sends `X-CSRFToken`.
+    The template needs the `csrf-token` meta tag, and the `fetch` needs the `X-CSRFToken` header.
   </Accordion>
 </AccordionGroup>

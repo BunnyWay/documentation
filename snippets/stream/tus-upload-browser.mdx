@@ -1,4 +1,4 @@
-tus-js-client sends the credentials as headers on every TUS request. Storing the video ID per file lets a reload resume into the same video:
+tus-js-client sends the credentials as headers with every request. The video ID goes into `localStorage` against the file, which is how a reload finds its way back to the same upload.
 
 ```js
 // Remembers which Bunny video a file was going into, so a reload can resume it.
@@ -40,4 +40,6 @@ export async function uploadVideo(file, { onProgress, onSuccess, onError }) {
 }
 ```
 
-`upload.abort()` pauses and `upload.start()` carries on from the last chunk Bunny Stream acknowledged. A re-signed video keeps its original TUS upload expiry; see the [TUS FAQ](/stream/tus-resumable-uploads#resumable-tus-upload-faq).
+`abort()` pauses. `start()` picks up from the last chunk we acknowledged.
+
+A 401 from the TUS endpoint means the signature doesn't match the headers. Check that the library ID and API key belong to the same library. Re-signing keeps the upload's original expiry, as the [TUS FAQ](/stream/tus-resumable-uploads#resumable-tus-upload-faq) explains.
