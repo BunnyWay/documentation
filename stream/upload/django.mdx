@@ -1,0 +1,207 @@
+---
+title: "Upload videos to Bunny Stream from Django"
+sidebarTitle: "Django"
+description: "Upload video from the browser straight to Bunny Stream over TUS, with a Django backend that creates each video and signs the upload."
+---
+
+import TusBrowser from "/snippets/stream/tus-upload-browser.mdx";
+import TusStatus from "/snippets/stream/tus-upload-status.mdx";
+
+Django creates the video in Bunny Stream and signs an upload. The browser sends the file to us over [TUS](/stream/tus-resumable-uploads), and your API key stays in the server's environment. Everything here runs on Django and the standard library.
+
+<Card title="Django example on GitHub" icon="/logo/frameworks/django.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-django" horizontal>
+  Django 6, no database, started with one `uv run` command.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Add your library credentials">
+    ```bash .env
+    BUNNY_STREAM_LIBRARY_ID=
+    BUNNY_STREAM_API_KEY=
+    ```
+
+    Copy both from your library's **API** page. Django won't read `.env` on its own, and `uv run --env-file .env manage.py runserver` loads it for you.
+  </Step>
+  <Step title="Create the Bunny Stream module">
+    `urllib` covers the two API calls. The upload signature is a SHA-256 of the library ID, API key, expiry, and video ID.
+
+    ```python uploads/bunny_stream.py
+    import hashlib
+    import json
+    import os
+    import time
+    from typing import Any
+    from urllib.error import HTTPError, URLError
+    from urllib.parse import quote
+    from urllib.request import Request, urlopen
+
+    # The status of a video still waiting for its file.
+    STATUS_CREATED = 0
+
+    # Bunny checks the expiry on every TUS request, so leave room for slow uploads.
+    SIGNATURE_TTL_SECONDS = 24 * 60 * 60
+
+
+    class BunnyStreamError(Exception):
+        pass
+
+
+    def _config() -> tuple[str, str]:
+        return os.environ["BUNNY_STREAM_LIBRARY_ID"], os.environ["BUNNY_STREAM_API_KEY"]
+
+
+    def _stream(path: str, *, method: str = "GET", body: dict[str, Any] | None = None) -> dict[str, Any]:
+        library_id, api_key = _config()
+        request = Request(
+            f"https://video.bunnycdn.com/library/{library_id}/videos{path}",
+            method=method,
+            data=json.dumps(body).encode() if body is not None else None,
+            headers={"AccessKey": api_key, "Accept": "application/json", "Content-Type": "application/json"},
+        )
+        try:
+            with urlopen(request, timeout=30) as response:
+                return json.load(response)
+        except HTTPError as error:
+            raise BunnyStreamError(f"Bunny Stream returned {error.code}: {error.read().decode()}") from error
+        except URLError as error:
+            raise BunnyStreamError(f"Could not reach Bunny Stream: {error.reason}") from error
+
+
+    def get_video(video_id: str) -> dict[str, Any]:
+        library_id, _ = _config()
+        video = _stream(f"/{quote(video_id, safe='')}")
+
+        return {
+            "status": video["status"],
+            "encodeProgress": video["encodeProgress"],
+            "embedUrl": f"https://player.mediadelivery.net/embed/{library_id}/{video_id}",
+        }
+
+
+    def create_video(title: str) -> str:
+        return _stream("", method="POST", body={"title": title})["guid"]
+
+
+    def sign_upload(video_id: str) -> dict[str, Any]:
+        library_id, api_key = _config()
+        expiration_time = int(time.time()) + SIGNATURE_TTL_SECONDS
+        signature = hashlib.sha256(f"{library_id}{api_key}{expiration_time}{video_id}".encode()).hexdigest()
+
+        return {
+            "videoId": video_id,
+            "libraryId": library_id,
+            "expirationTime": expiration_time,
+            "signature": signature,
+        }
+    ```
+  </Step>
+  <Step title="Add the views">
+    `create_upload` re-signs an unfinished video when the browser sends its ID, and creates a new one otherwise.
+
+    ```python uploads/views.py
+    import json
+
+    from django.http import HttpRequest, JsonResponse
+    from django.views.decorators.http import require_GET, require_POST
+
+    from . import bunny_stream
+
+
+    @require_POST
+    def create_upload(request: HttpRequest) -> JsonResponse:
+        try:
+            payload = json.loads(request.body)
+        except json.JSONDecodeError:
+            payload = None
+        if not isinstance(payload, dict):
+            return JsonResponse({"error": "Send a JSON object"}, status=400)
+
+        title = payload.get("title")
+        if not isinstance(title, str) or not title.strip():
+            return JsonResponse({"error": "title is required"}, status=400)
+
+        try:
+            video_id = payload.get("videoId")
+            if not (isinstance(video_id, str) and _can_resume(video_id)):
+                video_id = bunny_stream.create_video(title)
+
+            return JsonResponse(bunny_stream.sign_upload(video_id))
+        except bunny_stream.BunnyStreamError as error:
+            return JsonResponse({"error": str(error)}, status=502)
+
+
+    @require_GET
+    def video_status(request: HttpRequest, video_id: str) -> JsonResponse:
+        try:
+            return JsonResponse(bunny_stream.get_video(video_id))
+        except bunny_stream.BunnyStreamError as error:
+            return JsonResponse({"error": str(error)}, status=502)
+
+
+    def _can_resume(video_id: str) -> bool:
+        try:
+            return bunny_stream.get_video(video_id)["status"] == bunny_stream.STATUS_CREATED
+        except bunny_stream.BunnyStreamError:
+            return False
+    ```
+
+    ```python config/urls.py
+    from django.urls import path
+
+    from uploads import views
+
+    urlpatterns = [
+        path("api/uploads", views.create_upload),
+        path("api/videos/<str:video_id>", views.video_status),
+    ]
+    ```
+  </Step>
+  <Step title="Upload from the browser">
+    Render the CSRF token into the page. The CSRF middleware rejects the `POST` without it.
+
+    ```html uploads/templates/uploads/index.html
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <script type="module" src="{% static 'uploads/video-uploader.js' %}"></script>
+    ```
+
+    There's no build step. tus-js-client comes from jsDelivr, and the token travels as `X-CSRFToken`.
+
+    ```js uploads/static/uploads/video-uploader.js
+    import * as tus from "https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/+esm";
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    async function requestUpload(title, videoId) {
+      const response = await fetch("/api/uploads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+        body: JSON.stringify({ title, videoId }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? "Could not create the upload");
+
+      return body;
+    }
+    ```
+
+    <TusBrowser />
+  </Step>
+</Steps>
+
+## Play it once it's encoded
+
+<TusStatus />
+
+## Before you deploy
+
+Wrap both views in `login_required` and record who owns each video ID. The example's `settings.py` is for development, and production needs `DJANGO_SECRET_KEY`, `DEBUG = False`, and `ALLOWED_HOSTS`.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="/api/uploads returns 403 with CSRF verification failed">
+    The template needs the `csrf-token` meta tag, and the `fetch` needs the `X-CSRFToken` header.
+  </Accordion>
+</AccordionGroup>

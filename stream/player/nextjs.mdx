@@ -7,12 +7,12 @@ description: "Embed the Bunny Stream player in a Next.js app with a client compo
 import Install from "/snippets/stream/player-js-install.mdx";
 import Types from "/snippets/stream/player-js-types.mdx";
 
-The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. Server rendering adds two constraints. player.js reads `window` the moment it's imported, so it has to be imported in the browser. And it has to be loaded before the iframe finishes loading. player.js caches the iframe's `ready` message when it's imported, so a `Player` created afterwards still connects. If the iframe loads first, as server-rendered HTML can, the `Player` never becomes ready.
+[player.js](https://github.com/embedly/player.js) controls the Bunny Player iframe, and server rendering gives it two rules. It reads `window` on import, which means importing it in the browser. It also has to load before the iframe does. player.js caches the iframe's `ready` message on import, and a `Player` created any time after that still connects. An iframe that finishes loading first, straight from the server HTML, never becomes ready.
 
-The component below renders a placeholder on the server, loads player.js in an effect, then mounts the iframe and creates the `Player` in the same commit. It uses the App Router and works unchanged with the Pages Router. The [React guide](/stream/player/react) covers the client-only version.
+The component below renders a placeholder on the server, loads player.js in an effect, then mounts the iframe and creates the `Player` in the same commit. It works with the App Router and the Pages Router. For a client-only app, see the [React guide](/stream/player/react).
 
 <Card title="Next.js example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-nextjs" horizontal>
-  An App Router app built around this component, with custom controls and an event log. It plays a demo video after `bun install` and `bun dev`.
+  An App Router app with custom controls and an event log. `bun install && bun dev` plays a demo video.
 </Card>
 
 ## Quickstart
@@ -129,10 +129,10 @@ The component below renders a placeholder on the server, loads player.js in an e
     }
     ```
 
-    The placeholder is a black box at the same aspect ratio. Swap in the video's thumbnail if you want a poster while the script loads; [Video storage structure](/stream/storage-structure) has the URL.
+    The placeholder is a black 16:9 box. To show a poster until the script loads, use the video's thumbnail from [Video storage structure](/stream/storage-structure).
   </Step>
   <Step title="Render it from a Server Component">
-    The component is a Client Component, so a server-rendered page can pass it data fetched on the server:
+    A Server Component can fetch the video and pass it straight in.
 
     ```tsx app/lessons/[id]/page.tsx
     import { BunnyPlayer } from "@/components/bunny-player";
@@ -159,13 +159,13 @@ The component below renders a placeholder on the server, loads player.js in an e
     }
     ```
 
-    The library ID already appears in every embed URL, so a `NEXT_PUBLIC_` variable is fine. `params` accepts any [player parameter](/stream/embedding#supported-parameters).
+    The library ID is public in every embed URL, which makes a `NEXT_PUBLIC_` variable safe. `params` takes any [player parameter](/stream/embedding#supported-parameters).
   </Step>
 </Steps>
 
 ## Control playback
 
-Callback props are functions, so the component that passes them has to be a Client Component too. `onReady` hands you the `Player`:
+Callback props are functions, and functions can't cross from a Server Component. Pass them from a Client Component, where `onReady` hands you the `Player`.
 
 ```tsx components/lesson-player.tsx
 "use client";
@@ -196,17 +196,17 @@ export function LessonPlayer({ libraryId, videoId }: { libraryId: string; videoI
 }
 ```
 
-Getters take a callback, because the answer comes back from the iframe: `player.getCurrentTime((seconds) => ...)`. The `player.js` package on npm (0.1.0) has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()`, `getPlaybackRate()` and the `playbackratechange` event from version 0.1.2; see [Methods](/stream/playback-api#methods).
+Getters answer through a callback, as in `player.getCurrentTime((seconds) => ...)`. Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` from 0.1.2 ([Methods](/stream/playback-api#methods)).
 
 ```tsx
 player.send({ method: "setPlaybackRate", value: 1.5 });
 ```
 
-[Playback control API](/stream/playback-api) lists every method and event.
+The [Playback control API](/stream/playback-api) lists every method and event.
 
 ## Save progress with a Server Action
 
-`timeupdate` fires several times a second with `{ seconds, duration }`. Throttle it before calling a Server Action:
+`timeupdate` fires several times a second. Throttle it before calling a Server Action.
 
 ```ts app/actions.ts
 "use server";
@@ -241,11 +241,11 @@ export function LessonPlayer({ libraryId, videoId, resumeAt }: { libraryId: stri
 }
 ```
 
-Pass the saved position back as the `t` parameter to resume from there.
+Pass the saved position back as the `t` parameter to resume.
 
 ## Sign embed URLs on the server
 
-If the library uses [embed view token authentication](/stream/token-authentication), the iframe URL needs a `token` and `expires` pair. Compute them in the Server Component, where the library's security key stays, and pass them through `params`:
+With [embed view token authentication](/stream/token-authentication) on, the URL needs a `token` and `expires`. Sign them in the Server Component, where the key stays private, and pass them through `params`.
 
 ```tsx
 <BunnyPlayer
@@ -255,9 +255,11 @@ If the library uses [embed view token authentication](/stream/token-authenticati
 />
 ```
 
+[Sign embed URLs on the server](/stream/player/signed-embeds) has the signing function.
+
 ## Load player.js from the CDN instead
 
-To skip the npm dependency, load the hosted build in the root layout with `beforeInteractive`, so `window.playerjs` exists before anything hydrates:
+To drop the npm dependency, load our hosted build in the root layout. `beforeInteractive` puts `window.playerjs` in place before anything hydrates.
 
 ```tsx app/layout.tsx
 import Script from "next/script";
@@ -277,7 +279,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-Replace the dynamic import with `setPlayerjs(window.playerjs)` and declare the global:
+Swap the dynamic import for `setPlayerjs(window.playerjs)` and declare the global.
 
 ```ts
 declare global {
@@ -287,7 +289,7 @@ declare global {
 }
 ```
 
-Keep the placeholder. `beforeInteractive` does not guarantee the script has run before a server-rendered iframe finishes loading, so the gate is still needed with the hosted build.
+Keep the placeholder. `beforeInteractive` makes no promise that the script runs before a server-rendered iframe loads.
 
 ## Troubleshooting
 
@@ -296,12 +298,12 @@ Keep the placeholder. `beforeInteractive` does not guarantee the script has run 
     player.js is being imported on the server. Keep `import("player.js")` inside `useEffect`. A static `import playerjs from "player.js"` at the top of a Client Component still runs during server rendering.
   </Accordion>
   <Accordion title="onReady never fires">
-    The iframe finished loading before player.js was loaded, which happens when the iframe is part of the server-rendered HTML. Render it only after player.js has loaded, as the component above does. A `Player` created after that still connects, because player.js caches the iframe's `ready` message.
+    The iframe loaded before player.js, which happens when it's part of the server-rendered HTML. Render it only once player.js has loaded, as the component above does.
 
-    `ready` is also delayed while the tab is hidden, and fires once it becomes visible.
+    A hidden tab also holds `ready` back until the viewer switches to it.
   </Accordion>
   <Accordion title="Events fire twice after changing the video">
-    Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the effect cleanup keeps stale instances quiet, so check that yours flips it.
+    Each `Player` leaves a `message` listener on `window` for good. The `active` flag in the effect cleanup silences old instances. Check that yours flips it.
   </Accordion>
   <Accordion title="The iframe shows a 403">
     The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).

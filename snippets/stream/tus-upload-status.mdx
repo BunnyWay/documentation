@@ -1,0 +1,33 @@
+We start encoding when the last chunk arrives. Poll your status route until `status` reaches `4` (finished), `5` or `6` (failed), then embed `embedUrl`.
+
+```js
+const FINISHED = 4;
+const FAILED = [5, 6];
+
+// Returns a function that stops polling.
+export function watchVideo(videoId, { onChange, onError }) {
+  let timer;
+  let active = true;
+
+  async function poll() {
+    const response = await fetch(`/api/videos/${videoId}`);
+    const video = await response.json();
+    if (!active) return;
+    if (!response.ok) return onError(new Error(video.error ?? "Could not read the video status"));
+
+    onChange(video);
+    if (video.status !== FINISHED && !FAILED.includes(video.status)) {
+      timer = setTimeout(() => poll().catch(onError), 3000);
+    }
+  }
+
+  poll().catch(onError);
+
+  return () => {
+    active = false;
+    clearTimeout(timer);
+  };
+}
+```
+
+`encodeProgress` gives you a percentage to show in the meantime. A [webhook](/stream/webhooks) tells your server when encoding finishes.
