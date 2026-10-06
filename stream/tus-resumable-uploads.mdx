@@ -105,12 +105,21 @@ signature = hashlib.sha256(signature_string.encode()).hexdigest()
 
 ### Examples
 
-The framework guides build a complete upload flow with pause, resume after a reload, and playback once the video has encoded:
+Each framework guide signs the upload, sends the file, and plays the video once it's encoded.
 
 <CardGroup cols={3}>
   <Card title="Laravel" icon="/logo/frameworks/laravel.svg" href="/stream/upload/laravel" />
   <Card title="Rails" icon="/logo/frameworks/rubyonrails.svg" href="/stream/upload/rails" />
   <Card title="Django" icon="/logo/frameworks/django.svg" href="/stream/upload/django" />
+</CardGroup>
+
+We have runnable apps for more stacks in [BunnyWay/examples](https://github.com/BunnyWay/examples/tree/main/stream).
+
+<CardGroup cols={2}>
+  <Card title="Next.js" icon="/logo/frameworks/nextjs.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-nextjs" />
+  <Card title="Nuxt" icon="/logo/frameworks/vue.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-nuxt" />
+  <Card title="SvelteKit" icon="/logo/frameworks/svelte.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-sveltekit" />
+  <Card title="Uppy with React" icon="/logo/frameworks/react.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-uppy-react" />
 </CardGroup>
 
 Once you have the presigned credentials from your server, use a TUS client library to upload the file. The official [tus-js-client](https://github.com/tus/tus-js-client) is recommended for browser uploads.
