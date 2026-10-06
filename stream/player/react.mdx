@@ -7,15 +7,15 @@ description: "Embed the Bunny Stream player in a React app and control playback 
 import Install from "/snippets/stream/player-js-install.mdx";
 import Types from "/snippets/stream/player-js-types.mdx";
 
-The Bunny Player is an iframe. React renders it like any other element, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. This guide builds a `BunnyPlayer` component that renders the iframe, forwards its events, and hands you that object.
+React renders the Bunny Player iframe like any other element. The `BunnyPlayer` component below adds [player.js](https://github.com/embedly/player.js), forwards the player's events as props, and hands you a `Player` for controlling playback.
 
-The examples assume a client-rendered app, such as one built with Vite. For server rendering, including Remix and React Router framework mode, follow the [Next.js guide](/stream/player/nextjs).
+It assumes a client-rendered app, such as one built with Vite. For server rendering, including Remix and React Router framework mode, follow the [Next.js guide](/stream/player/nextjs).
 
 <Card title="React example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-react" horizontal>
-  A Vite app built around this component, with custom controls and an event log. It plays a demo video after `bun install` and `bun dev`.
+  A Vite app with custom controls and an event log. `bun install && bun dev` plays a demo video.
 </Card>
 
-## Quickstart
+## Build it
 
 <Steps>
   <Step title="Install player.js">
@@ -24,7 +24,7 @@ The examples assume a client-rendered app, such as one built with Vite. For serv
     <Types />
   </Step>
   <Step title="Create the component">
-    The component builds the embed URL, renders the iframe, and creates a `Player` once the iframe is in the DOM. Callbacks are read through a ref, so inline props don't re-create the player on every render.
+    The `Player` is created once the iframe is in the DOM. Callbacks live in a ref, which stops inline props from re-creating the player on every render.
 
     ```tsx components/bunny-player.tsx
     import { useEffect, useRef } from "react";
@@ -108,7 +108,7 @@ The examples assume a client-rendered app, such as one built with Vite. For serv
     ```
   </Step>
   <Step title="Render a video">
-    Pass the library ID and video GUID from the video's page in the dashboard:
+    The library ID and video GUID are on the video's page in the dashboard.
 
     ```tsx
     import { BunnyPlayer } from "./components/bunny-player";
@@ -125,13 +125,13 @@ The examples assume a client-rendered app, such as one built with Vite. For serv
     }
     ```
 
-    `params` accepts any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
+    `params` takes any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
   </Step>
 </Steps>
 
 ## Control playback
 
-`onReady` hands you the `Player`. Keep it in state and call its methods from your own controls:
+`onReady` hands you the `Player`. Keep it in state for your own controls.
 
 ```tsx
 import { useState } from "react";
@@ -162,25 +162,25 @@ export function Lesson() {
 }
 ```
 
-Getters take a callback, because the answer comes back from the iframe:
+Getters answer through a callback, since the value comes back from the iframe.
 
 ```tsx
 player.getCurrentTime((seconds) => console.log(seconds));
 player.getDuration((seconds) => console.log(seconds));
 ```
 
-The `player.js` package on npm (0.1.0) has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()`, `getPlaybackRate()` and the `playbackratechange` event from version 0.1.2; see [Methods](/stream/playback-api#methods).
+Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` from 0.1.2 ([Methods](/stream/playback-api#methods)).
 
 ```tsx
 player.send({ method: "setPlaybackRate", value: 1.5 });
 player.on("playbackratechange", (rate) => console.log(rate));
 ```
 
-Browsers block unmuted `play()` until the viewer has interacted with the page, so call `player.mute()` first if playback has to start without a click. [Playback control API](/stream/playback-api) lists every method and event.
+Browsers block unmuted `play()` before the viewer has clicked anything. Call `player.mute()` first if playback has to start on its own. The [Playback control API](/stream/playback-api) lists every method and event.
 
 ## Track progress
 
-`timeupdate` fires several times a second with `{ seconds, duration }`. Throttle it before writing to your backend:
+`timeupdate` fires several times a second. Throttle it before it reaches your backend.
 
 ```tsx
 import { useRef } from "react";
@@ -204,17 +204,17 @@ export function Lesson({ videoId }: { videoId: string }) {
 }
 ```
 
-Pass the saved position back as `params={{ t: savedSeconds }}` to resume from there.
+Pass the saved position back as `params={{ t: savedSeconds }}` to resume.
 
 ## Load player.js from the CDN instead
 
-To skip the npm dependency, load the build bunny.net hosts:
+To drop the npm dependency, load our hosted build in `<head>`, where it runs before your components mount.
 
 ```html index.html
 <script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
 ```
 
-Put it in `<head>` so it has loaded before your components mount. Replace `import playerjs from "player.js"` with `const playerjs = window.playerjs` and declare the global:
+Swap `import playerjs from "player.js"` for `const playerjs = window.playerjs` and declare the global.
 
 ```ts
 declare global {
@@ -228,12 +228,12 @@ declare global {
 
 <AccordionGroup>
   <Accordion title="onReady never fires">
-    player.js has to be loaded before the iframe finishes loading. It caches the iframe's `ready` message when it's imported, so a `Player` created afterwards still connects. In a client-rendered app, importing it with the component is early enough. Server-rendered iframe HTML can finish loading before your JavaScript runs; the [Next.js guide](/stream/player/nextjs) handles that case.
+    player.js has to be loaded before the iframe finishes loading. It caches the iframe's `ready` message on import, and a `Player` created later still connects. In a client-rendered app, importing it with the component is early enough. Server-rendered HTML can load the iframe before your JavaScript runs, which the [Next.js guide](/stream/player/nextjs) handles.
 
-    `ready` is also delayed while the tab is hidden, and fires once it becomes visible.
+    A hidden tab also holds `ready` back until the viewer switches to it.
   </Accordion>
   <Accordion title="Events fire twice after changing the video">
-    Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the effect cleanup keeps stale instances quiet, so check that yours flips it.
+    Each `Player` leaves a `message` listener on `window` for good. The `active` flag in the effect cleanup silences old instances. Check that yours flips it.
   </Accordion>
   <Accordion title="The iframe shows a 403">
     The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
