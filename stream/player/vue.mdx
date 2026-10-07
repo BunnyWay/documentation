@@ -7,16 +7,16 @@ description: "Embed the Bunny Stream player in a Vue or Nuxt app and control pla
 import Install from "/snippets/stream/player-js-install.mdx";
 import Types from "/snippets/stream/player-js-types.mdx";
 
-The Bunny Player is an iframe, and [player.js](https://github.com/embedly/player.js) gives you a `Player` object for talking to it over `postMessage`. This guide builds a `BunnyPlayer` component that renders the iframe, emits its events, and exposes that object.
+This guide builds a Vue `BunnyPlayer` component that renders the Bunny Player iframe, emits its events, and exposes a [player.js](https://github.com/embedly/player.js) `Player` for controlling playback.
 
-The component also works under Nuxt server rendering. player.js is imported in `onMounted`, because it reads `window` when imported, and the iframe renders only after the library is available, because player.js has to be loaded before the iframe finishes loading.
+Nuxt can server-render it as is. player.js reads `window` on import, which is why the component imports it in `onMounted`, and the iframe waits for the library before it renders.
 
 <CardGroup cols={2}>
   <Card title="Vue example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-vue" horizontal>
-    A Vite app built around this component, with custom controls and an event log.
+    A Vite app with custom controls and an event log.
   </Card>
   <Card title="Nuxt example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-nuxt" horizontal>
-    The same component in a Nuxt 4 app, reading the video IDs from `runtimeConfig`.
+    The same component in a Nuxt 4 app.
   </Card>
 </CardGroup>
 
@@ -40,7 +40,6 @@ The component also works under Nuxt server rendering. player.js is imported in `
       defineProps<{
         libraryId: string;
         videoId: string;
-        /** Player parameters such as autoplay, muted, captions, or t. */
         params?: Record<string, string | number | boolean>;
         title?: string;
       }>(),
@@ -76,22 +75,26 @@ The component also works under Nuxt server rendering. player.js is imported in `
     watch(
       iframe,
       (el, _previous, onCleanup) => {
-        if (!el || !playerjs.value) return;
+        const pjs = playerjs.value;
+        if (!el || !pjs) return;
 
-        // player.js has no teardown API. This flag stops stale listeners
-        // from firing after the video changes or the component unmounts.
-        let active = true;
-        const instance = new playerjs.value.Player(el);
+        // player.js never removes the window listener each Player adds,
+        // so grab it while constructing and remove it on cleanup.
+        let onMessage: EventListener = () => {};
+        const addEvent = pjs.addEvent;
+        pjs.addEvent = (elem, type, handler) => addEvent(elem, type, (onMessage = handler));
+        const instance = new pjs.Player(el);
+        pjs.addEvent = addEvent;
 
-        instance.on("ready", () => active && emit("ready", instance));
-        instance.on("play", () => active && emit("play"));
-        instance.on("pause", () => active && emit("pause"));
-        instance.on("ended", () => active && emit("ended"));
-        instance.on("timeupdate", (time) => active && emit("timeupdate", time));
+        instance.on("ready", () => emit("ready", instance));
+        instance.on("play", () => emit("play"));
+        instance.on("pause", () => emit("pause"));
+        instance.on("ended", () => emit("ended"));
+        instance.on("timeupdate", (time) => emit("timeupdate", time));
 
         player.value = instance;
         onCleanup(() => {
-          active = false;
+          window.removeEventListener("message", onMessage);
           player.value = null;
         });
       },
@@ -129,10 +132,10 @@ The component also works under Nuxt server rendering. player.js is imported in `
     </style>
     ```
 
-    In Nuxt, save it under `components/` and it's auto-imported. No `<ClientOnly>` wrapper is needed: the server renders the placeholder and the browser swaps in the iframe.
+    In Nuxt, save it under `components/` and it's auto-imported. Skip `<ClientOnly>`: the server renders the placeholder and the browser swaps in the iframe.
   </Step>
   <Step title="Render a video">
-    Pass the library ID and video GUID from the video's page in the dashboard:
+    The library ID and video GUID are on the video's page in the dashboard.
 
     ```vue
     <script setup lang="ts">
@@ -149,13 +152,13 @@ The component also works under Nuxt server rendering. player.js is imported in `
     </template>
     ```
 
-    `params` accepts any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
+    `params` takes any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
   </Step>
 </Steps>
 
 ## Control playback
 
-The `ready` event carries the `Player`. Keep it in a `shallowRef`, so Vue doesn't wrap the instance in a deep reactive proxy, and call its methods from your own controls:
+The `ready` event carries the `Player`. Keep it in a `shallowRef`, which stops Vue wrapping it in a deep reactive proxy.
 
 ```vue
 <script setup lang="ts">
@@ -185,24 +188,24 @@ function toggle() {
 </template>
 ```
 
-Getters take a callback, because the answer comes back from the iframe:
+Getters answer through a callback, since the value comes back from the iframe.
 
 ```ts
 player.value?.getCurrentTime((seconds) => console.log(seconds));
 player.value?.getDuration((seconds) => console.log(seconds));
 ```
 
-The `player.js` package on npm (0.1.0) has no playback speed method, so send the command directly. The build bunny.net hosts adds `setPlaybackRate()`, `getPlaybackRate()` and the `playbackratechange` event from version 0.1.2; see [Methods](/stream/playback-api#methods).
+Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` ([Methods](/stream/playback-api#methods)).
 
 ```ts
 player.value?.send({ method: "setPlaybackRate", value: 1.5 });
 ```
 
-Browsers block unmuted `play()` until the viewer has interacted with the page, so call `mute()` first if playback has to start without a click. [Playback control API](/stream/playback-api) lists every method and event.
+Browsers block unmuted `play()` before the viewer has clicked anything. Call `mute()` first if playback has to start on its own. The [Playback control API](/stream/playback-api) lists every method and event.
 
 ## Track progress
 
-`timeupdate` fires several times a second with `{ seconds, duration }`. Throttle it before writing to your backend:
+`timeupdate` fires several times a second. Throttle it before it reaches your backend.
 
 ```vue
 <script setup lang="ts">
@@ -212,7 +215,7 @@ const props = defineProps<{ videoId: string; resumeAt?: number }>();
 let lastSaved = 0;
 
 function onTimeUpdate({ seconds, duration }: { seconds: number; duration: number }) {
-  if (seconds - lastSaved < 5) return;
+  if (Math.abs(seconds - lastSaved) < 5) return;
   lastSaved = seconds;
   saveProgress(props.videoId, seconds, duration);
 }
@@ -229,30 +232,46 @@ function onTimeUpdate({ seconds, duration }: { seconds: number; duration: number
 </template>
 ```
 
-Pass the saved position back as the `t` parameter to resume from there.
+Pass the saved position back as the `t` parameter to resume.
 
 ## Load player.js from the CDN instead
 
-To skip the npm dependency, load the hosted build and read `window.playerjs`. In Nuxt, add it to `nuxt.config.ts`:
+To drop the npm dependency, load our hosted build from the component.
 
-```ts nuxt.config.ts
-export default defineNuxtConfig({
-  app: {
-    head: {
-      script: [{ src: "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js" }],
-    },
-  },
-});
-```
+```ts lib/load-playerjs.ts
+type PlayerJs = (typeof import("player.js"))["default"];
 
-In a plain Vue app, add the `<script>` tag to `index.html`. Replace the dynamic import in `onMounted` with `playerjs.value = window.playerjs` and declare the global:
-
-```ts
 declare global {
   interface Window {
-    playerjs: (typeof import("player.js"))["default"];
+    playerjs: PlayerJs;
   }
 }
+
+let loading: Promise<PlayerJs> | undefined;
+
+export function loadPlayerjs() {
+  loading ??= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js";
+    script.onload = () => resolve(window.playerjs);
+    script.onerror = (error) => {
+      loading = undefined;
+      reject(error);
+    };
+    document.head.append(script);
+  });
+  return loading;
+}
+```
+
+Swap the dynamic import in `onMounted` for the loader.
+
+```ts components/BunnyPlayer.vue
+import { loadPlayerjs } from "../lib/load-playerjs";
+
+onMounted(async () => {
+  playerjs.value = await loadPlayerjs();
+});
 ```
 
 ## Troubleshooting
@@ -262,12 +281,12 @@ declare global {
     player.js is being imported during server rendering. Keep `import("player.js")` inside `onMounted`. A static `import playerjs from "player.js"` at the top of `<script setup>` runs on the server in Nuxt.
   </Accordion>
   <Accordion title="The ready event never fires">
-    The iframe finished loading before player.js was loaded. Render the iframe only after player.js has loaded, as the component above does. A `Player` created after that still connects, because player.js caches the iframe's `ready` message.
+    The iframe loaded before player.js. Render it only once player.js has loaded, as the component above does.
 
-    `ready` is also delayed while the tab is hidden, and fires once it becomes visible.
+    A hidden tab also holds `ready` back until the viewer switches to it.
   </Accordion>
   <Accordion title="Nuxt warns that a type check failed for libraryId">
-    Nuxt parses `NUXT_PUBLIC_*` variables when it loads them into `runtimeConfig`, so a numeric library ID such as `12345` reaches the component as a number. Convert the IDs to strings before you pass them on:
+    Nuxt parses `NUXT_PUBLIC_*` variables as it loads them, and a numeric library ID such as `12345` arrives as a number. Convert the IDs to strings first.
 
     ```vue
     <script setup lang="ts">
@@ -276,9 +295,6 @@ declare global {
     const videoId = String(config.bunnyVideoId);
     </script>
     ```
-  </Accordion>
-  <Accordion title="Events fire twice after changing the video">
-    Every `Player` adds a `message` listener to `window` that is never removed. The `active` flag in the watcher cleanup keeps stale instances quiet, so check that yours flips it.
   </Accordion>
   <Accordion title="The iframe shows a 403">
     The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
