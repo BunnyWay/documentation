@@ -10,6 +10,7 @@ import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-inf
 import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
 import NextSteps from "/snippets/magic-containers/next-steps.mdx";
 import SignupInfo from "/snippets/magic-containers/signup-info.mdx";
+import ImageService from "/snippets/cdn/astro-bunny-image-service.mdx";
 
 This guide walks you through building and deploying an Astro application to Magic Containers with GitHub Container Registry. You'll need:
 
@@ -146,6 +147,39 @@ curl https://mc-xxx.bunny.run/index.json
 ```
 
 <CustomHostnameInfo />
+
+## Add Optimizer
+
+Your CDN endpoint is already a pull zone in front of the app. Turn on [Bunny Optimizer](/optimizer/dynamic-images/overview) there, and a custom image service sends every `<Image>` width to the edge for resizing.
+
+<Steps>
+  <Step title="Configure the endpoint's pull zone">
+    Open the pull zone that serves your CDN endpoint under **CDN → Pull Zones**. Turn on [URL Query String](/cdn/vary-cache#url-query-string) vary, since endpoint pull zones ignore query strings by default and `?width=1080` would come back as the cached `?width=640` image.
+
+    Enable Optimizer, then turn on the Dynamic Image API and automatic WebP under **Optimizer → Settings**. Astro already minifies CSS and JavaScript, so turn Optimizer's minification off.
+  </Step>
+  <Step title="Add the image service">
+    The service spreads Astro's `baseService`, so Astro still works out the `srcset` widths, and only `getURL` changes. Without a `baseURL`, it returns relative URLs that go through the same pull zone.
+
+    <ImageService />
+  </Step>
+  <Step title="Point Astro at the service">
+    ```javascript astro.config.mjs
+    import { defineConfig } from "astro/config";
+    import node from "@astrojs/node";
+
+    export default defineConfig({
+      output: "server",
+      adapter: node({ mode: "standalone" }),
+      image: { service: { entrypoint: "./src/bunny-image-service.ts" } },
+    });
+    ```
+
+    Rebuild and push the image. [Smart Cache](/cdn/smart-cache) is on for endpoint pull zones, so the edge skips HTML and deploys need no purge.
+  </Step>
+</Steps>
+
+To put a pull zone in front of Astro on another host, see [Serve Astro from Bunny CDN](/cdn/integrations/frameworks/astro).
 
 ## Connect a database
 

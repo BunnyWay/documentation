@@ -1,0 +1,142 @@
+---
+title: "Serve Next.js from Bunny CDN with Bunny Optimizer"
+sidebarTitle: "Next.js"
+description: "Put a bunny.net pull zone in front of a self-hosted Next.js app, and resize next/image requests at the edge with Bunny Optimizer."
+---
+
+import BunnyLoader from "/snippets/cdn/nextjs-bunny-loader.mdx";
+
+A custom `next/image` loader sends every image request to [Bunny Optimizer](/optimizer/dynamic-images/overview), which resizes and converts it at the edge. Your origin never runs `/_next/image`, and the pull zone caches each width. The [example app](https://github.com/BunnyWay/examples/tree/main/cdn/optimizer-nextjs-standalone) covers both setups on this page.
+
+<Info>
+  Next.js apps deployed to Magic Containers with a CDN endpoint already come with a pull zone in front of the whole app. Turn on Optimizer for that zone with the steps in [Add Optimizer](/magic-containers/guides/nextjs#add-optimizer).
+</Info>
+
+## Set up Optimizer and the loader
+
+<Steps>
+  <Step title="Create a pull zone">
+    [Create a pull zone](/cdn/quickstart) with your app's origin URL, then turn on [URL Query String](/cdn/vary-cache#url-query-string) vary. Without it, `?width=1080` comes back as the cached `?width=640` image.
+  </Step>
+  <Step title="Enable Optimizer">
+    Enable [Bunny Optimizer](/optimizer/quickstart) on the pull zone, then turn on the Dynamic Image API and automatic WebP under **Optimizer → Settings**. Next.js already minifies CSS and JavaScript, so turn Optimizer's minification off.
+  </Step>
+  <Step title="Add the loader">
+    The loader turns each `next/image` width into an Optimizer URL. It needs `"use client"` because the App Router sends the loader to the browser.
+
+    <BunnyLoader />
+
+    Any parameters already on `src` stay, so [Dynamic Image API](/optimizer/dynamic-images/overview) options combine with the responsive widths:
+
+    ```tsx
+    <Image src="/images/photo.jpg?aspect_ratio=1:1" alt="Photo" width={1200} height={1200} />
+    ```
+
+    Optimizer defaults to quality 85. The loader sends Next.js's default of 75 unless a component sets its own.
+  </Step>
+  <Step title="Configure Next.js">
+    ```typescript next.config.ts
+    import type { NextConfig } from "next";
+
+    // Assets and images only: your pull zone URL
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL;
+
+    // Whole site: your public hostnames, comma separated
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",");
+
+    const nextConfig: NextConfig = {
+      output: "standalone",
+      assetPrefix: cdn,
+      experimental: { serverActions: { allowedOrigins } },
+      images: {
+        loader: "custom",
+        loaderFile: "./lib/bunny-loader.ts",
+        qualities: [50, 75],
+      },
+      async headers() {
+        return [
+          {
+            source: "/images/:path*",
+            headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
+          },
+        ];
+      },
+    };
+
+    export default nextConfig;
+    ```
+
+    Next.js 16 only accepts quality 75 unless you list other values in `images.qualities`. The `headers()` rule caches `public/images` for a day, since Next.js serves public files with `max-age=0`.
+  </Step>
+</Steps>
+
+## Choose what the pull zone serves
+
+<Tabs>
+  <Tab title="Assets and images only">
+    Visitors load HTML from your host, and Next.js loads scripts, styles, fonts, and images from the pull zone.
+
+    <Steps>
+      <Step title="Respect origin cache headers">
+        Set the pull zone to respect the origin's `Cache-Control` header. Next.js sends year-long immutable headers on `/_next/static/*`.
+      </Step>
+      <Step title="Add CORS headers for fonts">
+        Add `woff2` and `woff` under **Headers**. `next/font` serves fonts from `/_next/static/media` on the pull zone hostname.
+      </Step>
+      <Step title="Block every other path">
+        Add an [edge rule](/cdn/edge-rules) with the **Block Request** action that triggers when the request URL matches none of `*/_next/static/*` and `*/images/*`. Without it, the pull zone serves your pages on its own hostname, and Next.js sends `s-maxage=31536000` on static pages, so the edge can cache a year-old copy of your HTML.
+      </Step>
+      <Step title="Build with the pull zone URL">
+        Next.js inlines `NEXT_PUBLIC_` variables at build time:
+
+        ```bash
+        NEXT_PUBLIC_CDN_URL=https://myapp.b-cdn.net npm run build
+        ```
+
+        Deploy the standalone build, for example to [Magic Containers](/magic-containers/guides/nextjs). The `<script>` tags and image `srcset` URLs in the page source should start with your pull zone hostname.
+      </Step>
+    </Steps>
+
+  </Tab>
+  <Tab title="Whole site">
+    Your public hostname points at the pull zone, and every request goes through it.
+
+    <Steps>
+      <Step title="Add your hostname">
+        Add your public hostname to the pull zone as a [custom hostname](/cdn/custom-hostname), and point its DNS at the pull zone.
+      </Step>
+      <Step title="Allow Server Actions">
+        Behind the pull zone, Next.js sees your public hostname in `Origin` and the origin's hostname in `x-forwarded-host`, so it rejects actions with `Invalid Server Actions request`. Set `ALLOWED_ORIGINS` when you build:
+
+        ```bash
+        ALLOWED_ORIGINS=www.example.com npm run build
+        ```
+      </Step>
+      <Step title="Keep cookies">
+        Turn off **Disable Cookies** in the pull zone's caching settings. Pull zones created through the API strip `Set-Cookie` by default, so a login looks like it worked and the session is gone after a reload.
+      </Step>
+      <Step title="Decide on HTML caching">
+        With [Smart Cache](/cdn/smart-cache) on, the edge skips HTML and deploys need no purge. With it off, Next.js's `s-maxage=31536000` caches static pages for a year, so [purge the pull zone](/cdn/purge-cache) on every deploy. ISR revalidation works with both.
+      </Step>
+    </Steps>
+
+    React Server Components payloads need nothing extra. bunny.net adds Next.js's `Vary: rsc, next-router-*` headers to the cache key, so RSC payloads and HTML get separate cache entries.
+
+    Deploy the standalone build, then submit a Server Action that sets a cookie and reload the page to check it stuck.
+
+  </Tab>
+</Tabs>
+
+<Note>
+  `NEXT_PUBLIC_CDN_URL` and `ALLOWED_ORIGINS` must be set when `next build` runs. If you build in Docker, [pass them as build arguments](/magic-containers/guides/nextjs#pass-build-time-variables).
+</Note>
+
+## Check it works
+
+Nothing should load from `/_next/image` in the network tab. Point these at your pull zone or public hostname:
+
+```bash
+curl -sI https://myapp.b-cdn.net/_next/static/chunks/<chunk>.js | grep -i cdn-cache
+
+curl -sI -H 'Accept: image/webp' 'https://myapp.b-cdn.net/images/photo.jpg?width=640&quality=75' | grep -i content-type
+```

@@ -1,0 +1,19 @@
+```typescript lib/bunny-loader.ts
+"use client";
+
+import type { ImageLoaderProps } from "next/image";
+
+const cdn = process.env.NEXT_PUBLIC_CDN_URL;
+
+export default function bunnyLoader({ src, width, quality }: ImageLoaderProps) {
+  const url = new URL(src, cdn || "http://localhost");
+  const params = url.searchParams;
+
+  if (!params.has("width")) params.set("width", String(width));
+
+  if (!params.has("quality")) params.set("quality", String(quality ?? 75));
+
+  const absolute = cdn || /^https?:\/\//.test(src);
+  return absolute ? url.href : url.pathname + url.search;
+}
+```

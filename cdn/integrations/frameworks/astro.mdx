@@ -1,0 +1,124 @@
+---
+title: "Serve Astro from Bunny CDN with Bunny Optimizer"
+sidebarTitle: "Astro"
+description: "Put a bunny.net pull zone in front of a self-hosted Astro app, and resize astro:assets images at the edge with Bunny Optimizer."
+---
+
+import ImageService from "/snippets/cdn/astro-bunny-image-service.mdx";
+
+A custom image service sends every `<Image>` width to [Bunny Optimizer](/optimizer/dynamic-images/overview), which resizes and converts it at the edge. Your server never resizes an image, and the pull zone caches each width. The [example app](https://github.com/BunnyWay/examples/tree/main/cdn/optimizer-astro-standalone) covers both setups on this page, and runs Astro with the [Node adapter](https://docs.astro.build/en/guides/integrations-guide/node/).
+
+<Info>
+  Astro apps deployed to Magic Containers with a CDN endpoint already come with a pull zone in front of the whole app. Turn on Optimizer for that zone with the steps in [Add Optimizer](/magic-containers/guides/astro#add-optimizer).
+</Info>
+
+## Set up Optimizer and the image service
+
+<Steps>
+  <Step title="Create a pull zone">
+    [Create a pull zone](/cdn/quickstart) with your app's origin URL, then turn on [URL Query String](/cdn/vary-cache#url-query-string) vary. Without it, `?width=1080` comes back as the cached `?width=640` image.
+  </Step>
+  <Step title="Enable Optimizer">
+    Enable [Bunny Optimizer](/optimizer/quickstart) on the pull zone, then turn on the Dynamic Image API and automatic WebP under **Optimizer → Settings**. Astro already minifies CSS and JavaScript, so turn Optimizer's minification off.
+  </Step>
+  <Step title="Add the image service">
+    The service spreads Astro's `baseService`, so Astro still works out the `srcset` widths, and only `getURL` changes. It adds `?width=` and `?quality=` to each image on your own zone, and leaves images on other hosts alone, since Optimizer can't reach them.
+
+    <ImageService />
+  </Step>
+  <Step title="Configure Astro">
+    ```js astro.config.mjs
+    import { defineConfig } from "astro/config";
+    import node from "@astrojs/node";
+
+    // Assets and images only: your pull zone URL
+    const cdn = process.env.CDN_URL;
+
+    export default defineConfig({
+      output: "server",
+      adapter: node({ mode: "standalone" }),
+      build: { assetsPrefix: cdn },
+      image: {
+        service: { entrypoint: "./src/bunny-image-service.ts", config: { baseURL: cdn } },
+      },
+    });
+    ```
+
+    Use `<Image>` with a `layout`, and Astro writes the `srcset`:
+
+    ```astro
+    ---
+    import { Image } from "astro:assets";
+    import photo from "../assets/photo.jpg";
+    ---
+    <Image src={photo} alt="Photo" layout="constrained" />
+    ```
+
+    Images in `src/assets` get a hashed `/_astro` URL, which the Node adapter serves with a one-year `immutable` header. Images in `public` are served with `max-age=0`, so the pull zone revalidates them with your origin on every cache miss.
+  </Step>
+</Steps>
+
+## Choose what the pull zone serves
+
+<Tabs>
+  <Tab title="Assets and images only">
+    Visitors load HTML from your host, and `build.assetsPrefix` points `/_astro` files and images at the pull zone.
+
+    <Steps>
+      <Step title="Respect origin cache headers">
+        Set the pull zone to respect the origin's `Cache-Control` header, so the `/_astro` files stay cached for a year.
+      </Step>
+      <Step title="Block every other path">
+        Add an [edge rule](/cdn/edge-rules) with the **Block Request** action that triggers when the request URL matches none of `*/_astro/*` and `*/images/*`. Without it, the pull zone serves your pages on its own hostname.
+      </Step>
+      <Step title="Build with the pull zone URL">
+        Astro reads `CDN_URL` when it builds:
+
+        ```bash
+        CDN_URL=https://myapp.b-cdn.net npm run build
+        ```
+
+        Deploy `dist` and start it with `node ./dist/server/entry.mjs`, for example on [Magic Containers](/magic-containers/guides/astro). The image `srcset` URLs in the page source should start with your pull zone hostname.
+
+        If you self-host fonts, they load from the pull zone hostname too, so add `woff2` and `woff` under the pull zone's **Headers** for CORS.
+      </Step>
+    </Steps>
+
+  </Tab>
+  <Tab title="Whole site">
+    Your public hostname points at the pull zone, and every request goes through it.
+
+    <Steps>
+      <Step title="Add your hostname">
+        Add your public hostname to the pull zone as a [custom hostname](/cdn/custom-hostname), and point its DNS at the pull zone.
+      </Step>
+      <Step title="Keep cookies">
+        Turn off **Disable Cookies** in the pull zone's caching settings. Pull zones created through the API strip `Set-Cookie` by default, so a login looks like it worked and the session is gone after a reload.
+      </Step>
+      <Step title="Keep Smart Cache on">
+        Astro sends no `Cache-Control` header on a server-rendered page. With [Smart Cache](/cdn/smart-cache) off, the pull zone caches those pages for its default expiry and can hand one visitor's page to the next. Smart Cache keeps HTML out of the edge cache, so deploys need no purge either.
+      </Step>
+    </Steps>
+
+    Form posts and Astro Actions need no config. Astro's CSRF check reads the browser's `Sec-Fetch-Site` header, which the pull zone passes through unchanged.
+
+    Build without `CDN_URL`, then submit a form that sets a cookie and reload the page to check it stuck.
+
+  </Tab>
+</Tabs>
+
+<Note>
+  `CDN_URL` must be set when `astro build` runs. If you build in Docker, declare it as an `ARG` in the build stage and pass it with `--build-arg`.
+</Note>
+
+## Check it works
+
+Point these at your pull zone or public hostname:
+
+```bash
+# Run twice, and look for CDN-Cache: HIT on the second request
+curl -sI https://myapp.b-cdn.net/_astro/<file>.js | grep -i cdn-cache
+
+# Expect image/webp
+curl -sI -H 'Accept: image/webp' 'https://myapp.b-cdn.net/images/photo.jpg?width=640&quality=75' | grep -i content-type
+```
