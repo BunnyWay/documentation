@@ -1,73 +1,96 @@
 ---
 title: Quickstart
-description: "Step-by-step guide to get started quickly with the product"
+description: "Create a Bunny Stream video library, upload your first video, and embed it on your site."
 ---
 
-This quickstart guide will walk you through the steps to upload, manage, and deliver your first video using Bunny Stream. Let's get your content streaming to viewers across the globe in no time.
+Getting a video onto your own page takes three steps in the dashboard: create a library, upload the file, and copy the embed code. You need a [bunny.net account](https://dash.bunny.net/auth/register) and a video file.
 
-## What you'll need
+## Create a video library
 
-Before you dive in, make sure you have the following prerequisites in place:
+A video library holds your videos along with their player, encoding, and security settings.
 
-- A [bunny.net](https://bunny.net/) account ( [Log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
-- A video file you want to host.
+<Steps>
+  <Step title="Open Stream">
+    In the [dashboard](https://dash.bunny.net), go to **Delivery** > **Stream** and click **Create Your first Video Library**.
 
-## Creating a video library
+    <Frame>
+      ![Stream page in the dashboard with the Create Your first Video Library button highlighted](/images/docs/6295ff2-image.png)
+    </Frame>
+  </Step>
+  <Step title="Name the library">
+    Enter a name you'll recognise in the dashboard.
 
-After signing up and logging into your bunny.net dashboard, you'll need to set up a video library. A video library is essentially a container for your video content on bunny.net. To create a video library, follow the steps below:
+    <Frame>
+      ![Video Library Name field on the Add Video Library page](/images/docs/31a980e-image.png)
+    </Frame>
+  </Step>
+  <Step title="Choose storage regions">
+    We replicate your videos to every region you enable. Pick at least two to keep a copy if one region has a hardware failure, and one per continent where your viewers are for the fastest uncached delivery.
 
-1. Login to [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu).
-2. Go to **Delivery** -> **Stream**  and click **Create Your first Video Library**.
+    <Frame>
+      ![Video Storage Configuration with a map and a list of storage regions](/images/docs/34c369a-image.png)
+    </Frame>
 
-![](/images/docs/6295ff2-image.png)
+    <Warning>
+      Replication regions can't be removed once they're enabled.
+    </Warning>
+  </Step>
+  <Step title="Create it">
+    Click **Add Video Library**.
+  </Step>
+</Steps>
 
-3. Enter the name of your video library.
+## Upload a video
 
-![](/images/docs/31a980e-image.png)
+<Steps>
+  <Step title="Open the uploader">
+    In your new library, click **Upload a Video**.
 
-4. The next step is to set up your video storage configuration. We recommend enabling at least 2 regions to assure data durability in case of a local hardware failure in a single region. To achieve optimal performance, we recommend enabling at least one storage region per continent.
+    <Frame>
+      ![Manage Videos page with the Upload a Video button highlighted](/images/docs/915e570-image.png)
+    </Frame>
+  </Step>
+  <Step title="Add your file">
+    Drag the file into the dialog or click **Browse**. The upload starts straight away.
 
-![](/images/docs/34c369a-image.png)
+    <Frame>
+      ![Upload Video File dialog with a drag and drop area and the supported formats](/images/docs/3e63ff3-image.png)
+    </Frame>
+  </Step>
+  <Step title="Wait for encoding">
+    We encode the video into several resolutions once the upload reaches 100%, so it plays smoothly on any device and connection.
 
-5. After you set your configuration, click **Add Video Library**.
+    <Frame>
+      ![File Upload panel showing a finished upload at 100%](/images/docs/284350f-image.png)
+    </Frame>
+  </Step>
+</Steps>
 
-## Uploading your video file
+## Share or embed it
 
-With your video library ready, it's time to upload your first video:
+To share a link, open the video's menu and click **Copy Video Play Url**. The link opens the video in Bunny Player.
 
-1. Click Upload a Video.
+<Frame>
+  ![Video menu with Copy Video Play Url highlighted](/images/docs/9171444-image.png)
+</Frame>
 
-![](/images/docs/915e570-image.png)
+To put the video on your own page, open it and copy the code from the **Embed** panel. The toggles above it set autoplay, looping, muting, and preloading for that embed.
 
-2. A new popup will open, allowing you to select or drag the video files which will automatically start the upload.
+<Frame>
+  ![Video page with the Embed panel highlighted, showing the embed options and code](/images/docs/cbfbc9a-image.png)
+</Frame>
 
-![](/images/docs/3e63ff3-image.png)
+Paste the code into your page's HTML where the player should appear. [Embedding videos](/stream/embedding) covers every player parameter and the embedding restrictions you can set on a library.
 
-3. bunny.net will then process and encode your video for optimal streaming across devices and bandwidths.
+## Control the player from your app
 
-![](/images/docs/284350f-image.png)
+Each guide builds a Bunny Player component for your framework, with play, pause, seek, and progress events wired up through player.js.
 
-## Getting the embed code or video URL
-
-Once your video is uploaded and processed, you can integrate it into your website or share it directly with your viewers.
-
-#### Getting the video URL
-
-To get the URL of your video click on the video and select **Copy Video Play Url**.
-
-![](/images/docs/9171444-image.png)
-
-After obtaining the video URL, you can directly share it through email, social media, or any other communication channel.
-
-#### Embedding your video
-
-To copy the embedded code of your video, simply click on the video and copy the embedded code.
-
-![](/images/docs/cbfbc9a-image.png)
-
-You can paste the embed code into the HTML of your webpage where you want the video player to appear. Save and refresh your page to see the video player in action.
-
-<Info>
-For more information regarding how to embed your video, see the [Embedding Videos guide](/stream/embedding).
-
-</Info>
+<CardGroup cols={2}>
+  <Card title="React" icon="/logo/frameworks/react.svg" href="/stream/player/react" />
+  <Card title="Next.js" icon="/logo/frameworks/nextjs.svg" href="/stream/player/nextjs" />
+  <Card title="Vue and Nuxt" icon="/logo/frameworks/vue.svg" href="/stream/player/vue" />
+  <Card title="Svelte and SvelteKit" icon="/logo/frameworks/svelte.svg" href="/stream/player/svelte" />
+  <Card title="Astro" icon="/logo/frameworks/astro.svg" href="/stream/player/astro" />
+  <Card title="JavaScript" icon="/logo/frameworks/javascript.svg" href="/stream/player/javascript" />
+</CardGroup>

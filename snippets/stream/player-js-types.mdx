@@ -27,10 +27,10 @@ declare module "player.js" {
     on(event: "playbackratechange", callback: (rate: number) => void): void;
     on(event: "error", callback: (error?: PlayerError) => void): void;
     on(event: PlayerEvent, callback: (data?: unknown) => void): void;
-    off(event: PlayerEvent, callback?: (...args: unknown[]) => void): void;
+    off(event: PlayerEvent, callback?: (...args: never[]) => void): void;
     supports(kind: "method" | "event", name: string | string[]): boolean;
-    /** Send a raw command, for methods player.js does not expose such as setPlaybackRate. */
-    send(message: { method: string; value?: unknown }): void;
+    /** Send a raw command, for methods player.js does not expose such as setPlaybackRate. Getters answer through the callback. */
+    send(message: { method: string; value?: unknown }, callback?: (value: unknown) => void): void;
 
     play(): void;
     pause(): void;
@@ -48,7 +48,10 @@ declare module "player.js" {
     getLoop(callback: (loop: boolean) => void): void;
   }
 
-  const playerjs: { Player: typeof Player };
+  const playerjs: {
+    Player: typeof Player;
+    addEvent(elem: EventTarget, type: string, handler: EventListener): void;
+  };
   export default playerjs;
 }
 ```

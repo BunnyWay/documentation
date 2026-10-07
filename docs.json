@@ -624,7 +624,15 @@
                       "stream/dashboard",
                       "stream/http-api",
                       "stream/url-fetch",
-                      "stream/tus-resumable-uploads"
+                      "stream/tus-resumable-uploads",
+                      {
+                        "group": "Frameworks",
+                        "pages": [
+                          "stream/upload/laravel",
+                          "stream/upload/rails",
+                          "stream/upload/django"
+                        ]
+                      }
                     ]
                   },
                   "stream/collections",
@@ -636,22 +644,30 @@
               {
                 "group": "Playback",
                 "pages": [
+                  "stream/player",
+                  "stream/player-settings",
+                  "stream/embedding",
+                  "stream/playback-api",
+                  "stream/mp4-downloads",
                   {
-                    "group": "Bunny Player",
+                    "group": "Frameworks",
                     "pages": [
-                      "stream/player",
-                      "stream/player-settings",
-                      "stream/playback-api",
-                      "stream/custom-head-html-migration-guide",
-                      {
-                        "group": "Frameworks",
-                        "pages": [
-                          "stream/player/react",
-                          "stream/player/nextjs",
-                          "stream/player/vue",
-                          "stream/player/svelte"
-                        ]
-                      }
+                      "stream/player/react",
+                      "stream/player/nextjs",
+                      "stream/player/vue",
+                      "stream/player/svelte",
+                      "stream/player/astro",
+                      "stream/player/javascript",
+                      "stream/player/signed-embeds"
+                    ]
+                  },
+                  {
+                    "group": "Mobile",
+                    "pages": [
+                      "stream/mobile-sdk",
+                      "stream/android-sdk",
+                      "stream/ios-sdk",
+                      "stream/expo-video"
                     ]
                   },
                   {
@@ -664,18 +680,7 @@
                       "stream/players/fairplay"
                     ]
                   },
-                  {
-                    "group": "Mobile SDK",
-                    "pages": [
-                      "stream/mobile-sdk",
-                      "stream/android-sdk",
-                      "stream/ios-sdk"
-                    ],
-                    "expanded": true
-                  },
-                  "stream/expo-video",
-                  "stream/embedding",
-                  "stream/mp4-downloads"
+                  "stream/custom-head-html-migration-guide"
                 ]
               },
               {
