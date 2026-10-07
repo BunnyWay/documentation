@@ -9,7 +9,7 @@ import ImageService from "/snippets/cdn/astro-bunny-image-service.mdx";
 A custom image service sends every `<Image>` width to [Bunny Optimizer](/optimizer/dynamic-images/overview), which resizes and converts it at the edge. Your server never resizes an image, and the pull zone caches each width. The [example app](https://github.com/BunnyWay/examples/tree/main/cdn/optimizer-astro-standalone) covers both setups on this page, and runs Astro with the [Node adapter](https://docs.astro.build/en/guides/integrations-guide/node/).
 
 <Info>
-  Astro apps deployed to Magic Containers with a CDN endpoint already come with a pull zone in front of the whole app. Turn on Optimizer for that zone with the steps in [Add Optimizer](/magic-containers/guides/astro#add-optimizer).
+  Astro apps deployed to Magic Containers with a CDN endpoint already come with a pull zone in front of the whole app. Turn on Optimizer for that zone with the steps in [Add Optimizer](/magic-containers/guides/astro#add-optimizer). For a static Astro site on Bunny Storage, see [Resize images with Bunny Optimizer](/storage/static-site-hosting/astro#resize-images-with-bunny-optimizer).
 </Info>
 
 ## Set up Optimizer and the image service
