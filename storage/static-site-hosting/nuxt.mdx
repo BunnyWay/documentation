@@ -6,6 +6,7 @@ description: "Build a Nuxt site and serve it from Bunny Storage through Bunny CD
 
 import Deploy from "/snippets/static-sites/deploy.mdx";
 import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+import Optimizer from "/snippets/static-sites/optimizer.mdx";
 
 `nuxt generate` prerenders every route of your Nuxt app into `.output/public`. To run Nuxt with a server, deploy it with [Magic Containers](/magic-containers/guides/nuxt).
 
@@ -15,5 +16,39 @@ import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
 | Output directory | `.output/public` |
 
 <Deploy build="npx nuxt generate" />
+
+## Resize images with Bunny Optimizer
+
+[Nuxt Image](https://image.nuxt.com/providers/bunny) has a built-in `bunny` provider that adds [Bunny Optimizer](/optimizer/dynamic-images/overview) parameters to each image URL, so `nuxt generate` skips image processing and the edge resizes every width in the `srcset`.
+
+<Steps>
+  <Step title="Turn on Optimizer">
+    <Optimizer />
+  </Step>
+  <Step title="Use the bunny provider">
+    ```bash
+    npx nuxt module add image
+    ```
+
+    ```ts nuxt.config.ts
+    export default defineNuxtConfig({
+      modules: ["@nuxt/image"],
+      image: {
+        provider: "bunny",
+        bunny: { baseURL: "/" },
+      },
+    });
+    ```
+
+    A `baseURL` of `/` keeps image URLs relative, so they work on the `b-cdn.net` address and your custom domain.
+  </Step>
+  <Step title="Add images">
+    ```vue
+    <NuxtImg src="/images/photo.jpg" width="1200" height="600" sizes="sm:100vw md:768px" />
+    ```
+
+    `<NuxtImg>` writes a `srcset` with URLs such as `/images/photo.jpg?width=768&height=384`. Use breakpoint prefixes in `sizes`, since a bare `100vw` produces 1px and 2px entries.
+  </Step>
+</Steps>
 
 <CustomDomain />

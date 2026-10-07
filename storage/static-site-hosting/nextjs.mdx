@@ -6,6 +6,8 @@ description: "Build a Next.js site and serve it from Bunny Storage through Bunny
 
 import Deploy from "/snippets/static-sites/deploy.mdx";
 import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+import Optimizer from "/snippets/static-sites/optimizer.mdx";
+import BunnyLoader from "/snippets/cdn/nextjs-bunny-loader.mdx";
 
 Next.js can export your app as static HTML, CSS, and JavaScript into `out`.
 
@@ -32,8 +34,43 @@ export default nextConfig;
 
 Without `trailingSlash`, Next.js writes `/about` as `about.html`, and a request for `/about` returns a 404.
 
-`images.unoptimized` lets `next/image` work without the image optimisation server, which a static export doesn't have. A static export also can't use other features that need a server, such as API routes. See the [Next.js static exports guide](https://nextjs.org/docs/app/guides/static-exports) for the full list. To run Next.js with a server, deploy it with [Magic Containers](/magic-containers/guides/nextjs).
+`images.unoptimized` lets `next/image` build without the image optimisation server, which a static export doesn't have, and serves every image at full size. To resize them at the edge, see [Resize images with Bunny Optimizer](#resize-images-with-bunny-optimizer). A static export also can't use other features that need a server, such as API routes. See the [Next.js static exports guide](https://nextjs.org/docs/app/guides/static-exports) for the full list. To run Next.js with a server, deploy it with [Magic Containers](/magic-containers/guides/nextjs).
 
 <Deploy build="npm run build" />
+
+## Resize images with Bunny Optimizer
+
+A custom loader points `next/image` at [Bunny Optimizer](/optimizer/dynamic-images/overview), which resizes each image at the edge for every width in the `srcset`. The [example app](https://github.com/BunnyWay/examples/tree/main/cdn/optimizer-nextjs-static) has the full setup.
+
+<Steps>
+  <Step title="Turn on Optimizer">
+    <Optimizer />
+  </Step>
+  <Step title="Add the loader">
+    The loader adds `?width=` and `?quality=` to each image URL. It needs `"use client"` because the App Router sends the loader to the browser.
+
+    <BunnyLoader />
+  </Step>
+  <Step title="Swap unoptimized for the loader">
+    ```ts next.config.ts
+    import type { NextConfig } from "next";
+
+    const nextConfig: NextConfig = {
+      output: "export",
+      trailingSlash: true,
+      images: {
+        loader: "custom",
+        loaderFile: "./lib/bunny-loader.ts",
+      },
+    };
+
+    export default nextConfig;
+    ```
+
+    Deploy again, and the `srcset` URLs on each page carry `?width=`.
+  </Step>
+</Steps>
+
+Any parameters already on `src` stay, so [Dynamic Image API](/optimizer/dynamic-images/overview) options such as `?aspect_ratio=1:1` combine with the responsive widths. Next.js 16 only accepts quality 75 unless you list other values in `images.qualities`.
 
 <CustomDomain />

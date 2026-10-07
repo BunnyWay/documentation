@@ -5,6 +5,7 @@ description: Deploy static sites and single-page apps to Bunny Storage and serve
 ---
 
 import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+import Optimizer from "/snippets/static-sites/optimizer.mdx";
 
 A static site on bunny.net is a storage zone that holds your built files, with a pull zone in front that serves them from the CDN. You can set that up with the [Bunny CLI](/cli), which detects your framework, runs the build, and uploads the output, or you can create the zones in the dashboard and upload the files yourself.
 
@@ -128,6 +129,23 @@ The Bunny CLI sets this up for frameworks that build single-page apps, and asks 
 Requests for missing files with an extension, such as `.js`, `.css`, or images, still return a 404. See [Storage zone settings](/storage/settings#error-handling) for details.
 
 <CustomDomain />
+
+## Resize images with Bunny Optimizer
+
+[Bunny Optimizer](/optimizer/dynamic-images/overview) resizes images at the edge from query parameters such as `?width=640`, so your build can ship one copy of each image.
+
+<Optimizer />
+
+The [Next.js](/storage/static-site-hosting/nextjs#resize-images-with-bunny-optimizer), [Nuxt](/storage/static-site-hosting/nuxt#resize-images-with-bunny-optimizer), [Astro](/storage/static-site-hosting/astro#resize-images-with-bunny-optimizer), and [Angular](/storage/static-site-hosting/angular#resize-images-with-bunny-optimizer) guides plug Optimizer into each framework's image component. Anywhere else, write the `srcset` yourself:
+
+```html
+<img
+  src="/images/photo.jpg?width=1200"
+  srcset="/images/photo.jpg?width=640 640w, /images/photo.jpg?width=1200 1200w"
+  sizes="100vw"
+  alt="Photo"
+/>
+```
 
 ## Cache configuration
 

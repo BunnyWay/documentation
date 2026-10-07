@@ -6,6 +6,8 @@ description: "Build an Astro site and serve it from Bunny Storage through Bunny 
 
 import Deploy from "/snippets/static-sites/deploy.mdx";
 import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+import Optimizer from "/snippets/static-sites/optimizer.mdx";
+import ImageService from "/snippets/cdn/astro-bunny-image-service.mdx";
 
 Astro builds static HTML by default, and writes every page to `dist`.
 
@@ -15,5 +17,42 @@ Astro builds static HTML by default, and writes every page to `dist`.
 | Output directory | `dist` |
 
 <Deploy build="npm run build" />
+
+## Resize images with Bunny Optimizer
+
+Astro's `<Image>` component can hand every width to [Bunny Optimizer](/optimizer/dynamic-images/overview) through a custom image service. The build then skips image processing, and the edge resizes each width in the `srcset`.
+
+<Steps>
+  <Step title="Turn on Optimizer">
+    <Optimizer />
+  </Step>
+  <Step title="Add the image service">
+    The service spreads Astro's `baseService`, so Astro still works out the `srcset` widths, and only `getURL` changes. The [example app](https://github.com/BunnyWay/examples/tree/main/cdn/optimizer-astro-static) has the full setup.
+
+    <ImageService />
+
+    ```js astro.config.mjs
+    import { defineConfig } from "astro/config";
+
+    export default defineConfig({
+      image: { service: { entrypoint: "./src/bunny-image-service.ts" } },
+    });
+    ```
+  </Step>
+  <Step title="Add images">
+    Import images from `src/assets`, or reference files in `public` by path:
+
+    ```astro
+    ---
+    import { Image } from "astro:assets";
+    import photo from "../assets/photo.jpg";
+    ---
+    <Image src={photo} alt="Photo" layout="constrained" />
+    <Image src="/images/banner.jpg" alt="Banner" width={1200} height={600} layout="constrained" />
+    ```
+
+    `layout` picks the `srcset` widths, and each one becomes a URL such as `/_astro/photo.a1b2c3.jpg?width=828&quality=75`. The build copies each image once and resizes nothing.
+  </Step>
+</Steps>
 
 <CustomDomain />
