@@ -662,7 +662,7 @@
                     ]
                   },
                   {
-                    "group": "Mobile",
+                    "group": "Native Mobile App SDKs",
                     "pages": [
                       "stream/mobile-sdk",
                       "stream/android-sdk",
