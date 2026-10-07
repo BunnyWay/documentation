@@ -157,8 +157,6 @@ export function ProtectedVideo({ videoId, token, expires }: ProtectedVideoProps)
 }
 ```
 
-For a live source, request authorization for the stream ID and pass `token` and `expires` alongside `type: 'live'` and `streamId`. The wrapper does not fetch or refresh tokens from your backend automatically. Changing a token or expiry remounts the native player, so refresh deliberately rather than on every render.
-
 The exported `generateEmbedToken` and `signPlaybackToken` methods on `BunnyStreamApi` are demo/debug conveniences, **not a production client-side signing flow**. See [Secure playback](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/secure-playback.md) for credential boundaries, protected images, and DRM notes.
 
 **Flow**
@@ -170,8 +168,8 @@ The exported `generateEmbedToken` and `signPlaybackToken` methods on `BunnyStrea
   <Step title="Receive the token">
     Your backend returns `{ token, expires }`, with expiry expressed as Unix seconds.
   </Step>
-  <Step title="Play the video or live stream">
-    After SDK initialization, pass `token` and `expires` through the player's `source`. For live playback, authorize the stream ID and handle both `onError` and `onLiveError`.
+  <Step title="Play the video">
+    After SDK initialization, pass `token` and `expires` through the player's `source`. 
   </Step>
 </Steps>
 
@@ -187,8 +185,5 @@ See [Upload videos](https://github.com/BunnyWay/bunny-stream-react-native/blob/m
 
 ## Next steps
 
-- [Play a live stream](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/play-a-live-stream.md).
 - [Manage videos and collections](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/manage-videos.md).
-- [Manage live streams](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/manage-live-streams.md).
-- [Go live from the camera](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/go-live-from-the-camera.md).
 - [Handle errors](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/handle-errors.md) and [troubleshoot integration issues](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/troubleshooting.md).
