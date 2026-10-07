@@ -10,6 +10,7 @@ import PrivateRegistryInfo from "/snippets/magic-containers/private-registry-inf
 import CustomHostnameInfo from "/snippets/magic-containers/custom-hostname-info.mdx";
 import NextSteps from "/snippets/magic-containers/next-steps.mdx";
 import SignupInfo from "/snippets/magic-containers/signup-info.mdx";
+import BunnyLoader from "/snippets/cdn/nextjs-bunny-loader.mdx";
 
 This guide walks you through building and deploying a Next.js application to Magic Containers with GitHub Container Registry. You'll need:
 
@@ -95,6 +96,21 @@ EXPOSE 80
 CMD ["node", "server.js"]
 ```
 
+### Pass build-time variables
+
+`next build` inlines `NEXT_PUBLIC_` variables and bakes in anything `next.config.ts` reads, and `docker build` doesn't read your shell's environment. Declare each one as an `ARG` in the `builder` stage, or the build runs without it:
+
+```dockerfile Dockerfile
+FROM base AS builder
+WORKDIR /app
+ARG NEXT_PUBLIC_CDN_URL
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm run build
+```
+
+Pass the value with `docker build --build-arg NEXT_PUBLIC_CDN_URL=https://myapp.b-cdn.net`, or with `build-args` in `docker/build-push-action`.
+
 ## Build and push to GitHub Container Registry
 
 <Tabs>
@@ -141,6 +157,42 @@ curl https://mc-xxx.bunny.run/api
 ```
 
 <CustomHostnameInfo />
+
+## Add Optimizer
+
+Your CDN endpoint is already a pull zone in front of the app. Turn on [Bunny Optimizer](/optimizer/dynamic-images/overview) there, and `next/image` resizes images at the edge.
+
+<Steps>
+  <Step title="Configure the endpoint's pull zone">
+    Open the pull zone that serves your CDN endpoint under **CDN → Pull Zones**. Turn on [URL Query String](/cdn/vary-cache#url-query-string) vary, since endpoint pull zones ignore query strings by default and `?width=1080` would come back as the cached `?width=640` image.
+
+    Enable Optimizer, then turn on the Dynamic Image API and automatic WebP under **Optimizer → Settings**. Next.js already minifies CSS and JavaScript, so turn Optimizer's minification off.
+  </Step>
+  <Step title="Add the image loader">
+    The loader turns each `next/image` width into an Optimizer URL. With `NEXT_PUBLIC_CDN_URL` unset, it returns relative URLs that go through the same pull zone.
+
+    <BunnyLoader />
+  </Step>
+  <Step title="Point Next.js at the loader">
+    ```typescript next.config.ts
+    import type { NextConfig } from "next";
+
+    const nextConfig: NextConfig = {
+      output: "standalone",
+      images: {
+        loader: "custom",
+        loaderFile: "./lib/bunny-loader.ts",
+      },
+    };
+
+    export default nextConfig;
+    ```
+
+    Rebuild and push the image. [Smart Cache](/cdn/smart-cache) is on for endpoint pull zones, so the edge skips HTML and deploys need no purge.
+  </Step>
+</Steps>
+
+To put a pull zone in front of Next.js on another host, see [Serve Next.js from Bunny CDN](/cdn/integrations/frameworks/nextjs).
 
 ## Connect a database
 

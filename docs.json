@@ -252,6 +252,13 @@
                       "cdn/integrations/storage/backblaze",
                       "cdn/integrations/storage/digitalocean-spaces"
                     ]
+                  },
+                  {
+                    "group": "Frameworks",
+                    "pages": [
+                      "cdn/integrations/frameworks/astro",
+                      "cdn/integrations/frameworks/nextjs"
+                    ]
                   }
                 ]
               },
