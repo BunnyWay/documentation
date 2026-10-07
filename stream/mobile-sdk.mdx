@@ -148,25 +148,3 @@ Bunny Stream offers official SDKs for native Android and iOS, a React Native SDK
 The **React Native SDK** is a wrapper around the native Android and iOS SDKs. React components render the native player and camera views, so you get the same native behavior with a single TypeScript interface. It also adds an Expo config plugin and platform features such as AirPlay on iOS, Chromecast on Android, and optional Android TV support. It does not support web.
 
 The **Expo Video guide** is not a Bunny SDK. It shows how to point the open source `expo-video` player at Bunny Stream's predictable HLS URLs and use the Stream API for metadata such as titles, thumbnails, chapters, and captions. Choose it when playback is all you need and you want to stay within Expo's own packages.
-
-## Securing playback
-
-The SDKs share the same security model, so the same backend can serve every platform.
-
-<Steps>
-  <Step title="Keep your API key on the server">
-    Your **Video Library API Key** is a secret. Store it in your backend or as an [Edge Script secret](/scripting/secrets), never in your app bundle, build-time environment variables, or Expo configuration.
-  </Step>
-  <Step title="Issue embed view tokens from your backend">
-    For private or restricted videos, enable [embedded view token authentication](/stream/token-authentication). Your backend or an Edge Script checks that the user is allowed to watch the video, then returns a short-lived `{ token, expires }` pair. Tokens of 1–5 minutes are a good starting point.
-  </Step>
-  <Step title="Pass the token to the player">
-    The app requests a token for the video and passes `token` and `expires` to the player. If CDN token authentication is enabled on the library, the native SDKs sign CDN requests automatically.
-  </Step>
-</Steps>
-
-<Warning>
-  The current React Native SDK `initialize()` call requires a library API access key on the device. If library credentials must never reach the client, review the [React Native SDK](/stream/react-native-sdk) credential notes before adopting it.
-</Warning>
-
-Each SDK page includes a ready-to-use Edge Script example that generates embed view tokens.
