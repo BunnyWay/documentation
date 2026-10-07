@@ -1,0 +1,241 @@
+---
+title: "Use Bunny Player with React"
+sidebarTitle: "React"
+description: "Embed the Bunny Stream player in a React app and control playback with player.js events and methods."
+---
+
+import Install from "/snippets/stream/player-js-install.mdx";
+import Types from "/snippets/stream/player-js-types.mdx";
+
+React renders the Bunny Player iframe like any other element. The `BunnyPlayer` component below adds [player.js](https://github.com/embedly/player.js), forwards the player's events as props, and hands you a `Player` for controlling playback.
+
+It assumes a client-rendered app, such as one built with Vite. For server rendering, including Remix and React Router framework mode, follow the [Next.js guide](/stream/player/nextjs).
+
+<Card title="React example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-react" horizontal>
+  A Vite app with custom controls and an event log.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Install player.js">
+    <Install />
+
+    <Types />
+  </Step>
+  <Step title="Create the component">
+    The `Player` is created once the iframe is in the DOM. Callbacks live in a ref, which stops inline props from re-creating the player on every render.
+
+    ```tsx components/bunny-player.tsx
+    import { useEffect, useRef } from "react";
+    import playerjs, { type Player, type TimeUpdate } from "player.js";
+
+    export type BunnyPlayerProps = {
+      libraryId: string;
+      videoId: string;
+      /** Player parameters such as autoplay, muted, captions, or t. */
+      params?: Record<string, string | number | boolean>;
+      title?: string;
+      onReady?: (player: Player) => void;
+      onPlay?: () => void;
+      onPause?: () => void;
+      onEnded?: () => void;
+      onTimeUpdate?: (time: TimeUpdate) => void;
+    };
+
+    export function BunnyPlayer({
+      libraryId,
+      videoId,
+      params,
+      title = "Video player",
+      onReady,
+      onPlay,
+      onPause,
+      onEnded,
+      onTimeUpdate,
+    }: BunnyPlayerProps) {
+      const iframeRef = useRef<HTMLIFrameElement>(null);
+
+      // Keep the latest callbacks without re-creating the player.
+      const handlers = useRef({ onReady, onPlay, onPause, onEnded, onTimeUpdate });
+      useEffect(() => {
+        handlers.current = { onReady, onPlay, onPause, onEnded, onTimeUpdate };
+      });
+
+      const query = new URLSearchParams(
+        Object.entries(params ?? {}).map(([key, value]) => [key, String(value)]),
+      ).toString();
+      const src = `https://player.mediadelivery.net/embed/${libraryId}/${videoId}${query ? `?${query}` : ""}`;
+
+      useEffect(() => {
+        const iframe = iframeRef.current;
+        if (!iframe) return;
+
+        // player.js has no teardown API. This flag stops stale listeners
+        // from firing after the video changes or the component unmounts.
+        let active = true;
+        const player = new playerjs.Player(iframe);
+
+        player.on("ready", () => active && handlers.current.onReady?.(player));
+        player.on("play", () => active && handlers.current.onPlay?.());
+        player.on("pause", () => active && handlers.current.onPause?.());
+        player.on("ended", () => active && handlers.current.onEnded?.());
+        player.on("timeupdate", (time) => active && handlers.current.onTimeUpdate?.(time));
+
+        return () => {
+          active = false;
+        };
+      }, [src]);
+
+      return (
+        <iframe
+          ref={iframeRef}
+          src={src}
+          title={title}
+          loading="lazy"
+          style={{
+            display: "block",
+            width: "100%",
+            height: "auto",
+            aspectRatio: "16 / 9",
+            border: 0,
+          }}
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowFullScreen
+        />
+      );
+    }
+    ```
+  </Step>
+  <Step title="Render a video">
+    The library ID and video GUID are on the video's page in the dashboard.
+
+    ```tsx
+    import { BunnyPlayer } from "./components/bunny-player";
+
+    export function Lesson() {
+      return (
+        <BunnyPlayer
+          libraryId="12345"
+          videoId="your-video-guid"
+          params={{ autoplay: false, preload: true }}
+          onEnded={() => console.log("Video finished")}
+        />
+      );
+    }
+    ```
+
+    `params` takes any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
+  </Step>
+</Steps>
+
+## Control playback
+
+`onReady` hands you the `Player`. Keep it in state for your own controls.
+
+```tsx
+import { useState } from "react";
+import type { Player } from "player.js";
+import { BunnyPlayer } from "./components/bunny-player";
+
+export function Lesson() {
+  const [player, setPlayer] = useState<Player | null>(null);
+  const [playing, setPlaying] = useState(false);
+
+  return (
+    <>
+      <BunnyPlayer
+        libraryId="12345"
+        videoId="your-video-guid"
+        onReady={setPlayer}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+      />
+
+      <button onClick={() => (playing ? player?.pause() : player?.play())}>
+        {playing ? "Pause" : "Play"}
+      </button>
+      <button onClick={() => player?.setCurrentTime(0)}>Restart</button>
+      <button onClick={() => player?.mute()}>Mute</button>
+    </>
+  );
+}
+```
+
+Getters answer through a callback, since the value comes back from the iframe.
+
+```tsx
+player.getCurrentTime((seconds) => console.log(seconds));
+player.getDuration((seconds) => console.log(seconds));
+```
+
+Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` ([Methods](/stream/playback-api#methods)).
+
+```tsx
+player.send({ method: "setPlaybackRate", value: 1.5 });
+player.on("playbackratechange", (rate) => console.log(rate));
+```
+
+Browsers block unmuted `play()` before the viewer has clicked anything. Call `player.mute()` first if playback has to start on its own. The [Playback control API](/stream/playback-api) lists every method and event.
+
+## Track progress
+
+`timeupdate` fires several times a second. Throttle it before it reaches your backend.
+
+```tsx
+import { useRef } from "react";
+import { BunnyPlayer } from "./components/bunny-player";
+
+export function Lesson({ videoId }: { videoId: string }) {
+  const lastSaved = useRef(0);
+
+  return (
+    <BunnyPlayer
+      libraryId="12345"
+      videoId={videoId}
+      onTimeUpdate={({ seconds, duration }) => {
+        if (seconds - lastSaved.current < 5) return;
+        lastSaved.current = seconds;
+        saveProgress(videoId, seconds, duration);
+      }}
+      onEnded={() => markComplete(videoId)}
+    />
+  );
+}
+```
+
+Pass the saved position back as `params={{ t: savedSeconds }}` to resume.
+
+## Load player.js from the CDN instead
+
+To drop the npm dependency, load our hosted build in `<head>`, where it runs before your components mount.
+
+```html index.html
+<script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
+```
+
+Swap `import playerjs from "player.js"` for `const playerjs = window.playerjs` and declare the global.
+
+```ts
+declare global {
+  interface Window {
+    playerjs: (typeof import("player.js"))["default"];
+  }
+}
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="onReady never fires">
+    player.js has to be loaded before the iframe finishes loading. It caches the iframe's `ready` message on import, and a `Player` created later still connects. In a client-rendered app, importing it with the component is early enough. Server-rendered HTML can load the iframe before your JavaScript runs, which the [Next.js guide](/stream/player/nextjs) handles.
+
+    A hidden tab also holds `ready` back until the viewer switches to it.
+  </Accordion>
+  <Accordion title="Events fire twice after changing the video">
+    Each `Player` leaves a `message` listener on `window` for good. The `active` flag in the effect cleanup silences old instances. Check that yours flips it.
+  </Accordion>
+  <Accordion title="The iframe shows a 403">
+    The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
+  </Accordion>
+</AccordionGroup>

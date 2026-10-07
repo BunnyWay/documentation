@@ -1,0 +1,271 @@
+---
+title: "Upload videos to Bunny Stream from Laravel"
+sidebarTitle: "Laravel"
+description: "Upload video from the browser straight to Bunny Stream over TUS, with a Laravel backend that creates each video and signs the upload."
+---
+
+import TusBrowser from "/snippets/stream/tus-upload-browser.mdx";
+import TusStatus from "/snippets/stream/tus-upload-status.mdx";
+import UploadAuthWarning from "/snippets/stream/upload-auth-warning.mdx";
+
+Video files are large and PHP's upload limits are small. Here the file never reaches PHP. Laravel creates the video and signs an upload, then the browser sends the file to us over [TUS](/stream/tus-resumable-uploads) in resumable chunks.
+
+<Card title="Laravel example on GitHub" icon="/logo/frameworks/laravel.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-laravel" horizontal>
+  A Laravel 13 app with no database.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Add your library credentials">
+    Copy both from your library's **API** page. The API key can delete videos, and belongs in `.env` only.
+
+    ```bash .env
+    BUNNY_STREAM_LIBRARY_ID=
+    BUNNY_STREAM_API_KEY=
+    ```
+
+    ```php config/services.php
+    'bunny_stream' => [
+        'library_id' => env('BUNNY_STREAM_LIBRARY_ID'),
+        'api_key' => env('BUNNY_STREAM_API_KEY'),
+    ],
+    ```
+  </Step>
+  <Step title="Create the Bunny Stream service">
+    The upload signature is a SHA-256 of the library ID, API key, expiry, and video ID.
+
+    ```php app/Services/BunnyStream.php
+    <?php
+
+    namespace App\Services;
+
+    use Illuminate\Container\Attributes\Config;
+    use Illuminate\Http\Client\PendingRequest;
+    use Illuminate\Support\Facades\Http;
+
+    final readonly class BunnyStream
+    {
+        // The status of a video still waiting for its file.
+        public const int STATUS_CREATED = 0;
+
+        // Bunny checks the expiry on every TUS request, so leave room for slow uploads.
+        private const int SIGNATURE_TTL_SECONDS = 24 * 60 * 60;
+
+        public function __construct(
+            #[Config('services.bunny_stream.library_id')] private string $libraryId,
+            #[Config('services.bunny_stream.api_key')] private string $apiKey,
+        ) {}
+
+        /** @return array{status: int, encodeProgress: int, embedUrl: string} */
+        public function getVideo(string $videoId): array
+        {
+            $video = $this->stream()->get('/videos/'.rawurlencode($videoId))->json();
+
+            return [
+                'status' => $video['status'],
+                'encodeProgress' => $video['encodeProgress'],
+                'embedUrl' => "https://player.mediadelivery.net/embed/{$this->libraryId}/{$videoId}",
+            ];
+        }
+
+        public function createVideo(string $title): string
+        {
+            return $this->stream()->post('/videos', ['title' => $title])->json('guid');
+        }
+
+        /** @return array{videoId: string, libraryId: string, expirationTime: int, signature: string} */
+        public function signUpload(string $videoId): array
+        {
+            $expirationTime = time() + self::SIGNATURE_TTL_SECONDS;
+
+            return [
+                'videoId' => $videoId,
+                'libraryId' => $this->libraryId,
+                'expirationTime' => $expirationTime,
+                'signature' => hash('sha256', $this->libraryId.$this->apiKey.$expirationTime.$videoId),
+            ];
+        }
+
+        private function stream(): PendingRequest
+        {
+            return Http::baseUrl("https://video.bunnycdn.com/library/{$this->libraryId}")
+                ->withHeaders(['AccessKey' => $this->apiKey])
+                ->acceptJson()
+                ->throw();
+        }
+    }
+    ```
+
+  </Step>
+  <Step title="Add the API routes">
+    <UploadAuthWarning />
+
+    Register `routes/api.php` in `bootstrap/app.php`. API routes skip the CSRF check, which keeps the browser side simple.
+
+    ```php bootstrap/app.php
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ```
+
+    ```php routes/api.php
+    <?php
+
+    use App\Http\Controllers\UploadController;
+    use App\Http\Controllers\VideoController;
+    use Illuminate\Support\Facades\Route;
+
+    Route::post('/uploads', UploadController::class);
+    Route::get('/videos/{id}', VideoController::class);
+    ```
+
+    Pass a `videoId` from an unfinished upload and the controller re-signs that video. Anything else gets a new one.
+
+    ```php app/Http/Controllers/UploadController.php
+    <?php
+
+    namespace App\Http\Controllers;
+
+    use App\Services\BunnyStream;
+    use Illuminate\Http\Client\RequestException;
+    use Illuminate\Http\JsonResponse;
+    use Illuminate\Http\Request;
+
+    class UploadController extends Controller
+    {
+        public function __construct(private readonly BunnyStream $bunny) {}
+
+        public function __invoke(Request $request): JsonResponse
+        {
+            // Require a signed-in user here. This route is public and creates videos in your library.
+            // Before re-signing a videoId, check that the user owns it.
+            $data = $request->validate([
+                'title' => ['required', 'string'],
+                'videoId' => ['nullable', 'string'],
+            ]);
+
+            try {
+                $videoId = $data['videoId'] ?? null;
+                if (! $videoId || ! $this->canResume($videoId)) {
+                    $videoId = $this->bunny->createVideo($data['title']);
+                }
+
+                return response()->json($this->bunny->signUpload($videoId));
+            } catch (RequestException $error) {
+                return response()->json(['error' => $error->getMessage()], 502);
+            }
+        }
+
+        private function canResume(string $videoId): bool
+        {
+            try {
+                return $this->bunny->getVideo($videoId)['status'] === BunnyStream::STATUS_CREATED;
+            } catch (RequestException) {
+                return false;
+            }
+        }
+    }
+    ```
+
+    ```php app/Http/Controllers/VideoController.php
+    <?php
+
+    namespace App\Http\Controllers;
+
+    use App\Services\BunnyStream;
+    use Illuminate\Http\Client\RequestException;
+    use Illuminate\Http\JsonResponse;
+
+    class VideoController extends Controller
+    {
+        public function __invoke(BunnyStream $bunny, string $id): JsonResponse
+        {
+            // Require a signed-in user here, and check that they own this video ID. The route is public.
+            try {
+                return response()->json($bunny->getVideo($id));
+            } catch (RequestException $error) {
+                // 404 when Bunny Stream has no such video, 502 for anything else.
+                $status = $error->response->status() === 404 ? 404 : 502;
+
+                return response()->json(['error' => $error->getMessage()], $status);
+            }
+        }
+    }
+    ```
+  </Step>
+  <Step title="Upload from the browser">
+    Serve the page from `/`, with a file input and somewhere to show the result.
+
+    ```php routes/web.php
+    <?php
+
+    use Illuminate\Support\Facades\Route;
+
+    Route::view('/', 'upload');
+    ```
+
+    ```blade resources/views/upload.blade.php
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Upload to Bunny Stream</title>
+        @vite('resources/js/app.js')
+    </head>
+    <body>
+        <input type="file" id="video-file" accept="video/*">
+        <div id="video-output"></div>
+    </body>
+    </html>
+    ```
+
+    ```js resources/js/app.js
+    import "./video-uploader";
+    ```
+
+    ```bash
+    bun add tus-js-client
+    ```
+
+    ```js resources/js/video-uploader.js
+    import * as tus from "tus-js-client";
+
+    async function requestUpload(title, videoId) {
+      const response = await fetch("/api/uploads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ title, videoId }),
+      });
+      const body = await response.json();
+      // Validation errors come back as `message`, Bunny Stream errors as `error`.
+      if (!response.ok) throw new Error(body.error ?? body.message ?? "Could not create the upload");
+
+      return body;
+    }
+    ```
+
+    <TusBrowser />
+  </Step>
+</Steps>
+
+## Play it once it's encoded
+
+<TusStatus />
+
+Start the app with `composer run dev`, open http://localhost:8000, and choose a video.
+
+## Before you deploy
+
+Put the routes behind `auth:sanctum` (`php artisan install:api` adds Sanctum) or your own middleware, and store which user owns each video ID. As written, anyone can fill your library.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="/api/uploads returns 404">
+    Laravel isn't loading `routes/api.php`. Check that `withRouting` in `bootstrap/app.php` has the `api:` line. If you changed `.env` after caching the config, run `php artisan config:clear` too.
+  </Accordion>
+</AccordionGroup>

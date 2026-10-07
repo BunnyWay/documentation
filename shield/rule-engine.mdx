@@ -3,11 +3,46 @@ title: "Understanding Rule Engine"
 description: "The Rule Engine is the core component of the Web Application Firewall (WAF) that enables precise control over HTTP requests by executing rules. These rules determine how the WAF inspects, evaluates, and responds to incoming traffic, enhancing the security and integrity of web applications."
 ---
 
+The Rule Engine evaluates HTTP traffic using managed rules and custom rules. Managed rules provide predefined checks whose sensitivity is controlled through paranoia levels. Custom rules let you define specific match conditions and the actions taken when those conditions are met.
+
+## Managed rules and paranoia levels
+
+Shield uses paranoia levels based on the OWASP Core Rule Set (CRS) to control how aggressively its managed WAF rules inspect traffic. The dashboard provides four presets:
+
+| Dashboard setting | CRS paranoia level | Description |
+| --- | --- | --- |
+| **Low** | Level 1 (PL1) | Baseline checks with the lowest likelihood of false positives and the least tuning required. |
+| **Medium** | Level 2 (PL2) | Additional checks that increase detection coverage and may require application-specific tuning. |
+| **High** | Level 3 (PL3) | Stricter checks for specialized attack patterns, with more false positives expected. |
+| **Extreme** | Level 4 (PL4) | The most aggressive checks, with the greatest likelihood of false positives and the most tuning required. |
+
+CRS levels are cumulative: each level includes the rules from the levels below it. For example, Level 2 includes both PL1 and PL2 rules.
+
+Higher levels can detect more attacks, but they can also flag legitimate requests. Test representative application traffic and review false positives when increasing your level.
+
+### Custom configuration
+
+Select **Custom** to configure these settings independently:
+
+- **Detection paranoia level**
+- **Blocking paranoia level**
+- **Execution paranoia level**
+
+Each setting has its own slider ranging from **Level 1** to **Level 4**, using the same CRS scale shown above.
+
+### How Shield blocks requests
+
+**A single matching rule within the configured blocking paranoia level is sufficient to block a request.**
+
+Shield does not use CRS-style cumulative anomaly scoring for this blocking decision. There is no anomaly-score threshold that a request must reach before it is blocked.
+
+For more information about the underlying levels, see the [OWASP CRS paranoia-level documentation](https://coreruleset.org/docs/2-how-crs-works/2-2-paranoia_levels/). Its discussion of anomaly scoring describes CRS behavior and does not apply to Shield’s blocking decision.
+
+## Custom rule fundamentals
+
 Every custom WAF rule is built from four parts: a variable that tells the engine where to look in a request, an operator that defines the match condition, optional transformations that normalize the data before comparison, and a response action for matches.
 
-## The fundamentals
-
-A WAF rule is structured into four main sections, each playing a vital role in the request evaluation process:
+Each playing a vital role in the request evaluation process:
 
 - **Variable**: This section specifies the parts of the HTTP request that the Rule Engine should examine. By defining a Variable, you instruct the WAF on where to look within the request, such as headers, URIs, or parameters.
 - **Operator**: Operator defines the condition or logic that triggers a match against the specified Variable (_and Variable Value_). It determines how the extracted data is compared to a given value, using operations like equality, pattern matching, or range checking.
@@ -45,11 +80,11 @@ Variable define where in the HTTP request the WAF should extract data for evalua
 - **`REQUEST_COOKIES`** (_Optional_ **Variable Value**) All cookie key-value pairs sent with the request.
 - **`REQUEST_HEADERS_NAMES`** (_Optional_ **Variable Value**) The names of headers included in the request.
 - **`REQUEST_HEADERS`** (_Optional_ **Variable Value**) All request headers in a key-value pair format.
-- **`REQUEST_BODY`** (**Premium**) The textual payload of the request body.
+- **`REQUEST_BODY`** (**Advanced**) The textual payload of the request body.
 - **`RESPONSE_HEADERS`** (_Optional_ **Variable Value**) All response headers sent back to the client.
-- **`RESPONSE_BODY`** (**Premium**) The textual payload of the response body returned by the origin server.
+- **`RESPONSE_BODY`** (**Advanced**) The textual payload of the response body returned by the origin server.
 - **`RESPONSE_STATUS`** The HTTP status code returned in the response (e.g., 200 OK, 404 Not Found).
-- **`FINGERPRINT`** (_Optional_ **Variable Value** - **_JA4\_A, JA4\_B, JA4\_C_** and any two-letter combination such as **_JA4\_AB_**) (**Premium**) The TLS client fingerprint of the request. With no Variable Value, returns the full JA4 string.
+- **`FINGERPRINT`** (_Optional_ **Variable Value** - **_JA4\_A, JA4\_B, JA4\_C_** and any two-letter combination such as **_JA4\_AB_**) (**Advanced**) The TLS client fingerprint of the request. With no Variable Value, returns the full JA4 string.
 - **`VERIFIED_BOT_CATEGORY`** The category assigned by verified-bot detection, e.g. `SEO` for verified search-engine crawlers, or empty when the client is not a recognized verified bot.
 
 ## Operator

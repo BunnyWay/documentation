@@ -176,6 +176,18 @@
                     ]
                   },
                   {
+                    "group": "Load Balancer",
+                    "pages": [
+                      "cdn/load-balancer/index",
+                      "cdn/load-balancer/origins",
+                      "cdn/load-balancer/routing",
+                      "cdn/load-balancer/sticky-sessions",
+                      "cdn/load-balancer/health-and-failover",
+                      "cdn/load-balancer/statistics",
+                      "cdn/load-balancer/pricing"
+                    ]
+                  },
+                  {
                     "group": "Performance",
                     "pages": [
                       "cdn/performance/index",
@@ -246,6 +258,7 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "cdn/request-headers-to-origin",
                   "cdn/custom-hostname",
                   "cdn/cdn-acceleration",
                   "cdn/verify-configuration",
@@ -611,7 +624,15 @@
                       "stream/dashboard",
                       "stream/http-api",
                       "stream/url-fetch",
-                      "stream/tus-resumable-uploads"
+                      "stream/tus-resumable-uploads",
+                      {
+                        "group": "Frameworks",
+                        "pages": [
+                          "stream/upload/laravel",
+                          "stream/upload/rails",
+                          "stream/upload/django"
+                        ]
+                      }
                     ]
                   },
                   "stream/collections",
@@ -623,13 +644,30 @@
               {
                 "group": "Playback",
                 "pages": [
+                  "stream/player",
+                  "stream/player-settings",
+                  "stream/embedding",
+                  "stream/playback-api",
+                  "stream/mp4-downloads",
                   {
-                    "group": "Bunny Player",
+                    "group": "Frameworks",
                     "pages": [
-                      "stream/player-settings",
-                      "stream/player",
-                      "stream/playback-api",
-                      "stream/custom-head-html-migration-guide"
+                      "stream/player/react",
+                      "stream/player/nextjs",
+                      "stream/player/vue",
+                      "stream/player/svelte",
+                      "stream/player/astro",
+                      "stream/player/javascript",
+                      "stream/player/signed-embeds"
+                    ]
+                  },
+                  {
+                    "group": "Mobile",
+                    "pages": [
+                      "stream/mobile-sdk",
+                      "stream/android-sdk",
+                      "stream/ios-sdk",
+                      "stream/expo-video"
                     ]
                   },
                   {
@@ -642,18 +680,7 @@
                       "stream/players/fairplay"
                     ]
                   },
-                  {
-                    "group": "Mobile SDK",
-                    "pages": [
-                      "stream/mobile-sdk",
-                      "stream/android-sdk",
-                      "stream/ios-sdk"
-                    ],
-                    "expanded": true
-                  },
-                  "stream/expo-video",
-                  "stream/embedding",
-                  "stream/mp4-downloads"
+                  "stream/custom-head-html-migration-guide"
                 ]
               },
               {
