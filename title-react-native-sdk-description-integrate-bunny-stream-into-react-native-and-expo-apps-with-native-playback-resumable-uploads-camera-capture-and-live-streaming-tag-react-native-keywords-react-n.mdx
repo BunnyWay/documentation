@@ -13,7 +13,7 @@ The Bunny Stream React Native SDK brings the native Bunny Stream players, upload
 
 ## Key Features
 
-- **Native video playback:** on-demand and live playback, adaptive streaming, captions, and controls configured through the Bunny Stream dashboard.
+- **Native video playback:** on-demand, adaptive streaming, captions, and controls configured through the Bunny Stream dashboard.
 - **Resumable uploads:** TUS transfers with progress events, pause, resume, cancellation, and interrupted-transfer recovery.
 - **Camera publishing:** record new videos and upload videos directly from the device camera 
 - **Typed content management:** videos, collections, captions, encoding, transcription, and statistics, with operation-specific platform support.
@@ -88,14 +88,14 @@ export function VideoScreen({ videoId }: { videoId: string }) {
 ```
 
 <Note>
-  For both VOD and live sources, `libraryId` falls back to the library passed to `initialize()`; provide it explicitly to override that ID. This fallback does not apply to management calls, uploads, or broadcaster sources.
+  For VOD, `libraryId` falls back to the library passed to `initialize()`; provide it explicitly to override that ID. This fallback does not apply to management calls, uploads, or broadcaster sources.
 </Note>
 
 ## Token authentication
 
 Protected playback involves two layers:
 
-- **Embed View Token Authentication** authorizes access to a video or live stream. Your backend or Edge Script verifies the user's entitlement and returns a token and expiry.
+- **Embed View Token Authentication** authorizes access to a video. Your backend or Edge Script verifies the user's entitlement and returns a token and expiry.
 - **CDN Token Authentication** protects delivery from Bunny CDN and is handled by the native SDK using the playback configuration when enabled for the library.
 
 ### Embed View Token Authentication
@@ -112,7 +112,7 @@ The React Native SDK forwards authorization to the native player. It does not au
 
 | Method | React Native SDK |
 | --- | --- |
-| Embed View Token Authentication | Backend-issued `source.token` and `source.expires` for VOD and live |
+| Embed View Token Authentication | Backend-issued `source.token` and `source.expires` for VOD |
 | CDN Token Authentication | Handled by the native SDK when enabled in the library |
 | Client-side token signing | Demo/debug helpers only; not a production authorization flow |
 
@@ -121,7 +121,7 @@ The React Native SDK forwards authorization to the native player. It does not au
 Your backend or Edge Script must:
 
 1. Keep the playback-token signing secret on the server.
-2. Authenticate the requesting user and check access to the requested video or stream.
+2. Authenticate the requesting user and check access to the requested video.
 3. Generate a token for that specific media ID using the Stream token-signing procedure.
 4. Return `{ token, expires }` over HTTPS, with expiry expressed as Unix seconds.
 
