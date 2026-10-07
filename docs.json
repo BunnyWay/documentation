@@ -688,7 +688,7 @@
                 "pages": [
                   {
                     "group": "Bunny CLI migration guides",
-                    "tag": "mux",
+                    "tag": "New",
                     "expanded": true,
                     "pages": [
                       "stream/migrate-from-mux",
