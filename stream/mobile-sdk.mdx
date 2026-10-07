@@ -115,36 +115,3 @@ Bunny Stream offers official SDKs for native Android and iOS, a React Native SDK
     Play Bunny Stream HLS URLs with `expo-video` when you only need native playback.
   </Card>
 </CardGroup>
-
-## Which option should I use?
-
-| If you are building… | Use |
-| --- | --- |
-| A native Android app in Kotlin | [Android SDK](/stream/android-sdk) |
-| A native iOS app in Swift | [iOS SDK](/stream/ios-sdk) |
-| A React Native app, or an Expo app that needs uploads, camera capture, or video management | [React Native SDK](/stream/react-native-sdk) |
-| An Expo app that only needs to play videos | [Expo Video guide](/stream/expo-video) |
-
-<Tip>
-  If your app only embeds a few videos and doesn't need native features like Picture-in-Picture or background playback, the [Bunny Player](/stream/embedding) in a WebView is the quickest option and includes statistics, chapters, and custom UI out of the box.
-</Tip>
-
-## Feature comparison
-
-|  | Android SDK | iOS SDK | React Native SDK | Expo Video |
-| --- | --- | --- | --- | --- |
-| **Language** | Kotlin | Swift | TypeScript | TypeScript |
-| **Distribution** | [GitHub](https://github.com/BunnyWay/bunny-stream-android) | Swift Package Manager ([GitHub](https://github.com/BunnyWay/bunny-stream-ios)) | [npm](https://www.npmjs.com/package/@bunny.net/stream-react-native) | [`expo-video`](https://docs.expo.dev/versions/latest/sdk/video/) (Expo package) |
-| **Native video playback** | Yes | Yes | Yes | Yes |
-| **Resumable TUS uploads** | Yes | Yes | Yes | No |
-| **Camera recording and upload** | Yes | Yes | Yes | No |
-| **Video and collection management** | Full Stream API | Full Stream API | Typed API, with platform-specific support per operation | Through your backend via the [Stream API](/api-reference/stream/index) |
-| **Embed view token authentication** | Yes | Yes | Yes | Yes |
-| **DRM** | See SDK docs | See SDK docs | FairPlay (iOS), Widevine (Android) | FairPlay (iOS), Widevine (Android) with [MediaCage Enterprise DRM](/stream/quickstart-mediacage-enterprise) |
-| **Works in Expo Go** | — | — | No, development build required | No, development build required |
-
-### How the options relate
-
-The **React Native SDK** is a wrapper around the native Android and iOS SDKs. React components render the native player and camera views, so you get the same native behavior with a single TypeScript interface. It also adds an Expo config plugin and platform features such as AirPlay on iOS, Chromecast on Android, and optional Android TV support. It does not support web.
-
-The **Expo Video guide** is not a Bunny SDK. It shows how to point the open source `expo-video` player at Bunny Stream's predictable HLS URLs and use the Stream API for metadata such as titles, thumbnails, chapters, and captions. Choose it when playback is all you need and you want to stay within Expo's own packages.
