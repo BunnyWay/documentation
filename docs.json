@@ -638,7 +638,8 @@
                   "stream/collections",
                   "stream/tagging",
                   "stream/metatags",
-                  "stream/storage-structure"
+                  "stream/storage-structure",
+                  "stream/video-specification"
                 ]
               },
               {
@@ -695,7 +696,6 @@
                       "stream/migrate-from-cloudflare-stream"
                     ]
                   },
-                  "stream/video-specification",
                   "stream/vimeo2bunny",
                   "stream/data-and-privacy",
                   "stream/api-reference"
