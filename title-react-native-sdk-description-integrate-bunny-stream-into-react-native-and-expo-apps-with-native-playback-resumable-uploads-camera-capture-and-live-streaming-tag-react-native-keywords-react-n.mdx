@@ -1,0 +1,197 @@
+---
+title: "React Native SDK"
+description: "Integrate Bunny Stream into React Native and Expo apps with native playback, resumable uploads, camera capture, and live streaming."
+tag: "React Native"
+keywords:
+  - "React Native"
+  - "Expo"
+  - "Mobile"
+  - "SDK"
+---
+
+The Bunny Stream React Native SDK brings the native Bunny Stream players, uploads, and content management APIs to iOS and Android through one TypeScript interface. Use it in a React Native application or an Expo development build.
+
+## Key Features
+
+- **Native video playback:** on-demand and live playback, adaptive streaming, captions, and controls configured through the Bunny Stream dashboard.
+- **Resumable uploads:** TUS transfers with progress events, pause, resume, cancellation, and interrupted-transfer recovery.
+- **Live streaming:** scheduled countdowns, pre-stream trailers, DVR, and playback of the recording when available.
+- **Camera publishing:** record new videos or broadcast to an existing live stream with connection-state events and primary/backup failover.
+- **Typed content management:** videos, collections, live streams, captions, encoding, transcription, and analytics, with operation-specific platform support.
+- **Platform playback features:** Picture-in-Picture, AirPlay on iOS, Chromecast on Android, FairPlay/Widevine-protected playback, and an optional Android TV player integration.
+- **Expo integration:** a config plugin for native setup and TypeScript APIs shared with bare React Native applications.
+
+## What is the Bunny Stream React Native SDK?
+
+The SDK is an npm package wrapping the official [Android SDK](/stream/android-sdk) and [iOS SDK](/stream/ios-sdk). React components render native player and camera views; hooks and typed events connect those views to your application state.
+
+It does not render the web player in a WebView, and it does not support Expo Go or web. Native capabilities are not necessarily exposed as equivalent JavaScript APIs on both platforms. Check the platform notes in the [playback](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/play-a-video.md), [content management](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/manage-videos.md), [upload](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/upload-videos.md), and [broadcasting](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/go-live-from-the-camera.md) guides for operation-specific support.
+
+<Card title="React Native SDK" horizontal href="https://github.com/BunnyWay/bunny-stream-react-native" cta="Hosted on GitHub">
+  [https://github.com/BunnyWay/bunny-stream-react-native](https://github.com/BunnyWay/bunny-stream-react-native)
+</Card>
+
+- [npm package](https://www.npmjs.com/package/@bunny.net/stream-react-native)
+- [Integration guides](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/README.md)
+
+## Requirements
+
+- React Native with the New Architecture enabled.
+- Android API 26+, `compileSdk` 36+, JDK 17, Kotlin 2.2.20+, and core library desugaring.
+- iOS deployment target compatible with your React Native version, Xcode, and CocoaPods with React Native's `spm_dependency` support. The native Bunny iOS SDK requires iOS 15+.
+- Expo SDK 52+ if using Expo, with a native development build.
+- A Bunny Stream video library and an initialization/credential flow appropriate for your app.
+
+## Installation
+
+```bash
+npm install @bunny.net/stream-react-native
+```
+
+For Expo, add the plugin to your existing app configuration:
+
+```json
+{
+  "expo": {
+    "plugins": ["@bunny.net/stream-react-native"]
+  }
+}
+```
+
+<Note>
+  The plugin supplies default iOS camera/microphone permission messages. Customize them with `cameraPermission` and `microphonePermission` when needed, and request runtime permissions before opening the camera. Rebuild the native application after configuration changes.
+</Note>
+
+Follow [Getting started](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/getting-started.md) for manual native setup and initialization, or the [Expo guide](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/expo.md) for development builds and plugin options.
+
+## Initialize and play
+
+Before mounting a player or using the management/upload APIs, call `initialize(accessKey, libraryId)` once during application startup. It validates configuration synchronously; keep SDK content unmounted if initialization fails.
+
+<Warning>
+  **Credential limitation:** the current React Native initializer requires a non-empty library API access key. The wrapper does not expose a token-only initializer or a configurable backend proxy. An embed view token is not a replacement for that key. API keys used by a distributed mobile app can be extracted, including keys supplied through build-time environment variables. Keep privileged operations and signing secrets on your backend wherever possible. If library credentials must never reach the client, resolve this integration requirement before adopting the current initialization flow; do not use a placeholder key as a production workaround.
+</Warning>
+
+After initialization, render a VOD player:
+
+```tsx
+import { BunnyStreamPlayer } from '@bunny.net/stream-react-native';
+
+export function VideoScreen({ videoId }: { videoId: string }) {
+  return (
+    <BunnyStreamPlayer
+      source={{ type: 'vod', videoId }}
+      style={{ width: '100%', aspectRatio: 16 / 9 }}
+      onError={({ nativeEvent }) => console.warn(nativeEvent.message)}
+    />
+  );
+}
+```
+
+For live playback, use `source={{ type: 'live', streamId: 'YOUR_STREAM_ID' }}` and also handle `onLiveError`.
+
+<Note>
+  For both VOD and live sources, `libraryId` falls back to the library passed to `initialize()`; provide it explicitly to override that ID. This fallback does not apply to management calls, uploads, or broadcaster sources.
+</Note>
+
+## Token authentication
+
+Protected playback involves two layers:
+
+- **Embed View Token Authentication** authorizes access to a video or live stream. Your backend or Edge Script verifies the user's entitlement and returns a token and expiry.
+- **CDN Token Authentication** protects delivery from Bunny CDN and is handled by the native SDK using the playback configuration when enabled for the library.
+
+### Embed View Token Authentication
+
+The React Native SDK forwards authorization to the native player. It does not authenticate your users or decide which videos they are allowed to watch.
+
+**React Native SDK responsibility**
+
+- The customer backend generates the token after authorizing the user.
+- The app requests the token and passes it to `BunnyStreamPlayer` through `source`.
+- The native SDK handles playback and the configured CDN delivery protection.
+
+### Supported authentication methods
+
+| Method | React Native SDK |
+| --- | --- |
+| Embed View Token Authentication | Backend-issued `source.token` and `source.expires` for VOD and live |
+| CDN Token Authentication | Handled by the native SDK when enabled in the library |
+| Client-side token signing | Demo/debug helpers only; not a production authorization flow |
+
+### Backend requirements
+
+Your backend or Edge Script must:
+
+1. Keep the playback-token signing secret on the server.
+2. Authenticate the requesting user and check access to the requested video or stream.
+3. Generate a token for that specific media ID using the Stream token-signing procedure.
+4. Return `{ token, expires }` over HTTPS, with expiry expressed as Unix seconds.
+
+<Note>
+  Use short-lived tokens appropriate for the playback flow; 1–5 minutes is a useful starting point.
+</Note>
+
+<Warning>
+  Never expose a signing endpoint that grants tokens for arbitrary IDs without authorization. Do not put the signing secret into your React Native bundle, Expo configuration, or client logs.
+</Warning>
+
+### React Native usage
+
+After initialization and a successful authorization response from your backend, pass the token and expiry through `source`:
+
+```tsx
+import { BunnyStreamPlayer } from '@bunny.net/stream-react-native';
+
+type ProtectedVideoProps = {
+  videoId: string;
+  token: string;
+  expires: number;
+};
+
+export function ProtectedVideo({ videoId, token, expires }: ProtectedVideoProps) {
+  return (
+    <BunnyStreamPlayer
+      source={{ type: 'vod', videoId, token, expires }}
+      style={{ width: '100%', aspectRatio: 16 / 9 }}
+      onError={({ nativeEvent }) => console.warn(nativeEvent.message)}
+    />
+  );
+}
+```
+
+For a live source, request authorization for the stream ID and pass `token` and `expires` alongside `type: 'live'` and `streamId`. The wrapper does not fetch or refresh tokens from your backend automatically. Changing a token or expiry remounts the native player, so refresh deliberately rather than on every render.
+
+The exported `generateEmbedToken` and `signPlaybackToken` methods on `BunnyStreamApi` are demo/debug conveniences, **not a production client-side signing flow**. See [Secure playback](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/secure-playback.md) for credential boundaries, protected images, and DRM notes.
+
+**Flow**
+
+<Steps>
+  <Step title="Request the embed token">
+    Call your authenticated backend or Edge Script for the target video or stream ID. The backend checks the user's access before generating a token.
+  </Step>
+  <Step title="Receive the token">
+    Your backend returns `{ token, expires }`, with expiry expressed as Unix seconds.
+  </Step>
+  <Step title="Play the video or live stream">
+    After SDK initialization, pass `token` and `expires` through the player's `source`. For live playback, authorize the stream ID and handle both `onError` and `onLiveError`.
+  </Step>
+</Steps>
+
+## Uploads and background behavior
+
+Choose `mode: 'tus'` explicitly when starting a resumable upload; `startUpload` defaults to `basic`. Subscribe to upload events before starting transfers and retain the video/file details needed for recovery. Transfer completion does not mean encoding has finished.
+
+<Note>
+  Android uploads stop with the process; TUS can continue after relaunch with saved details. iOS TUS supports background URLSession transfers and cached recovery, but user force-quit is different from system termination and recovery depends on available files and valid authorization.
+</Note>
+
+See [Upload videos](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/upload-videos.md).
+
+## Next steps
+
+- [Play a live stream](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/play-a-live-stream.md).
+- [Manage videos and collections](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/manage-videos.md).
+- [Manage live streams](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/manage-live-streams.md).
+- [Go live from the camera](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/go-live-from-the-camera.md).
+- [Handle errors](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/handle-errors.md) and [troubleshoot integration issues](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/troubleshooting.md).
