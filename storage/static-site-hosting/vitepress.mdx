@@ -11,16 +11,17 @@ VitePress builds your docs into `.vitepress/dist`, inside the folder that holds 
 
 | Setting | Value |
 | --- | --- |
-| Build command | `npm run build` |
+| Build command | `npm run docs:build` |
 | Output directory | `.vitepress/dist` |
 
 ## Configure VitePress
 
-The CLI expects `.vitepress` at the project root. If your docs live in a `docs` folder, set the output directory in `bunny.jsonc`:
+`npx vitepress init` names the build script `docs:build`, but the CLI runs `build`. Set the build command in `bunny.jsonc` at your project root. The CLI also expects `.vitepress` at the project root, so if your docs live in a `docs` folder, set the output directory too:
 
 ```jsonc bunny.jsonc
 {
   "sites": {
+    "build": "npm run docs:build",
     "dir": "docs/.vitepress/dist"
   }
 }
@@ -28,6 +29,6 @@ The CLI expects `.vitepress` at the project root. If your docs live in a `docs` 
 
 Leave `cleanUrls` off. With it on, VitePress writes `about.html` and links to `/about`, which returns a 404.
 
-<Deploy name="my-vitepress-site" build="npm run build" />
+<Deploy build="npm run docs:build" />
 
 <CustomDomain />

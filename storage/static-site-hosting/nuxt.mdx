@@ -7,13 +7,13 @@ description: "Build a Nuxt site and serve it from Bunny Storage through Bunny CD
 import Deploy from "/snippets/static-sites/deploy.mdx";
 import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
 
-`nuxi generate` prerenders every route of your Nuxt app into `.output/public`. To run Nuxt with a server, deploy it with [Magic Containers](/magic-containers/guides/nuxt).
+`nuxt generate` prerenders every route of your Nuxt app into `.output/public`. To run Nuxt with a server, deploy it with [Magic Containers](/magic-containers/guides/nuxt).
 
 | Setting | Value |
 | --- | --- |
-| Build command | `npx nuxi generate` |
+| Build command | `npx nuxt generate` |
 | Output directory | `.output/public` |
 
-<Deploy name="my-nuxt-site" build="npx nuxi generate" />
+<Deploy build="npx nuxt generate" />
 
 <CustomDomain />

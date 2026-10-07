@@ -8,34 +8,16 @@ import Deploy from "/snippets/static-sites/deploy.mdx";
 import SpaRouting from "/snippets/static-sites/spa-routing.mdx";
 import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
 
-A Blazor WebAssembly app publishes to `bin/Release/net<version>/publish/wwwroot` as static files that run in the browser.
+A standalone Blazor WebAssembly app publishes as static files that run in the browser. Publishing to `bin/publish` puts the site in `bin/publish/wwwroot`, a path that doesn't change with your target framework.
 
 | Setting | Value |
 | --- | --- |
-| Build command | `dotnet publish -c Release` |
-| Output directory | `bin/Release/net10.0/publish/wwwroot` |
+| Build command | `dotnet publish -c Release -o bin/publish` |
+| Output directory | `bin/publish/wwwroot` |
 
-## Configure Blazor WebAssembly
+The CLI detects Blazor WebAssembly from a `.csproj` at the project root that uses the `Microsoft.NET.Sdk.BlazorWebAssembly` SDK, and needs the .NET SDK installed to run the build. Server-hosted Blazor apps need a server, so deploy them with [Magic Containers](/magic-containers) instead.
 
-The CLI doesn't detect Blazor, so describe the build in `bunny.jsonc` at your project root. Change `net10.0` to match your target framework:
-
-```jsonc bunny.jsonc
-{
-  "sites": {
-    "build": "dotnet publish -c Release",
-    "dir": "bin/Release/net10.0/publish/wwwroot",
-    "spa": true
-  }
-}
-```
-
-When you set up GitHub Actions, pass the framework to `bunny sites ci init`:
-
-```bash
-bunny sites ci init --framework blazor
-```
-
-<Deploy name="my-blazor-site" build="dotnet publish -c Release" />
+<Deploy build="dotnet publish -c Release -o bin/publish" />
 
 <SpaRouting />
 

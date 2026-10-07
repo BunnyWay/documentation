@@ -1,7 +1,7 @@
 ---
 title: "Deploy Eleventy to Bunny Storage"
 sidebarTitle: "Eleventy"
-description: "Build a Eleventy site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+description: "Build an Eleventy site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
 ---
 
 import Deploy from "/snippets/static-sites/deploy.mdx";
@@ -21,11 +21,11 @@ The CLI runs your `build` script. Add one to `package.json` if your project does
 ```json package.json
 {
   "scripts": {
-    "build": "npx @11ty/eleventy"
+    "build": "eleventy"
   }
 }
 ```
 
-<Deploy name="my-eleventy-site" build="npm run build" />
+<Deploy build="npm run build" />
 
 <CustomDomain />
