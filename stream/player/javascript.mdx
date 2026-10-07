@@ -30,7 +30,6 @@ With no framework, Bunny Player comes down to one function. It appends the ifram
     export type BunnyPlayerOptions = {
       libraryId: string;
       videoId: string;
-      /** Player parameters such as autoplay, muted, captions, or t. */
       params?: Record<string, string | number | boolean>;
       title?: string;
     };
@@ -102,7 +101,7 @@ Browsers block unmuted `play()` before the viewer has clicked anything. Mute fir
 let lastSaved = 0;
 
 player.on("timeupdate", ({ seconds, duration }) => {
-  if (seconds - lastSaved < 5) return;
+  if (Math.abs(seconds - lastSaved) < 5) return;
   lastSaved = seconds;
   void saveProgress(seconds, duration);
 });
@@ -141,7 +140,7 @@ We host a build of player.js that adds `setPlaybackRate()` and the `playbackrate
     A hidden tab also holds `ready` back until the viewer switches to it.
   </Accordion>
   <Accordion title="Events fire twice after replacing the video">
-    Each `Player` leaves a `message` listener on `window` for good. Guard its handlers with a flag and flip it when you remove the iframe.
+    Each `Player` adds a `message` listener to `window` that player.js never removes. Capture it by wrapping `playerjs.addEvent` while you construct the `Player`, then remove it with the iframe, as the [React guide](/stream/player/react) does.
   </Accordion>
   <Accordion title="The iframe shows a 403">
     The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).

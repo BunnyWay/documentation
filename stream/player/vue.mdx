@@ -40,7 +40,6 @@ Nuxt can server-render it as is. player.js reads `window` on import, which is wh
       defineProps<{
         libraryId: string;
         videoId: string;
-        /** Player parameters such as autoplay, muted, captions, or t. */
         params?: Record<string, string | number | boolean>;
         title?: string;
       }>(),
@@ -76,22 +75,26 @@ Nuxt can server-render it as is. player.js reads `window` on import, which is wh
     watch(
       iframe,
       (el, _previous, onCleanup) => {
-        if (!el || !playerjs.value) return;
+        const pjs = playerjs.value;
+        if (!el || !pjs) return;
 
-        // player.js has no teardown API. This flag stops stale listeners
-        // from firing after the video changes or the component unmounts.
-        let active = true;
-        const instance = new playerjs.value.Player(el);
+        // player.js never removes the window listener each Player adds,
+        // so grab it while constructing and remove it on cleanup.
+        let onMessage: EventListener = () => {};
+        const addEvent = pjs.addEvent;
+        pjs.addEvent = (elem, type, handler) => addEvent(elem, type, (onMessage = handler));
+        const instance = new pjs.Player(el);
+        pjs.addEvent = addEvent;
 
-        instance.on("ready", () => active && emit("ready", instance));
-        instance.on("play", () => active && emit("play"));
-        instance.on("pause", () => active && emit("pause"));
-        instance.on("ended", () => active && emit("ended"));
-        instance.on("timeupdate", (time) => active && emit("timeupdate", time));
+        instance.on("ready", () => emit("ready", instance));
+        instance.on("play", () => emit("play"));
+        instance.on("pause", () => emit("pause"));
+        instance.on("ended", () => emit("ended"));
+        instance.on("timeupdate", (time) => emit("timeupdate", time));
 
         player.value = instance;
         onCleanup(() => {
-          active = false;
+          window.removeEventListener("message", onMessage);
           player.value = null;
         });
       },
@@ -212,7 +215,7 @@ const props = defineProps<{ videoId: string; resumeAt?: number }>();
 let lastSaved = 0;
 
 function onTimeUpdate({ seconds, duration }: { seconds: number; duration: number }) {
-  if (seconds - lastSaved < 5) return;
+  if (Math.abs(seconds - lastSaved) < 5) return;
   lastSaved = seconds;
   saveProgress(props.videoId, seconds, duration);
 }
@@ -233,26 +236,42 @@ Pass the saved position back as the `t` parameter to resume.
 
 ## Load player.js from the CDN instead
 
-To drop the npm dependency, load our hosted build and read `window.playerjs`. In Nuxt, it goes in `nuxt.config.ts`.
+To drop the npm dependency, load our hosted build from the component.
 
-```ts nuxt.config.ts
-export default defineNuxtConfig({
-  app: {
-    head: {
-      script: [{ src: "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js" }],
-    },
-  },
-});
-```
+```ts lib/load-playerjs.ts
+type PlayerJs = (typeof import("player.js"))["default"];
 
-In a plain Vue app, add the `<script>` tag to `index.html`. Then swap the dynamic import in `onMounted` for `playerjs.value = window.playerjs` and declare the global.
-
-```ts
 declare global {
   interface Window {
-    playerjs: (typeof import("player.js"))["default"];
+    playerjs: PlayerJs;
   }
 }
+
+let loading: Promise<PlayerJs> | undefined;
+
+export function loadPlayerjs() {
+  loading ??= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js";
+    script.onload = () => resolve(window.playerjs);
+    script.onerror = (error) => {
+      loading = undefined;
+      reject(error);
+    };
+    document.head.append(script);
+  });
+  return loading;
+}
+```
+
+Swap the dynamic import in `onMounted` for the loader.
+
+```ts components/BunnyPlayer.vue
+import { loadPlayerjs } from "../lib/load-playerjs";
+
+onMounted(async () => {
+  playerjs.value = await loadPlayerjs();
+});
 ```
 
 ## Troubleshooting
@@ -276,9 +295,6 @@ declare global {
     const videoId = String(config.bunnyVideoId);
     </script>
     ```
-  </Accordion>
-  <Accordion title="Events fire twice after changing the video">
-    Each `Player` leaves a `message` listener on `window` for good. The `active` flag in the watcher cleanup silences old instances. Check that yours flips it.
   </Accordion>
   <Accordion title="The iframe shows a 403">
     The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).

@@ -35,7 +35,6 @@ The component below renders a placeholder on the server, loads player.js in an e
     export type BunnyPlayerProps = {
       libraryId: string;
       videoId: string;
-      /** Player parameters such as autoplay, muted, captions, or t. */
       params?: Record<string, string | number | boolean>;
       title?: string;
       onReady?: (player: Player) => void;
@@ -94,20 +93,21 @@ The component below renders a placeholder on the server, loads player.js in an e
         const iframe = iframeRef.current;
         if (!playerjs || !iframe) return;
 
-        // player.js has no teardown API. This flag stops stale listeners
-        // from firing after the video changes or the component unmounts.
-        let active = true;
+        // player.js never removes the window listener each Player adds,
+        // so grab it while constructing and remove it on cleanup.
+        let onMessage: EventListener = () => {};
+        const addEvent = playerjs.addEvent;
+        playerjs.addEvent = (elem, type, handler) => addEvent(elem, type, (onMessage = handler));
         const player = new playerjs.Player(iframe);
+        playerjs.addEvent = addEvent;
 
-        player.on("ready", () => active && handlers.current.onReady?.(player));
-        player.on("play", () => active && handlers.current.onPlay?.());
-        player.on("pause", () => active && handlers.current.onPause?.());
-        player.on("ended", () => active && handlers.current.onEnded?.());
-        player.on("timeupdate", (time) => active && handlers.current.onTimeUpdate?.(time));
+        player.on("ready", () => handlers.current.onReady?.(player));
+        player.on("play", () => handlers.current.onPlay?.());
+        player.on("pause", () => handlers.current.onPause?.());
+        player.on("ended", () => handlers.current.onEnded?.());
+        player.on("timeupdate", (time) => handlers.current.onTimeUpdate?.(time));
 
-        return () => {
-          active = false;
-        };
+        return () => window.removeEventListener("message", onMessage);
       }, [playerjs, src]);
 
       // Hold the space until player.js is loaded so the iframe cannot
@@ -252,7 +252,7 @@ export function LessonPlayer({ libraryId, videoId, resumeAt }: { libraryId: stri
       videoId={videoId}
       params={resumeAt ? { t: resumeAt } : undefined}
       onTimeUpdate={({ seconds, duration }) => {
-        if (seconds - lastSaved.current < 5) return;
+        if (Math.abs(seconds - lastSaved.current) < 5) return;
         lastSaved.current = seconds;
         void saveProgress(videoId, seconds, duration);
       }}
@@ -279,27 +279,27 @@ With [embed view token authentication](/stream/token-authentication) on, the URL
 
 ## Load player.js from the CDN instead
 
-To drop the npm dependency, load our hosted build in the root layout. `beforeInteractive` puts `window.playerjs` in place before anything hydrates.
+To drop the npm dependency, load our hosted build from the component with `next/script`.
 
-```tsx app/layout.tsx
+Replace the `import("player.js")` effect with a `<Script>` next to the placeholder.
+
+```tsx components/bunny-player.tsx
 import Script from "next/script";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+if (!playerjs) {
   return (
-    <html lang="en">
-      <body>
-        {children}
-        <Script
-          src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
-          strategy="beforeInteractive"
-        />
-      </body>
-    </html>
+    <>
+      <Script
+        src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
+        onReady={() => setPlayerjs(window.playerjs)}
+      />
+      <div style={frameStyle} aria-hidden="true" />
+    </>
   );
 }
 ```
 
-Swap the dynamic import for `setPlayerjs(window.playerjs)` and declare the global.
+Then declare the global.
 
 ```ts
 declare global {
@@ -308,8 +308,6 @@ declare global {
   }
 }
 ```
-
-Keep the placeholder. `beforeInteractive` makes no promise that the script runs before a server-rendered iframe loads.
 
 ## Troubleshooting
 
@@ -324,9 +322,6 @@ Keep the placeholder. `beforeInteractive` makes no promise that the script runs 
     The iframe loaded before player.js, which happens when it's part of the server-rendered HTML. Render it only once player.js has loaded, as the component above does.
 
     A hidden tab also holds `ready` back until the viewer switches to it.
-  </Accordion>
-  <Accordion title="Events fire twice after changing the video">
-    Each `Player` leaves a `message` listener on `window` for good. The `active` flag in the effect cleanup silences old instances. Check that yours flips it.
   </Accordion>
   <Accordion title="The iframe shows a 403">
     The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).

@@ -34,7 +34,6 @@ SvelteKit renders it on the server without changes. The component imports player
       type Props = {
         libraryId: string;
         videoId: string;
-        /** Player parameters such as autoplay, muted, captions, or t. */
         params?: Record<string, string | number | boolean>;
         title?: string;
         onready?: (player: Player) => void;
@@ -76,20 +75,21 @@ SvelteKit renders it on the server without changes. The component imports player
       $effect(() => {
         if (!playerjs || !iframe) return;
 
-        // player.js has no teardown API. This flag stops stale listeners
-        // from firing after the video changes or the component unmounts.
-        let active = true;
+        // player.js never removes the window listener each Player adds,
+        // so grab it while constructing and remove it on cleanup.
+        let onMessage: EventListener = () => {};
+        const addEvent = playerjs.addEvent;
+        playerjs.addEvent = (elem, type, handler) => addEvent(elem, type, (onMessage = handler));
         const player = new playerjs.Player(iframe);
+        playerjs.addEvent = addEvent;
 
-        player.on("ready", () => active && onready?.(player));
-        player.on("play", () => active && onplay?.());
-        player.on("pause", () => active && onpause?.());
-        player.on("ended", () => active && onended?.());
-        player.on("timeupdate", (time) => active && ontimeupdate?.(time));
+        player.on("ready", () => onready?.(player));
+        player.on("play", () => onplay?.());
+        player.on("pause", () => onpause?.());
+        player.on("ended", () => onended?.());
+        player.on("timeupdate", (time) => ontimeupdate?.(time));
 
-        return () => {
-          active = false;
-        };
+        return () => window.removeEventListener("message", onMessage);
       });
     </script>
 
@@ -252,7 +252,7 @@ Browsers block unmuted `play()` before the viewer has clicked anything. Call `mu
   {videoId}
   params={resumeAt ? { t: resumeAt } : {}}
   ontimeupdate={({ seconds, duration }) => {
-    if (seconds - lastSaved < 5) return;
+    if (Math.abs(seconds - lastSaved) < 5) return;
     lastSaved = seconds;
     save(seconds, duration);
   }}
@@ -263,22 +263,42 @@ Pass the saved position back as the `t` parameter to resume.
 
 ## Load player.js from the CDN instead
 
-To drop the npm dependency, load our hosted build in `src/app.html`.
+To drop the npm dependency, load our hosted build from the component.
 
-```html src/app.html
-<script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
-```
+```ts src/lib/load-playerjs.ts
+type PlayerJs = (typeof import("player.js"))["default"];
 
-Swap the dynamic import in `onMount` for `playerjs = window.playerjs` and declare the global in `src/app.d.ts`.
-
-```ts src/app.d.ts
 declare global {
   interface Window {
-    playerjs: (typeof import("player.js"))["default"];
+    playerjs: PlayerJs;
   }
 }
 
-export {};
+let loading: Promise<PlayerJs> | undefined;
+
+export function loadPlayerjs() {
+  loading ??= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js";
+    script.onload = () => resolve(window.playerjs);
+    script.onerror = (error) => {
+      loading = undefined;
+      reject(error);
+    };
+    document.head.append(script);
+  });
+  return loading;
+}
+```
+
+Swap the dynamic import in `onMount` for the loader.
+
+```ts src/lib/components/BunnyPlayer.svelte
+import { loadPlayerjs } from "../load-playerjs";
+
+onMount(async () => {
+  playerjs = await loadPlayerjs();
+});
 ```
 
 ## Troubleshooting
@@ -291,9 +311,6 @@ export {};
     The iframe loaded before player.js. Render it only once player.js has loaded, as the component above does.
 
     A hidden tab also holds `ready` back until the viewer switches to it.
-  </Accordion>
-  <Accordion title="Events fire twice after changing the video">
-    Each `Player` leaves a `message` listener on `window` for good. The `active` flag in the effect cleanup silences old instances. Check that yours flips it.
   </Accordion>
   <Accordion title="The iframe shows a 403">
     The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
