@@ -693,6 +693,10 @@
               {
                 "group": "Reference",
                 "pages": [
+                  {
+                    "group": "Bunny CLI guides",
+                    "pages": []
+                  },
                   "stream/video-specification",
                   "stream/vimeo2bunny",
                   "stream/data-and-privacy",
