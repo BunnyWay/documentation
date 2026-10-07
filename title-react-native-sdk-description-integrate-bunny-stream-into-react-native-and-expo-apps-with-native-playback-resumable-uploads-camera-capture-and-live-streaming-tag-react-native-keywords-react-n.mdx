@@ -87,8 +87,6 @@ export function VideoScreen({ videoId }: { videoId: string }) {
 }
 ```
 
-For live playback, use `source={{ type: 'live', streamId: 'YOUR_STREAM_ID' }}` and also handle `onLiveError`.
-
 <Note>
   For both VOD and live sources, `libraryId` falls back to the library passed to `initialize()`; provide it explicitly to override that ID. This fallback does not apply to management calls, uploads, or broadcaster sources.
 </Note>
