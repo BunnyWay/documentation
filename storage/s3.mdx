@@ -85,7 +85,7 @@ Each set is limited to **2 KB** of combined key and value bytes. A request over 
 </Warning>
 
 <Note>
-  Metadata is only available over S3. Pull zones do not yet use stored metadata, so headers such as `Cache-Control` and `Content-Disposition` are not sent with CDN responses. Configure caching and download behavior on the pull zone instead. Overwriting an object through the HTTP API, FTP, SFTP, or the dashboard clears its S3 metadata.
+  Metadata is only available over S3. CDN pull zones do not yet use stored metadata, so headers such as `Cache-Control` and `Content-Disposition` are not sent with CDN responses. Configure caching and download behavior on the CDN pull zone instead. Overwriting an object through the HTTP API, FTP, SFTP, or the dashboard clears its S3 metadata.
 </Note>
 
 `GetObject` and `HeadObject` also honor the `response-content-type`, `response-cache-control`, `response-content-disposition`, `response-content-encoding`, `response-content-language`, and `response-expires` query parameters, so a presigned URL can force a download filename or cache policy.
