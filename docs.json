@@ -662,13 +662,16 @@
                     ]
                   },
                   {
-                    "group": "Mobile",
+                    "group": "Mobile SDKs",
                     "pages": [
                       "stream/mobile-sdk",
                       "stream/android-sdk",
                       "stream/ios-sdk",
+                      "title-react-native-sdk-description-integrate-bunny-stream-into-react-native-and-expo-apps-with-native-playback-resumable-uploads-camera-capture-and-live-streaming-tag-react-native-keywords-react-n",
                       "stream/expo-video"
-                    ]
+                    ],
+                    "tag": "New",
+                    "expanded": true
                   },
                   {
                     "group": "3rd Party Players",
