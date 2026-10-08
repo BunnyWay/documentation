@@ -9,30 +9,52 @@ import Optimizer from "/snippets/static-sites/optimizer.mdx";
 
 A static site on bunny.net is a storage zone that holds your built files, with a pull zone in front that serves them from the CDN. You can set that up with the [Bunny CLI](/cli), which detects your framework, runs the build, and uploads the output, or you can create the zones in the dashboard and upload the files yourself.
 
-## Deploy with the Bunny CLI
+## Deploy your site
 
-<Warning>
-  `bunny sites` is experimental and available only in the Bunny CLI. Commands,
-  flags, and behaviour may change, so [open an
-  issue](https://github.com/BunnyWay/cli/issues) if something breaks. The
-  storage zone and pull zone behind each site appear in the dashboard under
-  **Storage** and **CDN**.
-</Warning>
+<Tabs>
+  <Tab title="Bunny CLI">
+    <Warning>
+      `bunny sites` is experimental and available only in the Bunny CLI. Commands,
+      flags, and behaviour may change, so [open an
+      issue](https://github.com/BunnyWay/cli/issues) if something breaks. The
+      storage zone and pull zone behind each site appear in the dashboard under
+      **Storage** and **CDN**.
+    </Warning>
 
-From your project root:
+    From your project root:
 
-```bash
-bunny sites create my-site
-bunny sites deploy --build
-```
+    ```bash
+    bunny sites create my-site
+    bunny sites deploy --build
+    ```
 
-`bunny sites create` makes the storage zone and pull zone and links your directory to the site. `bunny sites deploy --build` detects your framework, runs its build with the package manager from your lockfile (Bun, pnpm, Yarn, or npm), and publishes the output directory. Each deploy is kept, so `bunny sites deployments publish --previous` rolls back to the last one.
+    `bunny sites create` makes the storage zone and pull zone and links your directory to the site. `bunny sites deploy --build` detects your framework, runs its build with the package manager from your lockfile (Bun, pnpm, Yarn, or npm), and publishes the output directory. Each deploy is kept, so `bunny sites deployments publish --previous` rolls back to the last one.
 
-Run `bunny sites ci init` to add a GitHub Actions workflow that deploys on every push to `main`. See [`bunny sites`](/cli/commands/sites) for every command.
+    Run `bunny sites ci init` to add a GitHub Actions workflow that deploys on every push to `main`. See [`bunny sites`](/cli/commands/sites) for every command.
+  </Tab>
+  <Tab title="Manually">
+    <Steps>
+      <Step title="Build your site">
+        From your project root, run your framework's build command. The [framework guides](#framework-guides) list the command and output directory for each framework.
+      </Step>
+      <Step title="Create a storage zone">
+        In the [bunny.net dashboard](https://dash.bunny.net), go to **Storage** and click **Add Storage Zone**. Give it a name, pick the main region closest to your audience, and click **Add Storage Zone**.
+      </Step>
+      <Step title="Upload your files">
+        Open the storage zone's file manager and upload the contents of your output directory to the root of the zone. To script uploads, use the [Storage HTTP API](/storage/http).
+      </Step>
+      <Step title="Create a pull zone">
+        Go to **CDN** and click **Add Pull Zone**. Set **Origin Type** to **Storage Zone**, select the zone you created, and click **Add Pull Zone**.
 
-### Site configuration
+        Your site is live at `https://<pull-zone-name>.b-cdn.net`.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
 
-When detection doesn't fit your project, add a `sites` block to `bunny.jsonc` at your project root. Every field is optional:
+## Site configuration
+
+When you deploy with the Bunny CLI and detection doesn't fit your project, add a `sites` block to `bunny.jsonc` at your project root. Every field is optional:
 
 ```jsonc bunny.jsonc
 {
