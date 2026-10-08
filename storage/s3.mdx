@@ -95,7 +95,7 @@ Each set is limited to **2 KB** of combined key and value bytes. A request over 
 `DeleteObjects` deletes up to **1,000 keys** in a single request. Each key is reported individually in the response, so one failed key does not abort the batch. Deleting a key that does not exist counts as a success, and duplicate keys collapse to a single result entry.
 
 - The request must carry a `Content-MD5` or `x-amz-checksum-*` header, as on AWS. Supported algorithms are CRC32, CRC32C, CRC64NVME, SHA1, and SHA256. The AWS CLI and SDKs add one automatically.
-- Entries with a `VersionId` are rejected per key, as versioning is not supported.
+- Entries with a `VersionId` are rejected per key, as versioning is not yet supported.
 - A folder key only removes the empty folder marker. Its contents stay in place, unlike a single `DeleteObject` on a folder, which deletes recursively.
 - If the request returns `503 SlowDown`, nothing was deleted. Retry after the `Retry-After` interval.
 
