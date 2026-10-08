@@ -81,7 +81,7 @@ Each set is limited to **2 KB** of combined key and value bytes. A request over 
 `CopyObject` keeps the source object's metadata by default. Send `x-amz-metadata-directive: REPLACE` to store the metadata from the copy request instead. The website redirect location is never copied and must be set on the copy request explicitly.
 
 <Warning>
-  Metadata keys that contain an underscore (`x-amz-meta-my_key`) are silently dropped. The upload still succeeds and no error is returned, so the key is simply missing when you read the object back. AWS accepts underscores, so check your key names when migrating. Use hyphens instead (`x-amz-meta-my-key`).
+  Metadata keys that contain an underscore (`x-amz-meta-my_key`) are silently dropped. The upload still succeeds, please use hyphens instead (`x-amz-meta-my-key`).
 </Warning>
 
 <Note>
