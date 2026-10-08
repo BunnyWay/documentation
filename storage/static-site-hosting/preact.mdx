@@ -8,12 +8,14 @@ import Deploy from "/snippets/static-sites/deploy.mdx";
 import SpaRouting from "/snippets/static-sites/spa-routing.mdx";
 import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
 
-This guide covers existing Preact apps built with `preact-cli`, which writes to `build`. `preact-cli` is no longer developed, and new projects created with `npm init preact` use Vite. For those, follow the [Vite guide](/storage/static-site-hosting/vite).
+Create a Preact app by running `npm init preact`. It sets up Vite, which builds your app into `dist`, and the Bunny CLI detects it as a Vite project.
 
 | Setting | Value |
 | --- | --- |
 | Build command | `npm run build` |
-| Output directory | `build` |
+| Output directory | `dist` |
+
+Older apps built with `preact-cli`, which is no longer developed, output to `build` instead.
 
 <Deploy build="npm run build" />
 

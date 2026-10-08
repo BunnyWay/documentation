@@ -8,12 +8,16 @@ import Deploy from "/snippets/static-sites/deploy.mdx";
 import SpaRouting from "/snippets/static-sites/spa-routing.mdx";
 import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
 
-This guide covers existing React apps created with Create React App, which builds into `build`. Create React App was deprecated in February 2025. For a React app built with Vite, follow the [Vite guide](/storage/static-site-hosting/vite). The CLI detects Vite and deploys `dist`.
+Create a React app with Vite by running `npm create vite@latest my-app -- --template react`. Vite builds your app into `dist`, and the Bunny CLI detects it as a Vite project. If you use React Router in framework mode, follow the [React Router guide](/storage/static-site-hosting/react-router). For Next.js, follow the [Next.js guide](/storage/static-site-hosting/nextjs).
 
 | Setting | Value |
 | --- | --- |
 | Build command | `npm run build` |
-| Output directory | `build` |
+| Output directory | `dist` |
+
+## Configure React
+
+If you use React Router, `createBrowserRouter()` gives you clean URLs such as `/about`. Those need the client-side routing fallback described below. `createHashRouter()` works without it.
 
 <Deploy build="npm run build" />
 
