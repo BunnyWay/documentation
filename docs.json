@@ -693,7 +693,8 @@
                     "expanded": true,
                     "pages": [
                       "stream/migrate-from-mux",
-                      "stream/migrate-from-cloudflare-stream"
+                      "stream/migrate-from-cloudflare-stream",
+                      "stream/migrate-from-vimeo"
                     ]
                   },
                   "stream/vimeo2bunny",
