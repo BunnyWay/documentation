@@ -638,7 +638,8 @@
                   "stream/collections",
                   "stream/tagging",
                   "stream/metatags",
-                  "stream/storage-structure"
+                  "stream/storage-structure",
+                  "stream/video-specification"
                 ]
               },
               {
@@ -686,7 +687,16 @@
               {
                 "group": "Reference",
                 "pages": [
-                  "stream/video-specification",
+                  {
+                    "group": "Bunny CLI migration guides",
+                    "tag": "New",
+                    "expanded": true,
+                    "pages": [
+                      "stream/migrate-from-mux",
+                      "stream/migrate-from-cloudflare-stream",
+                      "stream/migrate-from-vimeo"
+                    ]
+                  },
                   "stream/vimeo2bunny",
                   "stream/data-and-privacy",
                   "stream/api-reference"
