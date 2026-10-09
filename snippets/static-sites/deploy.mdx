@@ -1,0 +1,65 @@
+## Deploy your site
+
+<Tabs>
+  <Tab title="Bunny CLI">
+    <Warning>
+      `bunny sites` is in [Public Preview](/product-release-stages#stage-2-public-preview)
+      and available only in the Bunny CLI. It's in active development, so commands,
+      flags, and behaviour may change. Share feedback on
+      [Discord](https://discord.gg/bunnynet). The storage zone and pull zone behind
+      each site appear in the dashboard under **Storage** and **CDN**.
+    </Warning>
+
+    <Steps>
+      <Step title="Install the Bunny CLI and log in">
+        ```bash
+        curl -fsSL https://cli.bunny.net/install.sh | sh
+        bunny login
+        ```
+
+        See [Installation](/cli/installation) for npm and other options.
+      </Step>
+      <Step title="Create a site">
+        From your project root, run:
+
+        ```bash
+        bunny sites create my-site
+        ```
+
+        Replace `my-site` with a name for your site. The CLI creates a storage zone for your files and a pull zone to serve them, then links this directory to the new site. The site is served at a `b-cdn.net` address, and the CLI prints the URL.
+      </Step>
+      <Step title="Build and deploy">
+        ```bash
+        bunny sites deploy --build
+        ```
+
+        The CLI runs the build command, uploads the output directory from the table above, and publishes it. Every deploy is kept, so you can roll back with `bunny sites deployments publish --previous`.
+      </Step>
+      <Step title="Deploy on every push (optional)">
+        ```bash
+        bunny sites ci init
+        ```
+
+        This writes a GitHub Actions workflow to `.github/workflows/bunny-sites.yml` that deploys the site on every push to `main`. Add your API key to the repository as a `BUNNYNET_API_KEY` secret. The CLI offers to run `gh secret set BUNNYNET_API_KEY` for you.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Manually">
+    <Steps>
+      <Step title="Build your site">
+        From your project root, run <code>{build}</code>. The build writes your site to the output directory listed in the table above.
+      </Step>
+      <Step title="Create a storage zone">
+        In the [bunny.net dashboard](https://dash.bunny.net), go to **Storage** and click **Add Storage Zone**. Give it a name, pick the main region closest to your audience, and click **Add Storage Zone**.
+      </Step>
+      <Step title="Upload your files">
+        Open the storage zone's file manager and upload the contents of your output directory to the root of the zone. To script uploads, use the [Storage HTTP API](/storage/http).
+      </Step>
+      <Step title="Create a pull zone">
+        Go to **CDN** and click **Add Pull Zone**. Set **Origin Type** to **Storage Zone**, select the zone you created, and click **Add Pull Zone**.
+
+        Your site is live at `https://<pull-zone-name>.b-cdn.net`.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>

@@ -1,0 +1,39 @@
+---
+title: "Deploy Analog to Bunny Storage"
+sidebarTitle: "Analog"
+description: "Build an Analog site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Analog is the full-stack meta-framework for Angular. With static output turned on, it prerenders your routes into `dist/analog/public`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `dist/analog/public` |
+
+## Configure Analog
+
+Turn on static output and list the routes to prerender in `vite.config.ts`:
+
+```ts vite.config.ts
+import { defineConfig } from "vite";
+import analog from "@analogjs/platform";
+
+export default defineConfig({
+  plugins: [
+    analog({
+      static: true,
+      prerender: {
+        routes: async () => ["/"],
+      },
+    }),
+  ],
+});
+```
+
+<Deploy build="npm run build" />
+
+<CustomDomain />

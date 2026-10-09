@@ -1,0 +1,19 @@
+---
+title: "Deploy Gridsome to Bunny Storage"
+sidebarTitle: "Gridsome"
+description: "Build a Gridsome site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Gridsome builds your Vue-powered site into static files in `dist`. Gridsome hasn't had a release since 2020 and runs on Vue 2, which is end of life.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+
+<Deploy build="npm run build" />
+
+<CustomDomain />

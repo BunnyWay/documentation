@@ -1,0 +1,75 @@
+---
+title: "Deploy Angular to Bunny Storage"
+sidebarTitle: "Angular"
+description: "Build an Angular site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import SpaRouting from "/snippets/static-sites/spa-routing.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+import Optimizer from "/snippets/static-sites/optimizer.mdx";
+
+The Angular application builder writes your app to `dist/<project>/browser`, where `<project>` is the name in `angular.json`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `dist/<project>/browser` |
+
+## Configure Angular
+
+The Bunny CLI deploys `dist` for Angular by default. Point it at the `browser` folder in `bunny.jsonc` at your project root:
+
+```jsonc bunny.jsonc
+{
+  "sites": {
+    "dir": "dist/my-app/browser"
+  }
+}
+```
+
+<Deploy build="npm run build" />
+
+## Resize images with Bunny Optimizer
+
+`NgOptimizedImage` builds a `srcset` from a custom image loader. Point the loader at [Bunny Optimizer](/optimizer/dynamic-images/overview), and the edge resizes each width.
+
+<Steps>
+  <Step title="Turn on Optimizer">
+    <Optimizer />
+  </Step>
+  <Step title="Provide the loader">
+    Add an `IMAGE_LOADER` provider to your app config:
+
+    ```ts src/app/app.config.ts
+    import { ApplicationConfig } from "@angular/core";
+    import { IMAGE_LOADER, ImageLoaderConfig } from "@angular/common";
+
+    export const appConfig: ApplicationConfig = {
+      providers: [
+        {
+          provide: IMAGE_LOADER,
+          useValue: ({ src, width }: ImageLoaderConfig) => {
+            const url = new URL(src, "http://localhost");
+            if (width) url.searchParams.set("width", String(width));
+            return url.pathname + url.search;
+          },
+        },
+      ],
+    };
+    ```
+  </Step>
+  <Step title="Add images">
+    Import `NgOptimizedImage` in your component, then use `ngSrc`:
+
+    ```html
+    <img ngSrc="/images/photo.jpg" width="1200" height="600" sizes="100vw" />
+    ```
+
+    With `sizes`, Angular writes a `srcset` with URLs such as `/images/photo.jpg?width=828`. Without it, you get `1x` and `2x` entries.
+  </Step>
+</Steps>
+
+<SpaRouting />
+
+<CustomDomain />
