@@ -3,7 +3,6 @@ title: "Before cache execution"
 sidebarTitle: "Before cache execution"
 description: "Run your edge scripts before the cache layer to take control of
 every request, instead of only executing when the cache is missed."
-tag: Preview
 ---
 
 By default, edge scripts run **after** the cache. The CDN serves cached
@@ -17,6 +16,11 @@ the cost of executing your script even for cached content.
 Post-cache execution remains the default. Enable before cache execution when
 you need per-request logic, such as authentication, tenant-aware routing, or
 custom caching rules.
+
+<Warning>
+  Overriding the default handling of `/.well-known/*` paths in your script can
+  break ACME challenges and prevent automated certificate renewal.
+</Warning>
 
 ## Enable before cache execution
 
@@ -41,7 +45,7 @@ additional hooks that run on the client side of the cache:
   client, including responses served from the cache.
 
 ```ts
-import * as BunnySDK from "@bunny.net/edgescript-sdk@0.13.0-rc.0";
+import * as BunnySDK from "@bunny.net/edgescript-sdk@0.13.0";
 
 BunnySDK.net.http
   .servePullZone({ url: "https://your-origin.com" })

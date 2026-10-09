@@ -100,6 +100,7 @@
                     "pages": [
                       "billing/add-funds",
                       "billing/auto-recharge",
+                      "billing/negative-balance",
                       "billing/billing-history",
                       "billing/sales-tax"
                     ]
@@ -175,6 +176,18 @@
                     ]
                   },
                   {
+                    "group": "Load Balancer",
+                    "pages": [
+                      "cdn/load-balancer/index",
+                      "cdn/load-balancer/origins",
+                      "cdn/load-balancer/routing",
+                      "cdn/load-balancer/sticky-sessions",
+                      "cdn/load-balancer/health-and-failover",
+                      "cdn/load-balancer/statistics",
+                      "cdn/load-balancer/pricing"
+                    ]
+                  },
+                  {
                     "group": "Performance",
                     "pages": [
                       "cdn/performance/index",
@@ -245,6 +258,7 @@
               {
                 "group": "Reference",
                 "pages": [
+                  "cdn/request-headers-to-origin",
                   "cdn/custom-hostname",
                   "cdn/cdn-acceleration",
                   "cdn/verify-configuration",
@@ -502,7 +516,6 @@
                   "scripting/runtime",
                   {
                     "group": "Cache API",
-                    "tag": "Preview",
                     "pages": [
                       "scripting/cache/index",
                       "scripting/cache/managing-caches",
@@ -521,6 +534,7 @@
                 "group": "Reference",
                 "pages": [
                   "scripting/limits",
+                  "scripting/regions",
                   "scripting/https-ssl-certificates",
                   "scripting/before-cache",
                   "scripting/api-reference"
@@ -611,7 +625,15 @@
                       "stream/dashboard",
                       "stream/http-api",
                       "stream/url-fetch",
-                      "stream/tus-resumable-uploads"
+                      "stream/tus-resumable-uploads",
+                      {
+                        "group": "Frameworks",
+                        "pages": [
+                          "stream/upload/laravel",
+                          "stream/upload/rails",
+                          "stream/upload/django"
+                        ]
+                      }
                     ]
                   },
                   "stream/collections",
@@ -623,13 +645,30 @@
               {
                 "group": "Playback",
                 "pages": [
+                  "stream/player",
+                  "stream/player-settings",
+                  "stream/embedding",
+                  "stream/playback-api",
+                  "stream/mp4-downloads",
                   {
-                    "group": "Bunny Player",
+                    "group": "Frameworks",
                     "pages": [
-                      "stream/player-settings",
-                      "stream/player",
-                      "stream/playback-api",
-                      "stream/custom-head-html-migration-guide"
+                      "stream/player/react",
+                      "stream/player/nextjs",
+                      "stream/player/vue",
+                      "stream/player/svelte",
+                      "stream/player/astro",
+                      "stream/player/javascript",
+                      "stream/player/signed-embeds"
+                    ]
+                  },
+                  {
+                    "group": "Mobile",
+                    "pages": [
+                      "stream/mobile-sdk",
+                      "stream/android-sdk",
+                      "stream/ios-sdk",
+                      "stream/expo-video"
                     ]
                   },
                   {
@@ -642,18 +681,7 @@
                       "stream/players/fairplay"
                     ]
                   },
-                  {
-                    "group": "Mobile SDK",
-                    "pages": [
-                      "stream/mobile-sdk",
-                      "stream/android-sdk",
-                      "stream/ios-sdk"
-                    ],
-                    "expanded": true
-                  },
-                  "stream/expo-video",
-                  "stream/embedding",
-                  "stream/mp4-downloads"
+                  "stream/custom-head-html-migration-guide"
                 ]
               },
               {
@@ -751,7 +779,8 @@
                 "pages": [
                   "shield/index",
                   "shield/quickstart",
-                  "shield/pricing"
+                  "shield/pricing",
+                  "shield/changelog"
                 ]
               },
               {
@@ -833,7 +862,8 @@
                   "optimizer/image-classes",
                   "optimizer/watermarking",
                   "optimizer/burrow-smart-routing",
-                  "optimizer/html-prerender"
+                  "optimizer/html-prerender",
+                  "optimizer/agent-readability"
                 ]
               },
               {
@@ -1205,6 +1235,34 @@
                 },
                 "pages": [
                   "api-reference/database/index"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Partners",
+        "icon": "handshake",
+        "description": "Manage customers, pricing, and billing as a bunny.net partner",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Documentation",
+                "pages": [
+                  "partners/index"
+                ]
+              },
+              {
+                "group": "API Reference",
+                "openapi": {
+                  "source": "https://core-api-public-docs.b-cdn.net/docs/v3/PartnerPortal.json",
+                  "directory": "api-reference/partner"
+                },
+                "pages": [
+                  "api-reference/partner/index"
                 ]
               }
             ]
@@ -2321,7 +2379,7 @@
     },
     {
       "source": "/stream-changelog-2",
-      "destination": "/stream",
+      "destination": "/changelog?tags=Stream",
       "permanent": true
     },
     {

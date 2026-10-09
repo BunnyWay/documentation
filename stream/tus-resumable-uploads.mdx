@@ -3,6 +3,8 @@ title: "TUS Resumable Uploads"
 description: "Upload videos to Bunny Stream using the TUS protocol for resumable, reliable uploads."
 ---
 
+import UploadAuthWarning from "/snippets/stream/upload-auth-warning.mdx";
+
 The TUS resumable upload endpoint allows resumable and presigned uploads of video files. This enables end-users to upload directly to Bunny Stream and greatly improves reliability on poor networks and mobile connections.
 
 The endpoint uses the open [TUS Protocol](https://tus.io/) for resumable file uploads. Before a video can be uploaded through the TUS endpoint, a video object must be created through the [Create Video API](/api-reference/stream) call to obtain the video ID.
@@ -55,8 +57,12 @@ SHA256(library_id + api_key + expiration_time + video_id)
   The signature must be generated on your server to keep your API key secure. Never expose your API key in client-side code.
 </Warning>
 
+<UploadAuthWarning />
+
 <Note>
-  A **401 Unauthorized** from the TUS endpoint usually means one of: the `AuthorizationExpire` timestamp has passed before the upload finished, the `AuthorizationSignature` was generated with a different value than the request actually sends (mismatched library ID, API key, expiration, or video ID), or one of the `LibraryId` / `VideoId` headers is missing. The values used to generate the signature on your server must match the headers sent on the client byte-for-byte.
+  A **401 Unauthorized** from the TUS endpoint means the `AuthorizationSignature` doesn't match the headers the request sends, or the `VideoId`, `AuthorizationSignature`, or `AuthorizationExpire` header is missing. The values your server signs must match the headers the client sends byte-for-byte: library ID, API key, expiration, and video ID.
+
+  A **400 Bad Request** means `AuthorizationExpire` is already in the past, or `LibraryId` is missing or invalid. The response body says which.
 </Note>
 
 <CodeGroup>
@@ -105,6 +111,23 @@ signature = hashlib.sha256(signature_string.encode()).hexdigest()
 
 ### Examples
 
+Each framework guide signs the upload, sends the file, and plays the video once it's encoded.
+
+<CardGroup cols={3}>
+  <Card title="Laravel" icon="/logo/frameworks/laravel.svg" href="/stream/upload/laravel" />
+  <Card title="Rails" icon="/logo/frameworks/rubyonrails.svg" href="/stream/upload/rails" />
+  <Card title="Django" icon="/logo/frameworks/django.svg" href="/stream/upload/django" />
+</CardGroup>
+
+We have runnable apps for more stacks in [BunnyWay/examples](https://github.com/BunnyWay/examples/tree/main/stream).
+
+<CardGroup cols={2}>
+  <Card title="Next.js" icon="/logo/frameworks/nextjs.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-nextjs" />
+  <Card title="Nuxt" icon="/logo/frameworks/vue.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-nuxt" />
+  <Card title="SvelteKit" icon="/logo/frameworks/svelte.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-sveltekit" />
+  <Card title="Uppy with React" icon="/logo/frameworks/react.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-uppy-react" />
+</CardGroup>
+
 Once you have the presigned credentials from your server, use a TUS client library to upload the file. The official [tus-js-client](https://github.com/tus/tus-js-client) is recommended for browser uploads.
 
 **Install the TUS client:**
@@ -129,7 +152,7 @@ const upload = new tus.Upload(file, {
   retryDelays: [0, 3000, 5000, 10000, 20000, 60000, 60000],
   headers: {
     AuthorizationSignature: signature,
-    AuthorizationExpire: expirationTime,
+    AuthorizationExpire: String(expirationTime),
     VideoId: videoId,
     LibraryId: libraryId,
   },
@@ -149,13 +172,8 @@ const upload = new tus.Upload(file, {
   },
 });
 
-// Check for previous uploads to resume
-upload.findPreviousUploads().then(function (previousUploads) {
-  if (previousUploads.length) {
-    upload.resumeFromPreviousUpload(previousUploads[0]);
-  }
-  upload.start();
-});
+// Each call signs a new video, so start fresh. To resume after a reload, see Resuming uploads.
+upload.start();
 ```
 
 #### Next.js App Router
@@ -183,6 +201,9 @@ interface UploadCredentials {
 }
 
 export async function POST(request: NextRequest) {
+  // Require a signed-in user here. This route is a public endpoint that creates
+  // videos in your library and signs uploads into them.
+
   const BUNNY_API_KEY = process.env.BUNNY_STREAM_API_KEY;
   const BUNNY_LIBRARY_ID = process.env.BUNNY_STREAM_LIBRARY_ID;
 
@@ -234,7 +255,7 @@ export async function POST(request: NextRequest) {
     libraryId: BUNNY_LIBRARY_ID,
     expirationTime,
     signature,
-    embedUrl: `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${video.guid}`,
+    embedUrl: `https://player.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${video.guid}`,
   } satisfies UploadCredentials);
 }
 ```
@@ -282,7 +303,7 @@ export function VideoUploader() {
       retryDelays: [0, 3000, 5000, 10000, 20000, 60000],
       headers: {
         AuthorizationSignature: credentials.signature,
-        AuthorizationExpire: credentials.expirationTime,
+        AuthorizationExpire: String(credentials.expirationTime),
         VideoId: credentials.videoId,
         LibraryId: credentials.libraryId,
       },
@@ -303,12 +324,7 @@ export function VideoUploader() {
       },
     });
 
-    // Resume previous upload if available
-    const previousUploads = await upload.findPreviousUploads();
-    if (previousUploads.length) {
-      upload.resumeFromPreviousUpload(previousUploads[0]);
-    }
-
+    // Each call signs a new video, so start fresh. To resume after a reload, see Resuming uploads.
     upload.start();
   }
 
@@ -353,13 +369,16 @@ const crypto = require("crypto");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+// Only let your own frontend call this API from the browser.
+app.use(cors({ origin: process.env.APP_ORIGIN }));
 app.use(express.json());
 
 const BUNNY_API_KEY = process.env.BUNNY_STREAM_API_KEY;
 const BUNNY_LIBRARY_ID = process.env.BUNNY_STREAM_LIBRARY_ID;
 
 app.post("/api/create-upload", async (req, res) => {
+  // Require a signed-in user here. This route is a public endpoint that creates
+  // videos in your library and signs uploads into them.
   const { title } = req.body;
 
   // Create video object
@@ -396,22 +415,36 @@ app.post("/api/create-upload", async (req, res) => {
 app.listen(3001);
 ```
 
+Set `BUNNY_STREAM_API_KEY`, `BUNNY_STREAM_LIBRARY_ID`, and `APP_ORIGIN`, the origin your React app runs on, such as `http://localhost:5173`. CORS only stops other websites from calling the API in a visitor's browser. It doesn't stop scripts, so the route still needs its own auth check.
+
 ## Resuming uploads
 
-One of the key benefits of TUS is the ability to resume interrupted uploads. The `tus-js-client` library handles this automatically:
+One of the key benefits of TUS is the ability to resume interrupted uploads. Within a page session, `tus-js-client` retries failed requests and carries on from the last acknowledged chunk.
+
+To resume after a reload, upload into the same video again. A stored upload URL belongs to one video, so resuming it with another video's credentials sends the bytes to the old video and leaves the new one empty. Save the video ID against the file, ask your server to re-sign that video instead of creating a new one, and only resume when the IDs match:
 
 ```javascript
-upload.findPreviousUploads().then(function (previousUploads) {
-  // If there are previous uploads, resume from the first one
-  if (previousUploads.length) {
-    upload.resumeFromPreviousUpload(previousUploads[0]);
-  }
-  upload.start();
+const key = `bunny-video:${file.name}:${file.size}:${file.lastModified}`;
+const savedVideoId = localStorage.getItem(key);
+
+// Your server re-signs savedVideoId if that video is still waiting for its file
+// (status 0), and creates a new video otherwise.
+const credentials = await requestUpload(file.name, savedVideoId);
+localStorage.setItem(key, credentials.videoId);
+
+const upload = new tus.Upload(file, {
+  // ... endpoint, headers, and metadata as above
+  onSuccess: () => localStorage.removeItem(key),
 });
+
+const [previous] = await upload.findPreviousUploads();
+if (previous && credentials.videoId === savedVideoId) {
+  upload.resumeFromPreviousUpload(previous);
+}
+upload.start();
 ```
 
-The client stores upload progress in the browser's local storage by default. If an upload is interrupted (due to network issues, browser refresh, etc.), it can be resumed from where it left off.
-
+The [framework upload guides](/stream/upload/django) and their examples on GitHub implement the full flow, including the server side.
 ## Error handling
 
 Implement proper error handling to provide a good user experience:
@@ -429,12 +462,14 @@ const upload = new tus.Upload(file, {
     }
   },
   onShouldRetry: function (error, retryAttempt, options) {
-    // Retry on network errors or 5xx server errors
     const status = error.originalResponse?.getStatus();
-    if (status >= 500 && status < 600) {
-      return true;
+    // A 4xx won't fix itself, such as a bad signature or an expired upload.
+    // 409 and 423 are temporary conflicts on the upload, so retry those.
+    if (status >= 400 && status < 500 && status !== 409 && status !== 423) {
+      return false;
     }
-    return true; // Retry by default
+    // Retry network errors and 5xx responses.
+    return true;
   },
 });
 ```

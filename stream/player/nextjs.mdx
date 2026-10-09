@@ -1,0 +1,329 @@
+---
+title: "Use Bunny Player with Next.js"
+sidebarTitle: "Next.js"
+description: "Embed the Bunny Stream player in a Next.js app with a client component that survives server rendering, and control playback with player.js."
+---
+
+import Install from "/snippets/stream/player-js-install.mdx";
+import Types from "/snippets/stream/player-js-types.mdx";
+
+[player.js](https://github.com/embedly/player.js) controls the Bunny Player iframe, and server rendering gives it two rules. It reads `window` on import, which means importing it in the browser. It also has to load before the iframe does. player.js caches the iframe's `ready` message on import, and a `Player` created any time after that still connects. An iframe that finishes loading first, straight from the server HTML, never becomes ready.
+
+The component below renders a placeholder on the server, loads player.js in an effect, then mounts the iframe and creates the `Player` in the same commit. It works with the App Router and the Pages Router. For a client-only app, see the [React guide](/stream/player/react).
+
+<Card title="Next.js example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-nextjs" horizontal>
+  An App Router app with custom controls and an event log.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Install player.js">
+    <Install />
+
+    <Types />
+  </Step>
+  <Step title="Create the client component">
+    ```tsx components/bunny-player.tsx
+    "use client";
+
+    import { useEffect, useRef, useState, type CSSProperties } from "react";
+    import type { Player, TimeUpdate } from "player.js";
+
+    type PlayerJs = (typeof import("player.js"))["default"];
+
+    export type BunnyPlayerProps = {
+      libraryId: string;
+      videoId: string;
+      params?: Record<string, string | number | boolean>;
+      title?: string;
+      onReady?: (player: Player) => void;
+      onPlay?: () => void;
+      onPause?: () => void;
+      onEnded?: () => void;
+      onTimeUpdate?: (time: TimeUpdate) => void;
+    };
+
+    const frameStyle: CSSProperties = {
+      display: "block",
+      width: "100%",
+      height: "auto",
+      aspectRatio: "16 / 9",
+      border: 0,
+      background: "#000",
+    };
+
+    export function BunnyPlayer({
+      libraryId,
+      videoId,
+      params,
+      title = "Video player",
+      onReady,
+      onPlay,
+      onPause,
+      onEnded,
+      onTimeUpdate,
+    }: BunnyPlayerProps) {
+      const iframeRef = useRef<HTMLIFrameElement>(null);
+      const [playerjs, setPlayerjs] = useState<PlayerJs | null>(null);
+
+      // Keep the latest callbacks without re-creating the player.
+      const handlers = useRef({ onReady, onPlay, onPause, onEnded, onTimeUpdate });
+      useEffect(() => {
+        handlers.current = { onReady, onPlay, onPause, onEnded, onTimeUpdate };
+      });
+
+      // player.js reads window when imported, so load it in the browser only.
+      useEffect(() => {
+        let cancelled = false;
+        import("player.js").then((mod) => {
+          if (!cancelled) setPlayerjs(mod.default);
+        });
+        return () => {
+          cancelled = true;
+        };
+      }, []);
+
+      const query = new URLSearchParams(
+        Object.entries(params ?? {}).map(([key, value]) => [key, String(value)]),
+      ).toString();
+      const src = `https://player.mediadelivery.net/embed/${libraryId}/${videoId}${query ? `?${query}` : ""}`;
+
+      useEffect(() => {
+        const iframe = iframeRef.current;
+        if (!playerjs || !iframe) return;
+
+        // player.js never removes the window listener each Player adds,
+        // so grab it while constructing and remove it on cleanup.
+        let onMessage: EventListener = () => {};
+        const addEvent = playerjs.addEvent;
+        playerjs.addEvent = (elem, type, handler) => addEvent(elem, type, (onMessage = handler));
+        const player = new playerjs.Player(iframe);
+        playerjs.addEvent = addEvent;
+
+        player.on("ready", () => handlers.current.onReady?.(player));
+        player.on("play", () => handlers.current.onPlay?.());
+        player.on("pause", () => handlers.current.onPause?.());
+        player.on("ended", () => handlers.current.onEnded?.());
+        player.on("timeupdate", (time) => handlers.current.onTimeUpdate?.(time));
+
+        return () => window.removeEventListener("message", onMessage);
+      }, [playerjs, src]);
+
+      // Hold the space until player.js is loaded so the iframe cannot
+      // finish loading before the Player exists.
+      if (!playerjs) {
+        return <div style={frameStyle} aria-hidden="true" />;
+      }
+
+      return (
+        <iframe
+          ref={iframeRef}
+          src={src}
+          title={title}
+          style={frameStyle}
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowFullScreen
+        />
+      );
+    }
+    ```
+
+    The placeholder is a black 16:9 box. To show a poster until the script loads, use the video's thumbnail from [Video storage structure](/stream/storage-structure).
+  </Step>
+  <Step title="Set the library ID">
+    Add your library ID to `.env.local`. It's on the library's **API** page in the dashboard.
+
+    ```bash .env.local
+    NEXT_PUBLIC_BUNNY_LIBRARY_ID=123456
+    ```
+
+    The library ID is public in every embed URL, which makes a `NEXT_PUBLIC_` variable safe. Restart the dev server after changing it.
+  </Step>
+  <Step title="Render it from a Server Component">
+    A Server Component can fetch the video and pass it straight in. `params` is request data, so read it in a component inside `<Suspense>`. With Cache Components on, as in a new `create-next-app` project, reading it outside `<Suspense>` fails the build.
+
+    ```tsx app/lessons/[id]/page.tsx
+    import { Suspense } from "react";
+    import { BunnyPlayer } from "@/components/bunny-player";
+    import { getLesson } from "@/lib/lessons";
+
+    export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
+      return (
+        <main>
+          <Suspense>
+            <Lesson params={params} />
+          </Suspense>
+        </main>
+      );
+    }
+
+    async function Lesson({ params }: { params: Promise<{ id: string }> }) {
+      const { id } = await params;
+      const lesson = await getLesson(id);
+
+      return (
+        <>
+          <h1>{lesson.title}</h1>
+          <BunnyPlayer
+            libraryId={process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID!}
+            videoId={lesson.videoId}
+            params={{ autoplay: false, preload: true }}
+          />
+        </>
+      );
+    }
+    ```
+
+    The `params` prop on `BunnyPlayer` takes any [player parameter](/stream/embedding#supported-parameters).
+  </Step>
+</Steps>
+
+## Control playback
+
+Callback props are functions, and functions can't cross from a Server Component. Pass them from a Client Component, where `onReady` hands you the `Player`.
+
+```tsx components/lesson-player.tsx
+"use client";
+
+import { useState } from "react";
+import type { Player } from "player.js";
+import { BunnyPlayer } from "@/components/bunny-player";
+
+export function LessonPlayer({ libraryId, videoId }: { libraryId: string; videoId: string }) {
+  const [player, setPlayer] = useState<Player | null>(null);
+  const [playing, setPlaying] = useState(false);
+
+  return (
+    <>
+      <BunnyPlayer
+        libraryId={libraryId}
+        videoId={videoId}
+        onReady={setPlayer}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+      />
+      <button onClick={() => (playing ? player?.pause() : player?.play())}>
+        {playing ? "Pause" : "Play"}
+      </button>
+      <button onClick={() => player?.setCurrentTime(0)}>Restart</button>
+    </>
+  );
+}
+```
+
+Getters answer through a callback, as in `player.getCurrentTime((seconds) => ...)`. Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` ([Methods](/stream/playback-api#methods)).
+
+```tsx
+player.send({ method: "setPlaybackRate", value: 1.5 });
+```
+
+The [Playback control API](/stream/playback-api) lists every method and event.
+
+## Save progress with a Server Action
+
+`timeupdate` fires several times a second. Throttle it before calling a Server Action.
+
+A Server Action is a public POST endpoint, and anyone can call it with any arguments. Read the user from the session inside the action, never from its arguments, and validate the values before you write them.
+
+```ts app/actions.ts
+"use server";
+
+export async function saveProgress(videoId: string, seconds: number, duration: number) {
+  // Require a signed-in user here, read from the session. Anyone can call this
+  // action with any arguments, so check the user may watch videoId too.
+  // Then persist to your database, keyed by that user.
+}
+```
+
+```tsx components/lesson-player.tsx
+"use client";
+
+import { useRef } from "react";
+import { saveProgress } from "@/app/actions";
+import { BunnyPlayer } from "@/components/bunny-player";
+
+export function LessonPlayer({ libraryId, videoId, resumeAt }: { libraryId: string; videoId: string; resumeAt?: number }) {
+  const lastSaved = useRef(0);
+
+  return (
+    <BunnyPlayer
+      libraryId={libraryId}
+      videoId={videoId}
+      params={resumeAt ? { t: resumeAt } : undefined}
+      onTimeUpdate={({ seconds, duration }) => {
+        if (Math.abs(seconds - lastSaved.current) < 5) return;
+        lastSaved.current = seconds;
+        void saveProgress(videoId, seconds, duration);
+      }}
+    />
+  );
+}
+```
+
+Pass the saved position back as the `t` parameter to resume.
+
+## Sign embed URLs on the server
+
+With [embed view token authentication](/stream/token-authentication) on, the URL needs a `token` and `expires`. Sign them in the Server Component, where the key stays private, and pass them through `params`.
+
+```tsx
+<BunnyPlayer
+  libraryId={libraryId}
+  videoId={lesson.videoId}
+  params={{ token, expires }}
+/>
+```
+
+[Sign embed URLs on the server](/stream/player/signed-embeds) has the signing function.
+
+## Load player.js from the CDN instead
+
+To drop the npm dependency, load our hosted build from the component with `next/script`.
+
+Replace the `import("player.js")` effect with a `<Script>` next to the placeholder.
+
+```tsx components/bunny-player.tsx
+import Script from "next/script";
+
+if (!playerjs) {
+  return (
+    <>
+      <Script
+        src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
+        onReady={() => setPlayerjs(window.playerjs)}
+      />
+      <div style={frameStyle} aria-hidden="true" />
+    </>
+  );
+}
+```
+
+Then declare the global.
+
+```ts
+declare global {
+  interface Window {
+    playerjs: (typeof import("player.js"))["default"];
+  }
+}
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="ReferenceError: window is not defined">
+    player.js is being imported on the server. Keep `import("player.js")` inside `useEffect`. A static `import playerjs from "player.js"` at the top of a Client Component still runs during server rendering.
+  </Accordion>
+  <Accordion title="The build fails with uncached or runtime data during prerendering">
+    The page reads `params` or other request data outside `<Suspense>`, and Cache Components is on. Keep the page synchronous and read the data in an async child inside `<Suspense>`, as the lesson page above does.
+  </Accordion>
+  <Accordion title="onReady never fires">
+    The iframe loaded before player.js, which happens when it's part of the server-rendered HTML. Render it only once player.js has loaded, as the component above does.
+
+    A hidden tab also holds `ready` back until the viewer switches to it.
+  </Accordion>
+  <Accordion title="The iframe shows a 403">
+    The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
+  </Accordion>
+</AccordionGroup>

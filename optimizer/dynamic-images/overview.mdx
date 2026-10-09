@@ -150,7 +150,6 @@ All transformations are processed once and cached at the edge:
 
 - **First request:** Bunny Optimizer processes the transformation and stores the result in the global CDN cache
 - **Subsequent requests:** Served instantly from the nearest edge location
-- **Cache invalidation:** Purging the original image also purges all transformed variations
 
 This approach ensures fast delivery while maintaining flexibility. You can request new transformation combinations at any time without impacting performance of existing cached variations.
 

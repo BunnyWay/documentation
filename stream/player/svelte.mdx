@@ -1,0 +1,318 @@
+---
+title: "Use Bunny Player with Svelte and SvelteKit"
+sidebarTitle: "Svelte and SvelteKit"
+description: "Embed the Bunny Stream player in a Svelte or SvelteKit app and control playback with player.js events and methods."
+---
+
+import Install from "/snippets/stream/player-js-install.mdx";
+import Types from "/snippets/stream/player-js-types.mdx";
+
+This guide builds a `BunnyPlayer` component with Svelte 5 runes. It renders the Bunny Player iframe, passes its events to callback props, and hands you a [player.js](https://github.com/embedly/player.js) `Player` for controlling playback.
+
+SvelteKit renders it on the server without changes. The component imports player.js in `onMount`, since the library reads `window` on import, and holds the iframe back until the library is ready.
+
+<Card title="SvelteKit example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-sveltekit" horizontal>
+  A SvelteKit app with custom controls and an event log.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Install player.js">
+    <Install />
+
+    <Types />
+  </Step>
+  <Step title="Create the component">
+    ```svelte src/lib/components/BunnyPlayer.svelte
+    <script lang="ts">
+      import { onMount } from "svelte";
+      import type { Player, TimeUpdate } from "player.js";
+
+      type PlayerJs = (typeof import("player.js"))["default"];
+
+      type Props = {
+        libraryId: string;
+        videoId: string;
+        params?: Record<string, string | number | boolean>;
+        title?: string;
+        onready?: (player: Player) => void;
+        onplay?: () => void;
+        onpause?: () => void;
+        onended?: () => void;
+        ontimeupdate?: (time: TimeUpdate) => void;
+      };
+
+      let {
+        libraryId,
+        videoId,
+        params = {},
+        title = "Video player",
+        onready,
+        onplay,
+        onpause,
+        onended,
+        ontimeupdate,
+      }: Props = $props();
+
+      let playerjs: PlayerJs | null = $state.raw(null);
+      let iframe: HTMLIFrameElement | undefined = $state();
+
+      const src = $derived.by(() => {
+        const query = new URLSearchParams(
+          Object.entries(params).map(([key, value]) => [key, String(value)]),
+        ).toString();
+        return `https://player.mediadelivery.net/embed/${libraryId}/${videoId}${query ? `?${query}` : ""}`;
+      });
+
+      onMount(async () => {
+        // player.js reads window when imported, so load it in the browser only.
+        playerjs = (await import("player.js")).default;
+      });
+
+      // Runs for every new iframe element, right after it is inserted
+      // and before it has finished loading.
+      $effect(() => {
+        if (!playerjs || !iframe) return;
+
+        // player.js never removes the window listener each Player adds,
+        // so grab it while constructing and remove it on cleanup.
+        let onMessage: EventListener = () => {};
+        const addEvent = playerjs.addEvent;
+        playerjs.addEvent = (elem, type, handler) => addEvent(elem, type, (onMessage = handler));
+        const player = new playerjs.Player(iframe);
+        playerjs.addEvent = addEvent;
+
+        player.on("ready", () => onready?.(player));
+        player.on("play", () => onplay?.());
+        player.on("pause", () => onpause?.());
+        player.on("ended", () => onended?.());
+        player.on("timeupdate", (time) => ontimeupdate?.(time));
+
+        return () => window.removeEventListener("message", onMessage);
+      });
+    </script>
+
+    {#if playerjs}
+      {#key src}
+        <iframe
+          bind:this={iframe}
+          {src}
+          {title}
+          class="bunny-player"
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen
+        ></iframe>
+      {/key}
+    {:else}
+      <!-- Hold the space until player.js is loaded so the iframe cannot
+           finish loading before the Player exists. -->
+      <div class="bunny-player" aria-hidden="true"></div>
+    {/if}
+
+    <style>
+      .bunny-player {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        border: 0;
+        background: #000;
+      }
+    </style>
+    ```
+
+    `{#key src}` replaces the iframe when the video changes, and the effect runs again with a fresh `Player`. Callback props are read inside the event handlers, which means a new inline function won't re-create the player.
+  </Step>
+  <Step title="Add your library ID">
+    Create `.env` with the library ID from your library's **API** page.
+
+    ```bash .env
+    PUBLIC_BUNNY_LIBRARY_ID=12345
+    ```
+
+    Declare it in `src/env.ts`. `public: true` lets browser code import it, and `static: true` inlines it at build time.
+
+    ```ts src/env.ts
+    import { defineEnvVars } from "@sveltejs/kit/env";
+
+    export const variables = defineEnvVars({
+      PUBLIC_BUNNY_LIBRARY_ID: { public: true, static: true },
+    });
+    ```
+  </Step>
+  <Step title="Render a video">
+    Load the video ID in `+page.server.ts`.
+
+    ```ts src/routes/lessons/[id]/+page.server.ts
+    import { error } from "@sveltejs/kit";
+    import type { PageServerLoad } from "./$types";
+
+    // Swap this for your database.
+    const lessons: Record<string, { title: string; videoId: string }> = {
+      intro: { title: "Introduction", videoId: "your-video-guid" },
+    };
+
+    export const load: PageServerLoad = ({ params }) => {
+      const lesson = lessons[params.id];
+      if (!lesson) error(404, "Lesson not found");
+
+      return { lesson };
+    };
+    ```
+
+    The page reads it from `data`.
+
+    ```svelte src/routes/lessons/[id]/+page.svelte
+    <script lang="ts">
+      import BunnyPlayer from "#lib/components/BunnyPlayer.svelte";
+      import { PUBLIC_BUNNY_LIBRARY_ID } from "$app/env/public";
+
+      let { data } = $props();
+    </script>
+
+    <h1>{data.lesson.title}</h1>
+
+    <BunnyPlayer
+      libraryId={PUBLIC_BUNNY_LIBRARY_ID}
+      videoId={data.lesson.videoId}
+      params={{ autoplay: false, preload: true }}
+      onended={() => console.log("Video finished")}
+    />
+    ```
+
+    The library ID is public in every embed URL, so it is safe to send to the browser. `params` takes any [player parameter](/stream/embedding#supported-parameters), such as `captions`, `t`, or `muted`.
+  </Step>
+</Steps>
+
+## Control playback
+
+`onready` hands you the `Player`. Keep it in state for your own controls.
+
+```svelte
+<script lang="ts">
+  import type { Player } from "player.js";
+  import BunnyPlayer from "#lib/components/BunnyPlayer.svelte";
+
+  let player: Player | null = $state.raw(null);
+  let playing = $state(false);
+</script>
+
+<BunnyPlayer
+  libraryId="12345"
+  videoId="your-video-guid"
+  onready={(instance) => (player = instance)}
+  onplay={() => (playing = true)}
+  onpause={() => (playing = false)}
+/>
+
+<button onclick={() => (playing ? player?.pause() : player?.play())}>
+  {playing ? "Pause" : "Play"}
+</button>
+<button onclick={() => player?.setCurrentTime(0)}>Restart</button>
+<button onclick={() => player?.mute()}>Mute</button>
+```
+
+Getters answer through a callback, since the value comes back from the iframe.
+
+```ts
+player?.getCurrentTime((seconds) => console.log(seconds));
+player?.getDuration((seconds) => console.log(seconds));
+```
+
+Playback speed is missing from the npm build (0.1.0), and `send()` covers the gap. The build we host adds `setPlaybackRate()`, `getPlaybackRate()` and `playbackratechange` ([Methods](/stream/playback-api#methods)).
+
+```ts
+player?.send({ method: "setPlaybackRate", value: 1.5 });
+```
+
+Browsers block unmuted `play()` before the viewer has clicked anything. Call `mute()` first if playback has to start on its own. The [Playback control API](/stream/playback-api) lists every method and event.
+
+## Track progress
+
+`timeupdate` fires several times a second. Throttle it before it reaches your backend, here through an API route.
+
+```svelte
+<script lang="ts">
+  import BunnyPlayer from "#lib/components/BunnyPlayer.svelte";
+
+  let { videoId, resumeAt }: { videoId: string; resumeAt?: number } = $props();
+  let lastSaved = 0;
+
+  async function save(seconds: number, duration: number) {
+    await fetch(`/api/progress/${videoId}`, {
+      method: "POST",
+      body: JSON.stringify({ seconds, duration }),
+    });
+  }
+</script>
+
+<BunnyPlayer
+  libraryId="12345"
+  {videoId}
+  params={resumeAt ? { t: resumeAt } : {}}
+  ontimeupdate={({ seconds, duration }) => {
+    if (Math.abs(seconds - lastSaved) < 5) return;
+    lastSaved = seconds;
+    save(seconds, duration);
+  }}
+/>
+```
+
+Pass the saved position back as the `t` parameter to resume.
+
+## Load player.js from the CDN instead
+
+To drop the npm dependency, load our hosted build from the component.
+
+```ts src/lib/load-playerjs.ts
+type PlayerJs = (typeof import("player.js"))["default"];
+
+declare global {
+  interface Window {
+    playerjs: PlayerJs;
+  }
+}
+
+let loading: Promise<PlayerJs> | undefined;
+
+export function loadPlayerjs() {
+  loading ??= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js";
+    script.onload = () => resolve(window.playerjs);
+    script.onerror = (error) => {
+      loading = undefined;
+      reject(error);
+    };
+    document.head.append(script);
+  });
+  return loading;
+}
+```
+
+Swap the dynamic import in `onMount` for the loader.
+
+```ts src/lib/components/BunnyPlayer.svelte
+import { loadPlayerjs } from "../load-playerjs";
+
+onMount(async () => {
+  playerjs = await loadPlayerjs();
+});
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="ReferenceError: window is not defined">
+    player.js is being imported during server rendering. Keep `import("player.js")` inside `onMount`. A static `import playerjs from "player.js"` at the top of the script block runs on the server in SvelteKit.
+  </Accordion>
+  <Accordion title="onready never fires">
+    The iframe loaded before player.js. Render it only once player.js has loaded, as the component above does.
+
+    A hidden tab also holds `ready` back until the viewer switches to it.
+  </Accordion>
+  <Accordion title="The iframe shows a 403">
+    The library's allowed domains, direct access block, or token authentication is rejecting the embed. See [Embedding restrictions](/stream/embedding#embedding-restrictions).
+  </Accordion>
+</AccordionGroup>
