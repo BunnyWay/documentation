@@ -13,6 +13,8 @@ description: "Execution limits for Edge Scripts, covering CPU time, memory, subr
 | Environment variables per Script | 128    | Maximum number of environment variables per script.  |
 | Environment variable size        | 2KB    | Maximum size of environment variable value.          |
 
+The two size limits work together. A script well below 10 MB can still miss the 500ms startup budget, because every byte of it is parsed and evaluated before it answers its first request. A script that does not start in time makes the edge answer `400` with an empty body. Measured in August 2026 on a standalone script in DE, a bundled framework server served every request at 7.44 MB and none at 7.83 MB, so aim well below 10 MB for code that does real work as it loads.
+
 These limits cover typical use under normal operating conditions, and they keep one script from taking resources away from everyone else's.
 
 Occasional spikes above a limit are tolerated. A script that consistently hits or exceeds one will be throttled or terminated.
