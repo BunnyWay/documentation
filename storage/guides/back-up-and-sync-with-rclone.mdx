@@ -1,0 +1,45 @@
+---
+title: "Back up and sync files to Bunny Storage with rclone"
+sidebarTitle: "Back up with rclone"
+description: "Back up folders to Bunny Storage on a schedule with rclone and the S3-compatible API."
+---
+
+import RcloneRemote from "/snippets/storage/rclone-remote.mdx";
+
+[rclone](https://rclone.org) backs up any folder on your machine or servers to Bunny Storage, replicated to every region you picked for the zone.
+
+<Steps>
+  <Step title="Create a storage zone">
+    [Create a storage zone](/storage/s3#creating-a-storage-zone-with-s3-compatibility) with **S3 Compatibility** enabled.
+  </Step>
+  <Step title="Connect rclone">
+    <RcloneRemote />
+  </Step>
+  <Step title="Back up a folder">
+    ```bash
+    rclone sync /var/www/uploads bunny:your-storage-zone-name/uploads --progress
+    ```
+
+    `rclone sync` makes the zone match your folder. Use `rclone copy` to add files without removing any.
+  </Step>
+  <Step title="Schedule it">
+    Add a cron entry to run the backup every night at 02:00:
+
+    ```bash
+    0 2 * * * rclone sync /var/www/uploads bunny:your-storage-zone-name/uploads --log-file /var/log/rclone-backup.log
+    ```
+  </Step>
+  <Step title="Verify the backup">
+    ```bash
+    rclone check /var/www/uploads bunny:your-storage-zone-name/uploads
+    ```
+  </Step>
+</Steps>
+
+## Mount the zone as a drive
+
+`rclone mount` shows the zone as a local folder:
+
+```bash
+rclone mount bunny:your-storage-zone-name ~/bunny --vfs-cache-mode writes
+```

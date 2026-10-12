@@ -1,32 +1,32 @@
 ---
 title: "Bunny Storage"
 sidebarTitle: "Introduction"
-description: "The fastest object storage, replicated to the edge for unparalleled performance worldwide."
+description: "Object storage that replicates your files across regions and serves them through Bunny CDN."
 mode: wide
 ---
 
 ![bunny.net Storage](/images/storage/storage.png)
 
-Forget slow object storage and WOW your customers with unparalleled performance. Bunny Storage automatically replicates your files worldwide to minimize latency and maximize throughput. For every file. For every request. Everywhere.
-
-Bunny Storage is designed for a global audience with seamless replication that just works.
+Bunny Storage is object storage that keeps a copy of your files in each region you pick and serves them through Bunny CDN. Uploads land in your primary region and replicate on their own, and each request is answered by the copy closest to the CDN edge that asks for it.
 
 <Card title="Storage Quickstart" icon="rocket" horizontal href="/storage/quickstart">
 </Card>
 
 ## What's included
 
-Users typically see significant improvements:
-
-- **Global replication** across multiple regions
-- **Smart geographical load balancing** for optimal performance
-- **Multiple access methods** (HTTP API, FTP, S3-compatible API, Dashboard)
-- **Tight CDN integration** for seamless content delivery
+- **Global replication** to up to 15 regions, depending on the [storage tier](/storage/storage-tiers)
+- **Nearest-region delivery**, so uncached requests come from the closest copy
+- **Five ways to manage files**: the dashboard, the CLI, the HTTP API, the S3-compatible API, and FTP
+- **Built-in CDN connection**, so any pull zone can use a storage zone as its origin
 
 <Columns cols={2}>
 
 <Card title="Dashboard" href="/storage/dashboard" cta="Learn more">
-  Manage files directly from the bunny.net dashboard with a user-friendly interface.
+  Upload, organize, and share files from the bunny.net dashboard.
+</Card>
+
+<Card title="CLI" href="/storage/cli" cta="Learn more">
+  Create zones and upload files from your terminal with the bunny.net CLI.
 </Card>
 
 <Card title="HTTP API" href="/storage/http" cta="Learn more">
@@ -34,17 +34,47 @@ Users typically see significant improvements:
 </Card>
 
 <Card title="FTP Access" href="/storage/ftp" cta="Learn more">
-  Upload files using the FTP protocol for compatibility with existing software and workflows.
+  Upload files from the FTP clients and workflows you already use.
 </Card>
 
 <Card title="S3-Compatible API" href="/storage/s3" cta="Learn more">
-  Bunny Storage supports an S3-compatible API, allowing you to use familiar S3 tools, libraries, and workflows with your storage zones.
+  Use the AWS CLI, rclone, and S3 SDKs with your storage zones.
 </Card>
 
 </Columns>
 
 ## Guides
 
-<Card title="Host a static site" icon="globe" horizontal href="/storage/static-site-hosting">
-  Deploy a static site or single-page app to Bunny Storage and serve it through Bunny CDN.
+Each guide walks through one job you can build on Bunny Storage, with the settings and code it needs.
+
+<Columns cols={2}>
+
+<Card title="Serve private files" icon="lock" href="/storage/guides/serve-private-files">
+  Hand out signed links to private files that expire when you choose.
 </Card>
+
+<Card title="Accept user uploads" icon="upload" href="/storage/guides/accept-user-uploads">
+  Upload from the browser with presigned URLs, or through your server.
+</Card>
+
+<Card title="Serve and transform images" icon="image" href="/storage/guides/serve-and-transform-images">
+  Keep one original per image and let Bunny Optimizer resize it on request.
+</Card>
+
+<Card title="Host large downloads" icon="download" href="/storage/guides/host-large-downloads">
+  Serve big files through Bunny CDN with downloads that resume.
+</Card>
+
+<Card title="Migrate from S3" icon="arrow-right-left" href="/storage/guides/migrate-from-s3">
+  Copy buckets from Amazon S3, Cloudflare R2, or Backblaze B2 with rclone and switch your app over.
+</Card>
+
+<Card title="Back up with rclone" icon="hard-drive-download" href="/storage/guides/back-up-and-sync-with-rclone">
+  Back up your servers to a storage zone on a schedule.
+</Card>
+
+<Card title="Host a static site" icon="globe" href="/storage/static-site-hosting">
+  Deploy a static site or single-page app and serve it through Bunny CDN.
+</Card>
+
+</Columns>
