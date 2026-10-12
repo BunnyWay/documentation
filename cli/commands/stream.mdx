@@ -487,6 +487,8 @@ bunny stream smart <video-id> --chapters --transcribe
 
 `bunny stream import` moves an existing video library into Stream from Vimeo, AWS S3 (or an S3-compatible provider), Wistia, Mux, Cloudflare Stream, JW Player, or Brightcove. bunny.net fetches each file directly from the source, so nothing passes through your machine. Source folders become Stream collections of the same name.
 
+For a full walkthrough, see the migration guides for [Vimeo](/stream/migrate-from-vimeo), [Mux](/stream/migrate-from-mux), and [Cloudflare Stream](/stream/migrate-from-cloudflare-stream).
+
 ```bash
 # See folders, video counts, and what's already in Stream
 bunny stream import --library 12345 --source vimeo --dry-run
