@@ -44,3 +44,9 @@ https://video.bunnycdn.com/FairPlay/759/license/?videoId=eb1c4f77-0cda-46be-b47d
 ## Sign URLs in your framework
 
 [Sign embed URLs on the server](/stream/player/signed-embeds) has working signing code for Next.js, Nuxt, and SvelteKit, each with a runnable example app.
+
+For a signed URL to test with, use [`bunny stream video embed`](/cli/commands/stream#bunny-stream-video-embed):
+
+```bash
+bunny stream video embed <video-id> --expires 1h
+```

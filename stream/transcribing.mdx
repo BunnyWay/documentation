@@ -26,6 +26,15 @@ During automatic transcription, the language of the video is detected based on t
   If your video does not have speech in the first 30 seconds, it is recommended to manually set the transcription language when requesting a transcription.
 </Note>
 
+## Transcribe from the CLI
+
+[`bunny stream transcribe`](/cli/commands/stream#bunny-stream-transcribe) transcribes one video. To transcribe every new upload, turn it on for the library with [`bunny stream library update`](/cli/commands/stream#bunny-stream-library-update):
+
+```bash
+bunny stream transcribe <video-id> --languages en,de --source-language en
+bunny stream library update my-library --transcribing --transcribing-languages en,de
+```
+
 ## Supported languages and ISO 639-1 language codes
 
 | # | Language | ISO 639-1 |

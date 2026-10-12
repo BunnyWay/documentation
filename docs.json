@@ -1098,6 +1098,7 @@
                   "cli/commands/db",
                   "cli/commands/scripts",
                   "cli/commands/sandbox",
+                  "cli/commands/stream",
                   {
                     "group": "Registry",
                     "hidden": true,
