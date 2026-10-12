@@ -6,7 +6,7 @@ description: "Add video uploads to a Next.js app. The browser sends each file st
 
 import UploadAuthWarning from "/snippets/stream/upload-auth-warning.mdx";
 
-Serverless functions cap request bodies at a few megabytes, and video files are much bigger. Here the file never reaches Next.js. A Route Handler creates the video and signs an upload, then the browser sends the file to us over [TUS](/stream/tus-resumable-uploads) in resumable chunks.
+Many hosts cap serverless request bodies at a few megabytes, and video files are much bigger. Here the file never reaches Next.js. A Route Handler creates the video and signs an upload, then the browser sends the file to us over [TUS](/stream/tus-resumable-uploads) in resumable chunks.
 
 <Card title="Next.js example on GitHub" icon="/logo/frameworks/nextjs.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-nextjs" horizontal>
   An App Router app with pause, resume, and playback once encoding finishes.
@@ -200,6 +200,8 @@ Serverless functions cap request bodies at a few megabytes, and video files are 
 
     export function VideoUploader() {
       const uploadRef = useRef<tus.Upload | null>(null);
+      // Bumped on cancel, so an upload still waiting on the server never starts.
+      const attemptRef = useRef(0);
       const [state, setState] = useState<UploadState>({ phase: "idle" });
 
       // Stop sending chunks if the component goes away mid-upload.
@@ -209,15 +211,17 @@ Serverless functions cap request bodies at a few megabytes, and video files are 
         const title = file.name;
         const key = videoKey(file);
         const savedVideoId = localStorage.getItem(key);
+        const attempt = ++attemptRef.current;
         setState({ phase: "uploading", title, percent: 0 });
 
         let credentials: UploadCredentials;
         try {
           credentials = await requestUpload(title, savedVideoId);
         } catch (error) {
-          setState({ phase: "error", message: (error as Error).message });
+          if (attempt === attemptRef.current) setState({ phase: "error", message: (error as Error).message });
           return;
         }
+        if (attempt !== attemptRef.current) return;
         localStorage.setItem(key, credentials.videoId);
 
         const upload = new tus.Upload(file, {
@@ -247,6 +251,7 @@ Serverless functions cap request bodies at a few megabytes, and video files are 
 
         // A stored upload URL belongs to one video, so only resume into the same one.
         const [previous] = await upload.findPreviousUploads();
+        if (attempt !== attemptRef.current) return;
         if (previous && credentials.videoId === savedVideoId) {
           upload.resumeFromPreviousUpload(previous);
         }
@@ -264,6 +269,7 @@ Serverless functions cap request bodies at a few megabytes, and video files are 
       }
 
       function reset() {
+        attemptRef.current++;
         uploadRef.current?.abort();
         uploadRef.current = null;
         setState({ phase: "idle" });

@@ -185,6 +185,8 @@ Video files are large, and there's no reason to stream them through your SvelteK
 
       let state: UploadState = $state({ phase: "idle" });
       let upload: tus.Upload | null = null;
+      // Bumped on cancel, so an upload still waiting on the server never starts.
+      let attempt = 0;
 
       // Remembers which Bunny video a file was going into, so a reload can resume it.
       const videoKey = (file: File) => `bunny-video:${file.name}:${file.size}:${file.lastModified}`;
@@ -205,15 +207,17 @@ Video files are large, and there's no reason to stream them through your SvelteK
         const title = file.name;
         const key = videoKey(file);
         const savedVideoId = localStorage.getItem(key);
+        const current = ++attempt;
         state = { phase: "uploading", title, percent: 0 };
 
         let credentials: UploadCredentials;
         try {
           credentials = await requestUpload(title, savedVideoId);
         } catch (error) {
-          state = { phase: "error", message: (error as Error).message };
+          if (current === attempt) state = { phase: "error", message: (error as Error).message };
           return;
         }
+        if (current !== attempt) return;
         localStorage.setItem(key, credentials.videoId);
 
         upload = new tus.Upload(file, {
@@ -242,6 +246,7 @@ Video files are large, and there's no reason to stream them through your SvelteK
 
         // A stored upload URL belongs to one video, so only resume into the same one.
         const [previous] = await upload.findPreviousUploads();
+        if (current !== attempt) return;
         if (previous && credentials.videoId === savedVideoId) {
           upload.resumeFromPreviousUpload(previous);
         }
@@ -259,6 +264,7 @@ Video files are large, and there's no reason to stream them through your SvelteK
       }
 
       function reset() {
+        attempt++;
         upload?.abort();
         upload = null;
         state = { phase: "idle" };
