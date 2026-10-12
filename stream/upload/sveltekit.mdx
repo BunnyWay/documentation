@@ -1,0 +1,398 @@
+---
+title: "Upload videos to Bunny Stream from SvelteKit"
+sidebarTitle: "SvelteKit"
+description: "Add video uploads to a SvelteKit app. The browser sends each file straight to Bunny Stream over TUS, and a server endpoint creates the video and signs the upload."
+---
+
+import UploadAuthWarning from "/snippets/stream/upload-auth-warning.mdx";
+
+Video files are large, and there's no reason to stream them through your SvelteKit server. Here the file never reaches it. A `+server.ts` endpoint creates the video and signs an upload, then the browser sends the file to us over [TUS](/stream/tus-resumable-uploads) in resumable chunks.
+
+<Card title="SvelteKit example on GitHub" icon="/logo/frameworks/svelte.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-sveltekit" horizontal>
+  A SvelteKit app with pause, resume, and playback once encoding finishes.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Add your library credentials">
+    Copy both from your library's **API** page into `.env`. The API key can delete videos.
+
+    ```bash .env
+    BUNNY_STREAM_LIBRARY_ID=
+    BUNNY_STREAM_API_KEY=
+    ```
+
+    Declare them in `src/env.ts`. Without `public: true`, they're only importable from server code.
+
+    ```ts src/env.ts
+    import { defineEnvVars } from "@sveltejs/kit/env";
+
+    export const variables = defineEnvVars({
+      BUNNY_STREAM_LIBRARY_ID: {},
+      BUNNY_STREAM_API_KEY: {},
+    });
+    ```
+
+    Install tus-js-client, and `@types/node` as a dev dependency for the `node:crypto` types.
+
+    ```bash
+    npm install tus-js-client
+    npm install -D @types/node
+    ```
+  </Step>
+  <Step title="Create the Bunny Stream helpers">
+    The endpoints and the components both need the [video statuses](/api-reference/stream/manage-videos/get-video), so they live in a file without secrets.
+
+    ```ts src/lib/bunny-stream.ts
+    export const VideoStatusCode = { Created: 0, Finished: 4, Error: 5, UploadFailed: 6 } as const;
+
+    export type UploadCredentials = {
+      videoId: string;
+      libraryId: string;
+      expirationTime: number;
+      signature: string;
+    };
+
+    export type VideoStatus = {
+      status: number;
+      encodeProgress: number;
+      embedUrl: string;
+    };
+
+    export function hasFailed(status: number): boolean {
+      return status === VideoStatusCode.Error || status === VideoStatusCode.UploadFailed;
+    }
+    ```
+
+    The upload signature is a SHA-256 of the library ID, API key, expiry, and video ID. SvelteKit won't let browser code import anything under `src/lib/server`.
+
+    ```ts src/lib/server/bunny-stream.ts
+    import { createHash } from "node:crypto";
+    import { BUNNY_STREAM_API_KEY, BUNNY_STREAM_LIBRARY_ID } from "$app/env/private";
+    import type { UploadCredentials, VideoStatus } from "#lib/bunny-stream.ts";
+
+    // Bunny checks the expiry on every TUS request, so leave room for slow uploads.
+    const SIGNATURE_TTL_SECONDS = 24 * 60 * 60;
+
+    async function stream<T>(path: string, init?: RequestInit): Promise<T> {
+      const response = await fetch(`https://video.bunnycdn.com/library/${BUNNY_STREAM_LIBRARY_ID}/videos${path}`, {
+        ...init,
+        headers: { AccessKey: BUNNY_STREAM_API_KEY, Accept: "application/json", "Content-Type": "application/json" },
+      });
+      if (!response.ok) {
+        throw new Error(`Bunny Stream returned ${response.status}: ${await response.text()}`);
+      }
+
+      return response.json() as Promise<T>;
+    }
+
+    export async function getVideo(videoId: string): Promise<VideoStatus> {
+      const video = await stream<{ status: number; encodeProgress: number }>(`/${encodeURIComponent(videoId)}`);
+
+      return {
+        status: video.status,
+        encodeProgress: video.encodeProgress,
+        embedUrl: `https://player.mediadelivery.net/embed/${BUNNY_STREAM_LIBRARY_ID}/${videoId}`,
+      };
+    }
+
+    export async function createVideo(title: string): Promise<string> {
+      const video = await stream<{ guid: string }>("", { method: "POST", body: JSON.stringify({ title }) });
+
+      return video.guid;
+    }
+
+    export function signUpload(videoId: string): UploadCredentials {
+      const expirationTime = Math.floor(Date.now() / 1000) + SIGNATURE_TTL_SECONDS;
+      const signature = createHash("sha256")
+        .update(`${BUNNY_STREAM_LIBRARY_ID}${BUNNY_STREAM_API_KEY}${expirationTime}${videoId}`)
+        .digest("hex");
+
+      return { videoId, libraryId: BUNNY_STREAM_LIBRARY_ID, expirationTime, signature };
+    }
+    ```
+  </Step>
+  <Step title="Add the endpoints">
+    <UploadAuthWarning />
+
+    Pass a `videoId` from an unfinished upload and the endpoint re-signs that video. Anything else gets a new one.
+
+    ```ts src/routes/api/uploads/+server.ts
+    import { json } from "@sveltejs/kit";
+    import { VideoStatusCode } from "#lib/bunny-stream.ts";
+    import { createVideo, getVideo, signUpload } from "#lib/server/bunny-stream.ts";
+    import type { RequestHandler } from "./$types";
+
+    // Only re-sign videos that are still waiting for their file.
+    async function canResume(videoId: string): Promise<boolean> {
+      try {
+        return (await getVideo(videoId)).status === VideoStatusCode.Created;
+      } catch {
+        return false;
+      }
+    }
+
+    export const POST: RequestHandler = async ({ request }) => {
+      // Require a signed-in user here. This route is public and creates videos in your library.
+      // Before re-signing a videoId, check that the user owns it.
+      const { title, videoId } = (await request.json()) as { title?: unknown; videoId?: unknown };
+      if (typeof title !== "string" || !title.trim()) {
+        return json({ error: "title is required" }, { status: 400 });
+      }
+
+      try {
+        if (typeof videoId === "string" && (await canResume(videoId))) {
+          return json(signUpload(videoId));
+        }
+
+        return json(signUpload(await createVideo(title)));
+      } catch (error) {
+        return json({ error: (error as Error).message }, { status: 502 });
+      }
+    };
+    ```
+
+    ```ts src/routes/api/videos/[id]/+server.ts
+    import { json } from "@sveltejs/kit";
+    import { getVideo } from "#lib/server/bunny-stream.ts";
+    import type { RequestHandler } from "./$types";
+
+    export const GET: RequestHandler = async ({ params }) => {
+      // Require a signed-in user here, and check that they own this video ID. The route is public.
+      try {
+        return json(await getVideo(params.id));
+      } catch (error) {
+        return json({ error: (error as Error).message }, { status: 502 });
+      }
+    };
+    ```
+  </Step>
+  <Step title="Upload from a component">
+    tus-js-client sends the credentials as headers with every request. The video ID goes into `localStorage` against the file, which is how a reload finds its way back to the same upload.
+
+    ```svelte src/lib/components/VideoUploader.svelte
+    <script lang="ts">
+      import * as tus from "tus-js-client";
+      import type { UploadCredentials } from "#lib/bunny-stream.ts";
+      import UploadedVideo from "./UploadedVideo.svelte";
+
+      type UploadState =
+        | { phase: "idle" }
+        | { phase: "uploading" | "paused"; title: string; percent: number }
+        | { phase: "done"; title: string; videoId: string }
+        | { phase: "error"; message: string };
+
+      let state: UploadState = $state({ phase: "idle" });
+      let upload: tus.Upload | null = null;
+
+      // Remembers which Bunny video a file was going into, so a reload can resume it.
+      const videoKey = (file: File) => `bunny-video:${file.name}:${file.size}:${file.lastModified}`;
+
+      async function requestUpload(title: string, videoId: string | null): Promise<UploadCredentials> {
+        const response = await fetch("/api/uploads", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, videoId }),
+        });
+        const body = await response.json();
+        if (!response.ok) throw new Error(body.error ?? "Could not create the upload");
+
+        return body;
+      }
+
+      async function start(file: File) {
+        const title = file.name;
+        const key = videoKey(file);
+        const savedVideoId = localStorage.getItem(key);
+        state = { phase: "uploading", title, percent: 0 };
+
+        let credentials: UploadCredentials;
+        try {
+          credentials = await requestUpload(title, savedVideoId);
+        } catch (error) {
+          state = { phase: "error", message: (error as Error).message };
+          return;
+        }
+        localStorage.setItem(key, credentials.videoId);
+
+        upload = new tus.Upload(file, {
+          endpoint: "https://video.bunnycdn.com/tusupload",
+          retryDelays: [0, 3000, 5000, 10000, 20000, 60000],
+          removeFingerprintOnSuccess: true,
+          headers: {
+            AuthorizationSignature: credentials.signature,
+            AuthorizationExpire: String(credentials.expirationTime),
+            VideoId: credentials.videoId,
+            LibraryId: credentials.libraryId,
+          },
+          metadata: { filetype: file.type, title },
+          onProgress(bytesSent, bytesTotal) {
+            if (state.phase === "paused") return;
+            state = { phase: "uploading", title, percent: Math.floor((bytesSent / bytesTotal) * 100) };
+          },
+          onSuccess() {
+            localStorage.removeItem(key);
+            state = { phase: "done", title, videoId: credentials.videoId };
+          },
+          onError(error) {
+            state = { phase: "error", message: error.message };
+          },
+        });
+
+        // A stored upload URL belongs to one video, so only resume into the same one.
+        const [previous] = await upload.findPreviousUploads();
+        if (previous && credentials.videoId === savedVideoId) {
+          upload.resumeFromPreviousUpload(previous);
+        }
+        upload.start();
+      }
+
+      function pause() {
+        upload?.abort();
+        if (state.phase === "uploading") state = { ...state, phase: "paused" };
+      }
+
+      function resume() {
+        upload?.start();
+        if (state.phase === "paused") state = { ...state, phase: "uploading" };
+      }
+
+      function reset() {
+        upload?.abort();
+        upload = null;
+        state = { phase: "idle" };
+      }
+
+      // Stop sending chunks if the component goes away mid-upload.
+      $effect(() => () => void upload?.abort());
+    </script>
+
+    {#if state.phase === "idle"}
+      <input
+        type="file"
+        accept="video/*"
+        onchange={(event) => {
+          const file = event.currentTarget.files?.[0];
+          if (file) start(file);
+        }}
+      />
+    {:else if state.phase === "error"}
+      <p>{state.message}</p>
+      <button type="button" onclick={reset}>Try again</button>
+    {:else if state.phase === "done"}
+      <UploadedVideo videoId={state.videoId} title={state.title} />
+      <button type="button" onclick={reset}>Upload another</button>
+    {:else}
+      <p>{state.phase === "paused" ? "Paused" : "Uploading"} {state.title}: {state.percent}%</p>
+      <progress max={100} value={state.percent}></progress>
+      {#if state.phase === "uploading"}
+        <button type="button" onclick={pause}>Pause</button>
+      {:else}
+        <button type="button" onclick={resume}>Resume</button>
+      {/if}
+      <button type="button" onclick={reset}>Cancel</button>
+    {/if}
+    ```
+
+    `abort()` pauses. `start()` picks up from the last chunk we acknowledged.
+  </Step>
+</Steps>
+
+## Play it once it's encoded
+
+We start encoding when the last chunk arrives. Poll the status endpoint until `status` reaches `4` (finished), `5` or `6` (failed), then embed `embedUrl`.
+
+```svelte src/lib/components/UploadedVideo.svelte
+<script lang="ts">
+  import { hasFailed, VideoStatusCode, type VideoStatus } from "#lib/bunny-stream.ts";
+
+  let { videoId, title }: { videoId: string; title: string } = $props();
+
+  let video: VideoStatus | null = $state(null);
+  let error: string | null = $state(null);
+
+  $effect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    let active = true;
+
+    const poll = async () => {
+      try {
+        const response = await fetch(`/api/videos/${videoId}`);
+        const body = await response.json();
+        if (!active) return;
+        if (!response.ok) {
+          error = body.error ?? "Could not read the video status";
+          return;
+        }
+
+        video = body;
+        if (body.status !== VideoStatusCode.Finished && !hasFailed(body.status)) {
+          timer = setTimeout(poll, 3000);
+        }
+      } catch {
+        if (active) error = "Could not reach the server to check the video";
+      }
+    };
+
+    poll();
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  });
+</script>
+
+{#if error}
+  <p>{error}</p>
+{:else if !video}
+  <p>Checking the video…</p>
+{:else if hasFailed(video.status)}
+  <p>Bunny Stream could not encode {title}.</p>
+{:else if video.status !== VideoStatusCode.Finished}
+  <p>Encoding {title}… {video.encodeProgress}%</p>
+{:else}
+  <iframe
+    src={video.embedUrl}
+    {title}
+    style="width: 100%; aspect-ratio: 16 / 9; border: 0"
+    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+    allowfullscreen
+  ></iframe>
+{/if}
+```
+
+`encodeProgress` gives you a percentage to show in the meantime. A [webhook](/stream/webhooks) tells your server when encoding finishes.
+
+Render the uploader from any page.
+
+```svelte src/routes/+page.svelte
+<script lang="ts">
+  import VideoUploader from "#lib/components/VideoUploader.svelte";
+</script>
+
+<main>
+  <h1>Upload a video</h1>
+  <VideoUploader />
+</main>
+```
+
+Start the app with `npm run dev`, open http://localhost:5173, and choose a video. To control playback, swap the iframe for the component in [Use Bunny Player with Svelte and SvelteKit](/stream/player/svelte).
+
+## Before you deploy
+
+Check the session in both endpoints, for example in a `handle` hook, and store which user owns each video ID. As written, anyone can fill your library.
+
+Swap `@sveltejs/adapter-auto` for the [adapter](https://svelte.dev/docs/kit/adapters) that matches your host, and set the two variables in its environment. The production server doesn't read `.env`.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The TUS upload returns 401">
+    The signature doesn't match the headers. Check that the library ID and API key belong to the same library, and restart the dev server after editing `.env`.
+  </Accordion>
+  <Accordion title="The build fails on a server-only import">
+    A component imports from `src/lib/server/bunny-stream.ts`. Import only types from it, and keep shared values in `src/lib/bunny-stream.ts`.
+  </Accordion>
+</AccordionGroup>
