@@ -27,7 +27,7 @@ https://myzone.b-cdn.net/bcdn_token=HS256-abc123&expires=1598024587&token_path=%
 | `token_path`              | No       | URL-encoded path prefix for directory-level access |
 | `token_countries`         | No       | Comma-separated allowed country codes (ISO 3166-1) |
 | `token_countries_blocked` | No       | Comma-separated blocked country codes (ISO 3166-1) |
-| `token_ignore_params`     | No       | When `true`, query parameters are excluded from token validation |
+| `token_ignore_params`     | No       | When `true`, query parameters other than `token_` ones are excluded from token validation |
 | `limit`                   | No       | Download speed limit in kB/s                       |
 
 ## Directory tokens
@@ -81,11 +81,7 @@ By default, the token expiry is calculated as a relative offset from the current
 
 By default, all query string parameters present on the URL are included in the token signature. If a parameter is added, removed, or changed after signing, the token will fail validation.
 
-Set `ignoreParams` to `true` when you need to append arbitrary query parameters to signed URLs after generation, for example, analytics tags, cache-busting parameters, or player configuration. When enabled, the `token_ignore_params=true` parameter is included in the signature instead of the actual query parameters.
-
-<Warning>
-  With `ignoreParams` enabled, the signing libraries leave country restrictions (`token_countries`, `token_countries_blocked`) and speed limits (`limit`) out of the signed URL, so they don't apply. Don't enable it for URLs that rely on either.
-</Warning>
+Set `ignoreParams` to `true` when you need to append arbitrary query parameters to signed URLs after generation, for example, analytics tags, cache-busting parameters, or player configuration. When enabled, `token_ignore_params=true` is signed in place of the other query parameters. `token_path` stays part of the signature, so directory tokens keep working.
 
 ## Speed limits
 
@@ -109,7 +105,7 @@ Where:
 - **`security_key`** is used as the HMAC key (not included in the message)
 - **`signature_path`** is the URL path, or the `token_path` override if set
 - **`user_ip`** is the optional IP address, omitted entirely when not set. IPv6 addresses are masked to their `/64` prefix before signing
-- **`signing_data`** is the alphabetically-sorted parameters joined as `key=value` pairs separated by `&`, excluding `token` and `expires`
+- **`signing_data`** is the alphabetically-sorted parameters joined as `key=value` pairs separated by `&`, excluding `token` and `expires`. When `token_ignore_params=true` is set, only parameters starting with `token_` are included
 - **`flags`** is `1-` when an IP was signed, and empty otherwise, producing tokens of the form `HS256-1-<hash>`
 
 After Base64 encoding, replace `+` with `-`, `/` with `_`, and remove `=` padding characters.
