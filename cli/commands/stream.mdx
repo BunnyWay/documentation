@@ -6,34 +6,31 @@ description: "Manage Bunny Stream video libraries, videos, collections, and capt
 ---
 
 <Note>
-  `bunny stream` is in [Public Preview](/product-release-stages#stage-2-public-preview). Commands and flags may change during this period, and it isn't listed in `bunny --help` yet.
+  `bunny stream` is in [Public Preview](/product-release-stages#stage-2-public-preview). Commands and flags may change during this period.
 </Note>
 
 `bunny stream` manages [Bunny Stream](/stream) video libraries and the videos in them.
 
-| Command                   | Use it to                                                                                   |
-| ------------------------- | ------------------------------------------------------------------------------------------- |
-| `bunny stream library`    | Create and configure libraries, including player and security settings                      |
-| `bunny stream video`      | Upload, fetch, update, and delete videos                                                    |
-| `bunny stream collection` | Group videos into [collections](/stream/collections)                                        |
-| `bunny stream caption`    | Upload and remove caption files                                                             |
-| `bunny stream encode`     | Turn on [Premium Encoding](/stream/premium-encoding) and re-encode videos                   |
-| `bunny stream import`     | Move a library from another platform into Stream                                            |
-| `bunny stream transcribe` | Generate captions with [transcribing](/stream/transcribing)                                 |
-| `bunny stream smart`      | Generate titles, descriptions, chapters, and moments with [Smart Generate](/stream/smart-generate) |
+| Command                    | Use it to                                                                                                 |
+| -------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `bunny stream libraries`   | Create and configure libraries, including player and security settings                                    |
+| `bunny stream videos`      | Upload, fetch, update, encode, transcribe, caption, and delete videos                                      |
+| `bunny stream collections` | Group videos into [collections](/stream/collections)                                                      |
+| `bunny stream import`      | Move a library from another platform into Stream                                                          |
+| `bunny stream link`        | Link the current directory to a library                                                                   |
+| `bunny stream regions`     | List the regions a library can replicate to                                                               |
 
 ```bash
-bunny stream library create my-library
-bunny stream library link my-library
-bunny stream video upload ./video.mp4
-bunny stream video embed <video-id>
+bunny stream libraries create my-library --link
+bunny stream videos upload ./video.mp4
+bunny stream videos embed <video-id>
 ```
 
 ## Choosing a library
 
-Library commands take the library's name or numeric ID as an argument (`bunny stream library show my-library`). Other commands take it with `--lib` or `--library` (`bunny stream video list --lib 12345`). If you leave it out, the CLI uses the library linked to the current directory, and otherwise asks you to pick one.
+Library commands take the library's name or numeric ID as an argument (`bunny stream libraries show my-library`). Other commands take it with `--lib` or `--library` (`bunny stream videos list --lib 12345`). If you leave it out, the CLI uses the library linked to the current directory, and otherwise asks you to pick one.
 
-Run `bunny stream library link` to link a directory. It writes `.bunny/stream.json`, so every video, collection, and caption command in that directory targets the same library.
+Run [`bunny stream link`](#bunny-stream-link-and-unlink) to link a directory. It writes `.bunny/stream.json`, so every video, collection, and caption command in that directory targets the same library.
 
 You don't need a library's Stream API key. The CLI looks it up from your account.
 
@@ -41,68 +38,86 @@ You don't need a library's Stream API key. The CLI looks it up from your account
 
 ## Libraries
 
-### `bunny stream library create`
+`bunny stream libraries` also answers to `library` and `lib`.
 
-Create a video library. The main storage region is always DE. New libraries replicate to SG, LA, and NY unless you pass `--replication-regions`.
+### `bunny stream libraries create`
+
+Create a video library. The main storage region is always DE. New libraries replicate to SG, LA, and NY unless you pass `--replication-regions`. Run [`bunny stream regions`](#bunny-stream-regions) to see every region code.
 
 ```bash
 # Create a library with the default replication regions
-bunny stream library create my-library
+bunny stream libraries create my-library
 
 # Replicate to New York and Singapore only
-bunny stream library create my-library --replication-regions NY,SG
+bunny stream libraries create my-library --replication-regions NY,SG
 
 # Keep everything in DE, with no replication
-bunny stream library create internal --replication-regions DE
+bunny stream libraries create internal --replication-regions DE
 
 # Create with Premium Encoding and transcribing
-bunny stream library create my-library --encoding-tier premium --codecs x264,vp9 --transcribing --transcribing-languages en,de
+bunny stream libraries create my-library --encoding-tier premium --codecs x264,vp9 --transcribing --transcribing-languages en,de
+
+# Link this directory and save the library ID and API key to .env, with no prompts
+bunny stream libraries create my-library --link --save-env --no-add-videos
 ```
 
-| Flag                    | Description                                                                                                               |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `--name`                | Library name (same as the positional argument)                                                                            |
-| `--replication-regions` | Regions to replicate to besides DE: `UK`, `SE`, `NY`, `LA`, `SG`, `SYD`, `BR`, `JH`. Pass `DE` alone for no replication. |
-| `--player-version`      | `1` for the legacy player, `2` for the current one                                                                        |
+After it creates the library, the command offers to:
 
-`library create` also accepts every [library settings flag](#library-settings-flags).
+1. Link the current directory to the new library.
+2. Save `BUNNY_STREAM_LIBRARY_ID` and `BUNNY_STREAM_API_KEY` to `.env`. The [Stream examples](https://github.com/BunnyWay/examples/tree/main/stream) read these names.
+3. Add videos, by importing them from another platform or uploading a file.
+
+It then prints the commands to upload a video, import videos, and show the library's credentials. Use the flags below to answer the offers up front. When the command can't prompt, it skips any offer you didn't set with a flag.
+
+| Flag                             | Description                                                                                                               |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `--replication-regions`          | Regions to replicate to besides DE: `UK`, `SE`, `NY`, `LA`, `SG`, `SYD`, `BR`, `JH`. Pass `DE` alone for no replication. |
+| `--player-version`               | `1` for the legacy player, `2` for the current one                                                                        |
+| `--link`, `--no-link`            | Link the current directory to the new library, or skip the offer                                                          |
+| `--save-env`, `--no-save-env`    | Save the library ID and API key to `.env`, or skip the offer                                                              |
+| `--no-add-videos`                | Skip the offer to import or upload videos                                                                                 |
+
+`libraries create` also accepts every [library settings flag](#library-settings-flags).
 
 <Warning>
   Replication regions can't be removed once they're enabled. See
   [Replication](/stream/replication).
 </Warning>
 
-### `bunny stream library list`
+### `bunny stream libraries list`
 
 List your video libraries with their video count, storage, traffic, and replication regions.
 
 ```bash
-bunny stream library list
-bunny stream library ls --output json
+bunny stream libraries list
+bunny stream libraries ls --output json
 ```
 
-### `bunny stream library show`
+### `bunny stream libraries show`
 
 Show one library's settings. API keys are never printed here, in any output format.
 
 ```bash
-bunny stream library show my-library
-bunny stream library show 12345 --output json
+bunny stream libraries show my-library
+bunny stream libraries show 12345 --output json
 ```
 
-### `bunny stream library update`
+### `bunny stream libraries update`
 
-Change a library's settings. Without flags, the command walks you through the settings interactively.
+Change a library's settings. The command changes only the settings you pass flags for. Without flags, it walks you through the settings interactively.
 
 ```bash
 # Edit interactively
-bunny stream library update my-library
+bunny stream libraries update my-library
 
 # Set the enabled resolutions
-bunny stream library update my-library --resolutions 720p,1080p
+bunny stream libraries update my-library --resolutions 720p,1080p
+
+# Switch to Premium Encoding
+bunny stream libraries update my-library --encoding-tier premium --codecs x264,vp9
 
 # Add Sydney as a replication region
-bunny stream library update my-library --add-replication-regions SYD
+bunny stream libraries update my-library --add-replication-regions SYD
 ```
 
 | Flag                        | Description                                                         |
@@ -112,15 +127,15 @@ bunny stream library update my-library --add-replication-regions SYD
 | `--content-tagging`         | Categorize uploads automatically with [content tagging](/stream/tagging) |
 | `--force`, `-f`             | Skip prompts and apply only the flag values                         |
 
-`library update` also accepts every [library settings flag](#library-settings-flags).
+`libraries update` also accepts every [library settings flag](#library-settings-flags).
 
 #### Library settings flags
 
-`library create` and `library update` share these flags. Boolean flags take a `--no-` prefix to turn a setting off, such as `--no-jit`.
+`libraries create` and `libraries update` share these flags. Boolean flags take a `--no-` prefix to turn a setting off, such as `--no-jit`.
 
 | Flag                         | Description                                                                                               |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `--encoding-tier`            | `free` or `premium`                                                                                       |
+| `--encoding-tier`            | `free` or `premium`. [Premium Encoding](/stream/premium-encoding) is billed per output codec per minute.   |
 | `--jit`                      | [Just-in-time encoding](/stream/premium-encoding#just-in-time-encoding) (Premium)                         |
 | `--codecs`                   | Output codecs, comma-separated: `x264`, `vp9`, `hevc`, `av1`. `vp9`, `hevc`, and `av1` need Premium.     |
 | `--resolutions`              | Enabled resolutions, comma-separated: `240p`, `360p`, `480p`, `720p`, `1080p`, `1440p`, `2160p`           |
@@ -135,39 +150,43 @@ bunny stream library update my-library --add-replication-regions SYD
 | `--early-play`               | Play from the original file before encoding finishes. Needs `--keep-original`.                            |
 | `--multi-audio`              | Encode every [audio track](/stream/multi-audio) separately and offer them in the player                   |
 
-### `bunny stream library credentials`
+### `bunny stream libraries credentials`
 
 Show a library's ID and Stream API key. The key is masked unless you pass `--show-secret`.
 
 ```bash
-bunny stream library credentials my-library --show-secret
+bunny stream libraries credentials my-library --show-secret
+
+# Save the library ID and API key to .env
+bunny stream libraries credentials my-library --save-env
 
 # Rotate the read-only key without a prompt
-bunny stream library credentials my-library --rotate --read-only --force
+bunny stream libraries credentials my-library --rotate --read-only --force
 ```
 
-| Flag            | Description                                                         |
-| --------------- | ------------------------------------------------------------------- |
-| `--show-secret` | Reveal the API key                                                  |
-| `--read-only`   | Use the read-only API key                                           |
-| `--rotate`      | Reset the key. Anything using the old key stops working.            |
-| `--force`, `-f` | Skip the rotation confirmation                                      |
+| Flag                          | Description                                                                         |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| `--show-secret`               | Reveal the API key                                                                  |
+| `--read-only`                 | Use the read-only API key                                                           |
+| `--rotate`                    | Reset the key. Anything using the old key stops working.                            |
+| `--save-env`, `--no-save-env` | Save `BUNNY_STREAM_LIBRARY_ID` and `BUNNY_STREAM_API_KEY` to `.env`, or skip the offer |
+| `--force`, `-f`               | Skip the rotation confirmation                                                      |
 
-### `bunny stream library player`
+### `bunny stream libraries player`
 
 Show, update, or reset a library's [player settings](/stream/player-settings). `player update` without flags edits the settings interactively.
 
 ```bash
-bunny stream library player show my-library
+bunny stream libraries player show my-library
 
 # Brand the player and show the heatmap
-bunny stream library player update my-library --color "#FF7755" --heatmap
+bunny stream libraries player update my-library --color "#FF7755" --heatmap
 
 # Set playback speeds, including a custom one
-bunny stream library player update my-library --speeds 0.5,1.0,1.15,2.0
+bunny stream libraries player update my-library --speeds 0.5,1.0,1.15,2.0
 
 # Reset language, font, colours, captions, controls, and speeds
-bunny stream library player reset my-library --force
+bunny stream libraries player reset my-library --force
 ```
 
 | Flag                     | Description                                                                                     |
@@ -187,22 +206,22 @@ bunny stream library player reset my-library --force
 | `--legacy-player`        | Use the legacy player                                                                           |
 | `--captions-in-playlist` | Signal captions in the HLS master playlist for third-party players                              |
 
-### `bunny stream library security`
+### `bunny stream libraries security`
 
 Show or update a library's [security settings](/stream/security-options). `security update` without flags edits the settings interactively.
 
 ```bash
 # Show settings, including the token authentication key
-bunny stream library security show my-library --show-secret
+bunny stream libraries security show my-library --show-secret
 
 # Require embed tokens and allow embeds on one domain only
-bunny stream library security update my-library --embed-token --block-direct-access --allow-referrer example.com
+bunny stream libraries security update my-library --embed-token --block-direct-access --allow-referrer example.com
 
 # Turn on MediaCage Basic DRM
-bunny stream library security update my-library --drm-basic
+bunny stream libraries security update my-library --drm-basic
 
 # Rotate the token authentication key
-bunny stream library security reset-token my-library
+bunny stream libraries security show my-library --rotate
 ```
 
 | Flag                        | Description                                                            |
@@ -218,48 +237,58 @@ bunny stream library security reset-token my-library
 | `--token-ip`                | Bind CDN tokens to the viewer's IP                                     |
 | `--drm-basic`               | [MediaCage Basic DRM](/stream/mediacage-basic)                         |
 
+`security show` takes `--show-secret` to reveal the token authentication key, and `--rotate` to reset it. `--rotate` asks for confirmation, which `--force` skips.
+
 <Warning>
-  `reset-token` rotates the key used for both CDN and embed view tokens. Every
+  `--rotate` resets the key used for both CDN and embed view tokens. Every
   signed URL issued with the old key stops working.
 </Warning>
 
-### `bunny stream library link` and `unlink`
+### `bunny stream link` and `unlink`
 
-Link the current directory to a library so video, collection, and caption commands can leave out `--lib`.
+Link the current directory to a library so video, collection, and caption commands can leave out `--lib`. `bunny stream libraries link` and `bunny stream libraries unlink` do the same.
 
 ```bash
 # Pick a library interactively
-bunny stream library link
+bunny stream link
 
 # Link by name or ID
-bunny stream library link my-library
+bunny stream link my-library
 
 # Remove .bunny/stream.json
-bunny stream library unlink
+bunny stream unlink
 ```
 
-### `bunny stream library delete`
+### `bunny stream regions`
+
+List the region codes a library can store and replicate videos in. DE is the fixed main region, and SG, LA, and NY are the default replication regions.
+
+```bash
+bunny stream regions
+```
+
+### `bunny stream libraries delete`
 
 Delete a library and every video in it. Pass `--force` to skip the confirmation, which is required when running non-interactively.
 
 ```bash
-bunny stream library delete my-library
-bunny stream library delete my-library --force
+bunny stream libraries delete my-library
+bunny stream libraries delete my-library --force
 ```
 
 ---
 
 ## Videos
 
-Every video command accepts `--lib` / `--library` to pick a library. Commands that take a `[video]` argument expect the video's GUID, and prompt you to pick a video when you leave it out.
+`bunny stream videos` also answers to `video`. Every video command accepts `--lib` / `--library` to pick a library. Commands that take a `[video]` argument expect the video's GUID, and prompt you to pick a video when you leave it out.
 
-### `bunny stream video upload`
+### `bunny stream videos upload`
 
 Upload a local file. Files over 2 GB upload through [TUS](/stream/tus-resumable-uploads), which retries and resumes automatically.
 
 ```bash
-bunny stream video upload ./video.mp4
-bunny stream video upload ./video.mp4 --lib 12345 --title "Launch keynote"
+bunny stream videos upload ./video.mp4
+bunny stream videos upload ./video.mp4 --lib 12345 --title "Launch keynote"
 ```
 
 | Flag               | Description                                                       |
@@ -268,96 +297,104 @@ bunny stream video upload ./video.mp4 --lib 12345 --title "Launch keynote"
 | `--collection`     | Collection ID to put the video in                                 |
 | `--thumbnail-time` | Time in milliseconds to take the main thumbnail from              |
 
-### `bunny stream video fetch`
+### `bunny stream videos fetch`
 
 Have bunny.net download a video from a URL, server side. See [URL Fetch](/stream/url-fetch).
 
 ```bash
-bunny stream video fetch https://example.com/video.mp4
+bunny stream videos fetch https://example.com/video.mp4
 
 # Send a header to an origin that needs authentication
-bunny stream video fetch https://example.com/video.mp4 --header "Authorization: Bearer <token>"
+bunny stream videos fetch https://example.com/video.mp4 --header "Authorization: Bearer <token>"
 ```
 
-`video fetch` takes the same flags as `video upload`, plus `--header "Name: value"` (repeatable).
+`videos fetch` takes the same flags as `videos upload`, plus `--header "Name: value"` (repeatable).
 
-### `bunny stream video list`
+### `bunny stream videos list`
 
 List the videos in a library with their ID, title, status, size, length, views, and upload date.
 
 ```bash
-bunny stream video list
-bunny stream video list --search launch
-bunny stream video list --collection <collection-id>
+bunny stream videos list
+bunny stream videos list --search launch
+bunny stream videos list --collection <collection-id>
 ```
 
-### `bunny stream video show`
+### `bunny stream videos show`
 
-Show one video's details, including its Direct Play URL.
+Show one video's details, including its caption languages and Direct Play URL.
 
 ```bash
-bunny stream video show <video-id>
+bunny stream videos show <video-id>
 ```
 
-### `bunny stream video update`
+### `bunny stream videos update`
 
 Change a video's title, collection, chapters, or moments.
 
 ```bash
-bunny stream video update <video-id> --title "Launch keynote"
-bunny stream video update <video-id> --collection <collection-id>
-bunny stream video update <video-id> --chapters '[{"title":"Intro","start":0,"end":30}]'
-bunny stream video update <video-id> --moments '[{"label":"Demo","timestamp":42}]'
+bunny stream videos update <video-id> --title "Launch keynote"
+bunny stream videos update <video-id> --collection <collection-id>
+bunny stream videos update <video-id> --chapters '[{"title":"Intro","start":0,"end":30}]'
+bunny stream videos update <video-id> --moments '[{"label":"Demo","timestamp":42}]'
 ```
 
 Pass `--collection ""` to remove the video from its collection.
 
-### `bunny stream video thumbnail`
+### `bunny stream videos thumbnail`
 
 Set a video's thumbnail from a local file or a URL.
 
 ```bash
-bunny stream video thumbnail <video-id> --file ./thumb.jpg
-bunny stream video thumbnail <video-id> --url https://example.com/thumb.jpg
+bunny stream videos thumbnail <video-id> --file ./thumb.jpg
+bunny stream videos thumbnail <video-id> --url https://example.com/thumb.jpg
 ```
 
-### `bunny stream video embed`
+### `bunny stream videos embed`
 
 Print the player embed URL. When the library requires [embed view tokens](/stream/token-authentication), the URL is signed.
 
 ```bash
-bunny stream video embed <video-id>
+bunny stream videos embed <video-id>
 
 # Signed URL valid for 30 minutes (default 1h)
-bunny stream video embed <video-id> --expires 30m
+bunny stream videos embed <video-id> --expires 30m
 ```
 
-### `bunny stream video stats`
+### `bunny stream videos stats`
 
 Show a video's views and watch time. See [Statistics](/stream/statistics).
 
 ```bash
-bunny stream video stats <video-id>
-bunny stream video stats <video-id> --from 2026-08-01 --to 2026-08-31 --hourly
-bunny stream video stats <video-id> --heatmap
-bunny stream video stats <video-id> --play-data
+bunny stream videos stats <video-id>
+bunny stream videos stats <video-id> --from 2026-08-01 --to 2026-08-31 --hourly
+bunny stream videos stats <video-id> --heatmap
+bunny stream videos stats <video-id> --play-data
 ```
 
 The range defaults to the last 30 days.
 
-### `bunny stream video cleanup`
+### `bunny stream videos resolutions`
+
+Show which resolutions the library enables, and which ones the video has encoded and stored.
+
+```bash
+bunny stream videos resolutions <video-id>
+```
+
+### `bunny stream videos cleanup`
 
 Delete encoded resolutions, MP4 fallback files, or the stored original to free up storage.
 
 ```bash
 # Preview deleting resolutions the library no longer enables
-bunny stream video cleanup <video-id> --non-configured --dry-run
+bunny stream videos cleanup <video-id> --non-configured --dry-run
 
 # Delete specific resolutions
-bunny stream video cleanup <video-id> --resolutions 240p,360p
+bunny stream videos cleanup <video-id> --resolutions 240p,360p
 
 # Delete the original file
-bunny stream video cleanup <video-id> --original --force
+bunny stream videos cleanup <video-id> --original --force
 ```
 
 | Flag               | Description                                              |
@@ -371,104 +408,95 @@ bunny stream video cleanup <video-id> --original --force
 | `--dry-run`        | Show what would be deleted without deleting anything     |
 | `--force`, `-f`    | Skip the confirmation                                    |
 
-### `bunny stream video delete`
+### `bunny stream videos delete`
 
 ```bash
-bunny stream video delete <video-id>
-bunny stream video delete <video-id> --force
+bunny stream videos delete <video-id>
+bunny stream videos delete <video-id> --force
 ```
-
----
-
-## Collections
-
-Organize a library's videos into [collections](/stream/collections). Add a video to one with `--collection` on `video upload`, `video fetch`, or `video update`.
-
-```bash
-bunny stream collection list
-bunny stream collection create Tutorials
-bunny stream collection show <collection-id>
-bunny stream collection rename <collection-id> "Getting started"
-bunny stream collection delete <collection-id>
-```
-
-<Warning>
-  Deleting a collection also deletes every video inside it.
-</Warning>
 
 ---
 
 ## Captions
 
-Upload your own `.vtt` or `.srt` caption file for one language, or remove one.
+`bunny stream videos captions` uploads your own `.vtt` or `.srt` caption file for one language, or removes one.
 
 ```bash
-bunny stream caption add <video-id> en --file ./captions.vtt
-bunny stream caption add <video-id> de --file ./de.srt --label "Deutsch"
-bunny stream caption delete <video-id> en
+# Upload a file, then pick the video and type the language
+bunny stream videos captions add ./captions.vtt
+
+# Upload for a given video and language
+bunny stream videos captions add ./captions.vtt <video-id> en
+bunny stream videos captions add ./de.srt <video-id> de --label "Deutsch"
+
+# Remove a language
+bunny stream videos captions remove <video-id> en
 ```
 
-To generate captions from the audio instead, use [`bunny stream transcribe`](#bunny-stream-transcribe).
+`captions add` takes the caption file first, then the video and the language code. The player shows `--label` in its caption menu, and it defaults to the language code. When you leave out the language, `captions remove` lets you pick one of the video's caption languages. Pass `--force` to skip the confirmation, which is required when running non-interactively.
+
+To generate captions from the audio instead, use [`bunny stream videos transcribe`](#bunny-stream-videos-transcribe).
 
 ---
 
 ## Encoding
 
-### `bunny stream encode enable`
+### Turn on Premium Encoding
 
-Switch a library to [Premium Encoding](/stream/premium-encoding).
+Switch a library to [Premium Encoding](/stream/premium-encoding) with `libraries update`. Set the codecs, resolutions, and just-in-time encoding in the same command.
 
 ```bash
-bunny stream encode enable
-bunny stream encode enable --lib 12345 --jit --codecs x264,vp9 --resolutions 720p,1080p
+bunny stream libraries update my-library --encoding-tier premium --jit --codecs x264,vp9 --resolutions 720p,1080p
 ```
 
-### `bunny stream encode reencode`
+### `bunny stream videos encode`
 
 Re-encode a video with the library's current encoding settings. It works from the stored original file, so the library needs `--keep-original` turned on when the video was uploaded.
 
 ```bash
-bunny stream encode reencode <video-id>
+bunny stream videos encode <video-id>
 ```
+
+Re-encoding is billed like the original encode. If the library transcribes new uploads automatically, the video is transcribed again too.
 
 ---
 
 ## Transcribing and Smart Generate
 
-Both commands are billed. `transcribe` prints a cost estimate when it queues the job. See [Stream pricing](/stream/pricing).
+Both commands are billed. `videos transcribe` prints a cost estimate when it queues the job. See [Stream pricing](/stream/pricing).
 
-### `bunny stream transcribe`
+### `bunny stream videos transcribe`
 
 Transcribe a video's audio into captions with [transcribing](/stream/transcribing).
 
 ```bash
 # Use the library's transcribing defaults
-bunny stream transcribe <video-id>
+bunny stream videos transcribe <video-id>
 
 # Transcribe into two languages and generate a title
-bunny stream transcribe <video-id> --languages en,de --source-language en --generate-title
+bunny stream videos transcribe <video-id> --target-languages en,de --source-language en --generate-title
 ```
 
-| Flag                     | Description                                                  |
-| ------------------------ | ------------------------------------------------------------ |
-| `--languages`            | Target languages, comma-separated ISO 639-1 codes            |
-| `--source-language`      | Language spoken in the video                                 |
-| `--generate-title`       | Generate the title from the transcript                       |
-| `--generate-description` | Generate the description from the transcript                 |
-| `--generate-chapters`    | Generate chapters from the transcript                        |
-| `--generate-moments`     | Generate moments from the transcript                         |
-| `--force`, `-f`          | Re-run and override the library's transcribing defaults      |
+| Flag                     | Description                                                                    |
+| ------------------------ | ------------------------------------------------------------------------------ |
+| `--target-languages`     | Target languages, comma-separated ISO 639-1 codes                              |
+| `--source-language`      | Language spoken in the video, as an ISO 639-1 code                             |
+| `--generate-title`       | Generate the title from the transcript                                         |
+| `--generate-description` | Generate the description from the transcript                                   |
+| `--generate-chapters`    | Generate chapters from the transcript                                          |
+| `--generate-moments`     | Generate moments from the transcript                                           |
+| `--overwrite`            | Overwrite the existing transcription and override the library's transcribing defaults |
 
-### `bunny stream smart`
+### `bunny stream videos smart`
 
 Generate a title, description, chapters, or moments from a video's existing captions with [Smart Generate](/stream/smart-generate).
 
 ```bash
-bunny stream smart <video-id> --title --description
-bunny stream smart <video-id> --chapters --moments
+bunny stream videos smart <video-id> --title --description
+bunny stream videos smart <video-id> --chapters --moments
 
 # Transcribe first if the video has no captions (billed)
-bunny stream smart <video-id> --chapters --transcribe
+bunny stream videos smart <video-id> --chapters --transcribe
 ```
 
 | Flag                | Description                                                                         |
@@ -480,6 +508,24 @@ bunny stream smart <video-id> --chapters --transcribe
 | `--source-language` | Caption track to generate from, such as `en`                                        |
 | `--transcribe`      | Transcribe first if the video has no captions. Required to do so non-interactively. |
 | `--force`, `-f`     | Never fall back to a picker, so the run only acts on the library and video you named |
+
+---
+
+## Collections
+
+`bunny stream collections` also answers to `collection`. Organize a library's videos into [collections](/stream/collections). Add a video to one with `--collection` on `videos upload`, `videos fetch`, or `videos update`.
+
+```bash
+bunny stream collections list
+bunny stream collections create Tutorials
+bunny stream collections show <collection-id>
+bunny stream collections update <collection-id> --name "Getting started"
+bunny stream collections delete <collection-id>
+```
+
+<Warning>
+  Deleting a collection also deletes every video inside it.
+</Warning>
 
 ---
 
@@ -507,19 +553,21 @@ You can run an import again safely. It skips finished videos, leaves videos that
 
 ### Source credentials
 
-Set the source's credentials as environment variables before you run the import. The CLI never takes them as flags.
+The CLI reads the source's credentials from environment variables and never takes them as flags. In an interactive run, it asks for any required value that isn't set, then offers to save what you typed for the active CLI profile, so later runs don't ask again.
 
-| Source       | Environment variables                                                                                                                                                              |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vimeo`      | `VIMEO_ACCESS_TOKEN` with the `public`, `private`, and `video_files` scopes. Downloads need a paid Vimeo plan.                                                                     |
-| `s3`         | `S3_BUCKET`, `AWS_REGION` (default `us-east-1`). Optional: `S3_PREFIX`, `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `S3_PRESIGNED_URL_TTL`, `S3_ENDPOINT` |
-| `wistia`     | `WISTIA_ACCESS_TOKEN`                                                                                                                                                              |
-| `mux`        | `MUX_TOKEN_ID`, `MUX_TOKEN_SECRET`                                                                                                                                                 |
-| `cloudflare` | `CLOUDFLARE_API_TOKEN` with Stream:Edit, `CLOUDFLARE_ACCOUNT_ID`                                                                                                                   |
-| `jwplayer`   | `JWPLAYER_API_KEY` (v2), `JWPLAYER_SITE_ID`                                                                                                                                        |
-| `brightcove` | `BRIGHTCOVE_CLIENT_ID`, `BRIGHTCOVE_CLIENT_SECRET` with CMS video read, `BRIGHTCOVE_ACCOUNT_ID`                                                                                     |
+If you leave out `--source`, the CLI uses the one source whose credentials are all set, and otherwise asks you to pick one.
 
-For S3, leave both AWS keys unset to use the default AWS credential chain, such as a profile, SSO, or an instance role.
+| Source       | Environment variables                                                                                                                                                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vimeo`      | `VIMEO_ACCESS_TOKEN` with the `public`, `private`, and `video_files` scopes. Downloads need a Vimeo Standard plan or above.                                                                                                                  |
+| `s3`         | `S3_BUCKET`, `AWS_REGION` or `AWS_DEFAULT_REGION` (default `us-east-1`). Optional: `S3_PREFIX`, `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `S3_PRESIGNED_URL_TTL`, `S3_ENDPOINT` or `AWS_ENDPOINT_URL_S3`, `S3_INCLUDE_TS` |
+| `wistia`     | `WISTIA_ACCESS_TOKEN`                                                                                                                                                                                                                       |
+| `mux`        | `MUX_TOKEN_ID`, `MUX_TOKEN_SECRET`                                                                                                                                                                                                          |
+| `cloudflare` | `CLOUDFLARE_API_TOKEN` with Stream:Edit, `CLOUDFLARE_ACCOUNT_ID`                                                                                                                                                                            |
+| `jwplayer`   | `JWPLAYER_API_KEY` (v2), `JWPLAYER_SITE_ID`                                                                                                                                                                                                 |
+| `brightcove` | `BRIGHTCOVE_CLIENT_ID`, `BRIGHTCOVE_CLIENT_SECRET` with CMS video read, `BRIGHTCOVE_ACCOUNT_ID`                                                                                                                                              |
+
+For S3, leave both AWS keys unset to use the default AWS credential chain, such as a profile, SSO, or an instance role. The IAM policy needs `s3:ListBucket` and `s3:GetObject`.
 
 ### `bunny stream import`
 
@@ -535,7 +583,7 @@ For S3, leave both AWS keys unset to use the default AWS credential chain, such 
 | `--retry-stalled`                   | Delete and import again videos stuck at zero bytes                                                |
 | `--force`, `-f`                     | Skip the confirmation. Required when running non-interactively.                                   |
 | `--concurrency`, `-c`               | Videos handed to Stream in parallel, 1 to 20 (default 3)                                          |
-| `--bucket`, `--prefix`, `--url-ttl` | S3 overrides for one run                                                                          |
+| `--bucket`, `--prefix`, `--url-ttl` | S3 overrides for one run. `--url-ttl` takes 3600 to 604800 seconds.                               |
 | `--include-ts`                      | S3: import `.ts` files too                                                                        |
 | `--request-timeout`                 | Seconds per HTTP request (default 30)                                                             |
 | `--video-timeout`                   | Seconds per video hand-off, or per encode with `--wait` (default 5400)                            |

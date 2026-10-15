@@ -28,11 +28,11 @@ During automatic transcription, the language of the video is detected based on t
 
 ## Transcribe from the CLI
 
-[`bunny stream transcribe`](/cli/commands/stream#bunny-stream-transcribe) transcribes one video. To transcribe every new upload, turn it on for the library with [`bunny stream library update`](/cli/commands/stream#bunny-stream-library-update):
+[`bunny stream videos transcribe`](/cli/commands/stream#bunny-stream-videos-transcribe) transcribes one video. To transcribe every new upload, turn it on for the library with [`bunny stream libraries update`](/cli/commands/stream#bunny-stream-libraries-update):
 
 ```bash
-bunny stream transcribe <video-id> --languages en,de --source-language en
-bunny stream library update my-library --transcribing --transcribing-languages en,de
+bunny stream videos transcribe <video-id> --target-languages en,de --source-language en
+bunny stream libraries update my-library --transcribing --transcribing-languages en,de
 ```
 
 ## Supported languages and ISO 639-1 language codes

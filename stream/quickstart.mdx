@@ -50,11 +50,12 @@ A video library holds your videos along with their player, encoding, and securit
     Create a library and link the current directory to it. The upload command below uses the linked library.
 
     ```bash
-    bunny stream library create my-library
-    bunny stream library link my-library
+    bunny stream libraries create my-library --link
     ```
 
     The library stores videos in DE and replicates them to SG, LA, and NY. Pass `--replication-regions` to pick other regions.
+
+    The command then offers to save the library ID and API key to `.env`, and to add videos. You can skip adding videos for now, because the next step uploads one.
 
     <Warning>
       Replication regions can't be removed once they're enabled.
@@ -94,10 +95,10 @@ A video library holds your videos along with their player, encoding, and securit
     Upload the file to the linked library:
 
     ```bash
-    bunny stream video upload ./video.mp4
+    bunny stream videos upload ./video.mp4
     ```
 
-    The command prints the video ID and a Direct Play link you can share. Encoding starts when the upload finishes. Run `bunny stream video show <video-id>` to check on it.
+    The command prints the video ID and a Direct Play link you can share. Encoding starts when the upload finishes. Run `bunny stream videos show <video-id>` to check on it.
   </Tab>
 </Tabs>
 
@@ -123,7 +124,7 @@ A video library holds your videos along with their player, encoding, and securit
     Print the video's embed URL:
 
     ```bash
-    bunny stream video embed <video-id>
+    bunny stream videos embed <video-id>
     ```
 
     Use the URL as the `src` of an `<iframe>` on your page. See [`bunny stream`](/cli/commands/stream) for every Stream command.

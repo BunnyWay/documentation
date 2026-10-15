@@ -5,10 +5,10 @@ description: "Bunny Stream's Premium Encoding Tier is designed specifically for 
 
 With support for advanced encoding formats like x265 (HEVC), VP9, and AV1 (AV1 and x265 coming soon), you can optimize your videos for various devices and network conditions. This not only improves the playability experience but also allows for efficient bandwidth usage without compromising quality. Explore how our advanced encoding features empower you to elevate your audience's viewing experience. By leveraging the Premium Encoding Tier, you can deliver high-quality content more effectively, providing a seamless and engaging experience for your users.
 
-To turn on Premium Encoding with the CLI, use [`bunny stream encode enable`](/cli/commands/stream#bunny-stream-encode-enable):
+To turn on Premium Encoding with the CLI, set `--encoding-tier premium` with [`bunny stream libraries update`](/cli/commands/stream#turn-on-premium-encoding):
 
 ```bash
-bunny stream encode enable --lib my-library --jit --codecs x264,vp9
+bunny stream libraries update my-library --encoding-tier premium --jit --codecs x264,vp9
 ```
 
 ## Just-in-Time encoding
