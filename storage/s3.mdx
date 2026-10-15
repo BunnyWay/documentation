@@ -276,16 +276,17 @@ Additional regions will be added in the future. Regions that do not yet support 
 
 The following S3 features are limited by:
 
-- **CORS Configuration**: CORS is not configurable — the S3 endpoint always responds with `Access-Control-Allow-Origin: *`. To control CORS, front the storage zone with a pull zone and configure it at the CDN level for file delivery.
-- **Versioning**: Object versioning is not supported
 - **ACLs**: Access Control Lists are not supported
-- **Server-Side Encryption**: SSE/SSE-C encryption is not currently supported
-- **Object Tagging**: Object and bucket tagging is not supported
-- **Lifecycle Policies**: Automatic lifecycle transitions are not supported
+- **CORS Configuration**: CORS is not configurable — the S3 endpoint always responds with `Access-Control-Allow-Origin: *`. To control CORS, front the storage zone with a pull zone and configure it at the CDN level for file delivery.
 - **Custom Metadata**: User-defined metadata (`x-amz-meta-*`) is not supported, so it is not carried over by `CopyObject`
+- **Lifecycle Policies**: Automatic lifecycle transitions are not supported
+- **ListObjects / ListObjectsV2 / ListMultipartUploads** : Only '/' is supported as a valid delimiter
 - **Multipart Limits**: Maximum 10,000 parts per upload
 - **Multipart Session Expiry**: Sessions expire after 10 days
+- **Object Tagging**: Object and bucket tagging is not supported
 - **Presigned URLs**: Minimum time: 1 second | Maximum time: 7 days (604800 seconds)
+- **Server-Side Encryption**: SSE/SSE-C encryption is not currently supported
+- **Versioning**: Object versioning is not supported
 
 ## Error Codes
 
