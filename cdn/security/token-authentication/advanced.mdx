@@ -83,6 +83,10 @@ By default, all query string parameters present on the URL are included in the t
 
 Set `ignoreParams` to `true` when you need to append arbitrary query parameters to signed URLs after generation, for example, analytics tags, cache-busting parameters, or player configuration. When enabled, the `token_ignore_params=true` parameter is included in the signature instead of the actual query parameters.
 
+<Warning>
+  With `ignoreParams` enabled, the signing libraries leave country restrictions (`token_countries`, `token_countries_blocked`) and speed limits (`limit`) out of the signed URL, so they don't apply. Don't enable it for URLs that rely on either.
+</Warning>
+
 ## Speed limits
 
 The `limit` parameter restricts the maximum download speed for the request in kB/s. Pass the desired speed as the `speedLimit` parameter when signing. A value of `0` means no limit.
