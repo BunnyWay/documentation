@@ -1,0 +1,79 @@
+---
+title: "Migrate to Bunny Storage from Amazon S3, Cloudflare R2, or Backblaze B2"
+sidebarTitle: "Migrate from S3"
+description: "Copy your buckets to Bunny Storage with rclone and point your app at the S3-compatible API."
+---
+
+import RcloneRemote from "/snippets/storage/rclone-remote.mdx";
+
+Bunny Storage has an [S3-compatible API](/storage/s3), so moving a bucket means copying the objects with [rclone](https://rclone.org) and pointing your S3 client at a new endpoint. Your old bucket keeps serving traffic until you switch.
+
+<Steps>
+  <Step title="Create a storage zone">
+    [Create a storage zone](/storage/s3#creating-a-storage-zone-with-s3-compatibility) with **S3 Compatibility** enabled, and add [replication regions](/storage/replication) near your users.
+  </Step>
+  <Step title="Connect rclone to Bunny Storage">
+    <RcloneRemote />
+  </Step>
+  <Step title="Connect rclone to your current provider">
+    <Tabs>
+      <Tab title="Amazon S3">
+        ```bash
+        rclone config create source s3 \
+          provider=AWS \
+          access_key_id=your-aws-access-key \
+          secret_access_key=your-aws-secret-key \
+          region=us-east-1
+        ```
+      </Tab>
+      <Tab title="Cloudflare R2">
+        ```bash
+        rclone config create source s3 \
+          provider=Cloudflare \
+          access_key_id=your-r2-access-key \
+          secret_access_key=your-r2-secret-key \
+          endpoint=https://your-account-id.r2.cloudflarestorage.com
+        ```
+      </Tab>
+      <Tab title="Backblaze B2">
+        ```bash
+        rclone config create source b2 \
+          account=your-key-id \
+          key=your-application-key
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Copy your objects">
+    ```bash
+    rclone copy source:your-bucket bunny:your-storage-zone-name --progress --transfers 16
+    ```
+
+    Run `rclone check source:your-bucket bunny:your-storage-zone-name` when it finishes to confirm both sides match.
+  </Step>
+  <Step title="Switch your app">
+    Point your S3 client at Bunny Storage. The access key ID is your storage zone name, and the secret is its password:
+
+    ```ts
+    import { S3Client } from "@aws-sdk/client-s3";
+
+    const s3 = new S3Client({
+      region: "de",
+      endpoint: "https://de-s3.storage.bunnycdn.com",
+      forcePathStyle: true,
+      requestChecksumCalculation: "WHEN_REQUIRED",
+      credentials: {
+        accessKeyId: process.env.BUNNY_STORAGE_ZONE!,
+        secretAccessKey: process.env.BUNNY_STORAGE_PASSWORD!,
+      },
+    });
+    ```
+
+    Run `rclone copy` once more after you deploy, to pick up anything written during the switch.
+  </Step>
+  <Step title="Serve files through Bunny CDN">
+    [Create a pull zone](/cdn/quickstart) with **Origin Type** set to **Storage Zone** and select your new zone.
+  </Step>
+</Steps>
+
+Check the [supported S3 operations](/storage/s3#supported-s3-operations) against the features your app uses.

@@ -1,0 +1,36 @@
+---
+title: "Manage Bunny Storage with the CLI"
+sidebarTitle: "CLI"
+description: "Create storage zones, upload and download files, and print connection details with the bunny.net CLI."
+---
+
+The [bunny.net CLI](/cli) creates and manages storage zones and the files in them from your terminal. It looks up each zone's password for you, so your account login is all it needs.
+
+<Steps>
+  <Step title="Install and log in">
+    Follow the [CLI quickstart](/cli/quickstart) to install the CLI and authenticate.
+  </Step>
+  <Step title="Create a zone and link this directory">
+    ```bash
+    bunny storage zones create my-zone --region DE --pull-zone --link
+    ```
+
+    `--pull-zone` also creates a pull zone that serves the zone on the web. `--link` writes `.bunny/storage.json`, so later commands in this directory use `my-zone` without a `--zone` flag.
+  </Step>
+  <Step title="Upload and list files">
+    ```bash
+    bunny storage files upload ./logo.png --to images/
+    bunny storage files list images/
+    ```
+  </Step>
+  <Step title="Connect another tool">
+    Print the zone's credentials as config for another tool, or save them to `.env`:
+
+    ```bash
+    bunny storage zones credentials --format rclone >> ~/.config/rclone/rclone.conf
+    bunny storage zones credentials --connection http --save-env
+    ```
+  </Step>
+</Steps>
+
+The [`bunny storage` reference](/cli/commands/storage) lists every command and flag, including zone updates, custom domains, and downloads.

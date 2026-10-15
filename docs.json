@@ -731,6 +731,7 @@
                 "group": "Manage Files & Objects",
                 "pages": [
                   "storage/dashboard",
+                  "storage/cli",
                   "storage/http",
                   "storage/s3",
                   "storage/ftp",
@@ -748,6 +749,12 @@
               {
                 "group": "Guides",
                 "pages": [
+                  "storage/guides/serve-private-files",
+                  "storage/guides/accept-user-uploads",
+                  "storage/guides/serve-and-transform-images",
+                  "storage/guides/host-large-downloads",
+                  "storage/guides/migrate-from-s3",
+                  "storage/guides/back-up-and-sync-with-rclone",
                   {
                     "group": "Static Site Hosting",
                     "pages": [
@@ -1152,6 +1159,7 @@
                   "cli/commands/db",
                   "cli/commands/scripts",
                   "cli/commands/sites",
+                  "cli/commands/storage",
                   "cli/commands/sandbox",
                   {
                     "group": "Registry",

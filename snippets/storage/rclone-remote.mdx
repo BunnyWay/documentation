@@ -1,0 +1,9 @@
+Copy the zone name and password from your storage zone's **Access** tab, then create a remote called `bunny`. Replace `de` with your zone's primary region:
+
+```bash
+rclone config create bunny s3 \
+  provider=Other \
+  access_key_id=your-storage-zone-name \
+  secret_access_key=your-storage-password \
+  endpoint=https://de-s3.storage.bunnycdn.com
+```

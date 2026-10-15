@@ -1,0 +1,74 @@
+---
+title: "Host large downloads on Bunny Storage"
+sidebarTitle: "Large downloads"
+description: "Serve large files from Bunny Storage through Bunny CDN, with downloads that resume."
+---
+
+Put installers, game builds, and datasets in a storage zone and serve them through Bunny CDN, with downloads people can pause and resume.
+
+<Steps>
+  <Step title="Create a storage zone">
+    [Create a storage zone](/storage/quickstart) on the **Standard** tier, which is built for large files. Add [replication regions](/storage/replication) near your users.
+  </Step>
+  <Step title="Upload your files">
+    <Tabs>
+      <Tab title="AWS CLI">
+        On storage zones with [S3 compatibility](/storage/s3), the AWS CLI uses [multipart uploads](/storage/s3#multipart-upload-operations) for large files automatically, and a part that fails retries on its own. [Set up a `bunny` profile](/storage/s3#aws-cli) first, then run:
+
+        ```bash
+        aws s3 cp ./game-1.4.2.zip s3://your-storage-zone-name/releases/game-1.4.2.zip \
+          --profile bunny \
+          --endpoint-url https://de-s3.storage.bunnycdn.com
+        ```
+      </Tab>
+      <Tab title="HTTP API">
+        The [HTTP API](/storage/http#upload-a-file) works with any storage zone. Use the endpoint for your zone's [primary region](/storage/http#storage-endpoints):
+
+        ```bash
+        curl -X PUT \
+          https://storage.bunnycdn.com/your-storage-zone-name/releases/game-1.4.2.zip \
+          -H "AccessKey: your-storage-password" \
+          --upload-file ./game-1.4.2.zip
+        ```
+      </Tab>
+      <Tab title="Dashboard">
+        Open your storage zone's **File manager** and click **Upload**. This suits the odd release uploaded by hand. See [upload files](/storage/dashboard#upload-files) for folders and more.
+
+        <Frame>
+          ![Upload File or Folder](/images/storage/upload-file-or-folder.png)
+        </Frame>
+      </Tab>
+    </Tabs>
+
+    Put the version in each file name to give every release its own URL.
+  </Step>
+  <Step title="Connect a pull zone">
+    [Create a pull zone](/cdn/quickstart) with **Origin Type** set to **Storage Zone** and select your zone.
+  </Step>
+  <Step title="Turn on Optimize for Video Delivery">
+    In the pull zone's **Caching** settings, enable **Optimize for Video Delivery**. The CDN then fetches large files in chunks, and a paused download can pick up where it stopped. See [video and large file delivery](/cdn/smart-cache#video-and-large-file-delivery).
+  </Step>
+  <Step title="Force downloads">
+    Browsers open PDFs, videos, images, and text files in a tab. A **Force Download** [edge rule](/cdn/edge-rules) makes the browser save them to disk.
+
+    In the pull zone, go to **Edge Rules**, click **Add Edge Rule**, and set:
+
+    | Setting | Value |
+    | --- | --- |
+    | **Action** | Force Download |
+    | **Condition Type** | Request URL |
+    | **Match Type** | Match Any |
+    | **Condition Value** | `*/releases/*` |
+
+    Click **Save Edge Rule**. Every file under `/releases/` now downloads when someone opens its link. The [trigger path guide](/cdn/edge-rules/trigger-path) has more patterns, such as `*.pdf` for one file type.
+  </Step>
+  <Step title="Test a download">
+    A `206` response means resumable downloads are working:
+
+    ```bash
+    curl -I -H "Range: bytes=0-1023" https://downloads.b-cdn.net/releases/game-1.4.2.zip
+    ```
+  </Step>
+</Steps>
+
+For paid downloads, sign each link with [token authentication](/storage/guides/serve-private-files). For video that people watch in the browser, use [Bunny Stream](/stream).

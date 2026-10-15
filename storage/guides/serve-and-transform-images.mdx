@@ -1,0 +1,49 @@
+---
+title: "Serve and transform images from Bunny Storage"
+sidebarTitle: "Images"
+description: "Store original images in Bunny Storage and resize, crop, and convert them on request with Bunny Optimizer."
+---
+
+Upload one original of each image to Bunny Storage, and Bunny Optimizer resizes, crops, and converts it based on the URL. The CDN caches each variant after its first request.
+
+<Steps>
+  <Step title="Upload your images">
+    Upload full-size originals with the [dashboard](/storage/dashboard#upload-files), the [HTTP API](/storage/http#upload-a-file), or [rclone](/storage/guides/back-up-and-sync-with-rclone). Images that ship with your [static site](/storage/static-site-hosting) are already there.
+  </Step>
+  <Step title="Connect a pull zone">
+    [Create a pull zone](/cdn/quickstart) with **Origin Type** set to **Storage Zone** and select your zone. If you host a static site, use its pull zone.
+  </Step>
+  <Step title="Turn on Bunny Optimizer">
+    In the pull zone, click **Optimizer** and turn it on. Then enable the **Dynamic Image API** under **Optimizer** > **Settings**. The [Optimizer quickstart](/optimizer/quickstart) shows both screens.
+  </Step>
+  <Step title="Request a transformed image">
+    Add [Dynamic Images](/optimizer/dynamic-images/overview) parameters to any image URL:
+
+    ```bash
+    # 400 pixels wide
+    https://myapp.b-cdn.net/products/chair.jpg?width=400
+
+    # Square thumbnail
+    https://myapp.b-cdn.net/products/chair.jpg?aspect_ratio=1:1&width=300
+
+    # Avatar cropped around a face
+    https://myapp.b-cdn.net/avatars/42.jpg?face_crop=200,200
+
+    # Converted to AVIF
+    https://myapp.b-cdn.net/products/chair.jpg?format=avif
+    ```
+  </Step>
+</Steps>
+
+Save the settings you use most as [Image Classes](/optimizer/image-classes), then ask for them by name with `?class=thumbnail`.
+
+Next.js and Astro can generate Optimizer URLs from their image components:
+
+<Columns cols={2}>
+  <Card title="Next.js" icon="/logo/frameworks/nextjs.svg" href="/cdn/integrations/frameworks/nextjs" />
+  <Card title="Astro" icon="/logo/frameworks/astro.svg" href="/cdn/integrations/frameworks/astro" />
+</Columns>
+
+<Card title="Image gallery with Next.js" icon="github" href="https://github.com/BunnyWay/examples/tree/main/storage/image-gallery-nextjs" horizontal>
+  Upload images to Bunny Storage and show Optimizer thumbnails, cropped and resized from each original.
+</Card>

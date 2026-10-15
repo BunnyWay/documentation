@@ -1,0 +1,340 @@
+---
+title: "Accept user uploads with Bunny Storage"
+sidebarTitle: "User uploads"
+description: "Let visitors upload files to Bunny Storage from the browser with presigned URLs, or through your own server."
+---
+
+Every upload starts on your server, which picks the path and keeps the storage zone password to itself. With S3 compatibility enabled, your server signs a presigned URL and the browser sends the file to Bunny Storage directly. Your server never handles the bytes. We recommend this for most apps. Without S3, your server receives the file and streams it to storage with the SDK.
+
+Visitors download the files through the pull zone [connected to your storage zone](/storage/quickstart).
+
+<Tabs>
+  <Tab title="With S3">
+    Create your storage zone with **S3 Compatibility** enabled to use the [S3-compatible API](/storage/s3).
+
+    <Steps>
+      <Step title="Install an S3 library">
+        <Tabs>
+          <Tab title="Edge Scripting">
+            ```bash
+            npm install aws4fetch
+            ```
+          </Tab>
+          <Tab title="Node.js">
+            ```bash
+            npm install @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
+            ```
+          </Tab>
+          <Tab title="Go">
+            ```bash
+            go get github.com/aws/aws-sdk-go-v2/aws github.com/aws/aws-sdk-go-v2/credentials github.com/aws/aws-sdk-go-v2/service/s3
+            ```
+          </Tab>
+        </Tabs>
+      </Step>
+      <Step title="Sign an upload URL on your server">
+        <Tabs>
+          <Tab title="Edge Scripting">
+            Save the zone name and password as [secrets](/scripting/secrets), then deploy this [standalone script](/scripting/standalone/overview):
+
+            ```ts
+            import * as BunnySDK from "@bunny.net/edgescript-sdk";
+            import process from "node:process";
+            import { AwsClient } from "aws4fetch";
+
+            const zone = process.env.BUNNY_STORAGE_ZONE!;
+
+            const s3 = new AwsClient({
+              accessKeyId: zone,
+              secretAccessKey: process.env.BUNNY_STORAGE_PASSWORD!,
+              service: "s3",
+              region: "de",
+            });
+
+            BunnySDK.net.http.serve(async (): Promise<Response> => {
+              const key = `uploads/${crypto.randomUUID()}`;
+
+              const url = new URL(`https://de-s3.storage.bunnycdn.com/${zone}/${key}`);
+              url.searchParams.set("X-Amz-Expires", "300");
+
+              const signed = await s3.sign(url, { method: "PUT", aws: { signQuery: true } });
+
+              return Response.json({ uploadUrl: signed.url, url: `https://myapp.b-cdn.net/${key}` });
+            });
+            ```
+          </Tab>
+          <Tab title="Node.js">
+            ```ts
+            import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+            import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+            const s3 = new S3Client({
+              region: "de",
+              endpoint: "https://de-s3.storage.bunnycdn.com",
+              forcePathStyle: true,
+              requestChecksumCalculation: "WHEN_REQUIRED",
+              credentials: {
+                accessKeyId: process.env.BUNNY_STORAGE_ZONE!,
+                secretAccessKey: process.env.BUNNY_STORAGE_PASSWORD!,
+              },
+            });
+
+            export async function createUploadUrl(contentType: string) {
+              const key = `uploads/${crypto.randomUUID()}`;
+
+              const uploadUrl = await getSignedUrl(
+                s3,
+                new PutObjectCommand({
+                  Bucket: process.env.BUNNY_STORAGE_ZONE!,
+                  Key: key,
+                  ContentType: contentType,
+                }),
+                { expiresIn: 300 },
+              );
+
+              return { uploadUrl, url: `https://myapp.b-cdn.net/${key}` };
+            }
+            ```
+          </Tab>
+          <Tab title="Go">
+            ```go
+            package main
+
+            import (
+            	"crypto/rand"
+            	"encoding/json"
+            	"net/http"
+            	"os"
+            	"time"
+
+            	"github.com/aws/aws-sdk-go-v2/aws"
+            	"github.com/aws/aws-sdk-go-v2/credentials"
+            	"github.com/aws/aws-sdk-go-v2/service/s3"
+            )
+
+            var zone = os.Getenv("BUNNY_STORAGE_ZONE")
+
+            var presigner = s3.NewPresignClient(s3.New(s3.Options{
+            	Region:                     "de",
+            	BaseEndpoint:               aws.String("https://de-s3.storage.bunnycdn.com"),
+            	UsePathStyle:               true,
+            	RequestChecksumCalculation: aws.RequestChecksumCalculationWhenRequired,
+            	Credentials: credentials.NewStaticCredentialsProvider(
+            		zone, os.Getenv("BUNNY_STORAGE_PASSWORD"), "",
+            	),
+            }))
+
+            func createUploadURL(w http.ResponseWriter, r *http.Request) {
+            	var body struct {
+            		ContentType string `json:"contentType"`
+            	}
+            	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+            		http.Error(w, "invalid body", http.StatusBadRequest)
+            		return
+            	}
+
+            	key := "uploads/" + rand.Text()
+
+            	req, err := presigner.PresignPutObject(r.Context(), &s3.PutObjectInput{
+            		Bucket:      aws.String(zone),
+            		Key:         aws.String(key),
+            		ContentType: aws.String(body.ContentType),
+            	}, s3.WithPresignExpires(5*time.Minute))
+            	if err != nil {
+            		http.Error(w, err.Error(), http.StatusInternalServerError)
+            		return
+            	}
+
+            	json.NewEncoder(w).Encode(map[string]string{
+            		"uploadUrl": req.URL,
+            		"url":       "https://myapp.b-cdn.net/" + key,
+            	})
+            }
+
+            func main() {
+            	http.HandleFunc("POST /api/upload-url", createUploadURL)
+            	http.ListenAndServe(":8080", nil)
+            }
+            ```
+          </Tab>
+        </Tabs>
+      </Step>
+      <Step title="Upload from the browser">
+        Ask your server for an upload URL, and `PUT` the file there:
+
+        ```ts
+        const { uploadUrl, url } = await fetch("/api/upload-url", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contentType: file.type }),
+        }).then((res) => res.json());
+
+        await fetch(uploadUrl, {
+          method: "PUT",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+        ```
+
+        The file is live at `url` as soon as the upload finishes.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Without S3">
+    This works with any storage zone.
+
+    <Steps>
+      <Step title="Install the SDK">
+        <Tabs>
+          <Tab title="Edge Scripting">
+            ```bash
+            npm install @bunny.net/storage-sdk
+            ```
+          </Tab>
+          <Tab title="Node.js">
+            ```bash
+            npm install @bunny.net/storage-sdk
+            ```
+          </Tab>
+          <Tab title="Go">
+            Go calls the [HTTP API](/storage/http) with its standard library and needs no packages.
+          </Tab>
+        </Tabs>
+      </Step>
+      <Step title="Add an upload handler">
+        Each handler reads a `multipart/form-data` request and streams the file to storage under a unique path.
+
+        <Tabs>
+          <Tab title="Edge Scripting">
+            Save the zone name and password as [secrets](/scripting/secrets), then deploy this [standalone script](/scripting/standalone/overview):
+
+            ```ts
+            import * as BunnySDK from "@bunny.net/edgescript-sdk";
+            import * as BunnyStorageSDK from "@bunny.net/storage-sdk";
+            import process from "node:process";
+
+            const zone = BunnyStorageSDK.zone.connect_with_accesskey(
+              BunnyStorageSDK.regions.StorageRegion.Falkenstein,
+              process.env.BUNNY_STORAGE_ZONE!,
+              process.env.BUNNY_STORAGE_PASSWORD!,
+            );
+
+            BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+              const form = await request.formData();
+              const file = form.get("file") as File;
+
+              const path = `/uploads/${crypto.randomUUID()}-${file.name}`;
+
+              await BunnyStorageSDK.file.upload(zone, path, file.stream(), {
+                contentType: file.type,
+              });
+
+              return Response.json({ url: `https://myapp.b-cdn.net${path}` });
+            });
+            ```
+          </Tab>
+          <Tab title="Node.js">
+            ```ts
+            import * as BunnyStorageSDK from "@bunny.net/storage-sdk";
+
+            const zone = BunnyStorageSDK.zone.connect_with_accesskey(
+              BunnyStorageSDK.regions.StorageRegion.Falkenstein,
+              process.env.BUNNY_STORAGE_ZONE!,
+              process.env.BUNNY_STORAGE_PASSWORD!,
+            );
+
+            export async function handleUpload(request: Request) {
+              const form = await request.formData();
+              const file = form.get("file") as File;
+
+              const path = `/uploads/${crypto.randomUUID()}-${file.name}`;
+
+              await BunnyStorageSDK.file.upload(zone, path, file.stream(), {
+                contentType: file.type,
+              });
+
+              return Response.json({ url: `https://myapp.b-cdn.net${path}` });
+            }
+            ```
+          </Tab>
+          <Tab title="Go">
+            ```go
+            package main
+
+            import (
+            	"crypto/rand"
+            	"encoding/json"
+            	"net/http"
+            	"net/url"
+            	"os"
+            )
+
+            var (
+            	zone     = os.Getenv("BUNNY_STORAGE_ZONE")
+            	password = os.Getenv("BUNNY_STORAGE_PASSWORD")
+            )
+
+            func upload(w http.ResponseWriter, r *http.Request) {
+            	file, header, err := r.FormFile("file")
+            	if err != nil {
+            		http.Error(w, "missing file", http.StatusBadRequest)
+            		return
+            	}
+            	defer file.Close()
+
+            	path := "uploads/" + rand.Text() + "-" + url.PathEscape(header.Filename)
+
+            	req, err := http.NewRequestWithContext(r.Context(), http.MethodPut,
+            		"https://storage.bunnycdn.com/"+zone+"/"+path, file)
+            	if err != nil {
+            		http.Error(w, err.Error(), http.StatusInternalServerError)
+            		return
+            	}
+            	req.Header.Set("AccessKey", password)
+            	req.Header.Set("Content-Type", header.Header.Get("Content-Type"))
+
+            	res, err := http.DefaultClient.Do(req)
+            	if err != nil {
+            		http.Error(w, err.Error(), http.StatusBadGateway)
+            		return
+            	}
+            	defer res.Body.Close()
+
+            	if res.StatusCode != http.StatusCreated {
+            		http.Error(w, "upload failed: "+res.Status, http.StatusBadGateway)
+            		return
+            	}
+
+            	json.NewEncoder(w).Encode(map[string]string{
+            		"url": "https://myapp.b-cdn.net/" + path,
+            	})
+            }
+
+            func main() {
+            	http.HandleFunc("POST /upload", upload)
+            	http.ListenAndServe(":8080", nil)
+            }
+            ```
+
+            The storage endpoint depends on your zone's primary region. See [storage endpoints](/storage/http#storage-endpoints).
+          </Tab>
+        </Tabs>
+      </Step>
+      <Step title="Upload a file">
+        Post a form with a `file` field to your handler. The response contains the file's CDN URL.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Example apps
+
+Runnable versions of both tabs are in [BunnyWay/examples](https://github.com/BunnyWay/examples/tree/main/storage).
+
+<CardGroup cols={3}>
+  <Card title="Presigned upload with Next.js" icon="/logo/frameworks/nextjs.svg" href="https://github.com/BunnyWay/examples/tree/main/storage/s3-presigned-upload-nextjs" />
+  <Card title="Multipart upload with Uppy" icon="/logo/frameworks/react.svg" href="https://github.com/BunnyWay/examples/tree/main/storage/s3-uppy-multipart-react" />
+  <Card title="SDK upload with Hono" icon="/logo/frameworks/hono.svg" href="https://github.com/BunnyWay/examples/tree/main/storage/sdk-upload-hono" />
+</CardGroup>
+
+To keep uploads private, serve them through a pull zone with [token authentication](/storage/guides/serve-private-files). For images, add [Bunny Optimizer](/storage/guides/serve-and-transform-images) to resize them on request.

@@ -1,0 +1,79 @@
+---
+title: "Serve private files from Bunny Storage"
+sidebarTitle: "Private files"
+description: "Give visitors signed links to private files in Bunny Storage that expire when you choose."
+---
+
+Files in a storage zone stay private until you serve them. Put a pull zone with [token authentication](/cdn/security/token-authentication) in front, and your app hands each visitor a signed link that works for as long as you choose.
+
+<Steps>
+  <Step title="Create a pull zone for private files">
+    [Create a pull zone](/cdn/quickstart) with **Origin Type** set to **Storage Zone** and select your zone.
+  </Step>
+  <Step title="Turn on token authentication">
+    In the pull zone, go to **Security**, toggle **Token Authentication** on, and copy the **URL Token Authentication Key**.
+  </Step>
+  <Step title="Sign URLs">
+    Check that the visitor can see the file, then sign the URL with your key, the file path, and an expiry time.
+
+    <Tabs>
+      <Tab title="Edge Scripting">
+        Save the key as a [secret](/scripting/secrets) called `TOKEN_KEY` and deploy this [standalone script](/scripting/standalone/overview). It redirects each request to a signed URL on the private pull zone:
+
+        ```ts
+        import * as BunnySDK from "@bunny.net/edgescript-sdk";
+        import process from "node:process";
+        import { createHash } from "node:crypto";
+
+        function signUrl(path: string, expiresIn = 3600) {
+          const expires = Math.floor(Date.now() / 1000) + expiresIn;
+          const token = createHash("md5")
+            .update(process.env.TOKEN_KEY + path + expires)
+            .digest("base64")
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=/g, "");
+
+          return `https://private-files.b-cdn.net${path}?token=${token}&expires=${expires}`;
+        }
+
+        BunnySDK.net.http.serve(async (request: Request): Promise<Response> => {
+          const path = new URL(request.url).pathname;
+
+          // Check the visitor's session here
+
+          return Response.redirect(signUrl(path), 302);
+        });
+        ```
+      </Tab>
+      <Tab title="Node.js">
+        ```ts
+        import { createHash } from "node:crypto";
+
+        function signUrl(path: string, expiresIn = 3600) {
+          const expires = Math.floor(Date.now() / 1000) + expiresIn;
+          const token = createHash("md5")
+            .update(process.env.BUNNY_TOKEN_KEY + path + expires)
+            .digest("base64")
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=/g, "");
+
+          return `https://private-files.b-cdn.net${path}?token=${token}&expires=${expires}`;
+        }
+
+        signUrl("/invoices/2026/inv-1042.pdf");
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Open the link">
+    The signed URL downloads the file until it expires.
+  </Step>
+</Steps>
+
+[Advanced token authentication](/cdn/security/token-authentication/advanced) adds country rules, directory tokens, and download speed limits. Storage zones with S3 compatibility can also issue [presigned URLs](/storage/s3#presigned-url-validation).
+
+<Card title="Signed downloads with Edge Scripting" icon="github" href="https://github.com/BunnyWay/examples/tree/main/storage/token-auth-edge-script" horizontal>
+  A runnable version of the Edge Scripting tab, with a test and deploy steps.
+</Card>

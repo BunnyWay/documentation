@@ -1,0 +1,230 @@
+---
+title: bunny storage
+sidebarTitle: storage
+description: "Create and manage Bunny Storage zones, upload and download files, and print connection details from the command line."
+---
+
+`bunny storage` manages [Bunny Storage](/storage) from your terminal. The `zones` commands create and configure storage zones with your account API key. The `files` commands upload, download, list, and remove files inside a zone with the zone's own password, which the CLI looks up for you.
+
+```bash
+# Create a zone with S3, a pull zone, and credentials in .env
+bunny storage zones create my-zone --region DE --s3 --pull-zone \
+  --connection s3 --save-env --link
+
+# Upload a file and check it landed
+bunny storage files upload ./dist/app.js --to assets/
+bunny storage files list assets/
+```
+
+## Zone resolution
+
+`zones` commands take the zone as an optional `[zone]` argument. `files` commands take it as `--zone` (`-z`), because their argument is the file path. Both accept the zone name or its ID. When you leave the zone out, the CLI uses:
+
+1. The zone you passed
+2. `.bunny/storage.json`, written by `bunny storage link`
+3. An interactive picker, which offers to link the directory to the zone you pick
+
+With `--output json`, `--force`, or no terminal attached, the CLI skips the picker. Pass a zone or link the directory in scripts and CI.
+
+---
+
+## `bunny storage zones list`
+
+List your storage zones with their name, ID, main region, tier, and S3 support.
+
+```bash
+bunny storage zones list
+bunny storage zones list --output json
+```
+
+## `bunny storage zones create`
+
+Create a storage zone. Run it without flags to be prompted for the name, tier, region, and S3 support.
+
+```bash
+# Interactive
+bunny storage zones create
+
+# Standard tier in Frankfurt, replicated to Los Angeles and Singapore
+bunny storage zones create my-zone --region DE --replication LA,SG
+
+# Edge (SSD) tier with S3 compatibility
+bunny storage zones create my-zone --tier ssd --s3
+
+# Also create a pull zone and add a custom domain to it
+bunny storage zones create my-zone --region DE --domain cdn.example.com
+```
+
+| Flag               | Description                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| `--region`         | Main region code, such as `DE`, `NY`, `LA`, or `SG`. Run `bunny storage regions` for the list |
+| `--replication`    | Replication region codes, comma-separated or repeated                                |
+| `--tier`           | `hdd` for [Standard](/storage/storage-tiers#standard-tier) or `ssd` for [Edge](/storage/storage-tiers#edge-ssd-tier) |
+| `--s3`             | Turn on the [S3-compatible API](/storage/s3)                                         |
+| `--pull-zone`      | Also create a pull zone with this storage zone as its origin                         |
+| `--pull-zone-name` | Name for that pull zone. Defaults to the storage zone name                           |
+| `--domain`         | Custom domain for the pull zone. Implies `--pull-zone`                               |
+| `--link`           | Link this directory to the new zone. `--no-link` skips the prompt                    |
+| `--connection`     | Print connection details for `http`, `ftp`, or `s3`                                  |
+| `--format`         | Print client config: `sdk`, `rclone`, `aws`, `s3cmd`, or `env`                       |
+| `--save-env`       | Write the connection details to `.env`. Needs `--connection`                         |
+| `--force`          | Skip prompts and use the flag values only                                            |
+
+<Note>
+  The tier, the main region, and S3 compatibility are set when you create the zone. Edge (SSD) zones always use `DE` as their main region.
+</Note>
+
+## `bunny storage zones show`
+
+Show a zone's settings, tier, S3 support, and S3 endpoint.
+
+```bash
+bunny storage zones show my-zone
+bunny storage zones show                     # linked zone
+bunny storage zones show my-zone --output json
+```
+
+## `bunny storage zones update`
+
+Change a zone's settings. Run it with just the zone to edit them interactively.
+
+```bash
+bunny storage zones update my-zone
+bunny storage zones update my-zone --custom-404-path /404.html
+bunny storage zones update my-zone --replication SG
+```
+
+Replication regions can only be added. The CLI confirms before adding one.
+
+## `bunny storage zones delete`
+
+Delete a zone and every file in it. The CLI asks you to confirm, then to type the zone name.
+
+```bash
+bunny storage zones delete my-zone
+bunny storage zones delete my-zone --force   # skip both confirmations
+```
+
+## `bunny storage zones credentials`
+
+Print a zone's connection details for the [HTTP API](/storage/http), [FTP](/storage/ftp), or [S3](/storage/s3), or write them as config for another tool.
+
+```bash
+# Pick a protocol, with the password masked
+bunny storage zones credentials my-zone
+
+# Save the HTTP API details to .env
+bunny storage zones credentials my-zone --connection http --save-env
+
+# Add the zone to rclone
+bunny storage zones credentials my-zone --format rclone >> ~/.config/rclone/rclone.conf
+
+# Export S3 variables into the current shell
+set -a; eval "$(bunny storage zones credentials my-zone --format env)"; set +a
+```
+
+| Flag            | Description                                                                 |
+| --------------- | --------------------------------------------------------------------------- |
+| `--connection`  | `http`, `ftp`, or `s3`. Prompts when omitted                                |
+| `--format`      | `sdk` (HTTP API), or `rclone`, `aws`, `s3cmd`, and `env` (S3)               |
+| `--read-only`   | Use the zone's read-only password                                           |
+| `--show-secret` | Show the password in table and JSON output                                  |
+| `--save-env`    | Write the details to `.env`                                                 |
+
+`--save-env` writes `BUNNY_STORAGE_ZONE`, `BUNNY_STORAGE_PASSWORD`, and `BUNNY_STORAGE_REGION` for HTTP and FTP. For S3 it writes `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINT_URL`, and `AWS_REGION`.
+
+## `bunny storage zones domains`
+
+Manage custom domains on the zone's pull zone.
+
+```bash
+bunny storage zones domains list my-zone
+bunny storage zones domains add cdn.example.com my-zone
+bunny storage zones domains ssl cdn.example.com my-zone
+bunny storage zones domains remove cdn.example.com my-zone
+```
+
+`add` prints the DNS record to create, and `ssl` requests a certificate once the record resolves. If the zone has several pull zones, choose one with `--pull-zone <id>`.
+
+---
+
+## `bunny storage files list`
+
+List the files in a directory. Paths are relative to the zone root.
+
+```bash
+bunny storage files list --zone my-zone
+bunny storage files list images/             # linked zone
+```
+
+## `bunny storage files upload`
+
+Upload a local file.
+
+```bash
+bunny storage files upload ./photo.png --to images/
+bunny storage files upload ./photo.png --to images/photo.png --checksum --content-type image/png
+```
+
+| Flag             | Description                                                     |
+| ---------------- | --------------------------------------------------------------- |
+| `--zone`, `-z`   | Zone name or ID. Defaults to the linked zone                    |
+| `--to`           | Remote path. End it with `/` to upload into that directory      |
+| `--checksum`     | Send a SHA256 checksum so storage verifies the upload           |
+| `--content-type` | Content type to store the file with                             |
+
+## `bunny storage files download`
+
+Download a file.
+
+```bash
+bunny storage files download images/photo.png
+bunny storage files download images/photo.png --out ./local.png
+```
+
+## `bunny storage files remove`
+
+Delete a file, or a directory and everything in it when the path ends with `/`.
+
+```bash
+bunny storage files remove images/photo.png
+bunny storage files remove images/ --force
+```
+
+---
+
+## `bunny storage link`
+
+Link the current directory to a zone by writing `.bunny/storage.json`. Commands run in the directory then use that zone.
+
+```bash
+bunny storage link my-zone
+bunny storage link                           # pick from a list
+```
+
+## `bunny storage unlink`
+
+Remove `.bunny/storage.json`.
+
+```bash
+bunny storage unlink
+bunny storage unlink --force
+```
+
+## `bunny storage regions`
+
+List the region codes for `--region` and `--replication`.
+
+```bash
+bunny storage regions
+bunny storage regions --tier ssd
+bunny storage regions --s3
+```
+
+## `bunny storage docs`
+
+Open the Bunny Storage docs in your browser.
+
+```bash
+bunny storage docs
+```
