@@ -1,0 +1,34 @@
+---
+title: "Deploy React Router to Bunny Storage"
+sidebarTitle: "React Router"
+description: "Build a React Router site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import SpaRouting from "/snippets/static-sites/spa-routing.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+React Router in framework mode can build a single-page app with no server. The browser build lands in `build/client`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `build/client` |
+
+## Configure React Router
+
+Turn off server rendering in `react-router.config.ts`:
+
+```ts react-router.config.ts
+import type { Config } from "@react-router/dev/config";
+
+export default {
+  ssr: false,
+} satisfies Config;
+```
+
+<Deploy build="npm run build" />
+
+<SpaRouting />
+
+<CustomDomain />

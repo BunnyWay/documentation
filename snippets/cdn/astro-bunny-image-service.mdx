@@ -1,0 +1,22 @@
+```ts src/bunny-image-service.ts
+import type { ExternalImageService } from "astro";
+import { baseService } from "astro/assets";
+
+const service: ExternalImageService<{ baseURL?: string }> = {
+  ...baseService,
+  getURL(options, imageConfig) {
+    const base = imageConfig.service.config?.baseURL;
+    const src = typeof options.src === "string" ? options.src : options.src.src;
+
+    const absolute = /^(https?:)?\/\//.test(src);
+    if (absolute && !(base && src.startsWith(base))) return src;
+
+    const url = new URL(src, base || "http://localhost");
+    if (options.width) url.searchParams.set("width", String(options.width));
+    url.searchParams.set("quality", String(options.quality ?? 75));
+    return base || absolute ? url.href : url.pathname + url.search;
+  },
+};
+
+export default service;
+```

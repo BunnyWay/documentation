@@ -7,16 +7,16 @@
 } */
 
 /* Near-black framework logos disappear on the dark theme */
-.dark img[src$="/logo/frameworks/nextjs.svg"],
-.dark img[src$="/logo/frameworks/express.svg"],
-.dark img[src$="/logo/frameworks/mariadb.svg"],
-.dark img[src$="/logo/frameworks/angular.svg"],
-.dark img[src$="/logo/frameworks/eleventy.svg"],
-.dark img[src$="/logo/frameworks/sphinx.svg"] {
+.dark img[src*="/logo/frameworks/nextjs.svg"],
+.dark img[src*="/logo/frameworks/express.svg"],
+.dark img[src*="/logo/frameworks/mariadb.svg"],
+.dark img[src*="/logo/frameworks/angular.svg"],
+.dark img[src*="/logo/frameworks/eleventy.svg"],
+.dark img[src*="/logo/frameworks/sphinx.svg"] {
   filter: invert(1);
 }
 
 /* Zola's cream logo disappears on the light theme */
-html:not(.dark) img[src$="/logo/frameworks/zola.svg"] {
+html:not(.dark) img[src*="/logo/frameworks/zola.svg"] {
   filter: invert(1);
 }

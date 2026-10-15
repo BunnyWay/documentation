@@ -1,0 +1,164 @@
+---
+title: bunny sites
+sidebarTitle: sites
+tag: "Public preview"
+description: "Create, deploy, and manage static sites on Bunny Storage and Bunny CDN from the command line."
+---
+
+<Warning>
+  `bunny sites` is in [Public Preview](/product-release-stages#stage-2-public-preview)
+  and available only in the Bunny CLI. It's in active development, so commands,
+  flags, and behaviour may change. Share feedback on
+  [Discord](https://discord.gg/bunnynet). The storage zone and pull zone behind
+  each site appear in the dashboard under **Storage** and **CDN**.
+</Warning>
+
+`bunny sites` deploys static sites and single-page apps. A site is a storage zone that holds your deploys and a pull zone that serves the live one. The CLI detects your framework, runs the build, and uploads the output. See the [framework guides](/storage/static-site-hosting#framework-guides) for per-framework setup.
+
+Most subcommands default to the site linked in `.bunny/site.json`. Pass a site name or storage zone ID, or `--site <name>`, to target another site.
+
+## `bunny sites create`
+
+Create a site and link the current directory to it.
+
+```bash
+# Use sites.name from bunny.jsonc, or prompt for a name
+bunny sites create
+
+# Create a site named my-site
+bunny sites create my-site
+
+# Create and attach a custom domain
+bunny sites create my-site --domain example.com
+
+# Store files in New York
+bunny sites create my-site --region NY
+```
+
+The storage zone, pull zone, and `b-cdn.net` subdomain are named `sites-<name>-<suffix>`. In a GitHub repository, the CLI offers to set up GitHub Actions deploys.
+
+| Flag       | Description                                                                 |
+| ---------- | --------------------------------------------------------------------------- |
+| `--region` | Main storage region code, such as `DE`, `NY`, `LA`, or `SG` (default: `DE`) |
+| `--tier`   | Storage tier: `hdd` (Standard) or `ssd` (Edge, always `DE`)                 |
+| `--domain` | Custom production domain to attach                                          |
+| `--link`   | Link this directory to the new site (default: true). Use `--no-link` to skip |
+
+## `bunny sites deploy`
+
+Upload a directory and publish it as the live site.
+
+```bash
+# Run the detected or configured build, then deploy
+bunny sites deploy --build
+
+# Deploy a directory without building
+bunny sites deploy ./dist
+
+# Run an explicit build command
+bunny sites deploy ./dist --build "npm run build"
+
+# Pass build-time environment variables
+bunny sites deploy --build --env API_URL=https://api.example.com
+
+# Deploy to a specific site
+bunny sites deploy ./dist --site my-site
+```
+
+The directory defaults to `sites.dir` in `bunny.jsonc`, then the detected framework's output directory, then the current directory. Unchanged content is skipped. Each deploy is stored under its own ID (the git commit SHA or a content hash), so you can publish any earlier deploy again without uploading it.
+
+| Flag          | Description                                                                                        |
+| ------------- | -------------------------------------------------------------------------------------------------- |
+| `--build`     | Run a build first. Pass a command, or use the bare flag to run `sites.build` or the detected build |
+| `--env`       | Build-time environment variable as `KEY=VALUE` (repeatable)                                        |
+| `--env-file`  | Read build-time environment variables from a dotenv file                                           |
+| `--spa`       | Serve `index.html` for unknown paths. Use `--no-spa` to serve the 404 page                         |
+| `--deploy-id` | Use your own ID for this deploy, such as a release number                                          |
+| `--force`     | Deploy even when the content is unchanged                                                          |
+
+## `bunny sites deployments`
+
+List, publish, and delete deploys.
+
+```bash
+# List deploys for the linked site
+bunny sites deployments list
+
+# Roll back to the previous deploy
+bunny sites deployments publish --previous
+
+# Publish a specific deploy
+bunny sites deployments publish a1b2c3d4
+
+# Delete a deploy
+bunny sites deployments delete a1b2c3d4
+
+# Keep the 10 newest deploys and delete the rest
+bunny sites deployments prune --keep 10
+```
+
+`prune` always keeps the current and previous deploys.
+
+## `bunny sites ci init`
+
+Add a GitHub Actions workflow at `.github/workflows/bunny-sites.yml` that deploys the site on every push to `main`. The workflow can also be run by hand from the Actions tab.
+
+```bash
+# Detect the framework and write the workflow
+bunny sites ci init
+
+# Skip detection
+bunny sites ci init --framework astro
+
+# Overwrite an existing workflow
+bunny sites ci init --force
+```
+
+The workflow reads your API key from a `BUNNYNET_API_KEY` repository secret. The CLI offers to add it with `gh secret set BUNNYNET_API_KEY`.
+
+| Flag          | Description                                         |
+| ------------- | --------------------------------------------------- |
+| `--framework` | Framework preset for the build steps (default: detected) |
+| `--force`     | Overwrite an existing workflow file                 |
+
+## `bunny sites domains`
+
+Manage custom domains for a site. The first custom domain you add becomes the site's production URL.
+
+```bash
+# Add a domain and get DNS instructions
+bunny sites domains add example.com
+
+# Issue a free SSL certificate once DNS points at bunny.net
+bunny sites domains ssl example.com
+
+# List domains
+bunny sites domains list
+
+# Remove a domain
+bunny sites domains remove example.com
+```
+
+## `bunny sites ssl`
+
+Redirect HTTP to HTTPS on the site's `b-cdn.net` address.
+
+```bash
+bunny sites ssl
+bunny sites ssl my-site --no-force-ssl
+```
+
+## Other commands
+
+| Command              | Description                                                  |
+| -------------------- | ------------------------------------------------------------ |
+| `bunny sites list`   | List your sites                                              |
+| `bunny sites show`   | Show a site's resources, domains, and current deploy         |
+| `bunny sites open`   | Open the live URL in your browser. Use `--print` to print it |
+| `bunny sites link`   | Link the current directory to an existing site               |
+| `bunny sites unlink` | Remove the `.bunny/site.json` link                           |
+| `bunny sites delete` | Delete a site. Use `--keep-storage` to keep the storage zone |
+
+## Configuration
+
+`bunny sites` reads a `sites` block from `bunny.jsonc`. See [Site configuration](/storage/static-site-hosting#site-configuration).
