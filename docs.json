@@ -635,6 +635,9 @@
                       {
                         "group": "Frameworks",
                         "pages": [
+                          "stream/upload/nextjs",
+                          "stream/upload/nuxt",
+                          "stream/upload/sveltekit",
                           "stream/upload/laravel",
                           "stream/upload/rails",
                           "stream/upload/django"
