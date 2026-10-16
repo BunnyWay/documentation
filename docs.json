@@ -669,13 +669,16 @@
                     ]
                   },
                   {
-                    "group": "Mobile",
+                    "group": "Mobile SDKs",
                     "pages": [
                       "stream/mobile-sdk",
                       "stream/android-sdk",
                       "stream/ios-sdk",
+                      "stream/react-native-sdk",
                       "stream/expo-video"
-                    ]
+                    ],
+                    "tag": "New",
+                    "expanded": true
                   },
                   {
                     "group": "3rd Party Players",

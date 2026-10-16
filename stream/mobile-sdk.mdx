@@ -1,34 +1,101 @@
 ---
-title: "Mobile SDK"
+title: "Overview"
 sidebarTitle: "Overview"
-description: "Stream Mobile SDK Libraries"
-hidden: true
+description: "Choose the right way to integrate Bunny Stream video playback, uploads, and video management to your Android, iOS, React Native, or Expo mobile app."
 ---
 
-The following SDK libraries allow for quick integration of Bunny Stream player on both iOS and Android mobile platforms.
+Bunny Stream offers official SDKs for native Android and iOS, a React Native SDK that wraps both, and a guide for playing Bunny Stream videos with `expo-video`. All of them play your videos through the device's native video stack rather than a WebView, so your app can use platform features such as Picture-in-Picture, background audio, and lock screen controls.
 
-## Key Features
+<CardGroup cols={2}>
+  <Card title="Android SDK" icon="android" href="/stream/android-sdk">
+    Kotlin library for playback, resumable uploads, camera capture, and the full Stream API.
+  </Card>
 
-- Complete API Integration: Full support for Bunny REST Stream API
-- Efficient Video Upload: TUS protocol implementation for reliable, resumable uploads
-- Advanced Video Player: Custom-built player with full Bunny CDN integration
-- Camera Upload Support: Built-in capabilities for recording and uploading videos directly from device camera
-- Type-Safe API: Fully typed Swift API for compile-time safety
-- Background Processing: Support for background uploads and downloads
-- Comprehensive Error Handling: Detailed error information and recovery options
+  <Card title="iOS SDK" icon="apple" href="/stream/ios-sdk">
+    Swift package for playback, resumable uploads, camera capture, and the full Stream API.
+  </Card>
 
-## What is Bunny Stream Mobile SDK iOS?
+  <Card title="React Native SDK" icon="react" href="/stream/react-native-sdk">
+    One TypeScript API over the native Android and iOS SDKs, for React Native and Expo development builds.
+  </Card>
 
-Bunny Stream is a comprehensive Swift Package Manager (SPM) package designed to seamlessly integrate Bunny's powerful video streaming capabilities into your iOS applications. The package provides a robust set of tools for video management, playback, uploading, and camera-based video uploads, all through an intuitive **Swift API**.
+  <Card title="Expo Video guide" icon="circle-play" href="/stream/expo-video">
+    Play Bunny Stream HLS URLs with `expo-video` when you only need native playback.
+  </Card>
+</CardGroup>
 
-<Card title="iOS SDK" horizontal href="https://github.com/BunnyWay/bunny-stream-ios" cta="Hosted on Github">
-  [https://github.com/BunnyWay/bunny-stream-ios](https://github.com/BunnyWay/bunny-stream-ios)
-</Card>
+## Which option should I use?
 
-## What is Bunny Stream Mobile SDK Android?
+| If you are building… | Use |
+| --- | --- |
+| A native mobile Android app in Kotlin | [Android SDK](/stream/android-sdk) |
+| A native mobile iOS app in Swift | [iOS SDK](/stream/ios-sdk) |
+| A React Native mobile app, or an Expo app that needs uploads, camera capture, or video management | [React Native SDK](/stream/react-native-sdk) |
+| An Expo app that only needs to play videos | [Expo Video guide](/stream/expo-video) |
 
-Bunny Stream is an Android library designed to seamlessly integrate Bunny's powerful video streaming capabilities into your Android applications. The package provides a robust set of tools for video management, playback, uploading, and camera-based video uploads, all through an intuitive **Kotlin API**.
+<Tip>
+  If your app only embeds a few videos and doesn't need native features like Picture-in-Picture or background playback, the [Bunny Player](/stream/embedding) in a WebView is the quickest option and includes analytics, chapters, and dashboard branding out of the box.
+</Tip>
 
-<Card title="Android SDK" horizontal href="https://github.com/BunnyWay/bunny-stream-android" cta="Hosted on Github">
-  [https://github.com/BunnyWay/bunny-stream-android](https://github.com/BunnyWay/bunny-stream-android)
-</Card>
+## Feature comparison
+
+|  | Android SDK | iOS SDK | React Native SDK | Expo Video |
+| --- | --- | --- | --- | --- |
+| **Language** | Kotlin | Swift | TypeScript | TypeScript |
+| **Distribution** | [Bunny.net GitHub](https://github.com/BunnyWay/bunny-stream-android) | [Bunny.net GitHub](https://github.com/BunnyWay/bunny-stream-ios) | [Bunny.net GitHub](https://github.com/BunnyWay/bunny-stream-react-native) | [`expo-video`](https://docs.expo.dev/versions/latest/sdk/video/) (Expo package) |
+| **Native video playback** | Yes | Yes | Yes | Yes |
+| **Resumable TUS uploads** | Yes | Yes | Yes | No |
+| **Camera recording and upload** | Yes | Yes | Yes | No |
+| **Video and collection management** | Full Stream API | Full Stream API | Full Stream API but some operations are platform-specific ([see guide](https://github.com/BunnyWay/bunny-stream-react-native/blob/main/docs/guides/manage-videos.md)) | Through your backend via the [Stream API](/api-reference/stream/index) |
+| **Embed view token authentication** | Yes | Yes | Yes | Yes |
+| **DRM** | [Basic and Enterprise DRM](https://bunny.net/docs/stream/drm) | [Basic and Enterprise DRM](https://bunny.net/docs/stream/drm) | [Basic and Enterprise DRM](https://bunny.net/docs/stream/drm) | [Basic and Enterprise DRM](https://bunny.net/docs/stream/drm) |
+
+### How the options relate
+
+The **React Native SDK** is a wrapper around the native Android and iOS SDKs. React components render the native player and camera views, so you get the same native behavior with a single TypeScript interface. It also adds an Expo config plugin and platform features such as AirPlay on iOS, Chromecast on Android, and optional Android TV support. It does not support web.
+
+The **Expo Video guide** is not a Bunny SDK. It shows how to point the open source `expo-video` player at Bunny Stream's predictable HLS URLs and use the Stream API for metadata such as titles, thumbnails, chapters, and captions. Choose it when playback is all you need and you want to stay within Expo's own packages.
+
+## Securing playback
+
+The SDKs share the same security model, so the same backend can serve every platform.
+
+<Steps>
+  <Step title="Keep your API key on the server">
+    Your **Video Library API Key** is a secret. Store it in your backend or as an [Edge Script secret](/scripting/secrets), never in your app bundle, build-time environment variables, or Expo configuration.
+  </Step>
+  <Step title="Issue embed view tokens from your backend">
+    For private or restricted videos, enable [embedded view token authentication](/stream/token-authentication). Your backend or an Edge Script checks that the user is allowed to watch the video, then returns a short-lived `{ token, expires }` pair. Tokens of 1–5 minutes are a good starting point.
+  </Step>
+  <Step title="Pass the token to the player">
+    The app requests a token for the video and passes `token` and `expires` to the player. If CDN token authentication is enabled on the library, the native SDKs sign CDN requests automatically.
+  </Step>
+</Steps>
+
+<Warning>
+  The current React Native SDK `initialize()` call requires a library API access key on the device. If library credentials must never reach the client, review the [React Native SDK](/stream/react-native-sdk) credential notes before adopting it.
+</Warning>
+
+Each SDK page includes a ready-to-use Edge Script example that generates embed view tokens.
+
+## Before you start
+
+You need a Bunny Stream video library. If you don't have one yet, follow the [Stream quickstart](/stream/quickstart) to create a library and upload your first video. Then pick your platform:
+
+<CardGroup cols={2}>
+  <Card title="Android SDK" icon="android" href="/stream/android-sdk">
+    Kotlin library for playback, resumable uploads, camera capture, and the full Stream API.
+  </Card>
+
+  <Card title="iOS SDK" icon="apple" href="/stream/ios-sdk">
+    Swift package for playback, resumable uploads, camera capture, and the full Stream API.
+  </Card>
+
+  <Card title="React Native SDK" icon="react" href="/stream/react-native-sdk">
+    One TypeScript API over the native Android and iOS SDKs, for React Native and Expo development builds.
+  </Card>
+
+  <Card title="Expo Video guide" icon="circle-play" href="/stream/expo-video">
+    Play Bunny Stream HLS URLs with `expo-video` when you only need native playback.
+  </Card>
+</CardGroup>
