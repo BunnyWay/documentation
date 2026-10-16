@@ -15,3 +15,11 @@ keywords: ["Chromecast", "Airplay", "Apple airplay", "Google Chromecast"]
 - **Compact Controls** - Maximize screen real estate with a streamlined video player view, ideal for mobile and embedded players.
 - **Chromecast** - Cast videos to Chromecast-enabled devices, with a custom cast experience that syncs player colors and captions styling, supports audio track selection and playback speed control, and works with eDRM-protected content.
 - **AirPlay Support** - Stream videos to Apple TV via AirPlay using the Bunny Player. 
+
+## Update the player from the CLI
+
+[`bunny stream libraries player update`](/cli/commands/stream#bunny-stream-libraries-player) changes colours, fonts, controls, playback speeds, and the heatmap:
+
+```bash
+bunny stream libraries player update my-library --color "#FF7755" --speeds 0.5,1.0,1.5,2.0 --heatmap
+```
