@@ -1,7 +1,7 @@
 ---
 title: "Bunny Stream"
 sidebarTitle: "Introduction"
-description: "Upload, encode, secure, and deliver video worldwide with adaptive streaming, a customizable player, and built-in DRM."
+description: "Upload, encode, secure, and deliver video worldwide with adaptive streaming, a customizable player, AI captions, and built-in DRM."
 ---
 
 ![bunny.net Stream](/images/stream/stream.png)
@@ -27,113 +27,93 @@ Use it to power course platforms, media sites, SaaS products, or any app that ne
     A video library holds your videos together with their player, encoding, and security settings. When you create one, you choose which storage regions your videos are [replicated](/stream/replication) to.
   </Step>
   <Step title="Upload your videos">
-    Upload from the [dashboard](/stream/dashboard), the [HTTP API](/stream/http-api), a [remote URL](/stream/url-fetch), or with [TUS resumable uploads](/stream/tus-resumable-uploads) for large files and unreliable connections.
+    Upload from the dashboard, the API, a remote URL, or directly from your users' browsers and mobile apps with resumable uploads.
   </Step>
   <Step title="We encode and store them">
-    Each video is transcoded into multiple resolutions for [adaptive bitrate streaming](/stream/adaptive-bitrate), then stored in every region you enabled.
+    Each video is transcoded into multiple resolutions for [adaptive bitrate streaming](/stream/adaptive-bitrate). With [Premium Encoding](/stream/premium-encoding), videos are typically playable within seconds of upload.
   </Step>
   <Step title="Deliver and play anywhere">
-    Videos are served from bunny.net's CDN and play in [Bunny Player](/stream/player), a [third-party player](/stream/players), or your own [mobile app](/stream/mobile-sdk).
+    Videos are served from bunny.net's CDN and play in [Bunny Player](/stream/player), a [third-party player](/stream/players), or a native [mobile app](/stream/mobile-sdk).
   </Step>
 </Steps>
 
 ## Key features
 
-### Encoding and playback
-
 <CardGroup cols={2}>
+  <Card title="Flexible uploads" icon="upload" href="/stream/dashboard">
+    Upload from the dashboard, the HTTP API, a remote URL, or with TUS resumable uploads straight from your users.
+  </Card>
+
   <Card title="Free encoding" icon="film" href="/stream/encoding">
-    Every upload is transcoded into multiple resolutions and formats for playback on any device.
+    Every upload is transcoded into the resolutions and bitrates you choose, with optional MP4 fallback and watermarking.
   </Card>
 
-  <Card title="Premium Encoding" icon="gem" href="/stream/premium-encoding">
-    Higher-quality output tuned for instant playability.
-  </Card>
-
-  <Card title="Adaptive bitrate streaming" icon="gauge-high" href="/stream/adaptive-bitrate">
-    Quality adjusts automatically to each viewer's connection for uninterrupted playback.
-  </Card>
-
-  <Card title="Multi-audio" icon="language" href="/stream/multi-audio">
-    Add alternate language, commentary, or descriptive audio tracks.
+  <Card title="Adaptive streaming" icon="gauge" href="/stream/adaptive-bitrate">
+    HLS renditions switch quality to match each viewer's connection for uninterrupted playback.
   </Card>
 
   <Card title="Bunny Player" icon="circle-play" href="/stream/player">
-    A lightweight embeddable player you can [customize](/stream/player-settings) to match your brand.
+    A customizable embeddable player with captions, chapters, Chromecast, AirPlay, and picture-in-picture.
   </Card>
 
-  <Card title="Playback control API" icon="sliders" href="/stream/playback-api">
-    Control playback and listen for player events from your own code with player.js.
-  </Card>
-</CardGroup>
-
-### Security and DRM
-
-<CardGroup cols={2}>
-  <Card title="Security overview" icon="shield-halved" href="/stream/security">
-    Control who can watch your videos, where, and for how long.
+  <Card title="Mobile SDKs" icon="smartphone" href="/stream/mobile-sdk">
+    Native playback, resumable uploads, and camera capture for Android, iOS, React Native, and Expo.
   </Card>
 
-  <Card title="Token authentication" icon="key" href="/stream/token-authentication">
-    Sign embed URLs so only authorized pages can play your videos.
+  <Card title="Multi-audio" icon="audio-lines" href="/stream/multi-audio">
+    Add alternate language, commentary, or descriptive audio tracks viewers can switch between.
+  </Card>
+
+  <Card title="Access controls" icon="shield-check" href="/stream/security">
+    Restrict playback with allowed domains, direct URL blocking, and signed, expiring tokens.
   </Card>
 
   <Card title="MediaCage Basic DRM" icon="lock" href="/stream/mediacage-basic">
-    Protect videos from unauthorized downloads with a few clicks in the dashboard.
-  </Card>
-
-  <Card title="MediaCage Enterprise DRM" icon="building-shield" href="/stream/mediacage-enterprise">
-    Widevine and FairPlay protection for premium and licensed content.
-  </Card>
-</CardGroup>
-
-<Tip>
-  Not sure which protection you need? [Understanding Bunny Stream security options](/stream/security-options) compares token authentication and each [MediaCage DRM](/stream/drm) tier.
-</Tip>
-
-### AI and Accessibility
-
-<CardGroup cols={2}>
-  <Card title="Transcribing" icon="closed-captioning" href="/stream/transcribing">
-    Generate and translate captions automatically to reach a global audience.
-  </Card>
-
-  <Card title="Smart Generate" icon="wand-magic-sparkles" href="/stream/smart-generate">
-    Create titles, descriptions, chapters, and moments from your video's captions.
-  </Card>
-
-  <Card title="Content tagging" icon="tags" href="/stream/tagging">
-    Tag videos by their content automatically to organize them or flag unwanted uploads.
-  </Card>
-
-  <Card title="Advertising (VAST)" icon="rectangle-ad" href="/stream/vast">
-    Monetize your videos with VAST ad tags in the player.
-  </Card>
-</CardGroup>
-
-### Delivery, insights, and automation
-
-<CardGroup cols={2}>
-  <Card title="Delivery tiers" icon="globe" href="/stream/delivery-tiers">
-    Choose between the Standard and Volume networks to balance performance and cost.
+    Free, one-click encryption for every playback session that stops casual downloads.
   </Card>
 
   <Card title="Statistics" icon="chart-line" href="/stream/statistics">
-    Track views, watch time, engagement scores, and heatmaps.
+    Track views, watch time, viewers by country, engagement scores, and heatmaps.
   </Card>
 
-  <Card title="Webhooks" icon="bell" href="/stream/webhooks">
-    Get notified when a video's processing status changes.
+  <Card title="Webhooks" icon="webhook" href="/stream/webhooks">
+    Get signed notifications as videos upload, encode, and finish processing.
   </Card>
 
-  <Card title="Collections" icon="folder-open" href="/stream/collections">
-    Group related videos and organize large libraries.
+  <Card title="Global delivery" icon="network" href="/stream/delivery-tiers">
+    Serve from bunny.net's CDN on the Standard tier for the lowest latency or the Volume tier for lower cost.
+  </Card>
+
+  <Card title="Advertising" icon="megaphone" href="/stream/vast">
+    Monetize your videos by serving VAST ads in the player.
+  </Card>
+</CardGroup>
+
+## Premium add-ons
+
+Turn on paid add-ons for a library when you need faster processing, wider reach, or stronger protection. Each is billed on top of storage and delivery. See [Pricing](/stream/pricing) for rates.
+
+<CardGroup cols={2}>
+  <Card title="Premium Encoding" icon="zap" href="/stream/premium-encoding" cta="Explore Premium Encoding">
+    Make most videos playable in 10–15 seconds with Just-in-Time encoding, skip the queue with prioritized encoding, and output VP9, HEVC, and AV1 with HDR.
+  </Card>
+
+  <Card title="AI transcribing" icon="captions" href="/stream/transcribing" cta="Explore transcribing">
+    Generate captions automatically, translate them into 56 languages, and create titles, descriptions, and chapters with Smart Generate.
+  </Card>
+
+  <Card title="MediaCage Enterprise DRM" icon="lock-keyhole" href="/stream/mediacage-enterprise" cta="Explore Enterprise DRM">
+    Widevine and FairPlay protection with screen capture prevention, native app support, and custom player integration, built for premium and pay-per-view content.
+  </Card>
+
+  <Card title="Geo-replication" icon="globe" href="/stream/replication" cta="Explore geo-replication">
+    Replicate videos to additional storage regions for faster uncached delivery and automatic failover during regional outages.
   </Card>
 </CardGroup>
 
 ## Build with Stream
 
-Integrate Bunny Stream into your stack with the [Stream API](/stream/api-reference). Start with [Authentication](/stream/authentication) to find your library's API key, then pick a guide for your platform:
+Start with [Authentication](/stream/authentication) to find your library's API key, then pick a guide for your platform:
 
 | Platform | Guides |
 | --- | --- |
@@ -142,27 +122,3 @@ Integrate Bunny Stream into your stack with the [Stream API](/stream/api-referen
 | Server-side uploads | [Laravel](/stream/upload/laravel), [Rails](/stream/upload/rails), [Django](/stream/upload/django) |
 | Third-party players | [Bitmovin](/stream/players/bitmovin), [Shaka Player](/stream/players/shaka), [Widevine HTML5](/stream/players/widevine), [FairPlay HTML5](/stream/players/fairplay) |
 | Integrations | [WordPress](/integrations/wordpress/stream), [Terraform](/integrations/terraform/importing-stream-library) |
-
-<Note>
-  Moving from Vimeo? The [Vimeo2Bunny CLI](/stream/vimeo2bunny) helps you migrate your existing videos to Bunny Stream.
-</Note>
-
-## Reference
-
-<CardGroup cols={2}>
-  <Card title="Pricing" icon="tag" href="/stream/pricing">
-    Costs for storage, CDN delivery, encoding, transcribing, and DRM.
-  </Card>
-
-  <Card title="Video specification" icon="file-video" href="/stream/video-specification">
-    Supported video, audio, and caption formats.
-  </Card>
-
-  <Card title="Storage structure" icon="sitemap" href="/stream/storage-structure">
-    Where processed files are stored, for use in your own player or workflow.
-  </Card>
-
-  <Card title="Data and privacy" icon="user-shield" href="/stream/data-and-privacy">
-    What data we collect, how we use it, and how we keep it secure.
-  </Card>
-</CardGroup>
