@@ -672,10 +672,11 @@
                     "group": "Mobile SDKs",
                     "pages": [
                       "stream/mobile-sdk",
+                      "stream/mobile-sdk-token-authentication",
+                      "stream/expo-video",
                       "stream/android-sdk",
                       "stream/ios-sdk",
-                      "stream/react-native-sdk",
-                      "stream/expo-video"
+                      "stream/react-native-sdk"
                     ],
                     "tag": "New",
                     "expanded": true
