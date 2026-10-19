@@ -19,14 +19,17 @@ Your account has one API key, and it covers account-level work such as managing 
   We're working on scoped API keys. You'll be able to limit an API key to specific products and actions.
 </Note>
 
-## Stream and Edge Storage keys
+## Product credentials
 
-The Stream and Edge Storage APIs read the same `AccessKey` header and expect their own credentials:
+Some APIs expect a credential scoped to a single resource instead of your account API key:
 
-| API          | Credential                |
-| ------------ | ------------------------- |
-| Stream       | The video library API key |
-| Edge Storage | The storage zone password |
+| API | Credential |
+| --- | --- |
+| Bunny Stream | The [video library API key](/stream/authentication) |
+| Bunny Storage | The [storage zone password](/storage/http) |
+| Bunny Database | A [database auth token](/database/connect/authorization#access-tokens) |
+
+Managing video libraries, storage zones, and databases themselves uses your account API key.
 
 <Warning>
   Anyone holding your API key can act on your account. Keep it in a secret store or environment variable, and leave it out of client-side code and public
