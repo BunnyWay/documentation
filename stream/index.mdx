@@ -1,29 +1,124 @@
 ---
-title: Bunny Stream
-sidebarTitle: Introduction
-description: "Video streaming platform with global delivery, adaptive streaming, and robust security."
+title: "Bunny Stream"
+sidebarTitle: "Introduction"
+description: "Upload, encode, secure, and deliver video worldwide with adaptive streaming, a customizable player, modern codecs, AI transcription, captions, and built-in DRM."
 ---
 
 ![bunny.net Stream](/images/stream/stream.png)
 
-Bunny Stream is a feature-rich video streaming platform that allows content creators, website owners, and businesses to easily upload, manage, and stream video content to audiences worldwide. Built on top of bunny.net's robust content delivery network (CDN), Bunny Stream ensures that your video content is delivered efficiently and smoothly, regardless of the viewers' location.
+Bunny Stream is a video platform that takes care of the whole pipeline for you: upload a file, and we encode it into adaptive streams, replicate it to the storage regions you choose, and deliver it over bunny.net's global CDN to a player you can embed on any website or app.
 
-<Card
-  title="Stream Quickstart"
-  href="/stream/quickstart"
-  icon="rocket"
-  horizontal
-/>
+Use it to power course platforms, media sites, SaaS products, or any app that needs reliable video playback without running your own encoding and delivery infrastructure.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/stream/quickstart">
+    Create a video library, upload your first video, and embed it on your site.
+  </Card>
+
+  <Card title="API reference" icon="code" href="/stream/api-reference">
+    Manage libraries, videos, and collections programmatically.
+  </Card>
+</CardGroup>
+
+## How it works
+
+<Steps>
+  <Step title="Create a video library">
+    A video library holds your videos together with plenty of options to manage and configure. When you create one, you first choose the name of your video library and then choose which storage regions your videos are [replicated](/stream/replication) globally. The next step is configuring which paid services you would like to enable such as [Premium Encoding](/stream/premium-encoding), [AI Transcription](/stream/transcribing) and [Smart Generate](/stream/smart-generate) features. 
+  </Step>
+  <Step title="Upload your videos">
+    Upload from the dashboard, the API, a remote URL, or directly from your users' browsers and mobile apps with resumable uploads.
+  </Step>
+  <Step title="Encode and store them">
+    Each video is transcoded into multiple resolutions for [adaptive bitrate streaming](/stream/adaptive-bitrate). <br />With [Premium Encoding](/stream/premium-encoding), videos are typically playable within seconds of upload.
+  </Step>
+  <Step title="Deliver and play anywhere">
+    Videos are served from bunny.net's CDN and Storage. They playback with our very own customizable [Bunny Player](/stream/player),  [Native Mobile App Players](/stream/mobile-sdk)or [Third Party Player Integrations](/stream/players). 
+  </Step>
+</Steps>
 
 ## Key features
 
-Bunny Stream is designed to offer a seamless video streaming experience. Here are some of its key features:
+<CardGroup cols={2}>
+  <Card title="Flexible uploads" icon="upload" href="/stream/dashboard">
+    Upload to the dashboard, the HTTP API, fetch from a URL, or use resumable TUS.  
+  </Card>
 
-- **Global delivery**: Utilizes bunny.net's extensive CDN to stream videos with low latency and high transfer speeds globally.
-- **Adaptive streaming**: Automatically adjusts video quality based on the viewer's internet speed, ensuring uninterrupted playback.
-- **Video management**: Offers a user-friendly dashboard for uploading, organizing, and managing video content.
-- **Encoding and transcoding**: Automatically converts videos into multiple resolutions and formats to ensure compatibility across devices and browsers.
-- **Customizable video player**: Provides a customizable video player that can be tailored to match your branding and website design.
-- **Security**: Features security measures such as token authentication and domain restrictions to protect your video content from unauthorized access.
-- **DRM**: Implements DRM solutions to further secure your video content against piracy and unauthorized distribution, ensuring that your content is viewed only by authorized users in authorized regions. For more information, see our [MediaCageDRM overview](/stream/drm).
-- **Statistics**: Track engagement and analyze viewer behavior with detailed analytics and reporting tools.
+  <Card title="Free encoding" icon="film" href="/stream/encoding">
+    Every upload is transcoded into the resolutions and bitrates you choose, with optional MP4 fallback and watermarking.
+  </Card>
+
+  <Card title="Adaptive streaming" icon="gauge" href="/stream/adaptive-bitrate">
+    HLS renditions switch quality to match each viewer's connection for uninterrupted playback.
+  </Card>
+
+  <Card title="Bunny Player" icon="circle-play" href="/stream/player">
+    A customizable embeddable player with captions, chapters, Chromecast, AirPlay, adjustable playback speed, picture-in-picture and more. 
+  </Card>
+
+  <Card title="Mobile SDKs" icon="smartphone" href="/stream/mobile-sdk">
+    Native playback, resumable uploads, and camera capture for Android, iOS, React Native, and Expo.
+  </Card>
+
+  <Card title="Multi-audio" icon="audio-lines" href="/stream/multi-audio">
+    Add alternate language, commentary, or descriptive audio tracks viewers can switch between.
+  </Card>
+
+  <Card title="Access controls" icon="shield-check" href="/stream/security">
+    Restrict playback with allowed domains, direct URL blocking, and signed, expiring tokens.
+  </Card>
+
+  <Card title="MediaCage Basic DRM" icon="lock" href="/stream/mediacage-basic">
+    Free, one-click encryption for every playback session that stops casual downloads.
+  </Card>
+
+  <Card title="Statistics" icon="chart-line" href="/stream/statistics">
+    Track views, watch time, viewers by country, engagement scores, and heatmaps.
+  </Card>
+
+  <Card title="Webhooks" icon="webhook" href="/stream/webhooks">
+    Get signed notifications as videos upload, encode, and finish processing.
+  </Card>
+
+  <Card title="Global delivery" icon="network" href="/stream/delivery-tiers">
+    Serve from bunny.net's CDN on the Standard tier for the lowest latency or the Volume tier for lower cost.
+  </Card>
+
+  <Card title="Advertising" icon="megaphone" href="/stream/vast">
+    Monetize your videos by serving VAST ads in the player.
+  </Card>
+</CardGroup>
+
+## Premium add-ons
+
+Turn on paid add-ons for a library when you need faster processing, wider reach, or stronger protection. Each is billed on top of storage and delivery. See [Pricing](/stream/pricing) for rates.
+
+<CardGroup cols={2}>
+  <Card title="Premium Encoding" icon="zap" href="/stream/premium-encoding" cta="Explore Premium Encoding">
+    Make most videos playable in 10–15 seconds with Just-in-Time encoding, skip the queue with prioritized encoding, and output VP9, HEVC, and AV1 with HDR.
+  </Card>
+
+  <Card title="AI transcribing" icon="captions" href="/stream/transcribing" cta="Explore transcribing">
+    Generate captions automatically, translate them into 56 languages, and create titles, descriptions, and chapters with Smart Generate.
+  </Card>
+
+  <Card title="MediaCage Enterprise DRM" icon="lock-keyhole" href="/stream/mediacage-enterprise" cta="Explore Enterprise DRM">
+    Widevine and FairPlay protection with screen capture prevention, native app support, and custom player integration, built for premium and pay-per-view content.
+  </Card>
+
+  <Card title="Geo-replication" icon="globe" href="/stream/replication" cta="Explore geo-replication">
+    Replicate videos to additional storage regions for faster uncached delivery and automatic failover during regional outages.
+  </Card>
+</CardGroup>
+
+## Build with Stream
+
+Start with [Authentication](/stream/authentication) to find your library's API key, then pick a guide for your platform:
+
+| Platform | Guides |
+| --- | --- |
+| Browser Web player | [React](/stream/player/react), [Next.js](/stream/player/nextjs), [Vue and Nuxt](/stream/player/vue), [Svelte and SvelteKit](/stream/player/svelte), [Astro](/stream/player/astro), [JavaScript](/stream/player/javascript) |
+| Mobile SDKs | [Android](/stream/android-sdk), [iOS](/stream/ios-sdk), [React Native](/stream/react-native-sdk), [Expo](/stream/expo-video) |
+| Server-side uploads | [Laravel](/stream/upload/laravel), [Rails](/stream/upload/rails), [Django](/stream/upload/django) |
+| Third-party player <br />support | [Bitmovin](/stream/players/bitmovin), [Shaka Player](/stream/players/shaka), [Widevine HTML5](/stream/players/widevine), [FairPlay HTML5](/stream/players/fairplay) |
+| Integrations | [WordPress](/integrations/wordpress/stream), [Terraform](/integrations/terraform/importing-stream-library) |

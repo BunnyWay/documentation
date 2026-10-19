@@ -1,0 +1,11 @@
+## Add a custom domain
+
+With the Bunny CLI, add the domain to your site:
+
+```bash
+bunny sites domains add example.com
+```
+
+The CLI prints the `CNAME` record to create with your DNS provider. Once the record resolves, issue a free certificate with `bunny sites domains ssl example.com`.
+
+For a manual deploy, add the hostname to your pull zone by following [Custom hostnames](/cdn/custom-hostname).
