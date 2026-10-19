@@ -3,28 +3,7 @@ title: Authentication
 description: Learn how to authenticate requests to the bunny.net APIs.
 ---
 
-To authenticate requests, include your API key in the request headers.
-
-## Header
-
-| Header      | Value        |
-| ----------- | ------------ |
-| `AccessKey` | Your API key |
-
-The API key is required for performing account-specific actions, such as managing zones or other resources. You can have only one API key associated with your account, which can be viewed anytime in the dashboard.
-
-<Info>
-  You can learn how to locate your API key in the
-  [dashboard](https://dash.bunny.net).
-</Info>
-
-<Note>
-  The Stream and Edge Storage APIs use the same `AccessKey` header, but require
-  their own credentials. Use the library API key for Stream, or the storage zone
-  password for Edge Storage, instead of your account API key.
-</Note>
-
-## Example
+Send your API key in the `AccessKey` header with every request.
 
 ```bash
 curl --request GET \
@@ -32,7 +11,24 @@ curl --request GET \
   --header 'AccessKey: YOUR_API_KEY'
 ```
 
+## Find your API key
+
+Your account has one API key, and it covers account-level work such as managing pull zones, DNS zones, and other resources. You can view it at any time in the [dashboard](https://dash.bunny.net) under **Account** > **API**.
+
+<Note>
+  We're working on scoped API keys. You'll be able to limit an API key to specific products and actions.
+</Note>
+
+## Stream and Edge Storage keys
+
+The Stream and Edge Storage APIs read the same `AccessKey` header and expect their own credentials:
+
+| API          | Credential                |
+| ------------ | ------------------------- |
+| Stream       | The video library API key |
+| Edge Storage | The storage zone password |
+
 <Warning>
-  Ensure your API key is stored securely and never shared publicly to prevent
-  unauthorized access to your account.
+  Anyone holding your API key can act on your account. Keep it in a secret store or environment variable, and leave it out of client-side code and public
+  repositories.
 </Warning>
