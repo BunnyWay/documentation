@@ -1145,16 +1145,18 @@
                   "cli/quickstart",
                   "cli/installation",
                   "cli/configuration",
+                  "cli/commands/auth",
                   "cli/changelog"
                 ]
               },
               {
                 "group": "Commands",
                 "pages": [
-                  "cli/commands/auth",
                   "cli/commands/config",
                   "cli/commands/db",
+                  "cli/commands/dns",
                   "cli/commands/scripts",
+                  "cli/commands/storage",
                   "cli/commands/sites",
                   "cli/commands/sandbox",
                   {
@@ -1162,13 +1164,6 @@
                     "hidden": true,
                     "pages": [
                       "cli/commands/registry"
-                    ]
-                  },
-                  {
-                    "group": "DNS",
-                    "hidden": true,
-                    "pages": [
-                      "cli/commands/dns"
                     ]
                   },
                   {
