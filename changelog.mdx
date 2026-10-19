@@ -4,6 +4,14 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-10-19" tags={["Stream","(New)"]}>
+  ## SRT ingest for Stream Live
+
+  Bunny Stream Live now accepts feeds over SRT (Secure Reliable Transport) in addition to RTMP. SRT uses UDP with built-in packet-loss recovery, which keeps the stream stable over Wi-Fi, cellular, and long-distance links where RTMP would drop frames. Every live stream supports both protocols with no configuration change on the Bunny side.
+
+  The SRT latency buffer defaults to 120 ms and can be raised in the ingest URL for lossier connections. The Live Stream API returns SRT ingest URLs alongside RTMP URLs. [Learn more](/stream/live#choosing-an-ingest-protocol-rtmp-or-srt)
+</Update>
+
 <Update label="2026-10-16" tags={["Stream","(New)"]}>
   ## React Native Mobile SDK and Expo support
 
