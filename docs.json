@@ -1159,6 +1159,7 @@
                   "cli/commands/storage",
                   "cli/commands/sites",
                   "cli/commands/sandbox",
+                  "cli/commands/stream",
                   {
                     "group": "Registry",
                     "hidden": true,
