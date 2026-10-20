@@ -45,7 +45,7 @@ You don't need a library's Stream API key. The CLI looks it up from your account
 Create a video library. The main storage region is always DE. New libraries replicate to SG, LA, and NY unless you pass `--replication-regions`. Run [`bunny stream regions`](#bunny-stream-regions) to see every region code.
 
 ```bash
-# Create a library with the default replication regions
+# Create a library and choose replication regions interactively
 bunny stream libraries create my-library
 
 # Replicate to New York and Singapore only
