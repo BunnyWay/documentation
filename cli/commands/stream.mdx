@@ -42,7 +42,7 @@ You don't need a library's Stream API key. The CLI looks it up from your account
 
 ### `bunny stream libraries create`
 
-Create a video library. The main storage region is always DE. You can also pick when creating a video library the regions to replicate to. Pass --replication-regions to choose without the prompt.
+Create a video library. The main storage region is always DE. The command asks whether to replicate the library to other regions, with SG, LA, and NY preselected. Pass `--replication-regions` to choose without the prompt. Run [`bunny stream regions`](#bunny-stream-regions) to see every region code.
 
 ```bash
 # Create a library and choose replication regions interactively
@@ -51,7 +51,7 @@ bunny stream libraries create my-library
 # Replicate to New York and Singapore only
 bunny stream libraries create my-library --replication-regions NY,SG
 
-# Keep everything in DE, with no replication
+# Keep everything in DE without asking about replication
 bunny stream libraries create internal --replication-regions DE
 
 # Create with Premium Encoding and transcribing
@@ -71,7 +71,7 @@ It then prints the commands to upload a video, import videos, and show the libra
 
 | Flag                             | Description                                                                                                               |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `--replication-regions`          | Regions to replicate to besides DE: `UK`, `SE`, `NY`, `LA`, `SG`, `SYD`, `BR`, `JH`. Pass `DE` alone for no replication. |
+| `--replication-regions`          | Regions to replicate to besides DE: `UK`, `SE`, `NY`, `LA`, `SG`, `SYD`, `BR`, `JH`. Pass `DE` alone for no replication. Leave it out to be asked in a terminal, or to get no replicas when the command can't prompt. |
 | `--player-version`               | `1` for the legacy player, `2` for the current one                                                                        |
 | `--link`, `--no-link`            | Link the current directory to the new library, or skip the offer                                                          |
 | `--save-env`, `--no-save-env`    | Save the library ID and API key to `.env`, or skip the offer                                                              |
@@ -261,7 +261,7 @@ bunny stream unlink
 
 ### `bunny stream regions`
 
-List the region codes a library can store and replicate videos in. DE is the fixed main region, and SG, LA, and NY are the default replication regions.
+List the region codes a library can store and replicate videos in. DE is the fixed main region, and SG, LA, and NY are the suggested replication regions.
 
 ```bash
 bunny stream regions
