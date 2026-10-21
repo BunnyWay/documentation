@@ -28,6 +28,11 @@ jobs:
             exit 1
           fi
 
+          # The dashboard rewrites root-relative links onto https://bunny.net/. Docs links in the source are
+          # root-relative WITHOUT /docs (e.g. ](/stream/...)), so prepend /docs to every root-relative
+          # markdown link/image target. Idempotent (skips ](/docs/...); leaves ](https://...) and ](#...) alone.
+          perl -pe 's{\]\(/(?!docs/)}{](/docs/}g' "$CHANGELOG_MDX_PATH" > changelog.upload.mdx
+
           curl -X PUT \
             "https://${STORAGE_HOST}/${STORAGE_ZONE}/changelog.mdx" \
             -H "AccessKey: ${BUNNY_CHANGELOG_BUCKET_KEY}" \
