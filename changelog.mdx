@@ -4,6 +4,14 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-10-21" tags={["Shield","(Improvement)"]}>
+  ## Managed WAF protection for CVE-2026-109618 and CVE-2026-109619
+
+  Bunny Shield now blocks a multipart request pattern found in public proof-of-concept scripts associated with these reported PHP vulnerabilities.
+
+  The managed rule is active in blocking mode for all Bunny Shield protected sites, with no configuration required. We’ll review PHP’s security release later today and refine the rule against the confirmed details. Update PHP to a fixed release as soon as one is available.
+</Update>
+
 <Update label="2026-10-16" tags={["Stream","(New)"]}>
   ## React Native Mobile SDK and Expo support
 
