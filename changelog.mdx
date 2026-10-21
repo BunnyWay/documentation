@@ -5,11 +5,11 @@ rss: true
 ---
 
 <Update label="2026-10-21" tags={["Shield","(Improvement)"]}>
-  ## Managed WAF protection for CVE-2026-109618 and CVE-2026-109619
+  ## Bunny Shield rule for PHP CVE-2026-109618 and CVE-2026-109619
 
-  Bunny Shield now blocks a multipart request pattern found in public proof-of-concept scripts associated with these reported PHP vulnerabilities.
+  A managed WAF rule is now active for the multipart request pattern found in publicly circulating scripts associated with these vulnerabilities. For Shield Zones with the WAF in blocking mode, matching requests are blocked before they reach the origin. In log-only mode, the rule does not block requests. Bunny Shield respects each customer's configured mode.
 
-  The managed rule is active in blocking mode for all Bunny Shield protected sites, with no configuration required. We’ll review PHP’s security release later today and refine the rule against the confirmed details. Update PHP to a fixed release as soon as one is available.
+  The rule covers the observed request pattern while PHP's technical details are pending. We'll review today's PHP security release and refine the rule as needed. Update PHP to a fixed release when available.
 </Update>
 
 <Update label="2026-10-16" tags={["Stream","(New)"]}>
