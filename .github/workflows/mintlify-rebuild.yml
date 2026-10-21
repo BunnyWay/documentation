@@ -37,7 +37,7 @@ jobs:
             "https://${STORAGE_HOST}/${STORAGE_ZONE}/changelog.mdx" \
             -H "AccessKey: ${BUNNY_CHANGELOG_BUCKET_KEY}" \
             -H "Content-Type: text/plain; charset=utf-8" \
-            --data-binary "@${CHANGELOG_MDX_PATH}" \
+            --data-binary "@changelog.upload.mdx" \
             --fail --silent --show-error
 
           echo "Published ${CHANGELOG_MDX_PATH} -> ${STORAGE_ZONE}/changelog.mdx"
