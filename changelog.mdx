@@ -5,6 +5,14 @@ rss: true
 ---
 
 <Update label="2026-10-21" tags={["Shield","(Improvement)"]}>
+  ## Expanded Bunny Shield protections for critical PHP vulnerabilities
+
+  Following PHP's security release, we've updated our post on CVE-2026-109618 and CVE-2026-109619 with the confirmed vulnerability details and fixed versions. Bunny Shield has also added a managed WAF rule for multipart field names nested 20 or more levels. It joins our earlier rule for the default `PHP_SESSION_UPLOAD_PROGRESS` field.
+
+  Matching requests are blocked only when your Shield Zone's WAF is in **blocking mode**. In **log-only mode**, the rules do not block traffic. Update PHP to **8.5.12, 8.4.27, 8.3.36 or 8.2.35** as soon as possible; these rules cover specific request patterns and do not replace the PHP fixes. [PHP security advisory](https://www.php.net/archive/2026.php).
+</Update>
+
+<Update label="2026-10-21" tags={["Shield","(Improvement)"]}>
   ## Bunny Shield rule for PHP CVE-2026-109618 and CVE-2026-109619
 
   A managed WAF rule is now active for the multipart request pattern found in publicly circulating scripts associated with these vulnerabilities. For Shield Zones with the WAF in blocking mode, matching requests are blocked before they reach the origin. In log-only mode, the rule does not block requests. Bunny Shield respects each customer's configured mode.
