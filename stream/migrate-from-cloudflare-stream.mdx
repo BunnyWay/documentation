@@ -17,18 +17,25 @@ keywords:
   - "migrate"
 ---
 
-Moving a video library is nobody's idea of a good time but staying on Cloudflare Stream has its own cost though. It bills by the minute of video: a 4K master and a low-res webcam clip cost the same to store and deliver. There is no free tier, and the delivery bill increases with every view.
+<Tip>
+  **Using an AI coding agent?** The Bunny CLI skill gives AI coding agents, such as Claude Code, Cursor, and Codex, knowledge of the `bunny stream import` commands. Install it with `bunny skills install --global`, or accept the offer when you run `bunny login`. Then ask your agent: "Migrate my Cloudflare Stream videos to Bunny Stream."
+</Tip>
+
+<Warning>
+  The Bunny CLI is in [Public Preview](/product-release-stages#stage-2-public-preview). Commands, flags, and output may change, so what you see can differ slightly from the examples in this guide. [Open an issue](https://github.com/BunnyWay/cli/issues) if something does not work as described.
+</Warning>
 
 [Bunny Stream](https://bunny.net/stream/) bills only for the storage and bandwidth you use. See the [Bunny Stream pricing page](https://bunny.net/pricing/stream/) for current rates.
 
-This guide walks you through how to migrate your video content to Bunny Stream. Here's what we'll cover:
+This guide walks you through how to migrate your video content to Bunny Stream from Cloudflare Stream. Here's what we'll cover:
 
-- Installing and authenticating the [Bunny CLI](https://bunny.net/docs/cli)  
-- Creating a destination Bunny Stream library and a Cloudflare Stream API token  
-- Previewing the migration with a dry run, then running bunny stream import  
+- Installing and authenticating the [Bunny CLI](/cli)
+- Creating a destination Bunny Stream library and a Cloudflare Stream API token
+- Previewing the migration with a dry run, then running `bunny stream import`
 - Monitoring encoding progress and verifying the result in the Bunny dashboard
+- Cleaning up the MP4 downloads the migration creates on Cloudflare
 
-## Migration Overview
+## Overview
 
 <Frame>
   ![](/images/stream/migrate-from-cloudflare-stream/how-bunny-stream-import-works.png)
@@ -36,32 +43,71 @@ This guide walks you through how to migrate your video content to Bunny Stream. 
 
 A migration from Cloudflare Stream to Bunny Stream involves the following steps:
 
-- **Discover**: Bunny CLI lists every video on the Cloudflare Stream account. Cloudflare Stream has no folder concept, so every video is imported into the root of the destination library.  
-- **De-duplicate**: Each imported video is tagged with its Cloudflare Stream identifier under the cfStreamId metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.  
-- **Fetch**: For each new video, the CLI asks Cloudflare to generate an MP4 download and polls that request until the file is ready, for up to five minutes per video. It then passes the download URL to Bunny Stream, which fetches the file directly from Cloudflare.
+- **Discover**: Bunny CLI lists every video on the Cloudflare Stream account that is ready to stream. Cloudflare Stream has no folder concept, so every video is imported into the root of the destination library.
+- **De-duplicate**: Each imported video is tagged with its Cloudflare Stream identifier under the `cfStreamId` metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.
+- **Fetch**: For each new video, the CLI asks Cloudflare to generate an MP4 download, unless the video already has one, and polls that request until the file is ready, for up to five minutes per video. It then passes the download URL to Bunny Stream, which fetches the file directly from Cloudflare. Nothing is downloaded to your machine.
+
+## Scope
+
+The import copies the video files, names, and descriptions. Settings that control how and where videos play stay on Cloudflare, so plan to set up their Bunny equivalents.
+
+| Cloudflare Stream item | Migrated | Notes |
+| --- | --- | --- |
+| Video file | Yes | Copied from an MP4 download that Cloudflare generates for the import. |
+| Name | Yes | Taken from the video's `name` metadata. A video without a name keeps its video ID as its title. |
+| Description | Yes | Stored in the `description` metatag on the Bunny video, when the video has one. |
+| Video ID | Yes | Stored in the `cfStreamId` metatag on the Bunny video. |
+| Videos that are not ready to stream | No | Only videos that finished processing on Cloudflare are listed. |
+| Videos with `requireSignedURLs` | Not until you change them | They fail the import. See the privacy note below. |
+| Signed URLs and allowed origins | No | Use Bunny's library security settings instead. See the privacy note below. |
+| Captions | No | Upload them with `bunny stream videos captions add`, or generate new ones with [transcription](/stream/transcribing). |
+| Thumbnails | No | Bunny generates new thumbnails when it encodes each video. |
+| Watermark profiles | No | They are not carried over as settings. |
+| Live inputs | No | Only recorded videos are imported. |
+| Analytics | No | Bunny Stream collects its own [statistics](/stream/statistics) from the first view. |
+
+<Warning>
+  **Signed URLs and allowed origins are not migrated.** Every imported video follows the security settings of its Bunny library, and a new library allows playback from any site.
+
+  - **`requireSignedURLs`**: The CLI cannot import a video that requires signed URLs, so it fails these videos with an error that names the setting. To import them, turn off **Require Signed URLs** on each one in Cloudflare Stream, run the import, then turn it back on. While it is off, the video plays on Cloudflare without a token, so keep that window short.
+  - **Allowed origins**: Cloudflare's per-video allowed origins are not copied. Add the same sites to the library's [Allowed domains](/stream/security-options#domains) on Bunny.
+
+  Before you publish the new URLs, turn on [embed view token authentication](/stream/token-authentication) or [CDN token authentication](/stream/security#cdn-token-authentication) if you signed your Cloudflare playback URLs.
+</Warning>
 
 ## Prerequisites
 
 To follow along in this guide, you will need the following:
 
-- A [Cloudflare](https://dash.cloudflare.com) account  
-- [Node.js 24](https://nodejs.org/en) or later
+- A [bunny.net account](https://dash.bunny.net/auth/register)
+- A [Cloudflare](https://dash.cloudflare.com) account with Cloudflare Stream
 
 ## Step 1: Install and authenticate the Bunny CLI
 
-Install the Bunny CLI globally with npm:
+Install the Bunny CLI with the shell installer or npm:
 
-```sh
-npm install -g @bunny.net/cli
-```
+<Tabs>
+  <Tab title="curl">
+    ```sh
+    curl -fsSL https://cli.bunny.net/install.sh | sh
+    ```
 
-Once the CLI is installed, authenticate it with your Bunny account:
+    The installer downloads a prebuilt binary for your platform and places it on your `PATH`.
+  </Tab>
+  <Tab title="npm">
+    ```sh
+    npm install -g @bunny.net/cli
+    ```
+  </Tab>
+</Tabs>
+
+See [Installation](/cli/installation) for more options. Once the CLI is installed, authenticate it with your bunny.net account:
 
 ```sh
 bunny login
 ```
 
-The bunny login command opens your browser to complete authentication and securely stores the resulting credentials locally. On a remote machine or a CI environment without a browser, you can authenticate with an API key instead by running `bunny login --api-key "$BUNNYNET_API_KEY"`, where the key comes from [Account Settings > API key](https://dash.bunny.net/account/api-key) in the Bunny dashboard.
+The `bunny login` command opens your browser to complete authentication and securely stores the resulting credentials locally. The first time you log in from an interactive terminal, it also offers to install the agent skill for AI coding tools. On a remote machine or a CI environment without a browser, you can authenticate with an API key instead by running `bunny login --api-key "$BUNNYNET_API_KEY"`, where the key comes from [Account Settings > API key](https://dash.bunny.net/account/api-key) in the Bunny dashboard.
 
 ## Step 2: Create a Bunny Stream library
 
@@ -77,7 +123,7 @@ Then, enter a name for the library, select the replication regions closest to yo
   ![](/images/stream/migrate-from-cloudflare-stream/geo-replication-regions.png)
 </Frame>
 
-After the library is created, open its page, go to **API**, and copy the **Library ID**. You will pass this value to the `--lib` flag in the import commands.
+After the library is created, open its page, go to **API**, and copy the **Library ID**. You will pass this value to the `--library` flag in the import commands. The flag also accepts the library's name, and `--lib` works as a short alias.
 
 <Frame>
   ![](/images/stream/migrate-from-cloudflare-stream/library-api-id.png)
@@ -89,8 +135,8 @@ You do not need to manage the library's Stream API key at any point. Once you pa
 
 The Bunny CLI requires the following values from Cloudflare to list your videos and generate their MP4 download URLs:
 
-- Your Cloudflare Account ID  
-- A Cloudflare API token with the Stream:Edit permissions. It lets the CLI list your videos and generate an MP4 download for any video that does not already have one.
+- Your Cloudflare Account ID
+- A Cloudflare API token with the Stream:Edit permission. It lets the CLI list your videos and generate an MP4 download for any video that does not already have one.
 
 To find your Cloudflare Account ID, open the [Cloudflare dashboard](https://dash.cloudflare.com) and go to the **Build > Images & Stream > Hosted videos** section. The Account ID appears in the sidebar under **Account details**. Copy it and keep it handy, as the CLI asks for it the first time you run the import:
 
@@ -104,7 +150,7 @@ To create the Cloudflare API token, open [User API Tokens](https://dash.cloudfla
   ![](/images/stream/migrate-from-cloudflare-stream/cloudflare-create-token.png)
 </Frame>
 
-Then, click **Create Custom Token**, enter a token name (such as migrate-to-bunny), and add the permission **Account > Stream > Edit** (the Edit level also includes read access, so it covers both listing videos and generating their MP4 downloads). Finally, click **Continue to summary**, then **Create Token**.
+Then, click **Create Custom Token**, enter a token name (such as migrate-to-bunny), and add the permission **Account > Stream > Edit**. The Edit level also includes read access, so this single permission covers both listing videos and generating their MP4 downloads. Finally, click **Continue to summary**, then **Create Token**.
 
 <Frame>
   ![](/images/stream/migrate-from-cloudflare-stream/cloudflare-custom-token-permissions.png)
@@ -121,16 +167,16 @@ Once the token is displayed, copy it and keep it alongside your Account ID. Clou
 To preview the migration, run the following command:
 
 ```sh
-bunny stream import --lib 12345 --source cloudflare --dry-run
+bunny stream import --library 12345 --source cloudflare --dry-run
 ```
 
 In the command above:
 
-- `--lib` 12345 is the Bunny library ID you copied in Step 2.  
-- `--source` cloudflare selects Bunny's Cloudflare Stream adapter, which inspects the referenced Cloudflare Stream account for videos.  
+- `--library 12345` is the Bunny library ID you copied in Step 2.
+- `--source cloudflare` selects Bunny's Cloudflare Stream adapter, which inspects the referenced Cloudflare Stream account for videos.
 - `--dry-run` prints the import plan without making any changes to either platform.
 
-After resolving the library, the CLI prompts for your Cloudflare credentials. Paste the API token at the API Token prompt (the input is masked) and the Account ID at the Account ID prompt:
+After resolving the library, the CLI prompts for your Cloudflare credentials. Paste the API token at the **API Token** prompt (the input is masked) and the Account ID at the **Account ID** prompt:
 
 ```sh
 Cloudflare Stream credentials
@@ -139,32 +185,32 @@ Cloudflare Stream credentials
 ✔ Account ID: … your-account-id
 ```
 
-The CLI checks the credentials against Cloudflare. Once Cloudflare accepts them, the CLI offers to save them so that later runs skip these prompts. Press Enter to accept:
+The CLI checks the credentials against Cloudflare. Once Cloudflare accepts them, the CLI offers to save them so that later runs skip these prompts. This prompt defaults to yes, so press Enter to accept:
 
 ```sh
 ✔ Save Cloudflare Stream credentials for next time? … yes
 ✓ Saved Cloudflare Stream credentials to the "default" profile.
 ```
 
-The CLI stores the saved credentials in `~/.config/bunnynet/stream-import-credentials.json`, a file only your user account can read, separate from the main Bunny CLI config. They are tied to the active Bunny CLI profile. If Cloudflare later rejects them (for example, after you revoke the token), the CLI deletes the saved values and prompts for new ones on the next run. If you answer no, the CLI prompts for the credentials on every run.
+The CLI stores the saved credentials in `~/.config/bunnynet/stream-import-credentials.json`, a file only your user account can read, separate from the main Bunny CLI config. They are tied to the active Bunny CLI profile. If Cloudflare later rejects them (for example, after you revoke the token), the CLI deletes the saved values and prompts for new ones on the next run. If you answer no, the CLI prompts for the credentials on every run. The `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` environment variables always take priority over saved credentials.
 
 The dry run then produces an output like this:
 
 ```sh
 Cloudflare Stream to Bunny Stream
- Key                Value                                   
- Library            migrate-from-cloudflare-stream (753011) 
+ Key                Value
+ Library            migrate-from-cloudflare-stream (12345)
  Source             Cloudflare Stream: 6 videos in 0 folders
- Already imported   0                                       
- To import          6                                       
- Duration           2:01                                    
- Size               126 MB                                  
+ Already imported   0
+ To import          6
+ Duration           2:01
+ Size               126 MB
 
 Import plan
 (no collection) (6 videos)
   - 13534292_1920_1080_25fps.mp4
   - 3195394-uhd_3840_2160_25fps.mp4
-  - 6567878-uhd_2160_4096_25fps.mp4
+  - 6567878-hd_1080_1920_25fps.mp4
   - 4972699-hd_1920_1080_30fps.mp4
   - 12647590_1920_1080_50fps.mp4
   - 1585622-hd_720_1280_30fps.mp4
@@ -174,44 +220,51 @@ Import plan
 
 It opens with a summary block that reports:
 
-- **Library**: the destination Bunny Stream library the videos will be imported into.  
-- **Source**: the number of videos and folders found on the Cloudflare Stream account.  
-- **Already imported**: how many of those videos are already in the destination library.  
-- **To import**: how many videos would be imported on a real run.  
+- **Library**: the destination Bunny Stream library the videos will be imported into.
+- **Source**: the number of videos and folders found on the Cloudflare Stream account.
+- **Already imported**: how many of those videos are already in the destination library.
+- **To import**: how many videos would be imported on a real run.
 - **Duration and size**: the total runtime and file size of the videos to import.
 
 Below the summary, the CLI prints the import plan, listing every video under a single (no collection) group, since Cloudflare Stream has no folders, and adds them to the root of the destination library.
+
+Bunny Stream accepts sources up to 2160p (3840x2160, or 2160x3840 in portrait) and up to 72 hours long. Cloudflare reports each video's resolution, so the dry run checks every video against those limits. All six videos above are within them, so the dry run shows no warning. If a video were beyond the limits, the dry run would warn about it below the summary, as it will fail on Bunny:
+
+```sh
+⚠ 1 videos are beyond Bunny's limits and will fail:
+⚠   - 7136213-uhd_4096_2160_25fps.mp4: 4096x2160 is above Bunny's 2160p limit
+```
 
 ## Step 5: Run the import
 
 Now, to perform the migration, run the same command without `--dry-run`:
 
 ```sh
-bunny stream import --lib 12345 --source cloudflare
+bunny stream import --library 12345 --source cloudflare
 ```
 
-Because you saved the Cloudflare credentials during the dry run, the CLI does not prompt for them again. It prints the same summary block it showed during the dry run, then asks for confirmation to start the import:
+Because you saved the Cloudflare credentials during the dry run, the CLI does not prompt for them again. It prints the same summary block it showed during the dry run, then asks for confirmation to start the import. The confirmation defaults to no, so type `y` and press Enter to start:
 
 ```sh
 Cloudflare Stream to Bunny Stream
- Key                Value                                   
- Library            migrate-from-cloudflare-stream (12345) 
+ Key                Value
+ Library            migrate-from-cloudflare-stream (12345)
  Source             Cloudflare Stream: 6 videos in 0 folders
- Already imported   0                                       
- To import          6                                       
- Duration           2:01                                    
- Size               126 MB                                  
+ Already imported   0
+ To import          6
+ Duration           2:01
+ Size               126 MB
 
-? Import 6 videos into migrate-from-cloudflare-stream? › (Y/n)
+? Import 6 videos into migrate-from-cloudflare-stream? › (y/N)
 ```
 
-After you confirm, the CLI works through the same steps described in the Migration Overview:
+After you confirm, the CLI works through the same steps described in the [Overview](#overview):
 
-- **Discover**: it lists the videos on the Cloudflare Stream account.  
-- **De-duplicate**: it checks the destination library for videos that carry the cfStreamId tag and skips any that are already imported.  
-- **Fetch**: it passes each new video to Bunny (three at a time by default), writes the cfStreamId tag on it, and returns once every video has been queued. Bunny then fetches each file directly from Cloudflare and encodes it.
+- **Discover**: it lists the videos on the Cloudflare Stream account.
+- **De-duplicate**: it checks the destination library for videos that carry the `cfStreamId` tag and skips any that are already imported.
+- **Fetch**: it has Cloudflare generate each new video's MP4 download, passes the download URL to Bunny (three at a time by default), writes the `cfStreamId` tag on it, and returns once every video has been queued. Bunny then fetches each file directly from Cloudflare and encodes it.
 
-While the import runs, a single progress line shows the current stage, such as Discovering Cloudflare Stream content, Checking for existing videos in Bunny, and Handing videos to Bunny: 3/6. Once every video has been handed over, the progress line is replaced by the result:
+While the import runs, a single progress line shows the current stage, such as `Discovering Cloudflare Stream content`, `Checking for existing videos in Bunny`, and `Handing videos to Bunny: 3/6`. Once every video has been handed over, the progress line is replaced by the result:
 
 ```sh
 ✔ Import 6 videos into migrate-from-cloudflare-stream? … yes
@@ -219,37 +272,36 @@ While the import runs, a single progress line shows the current stage, such as D
 ℹ Check progress with bunny stream import status --library 12345 --source cloudflare
 ```
 
-The command finishes by reporting how many videos were queued into the destination library and printing the bunny stream import status command you can use to watch the encoding progress.
+The command finishes by reporting how many videos were queued into the destination library and printing the `bunny stream import status` command you can use to watch the encoding progress.
 
 The import command also accepts the following flags:
 
-- `--wait` keeps the command running, with a live encoding progress indicator, until Bunny has encoded every video.  
-- `--force` skips the confirmation prompt (useful for unattended or CI runs).  
-- `--concurrency` N sets how many videos the CLI passes to Bunny in parallel, from 1 to 20.  
-- `--clean-failed` deletes the failed Bunny copies of videos before importing them again, including videos that Bunny rejected.  
-- `--retry-stalled` deletes and imports again any video stuck at zero bytes on Bunny.  
-- `--folder` imports a single source folder only (folder-based sources only, does not apply to Cloudflare Stream).  
-- `--bucket` overrides the source bucket (S3 source only).  
-- `--prefix` overrides the source path prefix (S3 source only).  
-- `--url-ttl` sets the pre-signed download URL lifetime in seconds (S3 source only).  
-- `--include-ts` also imports .ts files (S3 source only).
+- `--wait` keeps the command running, with a live encoding progress indicator, until Bunny has encoded every video.
+- `--force` skips the confirmation prompt and the offer to retry failed videos (useful for unattended or CI runs).
+- `--concurrency N` sets how many videos the CLI passes to Bunny in parallel, from 1 to 20.
+- `--clean-failed` deletes the failed Bunny copies of videos before importing them again, including videos that Bunny rejected.
+- `--retry-stalled` deletes and imports again any video stuck at zero bytes on Bunny.
+- `--request-timeout` sets how many seconds one request to Cloudflare or Bunny can take before it gives up (default 30).
+- `--video-timeout` sets how many seconds the hand-off of one video to Bunny, or with `--wait` its encoding, can take before it gives up (default 5400).
+
+Run `bunny stream import --help` for the full list.
 
 ## Step 6: Watch encoding progress
 
 By default, the import command returns before Bunny finishes encoding. To check on the encoding progress, run the status command:
 
 ```sh
-bunny stream import status --lib 12345 --source cloudflare
+bunny stream import status --library 12345 --source cloudflare
 ```
 
 The status command prints one row per queued video, showing the video's encoding status on Bunny, its encode percentage, its size, and when it was queued. Run shortly after the import, it shows some videos still encoding:
 
 ```sh
 Cloudflare Stream to migrate-from-cloudflare-stream
- Video                             Bunny status   Encoded   Size    Queued  
+ Video                             Bunny status   Encoded   Size    Queued
  13534292_1920_1080_25fps.mp4      Finished       100%      37 MB   just now
  3195394-uhd_3840_2160_25fps.mp4   Finished       100%      15 MB   just now
- 6567878-uhd_2160_4096_25fps.mp4   Transcoding    45%               just now
+ 6567878-hd_1080_1920_25fps.mp4    Transcoding    45%               just now
  4972699-hd_1920_1080_30fps.mp4    Transcoding    5%                just now
  12647590_1920_1080_50fps.mp4      Processing     5%                just now
  1585622-hd_720_1280_30fps.mp4     Processing     5%                just now
@@ -267,45 +319,79 @@ The status command exits with a non-zero code when any video has failed, so you 
 
 ## Step 7: Recover from interruptions and failures
 
-When some videos fail during an interactive import, the CLI asks whether to retry them straight away:
+When some videos fail during an interactive import, the CLI lists each failure and asks whether to retry them straight away. The prompt defaults to no:
 
 ```sh
+✓ Queued 4 videos into migrate-from-cloudflare-stream. Bunny is fetching and encoding them now.
+ℹ Check progress with bunny stream import status --library 12345 --source cloudflare
+
+✖ 4972699-hd_1920_1080_30fps.mp4: No download available: the video was not found at the source or has no usable file
+✖ 12647590_1920_1080_50fps.mp4: Cloudflare video requires signed URLs; turn off Require Signed URLs on it in Cloudflare Stream, then re-run the import
+ℹ Resume with bunny stream import --library 12345 --source cloudflare --resume
 ? 2 videos failed. Retry them now? › (y/N)
 ```
 
-Answer yes to retry them in the same run. When an import is interrupted, or when you decline the retry, run the command again with the `--resume` flag:
+The errors you are most likely to see from Cloudflare Stream are:
+
+- **No download available**: Cloudflare did not finish generating the MP4 download within five minutes, which can happen with long or high-resolution videos. It can also mean the video was deleted from Cloudflare after the import started. Cloudflare keeps generating the download after the CLI stops waiting, so wait a few minutes, then retry. The retry picks up the finished download instead of requesting a new one.
+- **Cloudflare video requires signed URLs**: the video has `requireSignedURLs` turned on. Turn off **Require Signed URLs** on it in Cloudflare Stream, retry, then turn it back on. See [Scope](#scope).
+- **Cloudflare could not generate an MP4 download**: Cloudflare reported an error while generating the download, followed by its reason. Check the video in the Cloudflare dashboard. A retry only helps once Cloudflare can generate the download.
+
+Answer `y` to retry them in the same run. When an import is interrupted, or when you decline the retry, run the command again with the `--resume` flag:
 
 ```sh
-bunny stream import --lib 12345 --source cloudflare --resume
+bunny stream import --library 12345 --source cloudflare --resume
 ```
 
-The `--resume` flag retries the videos that failed, processes any videos that were still outstanding, and re-applies the cfStreamId tag to any video that Bunny fetched before the run stopped but did not finish tagging.
+The `--resume` flag retries the videos that failed, processes any videos that were still outstanding, and re-applies the `cfStreamId` tag to any video that Bunny fetched before the run stopped but did not finish tagging. A resume stops retrying a video after three failed attempts, and it skips videos that Bunny rejected outright. To try videos that failed three times again, run the import without `--resume`. To retry videos that Bunny rejected, add `--clean-failed`, which deletes their failed Bunny copies first.
 
-Running the import again is always safe. Because every imported video carries the cfStreamId tag, a repeated run against a library that already has every video imports nothing:
+Running the import again is always safe. Because every imported video carries the `cfStreamId` tag, a repeated run against a library that already has every video imports nothing:
 
 ```sh
 Cloudflare Stream to Bunny Stream
- Key                Value                                   
- Library            migrate-from-cloudflare-stream (12345) 
+ Key                Value
+ Library            migrate-from-cloudflare-stream (12345)
  Source             Cloudflare Stream: 6 videos in 0 folders
- Already imported   6                                       
- To import          0                                       
- Duration           2:01                                    
- Size               126 MB                                  
+ Already imported   6
+ To import          0
+ Duration           2:01
+ Size               126 MB
 
 ✓ Everything is already imported.
 ```
 
 ## Step 8: Verify in the Bunny dashboard
 
-To confirm that all the videos have been encoded on Bunny successfully, open the [Bunny dashboard](https://dash.bunny.net) and go to **Stream >** **Your library** **> Manage library**:
+To confirm that all the videos have been encoded on Bunny successfully, open the [Bunny dashboard](https://dash.bunny.net) and go to **Stream > Your library > Manage library**:
 
 <Frame>
   ![](/images/stream/migrate-from-cloudflare-stream/manage-library-videos.png)
 </Frame>
 
-After migrating your videos to Bunny Stream, replace the Cloudflare Stream embed URLs and player references in your site with their Bunny Stream equivalents. The [Embedding videos documentation](https://bunny.net/docs/stream/embedding) covers the embed and player options.
+After migrating your videos to Bunny Stream, set up the library's [security settings](/stream/security-options) if you have not already, then replace the Cloudflare Stream embed URLs and player references in your site with their Bunny Stream equivalents. The [Embedding videos documentation](/stream/embedding) covers the embed and player options.
+
+## Step 9: Clean up the MP4 downloads on Cloudflare
+
+The import asks Cloudflare to generate an MP4 download for every video that did not already have one, and those downloads stay on your Cloudflare account until you delete them or the video. According to [Cloudflare's documentation](https://developers.cloudflare.com/stream/viewing-videos/download-videos/), MP4 downloads add no storage cost, but each time an MP4 is downloaded, Cloudflare bills for the video's duration. Bunny's fetch during the import counts as one download per video.
+
+If you plan to delete your videos from Cloudflare Stream once the migration is complete, deleting a video also deletes its downloads, so there is nothing else to do.
+
+If you are keeping the videos on Cloudflare for now, you can delete the downloads you do not need. Delete a video's MP4 download through the Cloudflare API:
+
+```sh
+curl -X DELETE \
+  "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/stream/$VIDEO_UID/downloads/default" \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+```
+
+The `$VIDEO_UID` is the Cloudflare video ID, which is stored in the `cfStreamId` metatag on each Bunny video. To list every video ID on the account, run:
+
+```sh
+bunny stream import list --source cloudflare --videos
+```
+
+The CLI reuses MP4 downloads that existed before the migration. If your site already serves some of those downloads, leave them in place.
 
 ## Summary
 
-In this guide, you learned how to migrate a Cloudflare Stream library into Bunny Stream using the Bunny CLI. You installed and authenticated the CLI, created a destination Stream library, generated a Cloudflare API token with the Stream:Read and Stream:Edit permission, previewed the migration with `--dry-run`, ran bunny stream import to pass the Cloudflare library to Bunny over direct download URLs, monitored encoding with bunny stream import status, and verified the result in the dashboard.
+In this guide, you learned how to migrate a Cloudflare Stream library into Bunny Stream using the Bunny CLI. You installed and authenticated the CLI, created a destination Stream library, generated a Cloudflare API token with the Stream:Edit permission, previewed the migration with `--dry-run`, ran `bunny stream import` to pass the Cloudflare library to Bunny over direct download URLs, monitored encoding with `bunny stream import status`, verified the result in the dashboard, and cleaned up the MP4 downloads on Cloudflare.
