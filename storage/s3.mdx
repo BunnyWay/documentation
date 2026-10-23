@@ -345,6 +345,7 @@ Additional regions will be added in the future. Regions that do not yet support 
 The following S3 features are limited by:
 
 - **ACLs**: Access Control Lists are not supported
+- **CORS Configuration**: CORS is not configurable — the S3 endpoint always responds with `Access-Control-Allow-Origin: *`. To control CORS, front the storage zone with a pull zone and configure it at the CDN level for file delivery.
 - **Lifecycle Policies**: Automatic lifecycle transitions are not supported
 - **Object Metadata**: Custom metadata (`x-amz-meta-*`) and system metadata (`Cache-Control` and similar) are each limited to 2 KB. Keys containing an underscore are silently dropped. Metadata is returned only on S3 requests and is not yet used by pull zones. Metadata is cleared when the object is overwritten through a non-S3 protocol
 - **Bulk Delete**: Maximum 1,000 keys per `DeleteObjects` request. A folder key removes only the folder marker, not its contents
