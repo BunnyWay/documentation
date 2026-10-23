@@ -133,6 +133,20 @@ Generating llms.txt requires significant processing, so regeneration is rate lim
 The waiting period is determined by the system and can range from 5 minutes to 24 hours. 
 The dashboard shows when regeneration becomes available again.
 
+## How agents discover Markdown and llms.txt
+
+Conventions for how AI agents find Markdown content are still taking shape, so whether an agent sends `Accept: text/markdown` or looks for `/llms.txt` depends on its implementation. To make both easier to find, Agent Readability advertises them in the `Link` response header:
+
+- HTML pages link to their Markdown representation with `rel="alternate"` when **Markdown for AI agents** is enabled.
+- HTML pages and Markdown responses link to `/llms.txt` with `rel="describedby"` when **Enable llms.txt serving** is on.
+
+```text
+Link: </docs/page.index.md>; rel="alternate"; type="text/markdown"
+Link: </llms.txt>; rel="describedby"
+```
+
+These links make Markdown and `llms.txt` easier to find, but they do not guarantee that agents use them.
+
 ## Troubleshooting
 
 ### A Markdown request returns HTML
