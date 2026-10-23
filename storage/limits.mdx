@@ -77,10 +77,6 @@ When naming files and folders in Bunny Storage:
 
 Uploads that violate these rules are rejected.
 
-## SFTP path restrictions
-
-For security, SFTP paths cannot contain `..` (parent-directory traversal). If a path includes `..`, the SFTP connection fails **silently, with no error message**. If your SFTP client stops working unexpectedly, check that none of your paths contain `..`.
-
 ## Renaming files
 
 Renaming files or folders directly on Bunny Storage is not currently supported by design, so you won't see a rename option in the dashboard or over FTP. Allowing renames could cause inconsistencies while content propagates across edge locations, so the action is blocked to keep replication stable.
