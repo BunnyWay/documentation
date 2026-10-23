@@ -4,6 +4,14 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-10-23" tags={["Storage","(New)"]}>
+  ## S3 bulk deletes, object metadata and a new Storage Regions API
+
+  Bunny Storage’s S3-compatible API now supports DeleteObjects for up to 1,000 keys per request, so AWS CLI, rclone and SDK batch deletes work out of the box. You can also store custom x-amz-meta-\* fields and system headers like Cache-Control with your objects, preserved on copy and returned on every GET and HEAD. [Read the S3 docs](https://bunny.net/docs/storage/s3)
+
+  Plus, the new [Get Storage Zone Regions API](https://bunny.net/docs/api-reference/core/storage-zone/get-storage-zone-regions) lists every region with its tier, pricing, S3 support and endpoints, so you never need to hardcode them.
+</Update>
+
 <Update label="2026-10-21" tags={["Shield","(Improvement)"]}>
   ## Expanded Bunny Shield protections for critical PHP vulnerabilities
 
