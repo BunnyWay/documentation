@@ -4,6 +4,33 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-10-23">
+  ## Dashboard
+
+  ### New
+
+  - **Load Balancer edge rules.** Load Balancer has new edge rule options, and origin groups now include an origin latency period setting.
+  - **Shield event logs show request IDs.** Each Shield event includes the request ID, so you can trace a blocked or challenged request back to its source.
+  - **Re-encode confirmation in Bunny Stream.** Re-encoding a video when **Keep Originals** is off now opens a confirmation modal that explains what happens to the source file.
+
+  ### Improvements
+
+  - The Magic Containers overview page no longer repeats the same data in several places, and pod details show updated logs.
+  - Pod, region, and container filters stay applied when you switch between Magic Containers log tabs.
+  - The CDN settings explain the deprecated TLS version controls more clearly.
+  - Storage zone names are limited to 63 characters.
+
+  ### Fixes
+
+  - Bunny DNS shows the badge for MX records with priority 0, and sorts MX priorities correctly.
+  - Bunny DNS tooltips display correctly, and editing the TTL on a pull zone record saves as expected.
+  - Bunny Database's regions map loads fully after you disable regions and return to the map.
+  - Bunny Stream shows the same video status in list and grid view, and empty Videos and Collections tabs show a single banner.
+  - Dropdowns inside scrolling headers behave correctly, and the unsaved changes warning no longer blocks navigation in the wrong places.
+  - Profile names and email addresses display without escaped characters.
+  - Deletion confirmation fields accept trailing whitespace.
+</Update>
+
 <Update label="2026-10-21" tags={["Shield","(Improvement)"]}>
   ## Expanded Bunny Shield protections for critical PHP vulnerabilities
 
