@@ -4,6 +4,14 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-10-23" tags={["Storage","(New)"]}>
+  ## S3 custom metadata, system metadata, and bulk delete
+
+  The S3 API now supports custom metadata (`x-amz-meta-*` headers) and system metadata (`Cache-Control`, `Content-Disposition`, `Content-Encoding`, `Content-Language`, `Expires`) on `PutObject`, `CopyObject`, and `CreateMultipartUpload`. Metadata is returned on `GetObject` and `HeadObject` responses. Each metadata set is limited to 2 KB.
+
+  `DeleteObjects` now deletes up to 1,000 keys in a single request with per-key success and error reporting. [Learn more](/storage/s3)
+</Update>
+
 <Update label="2026-10-21" tags={["Shield","(Improvement)"]}>
   ## Expanded Bunny Shield protections for critical PHP vulnerabilities
 
