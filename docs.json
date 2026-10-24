@@ -564,6 +564,16 @@
                 "pages": [
                   "stream/index",
                   "stream/quickstart",
+                  {
+                    "group": "Migration Guides",
+                    "tag": "New",
+                    "expanded": true,
+                    "pages": [
+                      "stream/migrate-from-mux",
+                      "stream/migrate-from-cloudflare-stream",
+                      "stream/migrate-from-vimeo"
+                    ]
+                  },
                   "stream/authentication",
                   "stream/pricing",
                   "stream/changelog"
@@ -645,7 +655,8 @@
                   "stream/collections",
                   "stream/tagging",
                   "stream/metatags",
-                  "stream/storage-structure"
+                  "stream/storage-structure",
+                  "stream/video-specification"
                 ]
               },
               {
@@ -697,7 +708,6 @@
               {
                 "group": "Reference",
                 "pages": [
-                  "stream/video-specification",
                   "stream/vimeo2bunny",
                   "stream/data-and-privacy",
                   "stream/api-reference"
