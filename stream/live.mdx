@@ -468,6 +468,74 @@ All paths are relative to `https://video.bunnycdn.com` and require the `AccessKe
 | `GET` | `/library/{libraryId}/live/{streamId}/current-bitrate` | Get the latest ingest bitrate. |
 | `GET` | `/library/{libraryId}/live/{streamId}/bitrate-history` | Get ingest bitrate history (`startTime`, `endTime`). |
 
+## Webhooks
+
+Live streams send webhooks to your video library's webhook URL, the same URL that receives video webhooks. Requests are signed, delivered, and retried the same way. See [Webhooks](/stream/webhooks) to set up the URL and [validate the signature](/stream/webhooks#signature-validation).
+
+<Info>
+  Live stream webhooks are part of the closed preview and may change before general availability.
+</Info>
+
+### Payload
+
+<CodeGroup>
+
+```json JSON
+{
+  "IsLiveStreamWebhook": true,
+  "VideoLibraryId": 133,
+  "LiveStreamId": "019fed6c-d433-7040-92cd-dfd0e4221757",
+  "Status": 18,
+  "EventId": "4b1f8e0e-7c55-4f7e-9b0e-5d2a3c9b8f11",
+  "Timestamp": "2026-01-15T19:30:15.123456Z",
+  "Reason": "Manual"
+}
+```
+
+</CodeGroup>
+
+| Field | Description |
+| --- | --- |
+| `IsLiveStreamWebhook` | `true` for live stream webhooks. |
+| `VideoLibraryId` | The ID of the video library. |
+| `LiveStreamId` | The ID of the live stream. |
+| `Status` | The status code of the event. See the [status list](#live-stream-statuses) below. |
+| `EventId` | A unique ID for the event. Use it to drop duplicate deliveries. |
+| `Timestamp` | The UTC time the event happened. Use it to order events. |
+| `Reason` | Why the event happened, for statuses that have one. Left out when there is none. |
+| `VideoGuid` | Only on the recording events (`19` to `21`): the ID of the recording video. |
+
+<Note>
+  Switch on the numeric `Status` value, not on the status name. New statuses and `Reason` values may be added, so ignore the ones you don't recognize.
+</Note>
+
+### Live stream statuses
+
+| Value | Status | Sent when | `Reason` |
+| --- | --- | --- | --- |
+| `14` | LiveStreamCreated | The live stream was created. | - |
+| `15` | LiveStreamPublishingStarted | The primary ingest started publishing. | - |
+| `16` | LiveStreamStarted | The stream went live for viewers. | `Manual`, `Scheduled` |
+| `17` | LiveStreamDisconnected | All ingests disconnected. | `IngestLeft`, `IngestRejected`, `IngestTimeout`, `EncoderLost`, `Blocked`, `Unknown` |
+| `18` | LiveStreamStopped | The stream ended. | `Manual`, `Scheduled`, `DisconnectTimeout`, `MaxDuration`, `LibraryDisabled`, `Unknown` |
+| `19` | LiveStreamRecordingQueued | The recording was queued for encoding. | - |
+| `20` | LiveStreamRecordingReady | The recording finished encoding. | - |
+| `21` | LiveStreamRecordingFailed | The recording failed. | - |
+| `22` | LiveStreamDeleted | The live stream was deleted. | - |
+| `23` | LiveStreamKeyRegenerated | The stream key was regenerated. | - |
+| `24` | LiveStreamReconnected | The primary ingest reconnected after a disconnect. | - |
+| `25` | LiveStreamBackupConnected | The backup ingest connected. | - |
+| `26` | LiveStreamBackupDisconnected | The backup ingest disconnected. | Same as `17` |
+| `27` | LiveStreamFailedOver | The backup ingest took over from the primary. | `PrimaryEncoderLost`, `PrimaryStalled`, `IngestLeft` |
+| `28` | LiveStreamInterrupted | The primary ingest is connected, but no new media reaches viewers. | `PrimaryEncoderLost`, `PrimaryStalled` |
+| `29` | LiveStreamResumed | Media is flowing again after an interruption. | - |
+| `30` | LiveStreamBlockChanged | The stream's ingest was blocked or unblocked. | `Blocked`, `Unblocked` |
+| `31` | LiveStreamPublishRejected | An attempt to publish to the stream was refused. | `StreamEnded`, `StreamBlocked`, `TooManyIngests`, `RegionConflict` |
+
+Statuses `17` and `24` to `31` are best effort, so in rare cases one may not be delivered. To check the current state of a stream, use the [status endpoint](#check-the-stream-status).
+
+When **Video on demand** is enabled, the recording also sends the ordinary [video webhooks](/stream/webhooks#status-list) while it encodes, with `IsLiveStreamWebhook` set to `false`.
+
 ## Additional features
 
 - Live Stream also supports the following within **advanced settings** and your **video library live stream settings**:
@@ -481,6 +549,7 @@ All paths are relative to `https://video.bunnycdn.com` and require the `AccessKe
   - **VOD** is re-encoded, meaning all of Bunny Stream's VOD features - such as Premium encoding, Transcription, Smart generate, and eDRM - are supported for the VOD.
 - Configure **player UI and authentication** (allowed/blocked domains, token, and CDN authentication) in your **player and security video library settings**.
 - Automate stream creation and control with the [Live Stream API](#automate-with-the-live-stream-api) - create, start, stop, monitor, and manage streams programmatically.
+- React to stream events, such as a disconnected ingest or a finished recording, with [webhooks](#webhooks).
 
 ## Pricing
 
