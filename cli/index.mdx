@@ -2,17 +2,14 @@
 title: Bunny CLI
 sidebarTitle: Introduction
 description: Manage bunny.net from your terminal
+mode: wide
 ---
 
-<Warning>
-  The Bunny CLI is currently in [Public
-  Preview](/product-release-stages#stage-2-public-preview). Commands and flags
-  may evolve during this period, [open an
-  issue](https://github.com/BunnyWay/cli/issues) if you see something broken, or
-  have suggestions to improve the experience.
-</Warning>
+![bunny.net CLI](/images/cli/bunny-cli.png)
 
 The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from your terminal. It's useful for scripting, CI/CD, local development workflows, and quickly inspecting resources without leaving your shell.
+
+<Columns cols={2}>
 
 <Card title="CLI Quickstart" href="/cli/quickstart" icon="rocket" horizontal />
 
@@ -20,14 +17,7 @@ The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from
   Browse the source, follow releases, and report issues on the Bunny CLI repository
 </Card>
 
-## Key features
-
-- **Single binary**: install via `curl` or `npm`, authenticate once, run anywhere
-- **Databases**: create, link, shell into, and inspect Bunny Databases from the command line
-- **Edge Scripts**: scaffold, deploy, and manage Edge Scripts, their deployments, environment variables, and custom domains
-- **Raw API access**: `bunny api` lets you hit any bunny.net endpoint with auth handled automatically
-- **Profiles**: switch between multiple accounts (personal, staging, production) with `--profile`
-- **Scriptable output**: `--output json` / `csv` / `markdown` for pipelines, CI, and LLMs
+</Columns>
 
 ## Getting started
 
@@ -53,9 +43,22 @@ The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from
     Create and manage Bunny Databases, run schema migrations, open an
     interactive SQL shell, and generate auth tokens
   </Card>
+  <Card title="bunny dns" icon="globe-2" href="/cli/commands/dns">
+    Manage DNS zones and records, DNSSEC, query logging, and Scriptable DNS
+    scripts
+  </Card>
   <Card title="bunny scripts" icon="code" href="/cli/commands/scripts">
     Scaffold, deploy, and manage Edge Scripts, deployments, env vars, and custom
     domains
+  </Card>
+  <Card title="bunny storage" icon="hard-drive" href="/cli/commands/storage">
+    Create and manage Storage zones, credentials, custom domains, and files
+  </Card>
+  <Card title="bunny sites" icon="globe" href="/cli/commands/sites">
+    Build and deploy static sites to Bunny Storage and Bunny CDN (Public Preview)
+  </Card>
+  <Card title="bunny sandbox" icon="box" href="/cli/commands/sandbox">
+    Create and manage on-demand cloud sandboxes backed by Magic Containers
   </Card>
   <Card title="bunny api" icon="square-terminal" href="/cli/commands/api">
     Make raw authenticated requests to any bunny.net API endpoint

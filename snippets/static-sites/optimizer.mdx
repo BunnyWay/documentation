@@ -1,0 +1,4 @@
+`bunny sites create` leaves query strings and Optimizer off, so open the site's pull zone under **CDN → Pull Zones**:
+
+- Turn on [URL Query String](/cdn/vary-cache#url-query-string) vary, so each `?width=` gets its own cache entry.
+- Enable [Bunny Optimizer](/optimizer/quickstart), then turn on the Dynamic Image API and automatic WebP under **Optimizer → Settings**. Your build has already minified CSS and JavaScript, so turn Optimizer's minification off.

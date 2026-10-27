@@ -4,6 +4,81 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-10-23">
+  ## Dashboard
+
+  ### New
+
+  - **Load Balancer edge rules.** Load Balancer has new edge rule options, and origin groups now include an origin latency period setting.
+  - **Shield event logs show request IDs.** Each Shield event includes the request ID, so you can trace a blocked or challenged request back to its source.
+  - **Re-encode confirmation in Bunny Stream.** Re-encoding a video when **Keep Originals** is off now opens a confirmation modal that explains what happens to the source file.
+
+  ### Improvements
+
+  - The Magic Containers overview page no longer repeats the same data in several places, and pod details show updated logs.
+  - Pod, region, and container filters stay applied when you switch between Magic Containers log tabs.
+  - The CDN settings explain the deprecated TLS version controls more clearly.
+  - Storage zone names are limited to 63 characters.
+
+  ### Fixes
+
+  - Bunny DNS shows the badge for MX records with priority 0, and sorts MX priorities correctly.
+  - Bunny DNS tooltips display correctly, and editing the TTL on a pull zone record saves as expected.
+  - Bunny Database's regions map loads fully after you disable regions and return to the map.
+  - Bunny Stream shows the same video status in list and grid view, and empty Videos and Collections tabs show a single banner.
+  - Dropdowns inside scrolling headers behave correctly, and the unsaved changes warning no longer blocks navigation in the wrong places.
+  - Profile names and email addresses display without escaped characters.
+  - Deletion confirmation fields accept trailing whitespace.
+</Update>
+
+<Update label="2026-10-23" tags={["Storage","(New)"]}>
+  ## S3 bulk deletes, object metadata and a new Storage Regions API
+
+  Bunny Storage’s S3-compatible API now supports DeleteObjects for up to 1,000 keys per request, so AWS CLI, rclone and SDK bulk deletes work out of the box. You can also store custom x-amz-meta-\* fields and system headers like Cache-Control with your objects, preserved on copy and returned on every GET and HEAD. [Read the S3 docs](https://bunny.net/docs/storage/s3)
+
+  Plus, the new [Get Storage Zone Regions API](https://bunny.net/docs/api-reference/core/storage-zone/get-storage-zone-regions) lists every region with its tier, pricing, S3 support and endpoints, so you never need to hardcode them.
+</Update>
+
+<Update label="2026-10-21" tags={["Shield","(Improvement)"]}>
+  ## Expanded Bunny Shield protections for critical PHP vulnerabilities
+
+  Following PHP's security release, we've updated our post on CVE-2026-109618 and CVE-2026-109619 with the confirmed vulnerability details and fixed versions. Bunny Shield has also added a managed WAF rule for multipart field names nested 20 or more levels. It joins our earlier rule for the default `PHP_SESSION_UPLOAD_PROGRESS` field.
+
+  Matching requests are blocked only when your Shield Zone's WAF is in **blocking mode**. In **log-only mode**, the rules do not block traffic. Update PHP to **8.5.12, 8.4.27, 8.3.36 or 8.2.35** as soon as possible; these rules cover specific request patterns and do not replace the PHP fixes. [PHP security advisory](https://www.php.net/archive/2026.php).
+</Update>
+
+<Update label="2026-10-21" tags={["Shield","(Improvement)"]}>
+  ## Bunny Shield rule for PHP CVE-2026-109618 and CVE-2026-109619
+
+  A managed WAF rule is now active for the multipart request pattern found in publicly circulating scripts associated with these vulnerabilities. For Shield Zones with the WAF in blocking mode, matching requests are blocked before they reach the origin. In log-only mode, the rule does not block requests. Bunny Shield respects each customer's configured mode.
+
+  The rule covers the observed request pattern while PHP's technical details are pending. We'll review today's PHP security release and refine the rule as needed. Update PHP to a fixed release when available.
+</Update>
+
+<Update label="2026-10-16" tags={["Stream","(New)"]}>
+  ## React Native Mobile SDK and Expo support
+
+  The Bunny Stream React Native Mobile SDK brings the native Bunny Stream players, uploads, and content management APIs to iOS and Android through one TypeScript interface.
+
+  Use it in a React Native application or an Expo development build.[Learn more](/stream/react-native-sdk)
+</Update>
+
+<Update label="2026-10-13" tags={["Magic Containers","(Improvement)"]}>
+  ## Redesigned Overview and settings
+
+  We’ve redesigned the Overview and container settings pages in Magic Containers.
+
+  The Overview has an activity panel that shows live CPU, memory and bandwidth usage against each resource limit. An application status block tells you whether your app is running, and if it isn’t, it links you straight to the logs.
+
+  Container settings list every deployed container with its limits. You can set a startup command in a shell-style editor, connect Bunny Database or Bunny Storage with a single click, and see examples of the environment variables the Magic Containers runtime provides. [Learn more](/magic-containers)
+</Update>
+
+<Update label="2026-10-08" tags={["Magic Containers","(Improvement)"]}>
+  ## `ping` support in containers
+
+  The `ping` command now works inside Magic Containers. Use it to check that a host is reachable from your application.
+</Update>
+
 <Update label="2026-09-30" tags={["CDN","(New)"]}>
   ## CDN Load Balancer
 
