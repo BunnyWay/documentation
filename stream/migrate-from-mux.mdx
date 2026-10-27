@@ -16,18 +16,25 @@ keywords:
   - "migrationguide"
 ---
 
-Moving a video library is nobody's idea of a good time, but staying on Mux has its own cost. Mux bills per minute of video, at rates that rise with resolution and quality. Every minute you store is charged each month, and every minute your viewers watch is charged once the monthly free delivery allowance runs out. As your library and audience grow, so does the bill.
+<Tip>
+  **Using an AI coding agent?** The Bunny CLI skill gives AI coding agents, such as Claude Code, Cursor, and Codex, knowledge of the `bunny stream import` commands. Install it with `bunny skills install --global`, or accept the offer when you run `bunny login`. Then ask your agent: "Migrate my Mux videos to Bunny Stream."
+</Tip>
+
+<Warning>
+  The Bunny CLI is in [Public Preview](/product-release-stages#stage-2-public-preview). Commands, flags, and output may change, so what you see can differ slightly from the examples in this guide. [Open an issue](https://github.com/BunnyWay/cli/issues) if something does not work as described.
+</Warning>
 
 [Bunny Stream](https://bunny.net/stream/) bills only for the storage and bandwidth you use. See the [Bunny Stream pricing page](https://bunny.net/pricing/stream/) for current rates.
 
-This guide walks you through how to migrate your video content to Bunny Stream. Here's what we'll cover:
+This guide walks you through how to migrate your video content to Bunny Stream from Mux. Here's what we'll cover:
 
-- Installing and authenticating the [Bunny CLI](https://bunny.net/docs/cli)  
-- Creating a destination Bunny Stream library and a Mux access token  
-- Previewing the migration with a dry run, then running bunny stream import  
+- Installing and authenticating the [Bunny CLI](/cli)
+- Creating a destination Bunny Stream library and a Mux access token
+- Making your Mux videos downloadable
+- Previewing the migration with a dry run, then running `bunny stream import`
 - Monitoring encoding progress and verifying the result in the Bunny dashboard
 
-## Migration Overview
+## Overview
 
 <Frame>
   ![](/images/stream/migrate-from-mux/how-bunny-stream-import-works.png)
@@ -35,32 +42,65 @@ This guide walks you through how to migrate your video content to Bunny Stream. 
 
 A migration from Mux to Bunny Stream involves the following steps:
 
-- **Discover**: Bunny CLI lists every asset in your Mux environment that is ready and has a video track. Assets that are still preparing, assets that errored, and audio-only assets are left out. Mux has no folder concept, so every video is imported into the root of the destination library.  
-- **De-duplicate**: Each imported video is tagged with its Mux asset ID under the muxAssetId metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.  
-- **Fetch**: For each new video, the CLI looks up a downloadable file on Mux. It uses the original (master) file when master access is enabled and ready. Otherwise, it uses the best static MP4 rendition on a public playback ID. It then passes that URL to Bunny Stream, which fetches the file directly from Mux.
+- **Discover**: Bunny CLI lists every asset in your Mux environment that is ready and has a video track. Assets that are still preparing, assets that errored, and audio-only assets are left out. Mux has no folder concept, so every video is imported into the root of the destination library.
+- **De-duplicate**: Each imported video is tagged with its Mux asset ID under the `muxAssetId` metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.
+- **Fetch**: For each new video, the CLI looks up a downloadable file on Mux. It uses the original (master) file when master access is enabled and ready. Otherwise, it uses the best static MP4 rendition on a public playback ID. It then passes that URL to Bunny Stream, which fetches the file directly from Mux. Nothing is downloaded to your machine.
+
+## Scope
+
+The import copies the video files and their titles. Settings that control how and where videos play stay on Mux, so plan to set up their Bunny equivalents.
+
+| Mux item | Migrated | Notes |
+| --- | --- | --- |
+| Video file | Yes | The master file when it is ready, otherwise the best static MP4 rendition on a public playback ID. |
+| Title | Yes | Taken from the asset's title, or from `passthrough` on older assets. An asset with neither keeps its asset ID as its title. |
+| Asset ID | Yes | Stored in the `muxAssetId` metatag on the Bunny video. |
+| Assets that are preparing or errored | No | Only ready assets are listed. |
+| Audio-only assets | No | Bunny Stream imports videos only. |
+| Playback IDs and playback policies | No | Bunny creates new playback URLs. See the privacy note below. |
+| Captions and subtitle tracks | No | Upload them with `bunny stream videos captions add`, or generate new ones with [transcription](/stream/transcribing). |
+| Thumbnails | No | Bunny generates new thumbnails when it encodes each video. |
+| Static renditions and HLS outputs | No | Bunny encodes its own renditions from the source file. |
+| Mux Data analytics | No | Bunny Stream collects its own [statistics](/stream/statistics) from the first view. |
+
+<Warning>
+  **Signed playback policies are not migrated.** Every imported video follows the security settings of its Bunny library, and a new library allows playback from any site. Assets with a signed playback policy on Mux are imported through their master file, but on Bunny they play for anyone with the URL until you protect the library. Before you publish the new URLs, set up [Allowed domains](/stream/security-options#domains), and turn on [embed view token authentication](/stream/token-authentication) or [CDN token authentication](/stream/security#cdn-token-authentication) if you signed your Mux playback URLs.
+</Warning>
 
 ## Prerequisites
 
 To follow along in this guide, you will need the following:
 
-- A [Mux](https://dashboard.mux.com) account  
-- [Node.js 24](https://nodejs.org/en) or later
+- A [bunny.net account](https://dash.bunny.net/auth/register)
+- A [Mux](https://dashboard.mux.com) account
+- [Python 3](https://www.python.org/downloads/), to run the helper script in Step 4
 
 ## Step 1: Install and authenticate the Bunny CLI
 
-Install the Bunny CLI globally with npm:
+Install the Bunny CLI with the shell installer or npm:
 
-```sh
-npm install -g @bunny.net/cli
-```
+<Tabs>
+  <Tab title="curl">
+    ```sh
+    curl -fsSL https://cli.bunny.net/install.sh | sh
+    ```
 
-Once the CLI is installed, authenticate it with your Bunny account:
+    The installer downloads a prebuilt binary for your platform and places it on your `PATH`.
+  </Tab>
+  <Tab title="npm">
+    ```sh
+    npm install -g @bunny.net/cli
+    ```
+  </Tab>
+</Tabs>
+
+See [Installation](/cli/installation) for more options. Once the CLI is installed, authenticate it with your bunny.net account:
 
 ```sh
 bunny login
 ```
 
-The bunny login command opens your browser to complete authentication and securely stores the resulting credentials locally. On a remote machine or a CI environment without a browser, you can authenticate with an API key instead by running `bunny login --api-key "$BUNNYNET_API_KEY"`, where the key comes from [Account Settings > API key](https://dash.bunny.net/account/api-key) in the Bunny dashboard.
+The `bunny login` command opens your browser to complete authentication and securely stores the resulting credentials locally. The first time you log in from an interactive terminal, it also offers to install the agent skill for AI coding tools. On a remote machine or a CI environment without a browser, you can authenticate with an API key instead by running `bunny login --api-key "$BUNNYNET_API_KEY"`, where the key comes from [Account Settings > API key](https://dash.bunny.net/account/api-key) in the Bunny dashboard.
 
 ## Step 2: Create a Bunny Stream library
 
@@ -76,7 +116,7 @@ Then, enter a name for the library, select the replication regions closest to yo
   ![](/images/stream/migrate-from-mux/geo-replication-regions.png)
 </Frame>
 
-After the library is created, open its page, go to **API**, and copy the **Library ID**. You will pass this value to the `--lib` flag in the import commands.
+After the library is created, open its page, go to **API**, and copy the **Library ID**. You will pass this value to the `--library` flag in the import commands. The flag also accepts the library's name, and `--lib` works as a short alias.
 
 <Frame>
   ![](/images/stream/migrate-from-mux/library-api-id.png)
@@ -86,18 +126,18 @@ You do not need to manage the library's Stream API key at any point. Once you pa
 
 ## Step 3: Create a Mux access token
 
-The Bunny CLI requires the following values from Mux to list your videos and generate their MP4 download URLs:
+The Bunny CLI requires the following values from Mux to list your videos and look up their download URLs:
 
-- Token ID  
+- Token ID
 - Secret Key
 
-To create the Mux access token, open **Settings > Access Tokens** in the [Mux dashboard](https://dashboard.mux.com) and click **Create Token**.
+To create the Mux access token, open [Settings > Access Tokens](https://dashboard.mux.com/settings/access-tokens) in the Mux dashboard and click **Create Token**.
 
 <Frame>
   ![](/images/stream/migrate-from-mux/mux-access-tokens.png)
 </Frame>
 
-Access tokens are scoped to a Mux environment, so first select the environment that holds the videos you want to migrate. Then, enter a token name (such as migrate-to-bunny) and give it the **Mux Video** permission with both **Read** and **Write** access. The Bunny CLI itself only needs Read. Write is for the helper script in Step 4, which turns on master access for your assets. Finally, create the token.
+Access tokens are scoped to a Mux environment, so first select the environment that holds the videos you want to migrate. If you have videos in more than one environment, see [Migrate more than one Mux environment](#migrate-more-than-one-mux-environment). Then, enter a token name (such as migrate-to-bunny) and give it the **Mux Video** permission with both **Read** and **Write** access. The Bunny CLI itself only needs Read. Write is for the helper script in Step 4, which turns on master access for your assets. Finally, create the token.
 
 <Frame>
   ![](/images/stream/migrate-from-mux/mux-create-access-token.png)
@@ -113,12 +153,12 @@ Once the token is displayed, copy the Token ID and the Secret Key and keep them 
 
 Bunny imports a video by fetching a file from a URL. Mux stores your videos for streaming, so a downloadable file exists only when one of the following is true:
 
-- [**Master access**](https://www.mux.com/docs/api-reference/video/assets/update-asset-master-access) **is enabled**: Mux prepares a temporary copy of the original upload. The CLI prefers this file because it is the highest quality version of the video. It also works for videos with signed playback IDs. The master URL expires 24 hours after Mux makes it ready.  
-- [**Static MP4 renditions**](https://www.mux.com/docs/guides/enable-static-mp4-renditions) **are ready on a public playback ID**: the CLI picks the best one available, starting with highest.mp4 and then the highest resolution rendition. Renditions on signed playback IDs cannot be used, as Bunny cannot supply the signed token those URLs require.
+- [**Master access**](https://www.mux.com/docs/api-reference/video/assets/update-asset-master-access) **is enabled**: Mux prepares a temporary copy of the original upload. The CLI prefers this file because it is the highest quality version of the video. It also works for videos with signed playback IDs. The master URL expires 24 hours after Mux makes it ready.
+- [**Static MP4 renditions**](https://www.mux.com/docs/guides/enable-static-mp4-renditions) **are ready on a public playback ID**: the CLI picks the best one available, starting with `highest.mp4` and then the highest resolution rendition. Renditions on signed playback IDs cannot be used, as Bunny cannot supply the signed token those URLs require.
 
 If a video has neither, the dry run still lists it, but the import fails for that video with **No download available**.
 
-The recommended approach is to enable master access on every asset right before you migrate. The following Python script does that through the [Mux API](https://www.mux.com/docs/api-reference/video/assets/update-asset-master-access). It prompts for your Token ID and Secret Key, requests master access for every ready asset, and then waits until Mux has prepared each master file. Save it as `enable_mux_masters.py`:
+The recommended approach is to enable master access on every asset right before you migrate. The following Python script does that through the [Mux API](https://www.mux.com/docs/api-reference/video/assets/update-asset-master-access). It prompts for your Token ID and Secret Key, requests master access for every ready asset, and waits until Mux has prepared each master file. It asks again for any asset whose request did not take, reports assets whose master file errored, and stops waiting after six hours. Save it as `enable_mux_masters.py`:
 
 ```py
 """Turns on temporary master access for every ready Mux asset, then waits until each master file is ready."""
@@ -131,9 +171,10 @@ import urllib.error
 import urllib.request
 
 API = "https://api.mux.com/video/v1"
+TIMEOUT_HOURS = 6
 
 token_id = input("Mux Token ID: ").strip()
-token_secret = getpass.getpass("Mux Token Secret: ").strip()
+token_secret = getpass.getpass("Mux Secret Key: ").strip()
 auth = base64.b64encode(f"{token_id}:{token_secret}".encode()).decode()
 
 def mux(method, path, body=None):
@@ -149,34 +190,50 @@ def mux(method, path, body=None):
     except urllib.error.HTTPError as error:
         raise SystemExit(f"Mux returned {error.code} for {method} {path}. Check the token and its permissions.")
 
+def request_master(asset_id):
+    mux("PUT", f"/assets/{asset_id}/master-access", {"master_access": "temporary"})
+    time.sleep(0.2)  # stay under Mux's API rate limit
+
 # Collect every ready asset, 100 per page.
 assets, page = [], 1
 while True:
-    batch = mux("GET", f"/assets?limit=100&page={page}")
-    assets += [asset["id"] for asset in batch if asset["status"] == "ready"]
-    if len(batch) < 100:
+    items = mux("GET", f"/assets?limit=100&page={page}")
+    assets += [asset["id"] for asset in items if asset["status"] == "ready"]
+    if len(items) < 100:
         break
     page += 1
 
 print(f"Requesting master access for {len(assets)} assets...")
 for asset_id in assets:
-    mux("PUT", f"/assets/{asset_id}/master-access", {"master_access": "temporary"})
-    time.sleep(0.2)  # stay under Mux's API rate limit
+    request_master(asset_id)
 
+# Poll only the assets that are still preparing, so each pass gets shorter.
 print("Waiting for Mux to prepare the master files...")
+pending, ready, errored = set(assets), [], []
+deadline = time.time() + TIMEOUT_HOURS * 3600
 while True:
-    preparing = 0
-    for asset_id in assets:
-        master = mux("GET", f"/assets/{asset_id}").get("master") or {}
-        if master.get("status", "preparing") == "preparing":
-            preparing += 1
+    for asset_id in list(pending):
+        asset = mux("GET", f"/assets/{asset_id}")
+        status = (asset.get("master") or {}).get("status")
+        if status == "ready":
+            pending.discard(asset_id)
+            ready.append(asset_id)
+        elif status == "errored":
+            pending.discard(asset_id)
+            errored.append(asset_id)
+        elif asset.get("master_access") != "temporary":
+            request_master(asset_id)  # the first request did not take, so ask again
         time.sleep(0.2)
-    if preparing == 0:
+    if not pending or time.time() > deadline:
         break
-    print(f"{preparing} of {len(assets)} master files still preparing...")
+    print(f"{len(pending)} of {len(assets)} master files still preparing...")
     time.sleep(30)
 
-print("All master files are ready. Run the import within 24 hours, before the master URLs expire.")
+if errored:
+    print(f"Mux could not prepare a master file for {len(errored)} assets: {', '.join(errored)}")
+if pending:
+    print(f"Stopped waiting after {TIMEOUT_HOURS} hours with {len(pending)} master files still preparing. Run the script again to check on them.")
+print(f"{len(ready)} master files are ready. Run the import within 24 hours, before the master URLs expire.")
 ```
 
 Then, run it and enter your Token ID and Secret Key when prompted. The Secret Key is hidden as you type it:
@@ -189,11 +246,11 @@ The script reports its progress and finishes once every master file is ready:
 
 ```sh
 Mux Token ID: your-token-id
-Mux Token Secret:
+Mux Secret Key:
 Requesting master access for 6 assets...
 Waiting for Mux to prepare the master files...
 4 of 6 master files still preparing...
-All master files are ready. Run the import within 24 hours, before the master URLs expire.
+6 master files are ready. Run the import within 24 hours, before the master URLs expire.
 ```
 
 If Mux rejects the token, the script stops with a message like this:
@@ -204,50 +261,63 @@ Mux returned 401 for GET /assets?limit=100&page=1. Check the token and its permi
 
 A 401 means the Token ID or Secret Key is wrong. A 403 on a master-access request means the token is missing the Write permission from Step 3.
 
+If Mux reports that it could not prepare a master file for an asset, the import can still use a static MP4 rendition on a public playback ID when the asset has one. Otherwise, that asset fails with **No download available**.
+
 If your assets already have static MP4 renditions on public playback IDs, you can skip this step. The CLI uses those renditions when no master file is available.
+
+### Large libraries and the 24-hour window
+
+Bunny must fetch each master file within 24 hours of Mux making it ready. On a large library, give the import as much of that window as possible:
+
+- Run the import in Steps 5 and 6 as soon as the script finishes.
+- Add `--concurrency 10` (up to 20) to the import, so the CLI hands videos to Bunny faster than the default of three at a time.
+
+If some videos still fail with **No download available** because their master URLs expired, run the script again. Requesting master access again gives each expired master file a fresh URL. Then run the import again without `--resume`. It skips every video that is already in the library and imports the rest. A plain run is better than `--resume` here, because a resume stops retrying a video after three failed attempts. Repeat until the import reports that everything is already imported.
+
+If your assets have public playback IDs, [static MP4 renditions](https://www.mux.com/docs/guides/enable-static-mp4-renditions) are an alternative for very large libraries. They do not expire, so the 24-hour window does not apply. Check Mux's pricing for static renditions before you enable them.
 
 ## Step 5: Preview the migration with a dry run
 
 To preview the migration, run the following command:
 
 ```sh
-bunny stream import --lib 12345 --source mux --dry-run
+bunny stream import --library 12345 --source mux --dry-run
 ```
 
 In the command above:
 
-- `--lib` 12345 is the Bunny library ID you copied in Step 2.  
-- `--source` mux selects Bunny's Mux adapter, which inspects the referenced Mux account for videos.  
+- `--library 12345` is the Bunny library ID you copied in Step 2.
+- `--source mux` selects Bunny's Mux adapter, which inspects the referenced Mux environment for videos.
 - `--dry-run` prints the import plan without making any changes to either platform.
 
-After resolving the library, the CLI prompts for your Mux credentials. Paste the API token at the API Token prompt (the input is masked) and the Account ID at the Account ID prompt:
+After resolving the library, the CLI prompts for your Mux credentials. Enter the Token ID at the **Token ID** prompt and the Secret Key at the **Token Secret** prompt. Both inputs are masked:
 
 ```sh
-Mux Stream credentials
+Mux credentials
   https://dashboard.mux.com/settings/api-keys
 ✔ Token ID: … ************************************
 ✔ Token Secret: … ***************************************************************************
 ```
 
-The CLI checks the credentials against Mux. Once Mux accepts them, the CLI offers to save them so that later runs skip these prompts. Press Enter to accept:
+The CLI checks the credentials against Mux. Once Mux accepts them, the CLI offers to save them so that later runs skip these prompts. This prompt defaults to yes, so press Enter to accept:
 
 ```sh
 ✔ Save Mux credentials for next time? … yes
 ✓ Saved Mux credentials to the "default" profile.
 ```
 
-The CLI stores the saved credentials in `~/.config/bunnynet/stream-import-credentials.json`, a file only your user account can read, separate from the main Bunny CLI config. They are tied to the active Bunny CLI profile. If Mux later rejects them (for example, after you revoke the token), the CLI deletes the saved values and prompts for new ones on the next run. If you answer no, the CLI prompts for the credentials on every run.
+The CLI stores the saved credentials in `~/.config/bunnynet/stream-import-credentials.json`, a file only your user account can read, separate from the main Bunny CLI config. They are tied to the active Bunny CLI profile. If Mux later rejects them (for example, after you revoke the token), the CLI deletes the saved values and prompts for new ones on the next run. If you answer no, the CLI prompts for the credentials on every run. The `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` environment variables always take priority over saved credentials.
 
 The dry run then produces an output like this:
 
 ```sh
 Mux to Bunny Stream
- Key                Value                     
- Library            migrate-from-mux (12345)  
+ Key                Value
+ Library            migrate-from-mux (12345)
  Source             Mux: 6 videos in 0 folders
- Already imported   0                         
- To import          6                         
- Duration           2:01                      
+ Already imported   0
+ To import          6
+ Duration           2:01
 
 Import plan
 (no collection) (6 videos)
@@ -263,43 +333,45 @@ Import plan
 
 It opens with a summary block that reports:
 
-- **Library**: the destination Bunny Stream library the videos will be imported into.  
-- **Source**: the number of videos and folders found on the Mux account.  
-- **Already imported**: how many of those videos are already in the destination library.  
-- **To import**: how many videos would be imported on a real run.  
-- **Duration and size**: the total runtime of the videos to import. Mux's asset list does not report file sizes, so the summary has no Size row.
+- **Library**: the destination Bunny Stream library the videos will be imported into.
+- **Source**: the number of videos and folders found in the Mux environment.
+- **Already imported**: how many of those videos are already in the destination library.
+- **To import**: how many videos would be imported on a real run.
+- **Duration**: the total runtime of the videos to import. Mux's asset list does not report file sizes, so the summary has no Size row.
 
-Below the summary, the CLI prints the import plan, listing every video under a single (no collection) group, since Mux has no folders, and adds them to the root of the destination library.
+Below the summary, the CLI prints the import plan, listing every video under a single (no collection) group, since Mux has no folders, and adds them to the root of the destination library. A video without a title on Mux is listed under its asset ID, such as `aB3xK9mQ2pL7vR4tN8wY1zC5dF6gH0jS` above, and keeps that ID as its title on Bunny. You can rename it in the Bunny dashboard after the import.
+
+The dry run does not check whether each asset has a downloadable file. If you skipped Step 4 and an asset has no ready master file or public static MP4 rendition, it still appears in the plan and fails during the import.
 
 ## Step 6: Run the import
 
 Now, to perform the migration, run the same command without `--dry-run`:
 
 ```sh
-bunny stream import --lib 12345 --source mux
+bunny stream import --library 12345 --source mux
 ```
 
-Because you saved the Mux credentials during the dry run, the CLI does not prompt for them again. It prints the same summary block it showed during the dry run, then asks for confirmation to start the import:
+Because you saved the Mux credentials during the dry run, the CLI does not prompt for them again. It prints the same summary block it showed during the dry run, then asks for confirmation to start the import. The confirmation defaults to no, so type `y` and press Enter to start:
 
 ```sh
 Mux to Bunny Stream
- Key                Value                     
- Library            migrate-from-mux (12345)  
+ Key                Value
+ Library            migrate-from-mux (12345)
  Source             Mux: 6 videos in 0 folders
- Already imported   0                         
- To import          6                         
- Duration           2:01                      
+ Already imported   0
+ To import          6
+ Duration           2:01
 
-? Import 6 videos into migrate-from-mux? › (Y/n)
+? Import 6 videos into migrate-from-mux? › (y/N)
 ```
 
-After you confirm, the CLI works through the same steps described in the Migration Overview:
+After you confirm, the CLI works through the same steps described in the [Overview](#overview):
 
-- **Discover**: it lists the videos on the Mux environment.  
-- **De-duplicate**: it checks the destination library for videos that carry the muxAssetId tag and skips any that are already imported.  
-- **Fetch**: it looks up each new video's master file or best static MP4 rendition, passes that URL to Bunny (three at a time by default), writes the muxAssetId tag on it, and returns once every video has been queued. Bunny then fetches each file directly from Mux and encodes it.
+- **Discover**: it lists the videos in the Mux environment.
+- **De-duplicate**: it checks the destination library for videos that carry the `muxAssetId` tag and skips any that are already imported.
+- **Fetch**: it looks up each new video's master file or best static MP4 rendition, passes that URL to Bunny (three at a time by default), writes the `muxAssetId` tag on it, and returns once every video has been queued. Bunny then fetches each file directly from Mux and encodes it.
 
-While the import runs, a single progress line shows the current stage, such as Discovering Mux content, Checking for existing videos in Bunny, and Handing videos to Bunny: 3/6. Once every video has been handed over, the progress line is replaced by the result:
+While the import runs, a single progress line shows the current stage, such as `Discovering Mux content`, `Checking for existing videos in Bunny`, and `Handing videos to Bunny: 3/6`. Once every video has been handed over, the progress line is replaced by the result:
 
 ```sh
 ✔ Import 6 videos into migrate-from-mux? … yes
@@ -307,34 +379,33 @@ While the import runs, a single progress line shows the current stage, such as D
 ℹ Check progress with bunny stream import status --library 12345 --source mux
 ```
 
-The command finishes by reporting how many videos were queued into the destination library and printing the bunny stream import status command you can use to watch the encoding progress.
+The command finishes by reporting how many videos were queued into the destination library and printing the `bunny stream import status` command you can use to watch the encoding progress.
 
 The import command also accepts the following flags:
 
-- `--wait` keeps the command running, with a live encoding progress indicator, until Bunny has encoded every video.  
-- `--force` skips the confirmation prompt (useful for unattended or CI runs).  
-- `--concurrency` N sets how many videos the CLI passes to Bunny in parallel, from 1 to 20.  
-- `--clean-failed` deletes the failed Bunny copies of videos before importing them again, including videos that Bunny rejected.  
-- `--retry-stalled` deletes and imports again any video stuck at zero bytes on Bunny.  
-- `--folder` imports a single source folder only (folder-based sources only, does not apply to Mux).  
-- `--bucket` overrides the source bucket (S3 source only).  
-- `--prefix` overrides the source path prefix (S3 source only).  
-- `--url-ttl` sets the pre-signed download URL lifetime in seconds (S3 source only).  
-- `--include-ts` also imports .ts files (S3 source only).
+- `--wait` keeps the command running, with a live encoding progress indicator, until Bunny has encoded every video.
+- `--force` skips the confirmation prompt and the offer to retry failed videos (useful for unattended or CI runs).
+- `--concurrency N` sets how many videos the CLI passes to Bunny in parallel, from 1 to 20.
+- `--clean-failed` deletes the failed Bunny copies of videos before importing them again, including videos that Bunny rejected.
+- `--retry-stalled` deletes and imports again any video stuck at zero bytes on Bunny.
+- `--request-timeout` sets how many seconds one request to Mux or Bunny can take before it gives up (default 30).
+- `--video-timeout` sets how many seconds the hand-off of one video to Bunny, or with `--wait` its encoding, can take before it gives up (default 5400).
+
+Run `bunny stream import --help` for the full list.
 
 ## Step 7: Watch encoding progress
 
 By default, the import command returns before Bunny finishes encoding. To check on the encoding progress, run the status command:
 
 ```sh
-bunny stream import status --lib 12345 --source mux
+bunny stream import status --library 12345 --source mux
 ```
 
 The status command prints one row per queued video, showing the video's encoding status on Bunny, its encode percentage, its size, and when it was queued. Run shortly after the import, it shows some videos still encoding:
 
 ```sh
 Mux to migrate-from-mux
- Video                              Bunny status   Encoded   Size    Queued  
+ Video                              Bunny status   Encoded   Size    Queued
  Product walkthrough                Finished       100%      37 MB   just now
  Onboarding: getting started        Finished       100%      15 MB   just now
  Customer story: Acme               Transcoding    45%               just now
@@ -355,7 +426,7 @@ The status command exits with a non-zero code when any video has failed, so you 
 
 ## Step 8: Recover from interruptions and failures
 
-When some videos fail during an interactive import, the CLI lists each failure and asks whether to retry them straight away:
+When some videos fail during an interactive import, the CLI lists each failure and asks whether to retry them straight away. The prompt defaults to no:
 
 ```sh
 ✓ Queued 5 videos into migrate-from-mux. Bunny is fetching and encoding them now.
@@ -366,40 +437,51 @@ When some videos fail during an interactive import, the CLI lists each failure a
 ? 1 videos failed. Retry them now? › (y/N)
 ```
 
-The **No download available** error means the video had neither a ready master file nor a usable static MP4 rendition when the CLI looked it up. This happens when you skipped Step 4, when a master file was still preparing, or when more than 24 hours have passed since the master files became ready. Run the script from Step 4 again, then retry.
+The **No download available** error means the video had neither a ready master file nor a usable static MP4 rendition when the CLI looked it up. This happens when you skipped Step 4, when a master file was still preparing, or when more than 24 hours have passed since the master files became ready. Answer no to the retry prompt, run the script from Step 4 again, then run the import again.
 
-Answer yes to retry them in the same run. When an import is interrupted, or when you decline the retry, run the command again with the `--resume` flag:
+For other failures, answer `y` to retry them in the same run. When an import is interrupted, or when you decline the retry, run the command again with the `--resume` flag:
 
 ```sh
-bunny stream import --lib 12345 --source mux --resume
+bunny stream import --library 12345 --source mux --resume
 ```
 
-The `--resume` flag retries the videos that failed, processes any videos that were still outstanding, and re-applies the muxAssetId tag to any video that Bunny fetched before the run stopped but did not finish tagging.
+The `--resume` flag retries the videos that failed, processes any videos that were still outstanding, and re-applies the `muxAssetId` tag to any video that Bunny fetched before the run stopped but did not finish tagging. A resume stops retrying a video after three failed attempts, and it skips videos that Bunny rejected outright. To try videos that failed three times again, run the import without `--resume`. To retry videos that Bunny rejected, add `--clean-failed`, which deletes their failed Bunny copies first.
 
-Running the import again is always safe. Because every imported video carries the muxAssetId tag, a repeated run against a library that already has every video imports nothing:
+Running the import again is always safe. Because every imported video carries the `muxAssetId` tag, a repeated run against a library that already has every video imports nothing:
 
 ```sh
 Mux to Bunny Stream
- Key                Value                     
- Library            migrate-from-mux (12345)  
+ Key                Value
+ Library            migrate-from-mux (12345)
  Source             Mux: 6 videos in 0 folders
- Already imported   6                         
- To import          0                         
- Duration           2:01                      
+ Already imported   6
+ To import          0
+ Duration           2:01
 
 ✓ Everything is already imported.
 ```
 
 ## Step 9: Verify in the Bunny dashboard
 
-To confirm that all the videos have been encoded on Bunny successfully, open the [Bunny dashboard](https://dash.bunny.net) and go to **Stream >** **Your library** **> Manage library**:
+To confirm that all the videos have been encoded on Bunny successfully, open the [Bunny dashboard](https://dash.bunny.net) and go to **Stream > Your library > Manage library**:
 
 <Frame>
   ![](/images/stream/migrate-from-mux/manage-library-videos.png)
 </Frame>
 
-After migrating your videos to Bunny Stream, replace the Mux playback URLs (stream.mux.com) and Mux Player references in your site with their Bunny Stream equivalents. The [Embedding videos documentation](https://bunny.net/docs/stream/embedding) covers the embed and player options.
+After migrating your videos to Bunny Stream, set up the library's [security settings](/stream/security-options) if you have not already, then replace the Mux playback URLs (stream.mux.com) and Mux Player references in your site with their Bunny Stream equivalents. The [Embedding videos documentation](/stream/embedding) covers the embed and player options.
+
+## Migrate more than one Mux environment
+
+Mux access tokens are scoped to a single environment, such as Production or Development. To migrate several environments, repeat Steps 3 to 9 for each one, with a token created in that environment.
+
+Import each environment into its own Bunny library. The CLI keeps one saved import per source and library, so a separate library keeps each environment's progress, `--resume`, and `status` apart, and keeps test videos out of your production library.
+
+The CLI saves one set of Mux credentials per Bunny CLI profile. Once the first environment's token is saved, the CLI uses it without prompting, even for the next environment. Before you import the next environment, point the CLI at that environment's token in one of these ways:
+
+- Set `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` in your shell. Environment variables always take priority over saved credentials.
+- Run the import with a different Bunny CLI [profile](/cli/configuration#profiles), using `--profile`.
 
 ## Summary
 
-In this guide, you learned how to migrate a Mux library into Bunny Stream using the Bunny CLI. You installed and authenticated the CLI, created a destination Stream library, generated a Mux access token, enabled master access so every video had a downloadable file, previewed the migration with `--dry-run`, ran bunny stream import to pass each Mux file to Bunny over a direct download URL, monitored encoding with bunny stream import status, and verified the result in the dashboard.
+In this guide, you learned how to migrate a Mux library into Bunny Stream using the Bunny CLI. You installed and authenticated the CLI, created a destination Stream library, generated a Mux access token, enabled master access so every video had a downloadable file, previewed the migration with `--dry-run`, ran `bunny stream import` to pass each Mux file to Bunny over a direct download URL, monitored encoding with `bunny stream import status`, and verified the result in the dashboard.

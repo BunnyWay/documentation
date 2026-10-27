@@ -4,14 +4,24 @@ sidebarTitle: "Vimeo"
 description: "A step-by-step walkthrough for migrating a Vimeo video library into Bunny Stream using the Bunny CLI."
 ---
 
+<Tip>
+  **Using an AI coding agent?** The Bunny CLI skill gives AI coding agents, such as Claude Code, Cursor, and Codex, knowledge of the `bunny stream import` commands. Install it with `bunny skills install --global`, or accept the offer when you run `bunny login`. Then ask your agent: "Migrate my Vimeo videos to Bunny Stream."
+</Tip>
+
+<Warning>
+  The Bunny CLI is in [Public Preview](/product-release-stages#stage-2-public-preview). Commands, flags, and output may change, so what you see can differ slightly from the examples in this guide. [Open an issue](https://github.com/BunnyWay/cli/issues) if something does not work as described.
+</Warning>
+
+[Bunny Stream](https://bunny.net/stream/) bills only for the storage and bandwidth you use. See the [Bunny Stream pricing page](https://bunny.net/pricing/stream/) for current rates.
+
 This guide walks you through how to migrate your video content to Bunny Stream from Vimeo. Here's what we'll cover:
 
-- Installing and authenticating the [Bunny CLI](https://bunny.net/docs/cli)  
-- Creating a destination Bunny Stream library and a Vimeo access token  
-- Previewing the migration with a dry run, then running `bunny stream import`  
+- Installing and authenticating the [Bunny CLI](/cli)
+- Creating a destination Bunny Stream library and a Vimeo access token
+- Previewing the migration with a dry run, then running `bunny stream import`
 - Monitoring encoding progress and verifying the result in the Bunny dashboard
 
-## Migration Overview
+## Overview
 
 <Frame>
   ![](/images/stream/migrate-from-vimeo/how-bunny-stream-import-works.png)
@@ -19,34 +29,70 @@ This guide walks you through how to migrate your video content to Bunny Stream f
 
 A migration from Vimeo to Bunny Stream involves the following steps:
 
-- **Discover**: Bunny CLI lists every folder on your Vimeo account, the videos in each folder, and the videos that are not in any folder. Each Vimeo folder becomes a Bunny Stream collection with the same name, and videos outside a folder are imported into the root of the destination library.  
-- **De-duplicate**: Each imported video is tagged with its Vimeo video ID under the `vimeoId` metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.  
-- **Fetch**: For each new video, the CLI asks Vimeo for the video's download links and picks the best file: the original upload when Vimeo has it, otherwise the highest resolution download, otherwise the highest resolution MP4 file. It then passes that URL to Bunny Stream, which fetches the file directly from Vimeo. The video's title, description, and tags come along with it.
+- **Discover**: Bunny CLI lists every folder on your Vimeo account, the videos in each folder, and the videos that are not in any folder. Each Vimeo folder becomes a Bunny Stream collection with the same name, and videos outside a folder are imported into the root of the destination library.
+- **De-duplicate**: Each imported video is tagged with its Vimeo video ID under the `vimeoId` metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.
+- **Fetch**: For each new video, the CLI asks Vimeo for the video's download links and picks the best file: the original upload when Vimeo has it, otherwise the highest resolution download, otherwise the highest resolution MP4 file. It then passes that URL to Bunny Stream, which fetches the file directly from Vimeo. Nothing is downloaded to your machine. The video's title, description, and tags come along with it.
 
 Vimeo download links expire after 24 hours, but the CLI requests a fresh link for each video at the moment it hands that video to Bunny, so you do not need to prepare anything on Vimeo before the import.
+
+## Scope
+
+The import copies the video files, their titles, descriptions, and tags, and your folder structure. Settings that control who can watch your videos and where stay on Vimeo, so plan to set up their Bunny equivalents.
+
+| Vimeo item | Migrated | Notes |
+| --- | --- | --- |
+| Video file | Yes | The original upload when Vimeo has it, otherwise the highest resolution download or MP4 file. |
+| Title | Yes | |
+| Description | Yes | Stored in the `description` metatag on the Bunny video. |
+| Tags | Yes | Stored in the `keywords` metatag on the Bunny video. |
+| Folders | Yes | Each folder becomes a collection with the same name. |
+| Video ID | Yes | Stored in the `vimeoId` metatag on the Bunny video. |
+| Videos above 2160p or longer than 72 hours | No | Bunny Stream rejects them. The dry run warns about them before you import. |
+| Privacy settings (private, unlisted, password) | No | See the privacy note below. |
+| Embed settings and domain restrictions | No | Use Bunny's library security and [player settings](/stream/player-settings) instead. |
+| Captions and subtitles | No | Upload them with `bunny stream videos captions add`, or generate new ones with [transcription](/stream/transcribing). |
+| Custom thumbnails | No | Bunny generates new thumbnails when it encodes each video. |
+| Chapters | No | |
+| Showcases | No | Folders are imported as collections, but showcases are not. |
+| Comments, likes, and analytics | No | Bunny Stream collects its own [statistics](/stream/statistics) from the first view. |
+
+<Warning>
+  **Private and unlisted videos are not private on Bunny.** The import copies every video your token can read, including private, unlisted, and password-protected ones, but not their privacy settings. Every imported video follows the security settings of its Bunny library, and a new library allows playback from any site. On Bunny, a video that was private or unlisted on Vimeo plays for anyone with its URL until you protect the library. Before you publish the new URLs, set up [Allowed domains](/stream/security-options#domains) to replace Vimeo's embed domain restrictions, and turn on [embed view token authentication](/stream/token-authentication) or [CDN token authentication](/stream/security#cdn-token-authentication) for videos that only signed-in viewers should see. If the videos that need protection are in their own Vimeo folders, you can import those folders into a separate library with `--folder` and give that library stricter settings.
+</Warning>
 
 ## Prerequisites
 
 To follow along in this guide, you will need the following:
 
-- A [Vimeo](https://vimeo.com) account on a plan that allows video file access: Standard, Advanced, or Enterprise, or a legacy Plus, Pro, Business, or Premium plan. Free and Starter plans cannot download video files through the API.  
-- [Node.js 24](https://nodejs.org/en) or later
+- A [bunny.net account](https://dash.bunny.net/auth/register)
+- A [Vimeo](https://vimeo.com) account on a plan that allows video file access: Standard, Advanced, or Enterprise, or a legacy Plus, Pro, Business, or Premium plan. Free and Starter plans cannot download video files through the API.
 
 ## Step 1: Install and authenticate the Bunny CLI
 
-Install the Bunny CLI globally with npm:
+Install the Bunny CLI with the shell installer or npm:
 
-```sh
-npm install -g @bunny.net/cli
-```
+<Tabs>
+  <Tab title="curl">
+    ```sh
+    curl -fsSL https://cli.bunny.net/install.sh | sh
+    ```
 
-Once the CLI is installed, authenticate it with your Bunny account:
+    The installer downloads a prebuilt binary for your platform and places it on your `PATH`.
+  </Tab>
+  <Tab title="npm">
+    ```sh
+    npm install -g @bunny.net/cli
+    ```
+  </Tab>
+</Tabs>
+
+See [Installation](/cli/installation) for more options. Once the CLI is installed, authenticate it with your bunny.net account:
 
 ```sh
 bunny login
 ```
 
-The bunny login command opens your browser to complete authentication and securely stores the resulting credentials locally. On a remote machine or a CI environment without a browser, you can authenticate with an API key instead by running `bunny login --api-key "$BUNNYNET_API_KEY"`, where the key comes from [Account Settings > API key](https://dash.bunny.net/account/api-key) in the Bunny dashboard.
+The `bunny login` command opens your browser to complete authentication and securely stores the resulting credentials locally. The first time you log in from an interactive terminal, it also offers to install the agent skill for AI coding tools. On a remote machine or a CI environment without a browser, you can authenticate with an API key instead by running `bunny login --api-key "$BUNNYNET_API_KEY"`, where the key comes from [Account Settings > API key](https://dash.bunny.net/account/api-key) in the Bunny dashboard.
 
 ## Step 2: Create a Bunny Stream library
 
@@ -62,7 +108,7 @@ Then, select the replication regions closest to your audience, and click **Add V
   ![](/images/stream/migrate-from-vimeo/geo-replication-regions.png)
 </Frame>
 
-After the library is created, open its page, go to **API**, and copy the **Library ID**. You will pass this value to the `--lib` flag in the import commands.
+After the library is created, open its page, go to **API**, and copy the **Library ID**. You will pass this value to the `--library` flag in the import commands. The flag also accepts the library's name, and `--lib` works as a short alias.
 
 <Frame>
   ![](/images/stream/migrate-from-vimeo/library-api-id.png)
@@ -74,7 +120,7 @@ You do not need to manage the library's Stream API key at any point. Once you pa
 
 The Bunny CLI requires a Vimeo personal access token with the following scopes to list your folders and videos and read their download links:
 
-- **Public** and **Private**: to read every video on your account, including private and unlisted ones  
+- **Public** and **Private**: to read every video on your account, including private and unlisted ones
 - **Video Files**: to read the download links for each video
 
 To create the token, open [My Apps](https://developer.vimeo.com/apps) on the Vimeo developer site. If you don't have an app yet, click **Create an app**. Enter an app name (such as migrate-to-bunny) and a brief description, select **No** for whether people besides you will access the app, accept the Vimeo terms, and click **Create App**.
@@ -106,16 +152,16 @@ The page lists the new token under **Personal Access Tokens**, with the scopes p
 To preview the migration, run the following command:
 
 ```sh
-bunny stream import --lib 12345 --source vimeo --dry-run
+bunny stream import --library 12345 --source vimeo --dry-run
 ```
 
 In the command above:
 
-- `--lib` 12345 is the Bunny library ID you copied in Step 2.  
-- `--source` vimeo selects Bunny's Vimeo adapter, which inspects the Vimeo account your token belongs to for folders and videos.  
+- `--library 12345` is the Bunny library ID you copied in Step 2.
+- `--source vimeo` selects Bunny's Vimeo adapter, which inspects the Vimeo account your token belongs to for folders and videos.
 - `--dry-run` prints the import plan without making any changes to either platform.
 
-After resolving the library, the CLI prompts for your Vimeo access token. Paste it at the Access Token prompt. The input is masked:
+After resolving the library, the CLI prompts for your Vimeo access token. Paste it at the **Access Token** prompt. The input is masked:
 
 ```sh
 Vimeo credentials
@@ -130,26 +176,26 @@ The CLI checks the token against Vimeo. If Vimeo rejects it, the CLI stops with 
 Create one at https://developer.vimeo.com/apps with the public, private and video_files scopes.
 ```
 
-Once Vimeo accepts the token, the CLI offers to save it so that later runs skip this prompt. Press Enter to accept:
+Once Vimeo accepts the token, the CLI offers to save it so that later runs skip this prompt. This prompt defaults to yes, so press Enter to accept:
 
 ```sh
 ✔ Save Vimeo credentials for next time? … yes
 ✓ Saved Vimeo credentials to the "default" profile.
 ```
 
-The CLI stores the saved token in `~/.config/bunnynet/stream-import-credentials.json`, a file only your user account can read, separate from the main Bunny CLI config. It is tied to the active Bunny CLI profile. If Vimeo later rejects it (for example, after you delete the token), the CLI deletes the saved value and prompts for a new one on the next run. If you answer no, the CLI prompts for the token on every run.
+The CLI stores the saved token in `~/.config/bunnynet/stream-import-credentials.json`, a file only your user account can read, separate from the main Bunny CLI config. It is tied to the active Bunny CLI profile. If Vimeo later rejects it (for example, after you delete the token), the CLI deletes the saved value and prompts for a new one on the next run. If you answer no, the CLI prompts for the token on every run. The `VIMEO_ACCESS_TOKEN` environment variable always takes priority over a saved token.
 
 The dry run then produces an output like this:
 
 ```sh
 Vimeo to Bunny Stream
- Key                Value                         
- Library            migrate-from-vimeo (12345)    
- Source             Vimeo: 6 videos in 3 folders  
- Already imported   0                             
- To import          6                             
- Duration           1:06                             
- Size               16 MB                             
+ Key                Value
+ Library            migrate-from-vimeo (12345)
+ Source             Vimeo: 6 videos in 3 folders
+ Already imported   0
+ To import          6
+ Duration           1:06
+ Size               21 MB
 
 Import plan
 Product demos (3 videos)
@@ -167,15 +213,15 @@ Webinars (2 videos)
 
 It opens with a summary block that reports:
 
-- **Library**: the destination Bunny Stream library the videos will be imported into.  
-- **Source**: the number of videos and folders found on the Vimeo account.  
-- **Already imported**: how many of those videos are already in the destination library.  
-- **To import**: how many videos would be imported on a real run.  
+- **Library**: the destination Bunny Stream library the videos will be imported into.
+- **Source**: the number of videos and folders found on the Vimeo account.
+- **Already imported**: how many of those videos are already in the destination library.
+- **To import**: how many videos would be imported on a real run.
 - **Duration and size**: the total runtime and file size of the videos to import. The size comes from Vimeo's download links, so if the summary has no Size row, check that your plan allows video file access and that the token has the Video Files scope.
 
 Below the summary, the CLI prints the import plan, grouping the videos by the collection they will land in. Each Vimeo folder maps to a collection of the same name, and videos outside any folder are listed under (no collection) and added to the root of the destination library.
 
-Vimeo hosts videos at resolutions up to 8K, while Bunny Stream accepts sources up to 2160p (3840x2160, or 2160x3840 in portrait). If any of your videos are larger, the dry run warns about them below the summary, as they will fail on Bunny:
+Vimeo hosts videos at resolutions up to 8K, while Bunny Stream accepts sources up to 2160p (3840x2160, or 2160x3840 in portrait) and up to 72 hours long. Vimeo reports each video's resolution, so the dry run checks every video against those limits. All six videos above are within them, so the dry run shows no warning. If a video were beyond the limits, the dry run would warn about it below the summary, as it will fail on Bunny:
 
 ```sh
 ⚠ 1 videos are beyond Bunny's limits and will fail:
@@ -187,28 +233,28 @@ Vimeo hosts videos at resolutions up to 8K, while Bunny Stream accepts sources u
 Now, to perform the migration, run the same command without `--dry-run`:
 
 ```sh
-bunny stream import --lib 12345 --source vimeo
+bunny stream import --library 12345 --source vimeo
 ```
 
-Because you saved the Vimeo token during the dry run, the CLI does not prompt for it again. It prints the same summary block it showed during the dry run, then asks for confirmation to start the import:
+Because you saved the Vimeo token during the dry run, the CLI does not prompt for it again. It prints the same summary block it showed during the dry run, then asks for confirmation to start the import. The confirmation defaults to no, so type `y` and press Enter to start:
 
 ```sh
 Vimeo to Bunny Stream
- Key                Value                         
- Library            migrate-from-vimeo (12345)    
- Source             Vimeo: 6 videos in 3 folders  
- Already imported   0                             
- To import          6                             
- Duration           1:06                         
- Size               21 MB                        
+ Key                Value
+ Library            migrate-from-vimeo (12345)
+ Source             Vimeo: 6 videos in 3 folders
+ Already imported   0
+ To import          6
+ Duration           1:06
+ Size               21 MB
 
 ? Import 6 videos into migrate-from-vimeo? › (y/N)
 ```
 
-After you confirm, the CLI works through the same steps described in the Migration Overview:
+After you confirm, the CLI works through the same steps described in the [Overview](#overview):
 
-- **Discover**: it lists the folders and videos on the Vimeo account, then creates a Bunny collection for each folder, reusing any collection that already has the same name.  
-- **De-duplicate**: it checks the destination library for videos that carry the `vimeoId` tag and skips any that are already imported.  
+- **Discover**: it lists the folders and videos on the Vimeo account, then creates a Bunny collection for each folder, reusing any collection that already has the same name.
+- **De-duplicate**: it checks the destination library for videos that carry the `vimeoId` tag and skips any that are already imported.
 - **Fetch**: it requests each new video's best download link from Vimeo, passes it to Bunny (three at a time by default), and writes the `vimeoId` tag on the video, along with its Vimeo description and tags as the description and keywords metatags. It returns once every video has been queued. Bunny then fetches each file directly from Vimeo and encodes it.
 
 While the import runs, a single progress line shows the current stage, such as `Discovering Vimeo content`, `Creating Bunny collections`, `Checking for existing videos in Bunny`, and `Handing videos to Bunny: 3/6`. Once every video has been handed over, the progress line is replaced by the result:
@@ -223,16 +269,16 @@ The command finishes by reporting how many videos were queued into the destinati
 
 The import command also accepts the following flags:
 
-- `--wait` keeps the command running, with a live encoding progress indicator, until Bunny has encoded every video.  
-- `--force` skips the confirmation prompt (useful for unattended or CI runs).  
-- `--concurrency` N sets how many videos the CLI passes to Bunny in parallel, from 1 to 20.  
-- `--clean-failed` deletes the failed Bunny copies of videos before importing them again, including videos that Bunny rejected.  
-- `--retry-stalled` deletes and imports again any video stuck at zero bytes on Bunny.  
-- `--folder` imports a single Vimeo folder only (see below).  
-- `--bucket` overrides the source bucket (S3 source only).  
-- `--prefix` overrides the source path prefix (S3 source only).  
-- `--url-ttl` sets the pre-signed download URL lifetime in seconds (S3 source only).  
-- `--include-ts` also imports .ts files (S3 source only).
+- `--wait` keeps the command running, with a live encoding progress indicator, until Bunny has encoded every video.
+- `--force` skips the confirmation prompt and the offer to retry failed videos (useful for unattended or CI runs).
+- `--concurrency N` sets how many videos the CLI passes to Bunny in parallel, from 1 to 20.
+- `--clean-failed` deletes the failed Bunny copies of videos before importing them again, including videos that Bunny rejected.
+- `--retry-stalled` deletes and imports again any video stuck at zero bytes on Bunny.
+- `--folder` imports a single Vimeo folder only (see below).
+- `--request-timeout` sets how many seconds one request to Vimeo or Bunny can take before it gives up (default 30).
+- `--video-timeout` sets how many seconds the hand-off of one video to Bunny, or with `--wait` its encoding, can take before it gives up (default 5400).
+
+Run `bunny stream import --help` for the full list.
 
 ### Import one folder at a time
 
@@ -246,8 +292,8 @@ The command prints each folder's ID, name, and video count:
 
 ```sh
  ID         Name            Videos
- 18273645   Product demos   3     
- 18273699   Webinars        2     
+ 18273645   Product demos   3
+ 18273699   Webinars        2
 
 1 videos are not in a folder.
 Import one folder with bunny stream import --source vimeo --folder <id>
@@ -257,7 +303,7 @@ To see the videos inside a folder before importing it, add `--folder` with the f
 
 ```sh
 bunny stream import list --source vimeo --folder 18273645
-bunny stream import --lib 12345 --source vimeo --folder 18273645
+bunny stream import --library 12345 --source vimeo --folder 18273645
 ```
 
 The import works exactly as above, limited to that folder's videos and its collection. Repeat it for each folder you want to migrate.
@@ -267,7 +313,7 @@ The import works exactly as above, limited to that folder's videos and its colle
 By default, the import command returns before Bunny finishes encoding. To check on the encoding progress, run the status command:
 
 ```sh
-bunny stream import status --lib 12345 --source vimeo
+bunny stream import status --library 12345 --source vimeo
 ```
 
 The status command prints one row per queued video, showing the video's encoding status on Bunny, its encode percentage, its size, and when it was queued. Run shortly after the import, it shows some videos still encoding:
@@ -295,7 +341,7 @@ The status command exits with a non-zero code when any video has failed, so you 
 
 ## Step 7: Recover from interruptions and failures
 
-When some videos fail during an interactive import, the CLI lists each failure and asks whether to retry them straight away:
+When some videos fail during an interactive import, the CLI lists each failure and asks whether to retry them straight away. The prompt defaults to no:
 
 ```sh
 ✓ Queued 5 videos into migrate-from-vimeo. Bunny is fetching and encoding them now.
@@ -308,10 +354,10 @@ When some videos fail during an interactive import, the CLI lists each failure a
 
 The **No download available** error means Vimeo returned no downloadable file for that video. This happens when your Vimeo plan does not allow video file access, when the token is missing the Video Files scope, or when the video was deleted from Vimeo after the import started.
 
-Answer yes to retry the failed videos in the same run. When an import is interrupted, or when you decline the retry, run the command again with the `--resume` flag:
+Answer `y` to retry the failed videos in the same run. When an import is interrupted, or when you decline the retry, run the command again with the `--resume` flag:
 
 ```sh
-bunny stream import --lib 12345 --source vimeo --resume
+bunny stream import --library 12345 --source vimeo --resume
 ```
 
 The `--resume` flag retries the videos that failed, processes any videos that were still outstanding, and re-applies the `vimeoId` tag to any video that Bunny fetched before the run stopped but did not finish tagging. When the interrupted run was limited to one folder, the resume continues that same folder. A resume stops retrying a video after three failed attempts, and it skips videos that Bunny rejected outright. To try those again, add `--clean-failed`, which deletes their failed Bunny copies first. If `bunny stream import status` reports videos stuck with no data, add `--retry-stalled` to delete and fetch them again.
@@ -320,26 +366,26 @@ Running the import again is always safe. Because every imported video carries th
 
 ```sh
 Vimeo to Bunny Stream
- Key                Value                         
- Library            migrate-from-vimeo (12345)    
- Source             Vimeo: 6 videos in 3 folders  
- Already imported   6                             
- To import          0                             
- Duration           1:06                         
- Size               21 MB                        
+ Key                Value
+ Library            migrate-from-vimeo (12345)
+ Source             Vimeo: 6 videos in 3 folders
+ Already imported   6
+ To import          0
+ Duration           1:06
+ Size               21 MB
 
 ✓ Everything is already imported.
 ```
 
 ## Step 8: Verify in the Bunny dashboard
 
-To confirm that all the videos have been encoded on Bunny successfully, open the [Bunny dashboard](https://dash.bunny.net) and go to **Stream >** **Your library** **> Manage library**. Each Vimeo folder appears as a collection, and every migrated video is listed under **Latest videos**:
+To confirm that all the videos have been encoded on Bunny successfully, open the [Bunny dashboard](https://dash.bunny.net) and go to **Stream > Your library > Manage library**. Each Vimeo folder appears as a collection, and every migrated video is listed under **Latest videos**:
 
 <Frame>
   ![](/images/stream/migrate-from-vimeo/manage-library-videos.png)
 </Frame>
 
-After migrating your videos to Bunny Stream, replace the Vimeo embeds (player.vimeo.com iframes) and links in your site with their Bunny Stream equivalents. The [Embedding videos documentation](https://bunny.net/docs/stream/embedding) covers the embed and player options.
+After migrating your videos to Bunny Stream, set up the library's [security settings](/stream/security-options) if you have not already, then replace the Vimeo embeds (player.vimeo.com iframes) and links in your site with their Bunny Stream equivalents. The [Embedding videos documentation](/stream/embedding) covers the embed and player options.
 
 ## Summary
 
