@@ -1,0 +1,421 @@
+---
+title: "Upload videos to Bunny Stream from Next.js"
+sidebarTitle: "Next.js"
+description: "Add video uploads to a Next.js app. The browser sends each file straight to Bunny Stream over TUS, and a Route Handler creates the video and signs the upload."
+---
+
+import UploadAuthWarning from "/snippets/stream/upload-auth-warning.mdx";
+
+Many hosts cap serverless request bodies at a few megabytes, and video files are much bigger. Here the file never reaches Next.js. A Route Handler creates the video and signs an upload, then the browser sends the file to us over [TUS](/stream/tus-resumable-uploads) in resumable chunks.
+
+<Card title="Next.js example on GitHub" icon="/logo/frameworks/nextjs.svg" href="https://github.com/BunnyWay/examples/tree/main/stream/upload-tus-nextjs" horizontal>
+  An App Router app with pause, resume, and playback once encoding finishes.
+</Card>
+
+## Quickstart
+
+<Steps>
+  <Step title="Add your library credentials">
+    Copy both from your library's **API** page. The API key can delete videos, so keep it out of any `NEXT_PUBLIC_` variable.
+
+    ```bash .env.local
+    BUNNY_STREAM_LIBRARY_ID=
+    BUNNY_STREAM_API_KEY=
+    ```
+
+    ```bash
+    npm install tus-js-client server-only
+    ```
+  </Step>
+  <Step title="Create the Bunny Stream helpers">
+    The upload signature is a SHA-256 of the library ID, API key, expiry, and video ID. The `server-only` import breaks the build if a Client Component ever pulls this file in.
+
+    ```ts lib/bunny-stream.ts
+    import "server-only";
+    import { createHash } from "node:crypto";
+    import type { VideoStatus } from "./video-status";
+
+    // Bunny checks the expiry on every TUS request, so leave room for slow uploads.
+    const SIGNATURE_TTL_SECONDS = 24 * 60 * 60;
+
+    export type UploadCredentials = {
+      videoId: string;
+      libraryId: string;
+      expirationTime: number;
+      signature: string;
+    };
+
+    function config() {
+      const libraryId = process.env.BUNNY_STREAM_LIBRARY_ID;
+      const apiKey = process.env.BUNNY_STREAM_API_KEY;
+      if (!libraryId || !apiKey) {
+        throw new Error("Set BUNNY_STREAM_LIBRARY_ID and BUNNY_STREAM_API_KEY in .env.local");
+      }
+
+      return { libraryId, apiKey };
+    }
+
+    async function stream<T>(path: string, init?: RequestInit): Promise<T> {
+      const { libraryId, apiKey } = config();
+      const response = await fetch(`https://video.bunnycdn.com/library/${libraryId}/videos${path}`, {
+        ...init,
+        headers: { AccessKey: apiKey, Accept: "application/json", "Content-Type": "application/json" },
+        cache: "no-store",
+      });
+      if (!response.ok) {
+        throw new Error(`Bunny Stream returned ${response.status}: ${await response.text()}`);
+      }
+
+      return response.json() as Promise<T>;
+    }
+
+    export async function getVideo(videoId: string): Promise<VideoStatus> {
+      const { libraryId } = config();
+      const video = await stream<{ status: number; encodeProgress: number }>(`/${encodeURIComponent(videoId)}`);
+
+      return {
+        status: video.status,
+        encodeProgress: video.encodeProgress,
+        embedUrl: `https://player.mediadelivery.net/embed/${libraryId}/${videoId}`,
+      };
+    }
+
+    export async function createVideo(title: string): Promise<string> {
+      const video = await stream<{ guid: string }>("", { method: "POST", body: JSON.stringify({ title }) });
+
+      return video.guid;
+    }
+
+    export function signUpload(videoId: string): UploadCredentials {
+      const { libraryId, apiKey } = config();
+      const expirationTime = Math.floor(Date.now() / 1000) + SIGNATURE_TTL_SECONDS;
+      const signature = createHash("sha256")
+        .update(`${libraryId}${apiKey}${expirationTime}${videoId}`)
+        .digest("hex");
+
+      return { videoId, libraryId, expirationTime, signature };
+    }
+    ```
+
+    The browser needs the [video statuses](/api-reference/stream/manage-videos/get-video) too, so they live in a file without secrets.
+
+    ```ts lib/video-status.ts
+    export const VideoStatusCode = { Created: 0, Finished: 4, Error: 5, UploadFailed: 6 } as const;
+
+    export type VideoStatus = {
+      status: number;
+      encodeProgress: number;
+      embedUrl: string;
+    };
+
+    export function hasFailed(status: number): boolean {
+      return status === VideoStatusCode.Error || status === VideoStatusCode.UploadFailed;
+    }
+    ```
+  </Step>
+  <Step title="Add the Route Handlers">
+    <UploadAuthWarning />
+
+    Pass a `videoId` from an unfinished upload and the route re-signs that video. Anything else gets a new one.
+
+    ```ts app/api/uploads/route.ts
+    import { createVideo, getVideo, signUpload } from "@/lib/bunny-stream";
+    import { VideoStatusCode } from "@/lib/video-status";
+
+    export async function POST(request: Request) {
+      // Require a signed-in user here. This route is public and creates videos in your library.
+      // Before re-signing a videoId, check that the user owns it.
+      const { title, videoId } = (await request.json()) as { title?: unknown; videoId?: unknown };
+      if (typeof title !== "string" || !title.trim()) {
+        return Response.json({ error: "title is required" }, { status: 400 });
+      }
+
+      try {
+        if (typeof videoId === "string" && (await canResume(videoId))) {
+          return Response.json(signUpload(videoId));
+        }
+
+        return Response.json(signUpload(await createVideo(title)));
+      } catch (error) {
+        return Response.json({ error: (error as Error).message }, { status: 502 });
+      }
+    }
+
+    // Only re-sign videos that are still waiting for their file.
+    async function canResume(videoId: string): Promise<boolean> {
+      try {
+        return (await getVideo(videoId)).status === VideoStatusCode.Created;
+      } catch {
+        return false;
+      }
+    }
+    ```
+
+    ```ts app/api/videos/[id]/route.ts
+    import { getVideo } from "@/lib/bunny-stream";
+
+    export async function GET(_request: Request, { params }: RouteContext<"/api/videos/[id]">) {
+      // Require a signed-in user here, and check that they own this video ID. The route is public.
+      const { id } = await params;
+
+      try {
+        return Response.json(await getVideo(id));
+      } catch (error) {
+        return Response.json({ error: (error as Error).message }, { status: 502 });
+      }
+    }
+    ```
+  </Step>
+  <Step title="Upload from a Client Component">
+    tus-js-client sends the credentials as headers with every request. The video ID goes into `localStorage` against the file, which is how a reload finds its way back to the same upload.
+
+    ```tsx components/video-uploader.tsx
+    "use client";
+
+    import { useEffect, useRef, useState } from "react";
+    import * as tus from "tus-js-client";
+    import type { UploadCredentials } from "@/lib/bunny-stream";
+    import { UploadedVideo } from "./uploaded-video";
+
+    type UploadState =
+      | { phase: "idle" }
+      | { phase: "uploading" | "paused"; title: string; percent: number }
+      | { phase: "done"; title: string; videoId: string }
+      | { phase: "error"; message: string };
+
+    // Remembers which Bunny video a file was going into, so a reload can resume it.
+    const videoKey = (file: File) => `bunny-video:${file.name}:${file.size}:${file.lastModified}`;
+
+    async function requestUpload(title: string, videoId: string | null): Promise<UploadCredentials> {
+      const response = await fetch("/api/uploads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, videoId }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? "Could not create the upload");
+
+      return body;
+    }
+
+    export function VideoUploader() {
+      const uploadRef = useRef<tus.Upload | null>(null);
+      // Bumped on cancel, so an upload still waiting on the server never starts.
+      const attemptRef = useRef(0);
+      const [state, setState] = useState<UploadState>({ phase: "idle" });
+
+      // Stop sending chunks if the component goes away mid-upload.
+      useEffect(() => () => void uploadRef.current?.abort(), []);
+
+      async function start(file: File) {
+        const title = file.name;
+        const key = videoKey(file);
+        const savedVideoId = localStorage.getItem(key);
+        const attempt = ++attemptRef.current;
+        setState({ phase: "uploading", title, percent: 0 });
+
+        let credentials: UploadCredentials;
+        try {
+          credentials = await requestUpload(title, savedVideoId);
+        } catch (error) {
+          if (attempt === attemptRef.current) setState({ phase: "error", message: (error as Error).message });
+          return;
+        }
+        if (attempt !== attemptRef.current) return;
+        localStorage.setItem(key, credentials.videoId);
+
+        const upload = new tus.Upload(file, {
+          endpoint: "https://video.bunnycdn.com/tusupload",
+          retryDelays: [0, 3000, 5000, 10000, 20000, 60000],
+          removeFingerprintOnSuccess: true,
+          headers: {
+            AuthorizationSignature: credentials.signature,
+            AuthorizationExpire: String(credentials.expirationTime),
+            VideoId: credentials.videoId,
+            LibraryId: credentials.libraryId,
+          },
+          metadata: { filetype: file.type, title },
+          onProgress(bytesSent, bytesTotal) {
+            const percent = Math.floor((bytesSent / bytesTotal) * 100);
+            setState((current) => (current.phase === "paused" ? current : { phase: "uploading", title, percent }));
+          },
+          onSuccess() {
+            localStorage.removeItem(key);
+            setState({ phase: "done", title, videoId: credentials.videoId });
+          },
+          onError(error) {
+            setState({ phase: "error", message: error.message });
+          },
+        });
+        uploadRef.current = upload;
+
+        // A stored upload URL belongs to one video, so only resume into the same one.
+        const [previous] = await upload.findPreviousUploads();
+        if (attempt !== attemptRef.current) return;
+        if (previous && credentials.videoId === savedVideoId) {
+          upload.resumeFromPreviousUpload(previous);
+        }
+        upload.start();
+      }
+
+      function pause() {
+        uploadRef.current?.abort();
+        setState((current) => (current.phase === "uploading" ? { ...current, phase: "paused" } : current));
+      }
+
+      function resume() {
+        uploadRef.current?.start();
+        setState((current) => (current.phase === "paused" ? { ...current, phase: "uploading" } : current));
+      }
+
+      function reset() {
+        attemptRef.current++;
+        uploadRef.current?.abort();
+        uploadRef.current = null;
+        setState({ phase: "idle" });
+      }
+
+      if (state.phase === "idle") {
+        return (
+          <input
+            type="file"
+            accept="video/*"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) start(file);
+            }}
+          />
+        );
+      }
+
+      if (state.phase === "error") {
+        return (
+          <div>
+            <p>{state.message}</p>
+            <button type="button" onClick={reset}>Try again</button>
+          </div>
+        );
+      }
+
+      if (state.phase === "done") {
+        return (
+          <div>
+            <UploadedVideo videoId={state.videoId} title={state.title} />
+            <button type="button" onClick={reset}>Upload another</button>
+          </div>
+        );
+      }
+
+      return (
+        <div>
+          <p>
+            {state.phase === "paused" ? "Paused" : "Uploading"} {state.title}: {state.percent}%
+          </p>
+          <progress max={100} value={state.percent} />
+          {state.phase === "uploading" ? (
+            <button type="button" onClick={pause}>Pause</button>
+          ) : (
+            <button type="button" onClick={resume}>Resume</button>
+          )}
+          <button type="button" onClick={reset}>Cancel</button>
+        </div>
+      );
+    }
+    ```
+
+    `abort()` pauses. `start()` picks up from the last chunk we acknowledged.
+  </Step>
+</Steps>
+
+## Play it once it's encoded
+
+We start encoding when the last chunk arrives. Poll the status route until `status` reaches `4` (finished), `5` or `6` (failed), then embed `embedUrl`.
+
+```tsx components/uploaded-video.tsx
+"use client";
+
+import { useEffect, useState } from "react";
+import { hasFailed, VideoStatusCode, type VideoStatus } from "@/lib/video-status";
+
+export function UploadedVideo({ videoId, title }: { videoId: string; title: string }) {
+  const [video, setVideo] = useState<VideoStatus | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    let active = true;
+
+    const poll = async () => {
+      try {
+        const response = await fetch(`/api/videos/${videoId}`);
+        const body = await response.json();
+        if (!active) return;
+        if (!response.ok) return setError(body.error ?? "Could not read the video status");
+
+        setVideo(body);
+        if (body.status !== VideoStatusCode.Finished && !hasFailed(body.status)) {
+          timer = setTimeout(poll, 3000);
+        }
+      } catch {
+        if (active) setError("Could not reach the server to check the video");
+      }
+    };
+
+    poll();
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [videoId]);
+
+  if (error) return <p>{error}</p>;
+  if (!video) return <p>Checking the video…</p>;
+  if (hasFailed(video.status)) return <p>Bunny Stream could not encode {title}.</p>;
+  if (video.status !== VideoStatusCode.Finished) return <p>Encoding {title}… {video.encodeProgress}%</p>;
+
+  return (
+    <iframe
+      src={video.embedUrl}
+      title={title}
+      style={{ width: "100%", aspectRatio: "16 / 9", border: 0 }}
+      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+      allowFullScreen
+    />
+  );
+}
+```
+
+`encodeProgress` gives you a percentage to show in the meantime. A [webhook](/stream/webhooks) tells your server when encoding finishes.
+
+Render the uploader from any page. The page itself can stay a Server Component.
+
+```tsx app/page.tsx
+import { VideoUploader } from "@/components/video-uploader";
+
+export default function Home() {
+  return (
+    <main>
+      <h1>Upload a video</h1>
+      <VideoUploader />
+    </main>
+  );
+}
+```
+
+Start the app with `npm run dev`, open http://localhost:3000, and choose a video. To control playback or save progress, swap the iframe for the component in [Use Bunny Player with Next.js](/stream/player/nextjs).
+
+## Before you deploy
+
+Check the session in both Route Handlers, and store which user owns each video ID. As written, anyone can fill your library. Set the two variables in your host's environment too.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The TUS upload returns 401">
+    The signature doesn't match the headers. Check that the library ID and API key belong to the same library, and restart the dev server after editing `.env.local`.
+  </Accordion>
+  <Accordion title="The build fails with a server-only error">
+    A Client Component imports a value from `lib/bunny-stream.ts`. Import only types from it with `import type`, and keep shared values in `lib/video-status.ts`.
+  </Accordion>
+</AccordionGroup>
