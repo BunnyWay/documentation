@@ -1,0 +1,39 @@
+---
+title: Mathematics
+description: The trigonometric, logarithmic, and rounding functions available in Bunny Database, and how they differ from SQLite's built-in math functions.
+---
+
+The math functions are not SQLite's own [built-in math functions](https://www.sqlite.org/lang_mathfunc.html). They come from a bundled extension that mirrors most of that set, with a few differences that matter when porting SQL.
+
+<Warning>
+  - `log(x)` is the **natural** logarithm. Use `log10(x)` for base 10. The two-argument form `log(base, x)` and `log2(x)` are not available.
+  - `ceil()`, `ceiling()`, and `floor()` return an **integer** rather than a real.
+  - `power(x, y)` is available, but `pow()`, `trunc()`, and `mod()` are not.
+</Warning>
+
+## Functions
+
+| Function                                                   | What it does                                                               |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `acos`, `acosh`, `asin`, `asinh`, `atan`, `atan2`, `atanh` | Inverse trigonometric and hyperbolic functions, in radians.                |
+| `cos`, `cosh`, `sin`, `sinh`, `tan`, `tanh`                | Trigonometric and hyperbolic functions.                                    |
+| `cot(x)`, `coth(x)`                                        | Cotangent and hyperbolic cotangent.                                        |
+| `atn2(y, x)`                                               | Alias of `atan2()`.                                                        |
+| `exp(x)`, `ln(x)`, `log(x)`, `log10(x)`                    | Exponential, natural logarithm (both `ln` and `log`), base-10 logarithm.   |
+| `power(x, y)`, `sqrt(x)`, `square(x)`                      | Power, square root, and `x` multiplied by itself. `power()` returns a real. |
+| `ceil(x)`, `ceiling(x)`, `floor(x)`                        | Rounding up and down. Return an integer.                                   |
+| `sign(x)`                                                  | -1, 0, or 1. Returns `NULL` for non-numeric input.                         |
+| `degrees(x)`, `radians(x)`, `pi()`                         | Angle conversion and the constant pi.                                      |
+
+```sql
+SELECT log(100);           -- 4.60517 (natural log)
+SELECT log10(1000);        -- 3.0
+SELECT power(2, 10);       -- 1024.0
+SELECT typeof(ceil(1.2));  -- integer
+```
+
+## Edge cases
+
+Domain errors such as `sqrt(-1)`, `acos(2)`, or `log(-1)` return `NULL`.
+
+A result of infinity, such as `ln(0)`, has the SQL type `real` but is serialized as `null` over the HTTP API, because JSON has no representation for infinity.

@@ -1,0 +1,68 @@
+---
+title: Full-Text Search
+description: Use the FTS5, FTS4, and FTS3 full-text search modules in Bunny Database, with BM25 ranking, highlighting, and snippets.
+---
+
+Bunny Database includes SQLite's full-text search modules. See the SQLite documentation for [FTS5](https://www.sqlite.org/fts5.html) and [FTS3 and FTS4](https://www.sqlite.org/fts3.html).
+
+## Modules
+
+| Module                 | What it does                                                                                                     |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `fts5`                 | Current-generation full-text index with tokenizers, BM25 ranking, prefix queries, and highlighting. Prefer this. |
+| `fts5vocab`            | Read-only view of an FTS5 index's vocabulary: terms, document counts, and occurrence counts.                     |
+| `fts4`, `fts4aux`      | Previous-generation index and its term statistics, kept for compatibility.                                       |
+| `fts3`, `fts3tokenize` | Original module and a table that shows how a tokenizer splits text.                                              |
+
+```sql
+CREATE VIRTUAL TABLE articles USING fts5(title, body);
+
+INSERT INTO articles (title, body) VALUES ('Edge caching', 'How a CDN keeps content close to users.');
+
+SELECT title, bm25(articles) AS score
+FROM articles
+WHERE articles MATCH 'cdn'
+ORDER BY score;
+```
+
+## Tokenizers and table options
+
+The `unicode61` (default), `ascii`, `porter`, and `trigram` tokenizers are available. The `icu` tokenizer is not.
+
+Contentless and external-content tables, `detail=`, `columnsize=`, `prefix=`, and `UNINDEXED` columns all work as documented upstream.
+
+## Match expressions
+
+`MATCH` expressions support terms, `"phrases"`, `prefix*`, `column:term`, `NEAR`, `AND`, `OR`, and `NOT`.
+
+`NOT` is a binary operator in both FTS5 and FTS3/4, so write `a NOT b` rather than `a AND NOT b`. The `AND NOT` form is a syntax error.
+
+The `fts4aux` table accepts only the one-argument form `fts4aux(table)`.
+
+## Auxiliary functions
+
+See the SQLite documentation for the [FTS5 auxiliary functions](https://www.sqlite.org/fts5.html#_auxiliary_functions_) and the [FTS3/4 snippet, offsets, and matchinfo functions](https://www.sqlite.org/fts3.html#snippet).
+
+| Function                                                | What it does                                                                                                      |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `bm25(table [, weight1, weight2, ...])`                 | FTS5 relevance score inside a `MATCH` query. Scores are negative and lower is better. Optional per-column weights. |
+| `highlight(table, column, open, close)`                 | FTS5. Wraps each match in a column's text with the `open` and `close` markers.                                    |
+| `snippet(table, column, open, close, ellipsis, tokens)` | FTS5. A short excerpt around a match. Pass `-1` as the column to pick the best one.                               |
+| `offsets(table)`                                        | FTS3/4. Space-separated match offsets.                                                                            |
+| `snippet(table, ...)`                                   | FTS3/4. Snippet with its own argument order.                                                                      |
+| `matchinfo(table [, format])`                           | FTS3/4. Binary match statistics.                                                                                  |
+| `optimize(table)`                                       | FTS3/4. Merges index segments.                                                                                    |
+| `fts5_source_id()`                                      | The source identifier of the FTS5 module.                                                                         |
+| `fts3_tokenizer(name [, pointer])`                      | FTS3/4. Legacy tokenizer registration and lookup. Not needed in normal use.                                       |
+
+The `bm25()` score is also exposed as the hidden `rank` column, and its weights can be configured with `INSERT INTO t(t, rank) VALUES ('rank', 'bm25(10.0, 1.0)')`.
+
+When a term appears in half or more of the rows, its score is `-0.0`. That is correct BM25 behaviour, not a fault.
+
+## Special commands
+
+FTS5 special commands are written as `INSERT INTO t(t) VALUES ('command')`.
+
+The `optimize`, `rebuild`, `integrity-check`, `merge`, `automerge`, `usermerge`, `crisismerge`, `pgsz`, `secure-delete`, and `flush` commands are accepted on every FTS5 table. The `delete` and `delete-all` commands work only on contentless and external-content tables.
+
+FTS3/4 tables accept `optimize`, `rebuild`, `integrity-check`, `merge=n,m`, and `automerge=n`.

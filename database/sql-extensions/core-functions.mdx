@@ -1,0 +1,85 @@
+---
+title: Core SQLite Functions and Features
+sidebarTitle: Core functions
+description: The standard SQLite 3.45 scalar, aggregate, window, and date and time functions, and the statement features available in Bunny Database.
+---
+
+These are standard SQLite 3.45 functions and features. They are not extensions, but they are listed here so you can confirm what is available. See the SQLite documentation for [scalar functions](https://www.sqlite.org/lang_corefunc.html), [aggregate functions](https://www.sqlite.org/lang_aggfunc.html), [window functions](https://www.sqlite.org/windowfunctions.html), and [date and time functions](https://www.sqlite.org/lang_datefunc.html).
+
+For JSON functions, see [JSON](/database/sql-extensions/json).
+
+## Scalar functions
+
+| Group        | Functions                                                                                                                                                                                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Numeric      | `abs`, `round`, `sign`, `max`, `min`, `random`, `randomblob`, `zeroblob`                                                                                                                                           |
+| Conditional  | `iif`, `nullif`, `coalesce`, `ifnull`, `likely`, `unlikely`, `likelihood`                                                                                                                                          |
+| String       | `instr`, `substr`, `substring`, `upper`, `lower`, `length`, `octet_length`, `trim`, `ltrim`, `rtrim`, `replace`, `like`, `glob`, `soundex`, `concat`, `concat_ws`, `unhex`                                          |
+| Formatting   | `format`, `printf`, `char`, `unicode`, `quote`, `hex`                                                                                                                                                              |
+| Connection   | `changes`, `total_changes`, `last_insert_rowid`                                                                                                                                                                    |
+| Diagnostics  | `sqlite_version`, `sqlite_source_id`, `sqlite_compileoption_used`, `sqlite_compileoption_get`                                                                                                                      |
+
+```sql
+SELECT iif(stock > 0, 'in stock', 'sold out') FROM products;
+SELECT concat_ws('-', 'a', NULL, 'b');           -- a-b
+SELECT format('%05.2f|%s|%d', 3.14159, 'x', 42); -- 03.14|x|42
+```
+
+`length()` counts characters and `octet_length()` counts bytes, so `length('héllo')` is 5 and `octet_length('héllo')` is 6. The `LIKE` and `GLOB` operators work, including `LIKE ... ESCAPE`. `changes()`, `total_changes()`, and `last_insert_rowid()` reflect the last write on the same connection.
+
+## Aggregate functions
+
+`avg`, `count`, `group_concat`, `string_agg`, `max`, `min`, `sum`, and `total` are available. `FILTER` works on every aggregate:
+
+```sql
+SELECT count(*) FILTER (WHERE status = 'paid') AS paid_orders FROM orders;
+```
+
+`ORDER BY` inside `group_concat()` or `string_agg()`, such as `group_concat(name ORDER BY name)`, is rejected as a parse error. Sort the rows in a subquery first instead.
+
+For median, quartiles, and standard deviation, see [Statistics and text](/database/sql-extensions/statistics-and-text).
+
+## Window functions
+
+`row_number`, `rank`, `dense_rank`, `percent_rank`, `cume_dist`, `ntile`, `lag`, `lead`, `first_value`, `last_value`, and `nth_value` are available, and every built-in aggregate can be used over a window:
+
+```sql
+SELECT order_id, total,
+       sum(total) OVER (ORDER BY created_at) AS running_total
+FROM orders;
+```
+
+## Date and time functions
+
+`date`, `time`, `datetime`, `julianday`, `unixepoch`, `strftime`, and `timediff` are available, along with `current_date`, `current_time`, and `current_timestamp`.
+
+```sql
+SELECT date('2024-02-29', '+1 year');                    -- 2025-03-01
+SELECT unixepoch('2024-01-01');                          -- 1704067200
+SELECT datetime('now', 'start of month', 'weekday 1');   -- first Monday of the month
+SELECT datetime('now', 'subsec');                        -- with milliseconds
+```
+
+The `strftime()` formats `%d`, `%H`, `%I`, `%j`, `%J`, `%m`, `%M`, `%p`, `%s`, `%S`, `%w`, `%W`, `%Y`, and `%%` are supported.
+
+## Statement features
+
+The following SQLite features are available and need no special configuration:
+
+- [`STRICT` tables](https://www.sqlite.org/stricttables.html). A value of the wrong type is rejected with a constraint error.
+- [`RETURNING` clauses](https://www.sqlite.org/lang_returning.html) on `INSERT`, `UPDATE`, and `DELETE`
+- [`UPSERT`](https://www.sqlite.org/lang_upsert.html) (`INSERT ... ON CONFLICT DO UPDATE`)
+- [Generated columns](https://www.sqlite.org/gencol.html), virtual and stored
+- [Common table expressions](https://www.sqlite.org/lang_with.html), including `RECURSIVE` and `MATERIALIZED`
+- `RIGHT JOIN`, `FULL OUTER JOIN`, and `IS [NOT] DISTINCT FROM`
+- [Savepoints](https://www.sqlite.org/lang_savepoint.html) and transactions on the same connection
+- `IF NOT EXISTS` on `CREATE VIEW`, `CREATE TRIGGER`, and `CREATE INDEX`
+- [`EXPLAIN` and `EXPLAIN QUERY PLAN`](https://www.sqlite.org/eqp.html)
+- The `BINARY`, `NOCASE`, and `RTRIM` [collations](https://www.sqlite.org/datatype3.html#collation)
+
+`CREATE TEMP TABLE` is not supported. For other unsupported statements, see [Connection settings](/database/sql-extensions/connection-settings#unsupported-statements).
+
+## Not available
+
+- Features added in SQLite 3.46 or later. This includes `json_pretty()`, the `'ceiling'` and `'floor'` date modifiers, and the `%e`, `%F`, `%k`, `%l`, `%P`, `%R`, `%T`, `%u`, `%V`, and `%G` `strftime()` formats. The modifiers and formats return `NULL`.
+- `sqlite_offset()`

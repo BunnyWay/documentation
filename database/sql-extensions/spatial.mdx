@@ -1,0 +1,60 @@
+---
+title: Spatial Indexes and Geopoly
+sidebarTitle: Spatial
+description: Use R*Tree range indexes and Geopoly polygon storage and queries in Bunny Database.
+---
+
+Bunny Database includes SQLite's spatial modules. See the SQLite documentation for the [R\*Tree module](https://www.sqlite.org/rtree.html) and the [Geopoly interface](https://www.sqlite.org/geopoly.html).
+
+## Modules
+
+| Module               | What it does                                                                                                     |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `rtree`, `rtree_i32` | R\*Tree index over 1 to 5 dimensions of floating-point (or 32-bit integer) ranges, for range and overlap queries. |
+| `geopoly`            | Polygon storage and queries built on R\*Tree.                                                                    |
+
+## R\*Tree
+
+```sql
+CREATE VIRTUAL TABLE places USING rtree(id, min_x, max_x, min_y, max_y);
+
+INSERT INTO places VALUES (1, 2.0, 3.0, 10.0, 11.0);
+
+SELECT id FROM places WHERE min_x <= 2.5 AND max_x >= 2.5 AND min_y <= 10.5 AND max_y >= 10.5;
+```
+
+Coordinates are stored as 32-bit floats, and a row whose minimum exceeds its maximum is rejected. Auxiliary `+column` fields work.
+
+Custom geometry callbacks such as `MATCH circle(...)` are not available, because they need a function registered from C.
+
+### Helper functions
+
+See the SQLite documentation for the [rtreecheck function](https://www.sqlite.org/rtree.html#the_rtreecheck_function).
+
+| Function                                         | What it does                                                    |
+| ------------------------------------------------ | --------------------------------------------------------------- |
+| `rtreecheck(table)`, `rtreecheck(schema, table)` | Integrity check of an R\*Tree index. Returns `'ok'` when sound. |
+| `rtreenode(dimensions, blob)`                    | Renders a node's entries as text.                               |
+| `rtreedepth(blob)`                               | Tree depth of a node blob.                                      |
+
+## Geopoly
+
+A geopoly polygon must be closed, with the first point repeated as the last. An unclosed ring is rejected on insert.
+
+| Function                             | What it does                                                                     |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| `geopoly_area(p)`                    | Area of the polygon. Returns `NULL` for an invalid polygon.                      |
+| `geopoly_overlap(p1, p2)`            | 0 for no overlap, 1 for partial overlap, 2 if `p2` is inside `p1`, 3 if equal.  |
+| `geopoly_within(p1, p2)`             | 1 if `p1` is wholly inside `p2`, otherwise 0.                                    |
+| `geopoly_contains_point(p, x, y)`    | 0 outside, 1 on the boundary, 2 inside.                                          |
+| `geopoly_blob(p)`, `geopoly_json(p)` | Convert between the JSON and binary polygon forms.                               |
+| `geopoly_svg(p, ...)`                | The polygon as an SVG `<polyline>` element.                                      |
+| `geopoly_bbox(p)`                    | Bounding box of a polygon, as a polygon.                                         |
+| `geopoly_group_bbox(p)`              | Aggregate bounding box over a group.                                             |
+| `geopoly_xform(p, A, B, C, D, E, F)` | Affine transform.                                                                |
+| `geopoly_regular(x, y, r, n)`        | A regular polygon with `n` sides.                                                |
+| `geopoly_ccw(p)`                     | The polygon rewound counter-clockwise.                                           |
+
+```sql
+SELECT geopoly_area('[[0,0],[10,0],[10,10],[0,10],[0,0]]');   -- 100.0
+```

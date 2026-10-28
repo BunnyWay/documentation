@@ -1,0 +1,66 @@
+---
+title: SQL Extensions and Functions
+sidebarTitle: Overview
+description: The virtual table modules, SQL functions, syntax extensions, and connection settings that every Bunny Database exposes beyond standard SQLite.
+---
+
+Bunny Database is built on libSQL, a fork of SQLite. Every database runs the same SQLite 3.45.1 core and exposes the same set of extra modules, functions, and syntax on top of it. There is nothing to enable: everything in this section is available on every database and every connection, and nothing can be added or removed per database.
+
+Anything that SQLite added after version 3.45 is not available. See [Core functions](/database/sql-extensions/core-functions#not-available) for the specifics.
+
+## Extensions
+
+<CardGroup cols={2}>
+  <Card title="Full-text search" icon="text-search" href="/database/sql-extensions/full-text-search">
+    FTS5, FTS4, and FTS3 indexes with BM25 ranking, highlighting, and snippets
+  </Card>
+  <Card title="Vector search" icon="network" href="/database/sql-extensions/vector-search">
+    Vector columns, distance functions, and approximate nearest neighbour indexes
+  </Card>
+  <Card title="Spatial" icon="map" href="/database/sql-extensions/spatial">
+    R*Tree range indexes and Geopoly polygon queries
+  </Card>
+  <Card title="JSON" icon="braces" href="/database/sql-extensions/json">
+    Build, query, modify, and aggregate JSON and JSONB
+  </Card>
+  <Card title="Regular expressions" icon="regex" href="/database/sql-extensions/regular-expressions">
+    The REGEXP operator and the regexp and regexpi functions
+  </Card>
+  <Card title="Identifiers and hashing" icon="fingerprint-pattern" href="/database/sql-extensions/identifiers-and-hashing">
+    UUID generation and SHA-3 hashing
+  </Card>
+  <Card title="Mathematics" icon="radical" href="/database/sql-extensions/mathematics">
+    Trigonometric, logarithmic, and rounding functions
+  </Card>
+  <Card title="Statistics and text" icon="chart-column" href="/database/sql-extensions/statistics-and-text">
+    Median, quartile, and deviation aggregates plus string helpers
+  </Card>
+  <Card title="Sequences" icon="list-ordered" href="/database/sql-extensions/sequences">
+    The generate_series table-valued function
+  </Card>
+  <Card title="Introspection" icon="eye" href="/database/sql-extensions/introspection">
+    Space usage, open statements, and pragmas as tables
+  </Card>
+  <Card title="Syntax extensions" icon="code" href="/database/sql-extensions/syntax-extensions">
+    Alter a column in place and random row IDs
+  </Card>
+  <Card title="Connection settings" icon="sliders-horizontal" href="/database/sql-extensions/connection-settings">
+    Settings that differ from SQLite, unsupported statements, and limits
+  </Card>
+  <Card title="Core functions" icon="square-function" href="/database/sql-extensions/core-functions">
+    Standard SQLite functions and statement features
+  </Card>
+</CardGroup>
+
+## Connection functions
+
+Two functions report on the current connection:
+
+| Function                        | What it does                                                                                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `libsql_server_database_name()` | The name of the database the connection serves.                                                                     |
+| `last_rows_affected()`          | Rows changed by the last statement on this connection. Returns 0 on a fresh connection or after a zero-row update. |
+
+## Standard SQLite features
+
+The standard SQLite 3.45 scalar, aggregate, window, and date and time functions are all available, along with `STRICT` tables, `RETURNING`, `UPSERT`, generated columns, and common table expressions. See [Core functions](/database/sql-extensions/core-functions) for the full list and what is missing.

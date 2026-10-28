@@ -1,0 +1,130 @@
+---
+title: JSON
+description: Build, query, and modify JSON in Bunny Database with the JSON functions, the -> and ->> operators, jsonb, and the json_each and json_tree tables.
+---
+
+Bunny Database includes SQLite's full JSON function set. See the SQLite [JSON documentation](https://www.sqlite.org/json1.html).
+
+Every scalar function that returns JSON has a `jsonb_` sibling, such as `jsonb_set()` or `jsonb_array()`. It behaves the same but returns SQLite's binary JSONB format instead of text. JSONB is faster to query, so prefer it for values you store and read often.
+
+## Build and validate
+
+| Function                                       | What it does                                                                                                                    |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `json(x)`                                      | Validates and minifies JSON text. Also renders a JSONB blob as text.                                                            |
+| `jsonb(x)`                                     | Same as `json()`, but returns a JSONB blob.                                                                                     |
+| `json_array(...)`, `jsonb_array(...)`          | Builds an array from the arguments. Values wrapped in `json()` keep their JSON type.                                            |
+| `json_object(...)`, `jsonb_object(...)`        | Builds an object from key and value pairs. An odd number of arguments is an error.                                              |
+| `json_quote(x)`                                | Converts a SQL value to its JSON representation. A blob that is not JSONB is an error.                                          |
+| `json_valid(x [, flags])`                      | 1 if `x` is valid, otherwise 0. `flags` selects the format: 1 for JSON, 2 for JSON5, 4 or 8 for JSONB.                          |
+| `json_error_position(x)`                       | Position of the first syntax error, or 0 if the input is valid.                                                                 |
+
+```sql
+SELECT json_object('id', 1, 'tags', json_array('a', 'b'));
+-- {"id":1,"tags":["a","b"]}
+
+SELECT json_valid('{a:1}');      -- 0
+SELECT json_valid('{a:1}', 2);   -- 1 (valid JSON5)
+SELECT json_error_position('[1,2');   -- 5
+```
+
+`json()` accepts [JSON5](https://json5.org) input, such as unquoted keys, single quotes, comments, hex numbers, and trailing commas, and returns canonical JSON:
+
+```sql
+SELECT json('{a: 1, b: ''x'', c: 0x1F, d: [1, 2,],}');
+-- {"a":1,"b":"x","c":31,"d":[1,2]}
+```
+
+## Extract
+
+| Function                                         | What it does                                                                                               |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `json_extract(x, path [, ...])`, `jsonb_extract` | Extracts one path as a SQL value, or several paths as a JSON array. Objects and arrays come back as JSON.  |
+| `x -> path`                                      | Extracts a value as JSON.                                                                                  |
+| `x ->> path`                                     | Extracts a value as a SQL value: text, integer, real, or `NULL`.                                           |
+| `json_type(x [, path])`                          | The type name: `object`, `array`, `integer`, `real`, `text`, `true`, `false`, or `null`.                   |
+| `json_array_length(x [, path])`                  | Number of elements in an array, or 0 if the value is not an array.                                         |
+
+```sql
+SELECT data -> '$.user' AS user_json,
+       data ->> '$.user.name' AS user_name,
+       json_extract(data, '$.items[#-1]') AS last_item
+FROM events;
+```
+
+A path must start with `$`. Use `[#-1]` to index from the end of an array.
+
+Wrap keys that contain spaces or punctuation in double quotes, as in `$."key with spaces"`. The operators also accept a bare key or array index on the right, such as `data -> 'user'` or `data -> 1`. A missing path returns `NULL`.
+
+## Modify
+
+These functions return a new JSON value and do not change the input.
+
+| Function                                          | What it does                                                                  |
+| ------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `json_set(x, path, value, ...)`, `jsonb_set`      | Inserts or replaces.                                                          |
+| `json_insert(x, path, value, ...)`, `jsonb_insert` | Inserts only where the path does not exist yet. Never overwrites.            |
+| `json_replace(x, path, value, ...)`, `jsonb_replace` | Replaces only where the path already exists.                              |
+| `json_remove(x, path, ...)`, `jsonb_remove`       | Deletes paths, from left to right.                                            |
+| `json_patch(x, patch)`, `jsonb_patch`             | Merges `patch` into `x` following [RFC 7396](https://www.rfc-editor.org/rfc/rfc7396). A `null` member deletes the key. |
+
+```sql
+SELECT json_set('{"a":1}', '$.a', 2, '$.b', 3);
+-- {"a":2,"b":3}
+
+SELECT json_insert('{"tags":[]}', '$.tags[#]', 'new');
+-- {"tags":["new"]}
+
+SELECT json_patch('{"a":1,"b":{"x":1}}', '{"a":null,"b":{"y":2}}');
+-- {"b":{"x":1,"y":2}}
+```
+
+Use `[#]` as the array index to append to the end of an array.
+
+## Aggregate
+
+| Function                                              | What it does                                    |
+| ----------------------------------------------------- | ----------------------------------------------- |
+| `json_group_array(x)`, `jsonb_group_array`            | Collects the values of a group into an array.   |
+| `json_group_object(key, value)`, `jsonb_group_object` | Collects key and value pairs into an object.    |
+
+```sql
+SELECT customer_id, json_group_array(order_id) AS orders
+FROM orders
+GROUP BY customer_id;
+```
+
+`ORDER BY` inside the aggregate, such as `json_group_array(x ORDER BY x)`, is rejected as a parse error. Sort the rows in a subquery first instead.
+
+## Table-valued functions
+
+See the SQLite documentation for [json_each and json_tree](https://www.sqlite.org/json1.html#jeach).
+
+| Module      | What it does                                                                                                                                    |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `json_each` | One row per immediate element of a JSON array or object, with an optional path argument. Columns include `key`, `value`, `type`, `atom`, `fullkey`, and `path`. |
+| `json_tree` | Recursive walk of a JSON value, one row per node, with an optional path argument that scopes the walk.                                          |
+
+```sql
+SELECT value FROM json_each('["a", "b", "c"]');
+
+SELECT key, value FROM json_each('{"size": 10, "unit": "MB"}');
+
+SELECT fullkey, type, atom FROM json_tree('{"items": [1, {"x": 2}]}');
+```
+
+Both accept `jsonb()` values as well as JSON text.
+
+## Index a JSON field
+
+You can index an expression on a JSON field, and the query planner uses the index when a query filters on the same expression:
+
+```sql
+CREATE INDEX events_user_id_idx ON events (data ->> '$.user.id');
+
+SELECT * FROM events WHERE data ->> '$.user.id' = 42;
+```
+
+## Not available
+
+`json_pretty()` was added in SQLite 3.46 and is not available.
