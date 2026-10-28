@@ -1,0 +1,66 @@
+---
+title: Vector Search
+description: Store embeddings in vector columns, compare them with distance functions, and query approximate nearest neighbour indexes in Bunny Database.
+---
+
+Vector search is a libSQL feature. See the [libSQL vector search documentation](https://github.com/tursodatabase/libsql/blob/main/libsql-sqlite3/doc/libsql_extensions.md#vector-search).
+
+## Vector functions
+
+| Function                                                                    | What it does                                                                                                            |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `vector(x)`, `vector32(x)`                                                  | Parses a JSON array, or accepts a blob, as a 32-bit float vector. `vector()` is an alias of `vector32()`.                |
+| `vector64(x)`, `vector16(x)`, `vectorb16(x)`, `vector8(x)`, `vector1bit(x)` | Typed vectors: f64, f16, bfloat16, 8-bit, and 1-bit quantized. The 8-bit and 16-bit forms are lossy.                    |
+| `vector_extract(v)`                                                         | Returns the vector as JSON array text. Works for every vector type and for a raw f32 blob.                               |
+| `vector_distance_cos(a, b)`                                                 | Cosine distance. Returns `NULL` when either vector is all zeros. Supports 1-bit vectors.                                |
+| `vector_distance_l2(a, b)`                                                  | Euclidean distance. Not supported for 1-bit vectors.                                                                    |
+| `libsql_vector_idx(column [, options...])`                                  | Index expression for `CREATE INDEX` that builds an approximate nearest neighbour index. See [Vector indexes](#vector-indexes). |
+
+```sql
+SELECT vector_distance_cos(vector('[1, 2]'), vector('[2, 3]'));   -- 0.0077
+SELECT vector_distance_l2(vector('[0, 0]'), vector('[3, 4]'));    -- 5.0
+```
+
+A vector can have at most 65536 dimensions. A distance between vectors of different types or lengths is rejected with an error rather than returning a wrong number.
+
+## Vector indexes
+
+Declare a vector column with a type that includes its dimension, then create an index on it with `libsql_vector_idx()`. Query the index with `vector_top_k()`:
+
+```sql
+CREATE TABLE documents (
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL,
+  embedding F32_BLOB(3)
+);
+
+INSERT INTO documents (title, embedding)
+VALUES ('Getting started', vector('[0.1, 0.9, 0.2]'));
+
+CREATE INDEX documents_embedding_idx
+ON documents (libsql_vector_idx(embedding, 'metric=cosine'));
+
+SELECT d.id, d.title
+FROM vector_top_k('documents_embedding_idx', vector('[0.1, 0.8, 0.3]'), 5) AS v
+JOIN documents d ON d.rowid = v.id;
+```
+
+### Column types
+
+The column types are `F32_BLOB(n)`, `F64_BLOB(n)`, `F16_BLOB(n)`, `FB16_BLOB(n)`, `F8_BLOB(n)`, and `F1BIT_BLOB(n)`, where `n` is the number of dimensions.
+
+A column without a dimension, or a plain `BLOB`, cannot be indexed. Inserting a value with the wrong dimension, or a non-vector value, is rejected.
+
+### Index options
+
+The index options are `metric=cosine` (default) or `metric=l2`, plus the tuning options `type=diskann`, `compress_neighbors`, `max_neighbors`, `search_l`, and `insert_l`.
+
+`INSERT`, `UPDATE`, and `DELETE` maintain the index automatically.
+
+### Querying
+
+| Module                                      | What it does                                                                                                                                |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vector_top_k(index_name, query_vector, k)` | The `k` rows nearest to `query_vector`, according to the named index. Returns one `id` column holding the base table's row ID.              |
+
+`k` must be 1 or greater. A `k` larger than the row count returns every row, and an empty index returns no rows. A query vector whose type or dimension does not match the index is rejected.

@@ -1,0 +1,26 @@
+---
+title: Sequences
+description: Generate a series of integers as a table with the generate_series function in Bunny Database.
+---
+
+Bunny Database includes the [generate_series table-valued function](https://www.sqlite.org/series.html).
+
+| Module                                     | What it does                       |
+| ------------------------------------------ | ---------------------------------- |
+| `generate_series(start [, stop [, step]])` | A sequence of integers as a table. |
+
+```sql
+SELECT value FROM generate_series(1, 10, 3);   -- 1, 4, 7, 10
+SELECT value FROM generate_series(5, 1, -2);   -- 5, 3, 1
+```
+
+A step of 0 is treated as 1. Without `stop`, the series is unbounded, so add a `LIMIT`. The hidden `start`, `stop`, and `step` columns are readable.
+
+## Example: fill gaps in a time series
+
+```sql
+SELECT days.value AS day, coalesce(sum(s.amount), 0) AS total
+FROM generate_series(1, 31) AS days
+LEFT JOIN sales s ON s.day = days.value
+GROUP BY days.value;
+```

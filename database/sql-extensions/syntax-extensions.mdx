@@ -1,0 +1,36 @@
+---
+title: Syntax Extensions
+description: The libSQL statements Bunny Database adds to the SQLite grammar, such as altering a column in place and random row IDs.
+---
+
+libSQL adds a few statements to the SQLite grammar. See the [libSQL extensions documentation](https://github.com/tursodatabase/libsql/blob/main/libsql-sqlite3/doc/libsql_extensions.md).
+
+Vector index syntax is covered in [Vector search](/database/sql-extensions/vector-search#vector-indexes).
+
+## Alter a column in place
+
+Change a column's type, `NOT NULL`, `DEFAULT`, `CHECK`, `COLLATE`, or `REFERENCES` clause without recreating the table:
+
+```sql
+ALTER TABLE users ALTER COLUMN score TO score TEXT NOT NULL DEFAULT '';
+```
+
+A new `CHECK` or `NOT NULL` constraint applies to later writes only, and existing rows are not validated. The statement cannot rename the column and cannot add a `UNIQUE` constraint.
+
+<Warning>
+  Do not add `AUTOINCREMENT` to a column with `ALTER COLUMN`. Declare
+  `AUTOINCREMENT` when you create the table instead.
+</Warning>
+
+## Random row IDs
+
+Create a table whose row IDs are assigned randomly, so they reveal neither insert order nor row count:
+
+```sql
+CREATE TABLE sessions (
+  token TEXT NOT NULL,
+  user_id INTEGER NOT NULL
+) RANDOM ROWID;
+```
+
+`RANDOM ROWID` cannot be combined with `AUTOINCREMENT`. An explicit `rowid` on insert is still honoured.

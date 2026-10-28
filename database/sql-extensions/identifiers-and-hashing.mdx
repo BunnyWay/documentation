@@ -1,0 +1,40 @@
+---
+title: Identifiers and Hashing
+description: Generate UUIDs and compute SHA-3 hashes in SQL with the uuid and sha3 functions in Bunny Database.
+---
+
+These functions come from the SQLite [uuid](https://www.sqlite.org/src/file/ext/misc/uuid.c) and [shathree](https://www.sqlite.org/src/file/ext/misc/shathree.c) extensions.
+
+## UUID
+
+| Function       | What it does                                                                                                                                    |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `uuid()`       | A new random version-4 UUID as 36-character text.                                                                                               |
+| `uuid_str(x)`  | Normalizes a UUID blob, 32-character hex text, canonical text, or `{braced}` text to canonical lower-case text. Returns `NULL` for invalid input. |
+| `uuid_blob(x)` | Converts UUID text or a blob to its 16-byte blob form. Returns `NULL` for invalid input.                                                        |
+
+```sql
+CREATE TABLE orders (
+  id TEXT PRIMARY KEY DEFAULT (uuid()),
+  total INTEGER NOT NULL
+);
+
+SELECT uuid_str('{550E8400-E29B-41D4-A716-446655440000}');
+-- 550e8400-e29b-41d4-a716-446655440000
+```
+
+## SHA-3
+
+| Function                   | What it does                                                                                             |
+| -------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `sha3(x [, size])`         | SHA-3 hash of `x`. `size` is 224, 256 (default), 384, or 512. `sha3(NULL)` returns `NULL`.               |
+| `sha3_query(sql [, size])` | SHA-3 hash over the complete result of a read-only SQL statement. A write statement is rejected.         |
+
+```sql
+SELECT hex(sha3('abc', 256));
+-- 3A985DA74FE225B2045C172D6BD390BD855F086E3E9D525B46BFE24511431532
+
+SELECT hex(sha3_query('SELECT * FROM orders ORDER BY id'));
+```
+
+`sha3_query()` is useful for detecting whether a table's contents have changed between two points in time.
