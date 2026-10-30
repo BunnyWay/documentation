@@ -4,6 +4,14 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-10-30" tags={["Magic Containers","(New)"]}>
+  ## Deploy from any OCI-compliant registry
+
+  Magic Containers now accepts any OCI-compliant container registry as a private registry, including GitLab, Harbor, Quay, Azure Container Registry, Google Artifact Registry and self-hosted registries. Use the registry you already have, without mirroring images to Docker Hub. The registry must be reachable on a public address over HTTPS. If it rejects your credentials, the dashboard tells you why.
+
+  Deploying is faster too. Paste a full image reference such as `ghcr.io/acme/api:v1`, and Magic Containers confirms the image and its digest before you deploy. Each connected registry shows whether the image is found, not found, unauthorized or unavailable, so an expired token no longer looks like a missing image. If the image isn't found, you get suggestions for similar tags or image names. If you leave out the tag, you pick one instead of the deploy failing on a missing `latest` tag. [Learn more](/magic-containers/image-registries)
+</Update>
+
 <Update label="2026-10-23">
   ## Dashboard
 
