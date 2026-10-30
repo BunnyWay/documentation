@@ -30,7 +30,7 @@ Before you begin, make sure you have the following in place:
 - A stable upload connection with enough bandwidth for your target quality (see [Recommended encoder settings](#step-3-configure-your-encoder)).
 
 <Note>
-  **Closed preview limits:** Accounts are limited to a **maximum stream duration of 12 hours**. You won't be charged for **live encoding** during the closed preview. See [Pricing](#pricing) for the proposed rates after the preview.
+  **Closed preview limits:** **Event** streams are limited to a **maximum duration of 12 hours**. **Channel** streams have no duration limit (see [Choosing a stream type](#choosing-a-stream-type-event-or-channel)). You won't be charged for **live encoding** during the closed preview. See [Pricing](#pricing) for the proposed rates after the preview.
 </Note>
 
 ## Choosing an ingest protocol: RTMP or SRT
@@ -47,6 +47,61 @@ Bunny Stream Live accepts your feed over either **RTMP** or **SRT (Secure Reliab
 <Tip>
   If you're unsure, start with **RTMP**. Switch to **SRT** if you see dropped frames or connection drops on a lossy network.
 </Tip>
+
+## Choosing a stream type: Event or Channel
+
+Every live stream has a type. The type sets how long the stream can run, what happens when your encoder disconnects, and whether the stream can be recorded.
+
+- An **Event** is a broadcast with a start and an end, such as a conference talk, a match, or a webinar. It runs for up to 12 hours and can be recorded as a VOD. Event is the default type.
+- A **Channel** is a 24/7 stream, such as a linear TV channel, a radio stream, or a camera that never turns off. It has no duration limit and survives encoder disconnects, but it can't be recorded as a VOD.
+
+|  | Event | Channel |
+| --- | --- | --- |
+| **API value** (`streamType`) | `0` (default) | `1` |
+| **Best for** | One-off broadcasts with a clear start and end | Continuous, always-on streams |
+| **Maximum duration** | 12 hours | No limit |
+| **VOD recording** (`recordVod`) | Optional | Not supported |
+| **DVR** | Supported, up to 12 hours | Supported, up to 12 hours |
+| **Encoder disconnects** | The stream ends automatically if no encoder reconnects within 30 minutes | The stream stays open until you stop it. Reconnect at any time |
+| **Scheduling and countdown** | Supported | Supported |
+| **Backup ingest, RTMP outputs, watermark** | Supported | Supported |
+
+### How an Event behaves
+
+An Event ends in one of these ways:
+
+- You stop it from the Control Room or with the [stop endpoint](#start-and-stop-the-stream).
+- It reaches its `scheduledEndTime`, if you set one.
+- It reaches the **12-hour** maximum duration.
+- All encoders stay disconnected for **30 minutes**. If your encoder drops, reconnect with the same stream key within that time to continue the same stream.
+
+When an Event ends and `recordVod` is on, the recording is converted into a VOD in your video library.
+
+### How a Channel behaves
+
+A Channel keeps running until you stop it, or until its `scheduledEndTime` if you set one. There is no maximum duration, and a disconnect never ends it. Your encoder can disconnect for maintenance or a restart, and reconnect hours or days later with the same stream key. The stream continues where it left off.
+
+While no encoder is connected, viewers see no new video. If DVR is on, the time the Channel was offline shows as a gap in the DVR timeline.
+
+A Channel never records a VOD:
+
+- `recordVod` defaults to `false` for a Channel, even when your video library records VODs by default.
+- A request that sets `streamType` to `1` together with `recordVod` set to `true` is rejected.
+
+<Tip>
+  For a Channel, use DVR to let viewers rewind, up to 12 hours. To keep a specific part of a Channel as a video, run that part as a separate Event with `recordVod` on.
+</Tip>
+
+### Setting the stream type
+
+Set the type when you create the stream through the [Live Stream API](#create-a-live-stream), with the `streamType` field. Streams created in the dashboard are Events.
+
+You can change the type later with the [update endpoint](#manage-the-stream), but only while both of these are true:
+
+- The stream hasn't been started yet.
+- No encoder is publishing to the stream.
+
+To change an Event that records a VOD into a Channel, set `recordVod` to `false` in the same request.
 
 ## Step 1: Create a live stream
 
@@ -315,7 +370,8 @@ Key fields in the request body (`CreateLiveStreamModel`):
 | `title` | string | The title of the live stream. |
 | `description` | string | Optional description. |
 | `collectionId` | string | Collection the stream belongs to. |
-| `recordVod` | boolean | If `true`, the stream is converted to a VOD when it stops. |
+| `streamType` | integer | `0` for an **Event** (default) or `1` for a **Channel**. See [Choosing a stream type](#choosing-a-stream-type-event-or-channel). |
+| `recordVod` | boolean | If `true`, the stream is converted to a VOD when it stops. Defaults to your video library setting for an Event, and to `false` for a Channel. A Channel can't set it to `true`. |
 | `scheduledStartTime` | date-time | Scheduled start (UTC). Viewers can only watch after this time unless you start manually. |
 | `scheduledEndTime` | date-time | Scheduled end (UTC). |
 | `enableCountdown` | boolean | Show a countdown in the player before a scheduled start. |
@@ -334,6 +390,7 @@ The create response (and `GET /library/{libraryId}/live/{streamId}`) returns a `
   "guid": "019fed6c-d433-7040-92cd-dfd0e4221757",
   "title": "My first live stream",
   "status": 1,
+  "streamType": 0,
   "streamKey": "bunnylive_xxxxxxxxxxxxxxxx",
   "playbackUrlHls": "https://.../playlist.m3u8",
   "recordVod": true,
@@ -443,7 +500,7 @@ curl --request DELETE \
 </CodeGroup>
 
 <Note>
-  The **update** endpoint can be used with no restrictions **before the stream is started**. It can only be used for updating the title and description after the stream is started. The stream key can only be regenerated **before** a stream has ended; regenerating it also changes the `streamid` in both SRT ingest URLs, so update every encoder you've configured, whichever protocol it uses. Deleting a stream removes it and all associated resources and cannot be undone.
+  The **update** endpoint can be used with no restrictions **before the stream is started**. It can only be used for updating the title and description after the stream is started. The `streamType` can only be changed before the stream is started and while no encoder is publishing. The stream key can only be regenerated **before** a stream has ended; regenerating it also changes the `streamid` in both SRT ingest URLs, so update every encoder you've configured, whichever protocol it uses. Deleting a stream removes it and all associated resources and cannot be undone.
 </Note>
 
 ### Endpoint reference
@@ -532,6 +589,8 @@ Live streams send webhooks to your video library's webhook URL, the same URL tha
 | `30` | LiveStreamBlockChanged | The stream's ingest was blocked or unblocked. | `Blocked`, `Unblocked` |
 | `31` | LiveStreamPublishRejected | An attempt to publish to the stream was refused. | `StreamEnded`, `StreamBlocked`, `TooManyIngests`, `RegionConflict` |
 
+The `DisconnectTimeout` and `MaxDuration` reasons on status `18` apply to Events only. A Channel is never stopped for either reason, and never sends the recording statuses `19` to `21`.
+
 Statuses `17` and `24` to `31` are best effort, so in rare cases one may not be delivered. To check the current state of a stream, use the [status endpoint](#check-the-stream-status).
 
 When **Video on demand** is enabled, the recording also sends the ordinary [video webhooks](/stream/webhooks#status-list) while it encodes, with `IsLiveStreamWebhook` set to `false`.
@@ -578,6 +637,8 @@ For example, a 1-hour stream with a 1080p top output costs:
 | Primary ingest only | 60 min × \$0.05 | \$3.00 |
 | Primary + backup ingest | 2 × 60 min × \$0.05 | \$6.00 |
 
+A Channel is billed the same way, for every minute an encoder is publishing to it. A Channel that runs 24/7 with a 1080p top output and primary ingest only costs 1,440 min × \$0.05 = \$72.00 per day.
+
 ### Other charges
 
 Live encoding charges are in addition to your usual bunny.net usage:
@@ -591,8 +652,11 @@ Live encoding charges are in addition to your usual bunny.net usage:
 
 ## Limits
 
-- 12 hour maximum live duration limit
-- 3 concurrent live stream events per bunny account during closed preview
+- 12 hour maximum live duration for Events. Channels have no duration limit.
+- 12 hour maximum DVR window for both Events and Channels.
+- An Event ends after 30 minutes without a connected encoder. A Channel stays open until you stop it.
+- A Channel can't record a VOD.
+- 3 concurrent live streams per bunny account during closed preview
 
 ## Not currently supported by Stream Live during closed preview
 
