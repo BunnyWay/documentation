@@ -22,6 +22,6 @@ SELECT email FROM users WHERE email REGEXP '@example\.com$';
 
 The pattern syntax is SQLite's own regular expression dialect, a POSIX-like subset described in the header comment of the [regexp extension source](https://www.sqlite.org/src/file/ext/misc/regexp.c).
 
-It supports `\d`, `\w`, `\s`, `\b`, `{n,m}` repetition, alternation, and Unicode text. Back-references such as `\1` are not supported.
+It supports `\d`, `\w`, `\s`, `\b`, `{n,m}` repetition, alternation, and Unicode text. Back-references such as `\1` are not supported and raise an error.
 
 A `NULL` argument returns `NULL`, and an invalid pattern is an error.
