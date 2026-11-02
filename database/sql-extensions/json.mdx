@@ -15,7 +15,7 @@ Every scalar function that returns JSON has a `jsonb_` sibling, such as `jsonb_s
 | `jsonb(x)`                                     | Same as `json()`, but returns a JSONB blob.                                                                                     |
 | `json_array(...)`, `jsonb_array(...)`          | Builds an array from the arguments. Values wrapped in `json()` keep their JSON type.                                            |
 | `json_object(...)`, `jsonb_object(...)`        | Builds an object from key and value pairs. An odd number of arguments is an error.                                              |
-| `json_quote(x)`                                | Converts a SQL value to its JSON representation. A blob that is not JSONB is an error.                                          |
+| `json_quote(x)`                                | Converts a SQL value to its JSON representation. A blob that is not valid JSONB is an error.                                          |
 | `json_valid(x [, flags])`                      | 1 if `x` is valid, otherwise 0. `flags` selects the format: 1 for JSON, 2 for JSON5, 4 or 8 for JSONB.                          |
 | `json_error_position(x)`                       | Position of the first syntax error, or 0 if the input is valid.                                                                 |
 
