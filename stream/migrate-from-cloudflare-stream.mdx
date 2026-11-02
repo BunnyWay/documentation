@@ -192,7 +192,7 @@ The CLI checks the credentials against Cloudflare. Once Cloudflare accepts them,
 ✓ Saved Cloudflare Stream credentials to the "default" profile.
 ```
 
-The CLI stores the saved credentials in `~/.config/bunnynet/stream-import-credentials.json`, a file only your user account can read, separate from the main Bunny CLI config. They are tied to the active Bunny CLI profile. If Cloudflare later rejects them (for example, after you revoke the token), the CLI deletes the saved values and prompts for new ones on the next run. If you answer no, the CLI prompts for the credentials on every run. The `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` environment variables always take priority over saved credentials.
+The CLI stores the saved credentials in `~/.config/bunnynet/stream-import-credentials.json` (or `$XDG_CONFIG_HOME/bunnynet/stream-import-credentials.json` when `XDG_CONFIG_HOME` is set), a file only your user account can read, separate from the main Bunny CLI config. They are tied to the active Bunny CLI profile. If Cloudflare later rejects them (for example, after you revoke the token), the CLI deletes the saved values and prompts for new ones on the next run. If you answer no, the CLI prompts for the credentials on every run. The `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` environment variables always take priority over saved credentials.
 
 The dry run then produces an output like this:
 
@@ -234,6 +234,8 @@ Bunny Stream accepts sources up to 2160p (3840x2160, or 2160x3840 in portrait) a
 ⚠ 1 videos are beyond Bunny's limits and will fail:
 ⚠   - 7136213-uhd_4096_2160_25fps.mp4: 4096x2160 is above Bunny's 2160p limit
 ```
+
+The dry run does not check whether each video requires signed URLs. The CLI checks `requireSignedURLs` only when it fetches a video's download, so a video with **Require Signed URLs** turned on still appears in the plan and fails during the import. Turn the setting off on those videos before you run the import, as described in [Scope](#scope).
 
 ## Step 5: Run the import
 
@@ -384,11 +386,13 @@ curl -X DELETE \
   -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"
 ```
 
-The `$VIDEO_UID` is the Cloudflare video ID, which is stored in the `cfStreamId` metatag on each Bunny video. To list every video ID on the account, run:
+The `$VIDEO_UID` is the Cloudflare video ID, which is stored in the `cfStreamId` metatag on each Bunny video. To list the video IDs on the account, run:
 
 ```sh
 bunny stream import list --source cloudflare --videos
 ```
+
+The command lists at most 10,000 videos. On a larger account it prints only the first 10,000, so read the remaining IDs from the `cfStreamId` metatag on each Bunny video or from the Cloudflare API.
 
 The CLI reuses MP4 downloads that existed before the migration. If your site already serves some of those downloads, leave them in place.
 
