@@ -34,6 +34,6 @@ SELECT typeof(ceil(1.2));  -- integer
 
 ## Edge cases
 
-Domain errors such as `sqrt(-1)`, `acos(2)`, or `log(-1)` return `NULL`.
+`sqrt()` of a negative number returns `NULL`. Other domain errors, such as `acos(2)` or `log(-1)`, raise an error.
 
 A result of infinity, such as `ln(0)`, has the SQL type `real` but is serialized as `null` over the HTTP API, because JSON has no representation for infinity.
