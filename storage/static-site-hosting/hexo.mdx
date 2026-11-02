@@ -1,0 +1,19 @@
+---
+title: "Deploy Hexo to Bunny Storage"
+sidebarTitle: "Hexo"
+description: "Build a Hexo site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+`hexo generate` renders your blog into `public`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npx hexo generate` |
+| Output directory | `public` |
+
+<Deploy build="npx hexo generate" />
+
+<CustomDomain />

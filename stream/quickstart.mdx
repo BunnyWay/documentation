@@ -3,84 +3,135 @@ title: Quickstart
 description: "Create a Bunny Stream video library, upload your first video, and embed it on your site."
 ---
 
-Getting a video onto your own page takes three steps in the dashboard: create a library, upload the file, and copy the embed code. You need a [bunny.net account](https://dash.bunny.net/auth/register) and a video file.
+Getting a video onto your own page takes three steps: create a library, upload the file, and copy the embed code. You can do each one in the dashboard or with the [bunny.net CLI](/cli/quickstart). You need a [bunny.net account](https://dash.bunny.net/auth/register) and a video file.
 
 ## Create a video library
 
 A video library holds your videos along with their player, encoding, and security settings.
 
-<Steps>
-  <Step title="Open Stream">
-    In the [dashboard](https://dash.bunny.net), go to **Delivery** > **Stream** and click **Create Your first Video Library**.
+<Tabs>
+  <Tab title="Dashboard">
+    <Steps>
+      <Step title="Open Stream">
+        In the [dashboard](https://dash.bunny.net), go to **Delivery** > **Stream** and click **Create Your first Video Library**.
 
-    <Frame>
-      ![Stream page in the dashboard with the Create Your first Video Library button highlighted](/images/docs/6295ff2-image.png)
-    </Frame>
-  </Step>
-  <Step title="Name the library">
-    Enter a name you'll recognise in the dashboard.
+        <Frame>
+          ![Stream page in the dashboard with the Create Your first Video Library button highlighted](/images/docs/6295ff2-image.png)
+        </Frame>
+      </Step>
+      <Step title="Name the library">
+        Enter a name you'll recognise in the dashboard.
 
-    <Frame>
-      ![Video Library Name field on the Add Video Library page](/images/docs/31a980e-image.png)
-    </Frame>
-  </Step>
-  <Step title="Choose storage regions">
-    We replicate your videos to every region you enable. Pick at least two to keep a copy if one region has a hardware failure, and one per continent where your viewers are for the fastest uncached delivery.
+        <Frame>
+          ![Video Library Name field on the Add Video Library page](/images/docs/31a980e-image.png)
+        </Frame>
+      </Step>
+      <Step title="Choose storage regions">
+        We replicate your videos to every region you enable. Pick at least two to keep a copy if one region has a hardware failure, and one per continent where your viewers are for the fastest uncached delivery.
 
-    <Frame>
-      ![Video Storage Configuration with a map and a list of storage regions](/images/docs/34c369a-image.png)
-    </Frame>
+        <Frame>
+          ![Video Storage Configuration with a map and a list of storage regions](/images/docs/34c369a-image.png)
+        </Frame>
+
+        <Warning>
+          Replication regions can't be removed once they're enabled.
+        </Warning>
+      </Step>
+      <Step title="Create it">
+        Click **Add Video Library**.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="CLI">
+    <Note>
+      Install and log in to the CLI first. The [CLI quickstart](/cli/quickstart) covers both.
+    </Note>
+
+    Create a library and link the current directory to it. The upload command below uses the linked library.
+
+    ```bash
+    bunny stream libraries create my-library --link
+    ```
+
+    The library stores videos in DE. The CLI asks if you want to replicate to other regions (SG, LA, and NY preselected).
+
+    The command then offers to save the library ID and API key to `.env`, and to add videos. You can skip adding videos for now, because the next step uploads one.
 
     <Warning>
       Replication regions can't be removed once they're enabled.
     </Warning>
-  </Step>
-  <Step title="Create it">
-    Click **Add Video Library**.
-  </Step>
-</Steps>
+  </Tab>
+</Tabs>
 
 ## Upload a video
 
-<Steps>
-  <Step title="Open the uploader">
-    In your new library, click **Upload a Video**.
+<Tabs>
+  <Tab title="Dashboard">
+    <Steps>
+      <Step title="Open the uploader">
+        In your new library, click **Upload a Video**.
 
-    <Frame>
-      ![Manage Videos page with the Upload a Video button highlighted](/images/docs/915e570-image.png)
-    </Frame>
-  </Step>
-  <Step title="Add your file">
-    Drag the file into the dialog or click **Browse**. The upload starts straight away.
+        <Frame>
+          ![Manage Videos page with the Upload a Video button highlighted](/images/docs/915e570-image.png)
+        </Frame>
+      </Step>
+      <Step title="Add your file">
+        Drag the file into the dialog or click **Browse**. The upload starts straight away.
 
-    <Frame>
-      ![Upload Video File dialog with a drag and drop area and the supported formats](/images/docs/3e63ff3-image.png)
-    </Frame>
-  </Step>
-  <Step title="Wait for encoding">
-    We encode the video into several resolutions once the upload reaches 100%, so it plays smoothly on any device and connection.
+        <Frame>
+          ![Upload Video File dialog with a drag and drop area and the supported formats](/images/docs/3e63ff3-image.png)
+        </Frame>
+      </Step>
+      <Step title="Wait for encoding">
+        We encode the video into several resolutions once the upload reaches 100%, so it plays smoothly on any device and connection.
 
-    <Frame>
-      ![File Upload panel showing a finished upload at 100%](/images/docs/284350f-image.png)
-    </Frame>
-  </Step>
-</Steps>
+        <Frame>
+          ![File Upload panel showing a finished upload at 100%](/images/docs/284350f-image.png)
+        </Frame>
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="CLI">
+    Upload the file to the linked library:
+
+    ```bash
+    bunny stream videos upload ./video.mp4
+    ```
+
+    The command prints the video ID and a Direct Play link you can share. Encoding starts when the upload finishes. Run `bunny stream videos show <video-id>` to check on it.
+  </Tab>
+</Tabs>
 
 ## Share or embed it
 
-To share a link, open the video's menu and click **Copy Video Play Url**. The link opens the video in Bunny Player.
+<Tabs>
+  <Tab title="Dashboard">
+    To share a link, open the video's menu and click **Copy Video Play Url**. The link opens the video in Bunny Player.
 
-<Frame>
-  ![Video menu with Copy Video Play Url highlighted](/images/docs/9171444-image.png)
-</Frame>
+    <Frame>
+      ![Video menu with Copy Video Play Url highlighted](/images/docs/9171444-image.png)
+    </Frame>
 
-To put the video on your own page, open it and copy the code from the **Embed** panel. The toggles above it set autoplay, looping, muting, and preloading for that embed.
+    To put the video on your own page, open it and copy the code from the **Embed** panel. The toggles above it set autoplay, looping, muting, and preloading for that embed.
 
-<Frame>
-  ![Video page with the Embed panel highlighted, showing the embed options and code](/images/docs/cbfbc9a-image.png)
-</Frame>
+    <Frame>
+      ![Video page with the Embed panel highlighted, showing the embed options and code](/images/docs/cbfbc9a-image.png)
+    </Frame>
 
-Paste the code into your page's HTML where the player should appear. [Embedding videos](/stream/embedding) covers every player parameter and the embedding restrictions you can set on a library.
+    Paste the code into your page's HTML where the player should appear.
+  </Tab>
+  <Tab title="CLI">
+    Print the video's embed URL:
+
+    ```bash
+    bunny stream videos embed <video-id>
+    ```
+
+    Use the URL as the `src` of an `<iframe>` on your page. See [`bunny stream`](/cli/commands/stream) for every Stream command.
+  </Tab>
+</Tabs>
+
+[Embedding videos](/stream/embedding) covers every player parameter and the embedding restrictions you can set on a library.
 
 ## Control the player from your app
 

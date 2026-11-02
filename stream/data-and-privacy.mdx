@@ -7,9 +7,13 @@ description: "At bunny.net, we take data privacy seriously. We’re committed to
 
 Bunny Stream and Bunny Player are designed to avoid collecting or permanently storing user-identifying information for analytics or playback functionality. The player does not set cookies or transmit personally identifiable information (PII) as part of its playback or analytics features. To ensure optimal performance and reliability, the player may send anonymised technical telemetry, such as stream quality metrics, error reports, and buffering statistics. In addition, the embedded player (iframe) may communicate with bunny.net CDN endpoints worldwide to collect anonymous performance statistics. This data is used exclusively to improve routing decisions and automatically optimise streaming performance.
 
-## Resumable Playback
+## Resumable Playback and Viewer Preferences
 
-Resumable playback is managed entirely within the user's browser using Browser Local Storage on the user's device. No playback information is shared with or stored by bunny.net . Stored playback data is retained locally for up to seven (7) days, after which it is automatically deleted. The playback position is updated every second during viewing and is also saved when the user closes the browser tab or the page is unloaded. The playback position is not saved if the video is within three (3) seconds of completion. This design allows users to resume playback while ensuring that all playback data remains stored exclusively on the user's device. Playback data is never transmitted to or stored by bunny.net . Any technical telemetry transmitted by the player is anonymized and used solely to monitor service health and optimize streaming performance. It is never used for user tracking or identification.
+Resumable playback is managed entirely within the user's browser using Browser Local Storage on the user's device. No playback information is shared with or stored by bunny.net. The playback position is written while the video plays, each time the browser reports playback progress, and it is removed when the video plays to the end. It is not sent anywhere, and it stays on the device until the video finishes or the user clears their browser's site data. This design allows users to resume playback while ensuring that all playback data remains stored exclusively on the user's device.
+
+The player keeps viewer preferences the same way. Captions, volume, mute, playback speed and the time display mode are stored in Browser Local Storage, scoped to the video library, and are only written when the viewer changes a setting in the player. Nothing is written before the viewer presses play or interacts with the controls.
+
+Both can be switched off per embed. `rememberPosition=false` disables the saved position, and `rememberSettings=false` disables all stored preferences, the position included, so the player neither reads nor writes Browser Local Storage. See [Embedding videos](/stream/embedding) for the full parameter list.
 
 <Info>
   For more information check out our [GDPR](https://bunny.net/gdpr/) and [Privacy & Data](https://bunny.net/privacy/) policies.
