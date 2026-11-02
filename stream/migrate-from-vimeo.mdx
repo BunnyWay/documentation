@@ -45,7 +45,7 @@ The import copies the video files, their titles, descriptions, and tags, and you
 | Title | Yes | |
 | Description | Yes | Stored in the `description` metatag on the Bunny video. |
 | Tags | Yes | Stored in the `keywords` metatag on the Bunny video. |
-| Folders | Yes | Each folder becomes a collection with the same name. |
+| Folders | Yes | Each folder becomes a collection with the same name. An existing collection whose name differs only in case is reused. |
 | Video ID | Yes | Stored in the `vimeoId` metatag on the Bunny video. |
 | Videos above 2160p or longer than 72 hours | No | Bunny Stream rejects them. The dry run warns about them before you import. |
 | Privacy settings (private, unlisted, password) | No | See the privacy note below. |
@@ -183,7 +183,7 @@ Once Vimeo accepts the token, the CLI offers to save it so that later runs skip 
 ✓ Saved Vimeo credentials to the "default" profile.
 ```
 
-The CLI stores the saved token in `~/.config/bunnynet/stream-import-credentials.json`, a file only your user account can read, separate from the main Bunny CLI config. It is tied to the active Bunny CLI profile. If Vimeo later rejects it (for example, after you delete the token), the CLI deletes the saved value and prompts for a new one on the next run. If you answer no, the CLI prompts for the token on every run. The `VIMEO_ACCESS_TOKEN` environment variable always takes priority over a saved token.
+The CLI stores the saved token in `~/.config/bunnynet/stream-import-credentials.json` (or `$XDG_CONFIG_HOME/bunnynet/stream-import-credentials.json` when `XDG_CONFIG_HOME` is set), a file only your user account can read, separate from the main Bunny CLI config. It is tied to the active Bunny CLI profile. If Vimeo later rejects it (for example, after you delete the token), the CLI deletes the saved value and prompts for a new one on the next run. If you answer no, the CLI prompts for the token on every run. The `VIMEO_ACCESS_TOKEN` environment variable always takes priority over a saved token.
 
 The dry run then produces an output like this:
 
@@ -253,7 +253,7 @@ Vimeo to Bunny Stream
 
 After you confirm, the CLI works through the same steps described in the [Overview](#overview):
 
-- **Discover**: it lists the folders and videos on the Vimeo account, then creates a Bunny collection for each folder, reusing any collection that already has the same name.
+- **Discover**: it lists the folders and videos on the Vimeo account, then creates a Bunny collection for each folder, reusing any collection that already has the same name. The match ignores case i.e. if two Vimeo folders whose names differ only in case, such as `Webinars` and `webinars`, end up in the same collection. Rename one of them in Vimeo before the import if you want to keep them seperate.
 - **De-duplicate**: it checks the destination library for videos that carry the `vimeoId` tag and skips any that are already imported.
 - **Fetch**: it requests each new video's best download link from Vimeo, passes it to Bunny (three at a time by default), and writes the `vimeoId` tag on the video, along with its Vimeo description and tags as the description and keywords metatags. It returns once every video has been queued. Bunny then fetches each file directly from Vimeo and encodes it.
 
@@ -360,7 +360,7 @@ Answer `y` to retry the failed videos in the same run. When an import is interru
 bunny stream import --library 12345 --source vimeo --resume
 ```
 
-The `--resume` flag retries the videos that failed, processes any videos that were still outstanding, and re-applies the `vimeoId` tag to any video that Bunny fetched before the run stopped but did not finish tagging. When the interrupted run was limited to one folder, the resume continues that same folder. A resume stops retrying a video after three failed attempts, and it skips videos that Bunny rejected outright. To try those again, add `--clean-failed`, which deletes their failed Bunny copies first. If `bunny stream import status` reports videos stuck with no data, add `--retry-stalled` to delete and fetch them again.
+The `--resume` flag retries the videos that failed, processes any videos that were still outstanding, and re-applies the `vimeoId` tag to any video that Bunny fetched before the run stopped but did not finish tagging. When the interrupted run was limited to one folder, the resume continues that same folder. A resume stops retrying a video after three failed attempts, and it skips videos that Bunny rejected outright. To try videos that failed three times again, run the import without `--resume` (with the same `--folder`, if the run was limited to one folder). To retry videos that Bunny rejected, add `--clean-failed`, which deletes their failed Bunny copies first. If `bunny stream import status` reports videos stuck with no data, add `--retry-stalled` to delete and fetch them again.
 
 Running the import again is always safe. Because every imported video carries the `vimeoId` tag, a repeated run against a library that already has every video imports nothing:
 

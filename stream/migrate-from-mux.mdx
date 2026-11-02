@@ -154,7 +154,7 @@ Once the token is displayed, copy the Token ID and the Secret Key and keep them 
 Bunny imports a video by fetching a file from a URL. Mux stores your videos for streaming, so a downloadable file exists only when one of the following is true:
 
 - [**Master access**](https://www.mux.com/docs/api-reference/video/assets/update-asset-master-access) **is enabled**: Mux prepares a temporary copy of the original upload. The CLI prefers this file because it is the highest quality version of the video. It also works for videos with signed playback IDs. The master URL expires 24 hours after Mux makes it ready.
-- [**Static MP4 renditions**](https://www.mux.com/docs/guides/enable-static-mp4-renditions) **are ready on a public playback ID**: the CLI picks the best one available, starting with `highest.mp4` and then the highest resolution rendition. Renditions on signed playback IDs cannot be used, as Bunny cannot supply the signed token those URLs require.
+- [**Static MP4 renditions**](https://www.mux.com/docs/guides/enable-static-mp4-renditions) **are ready on a public playback ID**: the CLI picks the first one available in this order: `highest.mp4`, `capped-1080p.mp4`, then the resolution renditions from `2160p.mp4` down (`1440p.mp4`, `1080p.mp4`, and so on). An asset with both a `capped-1080p.mp4` and a `2160p.mp4` rendition is imported from the 1080p one. Renditions on signed playback IDs cannot be used, as Bunny cannot supply the signed token those URLs require.
 
 If a video has neither, the dry run still lists it, but the import fails for that video with **No download available**.
 
@@ -294,7 +294,7 @@ After resolving the library, the CLI prompts for your Mux credentials. Enter the
 
 ```sh
 Mux credentials
-  https://dashboard.mux.com/settings/api-keys
+  https://dashboard.mux.com/settings/access-tokens
 ✔ Token ID: … ************************************
 ✔ Token Secret: … ***************************************************************************
 ```
@@ -306,7 +306,7 @@ The CLI checks the credentials against Mux. Once Mux accepts them, the CLI offer
 ✓ Saved Mux credentials to the "default" profile.
 ```
 
-The CLI stores the saved credentials in `~/.config/bunnynet/stream-import-credentials.json`, a file only your user account can read, separate from the main Bunny CLI config. They are tied to the active Bunny CLI profile. If Mux later rejects them (for example, after you revoke the token), the CLI deletes the saved values and prompts for new ones on the next run. If you answer no, the CLI prompts for the credentials on every run. The `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` environment variables always take priority over saved credentials.
+The CLI stores the saved credentials in `~/.config/bunnynet/stream-import-credentials.json` (or `$XDG_CONFIG_HOME/bunnynet/stream-import-credentials.json` when `XDG_CONFIG_HOME` is set), a file only your user account can read, separate from the main Bunny CLI config. They are tied to the active Bunny CLI profile. If Mux later rejects them (for example, after you revoke the token), the CLI deletes the saved values and prompts for new ones on the next run. If you answer no, the CLI prompts for the credentials on every run. The `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` environment variables always take priority over saved credentials.
 
 The dry run then produces an output like this:
 
