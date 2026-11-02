@@ -12,6 +12,12 @@ The Bunny Stream library security settings can be found within the Bunny Dashboa
 
 ![](/images/docs/52e6276279eb2358b8c64af502dab2bc629bd739f37dff1f22e8d355c94f0bf9-image.png)
 
+You can also view and change them with [`bunny stream libraries security`](/cli/commands/stream#bunny-stream-libraries-security):
+
+```bash
+bunny stream libraries security update my-library --drm-basic --allow-referrer example.com
+```
+
 ## MediaCage DRM
 
 MediaCage is a basic free DRM system designed to prevent attempts at downloading your video content when enabled. MediaCage is tightly integrated into Bunny.net to dynamically encrypt the video content. It was designed to operate as a device-agnostic system and does not require any special hardware or software support on the client. With the encryption, this then prevents downloads by third party software as MediaCage only allows content to be loaded through the embed player itself.

@@ -58,12 +58,19 @@
             "tab": "Documentation",
             "groups": [
               {
-                "group": "bunny.net",
+                "group": "Get Started",
                 "pages": [
                   "index",
                   "quickstart",
-                  "faq",
-                  "changelog"
+                  "changelog",
+                  "faq"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "product-release-stages",
+                  "domains"
                 ]
               },
               {
@@ -113,13 +120,6 @@
                       "billing/affiliate-guidelines"
                     ]
                   }
-                ]
-              },
-              {
-                "group": "Product",
-                "pages": [
-                  "product-release-stages",
-                  "domains"
                 ]
               }
             ]
@@ -251,6 +251,13 @@
                       "cdn/integrations/storage/ovh",
                       "cdn/integrations/storage/backblaze",
                       "cdn/integrations/storage/digitalocean-spaces"
+                    ]
+                  },
+                  {
+                    "group": "Frameworks",
+                    "pages": [
+                      "cdn/integrations/frameworks/astro",
+                      "cdn/integrations/frameworks/nextjs"
                     ]
                   }
                 ]
@@ -486,7 +493,8 @@
                         "group": "Examples",
                         "pages": [
                           "scripting/middleware/examples/modify-headers",
-                          "scripting/middleware/examples/modify-body"
+                          "scripting/middleware/examples/modify-body",
+                          "scripting/middleware/examples/protect-cached-content"
                         ]
                       }
                     ]
@@ -663,13 +671,17 @@
                     ]
                   },
                   {
-                    "group": "Mobile",
+                    "group": "Mobile SDKs",
                     "pages": [
                       "stream/mobile-sdk",
+                      "stream/mobile-sdk-token-authentication",
+                      "stream/expo-video",
                       "stream/android-sdk",
                       "stream/ios-sdk",
-                      "stream/expo-video"
-                    ]
+                      "stream/react-native-sdk"
+                    ],
+                    "tag": "New",
+                    "expanded": true
                   },
                   {
                     "group": "3rd Party Players",
@@ -746,9 +758,56 @@
                     "group": "Static Site Hosting",
                     "pages": [
                       "storage/static-site-hosting/index",
-                      "storage/static-site-hosting/vite",
-                      "storage/static-site-hosting/react",
-                      "storage/static-site-hosting/vue"
+                      {
+                        "group": "JavaScript Frameworks",
+                        "pages": [
+                          "storage/static-site-hosting/analog",
+                          "storage/static-site-hosting/angular",
+                          "storage/static-site-hosting/astro",
+                          "storage/static-site-hosting/brunch",
+                          "storage/static-site-hosting/ember",
+                          "storage/static-site-hosting/nextjs",
+                          "storage/static-site-hosting/nuxt",
+                          "storage/static-site-hosting/preact",
+                          "storage/static-site-hosting/qwik",
+                          "storage/static-site-hosting/react",
+                          "storage/static-site-hosting/react-router",
+                          "storage/static-site-hosting/solidstart",
+                          "storage/static-site-hosting/sveltekit",
+                          "storage/static-site-hosting/vite",
+                          "storage/static-site-hosting/vue"
+                        ]
+                      },
+                      {
+                        "group": "Static Site Generators",
+                        "pages": [
+                          "storage/static-site-hosting/elderjs",
+                          "storage/static-site-hosting/eleventy",
+                          "storage/static-site-hosting/gatsby",
+                          "storage/static-site-hosting/gridsome",
+                          "storage/static-site-hosting/hexo",
+                          "storage/static-site-hosting/hugo",
+                          "storage/static-site-hosting/jekyll",
+                          "storage/static-site-hosting/pelican",
+                          "storage/static-site-hosting/zola"
+                        ]
+                      },
+                      {
+                        "group": "Documentation",
+                        "pages": [
+                          "storage/static-site-hosting/docusaurus",
+                          "storage/static-site-hosting/mkdocs",
+                          "storage/static-site-hosting/sphinx",
+                          "storage/static-site-hosting/vitepress"
+                        ]
+                      },
+                      {
+                        "group": "Other",
+                        "pages": [
+                          "storage/static-site-hosting/blazor",
+                          "storage/static-site-hosting/static-html"
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -973,6 +1032,25 @@
                 "group": "Reference",
                 "pages": [
                   "database/limits",
+                  {
+                    "group": "SQL Extensions",
+                    "pages": [
+                      "database/sql-extensions/index",
+                      "database/sql-extensions/full-text-search",
+                      "database/sql-extensions/vector-search",
+                      "database/sql-extensions/spatial",
+                      "database/sql-extensions/json",
+                      "database/sql-extensions/regular-expressions",
+                      "database/sql-extensions/identifiers-and-hashing",
+                      "database/sql-extensions/mathematics",
+                      "database/sql-extensions/statistics-and-text",
+                      "database/sql-extensions/sequences",
+                      "database/sql-extensions/introspection",
+                      "database/sql-extensions/syntax-extensions",
+                      "database/sql-extensions/connection-settings",
+                      "database/sql-extensions/core-functions"
+                    ]
+                  },
                   "database/replication",
                   "database/metrics",
                   "database/durability-and-consistency"
@@ -1088,29 +1166,26 @@
                   "cli/quickstart",
                   "cli/installation",
                   "cli/configuration",
+                  "cli/commands/auth",
                   "cli/changelog"
                 ]
               },
               {
                 "group": "Commands",
                 "pages": [
-                  "cli/commands/auth",
                   "cli/commands/config",
                   "cli/commands/db",
+                  "cli/commands/dns",
                   "cli/commands/scripts",
+                  "cli/commands/storage",
+                  "cli/commands/sites",
                   "cli/commands/sandbox",
+                  "cli/commands/stream",
                   {
                     "group": "Registry",
                     "hidden": true,
                     "pages": [
                       "cli/commands/registry"
-                    ]
-                  },
-                  {
-                    "group": "DNS",
-                    "hidden": true,
-                    "pages": [
-                      "cli/commands/dns"
                     ]
                   },
                   {

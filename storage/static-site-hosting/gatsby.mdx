@@ -1,0 +1,19 @@
+---
+title: "Deploy Gatsby to Bunny Storage"
+sidebarTitle: "Gatsby"
+description: "Build a Gatsby site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+`gatsby build` renders every page to static HTML in `public`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Output directory | `public` |
+
+<Deploy build="npm run build" />
+
+<CustomDomain />
