@@ -14,7 +14,7 @@ Vector search is a libSQL feature. See the [libSQL vector search documentation](
 | `vector_extract(v)`                                                         | Returns the vector as JSON array text. Works for every vector type and for a raw f32 blob.                               |
 | `vector_distance_cos(a, b)`                                                 | Cosine distance. Returns `NULL` when either vector is all zeros. Supports 1-bit vectors.                                |
 | `vector_distance_l2(a, b)`                                                  | Euclidean distance. Not supported for 1-bit vectors.                                                                    |
-| `libsql_vector_idx(column [, options...])`                                  | Index expression for `CREATE INDEX` that builds an approximate nearest neighbour index. See [Vector indexes](#vector-indexes). |
+| `libsql_vector_idx(column [, options...])`                                  | Index expression for `CREATE INDEX` that builds an approximate nearest neighbor index. See [Vector indexes](#vector-indexes). |
 
 ```sql
 SELECT vector_distance_cos(vector('[1, 2]'), vector('[2, 3]'));   -- 0.0077
