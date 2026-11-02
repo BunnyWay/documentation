@@ -360,7 +360,7 @@ Answer `y` to retry the failed videos in the same run. When an import is interru
 bunny stream import --library 12345 --source vimeo --resume
 ```
 
-The `--resume` flag retries the videos that failed, processes any videos that were still outstanding, and re-applies the `vimeoId` tag to any video that Bunny fetched before the run stopped but did not finish tagging. When the interrupted run was limited to one folder, the resume continues that same folder. A resume stops retrying a video after three failed attempts, and it skips videos that Bunny rejected outright. To try those again, add `--clean-failed`, which deletes their failed Bunny copies first. If `bunny stream import status` reports videos stuck with no data, add `--retry-stalled` to delete and fetch them again.
+The `--resume` flag retries the videos that failed, processes any videos that were still outstanding, and re-applies the `vimeoId` tag to any video that Bunny fetched before the run stopped but did not finish tagging. When the interrupted run was limited to one folder, the resume continues that same folder. A resume stops retrying a video after three failed attempts, and it skips videos that Bunny rejected outright. To try videos that failed three times again, run the import without `--resume` (with the same `--folder`, if the run was limited to one folder). To retry videos that Bunny rejected, add `--clean-failed`, which deletes their failed Bunny copies first. If `bunny stream import status` reports videos stuck with no data, add `--retry-stalled` to delete and fetch them again.
 
 Running the import again is always safe. Because every imported video carries the `vimeoId` tag, a repeated run against a library that already has every video imports nothing:
 
