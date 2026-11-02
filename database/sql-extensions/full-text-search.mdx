@@ -57,7 +57,7 @@ See the SQLite documentation for the [FTS5 auxiliary functions](https://www.sqli
 
 The `bm25()` score is also exposed as the hidden `rank` column, and its weights can be configured with `INSERT INTO t(t, rank) VALUES ('rank', 'bm25(10.0, 1.0)')`.
 
-When a term appears in half or more of the rows, its score is `-0.0`. That is correct BM25 behaviour, not a fault.
+When a term appears in half or more of the rows, its score is `-0.0`. That is correct BM25 behavior, not a fault.
 
 ## Special commands
 
