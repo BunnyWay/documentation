@@ -44,7 +44,7 @@ A geopoly polygon must be closed, with the first point repeated as the last. An 
 | Function                             | What it does                                                                     |
 | ------------------------------------ | -------------------------------------------------------------------------------- |
 | `geopoly_area(p)`                    | Area of the polygon. Returns `NULL` for an invalid polygon.                      |
-| `geopoly_overlap(p1, p2)`            | 0 for no overlap, 1 for partial overlap, 2 if `p2` is inside `p1`, 3 if equal.  |
+| `geopoly_overlap(p1, p2)`            | 0 for no overlap, 1 for partial overlap, 2 if `p1` is inside `p2`, 3 if `p2` is inside `p1`, 4 if equal. |
 | `geopoly_within(p1, p2)`             | 1 if `p1` is wholly inside `p2`, otherwise 0.                                    |
 | `geopoly_contains_point(p, x, y)`    | 0 outside, 1 on the boundary, 2 inside.                                          |
 | `geopoly_blob(p)`, `geopoly_json(p)` | Convert between the JSON and binary polygon forms.                               |
