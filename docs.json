@@ -1317,6 +1317,7 @@
       },
       {
         "product": "Partners",
+        "hidden": true,
         "icon": "handshake",
         "description": "Manage customers, pricing, and billing as a bunny.net partner",
         "tabs": [
