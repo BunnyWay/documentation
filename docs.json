@@ -1328,7 +1328,10 @@
                 "pages": [
                   "partners/index",
                   "partners/partner-types",
+                  "partners/sign-in",
                   "partners/add-a-customer",
+                  "partners/customer-details",
+                  "partners/access-a-customer-account",
                   "partners/limitations"
                 ]
               },
