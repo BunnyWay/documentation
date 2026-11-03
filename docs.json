@@ -1326,7 +1326,10 @@
               {
                 "group": "Documentation",
                 "pages": [
-                  "partners/index"
+                  "partners/index",
+                  "partners/partner-types",
+                  "partners/add-a-customer",
+                  "partners/limitations"
                 ]
               },
               {
