@@ -13,6 +13,35 @@ gVisor implements a subset of Linux system calls. While most common applications
 
 For a complete list of supported syscalls, see the [gVisor compatibility documentation](https://gvisor.dev/docs/user_guide/compatibility/linux/amd64/).
 
+## Ping and ICMP
+
+Outbound ICMP is allowed, so `ping` works from your containers. The sandbox does not grant the `CAP_NET_RAW` capability, so applications cannot open raw sockets. Instead, `ping` uses an unprivileged ICMP socket. This works for root and non-root users.
+
+On Debian and Ubuntu, the `iputils-ping` package installs `ping` with the file capability `cap_net_raw+ep`. The sandbox cannot grant this capability, so the binary does not start, even as root:
+
+```
+sh: 1: ping: Operation not permitted
+```
+
+Remove the file capability when you build the image:
+
+```dockerfile
+FROM debian:bookworm-slim
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends iputils-ping libcap2-bin \
+ && setcap -r /bin/ping \
+ && rm -rf /var/lib/apt/lists/*
+
+USER 10001
+
+CMD ["ping", "8.8.8.8"]
+```
+
+Keep `libcap2-bin` installed. `iputils-ping` depends on it, so removing it also removes `ping`.
+
+Alpine images need no change. Alpine's `iputils-ping` and BusyBox `ping` both work without the capability.
+
 ## Network Isolation
 
 Magic Containers uses Virtual Extensible LAN (VXLAN) to create virtual networks over the physical infrastructure. This provides scalable connectivity between containers across different hosts while maintaining isolation and segmentation.
