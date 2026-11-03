@@ -18,7 +18,7 @@ Scoped API keys start with `bnyscpd_`.
 
 ## Find the permission an endpoint needs
 
-Each endpoint in the [Core Platform API](/api-reference/core) that accepts scoped API keys lists its permissions in the endpoint description. For example, [List Pull Zones](/api-reference/core/pull-zone/list-pull-zones) shows:
+Scoped API keys work with endpoints of the [Core Platform API](/api-reference/core) and the [Scripting API](/api-reference/scripting) that list a scoped API key permission. Each endpoint lists its permissions in the endpoint description. For example, [List Pull Zones](/api-reference/core/pull-zone/list-pull-zones) shows:
 
 ```
 Scoped API key permissions (any one of):
@@ -30,20 +30,6 @@ Scoped API key permissions (any one of):
 Your key needs any one of the listed permissions. Grant that permission when you [create the key](/account/scoped-api-keys#create-a-scoped-api-key), on the resources the request touches.
 
 If an endpoint lists no scoped API key permission, it only accepts your account API key.
-
-## Supported APIs
-
-Scoped API keys work with endpoints of the [Core Platform API](/api-reference/core) and the [Scripting API](/api-reference/scripting) that list a scoped API key permission.
-
-Some APIs expect a credential scoped to a single resource. A scoped API key doesn't replace these:
-
-| API | Credential |
-| --- | --- |
-| Bunny Stream | The [video library API key](/stream/authentication) |
-| Bunny Storage | The [storage zone password](/storage/http) |
-| Bunny Database | A [database auth token](/database/connect/authorization#access-tokens) |
-
-A scoped API key can't create, list, or delete other API keys.
 
 ## Errors
 
