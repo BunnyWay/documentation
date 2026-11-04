@@ -710,7 +710,7 @@ When **Video on demand** is enabled, the recording also sends the ordinary [vide
     If all of these are true, the VOD may still be encoding. Wait for the `LiveStreamRecordingReady` (`20`) webhook, or check the video with the `VideoGuid` from the `LiveStreamRecordingQueued` (`19`) webhook.
   </Accordion>
 
-  <Accordion title='/stop returns 400 "Cannot stop live stream that was not started yet"'>
+  <Accordion title="/stop returns 400: Cannot stop live stream that was not started yet">
     The stream is still in preview (`status` `3`). An encoder being connected doesn't start the stream, so there's nothing to stop. Call `/start` first if you want the stream to go live and be recorded, or delete the stream if you don't need it.
   </Accordion>
 
@@ -799,7 +799,7 @@ Live encoding charges are in addition to your usual bunny.net usage:
 - A Channel can't record a VOD.
 - Only the part of a stream after it was started is recorded.
 - 3 concurrent live streams per bunny account during closed preview
-- **Startup delay** The preview and the viewer playlist take 15-20 seconds to become available after the encoder connects and after the stream is started.
+- **Startup delay.** The preview and the viewer playlist take 15-20 seconds to become available after the encoder connects and after the stream is started.
 
 ## Known issues
 
