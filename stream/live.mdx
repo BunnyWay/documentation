@@ -799,6 +799,7 @@ Live encoding charges are in addition to your usual bunny.net usage:
 - A Channel can't record a VOD.
 - Only the part of a stream after it was started is recorded.
 - 3 concurrent live streams per bunny account during closed preview
+- - **Startup delay.** The preview and the viewer playlist take 15-20 seconds to become available after the encoder connects and after the stream is started.
 
 ## Known issues
 
@@ -807,7 +808,6 @@ These are known issues in the closed preview that we're working on:
 - **`current-bitrate` may return `404`** while a stream is live. We're moving bitrate tracking to a new backend, which will fix this.
 - **Two error formats.** Unknown IDs return `404` with a `problem+json` body, while state errors return `400` with a `{"success": false, ...}` body. See [Errors](#errors).
 - **The `public` field has no effect.** Setting it to `false` doesn't restrict playback. Use your video library's security settings to control access instead.
-- **Startup delay.** The preview and the viewer playlist take 15-20 seconds to become available after the encoder connects and after the stream is started.
 
 ## Not currently supported by Stream Live during closed preview
 
