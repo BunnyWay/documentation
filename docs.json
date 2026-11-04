@@ -567,7 +567,6 @@
                   "stream/quickstart",
                   {
                     "group": "Migration Guides",
-                    "tag": "New",
                     "expanded": true,
                     "pages": [
                       "stream/migrate-from-mux",

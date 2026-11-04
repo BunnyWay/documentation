@@ -531,6 +531,10 @@ bunny stream collections delete <collection-id>
 
 ## Importing from another platform
 
+<Warning>
+  `bunny stream import` is in [Public Preview](/product-release-stages#stage-2-public-preview) and still in development. Commands, flags, and output may change. To report a bug, [open an issue on the Bunny CLI repository](https://github.com/BunnyWay/cli/issues/new).
+</Warning>
+
 `bunny stream import` moves an existing video library into Stream from Vimeo, AWS S3 (or an S3-compatible provider), Wistia, Mux, Cloudflare Stream, JW Player, or Brightcove. bunny.net fetches each file directly from the source, so nothing passes through your machine. Source folders become Stream collections of the same name. An existing collection is reused when its name matches, ignoring case.
 
 ```bash
