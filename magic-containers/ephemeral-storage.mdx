@@ -32,8 +32,6 @@ The limit applies to each container separately. In a [multi-container](/magic-co
 
 The platform measures the disk space that the files actually use. A sparse file counts only for the blocks that hold data, and not for its apparent size.
 
-The usage of an instance (pod) is the usage of its largest container. The platform uses the same value to start an eviction.
-
 ## What happens at the limit
 
 If a container writes more than 10 GiB, the platform evicts the pod. All containers in the pod stop, and the platform then [restarts the pod](/magic-containers/restart-policy).
@@ -41,7 +39,7 @@ If a container writes more than 10 GiB, the platform evicts the pod. All contain
 The new pod starts with an empty file system. All the files in ephemeral storage are lost.
 
 <Warning>
-If the application writes the same data again after each restart, the pod reaches the limit again. Move this data to a persistent volume.
+If the application writes the same data again after each restart, the pod reaches the limit again. Move this data to a [persistent volume](/magic-containers/persistent-volumes).
 </Warning>
 
 ## When the data is lost
