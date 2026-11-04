@@ -12,7 +12,7 @@ The platform restarts the container in these cases:
 - The main process exits with a non-zero exit code.
 - The application uses more memory than the [instance limit](/magic-containers/limits), so the platform stops it (out of memory).
 - The [startup or liveness health check](/magic-containers/health-checks) fails as many times as its failure threshold.
-- A container writes more than 10 GiB to [ephemeral storage](/magic-containers/ephemeral-storage), so the platform evicts the pod.
+- A container goes over 10 GiB of [ephemeral storage](/magic-containers/ephemeral-storage), so the platform evicts the pod.
 
 Exit codes 137 and 143 are an exception. They show that the process stopped after a stop signal, for example during a [graceful shutdown](/magic-containers/graceful-shutdown). The platform treats these as an intentional stop, and not as a failure.
 
