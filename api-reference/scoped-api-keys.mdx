@@ -1,7 +1,7 @@
 ---
 title: Authenticate with Scoped API Keys
 sidebarTitle: Scoped API Keys
-description: Learn how to call the bunny.net API with a scoped API key and find the permissions each endpoint needs.
+description: Learn how to call the bunny.net API with a scoped API key.
 ---
 
 A scoped API key works like your account API key, but it can only do what you allowed when you [created it](/account/scoped-api-keys). Use one for each script, CI job, or integration so a leaked key can't reach the rest of your account.
@@ -16,20 +16,7 @@ curl --request GET \
 
 Scoped API keys start with `bnyscpd_`.
 
-## Find the permission an endpoint needs
-
-Scoped API keys work with endpoints of the [Core Platform API](/api-reference/core) and the [Scripting API](/api-reference/scripting) that list a scoped API key permission. Each endpoint lists its permissions in the endpoint description. For example, [List Pull Zones](/api-reference/core/pull-zone/list-pull-zones) shows:
-
-```
-Scoped API key permissions (any one of):
-
-- PullZone.Read
-- PullZone.Update
-```
-
-Your key needs any one of the listed permissions. Grant that permission when you [create the key](/account/scoped-api-keys#create-a-scoped-api-key), on the resources the request touches.
-
-If an endpoint lists no scoped API key permission, it only accepts your account API key.
+Scoped API keys work with the Core Platform API and the Scripting API. Endpoints that don't support scoped API keys yet only accept your account API key.
 
 ## Errors
 
@@ -40,7 +27,7 @@ If an endpoint lists no scoped API key permission, it only accepts your account 
 
 A `403` response has the error key `scopedApiKey.forbidden` and the message "The scoped API key does not have permission to perform this action."
 
-To fix a `403`, check the permissions the endpoint lists, and check that the key covers the resource ID in the request. Keys can't be edited, so [create a new key](/account/scoped-api-keys#create-a-scoped-api-key) with the access you need.
+To fix a `403`, check that the key has a permission for the action, and that it covers the resource ID in the request. Keys can't be edited, so [create a new key](/account/scoped-api-keys#create-a-scoped-api-key) with the access you need.
 
 <Warning>
   Keep scoped API keys in a secret store or environment variable, and leave them out of client-side code and public repositories.

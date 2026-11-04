@@ -48,13 +48,13 @@ You can manage your scoped API keys at [Account > Scoped API keys](https://dash.
 
 ## Permissions
 
-Each permission pairs a product with an action, such as `PullZone.Purge` or `DnsZone.Read`. The dashboard shows every product and action you can grant. The [API reference](/api-reference/scoped-api-keys#find-the-permission-an-endpoint-needs) lists the permissions each endpoint accepts.
+Each permission pairs a product with an action, such as `PullZone.Purge` or `DnsZone.Read`. The dashboard shows every product and action you can grant. To call the API with your key, see [Authenticate with Scoped API Keys](/api-reference/scoped-api-keys).
 
 ### Limit a key to specific resources
 
 Choose **Selected** for a product to limit the key to the resources you pick, such as a single pull zone. Leave the list empty to allow all resources of that product.
 
-Some actions always apply to all resources of a product, such as creating a resource or listing every resource. A key limited to selected pull zones can't call [List Pull Zones](/api-reference/core/pull-zone/list-pull-zones), but it can still fetch each of those pull zones by ID.
+Some actions always apply to all resources of a product, such as creating a resource or listing every resource. A key limited to selected pull zones can't list every pull zone, but it can still fetch each of those pull zones by ID.
 
 ### Grant all permissions and resources
 
