@@ -377,6 +377,7 @@ The import copies the video files and their titles. Settings that control how an
 
     If the script reports that Mux could not prepare a master file for an asset, the import can still use a static MP4 rendition on a public playback ID. Otherwise, that asset fails with **No download available**.
   </Accordion>
+
   <Accordion title="Videos are stuck with no data">
     If `bunny stream import status` reports videos stuck at zero bytes, run the import again with `--retry-stalled` to delete and fetch them again.
   </Accordion>
@@ -384,7 +385,7 @@ The import copies the video files and their titles. Settings that control how an
 
 ## Migrate more than one Mux environment
 
-Mux access tokens are scoped to a single environment, such as Production or Development. To migrate several environments, repeat steps 3 to 8 for each one, with a token created in that environment.
+Mux access tokens are scoped to a single environment, such as Production or Development. To migrate several environments, repeat steps 2 to 8 for each one, with a token created in that environment.
 
 Import each environment into its own Bunny library. The CLI keeps one saved import per source and library, so a separate library keeps each environment's progress, `--resume`, and `status` apart, and keeps test videos out of your production library.
 

@@ -220,14 +220,14 @@ The import copies the video files, their titles, any description and tags in the
 
     The CLI creates a collection for each top-level folder, skips videos that are already imported, hands the rest to Bunny three at a time, and tags each video with `s3Source`, along with any description and tags from its metadata. It returns once every video is queued. Bunny then fetches each file directly from S3 and encodes it.
 
-    Collection names match without regard to case, so the S3 folders `Webinars/` and `webinars/` land in one collection, even though S3 treats them as separate folders. Move the objects in one of them to a differently named folder before the import to keep them separate.
-
     ```sh
     ✔ Import 6 videos into migrate-from-s3? … yes
 
     ✓ Queued 6 videos into migrate-from-s3. Bunny is fetching and encoding them now.
     ℹ Check progress with bunny stream import status --library 12345 --source s3
     ```
+
+    Collection names match without regard to case, so the S3 folders `Webinars/` and `webinars/` land in one collection, even though S3 treats them as separate folders. Move the objects in one of them to a differently named folder before the import to keep them separate.
 
     Each pre-signed URL stays valid for six hours by default, which is long enough for Bunny to fetch the file. Set `S3_PRESIGNED_URL_TTL` to a number of seconds between 3600 and 604800 to change it.
 
@@ -353,6 +353,7 @@ The import copies the video files, their titles, any description and tags in the
   <Accordion title="S3 object is in GLACIER">
     The object is in an archive storage class, which S3 cannot serve until it is restored. Restore it from the S3 console, wait for the restore to finish, then run the import again. Until then, the error says the restore is still in progress.
   </Accordion>
+
   <Accordion title="Videos are stuck with no data">
     If `bunny stream import status` reports videos stuck at zero bytes, run the import again with `--retry-stalled` to delete and fetch them again.
   </Accordion>

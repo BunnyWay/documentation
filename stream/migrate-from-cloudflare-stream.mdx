@@ -250,7 +250,7 @@ The import copies the video files, names, and descriptions. Settings that contro
 
     If you plan to delete your videos from Cloudflare Stream, deleting a video also deletes its downloads, so there is nothing else to do.
 
-    If you are keeping the videos on Cloudflare for now, delete the downloads you do not need through the Cloudflare API:
+    If you are keeping the videos on Cloudflare for now, set `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` in your shell, then delete the downloads you do not need through the Cloudflare API:
 
     ```sh
     curl -X DELETE \
@@ -307,6 +307,7 @@ The import copies the video files, names, and descriptions. Settings that contro
   <Accordion title="Cloudflare could not generate an MP4 download">
     Cloudflare reported an error while generating the download, and the CLI prints its reason. Check the video in the Cloudflare dashboard. A retry only helps once Cloudflare can generate the download.
   </Accordion>
+
   <Accordion title="Videos are stuck with no data">
     If `bunny stream import status` reports videos stuck at zero bytes, run the import again with `--retry-stalled` to delete and fetch them again.
   </Accordion>

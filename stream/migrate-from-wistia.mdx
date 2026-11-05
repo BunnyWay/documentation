@@ -190,14 +190,14 @@ The import copies the video files, their names and descriptions, and your folder
 
     The CLI creates a collection for each folder, skips videos that are already imported, hands the rest to Bunny three at a time, and tags each video with `wistiaId`, along with its Wistia description. It returns once every video is queued. Bunny then fetches each file directly from Wistia and encodes it.
 
-    Collection names match without regard to case, so Wistia folders named `Webinars` and `webinars` land in one collection. Rename one of them in Wistia before the import to keep them separate.
-
     ```sh
     ✔ Import 6 videos into migrate-from-wistia? … yes
 
     ✓ Queued 6 videos into migrate-from-wistia. Bunny is fetching and encoding them now.
     ℹ Check progress with bunny stream import status --library 12345 --source wistia
     ```
+
+    Collection names match without regard to case, so Wistia folders named `Webinars` and `webinars` land in one collection. Rename one of them in Wistia before the import to keep them separate.
 
     <ImportFlags provider="Wistia" />
 
@@ -310,6 +310,7 @@ The import copies the video files, their names and descriptions, and your folder
 
     `--folder` takes the folder's hashed ID, not its numeric ID. Use the ID the error suggests, or the one in the **ID** column of `bunny stream import list --source wistia`.
   </Accordion>
+
   <Accordion title="Videos are stuck with no data">
     If `bunny stream import status` reports videos stuck at zero bytes, run the import again with `--retry-stalled` to delete and fetch them again.
   </Accordion>

@@ -200,14 +200,14 @@ The import copies the video files, their titles, descriptions, and tags, and you
 
     The CLI creates a collection for each folder, skips videos that are already imported, hands the rest to Bunny three at a time, and tags each video with `vimeoId`, along with its Vimeo description and tags. It returns once every video is queued. Bunny then fetches each file directly from Vimeo and encodes it.
 
-    Collection names match without regard to case, so Vimeo folders named `Webinars` and `webinars` land in one collection. Rename one of them in Vimeo before the import to keep them separate.
-
     ```sh
     ✔ Import 6 videos into migrate-from-vimeo? … yes
 
     ✓ Queued 6 videos into migrate-from-vimeo. Bunny is fetching and encoding them now.
     ℹ Check progress with bunny stream import status --library 12345 --source vimeo
     ```
+
+    Collection names match without regard to case, so Vimeo folders named `Webinars` and `webinars` land in one collection. Rename one of them in Vimeo before the import to keep them separate.
 
     <ImportFlags provider="Vimeo" />
 

@@ -566,7 +566,7 @@
                   "stream/index",
                   "stream/quickstart",
                   {
-                    "group": "Migration Guides",
+                    "group": "Migrate to Bunny Stream",
                     "expanded": true,
                     "pages": [
                       "stream/migrate-from-mux",
