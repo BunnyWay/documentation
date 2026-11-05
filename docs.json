@@ -571,7 +571,9 @@
                     "pages": [
                       "stream/migrate-from-mux",
                       "stream/migrate-from-cloudflare-stream",
-                      "stream/migrate-from-vimeo"
+                      "stream/migrate-from-vimeo",
+                      "stream/migrate-from-wistia",
+                      "stream/migrate-from-s3"
                     ]
                   },
                   "stream/authentication",
