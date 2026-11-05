@@ -27,36 +27,15 @@ import ImportFlags from "/snippets/stream/migrate/import-flags.mdx";
 
 [Bunny Stream](https://bunny.net/stream/) bills only for the storage and bandwidth you use. See the [Bunny Stream pricing page](https://bunny.net/pricing/stream/) for current rates.
 
-This guide walks you through how to migrate video files stored in an AWS S3 bucket to Bunny Stream. Here's what we'll cover:
-
-- Installing and authenticating the [Bunny CLI](/cli)
-- Creating a destination Bunny Stream library and an AWS IAM user with read access to your bucket
-- Previewing the migration with a dry run, then running `bunny stream import`
-- Monitoring encoding progress and verifying the result in the bunny.net dashboard
-
 ## Overview
 
 <Frame>
   ![Diagram of the Bunny CLI listing S3 objects and signing their URLs, and Bunny Stream fetching each file directly from the S3 bucket](/images/stream/migrate-from-s3/how-bunny-stream-import-works.png)
 </Frame>
 
-A migration from AWS S3 to Bunny Stream involves the following steps:
+The Bunny CLI lists every video file in your bucket, creates a pre-signed download URL for each one, and hands it to Bunny Stream, which fetches the file directly from S3. Nothing is downloaded to your machine, and your bucket can stay private. Each top-level folder becomes a Bunny Stream collection with the same name. Each imported video is tagged with a hash of its bucket and key under the `s3Source` metatag, so running the import again skips videos that are already imported.
 
-- **Discover**: Bunny CLI lists every object in your bucket, or below a prefix you choose, whose file extension marks it as a video. Each top-level folder becomes a Bunny Stream collection with the same name, and videos at the top level of the bucket are imported into the root of the destination library.
-- **De-duplicate**: Each imported video is tagged with a SHA-256 hash of its bucket and key under the `s3Source` metatag, so your bucket and file names never appear in public embeds. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.
-- **Fetch**: For each new video, the CLI creates a pre-signed download URL and passes it to Bunny Stream, which fetches the file directly from S3. Nothing is downloaded to your machine, and your bucket can stay private. The video's title comes from its file name, and its description and tags come from the object's metadata, when it has them.
-
-S3 has no video catalog, so the CLI works out titles and collections from the object keys. For example, this bucket has one video at the top level and two folders:
-
-<Frame>
-  ![The objects in an S3 bucket: Company intro.mp4 at the top level and the folders Product demos and Webinars](/images/stream/migrate-from-s3/s3-bucket-objects.png)
-</Frame>
-
-<Frame>
-  ![The Product demos folder in the S3 bucket with three MP4 files](/images/stream/migrate-from-s3/s3-bucket-folder.png)
-</Frame>
-
-The CLI maps it like this:
+S3 has no video catalog, so the CLI works out titles and collections from the object keys. For example, a bucket with one video at the top level and two folders maps like this:
 
 ```
 migrate-to-bunny-demo/
@@ -106,7 +85,17 @@ The import copies the video files, their titles, any description and tags in the
   </Step>
 
   <Step title="Create a Bunny Stream library">
-    <CreateLibrary guide="migrate-from-s3" />
+    Create a library for the imported videos, or skip this step to use an existing one:
+
+    ```sh
+    bunny stream libraries create migrate-from-s3 --replication-regions NY,SG
+    ```
+
+    ```sh
+    ✓ Created video library migrate-from-s3 (ID: 12345), replicated to DE, NY, SG.
+    ```
+
+    <CreateLibrary />
   </Step>
 
   <Step title="Create an IAM user with read access to your bucket">
@@ -146,36 +135,14 @@ The import copies the video files, their titles, any description and tags in the
 
     Open the new user, go to **Security credentials**, and click **Create access key**. Choose **Command Line Interface (CLI)** as the use case, confirm the recommendation, and create the key. Copy the **Access key ID** and the **Secret access key**. AWS shows the secret only once.
 
-    The Bunny CLI does not prompt for AWS access keys. It reads them from the AWS shared credentials file, the same file the AWS CLI uses. Save the access key in `~/.aws/credentials`:
-
-    ```ini ~/.aws/credentials
-    [default]
-    aws_access_key_id = your-access-key-id
-    aws_secret_access_key = your-secret-access-key
-    ```
-
-    Then create `~/.aws/config` with your bucket's region:
-
-    ```ini ~/.aws/config
-    [default]
-    region = your-bucket-region
-    ```
-
-    Make the credentials file readable only by your user:
+    Set the access key in the shell where you run the import:
 
     ```sh
-    chmod 600 ~/.aws/credentials
+    export AWS_ACCESS_KEY_ID=your-access-key-id
+    export AWS_SECRET_ACCESS_KEY=your-secret-access-key
     ```
 
-    If either file already has a `[default]` profile, add a named profile instead, with `[migrate-to-bunny]` in `~/.aws/credentials` and `[profile migrate-to-bunny]` in `~/.aws/config`. Then select it in the shell where you run the import:
-
-    ```sh
-    export AWS_PROFILE=migrate-to-bunny
-    ```
-
-    The Bunny CLI asks for the bucket's region separately when you run the import, so the region in `~/.aws/config` applies to the AWS CLI and other AWS tools.
-
-    If you sign in to AWS with SSO instead, the Bunny CLI can use that session through the same profiles. Pre-signed URLs made from temporary credentials stop working when the session ends, so use an access key for a large import.
+    The CLI does not prompt for or save access keys. If you already use the AWS CLI, it also picks up keys from `~/.aws/credentials` and the profile `AWS_PROFILE` names. Pre-signed URLs made from temporary credentials, such as an AWS SSO session, stop working when the session ends, so use an access key for a large import.
   </Step>
 
   <Step title="Preview the migration with a dry run">
@@ -202,7 +169,9 @@ The import copies the video files, their titles, any description and tags in the
     ✓ Saved AWS S3 credentials to the "default" profile.
     ```
 
-    The CLI saves the region and bucket for the active Bunny CLI profile in `~/.config/bunnynet/stream-import-credentials.json` (or under `$XDG_CONFIG_HOME/bunnynet/` when it is set). Your access keys are not saved. The `AWS_REGION` and `S3_BUCKET` environment variables, and the `--bucket` flag, always take priority over saved values.
+    <Accordion title="Where the CLI stores credentials">
+      The CLI saves the region and bucket for the active Bunny CLI profile in `~/.config/bunnynet/stream-import-credentials.json` (or under `$XDG_CONFIG_HOME/bunnynet/` when it is set). Your access keys are not saved. The `AWS_REGION` and `S3_BUCKET` environment variables, and the `--bucket` flag, always take priority over saved values.
+    </Accordion>
 
     The dry run then prints a summary and the import plan:
 
@@ -344,7 +313,7 @@ The import copies the video files, their titles, any description and tags in the
     bunny stream import --library 12345 --source s3 --resume
     ```
 
-    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `s3Source` tag to videos Bunny fetched before the run stopped. When the interrupted run was limited to one folder, the resume continues that folder. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To try those again, run the import without `--resume` (with the same `--folder`, if you used one), adding `--clean-failed` to delete the rejected Bunny copies first.
+    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `s3Source` tag to videos Bunny fetched before the run stopped. When the interrupted run was limited to one folder, the resume continues that folder. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To retry those too, add `--clean-failed`, which deletes their Bunny copies first.
 
     Running the import again is always safe. Videos that already carry the `s3Source` tag are skipped, and the CLI reports **Everything is already imported** once nothing is left.
   </Accordion>
@@ -378,11 +347,14 @@ The import copies the video files, their titles, any description and tags in the
     ✖ Invalid AWS credentials.
     ```
 
-    AWS rejected the access key, or the CLI found no credentials at all. Check that `~/.aws/credentials` has the key under the profile the CLI uses, `[default]` or the one `AWS_PROFILE` names, and that the key is still active in the IAM console.
+    AWS rejected the access key, or the CLI found no credentials at all. Check that `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are set in the shell where you run the import, and that the key is still active in the IAM console.
   </Accordion>
 
   <Accordion title="S3 object is in GLACIER">
     The object is in an archive storage class, which S3 cannot serve until it is restored. Restore it from the S3 console, wait for the restore to finish, then run the import again. Until then, the error says the restore is still in progress.
+  </Accordion>
+  <Accordion title="Videos are stuck with no data">
+    If `bunny stream import status` reports videos stuck at zero bytes, run the import again with `--retry-stalled` to delete and fetch them again.
   </Accordion>
 </AccordionGroup>
 

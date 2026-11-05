@@ -26,24 +26,13 @@ import ImportFlags from "/snippets/stream/migrate/import-flags.mdx";
 
 [Bunny Stream](https://bunny.net/stream/) bills only for the storage and bandwidth you use. See the [Bunny Stream pricing page](https://bunny.net/pricing/stream/) for current rates.
 
-This guide walks you through how to migrate your video content to Bunny Stream from Wistia. Here's what we'll cover:
-
-- Installing and authenticating the [Bunny CLI](/cli)
-- Creating a destination Bunny Stream library and a Wistia API token
-- Previewing the migration with a dry run, then running `bunny stream import`
-- Monitoring encoding progress and verifying the result in the bunny.net dashboard
-
 ## Overview
 
 <Frame>
   ![Diagram of the Bunny CLI listing Wistia folders and videos and Bunny Stream fetching each file directly from Wistia](/images/stream/migrate-from-wistia/how-bunny-stream-import-works.png)
 </Frame>
 
-A migration from Wistia to Bunny Stream involves the following steps:
-
-- **Discover**: Bunny CLI lists every folder on your Wistia account and the videos in each one. Every Wistia video belongs to a folder, and each folder becomes a Bunny Stream collection with the same name. Images and audio files in your folders are left out.
-- **De-duplicate**: Each imported video is tagged with its Wistia media ID under the `wistiaId` metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.
-- **Fetch**: For each new video, the CLI asks Wistia for the video's files and picks the best one: the original upload when Wistia has it, otherwise the best MP4 rendition, from HD down. It then passes that URL to Bunny Stream, which fetches the file directly from Wistia. Nothing is downloaded to your machine. The video's name and description come along with it.
+The Bunny CLI lists every video in your Wistia folders and hands each one to Bunny Stream, which fetches the best available file directly from Wistia. Nothing is downloaded to your machine. Each Wistia folder becomes a Bunny Stream collection with the same name. Each imported video is tagged with its Wistia media ID under the `wistiaId` metatag, so running the import again skips videos that are already imported.
 
 ## Scope
 
@@ -84,7 +73,17 @@ The import copies the video files, their names and descriptions, and your folder
   </Step>
 
   <Step title="Create a Bunny Stream library">
-    <CreateLibrary guide="migrate-from-wistia" />
+    Create a library for the imported videos, or skip this step to use an existing one:
+
+    ```sh
+    bunny stream libraries create migrate-from-wistia --replication-regions NY,SG
+    ```
+
+    ```sh
+    ✓ Created video library migrate-from-wistia (ID: 12345), replicated to DE, NY, SG.
+    ```
+
+    <CreateLibrary />
   </Step>
 
   <Step title="Create a Wistia API token">
@@ -133,9 +132,11 @@ The import copies the video files, their names and descriptions, and your folder
     ✓ Saved Wistia credentials to the "default" profile.
     ```
 
-    <SaveCredentials provider="Wistia" />
+    <Accordion title="Where the CLI stores credentials">
+      <SaveCredentials provider="Wistia" />
 
-    The `WISTIA_ACCESS_TOKEN` environment variable always takes priority over a saved token.
+      The `WISTIA_ACCESS_TOKEN` environment variable always takes priority over a saved token.
+    </Accordion>
 
     The dry run then prints a summary and the import plan:
 
@@ -279,7 +280,7 @@ The import copies the video files, their names and descriptions, and your folder
     bunny stream import --library 12345 --source wistia --resume
     ```
 
-    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `wistiaId` tag to videos Bunny fetched before the run stopped. When the interrupted run was limited to one folder, the resume continues that folder. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To try those again, run the import without `--resume` (with the same `--folder`, if you used one), adding `--clean-failed` to delete the rejected Bunny copies first.
+    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `wistiaId` tag to videos Bunny fetched before the run stopped. When the interrupted run was limited to one folder, the resume continues that folder. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To retry those too, add `--clean-failed`, which deletes their Bunny copies first.
 
     Running the import again is always safe. Videos that already carry the `wistiaId` tag are skipped, and the CLI reports **Everything is already imported** once nothing is left.
   </Accordion>
@@ -308,6 +309,9 @@ The import copies the video files, their names and descriptions, and your folder
     ```
 
     `--folder` takes the folder's hashed ID, not its numeric ID. Use the ID the error suggests, or the one in the **ID** column of `bunny stream import list --source wistia`.
+  </Accordion>
+  <Accordion title="Videos are stuck with no data">
+    If `bunny stream import status` reports videos stuck at zero bytes, run the import again with `--retry-stalled` to delete and fetch them again.
   </Accordion>
 </AccordionGroup>
 
