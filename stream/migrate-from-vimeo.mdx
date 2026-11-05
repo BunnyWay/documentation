@@ -27,26 +27,13 @@ import ImportFlags from "/snippets/stream/migrate/import-flags.mdx";
 
 [Bunny Stream](https://bunny.net/stream/) bills only for the storage and bandwidth you use. See the [Bunny Stream pricing page](https://bunny.net/pricing/stream/) for current rates.
 
-This guide walks you through how to migrate your video content to Bunny Stream from Vimeo. Here's what we'll cover:
-
-- Installing and authenticating the [Bunny CLI](/cli)
-- Creating a destination Bunny Stream library and a Vimeo access token
-- Previewing the migration with a dry run, then running `bunny stream import`
-- Monitoring encoding progress and verifying the result in the bunny.net dashboard
-
 ## Overview
 
 <Frame>
   ![Diagram of the Bunny CLI listing Vimeo folders and videos and Bunny Stream fetching each file directly from Vimeo](/images/stream/migrate-from-vimeo/how-bunny-stream-import-works.png)
 </Frame>
 
-A migration from Vimeo to Bunny Stream involves the following steps:
-
-- **Discover**: Bunny CLI lists every folder on your Vimeo account, the videos in each folder, and the videos that are not in any folder. Each Vimeo folder becomes a Bunny Stream collection with the same name, and videos outside a folder are imported into the root of the destination library.
-- **De-duplicate**: Each imported video is tagged with its Vimeo video ID under the `vimeoId` metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.
-- **Fetch**: For each new video, the CLI asks Vimeo for the video's download links and picks the best file: the original upload when Vimeo has it, otherwise the highest resolution download, otherwise the highest resolution MP4 file. It then passes that URL to Bunny Stream, which fetches the file directly from Vimeo. Nothing is downloaded to your machine. The video's title, description, and tags come along with it.
-
-Vimeo download links expire after 24 hours, but the CLI requests a fresh link for each video at the moment it hands that video to Bunny, so you do not need to prepare anything on Vimeo before the import.
+The Bunny CLI lists every video on your Vimeo account and hands each one to Bunny Stream, which fetches the best available file directly from Vimeo. Nothing is downloaded to your machine. Each Vimeo folder becomes a Bunny Stream collection with the same name. Each imported video is tagged with its Vimeo video ID under the `vimeoId` metatag, so running the import again skips videos that are already imported.
 
 ## Scope
 
@@ -86,7 +73,17 @@ The import copies the video files, their titles, descriptions, and tags, and you
   </Step>
 
   <Step title="Create a Bunny Stream library">
-    <CreateLibrary guide="migrate-from-vimeo" />
+    Create a library for the imported videos, or skip this step to use an existing one:
+
+    ```sh
+    bunny stream libraries create migrate-from-vimeo --replication-regions NY,SG
+    ```
+
+    ```sh
+    ✓ Created video library migrate-from-vimeo (ID: 12345), replicated to DE, NY, SG.
+    ```
+
+    <CreateLibrary />
   </Step>
 
   <Step title="Create a Vimeo access token">
@@ -144,9 +141,11 @@ The import copies the video files, their titles, descriptions, and tags, and you
     ✓ Saved Vimeo credentials to the "default" profile.
     ```
 
-    <SaveCredentials provider="Vimeo" />
+    <Accordion title="Where the CLI stores credentials">
+      <SaveCredentials provider="Vimeo" />
 
-    The `VIMEO_ACCESS_TOKEN` environment variable always takes priority over a saved token.
+      The `VIMEO_ACCESS_TOKEN` environment variable always takes priority over a saved token.
+    </Accordion>
 
     The dry run then prints a summary and the import plan:
 
@@ -291,7 +290,7 @@ The import copies the video files, their titles, descriptions, and tags, and you
     bunny stream import --library 12345 --source vimeo --resume
     ```
 
-    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `vimeoId` tag to videos Bunny fetched before the run stopped. When the interrupted run was limited to one folder, the resume continues that folder. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To try those again, run the import without `--resume` (with the same `--folder`, if you used one), adding `--clean-failed` to delete the rejected Bunny copies first.
+    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `vimeoId` tag to videos Bunny fetched before the run stopped. When the interrupted run was limited to one folder, the resume continues that folder. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To retry those too, add `--clean-failed`, which deletes their Bunny copies first.
 
     Running the import again is always safe. Videos that already carry the `vimeoId` tag are skipped, and the CLI reports **Everything is already imported** once nothing is left.
   </Accordion>

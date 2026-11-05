@@ -28,25 +28,13 @@ import ImportFlags from "/snippets/stream/migrate/import-flags.mdx";
 
 [Bunny Stream](https://bunny.net/stream/) bills only for the storage and bandwidth you use. See the [Bunny Stream pricing page](https://bunny.net/pricing/stream/) for current rates.
 
-This guide walks you through how to migrate your video content to Bunny Stream from Cloudflare Stream. Here's what we'll cover:
-
-- Installing and authenticating the [Bunny CLI](/cli)
-- Creating a destination Bunny Stream library and a Cloudflare Stream API token
-- Previewing the migration with a dry run, then running `bunny stream import`
-- Monitoring encoding progress and verifying the result in the bunny.net dashboard
-- Cleaning up the MP4 downloads the migration creates on Cloudflare
-
 ## Overview
 
 <Frame>
   ![Diagram of the Bunny CLI listing Cloudflare Stream videos and Bunny Stream fetching each MP4 download directly from Cloudflare](/images/stream/migrate-from-cloudflare-stream/how-bunny-stream-import-works.png)
 </Frame>
 
-A migration from Cloudflare Stream to Bunny Stream involves the following steps:
-
-- **Discover**: Bunny CLI lists every video on the Cloudflare Stream account that is ready to stream. Cloudflare Stream has no folder concept, so every video is imported into the root of the destination library.
-- **De-duplicate**: Each imported video is tagged with its Cloudflare Stream identifier under the `cfStreamId` metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.
-- **Fetch**: For each new video, the CLI asks Cloudflare to generate an MP4 download, unless the video already has one, and polls that request until the file is ready, for up to five minutes per video. It then passes the download URL to Bunny Stream, which fetches the file directly from Cloudflare. Nothing is downloaded to your machine.
+The Bunny CLI lists every ready video on your Cloudflare Stream account, asks Cloudflare to generate an MP4 download for each one, and hands that download to Bunny Stream, which fetches the file directly from Cloudflare. Nothing is downloaded to your machine. Each imported video is tagged with its Cloudflare Stream ID under the `cfStreamId` metatag, so running the import again skips videos that are already imported.
 
 ## Scope
 
@@ -89,7 +77,17 @@ The import copies the video files, names, and descriptions. Settings that contro
   </Step>
 
   <Step title="Create a Bunny Stream library">
-    <CreateLibrary guide="migrate-from-cloudflare-stream" />
+    Create a library for the imported videos, or skip this step to use an existing one:
+
+    ```sh
+    bunny stream libraries create migrate-from-cloudflare-stream --replication-regions NY,SG
+    ```
+
+    ```sh
+    ✓ Created video library migrate-from-cloudflare-stream (ID: 12345), replicated to DE, NY, SG.
+    ```
+
+    <CreateLibrary />
   </Step>
 
   <Step title="Create a Cloudflare Stream API token">
@@ -145,9 +143,11 @@ The import copies the video files, names, and descriptions. Settings that contro
     ✓ Saved Cloudflare Stream credentials to the "default" profile.
     ```
 
-    <SaveCredentials provider="Cloudflare" />
+    <Accordion title="Where the CLI stores credentials">
+      <SaveCredentials provider="Cloudflare" />
 
-    The `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` environment variables always take priority over saved credentials.
+      The `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` environment variables always take priority over saved credentials.
+    </Accordion>
 
     The dry run then prints a summary and the import plan:
 
@@ -289,7 +289,7 @@ The import copies the video files, names, and descriptions. Settings that contro
     bunny stream import --library 12345 --source cloudflare --resume
     ```
 
-    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `cfStreamId` tag to videos Bunny fetched before the run stopped. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To try those again, run the import without `--resume`, adding `--clean-failed` to delete the rejected Bunny copies first.
+    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `cfStreamId` tag to videos Bunny fetched before the run stopped. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To retry those too, add `--clean-failed`, which deletes their Bunny copies first.
 
     Running the import again is always safe. Videos that already carry the `cfStreamId` tag are skipped, and the CLI reports **Everything is already imported** once nothing is left.
   </Accordion>
@@ -306,5 +306,8 @@ The import copies the video files, names, and descriptions. Settings that contro
 
   <Accordion title="Cloudflare could not generate an MP4 download">
     Cloudflare reported an error while generating the download, and the CLI prints its reason. Check the video in the Cloudflare dashboard. A retry only helps once Cloudflare can generate the download.
+  </Accordion>
+  <Accordion title="Videos are stuck with no data">
+    If `bunny stream import status` reports videos stuck at zero bytes, run the import again with `--retry-stalled` to delete and fetch them again.
   </Accordion>
 </AccordionGroup>
