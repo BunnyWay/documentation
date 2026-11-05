@@ -1,5 +1,5 @@
 ---
-title: "Stream Live "
+title: "Stream Live"
 description: "Create, configure, and broadcast your first bunny.net live stream - from RTMP or SRT setup in OBS to going live and converting the recording to VOD."
 hidden: true
 keywords:
@@ -32,6 +32,19 @@ Before you begin, make sure you have the following in place:
 <Note>
   **Closed preview limits:** **Event** streams are limited to a **maximum duration of 12 hours**. **Channel** streams have no duration limit (see [Choosing a stream type](#choosing-a-stream-type-event-or-channel)). You won't be charged for **live encoding** during the closed preview. See [Pricing](#pricing) for the proposed rates after the preview.
 </Note>
+
+## How a live stream works: preview, then live
+
+Every live stream goes through two separate stages, and it helps to understand them before you start:
+
+1. **Preview.** As soon as your encoder starts publishing, Bunny receives and encodes your feed, but only you can see it, in the dashboard preview player. Viewers can't watch yet, and **nothing is recorded**.
+2. **Live.** When you click **Start Stream** in the Control Room, or call the [start endpoint](#start-and-stop-the-stream), the stream becomes watchable for viewers. If **Video on demand** is on, recording begins at this point.
+
+Your encoder being connected doesn't start the stream. A stream that is never started stays in preview: it has no recording, it can't be ended with **End Stream** or the stop endpoint, and viewers can't play it.
+
+<Warning>
+  **Start the stream while your encoder is still publishing.** Only the part of your broadcast after the stream is started can be recorded. If your encoder disconnects before you start the stream, no VOD is created, even when **Video on demand** is enabled.
+</Warning>
 
 ## Choosing an ingest protocol: RTMP or SRT
 
@@ -68,7 +81,7 @@ Every live stream has a type. The type sets how long the stream can run, what ha
 
 ### How an Event behaves
 
-An Event ends in one of these ways:
+Once an Event has been started, it ends in one of these ways:
 
 - You stop it from the Control Room or with the [stop endpoint](#start-and-stop-the-stream).
 - It reaches its `scheduledEndTime`, if you set one.
@@ -154,7 +167,7 @@ Below the ingest details you can also set up the stream itself:
 
 - **Description** - an optional summary of your stream.
 - **Schedule start date and time** - optionally set the date and time (24-hour UTC) you plan to go live. This does **not** start the stream automatically: you still start it manually (in [Step 5](#step-5-go-live)), and you can do so before, at, or after the scheduled time. Scheduling is mainly used to show viewers a **countdown** ahead of the stream.
-- **Video on demand (VOD)** - enabled by default. When on, the live stream is stored in your video library and is available to watch back as VOD after the stream ends.
+- **Video on demand (VOD)** - enabled by default. When on, the live stream is stored in your video library and is available to watch back as VOD after the stream ends. Only the part of the broadcast after you [start the stream](#step-5-go-live) is recorded.
 
 ## Step 3: Configure your encoder
 
@@ -167,7 +180,7 @@ Open your encoder and point it at Bunny's ingest endpoint. In **OBS Studio**, go
   </Tab>
   <Tab title="SRT">
     - **Server:** paste the full **Primary ingest URL** from Step 2, including everything after the `?`. The stream key is already part of this URL.
-    - **Stream Key:** Copy in your Stream Key.
+    - **Stream Key:** paste your **Stream key**.
 
     A complete SRT URL looks like this:
 
@@ -277,7 +290,11 @@ Back on the **Add live stream** page (or the **Control Room**), the **Preview** 
 </Info>
 
 <Note>
-  **SRT not connecting?** Check that the URL was pasted in full, including the `streamid` parameter, and that the Stream Key field in your encoder is empty. Also make sure your network allows outbound **UDP** traffic on port **8890** - some corporate and venue firewalls block UDP even when RTMP works. If the stream connects but the preview stutters or shows artifacts, see [Adjusting SRT latency](#adjusting-srt-latency).
+  At this stage the stream is in **preview**. Viewers can't watch it yet, and the public HLS playlist (`playbackUrlHls`) returns `404 File Not Found` until you start the stream. This is expected. See [Troubleshooting](#troubleshooting) for more on playback errors.
+</Note>
+
+<Note>
+  **SRT not connecting?** Check that the URL was pasted in full, including the `streamid` parameter, and that your **Stream key** is filled in in your encoder's Stream Key field. Also make sure your network allows outbound **UDP** traffic on port **8890** - some corporate and venue firewalls block UDP even when RTMP works. If the stream connects but the preview stutters or shows artifacts, see [Adjusting SRT latency](#adjusting-srt-latency).
 </Note>
 
 From the **Control Room**, you can also click **Show Preview** to open the full-size preview player in a separate window and check playback and latency (last ping) without exposing the stream to viewers.
@@ -290,7 +307,15 @@ When you're happy with the preview, you're ready to broadcast:
 2. Click **Start Stream**.
 3. Confirm in the dialog. Note that **starting manually overrides your scheduled start time**.
 
-Your stream is now live. The header shows a **Live** badge and a running duration timer, and viewers watching the embed or direct URL now see your broadcast.
+Your stream is now live. The header shows a **Live** badge and a running duration timer, and viewers watching the embed or direct URL now see your broadcast. If **Video on demand** is on, recording starts now.
+
+<Warning>
+  Keep your encoder publishing until you've clicked **Start Stream**. Anything sent while the stream is in preview isn't recorded, and a stream that was never started can't be ended or turned into a VOD.
+</Warning>
+
+<Info>
+  Allow another **15-20 seconds** after starting for playback to become available to viewers. During this time the playlist may still return `404`.
+</Info>
 
 ## Step 6: Monitor your stream
 
@@ -306,8 +331,12 @@ While you're live, the **Control Room** surfaces real-time statistics so you can
 
 ## Step 7: End the stream and watch it back
 
-1. When you're finished, click **End Stream** in the Control Room header.
+1. When you're finished, click **End Stream** in the Control Room header. This option is only available once the stream has been started.
 2. Confirm in the dialog. Once ended, the stream cannot be restarted - you'll create a new stream for your next broadcast.
+
+<Note>
+  Ending the stream stops processing on Bunny's side and blocks further ingest, so your encoder is disconnected immediately. OBS reports a dropped connection, and FFmpeg exits with a broken pipe error. This is expected. You can stop your encoder first and then end the stream if you prefer a clean shutdown on the encoder side.
+</Note>
 
 If **Video on demand** was enabled, Bunny immediately begins converting the recording into a VOD asset in your library. You'll see a notice that **your VOD is currently processing - viewers can still rewatch the live stream** while it does. Once processing completes, the recording plays back like any other Bunny Stream video, and you can pick or upload a **thumbnail** and edit the **title** and details.
 
@@ -346,6 +375,31 @@ export BUNNY_API_KEY="your-video-library-api-key"
   Your API key grants full control over the video library - keep it server-side and never expose it in client-side code.
 </Warning>
 
+### Typical API flow
+
+A recorded broadcast through the API follows this order. Calling `/start` while your encoder is publishing is the step that makes the stream watchable and recordable.
+
+<Steps>
+  <Step title="Create the stream">
+    `POST /library/{libraryId}/live` with `recordVod` set to `true`. Save the returned `guid`, which is the `streamId` for every later call.
+  </Step>
+  <Step title="Start publishing from your encoder">
+    Connect your encoder to the RTMP or SRT ingest URL. The stream moves to **Preview** (`status` `3`). Viewers can't watch yet, and nothing is recorded.
+  </Step>
+  <Step title="Wait for the ingest to be ready">
+    Poll `GET /library/{libraryId}/live/{streamId}/status` until `readyToStart` and `primaryLive` are both `true`. This usually takes 15-20 seconds after the encoder connects.
+  </Step>
+  <Step title="Start the stream">
+    `PUT /library/{libraryId}/live/{streamId}/start`. The stream moves to **Running** (`status` `4`), becomes watchable, and recording begins. Allow another 15-20 seconds before playback is available to viewers.
+  </Step>
+  <Step title="Stop the stream">
+    `PUT /library/{libraryId}/live/{streamId}/stop` when you're done. Your encoder is disconnected and, with `recordVod` on, the recording is queued for encoding.
+  </Step>
+  <Step title="Pick up the recording">
+    Listen for the `LiveStreamRecordingQueued` (`19`) and `LiveStreamRecordingReady` (`20`) [webhooks](#webhooks). Both include the recording's `VideoGuid`. Once encoding has finished, the video is available through the regular video endpoints, such as `GET /library/{libraryId}/videos`.
+  </Step>
+</Steps>
+
 ### Create a live stream
 
 Send a `POST` to `/library/{libraryId}/live` with a JSON body. Only the basics are shown here; all fields are optional, though you'll typically set a `title`.
@@ -371,11 +425,11 @@ Key fields in the request body (`CreateLiveStreamModel`):
 | `description` | string | Optional description. |
 | `collectionId` | string | Collection the stream belongs to. |
 | `streamType` | integer | `0` for an **Event** (default) or `1` for a **Channel**. See [Choosing a stream type](#choosing-a-stream-type-event-or-channel). |
-| `recordVod` | boolean | If `true`, the stream is converted to a VOD when it stops. Defaults to your video library setting for an Event, and to `false` for a Channel. A Channel can't set it to `true`. |
+| `recordVod` | boolean | If `true`, the part of the stream after it was started is converted to a VOD when it stops. Defaults to your video library setting for an Event, and to `false` for a Channel. A Channel can't set it to `true`. |
 | `scheduledStartTime` | date-time | Scheduled start (UTC). Viewers can only watch after this time unless you start manually. |
 | `scheduledEndTime` | date-time | Scheduled end (UTC). |
 | `enableCountdown` | boolean | Show a countdown in the player before a scheduled start. |
-| `public` | boolean | Whether the stream is publicly accessible. Defaults to `true`. |
+| `public` | boolean | Not currently used and has no effect. Playback access is controlled by your video library's [security settings](#additional-features). |
 | `dvrEnabled` | boolean | Enable DVR for the stream. |
 | `dvrWindowSeconds` | integer | DVR window in seconds. Required when `dvrEnabled` is `true`; max is `43200` (12 hours). |
 | `rtmpOutputs` | array | Up to 4 RTMP outputs to forward the incoming stream to (each with `endpoint` and `streamKey`). |
@@ -409,9 +463,9 @@ The create response (and `GET /library/{libraryId}/live/{streamId}`) returns a `
 ```
 
 - **RTMP:** point your encoder's **server** at `ingestEndpoints.rtmp.primaryIngestUrl` (or the backup URL) and set its **stream key** to `streamKey`.
-- **SRT:** point your encoder's **server** at `ingestEndpoints.srt.primaryIngestUrl` (or the backup URL) and leave the stream key empty. Unlike the RTMP URLs, which you combine with `streamKey`, the SRT URLs are complete and already include the stream key. To change the latency, edit the `latency` value in the URL as described in [Adjusting SRT latency](#adjusting-srt-latency).
+- **SRT:** point your encoder's **server** at `ingestEndpoints.srt.primaryIngestUrl` (or the backup URL), including everything after the `?`, and set its **stream key** to `streamKey`. To change the latency, edit the `latency` value in the URL as described in [Adjusting SRT latency](#adjusting-srt-latency).
 
-These are the same values you'd otherwise copy from the dashboard in [Step 2](#step-2-get-your-ingest-details). Use `playbackUrlHls` for playback.
+These are the same values you'd otherwise copy from the dashboard in [Step 2](#step-2-get-your-ingest-details). Use `playbackUrlHls` for playback. The playlist returns `404` until the stream has been started and has finished starting up (see [Troubleshooting](#troubleshooting)).
 
 <Note>
   Save the `guid` returned here - it's the `streamId` used in every subsequent call. Don't confuse it with the SRT `streamid` URL parameter, which carries your stream key to Bunny.
@@ -419,7 +473,7 @@ These are the same values you'd otherwise copy from the dashboard in [Step 2](#s
 
 ### Start and stop the stream
 
-Once your encoder is publishing, mark the stream live so viewers can watch. Starting via the API is the equivalent of clicking **Start Stream** in the Control Room and overrides any scheduled start time.
+Once your encoder is publishing, mark the stream live so viewers can watch. Starting via the API is the equivalent of clicking **Start Stream** in the Control Room and overrides any scheduled start time. An encoder being connected does **not** start the stream by itself: until you call `/start`, the stream stays in preview.
 
 <CodeGroup>
 
@@ -438,8 +492,17 @@ curl --request PUT \
 </CodeGroup>
 
 <Warning>
+  **Call `/start` while your encoder is still publishing.** Only the part of the broadcast after `/start` is recorded. If you start the stream after your encoder has already disconnected, there is nothing to record and no VOD is created.
+</Warning>
+
+<Warning>
   Stopping a stream cannot be undone. If `recordVod` was set to `true`, the stream is converted to a regular video (VOD) when it stops.
 </Warning>
+
+A few things to know about `/stop`:
+
+- **It only works on a started stream.** Calling it on a stream that is still in preview returns `400` with the message `Cannot stop live stream that was not started yet`, even if an encoder is publishing. Start the stream first, or [delete it](#manage-the-stream) if you don't need it.
+- **It disconnects your encoder.** Stopping ends processing on Bunny's side and blocks further ingest, so your encoder is cut off immediately. FFmpeg exits with a broken pipe error and OBS reports a dropped connection. This is expected. To shut down cleanly on the encoder side, stop your encoder first and then call `/stop`.
 
 ### Check the stream status
 
@@ -461,14 +524,27 @@ curl --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID
 }
 ```
 
+| Field | Description |
+| --- | --- |
+| `readyToStart` | `true` when the ingest is ready and the stream can be started. |
+| `primaryLive` | `true` while the primary ingest is publishing. |
+| `backupLive` | `true` while the backup ingest is publishing. |
+| `lastPingAgo` | Time since the last ping from the ingest, in **milliseconds** (`205` = 0.2 seconds), if available. |
+| `duration` | The current duration of the stream. |
+| `statusTimeUtc` | The UTC time this status was generated. |
+
+<Note>
+  `primaryLive` and `backupLive` reflect your encoder's connection, not whether the stream has been started. A stream can show `primaryLive: true` while still in preview. Check the stream's `status` field to see whether it has been started.
+</Note>
+
 The `status` field on the live stream object itself moves through the stream's life cycle:
 
 | Value | Status | Meaning |
 | --- | --- | --- |
 | `1` | Created | The stream was just created. |
 | `2` | Scheduled | Scheduled to go live at `scheduledStartTime`. Publishing can start earlier, but it's only watchable after that time. |
-| `3` | Preview | Publishing has started but the stream wasn't started from the dashboard/API - visible only in the preview player. |
-| `4` | Running | Started from the dashboard or API; the stream is live. |
+| `3` | Preview | Publishing has started but the stream wasn't started from the dashboard/API - visible only in the preview player. Nothing is recorded, and the stream can't be stopped until it's started. |
+| `4` | Running | Started from the dashboard or API; the stream is live and, with `recordVod` on, being recorded. This is the only status `/stop` works from. |
 | `5` | Ended | Finished; publishing is no longer possible. |
 | `6` | VodProcessing | Ended and currently processing the VOD output. |
 | `7` | Error | An error occurred during ingest or live publishing. |
@@ -503,9 +579,31 @@ curl --request DELETE \
   The **update** endpoint can be used with no restrictions **before the stream is started**. It can only be used for updating the title and description after the stream is started. The `streamType` can only be changed before the stream is started and while no encoder is publishing. The stream key can only be regenerated **before** a stream has ended; regenerating it also changes the `streamid` in both SRT ingest URLs, so update every encoder you've configured, whichever protocol it uses. Deleting a stream removes it and all associated resources and cannot be undone.
 </Note>
 
+### Errors
+
+During the closed preview, the Live Stream API returns errors in two formats:
+
+| Situation | Status code | Body |
+| --- | --- | --- |
+| The library or stream ID doesn't exist | `404` | An `application/problem+json` body |
+| The request is valid but not allowed in the stream's current state (for example, stopping a stream that hasn't been started) | `400` | A JSON body with `"success": false` and a `message` describing the problem |
+
+Example `400` response:
+
+```json
+{
+  "success": false,
+  "message": "Cannot stop live stream that was not started yet"
+}
+```
+
+<Note>
+  We plan to unify these formats before general availability. Check the HTTP status code first, and handle both body formats in the meantime.
+</Note>
+
 ### Endpoint reference
 
-All paths are relative to `https://video.bunnycdn.com` and require the `AccessKey` header (except the public playback endpoint).
+All paths are relative to `https://video.bunnycdn.com` and require the `AccessKey` header (except the playback endpoint).
 
 | Method | Path | Description |
 | --- | --- | --- |
@@ -514,20 +612,20 @@ All paths are relative to `https://video.bunnycdn.com` and require the `AccessKe
 | `GET` | `/library/{libraryId}/live/{streamId}` | Get a live stream by ID. |
 | `PUT` | `/library/{libraryId}/live/{streamId}` | Update a live stream. |
 | `DELETE` | `/library/{libraryId}/live/{streamId}` | Delete a live stream and its resources. |
-| `PUT` | `/library/{libraryId}/live/{streamId}/start` | Start the stream (make it watchable). |
-| `PUT` | `/library/{libraryId}/live/{streamId}/stop` | Stop the stream (converts to VOD if `recordVod` is enabled). |
+| `PUT` | `/library/{libraryId}/live/{streamId}/start` | Start the stream (make it watchable and, with `recordVod` on, begin recording). Call while the encoder is publishing. |
+| `PUT` | `/library/{libraryId}/live/{streamId}/stop` | Stop a started stream (converts to VOD if `recordVod` is enabled). Disconnects the encoder. Returns `400` if the stream hasn't been started. |
 | `PUT` | `/library/{libraryId}/live/{streamId}/regenerate-key` | Regenerate the stream key, which also updates the SRT ingest URLs (not allowed after a stream ends). |
-| `GET` | `/library/{libraryId}/live/{streamId}/status` | Get real-time ingest status. |
-| `GET` | `/library/{libraryId}/live/{streamId}/play` | Get playback data (public; supports `token` and `expires` for signed URLs). |
+| `GET` | `/library/{libraryId}/live/{streamId}/status` | Get real-time ingest status. `lastPingAgo` is in milliseconds. |
+| `GET` | `/library/{libraryId}/live/{streamId}/play` | Get playback data. Doesn't require the `AccessKey` header. |
 | `GET` | `/library/{libraryId}/live/{streamId}/thumbnails` | List recent generated thumbnails (`limit`, `from`, `to`). |
 | `POST` | `/library/{libraryId}/live/{streamId}/thumbnail` | Set a custom thumbnail (upload or `thumbnailUrl`). |
 | `DELETE` | `/library/{libraryId}/live/{streamId}/thumbnail` | Remove the custom thumbnail. |
-| `GET` | `/library/{libraryId}/live/{streamId}/current-bitrate` | Get the latest ingest bitrate. |
+| `GET` | `/library/{libraryId}/live/{streamId}/current-bitrate` | Get the latest ingest bitrate. May return `404` during the closed preview (see [Known issues](#known-issues)). |
 | `GET` | `/library/{libraryId}/live/{streamId}/bitrate-history` | Get ingest bitrate history (`startTime`, `endTime`). |
 
 ## Webhooks
 
-Live streams send webhooks to your video library's webhook URL, the same URL that receives video webhooks. Requests are signed, delivered, and retried the same way. See [Webhooks](/stream/webhooks) to set up the URL and [validate the signature](/stream/webhooks#signature-validation).
+Live streams send webhooks to your video library's webhook URL, the same URL that receives video webhooks. Webhooks are configured per library, so there is no separate live stream webhook URL. Requests are signed, delivered, and retried the same way. See [Webhooks](/stream/webhooks) to set up the URL and [validate the signature](/stream/webhooks#signature-validation).
 
 <Info>
   Live stream webhooks are part of the closed preview and may change before general availability.
@@ -553,7 +651,7 @@ Live streams send webhooks to your video library's webhook URL, the same URL tha
 
 | Field | Description |
 | --- | --- |
-| `IsLiveStreamWebhook` | `true` for live stream webhooks. |
+| `IsLiveStreamWebhook` | `true` for live stream webhooks. Use it to tell live stream events apart from video events on the shared URL. |
 | `VideoLibraryId` | The ID of the video library. |
 | `LiveStreamId` | The ID of the live stream. |
 | `Status` | The status code of the event. See the [status list](#live-stream-statuses) below. |
@@ -571,7 +669,7 @@ Live streams send webhooks to your video library's webhook URL, the same URL tha
 | Value | Status | Sent when | `Reason` |
 | --- | --- | --- | --- |
 | `14` | LiveStreamCreated | The live stream was created. | - |
-| `15` | LiveStreamPublishingStarted | The primary ingest started publishing. | - |
+| `15` | LiveStreamPublishingStarted | The primary ingest started publishing. The stream is in preview until it's started. | - |
 | `16` | LiveStreamStarted | The stream went live for viewers. | `Manual`, `Scheduled` |
 | `17` | LiveStreamDisconnected | All ingests disconnected. | `IngestLeft`, `IngestRejected`, `IngestTimeout`, `EncoderLost`, `Blocked`, `Unknown` |
 | `18` | LiveStreamStopped | The stream ended. | `Manual`, `Scheduled`, `DisconnectTimeout`, `MaxDuration`, `LibraryDisabled`, `Unknown` |
@@ -591,9 +689,52 @@ Live streams send webhooks to your video library's webhook URL, the same URL tha
 
 The `DisconnectTimeout` and `MaxDuration` reasons on status `18` apply to Events only. A Channel is never stopped for either reason, and never sends the recording statuses `19` to `21`.
 
+If you receive `15` (LiveStreamPublishingStarted) but never `16` (LiveStreamStarted), the stream was never started, so no recording statuses (`19` to `21`) follow.
+
 Statuses `17` and `24` to `31` are best effort, so in rare cases one may not be delivered. To check the current state of a stream, use the [status endpoint](#check-the-stream-status).
 
 When **Video on demand** is enabled, the recording also sends the ordinary [video webhooks](/stream/webhooks#status-list) while it encodes, with `IsLiveStreamWebhook` set to `false`.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="My stream ended but no VOD appeared in my library">
+    The most common cause is that the stream was never started while the encoder was publishing. Only the part of a broadcast after **Start Stream** (or `/start`) is recorded. If you start the stream after the encoder has already disconnected, there is nothing to record.
+
+    Check that:
+
+    - **Video on demand** (`recordVod`) was on for the stream.
+    - The stream reached **Running** (`status` `4`) while your encoder was still publishing.
+    - The stream was an **Event**. Channels never record a VOD.
+
+    If all of these are true, the VOD may still be encoding. Wait for the `LiveStreamRecordingReady` (`20`) webhook, or check the video with the `VideoGuid` from the `LiveStreamRecordingQueued` (`19`) webhook.
+  </Accordion>
+
+  <Accordion title="/stop returns 400: Cannot stop live stream that was not started yet">
+    The stream is still in preview (`status` `3`). An encoder being connected doesn't start the stream, so there's nothing to stop. Call `/start` first if you want the stream to go live and be recorded, or delete the stream if you don't need it.
+  </Accordion>
+
+  <Accordion title="The HLS playlist returns 404 File Not Found">
+    This is expected in two situations:
+
+    - The stream hasn't been started yet. The playlist only exists for viewers once the stream is running.
+    - The stream has just been started. Allow **15-20 seconds** for the stream to start up before the playlist is available.
+
+    If the playlist still returns `404` well after the stream has started, check the stream's `status` and contact support with the stream ID.
+  </Accordion>
+
+  <Accordion title="The HLS playlist returns 403 Forbidden">
+    By default, your video library blocks playback requests that don't send a `Referer` header. This applies to all videos in the library, not only live streams. Requests from a browser page usually send a `Referer` automatically; requests from tools such as `curl` don't. Add a `Referer` header when testing, or review the allowed domains and authentication options in your video library's **Security** settings.
+  </Accordion>
+
+  <Accordion title="lastPingAgo looks very high">
+    `lastPingAgo` is in **milliseconds**, not seconds. A value of `205` means the last ping arrived 0.2 seconds ago.
+  </Accordion>
+
+  <Accordion title="My encoder reports an error when the stream ends">
+    Ending a stream disconnects the encoder immediately, so FFmpeg exits with a broken pipe error and OBS reports a dropped connection. This is expected and doesn't affect the recording. Stop your encoder before ending the stream if you prefer a clean shutdown.
+  </Accordion>
+</AccordionGroup>
 
 ## Additional features
 
@@ -606,7 +747,7 @@ When **Video on demand** is enabled, the recording also sends the ordinary [vide
   - **Watermarking** rendered into the live video stream. This is unique to the live stream library, meaning a clean version is generated for VOD so you can apply a different watermark to your VOD.
   - **RTMP Output** for co-streaming live to other platforms in parallel.
   - **VOD** is re-encoded, meaning all of Bunny Stream's VOD features - such as Premium encoding, Transcription, Smart generate, and eDRM - are supported for the VOD.
-- Configure **player UI and authentication** (allowed/blocked domains, token, and CDN authentication) in your **player and security video library settings**.
+- Configure **player UI and authentication** (allowed/blocked domains, token, and CDN authentication) in your **player and security video library settings**. These settings control who can play your live streams.
 - Automate stream creation and control with the [Live Stream API](#automate-with-the-live-stream-api) - create, start, stop, monitor, and manage streams programmatically.
 - React to stream events, such as a disconnected ingest or a finished recording, with [webhooks](#webhooks).
 
@@ -656,7 +797,17 @@ Live encoding charges are in addition to your usual bunny.net usage:
 - 12 hour maximum DVR window for both Events and Channels.
 - An Event ends after 30 minutes without a connected encoder. A Channel stays open until you stop it.
 - A Channel can't record a VOD.
+- Only the part of a stream after it was started is recorded.
 - 3 concurrent live streams per bunny account during closed preview
+- **Startup delay.** The preview and the viewer playlist take 15-20 seconds to become available after the encoder connects and after the stream is started.
+
+## Known issues
+
+These are known issues in the closed preview that we're working on:
+
+- **`current-bitrate` may return `404`** while a stream is live. We're moving bitrate tracking to a new backend, which will fix this.
+- **Two error formats.** Unknown IDs return `404` with a `problem+json` body, while state errors return `400` with a `{"success": false, ...}` body. See [Errors](#errors).
+- **The `public` field has no effect.** Setting it to `false` doesn't restrict playback. Use your video library's security settings to control access instead.
 
 ## Not currently supported by Stream Live during closed preview
 
