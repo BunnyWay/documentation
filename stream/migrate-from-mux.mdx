@@ -27,25 +27,13 @@ import ImportFlags from "/snippets/stream/migrate/import-flags.mdx";
 
 [Bunny Stream](https://bunny.net/stream/) bills only for the storage and bandwidth you use. See the [Bunny Stream pricing page](https://bunny.net/pricing/stream/) for current rates.
 
-This guide walks you through how to migrate your video content to Bunny Stream from Mux. Here's what we'll cover:
-
-- Installing and authenticating the [Bunny CLI](/cli)
-- Creating a destination Bunny Stream library and a Mux access token
-- Making your Mux videos downloadable
-- Previewing the migration with a dry run, then running `bunny stream import`
-- Monitoring encoding progress and verifying the result in the bunny.net dashboard
-
 ## Overview
 
 <Frame>
   ![Diagram of the Bunny CLI listing Mux assets and Bunny Stream fetching each file directly from Mux](/images/stream/migrate-from-mux/how-bunny-stream-import-works.png)
 </Frame>
 
-A migration from Mux to Bunny Stream involves the following steps:
-
-- **Discover**: Bunny CLI lists every asset in your Mux environment that is ready and has a video track. Assets that are still preparing, assets that errored, and audio-only assets are left out. Mux has no folder concept, so every video is imported into the root of the destination library.
-- **De-duplicate**: Each imported video is tagged with its Mux asset ID under the `muxAssetId` metatag. Before importing a video, the CLI checks whether that tag already exists in the destination library and skips the video if it does.
-- **Fetch**: For each new video, the CLI looks up a downloadable file on Mux. It uses the original (master) file when master access is enabled and ready. Otherwise, it uses the best static MP4 rendition on a public playback ID. It then passes that URL to Bunny Stream, which fetches the file directly from Mux. Nothing is downloaded to your machine.
+The Bunny CLI lists every ready video in your Mux environment and hands each one to Bunny Stream, which fetches the file directly from Mux. Nothing is downloaded to your machine. Each imported video is tagged with its Mux asset ID under the `muxAssetId` metatag, so running the import again skips videos that are already imported.
 
 ## Scope
 
@@ -82,7 +70,17 @@ The import copies the video files and their titles. Settings that control how an
   </Step>
 
   <Step title="Create a Bunny Stream library">
-    <CreateLibrary guide="migrate-from-mux" />
+    Create a library for the imported videos, or skip this step to use an existing one:
+
+    ```sh
+    bunny stream libraries create migrate-from-mux --replication-regions NY,SG
+    ```
+
+    ```sh
+    ✓ Created video library migrate-from-mux (ID: 12345), replicated to DE, NY, SG.
+    ```
+
+    <CreateLibrary />
   </Step>
 
   <Step title="Create a Mux access token">
@@ -117,6 +115,7 @@ The import copies the video files and their titles. Settings that control how an
 
     Otherwise, enable master access on every asset right before you migrate. The following Python script does that through the [Mux API](https://www.mux.com/docs/api-reference/video/assets/update-asset-master-access). It prompts for your Token ID and Secret Key, requests master access for every ready asset, and waits until Mux has prepared each master file. Save it as `enable_mux_masters.py`:
 
+    <Accordion title="enable_mux_masters.py">
     ```py enable_mux_masters.py
     """Turns on temporary master access for every ready Mux asset, then waits until each master file is ready."""
 
@@ -192,6 +191,7 @@ The import copies the video files and their titles. Settings that control how an
         print(f"Stopped waiting after {TIMEOUT_HOURS} hours with {len(pending)} master files still preparing. Run the script again to check on them.")
     print(f"{len(ready)} master files are ready. Run the import within 24 hours, before the master URLs expire.")
     ```
+    </Accordion>
 
     Run it and enter your Token ID and Secret Key when prompted:
 
@@ -240,9 +240,11 @@ The import copies the video files and their titles. Settings that control how an
     ✓ Saved Mux credentials to the "default" profile.
     ```
 
-    <SaveCredentials provider="Mux" />
+    <Accordion title="Where the CLI stores credentials">
+      <SaveCredentials provider="Mux" />
 
-    The `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` environment variables always take priority over saved credentials.
+      The `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` environment variables always take priority over saved credentials.
+    </Accordion>
 
     The dry run then prints a summary and the import plan:
 
@@ -352,7 +354,7 @@ The import copies the video files and their titles. Settings that control how an
     bunny stream import --library 12345 --source mux --resume
     ```
 
-    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `muxAssetId` tag to videos Bunny fetched before the run stopped. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To try those again, run the import without `--resume`, adding `--clean-failed` to delete the rejected Bunny copies first.
+    `--resume` retries failed videos, processes any that were still outstanding, and re-applies the `muxAssetId` tag to videos Bunny fetched before the run stopped. It stops retrying a video after three failed attempts and skips videos that Bunny rejected. To retry those too, add `--clean-failed`, which deletes their Bunny copies first.
 
     Running the import again is always safe. Videos that already carry the `muxAssetId` tag are skipped, and the CLI reports **Everything is already imported** once nothing is left.
   </Accordion>
@@ -373,6 +375,9 @@ The import copies the video files and their titles. Settings that control how an
     A 401 means the Token ID or Secret Key is wrong. A 403 on a master-access request means the token is missing the Write permission from step 3.
 
     If the script reports that Mux could not prepare a master file for an asset, the import can still use a static MP4 rendition on a public playback ID. Otherwise, that asset fails with **No download available**.
+  </Accordion>
+  <Accordion title="Videos are stuck with no data">
+    If `bunny stream import status` reports videos stuck at zero bytes, run the import again with `--retry-stalled` to delete and fetch them again.
   </Accordion>
 </AccordionGroup>
 

@@ -1,21 +1,9 @@
-If you haven't already, open the [bunny.net dashboard](https://dash.bunny.net), go to [Delivery > Stream](https://dash.bunny.net/stream), and click **Add Video Library**.
-
-<Frame>
-  <img src={`/images/stream/${guide}/add-video-library.png`} alt="The Stream page in the bunny.net dashboard with the Add Video Library button" />
-</Frame>
-
-Enter a name for the library, select the replication regions closest to your audience, and click **Add Video Library**.
-
-<Frame>
-  <img src={`/images/stream/${guide}/geo-replication-regions.png`} alt="The new video library form with a library name and replication regions selected" />
-</Frame>
+DE is always the main storage region. Replicate to the regions closest to your audience, from `UK`, `SE`, `NY`, `LA`, `SG`, `SYD`, `BR`, and `JH`. You can't remove a [replication region](/stream/replication) later.
 
 <Note>
-  Set the library's [encoding settings](/stream/encoding) now, before you import. Changes you make later apply only to new uploads, not to videos that are already imported.
+  Set encoding options, such as `--resolutions` or `--encoding-tier`, when you create the library. Changes you make later apply only to new uploads, not to videos that are already imported. Run `bunny stream libraries create --help` to see every option, or read [Encoding](/stream/encoding).
 </Note>
 
-Open the library, go to **API**, and copy the **Library ID**. You pass it to the `--library` flag in the import commands. The flag also accepts the library's name, and `--lib` works as a short alias. The CLI reads the library's Stream API key for you, so you don't need to copy it.
+When the CLI asks how to add videos, choose **Later**. You start the import in the next steps.
 
-<Frame>
-  <img src={`/images/stream/${guide}/library-api-id.png`} alt="The API page of a video library with the Library ID highlighted" />
-</Frame>
+Copy the library ID from the output. You pass it to `--library` in the import commands. The flag also accepts the library's name, and `--lib` works as a short alias.
