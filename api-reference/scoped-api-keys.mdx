@@ -1,0 +1,34 @@
+---
+title: Authenticate with Scoped API Keys
+sidebarTitle: Scoped API Keys
+description: Learn how to call the bunny.net API with a scoped API key.
+---
+
+A scoped API key works like your account API key, but it can only do what you allowed when you [created it](/account/scoped-api-keys). Use one for each script, CI job, or integration so a leaked key can't reach the rest of your account.
+
+Send the scoped API key in the same `AccessKey` header:
+
+```bash
+curl --request GET \
+  --url https://api.bunny.net/pullzone/12345 \
+  --header 'AccessKey: YOUR_SCOPED_API_KEY'
+```
+
+Scoped API keys start with `bnyscpd_`.
+
+Scoped API keys work with the Core Platform API and the Scripting API. Endpoints that don't support scoped API keys yet only accept your account API key.
+
+## Errors
+
+| Status | Cause |
+| --- | --- |
+| `401 Unauthorized` | The key doesn't exist, has expired, or was deleted, or the endpoint doesn't accept scoped API keys |
+| `403 Forbidden` | The key is missing the permission or resource the request needs, or the request came from an IP address the key doesn't allow |
+
+A `403` response has the error key `scopedApiKey.forbidden` and the message "The scoped API key does not have permission to perform this action."
+
+To fix a `403`, check that the key has a permission for the action, and that it covers the resource ID in the request. Keys can't be edited, so [create a new key](/account/scoped-api-keys#create-a-scoped-api-key) with the access you need.
+
+<Warning>
+  Keep scoped API keys in a secret store or environment variable, and leave them out of client-side code and public repositories.
+</Warning>
