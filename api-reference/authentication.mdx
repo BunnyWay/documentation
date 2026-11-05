@@ -13,11 +13,11 @@ curl --request GET \
 
 ## Find your API key
 
-Your account has one API key, and it covers account-level work such as managing pull zones, DNS zones, and other resources. You can view it at any time in the [dashboard](https://dash.bunny.net) under **Account** > **API**.
+Your account has one API key, and it covers account-level work such as managing pull zones, DNS zones, and other resources. You can view it at any time in the [dashboard](https://dash.bunny.net) under **Account** > **API key**.
 
-<Note>
-  We're working on scoped API keys. You'll be able to limit an API key to specific products and actions.
-</Note>
+## Scoped API keys
+
+A [scoped API key](/api-reference/scoped-api-keys) is limited to the permissions, resources, and IP addresses you choose, and it expires on a date you set. It uses the same `AccessKey` header. Use one instead of your account API key for scripts, CI jobs, and integrations.
 
 ## Product credentials
 
