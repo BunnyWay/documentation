@@ -52,19 +52,7 @@ Each permission pairs a product with an action, such as `PullZone.Purge` or `Dns
 
 ### Use a preset
 
-Presets fill in the permissions for common uses. Click one while you create a key, then add or remove permissions if you need to. A preset replaces any permissions you've already selected.
-
-| Preset | Permissions | Use it for |
-| --- | --- | --- |
-| **CI static deploy** | `StorageZone.Create`, `StorageZone.Update`, `PullZone.Create`, `PullZone.Update`, `PullZone.Purge` | Deploying a static site from a CI pipeline: create and update its storage zone and pull zone, and purge the cache after each deploy |
-| **Purge** | `PullZone.Purge` | Purging the CDN cache after you publish new content |
-| **ACME challenge** | `DnsZone.Update` | Letting an ACME client, such as Certbot, add the DNS records it needs to issue certificates with a DNS-01 challenge |
-| **Stream uploader** | `Video.Import` | Adding videos to your Stream libraries, by uploading them or fetching them from a URL |
-| **Billing** | `Billing.Read` | Reading billing details, summaries, and invoices, for example in finance or reporting tools |
-| **Statistics** | `Statistics` on every product | Feeding dashboards and monitoring tools |
-| **Read-only** | `Read` and `Statistics` on every product | Audits, inventory scripts, and other tools that must never change anything |
-
-Presets only set permissions. If the key doesn't need every resource of a product, limit it to the ones it uses, such as the single pull zone a deploy purges.
+Presets select the permissions for common uses, such as purging the cache or deploying a static site from CI. Click a preset to fill in its permissions, then review the products and permissions it selected under **Permissions**, and add or remove any before you create the key. A preset replaces any permissions you've already selected, and it doesn't limit the key to specific resources.
 
 ### Limit a key to specific resources
 
