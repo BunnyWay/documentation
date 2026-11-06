@@ -5,6 +5,10 @@ description: "Storage zone, connection, rate, request, and naming limits for Bun
 
 To ensure optimal performance for all users, Bunny Storage enforces limits on concurrent connections, request rates, throughput, and file naming. This page describes the limits that apply to your storage zones and how to work within them.
 
+<Warning>
+  Access to Bunny Storage over HTTP (port 80) will be deprecated on **January 31, 2027**. Update any applications, scripts, or integrations to connect over HTTPS (port 443) before this date.
+</Warning>
+
 ## How limits are applied
 
 Most limits are applied on a **per-server basis**. Each Bunny Storage region runs multiple servers, and each server tracks limits independently.
