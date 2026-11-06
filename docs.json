@@ -747,7 +747,7 @@
                 "group": "Manage Files & Objects",
                 "pages": [
                   "storage/dashboard",
-                  "storage/http",
+                  "storage/https",
                   "storage/s3",
                   "storage/ftp",
                   {
