@@ -9,7 +9,7 @@ import Types from "/snippets/stream/player-js-types.mdx";
 
 [player.js](https://github.com/embedly/player.js) controls the Bunny Player iframe, and server rendering gives it two rules. It reads `window` on import, which means importing it in the browser. It also has to load before the iframe does. player.js caches the iframe's `ready` message on import, and a `Player` created any time after that still connects. An iframe that finishes loading first, straight from the server HTML, never becomes ready.
 
-The component below renders a placeholder on the server, loads player.js in an effect, then mounts the iframe and creates the `Player` in the same commit. It works with the App Router and the Pages Router. For a client-only app, see the [React guide](/stream/player/react).
+The component below renders a placeholder on the server, loads player.js in an effect, then mounts the iframe and creates the `Player` in the same commit. It works with the App Router and the Pages Router. For a client-only app, see the [React guide](/stream/player/react). To let users upload videos from your app, see [Upload videos from Next.js](/stream/upload/nextjs).
 
 <Card title="Next.js example on GitHub" icon="github" href="https://github.com/BunnyWay/examples/tree/main/stream/player-nextjs" horizontal>
   An App Router app with custom controls and an event log.
