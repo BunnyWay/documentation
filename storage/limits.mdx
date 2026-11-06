@@ -15,7 +15,7 @@ In practice, this allows you to achieve much higher concurrency than the per-ser
 
 | Limit | Value | Description |
 | --- | --- | --- |
-| Concurrent HTTP connections per IP | 100 | Per server, per remote IP. Shared across the S3-compatible and HTTP APIs combined. |
+| Concurrent HTTPS connections per IP | 100 | Per server, per remote IP. Shared across the S3-compatible and HTTPS APIs combined. |
 | Concurrent FTP connections per IP | 250 | Per server, per remote IP. |
 | Simultaneous FTP commands per IP / zone | 300 | Per server. Maximum number of FTP commands that can be in flight at once. |
 
@@ -27,12 +27,12 @@ Certain operations have their own concurrency and size limits:
 | --- | --- |
 | POST (zip or download requests) | 10 requests per zone |
 | POST maximum request body size | 8 MB |
-| Folder listing (HTTP GET and FTP) | 5 requests at a time |
+| Folder listing (HTTPS GET and FTP) | 5 requests at a time |
 | DELETE | 30 simultaneous requests |
 
-## HTTP API limits
+## HTTPS API limits
 
-The HTTP API is limited to **250 concurrent connections per zone, per server**. Connections beyond this limit are rejected until capacity frees up.
+The HTTPS API is limited to **250 concurrent connections per zone, per server**. Connections beyond this limit are rejected until capacity frees up.
 
 ## S3 API throughput and rate limits
 
@@ -49,14 +49,14 @@ The response you receive depends on which limit you reach and which protocol or 
 
 | Limit reached | Protocol / API | Response |
 | --- | --- | --- |
-| IP concurrency limit | HTTP | `429 Too Many Requests` |
+| IP concurrency limit | HTTPS | `429 Too Many Requests` |
 | IP concurrency limit | FTP | `421 Too many connections (N) from this IP, please try again later` |
 | IP concurrency limit | S3 API | `503 SlowDown`, with a `Retry-After: 5` header |
-| Concurrent connections per zone (250) | HTTP | `429 Too Many Requests` |
+| Concurrent connections per zone (250) | HTTPS | `429 Too Many Requests` |
 | Concurrent connections per zone (250) | FTP | Connection refused |
 | Concurrent connections per zone (250) | S3 API | `503 SlowDown`, with a `Retry-After: 5` header |
-| Per-operation concurrency (GET / POST / DELETE) | HTTP | `400 Unable to process request` |
-| Folder listing rate limit | HTTP | `400 Unable to process request` |
+| Per-operation concurrency (GET / POST / DELETE) | HTTPS | `400 Unable to process request` |
+| Folder listing rate limit | HTTPS | `400 Unable to process request` |
 | Folder listing rate limit | FTP | `421 Server busy, please try again later` |
 
 For the per-IP FTP response, **N** is the number of connections currently open from your IP.
