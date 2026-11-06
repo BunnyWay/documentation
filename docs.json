@@ -747,7 +747,7 @@
                 "group": "Manage Files & Objects",
                 "pages": [
                   "storage/dashboard",
-                  "storage/http",
+                  "storage/https",
                   "storage/s3",
                   "storage/ftp",
                   {
@@ -1357,6 +1357,11 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/storage/http",
+      "destination": "/storage/https",
+      "permanent": true
+    },
     {
       "source": "/stream/livestream",
       "destination": "/stream/live",

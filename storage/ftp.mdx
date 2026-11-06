@@ -6,7 +6,7 @@ description: "Upload and manage files using FTP for compatibility with existing 
 Bunny Storage supports FTP access for easy file management using familiar FTP clients and workflows. This provides compatibility with most software and programming languages.
 
 <Warning>
-  The FTP protocol is outdated and not as secure as newer protocols like HTTP. It may be vulnerable to Man-In-The-Middle attacks. We recommend using FTP only when other upload options are not available. Use the [HTTP API](/storage/http) for better security and performance.
+  The FTP protocol is outdated and not as secure as newer protocols like HTTPS. It may be vulnerable to Man-In-The-Middle attacks. We recommend using FTP only when other upload options are not available. Use the [HTTPS API](/storage/https) for better security and performance.
 </Warning>
 
 ## Connection settings
@@ -65,7 +65,7 @@ Ensure you are using **Passive mode** in your FTP client settings. Some networks
 
 ## Rate limits
 
-FTP connections are subject to the same limits as HTTP API uploads:
+FTP connections are subject to the same limits as HTTPS API uploads:
 
 - Maximum 25 concurrent FTP connections per IP
 - Maximum 50 concurrent uploads per storage zone
