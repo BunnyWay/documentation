@@ -352,6 +352,7 @@
                   "magic-containers/configuration",
                   "magic-containers/environment-variables",
                   "magic-containers/persistent-volumes",
+                  "magic-containers/ephemeral-storage",
                   "magic-containers/endpoints",
                   "magic-containers/undeploy",
                   "magic-containers/delete"
