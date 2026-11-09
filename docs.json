@@ -626,6 +626,7 @@
                     "group": "Security",
                     "pages": [
                       "stream/security",
+                      "stream/geo-blocking",
                       "stream/security-options",
                       "stream/token-authentication"
                     ]
