@@ -565,6 +565,17 @@
                 "pages": [
                   "stream/index",
                   "stream/quickstart",
+                  {
+                    "group": "Migrate to Bunny Stream",
+                    "expanded": true,
+                    "pages": [
+                      "stream/migrate-from-mux",
+                      "stream/migrate-from-cloudflare-stream",
+                      "stream/migrate-from-vimeo",
+                      "stream/migrate-from-wistia",
+                      "stream/migrate-from-s3"
+                    ]
+                  },
                   "stream/authentication",
                   "stream/pricing",
                   "stream/changelog"
