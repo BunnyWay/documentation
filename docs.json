@@ -665,6 +665,13 @@
                 "group": "Playback",
                 "pages": [
                   "stream/player",
+                  {
+                    "group": "Player Settings",
+                    "pages": [
+                      "stream/player-settings",
+                      "untitled-page"
+                    ]
+                  },
                   "stream/embedding",
                   "stream/playback-api",
                   "stream/mp4-downloads",
@@ -703,14 +710,7 @@
                       "stream/players/fairplay"
                     ]
                   },
-                  "stream/custom-head-html-migration-guide",
-                  {
-                    "group": "Player Settings",
-                    "pages": [
-                      "stream/player-settings",
-                      "untitled-page"
-                    ]
-                  }
+                  "stream/custom-head-html-migration-guide"
                 ]
               },
               {
