@@ -669,7 +669,8 @@
                     "group": "Player Settings",
                     "pages": [
                       "stream/player-settings"
-                    ]
+                    ],
+                    "expanded": true
                   },
                   "stream/player-ui-language",
                   "stream/embedding",
