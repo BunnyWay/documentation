@@ -669,7 +669,7 @@
                     "group": "Player Settings",
                     "pages": [
                       "stream/player-settings",
-                      "stream/player-language"
+                      "stream/player-ui-language"
                     ]
                   },
                   "stream/embedding",
