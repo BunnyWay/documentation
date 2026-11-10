@@ -4,13 +4,16 @@ description: "Set the language of the Bunny Stream video player interface, inclu
 icon: "language"
 ---
 
-The UI language controls the text shown in the Bunny Stream player interface, such as the settings menu, control tooltips, and caption labels. It is configured per video library, so every video in that library uses the same player language.
+The UI language controls the text shown in the Bunny Stream player interface, such as the settings menu, control tooltips, and caption labels. You can set it in two ways:
 
-English (`en`) is used by default.
+- **Library default:** set `UILanguage` on the video library so every video in that library uses the same player language.
+- **Per player:** add the `lang` query parameter to an embed or direct play URL to override the library default for that player only.
+
+If neither is set, English (`en`) is used.
 
 ## Supported languages
 
-Use the code in the **Code** column as the value of `UILanguage`.
+Use the code in the **Code** column as the value of the `UILanguage` field or the `lang` query parameter.
 
 | Language | Code | Language | Code |
 | --- | --- | --- | --- |
@@ -32,14 +35,14 @@ Use the code in the **Code** column as the value of `UILanguage`.
 | Korean | `kr` |  |  |
 
 <Warning>
-  Several codes differ from the ISO 639-1 standard, always use the codes listed above.
+  Several codes differ from the ISO 639-1 standard. For example, Chinese is `cn` (not `zh`), Czech is `cz` (not `cs`), Japanese is `jp` (not `ja`), Swedish is `se` (not `sv`), and Ukrainian is `ua` (not `uk`). Always use the codes listed above.
 </Warning>
 
-## Set the player UI language
+## Set the library default
 
 <Steps>
   <Step title="Get your API key and library ID">
-    To find your API key, go to **Account → API key** in the [bunny.net dashboard](https://dash.bunny.net/account/api-key).
+    You need your account API key and the ID of the video library you want to update. To find your API key, go to **Account → API key** in the [bunny.net dashboard](https://dash.bunny.net/account/api-key).
   </Step>
   <Step title="Check which languages support player translation (optional)">
     Call [Get Languages](/api-reference/core/stream-video-library/get-languages) to retrieve the current list of languages. Only entries where `SupportPlayerTranslation` is `true` can be used as the player UI language. Use each entry's `ShortCode` as the value.
@@ -121,14 +124,56 @@ Use the code in the **Code** column as the value of `UILanguage`.
   To switch back to the default, set `UILanguage` to `en`.
 </Tip>
 
-## API reference
+## Override per player with a query parameter
 
-<CardGroup cols={2}>
+Add `lang` to an embed or direct play URL to set the player language for that player only. It overrides the library's `UILanguage` setting, and the library setting stays unchanged. This is useful on multilingual sites, where each page can load the player in the visitor's language.
+
+<Tabs>
+  <Tab title="Embed URL">
+    ```text
+    https://player.mediadelivery.net/embed/{video_library_id}/{video_id}?lang=de
+    ```
+
+    ```html
+    <iframe
+      src="https://player.mediadelivery.net/embed/{video_library_id}/{video_id}?lang=de"
+      title="Video player"
+      loading="lazy"
+      style="display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 0;"
+      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+      allowfullscreen>
+    </iframe>
+    ```
+  </Tab>
+  <Tab title="Direct play URL">
+    ```text
+    https://player.mediadelivery.net/play/{video_library_id}/{video_id}?lang=de
+    ```
+  </Tab>
+</Tabs>
+
+`lang` can be combined with other [player parameters](/stream/embedding#supported-parameters) using `&`. For example, to load the French interface with French captions turned on:
+
+```text
+https://player.mediadelivery.net/embed/{video_library_id}/{video_id}?lang=fr&captions=fr
+```
+
+<Note>
+  If the library uses [embed view token authentication](/stream/token-authentication), keep the `token` and `expires` parameters in the URL and add `lang` alongside them.
+</Note>
+
+## Related
+
+<CardGroup cols={3}>
   <Card title="Update Video Library" icon="pen-to-square" href="/api-reference/core/stream-video-library/update-video-library">
     Set the `UILanguage` field for a video library.
   </Card>
 
   <Card title="Get Languages" icon="list" href="/api-reference/core/stream-video-library/get-languages">
     List languages and check `SupportPlayerTranslation`.
+  </Card>
+
+  <Card title="Embedding videos" icon="code" href="/stream/embedding">
+    Embed and direct play URLs, plus all supported player parameters.
   </Card>
 </CardGroup>
