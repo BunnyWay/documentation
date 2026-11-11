@@ -7,7 +7,19 @@ description: "The Scriptable DNS comes with a list of helper objects to help wit
 
 The monitoring helper allows you to check and monitor the uptime status of an IP. This is useful for uptime checking when returning DNS records. It takes a single IP parameter that is then monitored in the background.
 
-The first time an IP is called, it is added into a background monitoring service while synchronously waiting for the initial latency. Once the IP is called again from the same server, the result is returned immediately.
+### How an IP's status is determined
+
+An IP is considered **online** if it responded to an ICMP ping in its most recent health check:
+
+- Each health check sends an ICMP ping with a 700 ms timeout, retrying up to 3 times. A single successful reply marks the IP as online; if all 3 attempts fail, it is marked as offline.
+- While an IP is being actively requested by your script, it is re-checked approximately every 10 seconds. IPs that are requested less often are checked less frequently (up to every 2 minutes), and IPs that are not requested for 3 days stop being monitored.
+- The first time an IP is requested, it is added to the background monitoring service and the DNS server synchronously waits for the initial check to complete. Subsequent requests return the cached status immediately.
+- Monitoring is performed independently by each DNS server, so the status reflects reachability from the DNS server handling the query.
+- Private and loopback addresses (`127.0.x.x`, `192.168.x.x`) and invalid IPs are always reported as offline.
+
+<Note>
+Monitoring is a network-level (ICMP) check only. It does not verify that an HTTP service or any specific port is responding. A server that responds to ping but has a failed application will still be reported as online. Make sure your servers allow inbound ICMP echo requests, otherwise they will always be reported as offline.
+</Note>
 
 ### Functions
 
@@ -103,7 +115,7 @@ RoutingEngine helps with dynamic geographic routing, weight calculation, and rou
 
 #### RoutingEngine.getWeightedRandom(servers: Array\<Server\>, onlineOnly: bool = false, applyWeight: bool = true): Server
 
-Returns one server from an array of servers based on a round robin weighted random principle. Additionally, servers can be filtered by online servers only. To activate weights, the applyWeight parameter should be set to true.
+Returns one server from an array of servers based on a round robin weighted random principle, using each server's `weight`. If `onlineOnly` is set to `true`, servers that are offline (see [Monitoring](#how-an-ips-status-is-determined)) are skipped. If no servers are online, `null` is returned.
 
 ```javascript
 /*
@@ -127,9 +139,13 @@ export default function handleQuery(query) {
 
 #### RoutingEngine.getClosestServer(servers: Array\<Server\>, location: GeoLocation, onlineOnly: bool = false, applyWeight: bool = true): Server
 
-Returns one server from an array of servers based on a round robin weighted random principle that is closest to the given GeoLocation parameter.
+Returns the server from an array of servers that is geographically closest to the given GeoLocation. If several servers are equally close, one of them is chosen using weighted round robin.
 
-Additionally, servers can be filtered by online servers only. To activate weights, the applyWeight parameter should be set to true.
+If `onlineOnly` is set to `true`, servers that are offline (see [Monitoring](#how-an-ips-status-is-determined)) are skipped. **`onlineOnly` defaults to `false`**, so offline servers are only excluded when you pass `true` explicitly.
+
+<Warning>
+If `onlineOnly` is `true` and none of the servers are online, no server is returned. Always provide a fallback record for this case.
+</Warning>
 
 ```javascript
 /*
@@ -155,6 +171,10 @@ export default function handleQuery(query) {
 ## Server
 
 The Server object is used to pass or return server information to various other helper methods and does not contain any functionality by itself.
+
+<Note>
+The `online` constructor parameter is not used by `RoutingEngine`. Online status is always determined by the [Monitoring](#how-an-ips-status-is-determined) health check, so setting `online` to `false` will not remove a server from rotation. To take a server out of rotation, remove it from the array.
+</Note>
 
 ### Constructor
 

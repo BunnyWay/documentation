@@ -1,0 +1,214 @@
+---
+title: "Geo-blocking"
+description: "Control which countries can stream videos from your Bunny Stream library by blocking selected countries or allowing only selected countries."
+sidebarTitle: "Geo-blocking"
+tag: "New"
+keywords:
+  - "geo-blocking"
+  - "geoblocking"
+  - "security"
+  - "geoblock"
+  - "block"
+  - "geo"
+  - "allowlist"
+  - "blocklist"
+  - "presets"
+  - "country restriction"
+hidden: true
+---
+
+Geo-blocking lets you control who can watch your videos based on the viewer's country. It works at the video library level and applies to every video the library delivers, giving you a single place to enforce licensing, regional-rights, or compliance rules across your whole catalog.
+
+Geo-blocking has two modes. You pick one, then build a single list of countries for it:
+
+- **Block selected countries** - the countries on your list are rejected. Every other country can stream.
+- **Allow only selected countries** - only the countries on your list can stream. Every other country is blocked.
+
+<Note>
+  Geo-blocking is configured per video library. If you deliver content through several libraries, repeat the setup for each library you want to restrict.
+</Note>
+
+## Configure geo-blocking
+
+<Steps>
+  <Step title="Open your video library">
+    In the [bunny.net dashboard](https://dash.bunny.net), go to **Stream** and select the video library you want to restrict. The library's delivery hostname (for example, `your-library.b-cdn.net`) is shown at the top of the page.
+  </Step>
+  <Step title="Open the Geo-blocking screen">
+    In the library menu, open **Security > Geo-blocking**.
+  </Step>
+  <Step title="Turn on geo-blocking">
+    Switch on the **Enable Geo-blocking** toggle.
+  </Step>
+  <Step title="Choose a mode">
+    Select either **Block selected countries** or **Allow only selected countries**. The mode decides what happens to the countries you add in the next step. You can switch modes at any time. See [Switching modes](#switching-modes).
+  </Step>
+  <Step title="Add countries">
+    Build your country list in either or both of these ways:
+
+    - **Select countries** - open the dropdown and pick individual countries.
+    - **Add Preset** - add a whole group of countries in one click, such as a continent, a data protection zone, or a common business region. See [Presets](#presets).
+
+    Each country you add appears as a tag below the dropdown. The list heading shows **Blocked countries** or **Allowed countries**, depending on the mode, with a count of the countries on it.
+
+    Once you've added a country, the map colours every country by whether its viewers can stream: green for allowed and red for blocked. This lets you confirm your coverage at a glance. A summary above the list describes the effect of your current rule, for example _Viewers in 27 countries can't stream. Viewers everywhere else can._
+
+    To remove a single country, click the **×** on its tag. To remove every country and start again, click **Clear List**.
+  </Step>
+  <Step title="Save your settings">
+    Click **Save Settings** to apply the rule. The button stays inactive until you've added at least one country.
+  </Step>
+</Steps>
+
+<Note>
+  Geo-blocking has no effect until at least one country is on the list. With the toggle on but the list empty, viewers in every country can still stream.
+</Note>
+
+## Presets
+
+Presets let you add a group of countries without selecting each one individually. Click **Add Preset** above the country list and choose a group. The badge next to each preset shows how many countries it contains, and all of them are added to your list.
+
+| Group | Presets |
+| --- | --- |
+| **Continents** | Africa, Asia, Europe, North America, Oceania, South America |
+| **Data protection** | European Union (EU), EEA (GDPR), EEA and UK (GDPR and UK GDPR) |
+| **Regions** | Asia-Pacific (APAC), Australia and New Zealand, Benelux, DACH, Latin America (LATAM), Middle East and North Africa (MENA), Nordics, UK and Ireland, US and Canada |
+
+You can combine several presets and mix them with individually selected countries. A preset only adds countries to your list, so after adding one you can remove any country you don't want by clicking the **×** on its tag. For example, to stream only within the EEA and the UK, select **Allow only selected countries** and add the **EEA and UK (GDPR and UK GDPR)** preset.
+
+### What each preset includes
+
+Each preset adds the countries and territories listed below.
+
+#### Continents
+
+Countries that span two continents are placed where they're usually grouped: Russia in Europe, Turkey and the Caucasus in Asia, and Egypt in Africa. Overseas territories are grouped with the continent they lie on, so French Guiana is in South America and Greenland is in North America.
+
+<AccordionGroup>
+  <Accordion title="Africa">
+    Algeria, Angola, Benin, Botswana, British Indian Ocean Territory, Burkina Faso, Burundi, Cameroon, Cape Verde, Central African Republic, Chad, Comoros, Congo, Congo (DRC), Côte d'Ivoire, Djibouti, Egypt, Equatorial Guinea, Eritrea, Eswatini, Ethiopia, French Southern Territories, Gabon, Gambia, Ghana, Guinea, Guinea-Bissau, Kenya, Lesotho, Liberia, Libya, Madagascar, Malawi, Mali, Mauritania, Mauritius, Mayotte, Morocco, Mozambique, Namibia, Niger, Nigeria, Réunion, Rwanda, Saint Helena (incl. Ascension and Tristan da Cunha), Sao Tome and Principe, Senegal, Seychelles, Sierra Leone, Somalia, South Africa, South Sudan, Sudan, Tanzania, Togo, Tunisia, Uganda, Western Sahara, Zambia, and Zimbabwe.
+  </Accordion>
+
+  <Accordion title="Asia">
+    Afghanistan, Armenia, Azerbaijan, Bahrain, Bangladesh, Bhutan, Brunei, Cambodia, China, Georgia, Hong Kong, India, Indonesia, Iran, Iraq, Israel, Japan, Jordan, Kazakhstan, Kuwait, Kyrgyzstan, Laos, Lebanon, Macao, Malaysia, Maldives, Mongolia, Myanmar, Nepal, North Korea, Oman, Pakistan, Palestine, Philippines, Qatar, Saudi Arabia, Singapore, South Korea, Sri Lanka, Syria, Taiwan, Tajikistan, Thailand, Timor-Leste, Turkey, Turkmenistan, United Arab Emirates, Uzbekistan, Vietnam, and Yemen.
+  </Accordion>
+
+  <Accordion title="Europe">
+    Åland Islands, Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Faroe Islands, Finland, France, Germany, Gibraltar, Greece, Guernsey, Hungary, Iceland, Ireland, Isle of Man, Italy, Jersey, Kosovo, Latvia, Liechtenstein, Lithuania, Luxembourg, Malta, Moldova, Monaco, Montenegro, Netherlands, North Macedonia, Norway, Poland, Portugal, Romania, Russia, San Marino, Serbia, Slovakia, Slovenia, Spain, Svalbard and Jan Mayen, Sweden, Switzerland, Ukraine, United Kingdom, and Vatican City.
+  </Accordion>
+
+  <Accordion title="North America">
+    Anguilla, Antigua and Barbuda, Aruba, Bahamas, Barbados, Belize, Bermuda, British Virgin Islands, Canada, Caribbean Netherlands, Cayman Islands, Costa Rica, Cuba, Curaçao, Dominica, Dominican Republic, El Salvador, Greenland, Grenada, Guadeloupe, Guatemala, Haiti, Honduras, Jamaica, Martinique, Mexico, Montserrat, Nicaragua, Panama, Puerto Rico, Saint Barthélemy, Saint Kitts and Nevis, Saint Lucia, Saint Martin (French part), Saint Pierre and Miquelon, Saint Vincent and the Grenadines, Sint Maarten (Dutch part), Trinidad and Tobago, Turks and Caicos Islands, United States, and US Virgin Islands.
+  </Accordion>
+
+  <Accordion title="Oceania">
+    American Samoa, Australia, Christmas Island, Cocos (Keeling) Islands, Cook Islands, Fiji, French Polynesia, Guam, Heard Island and McDonald Islands, Kiribati, Marshall Islands, Micronesia, Nauru, New Caledonia, New Zealand, Niue, Norfolk Island, Northern Mariana Islands, Palau, Papua New Guinea, Pitcairn Islands, Samoa, Solomon Islands, Tokelau, Tonga, Tuvalu, US Minor Outlying Islands, Vanuatu, and Wallis and Futuna.
+  </Accordion>
+
+  <Accordion title="South America">
+    Argentina, Bolivia, Bouvet Island, Brazil, Chile, Colombia, Ecuador, Falkland Islands, French Guiana, Guyana, Paraguay, Peru, South Georgia and the South Sandwich Islands, Suriname, Uruguay, and Venezuela.
+  </Accordion>
+</AccordionGroup>
+
+#### Data protection
+
+<AccordionGroup>
+  <Accordion title="European Union (EU)">
+    Austria, Belgium, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain, and Sweden.
+  </Accordion>
+
+  <Accordion title="EEA (GDPR)">
+    All countries in the **European Union (EU)** preset, plus Iceland, Liechtenstein, and Norway.
+  </Accordion>
+
+  <Accordion title="EEA and UK (GDPR and UK GDPR)">
+    All countries in the **EEA (GDPR)** preset, plus the United Kingdom.
+  </Accordion>
+</AccordionGroup>
+
+#### Regions
+
+<AccordionGroup>
+  <Accordion title="Asia-Pacific (APAC)">
+    All countries and territories in the **Oceania** preset, plus Bangladesh, Bhutan, Brunei, Cambodia, China, Hong Kong, India, Indonesia, Japan, Laos, Macao, Malaysia, Maldives, Mongolia, Myanmar, Nepal, North Korea, Pakistan, Philippines, Singapore, South Korea, Sri Lanka, Taiwan, Thailand, Timor-Leste, and Vietnam.
+  </Accordion>
+
+  <Accordion title="Australia and New Zealand">
+    Australia and New Zealand.
+  </Accordion>
+
+  <Accordion title="Benelux">
+    Belgium, Luxembourg, and Netherlands.
+  </Accordion>
+
+  <Accordion title="DACH">
+    Austria, Germany, and Switzerland.
+  </Accordion>
+
+  <Accordion title="Latin America (LATAM)">
+    Argentina, Bolivia, Brazil, Chile, Colombia, Costa Rica, Cuba, Dominican Republic, Ecuador, El Salvador, Guatemala, Haiti, Honduras, Mexico, Nicaragua, Panama, Paraguay, Peru, Puerto Rico, Uruguay, and Venezuela.
+  </Accordion>
+
+  <Accordion title="Middle East and North Africa (MENA)">
+    Algeria, Bahrain, Djibouti, Egypt, Iran, Iraq, Israel, Jordan, Kuwait, Lebanon, Libya, Morocco, Oman, Palestine, Qatar, Saudi Arabia, Syria, Tunisia, United Arab Emirates, and Yemen.
+  </Accordion>
+
+  <Accordion title="Nordics">
+    Åland Islands, Denmark, Faroe Islands, Finland, Greenland, Iceland, Norway, and Sweden.
+  </Accordion>
+
+  <Accordion title="UK and Ireland">
+    Guernsey, Ireland, Isle of Man, Jersey, and United Kingdom.
+  </Accordion>
+
+  <Accordion title="US and Canada">
+    American Samoa, Canada, Guam, Northern Mariana Islands, Puerto Rico, United States, and US Virgin Islands.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  Some territories are listed separately from the country they belong to. For example, Spain appears as **Spain (excl. Canary Islands)**, and the Åland Islands, Faroe Islands, and Greenland have their own entries. Some presets include territories like these, such as **Nordics**, which adds all three. Others don't. If your rule needs to cover a territory, check the map and add it individually.
+</Note>
+
+<Tip>
+  The map updates as you add presets, so it's a quick way to check that a preset covers the territories you expect before you save.
+</Tip>
+
+## Switching modes
+
+If you switch modes while countries are on the list, the list is kept and its meaning flips. Your blocked countries become your allowed countries, and vice versa.
+
+<Warning>
+  Switching modes reverses the effect of your rule. For example, if you've blocked three countries and switch to **Allow only selected countries**, those three become the only countries that can stream, and every other country is blocked once you save. Check the summary above the list before clicking **Save Settings**.
+</Warning>
+
+## How geo-blocking works
+
+When a viewer requests a video, bunny.net determines their country from their IP address and checks it against your library's rule:
+
+- In **Block selected countries** mode, the request is rejected if the viewer's country is on the list. All other countries can stream.
+- In **Allow only selected countries** mode, the request is allowed only if the viewer's country is on the list. All other countries are rejected.
+
+A rejected viewer cannot connect to the stream, so playback fails for every video in the library rather than for a single file.
+
+## Choosing a mode
+
+Use **Allow only selected countries** when your default should be _deny_. For example, when you're licensed to distribute in only a handful of territories and want everywhere else closed off. Adding a small set of countries, or a single preset such as **UK and Ireland**, is quicker and safer than trying to block every country you don't serve.
+
+Use **Block selected countries** when your default should be _allow_. For example, when your content is available almost everywhere and you only need to exclude a few specific countries for legal or contractual reasons.
+
+## Combine with token authentication for stricter control
+
+<Warning>
+  Country detection is based on the viewer's IP address, which can be masked with a VPN or proxy. Geo-blocking is a strong first layer, but it is not tamper-proof on its own. For stricter enforcement, pair it with [token authentication](/docs/stream/token-authentication), which can restrict signed playback URLs by expiry time and is far harder to bypass.
+</Warning>
+
+## Related
+
+<Card title="Stream Security" icon="shield" horizontal href="/docs/stream/security">
+  Review the full set of Bunny Stream security controls, including embed view and CDN token authentication.
+</Card>
+
+<Card title="Embedded view token authentication" icon="key" horizontal href="/docs/stream/token-authentication">
+  Sign your embeds and restrict playback by expiry time, and more.
+</Card>

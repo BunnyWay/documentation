@@ -565,6 +565,17 @@
                 "pages": [
                   "stream/index",
                   "stream/quickstart",
+                  {
+                    "group": "Migrate to Bunny Stream",
+                    "expanded": true,
+                    "pages": [
+                      "stream/migrate-from-mux",
+                      "stream/migrate-from-cloudflare-stream",
+                      "stream/migrate-from-vimeo",
+                      "stream/migrate-from-wistia",
+                      "stream/migrate-from-s3"
+                    ]
+                  },
                   "stream/authentication",
                   "stream/pricing",
                   "stream/changelog"
@@ -615,6 +626,7 @@
                     "group": "Security",
                     "pages": [
                       "stream/security",
+                      "stream/geo-blocking",
                       "stream/security-options",
                       "stream/token-authentication"
                     ]
@@ -652,8 +664,15 @@
               {
                 "group": "Playback",
                 "pages": [
-                  "stream/player",
-                  "stream/player-settings",
+                  {
+                    "group": "Bunny Player",
+                    "pages": [
+                      "stream/player",
+                      "stream/player-settings",
+                      "stream/player-ui-language"
+                    ],
+                    "expanded": true
+                  },
                   "stream/embedding",
                   "stream/playback-api",
                   "stream/mp4-downloads",
