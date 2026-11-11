@@ -47,15 +47,15 @@ The following metadata can be passed with the TUS upload:
 
 ## Encoding headers
 
-These optional headers override the library's encoding settings for one upload. Anything you leave out uses the library setting.
+These optional encoding headers override the video library's encoding settings for one upload. Anything you leave out uses the video library encoding setting.
 
 | Header | Description |
 | --- | --- |
 | `EnabledResolutions` | Comma-separated list of resolutions to encode, such as `360p,720p`. Available values: `240p`, `360p`, `480p`, `720p`, `1080p`, `1440p`, `2160p`. Unrecognized values are ignored. JIT encoding always uses the library's resolutions, so this header has no effect when JIT is on. |
 | `EnabledOutputCodecs` | Comma-separated list of [output codecs](/stream/premium-encoding#output-codecs), such as `x264,vp9`. Use `hevc` for x265. Codecs other than `x264` need the Premium encoding tier. On other libraries, the upload completes but the video isn't encoded. |
-| `JitEnabled` | `true` or `false`. Turns [JIT encoding](/stream/premium-encoding) on or off for this video. It only takes effect on libraries with Premium encoding. With JIT on, the video first becomes playable in `x264`, and the other codecs in `EnabledOutputCodecs` are added once that finishes. |
+| `JitEnabled` | `true` or `false`. Turns [JIT encoding](/stream/premium-encoding) on or off for this video. It only takes effect on libraries with Premium encoding. With JIT on, the video first becomes playable in `x264`, and the other codecs defined in `EnabledOutputCodecs` become available after encoding has finished. |
 
-Send them on every request of the upload, alongside the authentication headers. Encoding starts with the request that completes the upload and uses the headers on that request. `tus-js-client` sends its `headers` option with every request, so adding them there is enough:
+Send encoding headers on every request of the TUS video upload, alongside the authentication headers. Encoding starts with the request that completes the upload and uses the headers on that request. `tus-js-client` sends its `headers` option with every request, so adding them there is enough:
 
 ```javascript
 const upload = new tus.Upload(file, {
