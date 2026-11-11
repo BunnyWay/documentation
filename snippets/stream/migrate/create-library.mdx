@@ -1,0 +1,9 @@
+DE is always the main storage region. Replicate to the regions closest to your audience, from `UK`, `SE`, `NY`, `LA`, `SG`, `SYD`, `BR`, and `JH`. You can't remove a [replication region](/stream/replication) later.
+
+<Note>
+  Set encoding options, such as `--resolutions` or `--encoding-tier`, when you create the library. Changes you make later apply only to new uploads, not to videos that are already imported. Run `bunny stream libraries create --help` to see every option, or read [Encoding](/stream/encoding).
+</Note>
+
+When the CLI asks how to add videos, choose **Later**. You start the import in the next steps.
+
+Copy the library ID from the output. You pass it to `--library` in the import commands. The flag also accepts the library's name, and `--lib` works as a short alias.

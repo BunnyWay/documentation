@@ -1,12 +1,15 @@
 ---
 title: Magic Containers
 sidebarTitle: Introduction
-description: "Deploy and manage containerized applications on a distributed network of bare-metal servers."
+description: "Run Docker containers in 40+ regions, with autoscaling, sandboxing, and CDN or Anycast endpoints included."
+mode: wide
 ---
+
+import FrameworkGuides from "/snippets/magic-containers/framework-guides.mdx";
 
 ![bunny.net Magic Containers](/images/magic-containers/magic-containers.png)
 
-Magic Containers is an edge compute platform for deploying containerized applications globally. The platform automatically identifies user locations and deploys your applications close to them, with workloads scaling dynamically based on demand.
+Magic Containers runs your Docker images in 40+ regions. Pick an image from Docker Hub or GitHub, choose where it runs, and we'll scale it with your traffic.
 
 <Card
   title="Magic Containers Quickstart"
@@ -15,10 +18,31 @@ Magic Containers is an edge compute platform for deploying containerized applica
   horizontal
 />
 
-## Key features
+## What's included
 
-- **Speed that flies** - Deploy on ultra-fast CPUs and NVMe storage across 40+ regions. Milliseconds matter.
-- **Security, locked down** - No shared memory. No noisy neighbors. Your app runs fully isolated and fully virtualized in its own dedicated space.
-- **Scalability on autopilot** - Traffic spikes? No problem. AI scales your app instantly—within regions and across the globe. No limits.
-- **Simplicity, borderline ridiculous** - Just select your image, hit deploy, and let the magic happen.
-- **Everything built in** - CDN, anycast, load balancing, auto-scaling, seamlessly integrated.
+- [Autoscaling](/magic-containers/autoscaling) adds replicas in a region when CPU usage climbs and removes them when it drops. [Autoprovisioning](/magic-containers/regions#autoprovisioning) follows your traffic and deploys to new regions as demand appears.
+- Every app runs inside a [gVisor sandbox](/magic-containers/sandbox), which handles system calls in a user-space kernel so your code never reaches the host kernel directly.
+- Expose your app through a [CDN endpoint](/magic-containers/endpoints#cdn) for HTTP traffic, or an [Anycast endpoint](/magic-containers/endpoints#anycast) for direct IP access.
+- Attach [persistent volumes](/magic-containers/persistent-volumes) to keep data across restarts and redeploys.
+- Private images work once you [connect your Docker Hub or GitHub registry](/magic-containers/image-registries).
+
+## Deploy your framework
+
+Step-by-step guides for deploying popular frameworks.
+
+<FrameworkGuides />
+
+## Run a database
+
+Deploy a database from its official image, with a persistent volume for the data.
+
+<Columns cols={4}>
+  <Card title="PostgreSQL" icon="/logo/frameworks/postgresql.svg" href="/magic-containers/guides/postgresql" />
+  <Card title="MariaDB" icon="/logo/frameworks/mariadb.svg" href="/magic-containers/guides/mariadb" />
+  <Card title="Redis" icon="/logo/frameworks/redis.svg" href="/magic-containers/guides/redis" />
+  <Card title="ClickHouse" icon="/logo/frameworks/clickhouse.svg" href="/magic-containers/guides/clickhouse" />
+</Columns>
+
+<Card title="Deploy a template" icon="layout-template" href="/magic-containers/templates" horizontal>
+  Start from a pre-built app, such as n8n, Umami, or Next.js with PostgreSQL, and deploy it from the dashboard
+</Card>

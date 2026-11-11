@@ -1,0 +1,42 @@
+---
+title: Statistics and Text Functions
+sidebarTitle: Statistics and text
+description: Median, quartile, mode, and deviation aggregates plus string helper functions available in Bunny Database.
+---
+
+These functions are available in addition to SQLite's [built-in aggregate functions](https://www.sqlite.org/lang_aggfunc.html) and [built-in scalar functions](https://www.sqlite.org/lang_corefunc.html).
+
+## Statistics
+
+| Function                                 | What it does                                                         |
+| ---------------------------------------- | -------------------------------------------------------------------- |
+| `median(x)`                              | Median of the group.                                                 |
+| `lower_quartile(x)`, `upper_quartile(x)` | First and third quartile of the group.                               |
+| `mode(x)`                                | Most frequent value in the group.                                    |
+| `stdev(x)`                               | Sample standard deviation. Note the spelling: `stdev`, not `stddev`. |
+| `variance(x)`                            | Sample variance.                                                     |
+
+```sql
+SELECT median(value), stdev(value) FROM readings;
+```
+
+These are aggregates only and cannot be used as window functions with `OVER`.
+
+On empty or all-`NULL` input, `median()` and `mode()` return `NULL`, while `stdev()` and `variance()` return 0.0.
+
+## Text
+
+| Function                                 | What it does                                                                                                    |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `charindex(needle, haystack [, start])`  | 1-based position of `needle` in `haystack`, or 0 if absent. `charindex('c', 'abcabc')` returns 3.               |
+| `leftstr(s, n)`, `rightstr(s, n)`        | The first or last `n` characters of `s`. Unicode-aware.                                                         |
+| `padl(s, n)`, `padr(s, n)`, `padc(s, n)` | Space-pad `s` to length `n` on the left, right, or both sides. A string already at least `n` long is unchanged. |
+| `proper(s)`                              | Capitalizes the first letter of each word. `proper('hello wORLD')` returns `Hello World`.                       |
+| `replicate(s, n)`                        | Repeats `s` `n` times. `n = 0` returns an empty string and a negative `n` is an error.                          |
+| `reverse(s)`                             | Reverses `s`. Unicode-aware.                                                                                    |
+| `strfilter(s, chars)`                    | Keeps only the characters of `s` that appear in `chars`. `strfilter('hello world', 'lo')` returns `llool`.      |
+| `difference(a, b)`                       | Soundex similarity from 0 to 4. `difference('Robert', 'Rupert')` returns 4. `soundex()` itself is also available. |
+
+```sql
+SELECT proper(name), padl(code, 6) FROM products;
+```

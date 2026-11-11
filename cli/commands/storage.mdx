@@ -1,0 +1,142 @@
+---
+title: bunny storage
+sidebarTitle: storage
+description: "Manage Storage zones and files from the command line."
+---
+
+`bunny storage` manages [Bunny Storage](/storage) through two resource groups:
+
+- **`bunny storage zones`** manages the zone itself: creation, settings, credentials, and custom domains.
+- **`bunny storage files`** lists, uploads, downloads, and deletes files within a zone.
+
+The `[zone]` argument accepts either the zone's name or its numeric ID. Omit it and the CLI uses the zone linked with `bunny storage link`, or prompts you to pick one. `files` commands take the zone through `--zone` / `-z` instead.
+
+`zones` aliases to `zone`; `files` aliases to `file`.
+
+## Linking a directory
+
+Link the current directory to a zone so later commands don't need the zone name.
+
+```bash
+bunny storage link            # pick a zone interactively
+bunny storage link my-zone    # link by name or ID
+bunny storage unlink          # remove .bunny/storage.json
+```
+
+## Zones
+
+```bash
+# Lifecycle
+bunny storage zones list
+bunny storage zones create                                  # interactive wizard
+bunny storage zones create my-zone --region DE
+bunny storage zones show my-zone
+bunny storage zones delete my-zone
+
+# Replication and tiers
+bunny storage zones create my-zone --region NY --replication LA,SG
+bunny storage zones create my-zone --tier ssd --s3          # Edge (SSD) zone with S3 access
+
+# Serve the zone over the web with a pull zone and custom domain
+bunny storage zones create my-zone --pull-zone
+bunny storage zones create my-zone --domain cdn.example.com
+
+# Settings
+bunny storage zones update my-zone                          # edit interactively
+bunny storage zones update my-zone --custom-404-path /404.html
+bunny storage zones update my-zone --replication LA,SG
+```
+
+List the regions a zone can use with `bunny storage regions`. Filter with `--tier hdd|ssd` and `--s3`. See [Storage tiers](/storage/storage-tiers) and [Replication](/storage/replication) for what each option means.
+
+### Credentials
+
+`zones credentials` prints connection details for the [HTTP API](/storage/http), [FTP](/storage/ftp), or [S3](/storage/s3). Secrets are masked unless you pass `--show-secret`.
+
+```bash
+# Pick a connection type and show its credentials
+bunny storage zones credentials my-zone
+bunny storage zones creds my-zone --connection ftp --show-secret
+
+# Ready-to-use client config
+bunny storage zones credentials my-zone --format sdk
+bunny storage zones credentials my-zone --format rclone >> ~/.config/rclone/rclone.conf
+eval "$(bunny storage zones credentials my-zone --format env)"
+
+# Save the connection variables to .env
+bunny storage zones credentials my-zone --connection http --save-env
+```
+
+`--format` accepts `sdk`, `rclone`, `aws`, `s3cmd`, and `env`.
+
+### Custom domains
+
+Manage custom domains on the zone's pull zone. SSL is not requested by default. A free certificate can only be issued once your DNS points at bunny.net.
+
+```bash
+bunny storage zones domains add cdn.example.com              # add, no SSL
+bunny storage zones domains add cdn.example.com --ssl        # add and issue SSL now
+bunny storage zones domains add cdn.example.com --wait       # wait for DNS, then issue SSL
+bunny storage zones domains ssl cdn.example.com              # issue SSL later
+bunny storage zones domains list
+bunny storage zones domains remove cdn.example.com
+```
+
+HTTP is redirected to HTTPS when SSL is issued. Pass `--no-force-ssl` to keep plain HTTP. If the zone has more than one pull zone, pass `--pull-zone <id>`.
+
+## Files
+
+`files` commands use the linked zone unless you pass `--zone`.
+
+```bash
+# List
+bunny storage files list
+bunny storage files list images/
+bunny storage files ls --zone my-zone
+
+# Upload (a trailing slash on --to uploads into that directory)
+bunny storage files upload ./photo.png
+bunny storage files upload ./photo.png --to images/
+bunny storage files upload ./photo.png --to images/hero.png --checksum
+
+# Download
+bunny storage files download images/photo.png
+bunny storage files download images/photo.png --out ./local.png
+
+# Delete a file or directory
+bunny storage files remove images/photo.png
+bunny storage files rm images/ --force
+```
+
+<Warning>
+  `bunny storage files remove /` deletes every file in the zone.
+</Warning>
+
+## Flags
+
+| Flag | Commands | Description |
+| --- | --- | --- |
+| `--region` | `zones create` | Main storage region code, such as `DE`, `NY`, `LA`, or `SG` |
+| `--tier` | `zones create`, `regions` | `hdd` (Standard) or `ssd` (Edge) |
+| `--s3` | `zones create`, `regions` | Enable S3-compatible API access, or list regions that support it |
+| `--replication` | `zones create`, `zones update` | Replication region codes (comma-separated or repeated) |
+| `--pull-zone`, `--pull-zone-name` | `zones create` | Create a pull zone to serve the zone, and optionally name it |
+| `--domain` | `zones create` | Custom domain to add to the pull zone (implies `--pull-zone`) |
+| `--link`, `--no-link` | `zones create` | Link this directory to the new zone, or skip without prompting |
+| `--connection` | `zones create`, `zones credentials` | Connection type: `http`, `ftp`, or `s3` |
+| `--format` | `zones create`, `zones credentials` | Emit client config: `sdk`, `rclone`, `aws`, `s3cmd`, or `env` |
+| `--save-env` | `zones create`, `zones credentials` | Save the connection details to `.env` |
+| `--read-only` | `zones credentials` | Use the zone's read-only password as the secret |
+| `--show-secret` | `zones credentials` | Reveal the secret (masked by default) |
+| `--custom-404-path` | `zones update` | Path to the file returned for missing files |
+| `--rewrite-404-to-200` | `zones update` | Rewrite 404 responses to 200 for extensionless URLs |
+| `--ssl` | `zones domains add` | Issue a free SSL certificate now (DNS must point at bunny.net) |
+| `--wait` | `zones domains add` | Wait up to 10 minutes for DNS, then issue SSL |
+| `--force-ssl`, `--no-force-ssl` | `zones domains add`, `zones domains ssl` | Redirect HTTP to HTTPS (default: on) |
+| `--pull-zone` | `zones domains *` | Pull zone ID, required if the zone has more than one |
+| `--zone`, `-z` | `files *` | Storage zone name or ID (defaults to the linked zone) |
+| `--to` | `files upload` | Remote path (prompts if omitted) |
+| `--content-type` | `files upload` | Override the stored content type |
+| `--checksum` | `files upload` | Send a SHA256 checksum so the server verifies the upload |
+| `--out` | `files download` | Local destination path (defaults to the file name) |
+| `--force`, `-f` | `zones create`, `zones update`, `zones delete`, `zones domains remove`, `files remove`, `unlink` | Skip prompts and confirmations |

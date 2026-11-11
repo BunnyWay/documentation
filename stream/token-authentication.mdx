@@ -16,7 +16,7 @@ To create a secure URL, you must add a **token** and **expires** query parameter
 
 The token parameter is a HEX value of the SHA256 hash based on the key, video ID and expiration time. To generate the token, you can use the following algorithm.
 
-Copy the token security key from the **Token authentication key** card on your library's **Security** page. The field is labelled **API key**, but it's a different value from the library's API key. CDN token authentication uses the same key.
+Copy the token security key from the **Token authentication key** card on your library's **Security** page. The field is labelled **API key**, but it's a different value from the library's API key.
 
 <CodeGroup>
     ```bash SHA256_HEX
@@ -44,3 +44,9 @@ https://video.bunnycdn.com/FairPlay/759/license/?videoId=eb1c4f77-0cda-46be-b47d
 ## Sign URLs in your framework
 
 [Sign embed URLs on the server](/stream/player/signed-embeds) has working signing code for Next.js, Nuxt, and SvelteKit, each with a runnable example app.
+
+For a signed URL to test with, use [`bunny stream videos embed`](/cli/commands/stream#bunny-stream-videos-embed):
+
+```bash
+bunny stream videos embed <video-id> --expires 1h
+```

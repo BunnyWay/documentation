@@ -1,0 +1,37 @@
+---
+title: Introspection
+description: Inspect space usage, open statements, and settings in Bunny Database with dbstat, sqlite_stmt, and pragma table-valued functions.
+---
+
+See the SQLite documentation for the [dbstat virtual table](https://www.sqlite.org/dbstat.html), the [sqlite_stmt virtual table](https://www.sqlite.org/stmt.html), and [pragma table-valued functions](https://www.sqlite.org/pragma.html#pragfunc).
+
+## Modules
+
+| Module                            | What it does                                                                                |
+| --------------------------------- | ------------------------------------------------------------------------------------------- |
+| `dbstat`                          | Per-page or per-table space usage. Read-only. The aggregate form `dbstat('main', 1)` works. |
+| `sqlite_stmt`                     | Prepared statements open on the connection and their counters. Read-only.                   |
+| `pragma_*` table-valued functions | Every pragma that returns rows can be read as a table.                                      |
+
+```sql
+-- Space used by each table
+SELECT name, sum(pgsize) AS bytes
+FROM dbstat
+GROUP BY name
+ORDER BY bytes DESC;
+```
+
+## Reading settings as tables
+
+Any pragma that returns a value can be read as a table through its `pragma_*` [table-valued function](https://www.sqlite.org/pragma.html#pragfunc):
+
+```sql
+SELECT * FROM pragma_table_info('users');
+SELECT * FROM pragma_page_count;
+```
+
+This works for `table_info`, `table_xinfo`, `table_list`, `index_list`, `index_info`, `index_xinfo`, `foreign_key_list`, `foreign_key_check`, `collation_list`, `database_list`, `integrity_check`, `quick_check`, `page_count`, `page_size`, `freelist_count`, `journal_mode`, `synchronous`, `user_version`, `schema_version`, `application_id`, `encoding`, `foreign_keys`, `recursive_triggers`, `temp_store`, `cache_size`, `busy_timeout`, `max_page_count`, `function_list`, `pragma_list`, and `compile_options`.
+
+A few scalar pragmas, including `wal_autocheckpoint`, `mmap_size`, and `stats`, have no table-valued form. Read those with the statement form, such as `PRAGMA wal_autocheckpoint`.
+
+For which settings can be changed, see [Connection settings](/database/sql-extensions/connection-settings).

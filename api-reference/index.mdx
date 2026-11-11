@@ -3,7 +3,9 @@ title: Introduction
 description: Learn about the bunny.net APIs and how to integrate with the platform.
 ---
 
-bunny.net provides a comprehensive set of APIs that enable you to programmatically manage your resources and integrate with our services.
+![bunny.net API](/images/api/bunny-api.png)
+
+The bunny.net APIs let you manage your account and products over HTTP. Create a pull zone from a deploy script, upload files from CI, fetch logs, and more.
 
 <Card
   title="Quickstart"
@@ -11,12 +13,14 @@ bunny.net provides a comprehensive set of APIs that enable you to programmatical
   href="/api-reference/quickstart"
   horizontal
 >
-  Get started and create your first API request
+  Get an API key and make your first request
 </Card>
+
+Every request carries an `AccessKey` header. Most APIs take your account API key, and Stream and Edge Storage each use their own credentials. The [authentication guide](/api-reference/authentication) covers which key goes where.
 
 ## Core Platform API
 
-The [Core Platform API](/api-reference/core) provides access to manage your account and resources:
+The [Core Platform API](/api-reference/core) manages your account and the resources inside it:
 
 - Pull Zones (CDN)
 - Storage Zones
@@ -24,15 +28,13 @@ The [Core Platform API](/api-reference/core) provides access to manage your acco
 - Stream Video Libraries
 - Statistics and billing
 
-### Base URL
-
 ```bash
 https://api.bunny.net
 ```
 
 ## Product APIs
 
-In addition to the Core Platform API, each product has its own dedicated API for managing content and product-specific operations:
+Each product has its own API for content and product-specific operations. Some share the Core Platform base URL, and others run on their own host.
 
 | Product                                             | Description                                             | Base URL                                |
 | --------------------------------------------------- | ------------------------------------------------------- | --------------------------------------- |
@@ -44,4 +46,3 @@ In addition to the Core Platform API, each product has its own dedicated API for
 | [Origin Errors](/api-reference/origin-errors)       | Retrieve origin error logs for pull zones               | `https://cdn-origin-logging.bunny.net`  |
 | [CDN Logging](/api-reference/cdn-logging)           | Retrieve raw request logs for pull zones                | `https://logging.bunnycdn.com`          |
 | [Partner Portal](/api-reference/partner)            | Manage customers, pricing, and billing as a partner     | `https://api.bunny.net`                 |
-

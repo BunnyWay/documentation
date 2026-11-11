@@ -1,11 +1,11 @@
 ---
-title: Storage Tiers
-description: Choose between Standard and Edge (SSD) storage tiers based on your performance requirements
+title: "Storage Tiers"
+description: "Choose between Standard (HDD) and Edge (SSD) storage tiers based on your performance requirements"
 ---
 
 Bunny Storage offers two storage tiers optimized for different use cases and performance requirements.
 
-## Standard tier
+## Standard (HDD) tier
 
 The Standard storage tier is optimized for low cost, high throughput global file storage and delivery.
 
@@ -13,7 +13,7 @@ The Standard storage tier is optimized for low cost, high throughput global file
 
 - **Storage type**: HDD-based
 - **Latency**: Variable (30-300ms)
-- **Replication points**: Up to 9 regions (HTTP API/FTP) or 4 regions (S3-compatible)
+- **Replication points**: Up to 9 regions (HTTP API/FTP) or 8 regions (S3-compatible)
 - **Primary region**: Any available region
 - **Recommended regions**: Geographically diverse
 
@@ -34,7 +34,7 @@ The Edge storage tier is optimized for ultra-high global performance powered by 
 
 - **Storage type**: SSD-based
 - **Latency**: Consistent (1-5ms)
-- **Replication points**: Up to 15 regions (HTTP API/FTP) or 4 regions (S3-compatible)
+- **Replication points**: Up to 15 regions (HTTP API/FTP) or 8 regions (S3-compatible)
 - **Primary region**: Frankfurt (DE) only
 - **Recommended regions**: As many as possible
 
@@ -54,12 +54,12 @@ The Edge storage tier is optimized for ultra-high global performance powered by 
 
 ## S3 compatibility impact
 
-When S3 compatibility is enabled (currently in beta), the number of available replication points is reduced:
+When S3 compatibility is enabled, the number of available replication points is reduced:
 
 | Tier       | HTTP API/FTP     | S3-compatible |
 | ---------- | ---------------- | ------------- |
-| Standard   | Up to 9 regions  | 4 regions     |
-| Edge (SSD) | Up to 15 regions | 4 regions     |
+| Standard | Up to 9 regions | 8 regions |
+| Edge (SSD) | Up to 15 regions | 8 regions |
 
 ## Choosing a tier
 

@@ -54,7 +54,7 @@ When you enable replication regions:
 
 Your primary storage region is where file uploads are performed. All uploads go to the primary region first, then are automatically replicated to your selected replication regions.
 
-**Standard tier**: You can select any available region as your primary region.
+**Standard (HDD) tier**: You can select any available region as your primary region.
 
 **Edge (SSD) tier**: Frankfurt (DE) must be the primary region.
 
@@ -74,17 +74,17 @@ Your primary storage region is where file uploads are performed. All uploads go 
 | North America  | Los Angeles (LA), New York (NY)             |
 | Asia & Oceania | Singapore (SG), Sydney (SYD)                |
 | LATAM          | Sao Paulo (BR)                              |
-| Africa         | Johannesburg (ZA)                           |
+| Africa | Johannesburg (JH) |
 
 ### Edge (SSD) tier - up to 15 regions
 
 | Continent      | Regions                                                                                                                                             |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Europe         | <Tooltip tip="Frankfurt (DE) is the required primary region for Edge (SSD) tier">Frankfurt (DE)</Tooltip>, Stockholm (SE), Madrid (ES), Prague (CZ) |
-| North America  | Los Angeles (LA), Seattle (WA), New York (NY), Miami (FL)                                                                                           |
-| Asia & Oceania | Sydney (AU), Tokyo (JP), Singapore (SG), Hong Kong (HK)                                                                                             |
+| North America | Los Angeles (LA), Seattle (WA), New York (NY), Miami (MI) |
+| Asia & Oceania | Sydney (SYD), Tokyo (JP), Singapore (SG), Hong Kong (HK) |
 | LATAM          | Sao Paulo (BR)                                                                                                                                      |
-| Africa         | Johannesburg (ZA)                                                                                                                                   |
+| Africa | Johannesburg (JH) |
 
 See [Pricing](/storage/pricing) for region-specific costs.
 
@@ -94,8 +94,8 @@ The number of available replication points depends on your storage tier and whet
 
 | Storage Tier   | HTTP API/FTP     | S3-compatible |
 | -------------- | ---------------- | ------------- |
-| Standard (HDD) | Up to 9 regions  | 4 regions     |
-| Edge (SSD)     | Up to 15 regions | 4 regions     |
+| Standard (HDD) | Up to 9 regions | 8 regions |
+| Edge (SSD) | Up to 15 regions | 8 regions |
 
 See [Storage Tiers](/storage/storage-tiers) for more details about each tier.
 
@@ -108,7 +108,7 @@ See [Storage Tiers](/storage/storage-tiers) for more details about each tier.
 
 For optimal reliability and performance:
 
-- **Standard tier**: Enable geographically diverse regions (e.g., US, Europe, Asia)
+- **Standard (HDD) tier**: Enable geographically diverse regions (e.g., US, Europe, Asia)
 - **Edge (SSD) tier**: Enable as many regions as possible for lowest latency worldwide
 - **Minimum**: At least one additional replication region for eleven nines durability
 - **High availability**: Multiple replication regions across different continents

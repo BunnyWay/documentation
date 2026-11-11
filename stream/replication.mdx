@@ -35,6 +35,13 @@ In the event that a file has just been uploaded to our platform, but the file ha
 | Asia - Singapore |
 | LATAM - São Paulo |
 
+With the CLI, set regions at creation with `--replication-regions` and add more later with `--add-replication-regions`:
+
+```bash
+bunny stream libraries create my-library --replication-regions NY,SG,SYD
+bunny stream libraries update my-library --add-replication-regions UK
+```
+
 <Info>
   ### Should I enable geo-replication?
 

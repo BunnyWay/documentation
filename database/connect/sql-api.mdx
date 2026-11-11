@@ -208,19 +208,25 @@ Use `:name`, `$name`, or `@name` placeholders with `named_args`:
 
 ## Value types
 
-The `type` field in parameter values must be one of:
+Each value is a JSON object with a `type` field. The shape of the object depends on the type:
 
-| Type      | Description                  |
-| --------- | ---------------------------- |
-| `null`    | NULL value                   |
-| `integer` | 64-bit signed integer        |
-| `float`   | 64-bit floating point        |
-| `text`    | UTF-8 string                 |
-| `blob`    | Binary data (base64 encoded) |
+| Type      | Description                  | JSON shape                                       |
+| --------- | ---------------------------- | ------------------------------------------------ |
+| `null`    | NULL value                   | `{ "type": "null" }`                             |
+| `integer` | 64-bit signed integer        | `{ "type": "integer", "value": "42" }`           |
+| `float`   | 64-bit floating point        | `{ "type": "float", "value": 3.14 }`             |
+| `text`    | UTF-8 string                 | `{ "type": "text", "value": "Kit" }`             |
+| `blob`    | Binary data (base64 encoded) | `{ "type": "blob", "base64": "AAH/IGJpbmFyeQ" }` |
+
+The server rejects values that do not match these shapes:
+
+- An `integer` value must be a JSON string, not a number. This avoids precision loss, since some JSON implementations treat all numbers as 64-bit floats.
+- A `float` value must be a JSON number. Sending it as a string returns a `400` error.
+- A `blob` carries its data in a `base64` field, not in `value`. The server accepts base64 with or without padding.
 
 <Note>
-  Values are passed as strings in JSON to avoid precision loss, since some JSON
-  implementations treat all numbers as 64-bit floats.
+  Blobs in responses are encoded as base64 without padding. If your base64
+  decoder is strict, add the missing `=` padding before decoding.
 </Note>
 
 ## Multiple statements
