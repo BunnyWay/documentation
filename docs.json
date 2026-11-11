@@ -665,7 +665,14 @@
                 "group": "Playback",
                 "pages": [
                   "stream/player",
-                  "stream/player-settings",
+                  {
+                    "group": "Player Settings",
+                    "pages": [
+                      "stream/player-settings",
+                      "stream/player-ui-language"
+                    ],
+                    "expanded": true
+                  },
                   "stream/embedding",
                   "stream/playback-api",
                   "stream/mp4-downloads",
