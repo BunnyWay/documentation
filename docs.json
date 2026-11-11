@@ -664,10 +664,10 @@
               {
                 "group": "Playback",
                 "pages": [
-                  "stream/player",
                   {
-                    "group": "Player Settings",
+                    "group": "Bunny Player",
                     "pages": [
+                      "stream/player",
                       "stream/player-settings",
                       "stream/player-ui-language"
                     ],
