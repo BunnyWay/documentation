@@ -387,7 +387,7 @@ A recorded broadcast through the API follows this order. Calling `/start` while 
     Connect your encoder to the RTMP or SRT ingest URL. The stream moves to **Preview** (`status` `3`). Viewers can't watch yet, and nothing is recorded.
   </Step>
   <Step title="Wait for the ingest to be ready">
-    Poll `GET /library/{libraryId}/live/{streamId}/status` until `readyToStart` and `primaryLive` are both `true`. This usually takes 15-20 seconds after the encoder connects.
+    Poll `GET /library/{libraryId}/live/{streamId}/status` until `readyToStart` and `primaryLive` are both `true`.
   </Step>
   <Step title="Start the stream">
     `PUT /library/{libraryId}/live/{streamId}/start`. The stream moves to **Running** (`status` `4`), becomes watchable, and recording begins. Allow another 15-20 seconds before playback is available to viewers.
@@ -396,7 +396,7 @@ A recorded broadcast through the API follows this order. Calling `/start` while 
     `PUT /library/{libraryId}/live/{streamId}/stop` when you're done. Your encoder is disconnected and, with `recordVod` on, the recording is queued for encoding.
   </Step>
   <Step title="Pick up the recording">
-    Listen for the `LiveStreamRecordingQueued` (`19`) and `LiveStreamRecordingReady` (`20`) [webhooks](#webhooks). Both include the recording's `VideoGuid`. Once encoding has finished, the video is available through the regular video endpoints, such as `GET /library/{libraryId}/videos`.
+    Listen for the `LiveStreamRecordingQueued` (`19`) and `LiveStreamRecordingReady` (`20`) [webhooks](#webhooks). Both include the recording's `VideoGuid`. Once encoding has finished, currently the video on demand is only available through the Get Video endpoint by VideoID. 
   </Step>
 </Steps>
 
