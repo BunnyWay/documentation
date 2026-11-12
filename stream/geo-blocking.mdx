@@ -178,7 +178,7 @@ Countries that span two continents are placed where they're usually grouped: Rus
 If you switch modes while countries are on the list, the list is kept and its meaning flips. Your blocked countries become your allowed countries, and vice versa.
 
 <Warning>
-  Switching modes reverses the effect of your rule. For example, if you've blocked three countries and switch to **Allow only selected countries**, those three become the only countries that can stream, and every other country is blocked once you save. Check the summary above the list before clicking **Save Settings**.
+  Switching modes reverses the effect of your rule. For example, if you've blocked three countries and switch to **Allow selected countries**, those three become the only countries that can stream, and every other country is blocked once you save. Check the summary above the list before clicking **Save Settings**.
 </Warning>
 
 ## How geo-blocking works
@@ -186,13 +186,13 @@ If you switch modes while countries are on the list, the list is kept and its me
 When a viewer requests a video, bunny.net determines their country from their IP address and checks it against your library's rule:
 
 - In **Block selected countries** mode, the request is rejected if the viewer's country is on the list. All other countries can stream.
-- In **Allow only selected countries** mode, the request is allowed only if the viewer's country is on the list. All other countries are rejected.
+- In **Allow selected countries** mode, the request is allowed only if the viewer's country is on the list. All other countries are rejected.
 
 A rejected viewer cannot connect to the stream, so playback fails for every video in the library rather than for a single file.
 
 ## Choosing a mode
 
-Use **Allow only selected countries** when your default should be _deny_. For example, when you're licensed to distribute in only a handful of territories and want everywhere else closed off. Adding a small set of countries, or a single preset such as **UK and Ireland**, is quicker and safer than trying to block every country you don't serve.
+Use **Allow selected countries** when your default should be _deny_. For example, when you're licensed to distribute in only a handful of territories and want everywhere else closed off. Adding a small set of countries, or a single preset such as **UK and Ireland**, is quicker and safer than trying to block every country you don't serve.
 
 Use **Block selected countries** when your default should be _allow_. For example, when your content is available almost everywhere and you only need to exclude a few specific countries for legal or contractual reasons.
 
