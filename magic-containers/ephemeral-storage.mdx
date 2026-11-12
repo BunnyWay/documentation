@@ -1,0 +1,46 @@
+---
+title: Ephemeral Storage
+description: "What counts toward the 10 GiB ephemeral storage limit in Magic Containers, and what happens when a container goes over it."
+---
+
+Ephemeral storage is the writable file system each container gets on top of its image. Anything your app writes there lasts until the container restarts, so treat it as scratch space.
+
+## What counts toward the limit
+
+Every file a container writes to its own file system counts, including:
+
+- Files your app creates, downloads, or changes.
+- Temporary files, caches, build output, and uploads kept on local disk.
+- Edits to files that ship in the image. Changing one copies it into the writable layer, so it counts at its full size.
+
+## What doesn't count
+
+- **Image layers.** They're read-only. Only your changes to them count.
+- **Persistent volumes.** A [persistent volume](/magic-containers/persistent-volumes) has its own size limit.
+- **Logs.** Magic Containers stores stdout and stderr outside the container file system. See [Logs](/magic-containers/logs).
+
+## Limit
+
+Each container can use up to 10 GiB of ephemeral storage. In a [multi-container](/magic-containers/multi-container) pod, every container gets its own 10 GiB.
+
+## How the platform measures usage
+
+Magic Containers counts the disk space files actually use, so a sparse file only counts for the blocks that hold data.
+
+## What happens at the limit
+
+When a container goes over 10 GiB, Magic Containers evicts the pod, which stops every container in it, and then [restarts the pod](/magic-containers/restart-policy) with an empty file system.
+
+<Warning>
+If your app writes the same data again after the restart, it hits the limit again and the pod keeps restarting. Move that data to a [persistent volume](/magic-containers/persistent-volumes).
+</Warning>
+
+## When the data is lost
+
+Files in ephemeral storage are lost in these cases:
+
+- The container restarts. See [Restart Policy](/magic-containers/restart-policy) for the causes.
+- You deploy a new image or configuration.
+- Magic Containers moves the pod to another node, or removes it while scaling down.
+
+To keep the data after a restart, use a [persistent volume](/magic-containers/persistent-volumes).
