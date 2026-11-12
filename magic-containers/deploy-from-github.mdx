@@ -12,12 +12,12 @@ description: Build and deploy an app to Magic Containers straight from a GitHub 
 
 Deploy an app to Magic Containers straight from a GitHub repository. You pick a repository and branch, and bunny.net builds the image from your Dockerfile, stores it, and rolls it out to your regions. You don't need to build locally or set up a registry. After the first deploy, your app redeploys every time you push to the branch.
 
-If you already have a built image in a registry, see [Deploy an App](/magic-containers/deploy) instead.
+To deploy an image you've already built, see [Deploy an App](/magic-containers/deploy).
 
 ## Prerequisites
 
 - A GitHub account connected to bunny.net. You can connect one while you deploy.
-- A repository with a `Dockerfile`. Add an `EXPOSE` instruction for the port your app listens on, so the port can be detected for you.
+- A repository with a `Dockerfile`. Add an `EXPOSE` instruction for the port your app listens on, so Magic Containers can detect the port.
 
 ## Deploy your app
 
@@ -72,7 +72,7 @@ If you already have a built image in a registry, see [Deploy an App](/magic-cont
 
     Under **Public HTTP endpoint**, choose how traffic reaches the app:
 
-    - **Port → public HTTPS URL**: routes public traffic to that port through a default HTTP endpoint. TLS is terminated at the edge.
+    - **Port → public HTTPS URL**: routes public traffic to that port through a default HTTP endpoint. bunny.net terminates TLS at the edge.
     - **No public endpoint**: the app is internal only. Your other containers can still reach it.
 
     <Frame>
@@ -101,7 +101,7 @@ If you already have a built image in a registry, see [Deploy an App](/magic-cont
   </Step>
 
   <Step title="Open your app">
-    When all steps complete, the app is live. If you chose a public endpoint, the URL of your app and the port it serves from are shown. Click **Open App** to visit it, or **App Overview** to manage it.
+    When all steps complete, the app is live. If you chose a public endpoint, the page shows your app's URL and port. Click **Open App** to visit it, or **App Overview** to manage it.
 
     <Frame>
       ![Completed deployment showing the app is live with its public URL](/images/magic-containers/deploy-from-github-live.png)

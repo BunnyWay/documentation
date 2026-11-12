@@ -40,7 +40,7 @@ You can redeploy the latest build, or roll back to any earlier build:
 - To redeploy the latest build, click the **...** menu on the right of **Latest build**.
 - To redeploy an earlier build, find it under **History** and click the **...** menu on the right of its row.
 
-The build is rolled out to your regions again. To control how new instances replace running ones, see [Rolling Updates](/magic-containers/rolling-updates).
+Magic Containers rolls the build out to your regions again. To control how new instances replace running ones, see [Rolling Updates](/magic-containers/rolling-updates).
 
 ## Deployment settings
 
@@ -58,10 +58,10 @@ Go to **Deployments > Settings** to change how and when your app is built.
 
 ### Build
 
-These settings apply from the next build. Builds that already ran don't change.
+These settings apply from the next build.
 
 - **Root directory**: the folder to build from. Leave it empty to build from the repository root. Set it when your app lives in a subfolder of a monorepo.
 - **Dockerfile**: the path to the Dockerfile, relative to the root directory.
-- **Watch paths**: the files that trigger a deploy when they change. Defaults to all files.
+- **Watch paths**: the files that trigger a redeploy when they change. Defaults to all files.
 
 Click **Save Changes** to apply your changes.
