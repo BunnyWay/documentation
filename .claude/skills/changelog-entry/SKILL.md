@@ -33,7 +33,7 @@ If one exists, don't add another.
 - Put the entry in date order, newest first.
 - Indent the content two spaces inside `<Update>`.
 - Put one blank line between entries.
-- `label` is the date the change went live, as `YYYY-MM-DD`. It is not the date of the PR.
+- `label` is the date the change went live, as `YYYY-MM-DD`. Use the merge date of the source PR, unless the PR states a go-live date.
 
 ## Tags
 
