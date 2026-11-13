@@ -1187,6 +1187,7 @@
                   "cli/quickstart",
                   "cli/installation",
                   "cli/configuration",
+                  "cli/telemetry",
                   "cli/commands/auth",
                   "cli/changelog"
                 ]
