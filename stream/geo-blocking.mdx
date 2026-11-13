@@ -14,7 +14,9 @@ keywords:
   - "blocklist"
   - "presets"
   - "country restriction"
-hidden: true
+  - "country codes"
+  - "ISO 3166-1"
+  - "alpha-2"
 ---
 
 Geo-blocking lets you control who can watch your videos based on the viewer's country. It works at the video library level and applies to every video the library delivers, giving you a single place to enforce licensing, regional-rights, or compliance rules across your whole catalog.
@@ -22,7 +24,7 @@ Geo-blocking lets you control who can watch your videos based on the viewer's co
 Geo-blocking has two modes. You pick one, then build a single list of countries for it:
 
 - **Block selected countries** - the countries on your list are rejected. Every other country can stream.
-- **Allow only selected countries** - only the countries on your list can stream. Every other country is blocked.
+- **Allow selected countries** - only the countries on your list can stream. Every other country is blocked.
 
 <Note>
   Geo-blocking is configured per video library. If you deliver content through several libraries, repeat the setup for each library you want to restrict.
@@ -41,19 +43,19 @@ Geo-blocking has two modes. You pick one, then build a single list of countries 
     Switch on the **Enable Geo-blocking** toggle.
   </Step>
   <Step title="Choose a mode">
-    Select either **Block selected countries** or **Allow only selected countries**. The mode decides what happens to the countries you add in the next step. You can switch modes at any time. See [Switching modes](#switching-modes).
+    Select either **Block selected countries** or **Allow selected countries**. The mode decides what happens to the countries you add in the next step. You can switch modes at any time. See [Switching modes](#switching-modes).
   </Step>
   <Step title="Add countries">
     Build your country list in either or both of these ways:
 
     - **Select countries** - open the dropdown and pick individual countries.
-    - **Add Preset** - add a whole group of countries in one click, such as a continent, a data protection zone, or a common business region. See [Presets](#presets).
+    - **Append Preset** - add a whole group of countries in one click, such as a continent, a data protection zone, or a common business region. See [Presets](#presets).
 
-    Each country you add appears as a tag below the dropdown. The list heading shows **Blocked countries** or **Allowed countries**, depending on the mode, with a count of the countries on it.
+    Each country you add appears as a list below the dropdown. The list heading shows **You blocked XXX countries** or **You allowed XXX countries**, depending on the mode, with a count of the countries on it.
 
-    Once you've added a country, the map colours every country by whether its viewers can stream: green for allowed and red for blocked. This lets you confirm your coverage at a glance. A summary above the list describes the effect of your current rule, for example _Viewers in 27 countries can't stream. Viewers everywhere else can._
+    Once you've added a country, the map colours every country by whether its viewers can stream: green for allowed and red for blocked. This lets you confirm your coverage at a glance.
 
-    To remove a single country, click the **×** on its tag. To remove every country and start again, click **Clear List**.
+    To remove a single country, click the **×** next it's name on the dropdown. To remove every country and start again, click **Remove all**.
   </Step>
   <Step title="Save your settings">
     Click **Save Settings** to apply the rule. The button stays inactive until you've added at least one country.
@@ -66,7 +68,7 @@ Geo-blocking has two modes. You pick one, then build a single list of countries 
 
 ## Presets
 
-Presets let you add a group of countries without selecting each one individually. Click **Add Preset** above the country list and choose a group. The badge next to each preset shows how many countries it contains, and all of them are added to your list.
+Presets let you add a group of countries without selecting each one individually. Click **Append Preset** above the country list and choose a group. The badge next to each preset shows how many countries it contains, and all of them are added to your list.
 
 | Group | Presets |
 | --- | --- |
@@ -74,7 +76,7 @@ Presets let you add a group of countries without selecting each one individually
 | **Data protection** | European Union (EU), EEA (GDPR), EEA and UK (GDPR and UK GDPR) |
 | **Regions** | Asia-Pacific (APAC), Australia and New Zealand, Benelux, DACH, Latin America (LATAM), Middle East and North Africa (MENA), Nordics, UK and Ireland, US and Canada |
 
-You can combine several presets and mix them with individually selected countries. A preset only adds countries to your list, so after adding one you can remove any country you don't want by clicking the **×** on its tag. For example, to stream only within the EEA and the UK, select **Allow only selected countries** and add the **EEA and UK (GDPR and UK GDPR)** preset.
+You can combine several presets and mix them with individually selected countries. A preset only adds countries to your list, so after adding one you can remove any country you don't want by clicking the **×** on its name. For example, to stream only within the EEA and the UK, select **Allow selected countries** and add the **EEA and UK (GDPR and UK GDPR)** preset.
 
 ### What each preset includes
 
@@ -174,12 +176,274 @@ Countries that span two continents are placed where they're usually grouped: Rus
   The map updates as you add presets, so it's a quick way to check that a preset covers the territories you expect before you save.
 </Tip>
 
+## Supported countries and codes
+
+Geo-blocking supports the countries and territories below, each identified by its two-letter [ISO 3166-1 alpha-2](https://www.iso.org/iso-3166-country-codes.html) code. The **Continent preset** column shows which continent preset adds each one.
+
+<Note>
+  The United Kingdom uses the ISO code `GB`, not `UK`. Kosovo uses `XK`, a widely adopted user-assigned code, because it has no official ISO 3166-1 code.
+</Note>
+
+<Accordion title="View all country and territory codes" icon="globe">
+  | Country or territory | ISO code | Continent preset |
+  | --- | --- | --- |
+  | Afghanistan | `AF` | Asia |
+  | Åland Islands | `AX` | Europe |
+  | Albania | `AL` | Europe |
+  | Algeria | `DZ` | Africa |
+  | American Samoa | `AS` | Oceania |
+  | Andorra | `AD` | Europe |
+  | Angola | `AO` | Africa |
+  | Anguilla | `AI` | North America |
+  | Antigua and Barbuda | `AG` | North America |
+  | Argentina | `AR` | South America |
+  | Armenia | `AM` | Asia |
+  | Aruba | `AW` | North America |
+  | Australia | `AU` | Oceania |
+  | Austria | `AT` | Europe |
+  | Azerbaijan | `AZ` | Asia |
+  | Bahamas | `BS` | North America |
+  | Bahrain | `BH` | Asia |
+  | Bangladesh | `BD` | Asia |
+  | Barbados | `BB` | North America |
+  | Belarus | `BY` | Europe |
+  | Belgium | `BE` | Europe |
+  | Belize | `BZ` | North America |
+  | Benin | `BJ` | Africa |
+  | Bermuda | `BM` | North America |
+  | Bhutan | `BT` | Asia |
+  | Bolivia | `BO` | South America |
+  | Bosnia and Herzegovina | `BA` | Europe |
+  | Botswana | `BW` | Africa |
+  | Bouvet Island | `BV` | South America |
+  | Brazil | `BR` | South America |
+  | British Indian Ocean Territory | `IO` | Africa |
+  | British Virgin Islands | `VG` | North America |
+  | Brunei | `BN` | Asia |
+  | Bulgaria | `BG` | Europe |
+  | Burkina Faso | `BF` | Africa |
+  | Burundi | `BI` | Africa |
+  | Cambodia | `KH` | Asia |
+  | Cameroon | `CM` | Africa |
+  | Canada | `CA` | North America |
+  | Cape Verde | `CV` | Africa |
+  | Caribbean Netherlands | `BQ` | North America |
+  | Cayman Islands | `KY` | North America |
+  | Central African Republic | `CF` | Africa |
+  | Chad | `TD` | Africa |
+  | Chile | `CL` | South America |
+  | China | `CN` | Asia |
+  | Christmas Island | `CX` | Oceania |
+  | Cocos (Keeling) Islands | `CC` | Oceania |
+  | Colombia | `CO` | South America |
+  | Comoros | `KM` | Africa |
+  | Congo | `CG` | Africa |
+  | Congo (DRC) | `CD` | Africa |
+  | Cook Islands | `CK` | Oceania |
+  | Costa Rica | `CR` | North America |
+  | Côte d'Ivoire | `CI` | Africa |
+  | Croatia | `HR` | Europe |
+  | Cuba | `CU` | North America |
+  | Curaçao | `CW` | North America |
+  | Cyprus | `CY` | Europe |
+  | Czech Republic | `CZ` | Europe |
+  | Denmark | `DK` | Europe |
+  | Djibouti | `DJ` | Africa |
+  | Dominica | `DM` | North America |
+  | Dominican Republic | `DO` | North America |
+  | Ecuador | `EC` | South America |
+  | Egypt | `EG` | Africa |
+  | El Salvador | `SV` | North America |
+  | Equatorial Guinea | `GQ` | Africa |
+  | Eritrea | `ER` | Africa |
+  | Estonia | `EE` | Europe |
+  | Eswatini | `SZ` | Africa |
+  | Ethiopia | `ET` | Africa |
+  | Falkland Islands | `FK` | South America |
+  | Faroe Islands | `FO` | Europe |
+  | Fiji | `FJ` | Oceania |
+  | Finland | `FI` | Europe |
+  | France | `FR` | Europe |
+  | French Guiana | `GF` | South America |
+  | French Polynesia | `PF` | Oceania |
+  | French Southern Territories | `TF` | Africa |
+  | Gabon | `GA` | Africa |
+  | Gambia | `GM` | Africa |
+  | Georgia | `GE` | Asia |
+  | Germany | `DE` | Europe |
+  | Ghana | `GH` | Africa |
+  | Gibraltar | `GI` | Europe |
+  | Greece | `GR` | Europe |
+  | Greenland | `GL` | North America |
+  | Grenada | `GD` | North America |
+  | Guadeloupe | `GP` | North America |
+  | Guam | `GU` | Oceania |
+  | Guatemala | `GT` | North America |
+  | Guernsey | `GG` | Europe |
+  | Guinea | `GN` | Africa |
+  | Guinea-Bissau | `GW` | Africa |
+  | Guyana | `GY` | South America |
+  | Haiti | `HT` | North America |
+  | Heard Island and McDonald Islands | `HM` | Oceania |
+  | Honduras | `HN` | North America |
+  | Hong Kong | `HK` | Asia |
+  | Hungary | `HU` | Europe |
+  | Iceland | `IS` | Europe |
+  | India | `IN` | Asia |
+  | Indonesia | `ID` | Asia |
+  | Iran | `IR` | Asia |
+  | Iraq | `IQ` | Asia |
+  | Ireland | `IE` | Europe |
+  | Isle of Man | `IM` | Europe |
+  | Israel | `IL` | Asia |
+  | Italy | `IT` | Europe |
+  | Jamaica | `JM` | North America |
+  | Japan | `JP` | Asia |
+  | Jersey | `JE` | Europe |
+  | Jordan | `JO` | Asia |
+  | Kazakhstan | `KZ` | Asia |
+  | Kenya | `KE` | Africa |
+  | Kiribati | `KI` | Oceania |
+  | Kosovo | `XK` | Europe |
+  | Kuwait | `KW` | Asia |
+  | Kyrgyzstan | `KG` | Asia |
+  | Laos | `LA` | Asia |
+  | Latvia | `LV` | Europe |
+  | Lebanon | `LB` | Asia |
+  | Lesotho | `LS` | Africa |
+  | Liberia | `LR` | Africa |
+  | Libya | `LY` | Africa |
+  | Liechtenstein | `LI` | Europe |
+  | Lithuania | `LT` | Europe |
+  | Luxembourg | `LU` | Europe |
+  | Macao | `MO` | Asia |
+  | Madagascar | `MG` | Africa |
+  | Malawi | `MW` | Africa |
+  | Malaysia | `MY` | Asia |
+  | Maldives | `MV` | Asia |
+  | Mali | `ML` | Africa |
+  | Malta | `MT` | Europe |
+  | Marshall Islands | `MH` | Oceania |
+  | Martinique | `MQ` | North America |
+  | Mauritania | `MR` | Africa |
+  | Mauritius | `MU` | Africa |
+  | Mayotte | `YT` | Africa |
+  | Mexico | `MX` | North America |
+  | Micronesia | `FM` | Oceania |
+  | Moldova | `MD` | Europe |
+  | Monaco | `MC` | Europe |
+  | Mongolia | `MN` | Asia |
+  | Montenegro | `ME` | Europe |
+  | Montserrat | `MS` | North America |
+  | Morocco | `MA` | Africa |
+  | Mozambique | `MZ` | Africa |
+  | Myanmar | `MM` | Asia |
+  | Namibia | `NA` | Africa |
+  | Nauru | `NR` | Oceania |
+  | Nepal | `NP` | Asia |
+  | Netherlands | `NL` | Europe |
+  | New Caledonia | `NC` | Oceania |
+  | New Zealand | `NZ` | Oceania |
+  | Nicaragua | `NI` | North America |
+  | Niger | `NE` | Africa |
+  | Nigeria | `NG` | Africa |
+  | Niue | `NU` | Oceania |
+  | Norfolk Island | `NF` | Oceania |
+  | North Korea | `KP` | Asia |
+  | North Macedonia | `MK` | Europe |
+  | Northern Mariana Islands | `MP` | Oceania |
+  | Norway | `NO` | Europe |
+  | Oman | `OM` | Asia |
+  | Pakistan | `PK` | Asia |
+  | Palau | `PW` | Oceania |
+  | Palestine | `PS` | Asia |
+  | Panama | `PA` | North America |
+  | Papua New Guinea | `PG` | Oceania |
+  | Paraguay | `PY` | South America |
+  | Peru | `PE` | South America |
+  | Philippines | `PH` | Asia |
+  | Pitcairn Islands | `PN` | Oceania |
+  | Poland | `PL` | Europe |
+  | Portugal | `PT` | Europe |
+  | Puerto Rico | `PR` | North America |
+  | Qatar | `QA` | Asia |
+  | Réunion | `RE` | Africa |
+  | Romania | `RO` | Europe |
+  | Russia | `RU` | Europe |
+  | Rwanda | `RW` | Africa |
+  | Saint Barthélemy | `BL` | North America |
+  | Saint Helena (incl. Ascension and Tristan da Cunha) | `SH` | Africa |
+  | Saint Kitts and Nevis | `KN` | North America |
+  | Saint Lucia | `LC` | North America |
+  | Saint Martin (French part) | `MF` | North America |
+  | Saint Pierre and Miquelon | `PM` | North America |
+  | Saint Vincent and the Grenadines | `VC` | North America |
+  | Samoa | `WS` | Oceania |
+  | San Marino | `SM` | Europe |
+  | Sao Tome and Principe | `ST` | Africa |
+  | Saudi Arabia | `SA` | Asia |
+  | Senegal | `SN` | Africa |
+  | Serbia | `RS` | Europe |
+  | Seychelles | `SC` | Africa |
+  | Sierra Leone | `SL` | Africa |
+  | Singapore | `SG` | Asia |
+  | Sint Maarten (Dutch part) | `SX` | North America |
+  | Slovakia | `SK` | Europe |
+  | Slovenia | `SI` | Europe |
+  | Solomon Islands | `SB` | Oceania |
+  | Somalia | `SO` | Africa |
+  | South Africa | `ZA` | Africa |
+  | South Georgia and the South Sandwich Islands | `GS` | South America |
+  | South Korea | `KR` | Asia |
+  | South Sudan | `SS` | Africa |
+  | Spain | `ES` | Europe |
+  | Sri Lanka | `LK` | Asia |
+  | Sudan | `SD` | Africa |
+  | Suriname | `SR` | South America |
+  | Svalbard and Jan Mayen | `SJ` | Europe |
+  | Sweden | `SE` | Europe |
+  | Switzerland | `CH` | Europe |
+  | Syria | `SY` | Asia |
+  | Taiwan | `TW` | Asia |
+  | Tajikistan | `TJ` | Asia |
+  | Tanzania | `TZ` | Africa |
+  | Thailand | `TH` | Asia |
+  | Timor-Leste | `TL` | Asia |
+  | Togo | `TG` | Africa |
+  | Tokelau | `TK` | Oceania |
+  | Tonga | `TO` | Oceania |
+  | Trinidad and Tobago | `TT` | North America |
+  | Tunisia | `TN` | Africa |
+  | Turkey | `TR` | Asia |
+  | Turkmenistan | `TM` | Asia |
+  | Turks and Caicos Islands | `TC` | North America |
+  | Tuvalu | `TV` | Oceania |
+  | Uganda | `UG` | Africa |
+  | Ukraine | `UA` | Europe |
+  | United Arab Emirates | `AE` | Asia |
+  | United Kingdom | `GB` | Europe |
+  | United States | `US` | North America |
+  | Uruguay | `UY` | South America |
+  | US Minor Outlying Islands | `UM` | Oceania |
+  | US Virgin Islands | `VI` | North America |
+  | Uzbekistan | `UZ` | Asia |
+  | Vanuatu | `VU` | Oceania |
+  | Vatican City | `VA` | Europe |
+  | Venezuela | `VE` | South America |
+  | Vietnam | `VN` | Asia |
+  | Wallis and Futuna | `WF` | Oceania |
+  | Western Sahara | `EH` | Africa |
+  | Yemen | `YE` | Asia |
+  | Zambia | `ZM` | Africa |
+  | Zimbabwe | `ZW` | Africa |
+</Accordion>
+
 ## Switching modes
 
 If you switch modes while countries are on the list, the list is kept and its meaning flips. Your blocked countries become your allowed countries, and vice versa.
 
 <Warning>
-  Switching modes reverses the effect of your rule. For example, if you've blocked three countries and switch to **Allow only selected countries**, those three become the only countries that can stream, and every other country is blocked once you save. Check the summary above the list before clicking **Save Settings**.
+  Switching modes reverses the effect of your rule. For example, if you've blocked three countries and switch to **Allow selected countries**, those three become the only countries that can stream, and every other country is blocked once you save. Check the summary above the list before clicking **Save Settings**.
 </Warning>
 
 ## How geo-blocking works
@@ -187,13 +451,13 @@ If you switch modes while countries are on the list, the list is kept and its me
 When a viewer requests a video, bunny.net determines their country from their IP address and checks it against your library's rule:
 
 - In **Block selected countries** mode, the request is rejected if the viewer's country is on the list. All other countries can stream.
-- In **Allow only selected countries** mode, the request is allowed only if the viewer's country is on the list. All other countries are rejected.
+- In **Allow selected countries** mode, the request is allowed only if the viewer's country is on the list. All other countries are rejected.
 
 A rejected viewer cannot connect to the stream, so playback fails for every video in the library rather than for a single file.
 
 ## Choosing a mode
 
-Use **Allow only selected countries** when your default should be _deny_. For example, when you're licensed to distribute in only a handful of territories and want everywhere else closed off. Adding a small set of countries, or a single preset such as **UK and Ireland**, is quicker and safer than trying to block every country you don't serve.
+Use **Allow selected countries** when your default should be _deny_. For example, when you're licensed to distribute in only a handful of territories and want everywhere else closed off. Adding a small set of countries, or a single preset such as **UK and Ireland**, is quicker and safer than trying to block every country you don't serve.
 
 Use **Block selected countries** when your default should be _allow_. For example, when your content is available almost everywhere and you only need to exclude a few specific countries for legal or contractual reasons.
 

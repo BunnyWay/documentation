@@ -332,6 +332,7 @@
                 "group": "Deployment",
                 "pages": [
                   "magic-containers/deploy",
+                  "magic-containers/deploy-from-github",
                   "magic-containers/deploy-with-github-actions",
                   "magic-containers/image-registries",
                   "magic-containers/regions",
@@ -349,9 +350,11 @@
                 "group": "Managing Apps",
                 "pages": [
                   "magic-containers/update",
+                  "magic-containers/deployments",
                   "magic-containers/configuration",
                   "magic-containers/environment-variables",
                   "magic-containers/persistent-volumes",
+                  "magic-containers/ephemeral-storage",
                   "magic-containers/endpoints",
                   "magic-containers/undeploy",
                   "magic-containers/delete"
