@@ -27,7 +27,7 @@ The CLI records the following for each command you run:
 | CLI version     | `0.22.0`          | The version of the CLI                                    |
 | OS and CPU      | `darwin`, `arm64` | The operating system and architecture                     |
 | CI              | `false`           | Whether the CLI is running in CI                          |
-| Installation ID | A random UUID     | A random ID for this machine, to count installations      |
+| Installation ID | A random UUID     | Generated on this machine, to count installations         |
 
 A few actions record a little more detail:
 
@@ -49,7 +49,7 @@ The CLI never collects:
 
 ## See what would be sent
 
-Set `BUNNYNET_TELEMETRY_DEBUG=1` and the CLI prints what it would send, and sends nothing:
+Set `BUNNYNET_TELEMETRY_DEBUG=1` to print what the CLI would send, without sending it:
 
 ```bash
 BUNNYNET_TELEMETRY_DEBUG=1 bunny db list
