@@ -1,8 +1,8 @@
 ---
-title: Token authentication with Mobile SDKs
-sidebarTitle: "Mobile Auth"
+title: "Token authentication with Mobile SDKs"
+sidebarTitle: "Mobile SDK Token Authentication"
 metadata:
-  robots: index
+  robots: "index"
 ---
 
 When using the Stream Mobile SDKs, **two authentication layers exist**:
@@ -28,22 +28,19 @@ This document focuses on **Embed View Token Authentication**, which must be hand
 
 ## Supported Authentication Methods
 
-| Method                          | Mobile SDK                     |
-| ------------------------------- | ------------------------------ |
+| Method | Mobile SDK |
+| --- | --- |
 | Embed View Token Authentication | Supported via customer backend |
-| CDN Token Authentication        | Automatic                      |
-| Client-side token signing       | Not supported                  |
+| CDN Token Authentication | Automatic |
+| Client-side token signing | Not supported |
 
 ## Backend Requirements
 
 The backend (or Edge Script) must:
 
 - Securely store the **Video Library API Key** as it serves as a secret that must not be stored in the mobile app
-
 - Authenticate the mobile app user with custom business logic
-
 - Generate embed view token by following the [token authentication signing procedure](/stream/token-authentication#signing-procedure) (token security key is your Video Library API Key)
-
 - Return a `token` and `expires` values in response:
 
 ```json

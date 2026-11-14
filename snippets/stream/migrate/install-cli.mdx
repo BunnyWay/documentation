@@ -1,0 +1,24 @@
+Install the Bunny CLI with the shell installer or npm:
+
+<Tabs>
+  <Tab title="curl">
+    ```sh
+    curl -fsSL https://cli.bunny.net/install.sh | sh
+    ```
+
+    The installer downloads a prebuilt binary for your platform and places it on your `PATH`.
+  </Tab>
+  <Tab title="npm">
+    ```sh
+    npm install -g @bunny.net/cli
+    ```
+  </Tab>
+</Tabs>
+
+See [Installation](/cli/installation) for more options. Then authenticate the CLI with your bunny.net account:
+
+```sh
+bunny login
+```
+
+`bunny login` opens your browser to complete authentication and stores the credentials locally. The first time you log in from an interactive terminal, it also offers to install the agent skill for AI coding tools. On a remote machine or in CI without a browser, run `bunny login --api-key "$BUNNYNET_API_KEY"` instead, with a key from [Account Settings > API key](https://dash.bunny.net/account/api-key).

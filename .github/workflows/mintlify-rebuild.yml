@@ -1,14 +1,46 @@
 name: Trigger Mintlify Rebuild
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - changelog.mdx
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */6 * * *'  
   workflow_dispatch:
 
 jobs:
   rebuild:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out docs source
+        uses: actions/checkout@v4
+
+      - name: Publish changelog source to Bunny Storage
+        env:
+          STORAGE_HOST: storage.bunnycdn.com
+          STORAGE_ZONE: bunny-changelog
+          CHANGELOG_MDX_PATH: changelog.mdx
+          BUNNY_CHANGELOG_BUCKET_KEY: ${{ secrets.BUNNY_CHANGELOG_BUCKET_KEY }}
+        run: |
+          if [ ! -f "$CHANGELOG_MDX_PATH" ]; then
+            echo "::error::changelog source not found at $CHANGELOG_MDX_PATH"
+            exit 1
+          fi
+
+          # The dashboard rewrites root-relative links onto https://bunny.net/. Docs links in the source are
+          # root-relative WITHOUT /docs (e.g. ](/stream/...)), so prepend /docs to every root-relative
+          # markdown link/image target. Idempotent (skips ](/docs/...); leaves ](https://...) and ](#...) alone.
+          perl -pe 's{\]\(/(?!docs/)}{](/docs/}g' "$CHANGELOG_MDX_PATH" > changelog.upload.mdx
+
+          curl -X PUT \
+            "https://${STORAGE_HOST}/${STORAGE_ZONE}/changelog.mdx" \
+            -H "AccessKey: ${BUNNY_CHANGELOG_BUCKET_KEY}" \
+            -H "Content-Type: text/plain; charset=utf-8" \
+            --data-binary "@changelog.upload.mdx" \
+            --fail --silent --show-error
+
+          echo "Published ${CHANGELOG_MDX_PATH} -> ${STORAGE_ZONE}/changelog.mdx"
       - name: Trigger Mintlify rebuild
         run: |
           curl -X POST "https://api.mintlify.com/v1/project/update/${{ vars.MINTLIFY_PROJECT_ID }}" \

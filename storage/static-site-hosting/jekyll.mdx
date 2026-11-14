@@ -1,0 +1,19 @@
+---
+title: "Deploy Jekyll to Bunny Storage"
+sidebarTitle: "Jekyll"
+description: "Build a Jekyll site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+Jekyll writes your site to `_site`. The CLI detects Jekyll from your `Gemfile` or `_config.yml`, and runs the build through Bundler.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `bundle exec jekyll build` |
+| Output directory | `_site` |
+
+<Deploy build="bundle exec jekyll build" />
+
+<CustomDomain />

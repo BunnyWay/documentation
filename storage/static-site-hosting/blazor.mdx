@@ -1,0 +1,24 @@
+---
+title: "Deploy Blazor WebAssembly to Bunny Storage"
+sidebarTitle: "Blazor WebAssembly"
+description: "Build a Blazor WebAssembly site and serve it from Bunny Storage through Bunny CDN, with the Bunny CLI or by hand."
+---
+
+import Deploy from "/snippets/static-sites/deploy.mdx";
+import SpaRouting from "/snippets/static-sites/spa-routing.mdx";
+import CustomDomain from "/snippets/static-sites/custom-domain.mdx";
+
+A standalone Blazor WebAssembly app publishes as static files that run in the browser. Publishing to `bin/publish` puts the site in `bin/publish/wwwroot`, a path that doesn't change with your target framework.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `dotnet publish -c Release -o bin/publish` |
+| Output directory | `bin/publish/wwwroot` |
+
+The CLI detects Blazor WebAssembly from a `.csproj` at the project root that uses the `Microsoft.NET.Sdk.BlazorWebAssembly` SDK, and needs the .NET SDK installed to run the build. Server-hosted Blazor apps need a server, so deploy them with [Magic Containers](/magic-containers) instead.
+
+<Deploy build="dotnet publish -c Release -o bin/publish" />
+
+<SpaRouting />
+
+<CustomDomain />

@@ -1,0 +1,11 @@
+The import command also accepts these flags:
+
+- `--wait` keeps the command running, with a live encoding progress indicator, until Bunny has encoded every video.
+- `--force` skips the confirmation prompt and the offer to retry failed videos, for unattended or CI runs.
+- `--concurrency N` sets how many videos the CLI passes to Bunny in parallel, from 1 to 20.
+- `--clean-failed` deletes the failed Bunny copies of videos before importing them again, including videos that Bunny rejected.
+- `--retry-stalled` deletes and imports again any video stuck at zero bytes on Bunny.
+- `--request-timeout` sets how many seconds one request to {provider} or Bunny can take before it gives up (default 30).
+- `--video-timeout` sets how many seconds the hand-off of one video to Bunny, or with `--wait` its encoding, can take before it gives up (default 5400).
+
+Run `bunny stream import --help` for the full list.

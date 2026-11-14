@@ -1,0 +1,148 @@
+---
+title: "Protect cached content with middleware"
+sidebarTitle: "Protect cached content"
+description: "Check an access token in a middleware script before the cache lookup, so unauthorized requests cannot read content that is already cached."
+---
+
+This middleware rejects every request that does not carry a valid bearer token.
+The check runs before the cache lookup, so it also protects content that is
+already in the cache.
+
+<Warning>
+  Put access checks in `onClientRequest`, and enable
+  [before cache execution](/scripting/before-cache). Origin hooks, such as
+  `onOriginRequest`, run only on a cache MISS. After one authorized request
+  fills the cache, the CDN serves the cached response to every client, with no
+  check.
+</Warning>
+
+The example is for content that is the same for all authorized users, such as
+private files or reports. Responses that differ per user need their own cache
+keys, which this example does not cover.
+
+<Tip>
+  If you only need signed, expiring URLs, use
+  [Token Authentication](/cdn/security/token-authentication) instead. It needs
+  no script.
+</Tip>
+
+## Script
+
+```ts
+import * as BunnySDK from "@bunny.net/edgescript-sdk@0.13.0";
+import process from "node:process";
+
+const encoder = new TextEncoder();
+
+// Compare in constant time, so response timing does not leak the token.
+function safeEqual(a: string, b: string): boolean {
+  const x = encoder.encode(a);
+  const y = encoder.encode(b);
+  if (x.length !== y.length) return false;
+  let diff = 0;
+  for (let i = 0; i < x.length; i++) diff |= x[i] ^ y[i];
+  return diff === 0;
+}
+
+function unauthorized(): Response {
+  return new Response("Unauthorized", {
+    status: 401,
+    headers: {
+      "WWW-Authenticate": 'Bearer realm="private"',
+      "Cache-Control": "no-store",
+    },
+  });
+}
+
+BunnySDK.net.http
+  .servePullZone({ url: "https://your-origin.com" })
+  .onClientRequest((ctx) => {
+    const expected = process.env.ACCESS_TOKEN;
+    const header = ctx.request.headers.get("Authorization") ?? "";
+    const token = header.startsWith("Bearer ") ? header.slice(7) : "";
+
+    if (!expected || !token || !safeEqual(token, expected)) {
+      return unauthorized();
+    }
+
+    // Continue to the cache lookup, then to the origin on a MISS.
+    return ctx.request;
+  });
+```
+
+When `onClientRequest` returns a response, the CDN sends it as it is.
+`onClientResponse` does not run, so set every header you need on the rejection
+response itself.
+
+## Set up
+
+<Steps>
+  <Step title="Create the script">
+    Create a **Middleware** script, and paste the code above. See the
+    [quickstart](/scripting/quickstart).
+  </Step>
+  <Step title="Add the secret">
+    Add a secret named `ACCESS_TOKEN` that holds the token. See
+    [Secrets](/scripting/secrets).
+  </Step>
+  <Step title="Publish and link the script">
+    Publish the script, and link it to the Pull Zone that serves the private
+    content.
+  </Step>
+  <Step title="Enable before cache execution">
+    In the Pull Zone, go to **General** > **Origin**, and enable **Run script
+    before cache**. If you skip this step, `onClientRequest` does not run, and
+    the CDN serves the content to all clients with no error.
+  </Step>
+</Steps>
+
+You can also do the last two steps with the
+[Update Pull Zone](/api-reference/core/pull-zone/update-pull-zone) API. Set
+`MiddlewareScriptId` to the script ID, and `EdgeScriptExecutionPhase` to `2`
+for before cache execution. The default value, `0`, runs the script after the
+cache.
+
+```bash
+curl -X POST "https://api.bunny.net/pullzone/$PULL_ZONE_ID" \
+  -H "AccessKey: $BUNNY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{\"MiddlewareScriptId\": $SCRIPT_ID, \"EdgeScriptExecutionPhase\": 2}"
+
+# Read the settings back
+curl -s "https://api.bunny.net/pullzone/$PULL_ZONE_ID" \
+  -H "AccessKey: $BUNNY_API_KEY" | jq '{MiddlewareScriptId, EdgeScriptExecutionPhase}'
+```
+
+## Verify
+
+Test against the Pull Zone hostname, not a local server. The `CDN-Cache`
+response header shows whether the CDN served the response from the cache.
+
+```bash
+URL=https://your-zone.b-cdn.net/report.pdf
+
+# 1. Valid token: 200, CDN-Cache: MISS. Repeat it: 200, CDN-Cache: HIT
+curl -sI -H "Authorization: Bearer $TOKEN" "$URL"
+
+# 2. No token, same cached URL: 401
+curl -sI "$URL"
+
+# 3. Wrong token, same cached URL: 401
+curl -sI -H "Authorization: Bearer wrong" "$URL"
+```
+
+Step 2 is the important test. A 401 on a URL that is already cached shows that
+the check runs before the cache.
+
+## Close other access paths
+
+The script protects only the Pull Zone that it is linked to. Make sure clients
+cannot get the same content another way:
+
+- Do not serve the same origin or Storage Zone through a second Pull Zone that
+  has no protection.
+- If your origin is a public server, make it accept requests only from the CDN.
+  For example, add a secret header in `onOriginRequest`, and reject requests
+  without it at the origin.
+- A Storage Zone does not serve files without its password, so a
+  Storage-backed Pull Zone has no public origin to protect.

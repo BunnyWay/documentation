@@ -3,7 +3,7 @@ title: "Webhooks"
 description: "Bunny Stream allows you to configure a secure webhook URL. Our system will automatically send notifications back to this URL once a video status changes. This allows you to track the updates and progress of the video processing cycles on your side."
 ---
 
-Configure a webhook URL on your library to receive a POST notification every time a video changes state — for example, when uploading completes or transcoding finishes. The sections below describe the callback payload, status codes, and signature verification.
+Configure a webhook URL on your library to receive a POST notification every time a video changes state — for example, when uploading completes or transcoding finishes. The sections below describe the callback payload, status codes, delivery, and signature verification.
 
 ## Callback
 
@@ -13,13 +13,32 @@ When the video state changes, a JSON callback will be sent back to your URL as a
 
 ```json JSON
 {
+	"IsLiveStreamWebhook": false,
 	"VideoLibraryId": 133,
 	"VideoGuid": "657bb740-a71b-4529-a012-528021c31a92",
-	"Status": 3
+	"Status": 3,
+	"EventId": "0f8e2c52-6a3e-4c1f-9d55-2b8c4f6c2a10",
+	"Timestamp": "2026-10-01T12:30:15.1234567Z"
 }
 ```
 
 </CodeGroup>
+
+The callback contains the following fields:
+
+| Field | Description |
+| --- | --- |
+| `IsLiveStreamWebhook` | `false` for video webhooks. |
+| `VideoLibraryId` | The ID of the video library. |
+| `VideoGuid` | The ID of the video. |
+| `Status` | The status code of the event. See the [Status list](#status-list). |
+| `EventId` | A unique ID for the event. It stays the same when a webhook is [delivered again](#delivery-and-retries), so use it to drop duplicate deliveries. |
+| `Timestamp` | The UTC time the event happened, not the time the webhook was delivered. Deliveries can arrive out of order, so use it to order the events of a video. |
+| `Reason` | Extra detail for statuses that have one, such as `SmartGenerationFailed`. Left out when there is none. |
+
+<Note>
+  `IsLiveStreamWebhook`, `EventId`, `Timestamp`, and `Reason` were added to an existing payload. If your receiver ignores fields it doesn't know, it keeps working without changes. Switch on the numeric `Status` value, not on the status name.
+</Note>
 
 ## Status list
 
@@ -36,6 +55,22 @@ Below are the possible status codes sent with the webhook:
 - 8 - **PresignedUploadFailed** : A pre-signed upload has failed.
 - 9 - **CaptionsGenerated** : Automatic captions were generated.
 - 10 - **TitleOrDescriptionGenerated** : Automatic generation of title or description has been completed.
+- 11 - **CaptionGenerationFailed** : Automatic caption generation has failed.
+- 12 - **ChaptersGenerated** : Automatic chapters were generated.
+- 13 - **MomentsGenerated** : Automatic moments were generated.
+- 32 - **VideoDeleted** : The video was deleted, including when it was deleted together with its collection. Sent once per deleted video.
+- 33 - **SmartGenerationFailed** : A requested smart generation feature failed. `Reason` names the feature: `Title`, `Description`, `Chapters`, or `Moments`. One webhook is sent for each failed feature. Features that completed before the failure still send their own generated webhook.
+
+## Delivery and retries
+
+Each webhook is first sent right after the event happens. Your endpoint confirms delivery by responding with any `2xx` status code.
+
+If a delivery fails with a network error, a timeout, or a `408`, `429`, or `5xx` response, it is retried after 30 seconds, 2 minutes, 10 minutes, 30 minutes, 1 hour, and 2 hours. After the last attempt, about four hours after the event, the webhook is dropped. Other `4xx` responses are not retried.
+
+- **Same body on every attempt**: A retry sends the original body, so `EventId` and `Timestamp` don't change. Use `EventId` to ignore a webhook you already processed.
+- **Order by `Timestamp`**: A retried webhook can arrive after a newer event for the same video. Compare `Timestamp` values instead of relying on arrival order.
+- **Current settings apply**: Every attempt goes to the library's current webhook URL and is signed with its current Read-Only API key. If you remove the webhook URL, pending retries are dropped.
+- **Respond quickly**: Return a `2xx` response as soon as you've received the webhook, and do slow processing afterwards, so the request doesn't time out and get retried.
 
 ## Signature validation
 
@@ -68,7 +103,7 @@ signature  = lowercase_hex( HMAC-SHA256( utf8(body), utf8(signatureSecret) ) )
 - **body**: The exact raw HTTP request body bytes as received.
 - **signatureSecret**: Your library's [**Read-Only API key**](/api-reference/core/stream-video-library/get-video-library#response-read-only-api-key-one-of-0), encoded as UTF-8.
 - **Output**: 64-character lowercase hexadecimal string.
-- The URL, timestamp, HTTP method, and headers are **not** part of the `v1` signature.
+- The URL, HTTP method, and headers are **not** part of the `v1` signature. The body, including its `EventId` and `Timestamp` fields, is.
 
 ### Validation steps
 

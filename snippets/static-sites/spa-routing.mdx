@@ -1,0 +1,7 @@
+## Client-side routing
+
+Single-page apps handle routing in the browser, so a direct visit to a path like `/settings` needs to load `index.html`.
+
+The Bunny CLI turns this on for you when it detects a single-page app, unless your build includes a `404.html`. To change it, set `"spa"` in the `sites` block of `bunny.jsonc`, or pass `--spa` or `--no-spa` to `bunny sites deploy`.
+
+For a manual deploy, open your storage zone's **Error handling** page, set **404 File path** to `/index.html`, and check **Rewrite 404 to 200 status code**. See [Storage zone settings](/storage/settings#error-handling) for details.

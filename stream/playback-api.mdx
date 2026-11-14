@@ -136,7 +136,7 @@ player.getPlaybackRate((rate) => console.log("getPlaybackRate", rate));
 
 <Info>
 
-The playback rate methods need player.js 0.1.2 or later. On earlier versions, and on the upstream Embedly build, send the command instead:
+The playback rate methods are only in the build we host. With the npm package (0.1.0) or the upstream Embedly build, send the command instead:
 
 ```js
 player.send({ method: "setPlaybackRate", value: 1.5 });

@@ -1,0 +1,5 @@
+<Warning>
+  Put the upload routes behind your own authentication before you deploy. The create route makes a video in your library and hands back a signature that lets the caller upload into it. Left open, anyone who finds the URL can fill your library with uploads that you pay to store, encode, and deliver.
+
+  Server Actions and API routes are public HTTP endpoints, even when nothing in your UI links to them. Check the user on every request, and check that they own a video ID before you re-sign it or return its status.
+</Warning>

@@ -143,7 +143,11 @@ To automate the whole flow, so every push to your repository builds an image, pu
 The following limits apply to each account:
 
 - Repositories per account: 100.
-- Tags per account: 1,000.
-- Blobs per account: 5,000. Blobs are the layers, configs, and manifests that make up your images.
-- Maximum image size: 10 GB.
+- Tags per account: 1,000, counted across all of your repositories.
+- Blobs per account: 5,000. Blobs are the layers and image configs that make up your images. A layer shared by several images or repositories in your account is stored and counted once.
+- Maximum image size: 10 GB, counting the image config and all layers. No single layer upload may exceed it either.
 - Maximum total storage: 100 GB.
+
+<Note>
+Your images are stored in a single storage zone in the Germany (DE) region. If you need your registry replicated to more regions, [contact support](https://bunny.net/contact/).
+</Note>
