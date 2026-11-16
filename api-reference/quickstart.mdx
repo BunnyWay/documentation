@@ -6,13 +6,16 @@ description: Make your first API request to bunny.net in minutes.
 This guide walks you through making your first API request to bunny.net.
 
 <Steps>
-  <Step title="Get your API key">
-    1. Log in to the [bunny.net dashboard](https://dash.bunny.net)
-    2. Navigate to **Account** > **API key**
-    3. Copy your API key
+  <Step title="Create a scoped API key">
+    1. In the [bunny.net dashboard](https://dash.bunny.net), go to [Account > Scoped API keys](https://dash.bunny.net/account/scoped-api-keys) and click **Create API Key**.
+    2. Name the key, such as `quickstart`, and pick when it expires.
+    3. Turn on **Grant all permissions and resources**, so the key can call every endpoint that accepts scoped API keys while you explore.
+    4. Click **Create API Key**, then copy the key. It's shown only once.
+
+    [Team members](/account/team-management) can't turn on **Grant all permissions and resources**. Select the permissions for the endpoints you'll call instead, such as `PullZone.Read` for the request in the next step.
 
     <Warning>
-    Keep your API key secure and never share it publicly.
+    This key can manage and delete everything in your account. Keep it secret, and replace it with a narrower key before you use it in production.
     </Warning>
 
   </Step>
@@ -23,11 +26,11 @@ This guide walks you through making your first API request to bunny.net.
     ```bash
     curl --request GET \
       --url https://api.bunny.net/pullzone \
-      --header 'AccessKey: YOUR_API_KEY' \
+      --header 'AccessKey: YOUR_SCOPED_API_KEY' \
       --header 'Content-Type: application/json'
     ```
 
-    Replace `YOUR_API_KEY` with the API key you copied from the dashboard.
+    Replace `YOUR_SCOPED_API_KEY` with the key you copied from the dashboard.
 
   </Step>
 
@@ -74,19 +77,12 @@ This guide walks you through making your first API request to bunny.net.
 
   </Step>
 
-  <Step title="Switch to a scoped API key">
-    Your account API key has full access to your account. Once you know which endpoints your integration calls, replace it with a scoped API key that can only call those endpoints.
+  <Step title="Narrow your key's permissions">
+    The key from the first step can do anything your account can. Once you know which endpoints your integration calls, replace it with a key that can only call those endpoints.
 
     1. Open each endpoint in the API reference and note the permissions it lists. For example, [List Pull Zones](/api-reference/core/pull-zone/list-pull-zones) accepts `PullZone.Read` or `PullZone.Update`.
-    2. [Create a scoped API key](/account/scoped-api-keys#create-a-scoped-api-key) with those permissions. Limit it to the resources and IP addresses your integration uses. List endpoints, like List Pull Zones, need access to all resources of that product.
-    3. Replace `YOUR_API_KEY` with your scoped API key:
-
-    ```bash
-    curl --request GET \
-      --url https://api.bunny.net/pullzone \
-      --header 'AccessKey: YOUR_SCOPED_API_KEY' \
-      --header 'Content-Type: application/json'
-    ```
+    2. [Create a scoped API key](/account/scoped-api-keys#create-a-scoped-api-key) with those permissions, and leave **Grant all permissions and resources** off. Limit it to the resources and IP addresses your integration uses. List endpoints, like List Pull Zones, need access to all resources of that product.
+    3. Use the new key in your integration, then delete the `quickstart` key.
 
     See [Scoped API keys](/api-reference/scoped-api-keys) for the full guide.
 
