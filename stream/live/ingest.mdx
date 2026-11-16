@@ -1,0 +1,119 @@
+---
+title: "Stream Live Ingest"
+sidebarTitle: "Ingest"
+description: "Send your live feed to Bunny Stream: choose between RTMPS, RTMP, and SRT, set recommended encoder settings, customize the ABR ladder, and tune SRT latency."
+hidden: true
+keywords:
+  - "Live"
+  - "Ingest"
+  - "RTMPS"
+  - "RTMP"
+  - "SRT"
+  - "Encoder settings"
+  - "Latency"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+
+<LiveClosedPreview />
+
+Choose how your encoder sends its feed to Bunny, then set up your encoder for the quality your connection can sustain. To connect an encoder step by step, follow the [quickstart](/stream/live/quickstart#step-3-configure-your-encoder).
+
+## Choosing an ingest protocol: RTMPS, RTMP, or SRT
+
+Bunny Stream Live accepts your feed over **RTMPS**, **RTMP**, or **SRT (Secure Reliable Transport)**. Every live stream supports all three: you pick one when you configure your encoder. All three produce the same output for viewers: the same ABR ladder, player, DVR, and VOD recording. The protocol only affects how your encoder delivers the feed to Bunny.
+
+|  | RTMPS | RTMP | SRT |
+| --- | --- | --- | --- |
+| **Transport** | TCP on port 443, encrypted with TLS | TCP, unencrypted | UDP, with packet-loss recovery |
+| **Best for** | Most broadcasts; keeps your stream key and feed private in transit | Older encoders that don't support TLS | Unreliable or long-distance networks (Wi-Fi, cellular, remote venues) |
+| **Tuning** | None needed | None needed | Adjustable latency buffer to trade a little delay for resilience |
+| **Encoder support** | OBS, vMix, FFmpeg, and most current software and hardware encoders | Almost every encoder and streaming app | OBS, vMix, FFmpeg, hardware encoders and most broadcast tools |
+
+<Tip>
+  If you're unsure, start with **RTMPS**. Use **RTMP** only if your encoder doesn't support RTMPS, and switch to **SRT** if you see dropped frames or connection drops on a lossy network.
+</Tip>
+
+## Recommended encoder settings
+
+Use these settings as a starting point for your encoder, depending on the target output quality your upload connection can sustain:
+
+| Setting | 1080p | 2160p / 4K |
+| --- | --- | --- |
+| **Protocol** | RTMPS, RTMP, or SRT | RTMPS, RTMP, or SRT |
+| **Bitrate** | 5,000 - 8,000 kbps | 8,000 - 25,000 kbps |
+| **Video resolution** | 1920 × 1080 (1080p) | 3840 × 2160 (2160p, UHD) |
+| **Frame rate** | Max 60fps | Max 30fps |
+| **Keyframe interval** | 2 seconds | 2 seconds |
+| **Audio settings** | Stereo AAC, 48 kHz, 256 kbps | Stereo AAC, 48 kHz, 320 kbps |
+
+Then, under **Output → Output mode: advanced**, set your encoder to the highest quality in Bunny's adaptive bitrate (ABR) ladder that your upload connection can sustain, and set the **keyframe interval to 2 seconds**. Bunny Stream Live ingests **H.264 (AVC)** video with **stereo AAC** audio (carried in **MPEG-TS** when using SRT) and transcodes your feed into the following renditions:
+
+| Resolution | Recommended source bitrate |
+| --- | --- |
+| 2160p / 4K (3840 × 2160) | 25,000 kbps |
+| 1440p (2560 × 1440) | 8,000 kbps |
+| 1080p (1920 × 1080) | 5,000 kbps |
+| 720p (1280 × 720) | 2,800 kbps |
+| 480p (842 × 480) | 1,400 kbps |
+| 360p (640 × 360) | 800 kbps |
+| 240p (352 × 240) | 600 kbps |
+
+<Tip>
+  Encode and send Bunny a **single high-quality feed at your top target resolution** (for example, 1080p at ~5,000 kbps). Bunny generates the full ABR ladder from your video library's [encoding settings](#customizing-the-abr-ladder-and-bitrates) automatically, so your viewers receive the best quality their connection and device can handle. Live streams support up to 60 FPS at 1080p and 30 FPS at 2160p. A **2-second keyframe interval** keeps the ABR renditions aligned for smooth quality switching and CBR maintains consistent quality.
+</Tip>
+
+## Customizing the ABR ladder and bitrates
+
+Live streams use the same encoding settings as the rest of your video library. The renditions Bunny encodes from your live feed, and the bitrate of each one, come from your library's **Encoding** settings, which apply to both live streams and video on demand. You won't find these settings in your library's live stream settings.
+
+To change them, open your video library in the dashboard and go to **Encoding**:
+
+- **Change the ABR ladder:** under **Enabled resolutions**, select the resolutions you want Bunny to encode. Bunny never encodes a rendition above the resolution of the feed your encoder sends.
+- **Change a bitrate:** in the **Enabled resolutions** list, click the bitrate number next to a resolution and enter the bitrate you want.
+
+For more detail, see [Enabled resolutions](/stream/encoding#enabled-resolutions) and [Resolution bitrates](/stream/encoding#resolution-bitrates) in the Stream encoding settings.
+
+<Note>
+  The highest enabled resolution is the top output resolution of your live encode, which sets your live encoding rate. See [Pricing](/stream/live/pricing-and-limits#pricing).
+</Note>
+
+## Adjusting SRT latency
+
+The SRT ingest URLs use a default latency of **120 ms** (`latency=120000`). This is the time SRT allows to re-send packets lost on the way to Bunny. It works well on a good wired connection close to an ingest point. On a lossy or distant connection, 120 ms may not leave enough time to recover lost packets.
+
+Consider increasing the latency if you see any of the following while streaming over SRT:
+
+- Dropped or skipped frames in your encoder, or a rising count of lost or dropped packets in its stats.
+- Blocky artifacts, frozen frames, or audio glitches in the dashboard preview.
+- The SRT connection repeatedly dropping and reconnecting.
+
+To change the latency, edit the `latency` value at the end of your SRT ingest URL. The value is in **microseconds**, so multiply the milliseconds you want by 1,000. Leave the rest of the URL (`mode`, `streamid`, and `pkt_size`) unchanged.
+
+```text
+# Default: 120 ms
+srt://global.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=120000
+
+# Increased: 500 ms
+srt://global.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=500000
+```
+
+Use these values as a starting point:
+
+| Connection | Suggested latency | `latency` value in the URL |
+| --- | --- | --- |
+| Wired, close to an ingest point | 120 ms (default) | `120000` |
+| Wi-Fi, or a moderate distance to an ingest point | 300 - 500 ms | `300000` - `500000` |
+| Cellular, bonded or satellite links, or long distances | 1,000 - 2,000 ms | `1000000` - `2000000` |
+
+A good rule of thumb is to set the latency to **at least 4× the round-trip time (RTT)** between your encoder and Bunny. Many encoders, including OBS, show the RTT in their SRT stats. Raise the value one step at a time until the problems stop, rather than jumping straight to the maximum.
+
+To apply the new value in OBS, stop streaming, paste the updated URL into **Settings → Stream → Server**, then start streaming again. If you use a backup ingest, update the backup URL with the same value.
+
+<Note>
+  Latency adds directly to the delay your viewers experience, so a value of `2000000` means the live stream reaches viewers about 2 seconds later. Keep the value as low as your connection allows.
+</Note>
+
+<Tip>
+  Changing the latency requires your encoder to reconnect. If you're already live and run a backup encoder, update and restart one encoder at a time. Bunny fails over to the other ingest while the first reconnects, so your broadcast stays up.
+</Tip>

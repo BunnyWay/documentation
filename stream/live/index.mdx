@@ -1,0 +1,109 @@
+---
+title: "Stream Live Overview"
+sidebarTitle: "Live Overview"
+description: "Broadcast live video with Bunny Stream: send RTMPS, RTMP, or SRT from your encoder, go live automatically, and record your stream as VOD."
+hidden: true
+keywords:
+  - "Live"
+  - "Live Stream"
+  - "RTMPS"
+  - "RTMP"
+  - "SRT"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+
+<LiveClosedPreview />
+
+Bunny Stream Live lets you broadcast live video to viewers across the globe from your Bunny Stream video library. You send a single feed from your encoder over RTMPS, RTMP, or SRT, and Bunny encodes it into an adaptive bitrate stream, plays it in the Bunny player, and can record it as a video on demand (VOD) when the stream ends.
+
+You can also let Bunny handle the setup for you: **auto-start** puts a stream live as soon as your encoder connects, and **auto-create** creates a new live stream whenever your encoder publishes to your library's stream key. See [Going live automatically](/stream/live/auto-start-and-auto-create).
+
+## Explore Stream Live
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" href="/stream/live/quickstart">
+    Create a stream, connect OBS, go live, and turn the recording into a VOD.
+  </Card>
+
+  <Card title="Ingest" href="/stream/live/ingest">
+    Choose between RTMPS, RTMP, and SRT, set up your encoder, and customize the ABR ladder.
+  </Card>
+
+  <Card title="Stream types" href="/stream/live/stream-types">
+    Run a one-off Event or a 24/7 Channel.
+  </Card>
+
+  <Card title="Auto-start and auto-create" href="/stream/live/auto-start-and-auto-create">
+    Go live as soon as your encoder connects, without creating or starting streams by hand.
+  </Card>
+
+  <Card title="Stream Live API" href="/stream/live/api">
+    Create, start, stop, and monitor streams programmatically.
+  </Card>
+
+  <Card title="Webhooks" href="/stream/live/webhooks">
+    React to stream events, such as a disconnect or a finished recording.
+  </Card>
+
+  <Card title="Troubleshooting" href="/stream/live/troubleshooting">
+    Fix common problems with VODs, playback, and connections.
+  </Card>
+
+  <Card title="Pricing and limits" href="/stream/live/pricing-and-limits">
+    Proposed pricing, closed preview limits, and known issues.
+  </Card>
+</CardGroup>
+
+## What you'll need
+
+Before you begin, make sure you have the following in place:
+
+- A [bunny.net](https://bunny.net/) account with live streaming enabled for the closed preview ([log in](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) or sign up for a [free trial](https://dash.bunny.net/auth/register)).
+- A **new video library** in Bunny Stream. Create it first by following the [Stream Quickstart](/stream/quickstart).
+
+<Info>
+  Live streaming is only supported on newly created video libraries. Your pre-existing video libraries will not support live streaming during closed preview.
+</Info>
+
+- An **RTMPS-, RTMP-, or SRT-capable encoder**. This guide uses [OBS Studio](https://obsproject.com/), a free, cross-platform encoder that supports all three protocols, but any encoder that supports RTMPS, RTMP, or SRT will work.
+- A stable upload connection with enough bandwidth for your target quality (see [Recommended encoder settings](/stream/live/ingest#recommended-encoder-settings)).
+
+<Note>
+  **Closed preview limits:** **Event** streams are limited to a **maximum duration of 12 hours**. **Channel** streams have no duration limit (see [Choosing a stream type](/stream/live/stream-types)). You won't be charged for **live encoding** during the closed preview. See [Pricing](/stream/live/pricing-and-limits#pricing) for the proposed rates after the preview.
+</Note>
+
+## How a live stream works: preview, then live
+
+Every live stream goes through two separate stages, and it helps to understand them before you start:
+
+1. **Preview.** As soon as your encoder starts publishing, Bunny receives and encodes your feed, but only you can see it, in the dashboard preview player. Viewers can't watch yet, and **nothing is recorded**.
+2. **Live.** When you click **Start Stream** in the Control Room, or call the [start endpoint](/stream/live/api#start-and-stop-the-stream), the stream becomes watchable for viewers. If **Video on demand** is on, recording begins at this point.
+
+By default, your encoder being connected doesn't start the stream. A stream that is never started stays in preview: it has no recording, it can't be ended with **End Stream** or the stop endpoint, and viewers can't play it.
+
+If you turn on [auto-start](/stream/live/auto-start-and-auto-create#auto-start), the stream skips the manual step: it goes live for viewers as soon as your encoder sends video, and recording begins at that point. Streams created by [auto-create](/stream/live/auto-start-and-auto-create#auto-create) always skip it.
+
+<Warning>
+  **Start the stream while your encoder is still publishing.** Only the part of your broadcast after the stream is started can be recorded. If your encoder disconnects before you start the stream, no VOD is created, even when **Video on demand** is enabled.
+</Warning>
+
+## Additional features
+
+- Live Stream also supports the following within **advanced settings** and your **video library live stream settings**:
+  - **RTMPS ingest** to send your feed encrypted over TLS.
+  - **SRT ingest** as an alternative to RTMPS and RTMP, for resilient contribution over unreliable networks with adjustable latency.
+  - **Auto-start** so a stream goes live as soon as your encoder connects, without clicking **Start Stream**.
+  - **Auto-create** so publishing to your library stream key creates a new live stream with your library's default settings and starts it straight away.
+  - **Default settings** for new live streams (stream type, auto-start, countdown, VOD, DVR, pre-stream trailer, and RTMP outputs), applied to streams created from the dashboard, the API, or auto-create. Auto-created streams always start automatically, whatever the auto-start setting.
+  - **Countdown** within the bunny player so viewers can see how long they have left before the live stream starts.
+  - **Thumbnails** displayed within the player before the live stream starts and generated during the live stream.
+  - **Prestream Trailer** so viewers can watch a looping video with a countdown before the live stream starts.
+  - **DVR** meaning viewers can rewind during the live stream a set amount of time.
+  - **Watermarking** rendered into the live video stream. This is unique to the live stream library, meaning a clean version is generated for VOD so you can apply a different watermark to your VOD.
+  - **RTMP Output** for co-streaming live to other platforms in parallel, over `rtmp://` or `rtmps://`.
+  - **VOD** is re-encoded, meaning all of Bunny Stream's VOD features - such as Premium encoding, Transcription, Smart generate, and eDRM - are supported for the VOD.
+- Live streams use your video library's **Encoding** settings. To customize the ABR ladder or change bitrates, see [Customizing the ABR ladder and bitrates](/stream/live/ingest#customizing-the-abr-ladder-and-bitrates). These settings aren't part of the live stream settings.
+- Configure **player UI and authentication** (allowed/blocked domains, token, and CDN authentication) in your **player and security video library settings**. These settings control who can play your live streams.
+- Automate stream creation and control with the [Live Stream API](/stream/live/api) - create, start, stop, monitor, and manage streams programmatically.
+- React to stream events, such as a disconnected ingest or a finished recording, with [webhooks](/stream/live/webhooks).

@@ -1,0 +1,320 @@
+---
+title: "Stream Live API"
+sidebarTitle: "API"
+description: "Create, start, stop, monitor, and manage Bunny Stream live streams with the Live Stream API."
+hidden: true
+keywords:
+  - "Live"
+  - "API"
+  - "Live Stream API"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+
+<LiveClosedPreview />
+
+Everything in the [quickstart](/stream/live/quickstart) can be driven programmatically with the Bunny Stream API. This is the same workflow - create a stream, read its ingest details, start it, monitor it, and stop it - expressed as API calls.
+
+<Info>
+  The Live Stream API is part of the closed preview and may change before general availability. Endpoints, fields, and defaults described below reflect the current preview.
+</Info>
+
+## Authentication
+
+All Stream API requests go to the base URL `https://video.bunnycdn.com` and authenticate with your **video library API key**, sent in the `AccessKey` header. You can find this key in the dashboard under your video library's **API** section.
+
+```bash
+# Common values used throughout the examples
+export BUNNY_LIBRARY_ID="123456"
+export BUNNY_API_KEY="your-video-library-api-key"
+```
+
+<Warning>
+  Your API key grants full control over the video library - keep it server-side and never expose it in client-side code.
+</Warning>
+
+## Typical API flow
+
+A recorded broadcast through the API follows this order. Calling `/start` while your encoder is publishing is the step that makes the stream watchable and recordable.
+
+<Steps>
+  <Step title="Create the stream">
+    `POST /library/{libraryId}/live` with `recordVod` set to `true`. Save the returned `guid`, which is the `streamId` for every later call.
+  </Step>
+  <Step title="Start publishing from your encoder">
+    Connect your encoder to the RTMPS, RTMP, or SRT ingest URL. The stream moves to **Preview** (`status` `3`). Viewers can't watch yet, and nothing is recorded.
+  </Step>
+  <Step title="Wait for the ingest to be ready">
+    Poll `GET /library/{libraryId}/live/{streamId}/status` until `readyToStart` and `primaryLive` are both `true`.
+  </Step>
+  <Step title="Start the stream">
+    `PUT /library/{libraryId}/live/{streamId}/start`. The stream moves to **Running** (`status` `4`), becomes watchable, and recording begins. Allow another 15-20 seconds before playback is available to viewers.
+  </Step>
+  <Step title="Stop the stream">
+    `PUT /library/{libraryId}/live/{streamId}/stop` when you're done. Your encoder is disconnected and, with `recordVod` on, the recording is queued for encoding.
+  </Step>
+  <Step title="Pick up the recording">
+    Listen for the `LiveStreamRecordingQueued` (`19`) and `LiveStreamRecordingReady` (`20`) [webhooks](/stream/live/webhooks). Both include the recording's `VideoGuid`. Once encoding has finished, currently the video on demand is only available through the Get Video endpoint by VideoID.
+  </Step>
+</Steps>
+
+<Tip>
+  To skip steps 3 and 4, create the stream with `autoStartOnIngestDetected` set to `true`. The stream then moves straight to **Running** when your encoder starts publishing. With [auto-create](/stream/live/auto-start-and-auto-create#auto-create) on in your library, you can skip steps 1, 3, and 4: publish to the library stream key, and the new stream is created and moves straight to **Running**. Look it up with the [list endpoint](#endpoint-reference) or the `LiveStreamCreated` (`14`) [webhook](/stream/live/webhooks).
+</Tip>
+
+## Create a live stream
+
+Send a `POST` to `/library/{libraryId}/live` with a JSON body. Only the basics are shown here; all fields are optional, though you'll typically set a `title`.
+
+```bash
+curl --request POST \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live" \
+  --header "AccessKey: $BUNNY_API_KEY" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "title": "My first live stream",
+    "recordVod": true,
+    "autoStartOnIngestDetected": false,
+    "enableCountdown": true,
+    "scheduledStartTime": "2026-01-15T18:00:00Z"
+  }'
+```
+
+Key fields in the request body (`CreateLiveStreamModel`):
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `title` | string | The title of the live stream. |
+| `description` | string | Optional description. |
+| `collectionId` | string | Collection the stream belongs to. |
+| `streamType` | integer | `0` for an **Event** (default) or `1` for a **Channel**. See [Choosing a stream type](/stream/live/stream-types). |
+| `recordVod` | boolean | If `true`, the part of the stream after it was started is converted to a VOD when it stops. Defaults to your video library setting for an Event, and to `false` for a Channel. A Channel can't set it to `true`. |
+| `autoStartOnIngestDetected` | boolean | If `true`, the stream goes live as soon as ingest is detected, without a call to `/start`. Defaults to your video library setting. A scheduled stream isn't started before its `scheduledStartTime`. See [Auto-start](/stream/live/auto-start-and-auto-create#auto-start). |
+| `scheduledStartTime` | date-time | Scheduled start (UTC). Viewers can only watch after this time unless you start manually. |
+| `scheduledEndTime` | date-time | Scheduled end (UTC). The stream stops at this time. You can change or remove it later with the [update endpoint](#manage-the-stream), also while the stream is running. |
+| `enableCountdown` | boolean | Show a countdown in the player before a scheduled start. |
+| `public` | boolean | Not currently used and has no effect. Playback access is controlled by your video library's [security settings](/stream/live#additional-features). |
+| `dvrEnabled` | boolean | Enable DVR for the stream. |
+| `dvrWindowSeconds` | integer | DVR window in seconds. Required when `dvrEnabled` is `true`; max is `43200` (12 hours). |
+| `rtmpOutputs` | array | Up to 4 RTMP outputs to forward the incoming stream to (each with `endpoint` and `streamKey`). Endpoints can use `rtmp://` or `rtmps://`. |
+| `preStreamTrailerVideoId` | string | Video ID of a trailer to play before the stream starts. |
+
+## Get your ingest details
+
+The create response (and `GET /library/{libraryId}/live/{streamId}`) returns a `LiveStreamModel` containing everything your encoder needs, for RTMPS, RTMP, and SRT:
+
+```json
+{
+  "guid": "019fed6c-d433-7040-92cd-dfd0e4221757",
+  "title": "My first live stream",
+  "status": 1,
+  "streamType": 0,
+  "streamKey": "bunnylive_xxxxxxxxxxxxxxxx",
+  "playbackUrlHls": "https://.../playlist.m3u8",
+  "recordVod": true,
+  "autoStartOnIngestDetected": false,
+  "availableResolutions": "240p,360p,480p,720p,1080p",
+  "ingestEndpoints": {
+    "rtmps": {
+      "primaryIngestUrl": "rtmps://global.rtmp.mediadelivery.net/live",
+      "backupIngestUrl": "rtmps://global-backup.rtmp.mediadelivery.net/live"
+    },
+    "rtmp": {
+      "primaryIngestUrl": "rtmp://global.rtmp.mediadelivery.net/live",
+      "backupIngestUrl": "rtmp://global-backup.rtmp.mediadelivery.net/live"
+    },
+    "srt": {
+      "primaryIngestUrl": "srt://global.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=120000",
+      "backupIngestUrl": "srt://global-backup.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=120000"
+    }
+  }
+}
+```
+
+- **RTMPS:** point your encoder's **server** at `ingestEndpoints.rtmps.primaryIngestUrl` (or the backup URL) and set its **stream key** to `streamKey`.
+- **RTMP:** point your encoder's **server** at `ingestEndpoints.rtmp.primaryIngestUrl` (or the backup URL) and set its **stream key** to `streamKey`.
+- **SRT:** point your encoder's **server** at `ingestEndpoints.srt.primaryIngestUrl` (or the backup URL), including everything after the `?`, and set its **stream key** to `streamKey`. To change the latency, edit the `latency` value in the URL as described in [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency).
+
+These are the same values you'd otherwise copy from the dashboard in [Step 2](/stream/live/quickstart#step-2-get-your-ingest-details). Use `playbackUrlHls` for playback. The playlist returns `404` until the stream has been started and has finished starting up (see [Troubleshooting](/stream/live/troubleshooting)).
+
+<Note>
+  Save the `guid` returned here - it's the `streamId` used in every subsequent call. Don't confuse it with the SRT `streamid` URL parameter, which carries your stream key to Bunny.
+</Note>
+
+<Note>
+  Treat each protocol in `ingestEndpoints` as optional and read the URLs from the response rather than hard-coding them. For a stream created by [auto-create](/stream/live/auto-start-and-auto-create#auto-create), `streamKey` is empty, because the stream is published with the library stream key.
+</Note>
+
+## Start and stop the stream
+
+Once your encoder is publishing, mark the stream live so viewers can watch. Starting via the API is the equivalent of clicking **Start Stream** in the Control Room and overrides any scheduled start time. Unless `autoStartOnIngestDetected` is `true`, an encoder being connected does **not** start the stream by itself: until you call `/start`, the stream stays in preview.
+
+<CodeGroup>
+
+```bash Start
+curl --request PUT \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/start" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+
+```bash Stop
+curl --request PUT \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/stop" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+
+</CodeGroup>
+
+<Warning>
+  **Call `/start` while your encoder is still publishing.** Only the part of the broadcast after `/start` is recorded. If you start the stream after your encoder has already disconnected, there is nothing to record and no VOD is created.
+</Warning>
+
+<Warning>
+  Stopping a stream cannot be undone. If `recordVod` was set to `true`, the stream is converted to a regular video (VOD) when it stops.
+</Warning>
+
+A few things to know about `/stop`:
+
+- **It only works on a started stream.** Calling it on a stream that is still in preview returns `400` with the message `Cannot stop live stream that was not started yet`, even if an encoder is publishing. Start the stream first, or [delete it](#manage-the-stream) if you don't need it.
+- **It disconnects your encoder.** Stopping ends processing on Bunny's side and blocks further ingest, so your encoder is cut off immediately. FFmpeg exits with a broken pipe error and OBS reports a dropped connection. This is expected. To shut down cleanly on the encoder side, stop your encoder first and then call `/stop`.
+
+## Check the stream status
+
+Poll `GET /library/{libraryId}/live/{streamId}/status` to drive your own UI or automation. It returns whether the primary/backup ingest is live, how long ago the last ping arrived, and the current duration.
+
+```bash
+curl --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/status" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+
+```json
+{
+  "readyToStart": true,
+  "primaryLive": true,
+  "backupLive": false,
+  "lastPingAgo": 205,
+  "duration": 12,
+  "statusTimeUtc": "2026-01-15T18:03:45Z"
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `readyToStart` | `true` when the ingest is ready and the stream can be started. |
+| `primaryLive` | `true` while the primary ingest is publishing. |
+| `backupLive` | `true` while the backup ingest is publishing. |
+| `lastPingAgo` | Time since the last ping from the ingest, in **milliseconds** (`205` = 0.2 seconds), if available. |
+| `duration` | The current duration of the stream. |
+| `statusTimeUtc` | The UTC time this status was generated. |
+
+<Note>
+  `primaryLive` and `backupLive` reflect your encoder's connection, not whether the stream has been started. A stream can show `primaryLive: true` while still in preview. Check the stream's `status` field to see whether it has been started.
+</Note>
+
+The `status` field on the live stream object itself moves through the stream's life cycle:
+
+| Value | Status | Meaning |
+| --- | --- | --- |
+| `1` | Created | The stream was just created. |
+| `2` | Scheduled | Scheduled to go live at `scheduledStartTime`. Publishing can start earlier, but it's only watchable after that time. |
+| `3` | Preview | Publishing has started but the stream hasn't been started yet - visible only in the preview player. Nothing is recorded, and the stream can't be stopped until it's started. A stream with auto-start on skips this status, unless it's waiting for its `scheduledStartTime`, and so does a stream created by auto-create. |
+| `4` | Running | Started from the dashboard, the API, by auto-start, or by auto-create; the stream is live and, with `recordVod` on, being recorded. This is the only status `/stop` works from. |
+| `5` | Ended | Finished; publishing is no longer possible. |
+| `6` | VodProcessing | Ended and currently processing the VOD output. |
+| `7` | Error | An error occurred during ingest or live publishing. |
+
+## Manage the stream
+
+Update a live stream with `PATCH /library/{libraryId}/live/{streamId}`. Send only the fields you want to change: fields you leave out keep their current value. To remove a value, such as a `scheduledStartTime` or `scheduledEndTime`, send it as `null`.
+
+<CodeGroup>
+
+```bash Update
+curl --request PATCH \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID" \
+  --header "AccessKey: $BUNNY_API_KEY" \
+  --header "Content-Type: application/json" \
+  --data '{ "title": "Updated title", "scheduledEndTime": "2026-01-15T21:00:00Z" }'
+```
+
+```bash Remove the schedule
+curl --request PATCH \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID" \
+  --header "AccessKey: $BUNNY_API_KEY" \
+  --header "Content-Type: application/json" \
+  --data '{ "scheduledStartTime": null, "scheduledEndTime": null }'
+```
+
+```bash Regenerate key
+curl --request PUT \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID/regenerate-key" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+
+```bash Delete
+curl --request DELETE \
+  --url "https://video.bunnycdn.com/library/$BUNNY_LIBRARY_ID/live/$STREAM_ID" \
+  --header "AccessKey: $BUNNY_API_KEY"
+```
+
+</CodeGroup>
+
+What you can update depends on the stream's state:
+
+| Field | Before the stream is started | After the stream is started |
+| --- | --- | --- |
+| `title`, `description` | Yes | Yes |
+| `scheduledEndTime` | Yes. Send `null` to remove it | Yes. Set a new time to end the stream earlier or later, or send `null` to remove it |
+| `streamType` | Only while no encoder is publishing | No |
+| All other fields | Yes | No |
+
+`autoStartOnIngestDetected` can't be set to `null`. Send `true` or `false`.
+
+<Note>
+  The stream key can only be regenerated **before** a stream has ended. Regenerating it also changes the `streamid` in both SRT ingest URLs, so update every encoder you've configured, whichever protocol it uses. Deleting a stream removes it and all associated resources and cannot be undone.
+</Note>
+
+## Errors
+
+During the closed preview, the Live Stream API returns errors in two formats:
+
+| Situation | Status code | Body |
+| --- | --- | --- |
+| The library or stream ID doesn't exist | `404` | An `application/problem+json` body |
+| The request is valid but not allowed in the stream's current state (for example, stopping a stream that hasn't been started) | `400` | A JSON body with `"success": false` and a `message` describing the problem |
+
+Example `400` response:
+
+```json
+{
+  "success": false,
+  "message": "Cannot stop live stream that was not started yet"
+}
+```
+
+<Note>
+  We plan to unify these formats before general availability. Check the HTTP status code first, and handle both body formats in the meantime.
+</Note>
+
+## Endpoint reference
+
+All paths are relative to `https://video.bunnycdn.com` and require the `AccessKey` header (except the playback endpoint).
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `POST` | `/library/{libraryId}/live` | Create a live stream. |
+| `GET` | `/library/{libraryId}/live` | List live streams (`page`, `itemsPerPage`, `search`, `orderBy`, `collectionId`), including auto-created streams. |
+| `GET` | `/library/{libraryId}/live/ingest-endpoints` | Get the RTMPS, RTMP, and SRT ingest endpoints for the library's [auto-create](/stream/live/auto-start-and-auto-create#auto-create) stream key. Pass `liveStreamId` to get the endpoints for one stream instead. |
+| `GET` | `/library/{libraryId}/live/{streamId}` | Get a live stream by ID. |
+| `PATCH` | `/library/{libraryId}/live/{streamId}` | Update a live stream. Fields you leave out are unchanged; send `null` to remove a value. See [Manage the stream](#manage-the-stream). |
+| `DELETE` | `/library/{libraryId}/live/{streamId}` | Delete a live stream and its resources. |
+| `PUT` | `/library/{libraryId}/live/{streamId}/start` | Start the stream (make it watchable and, with `recordVod` on, begin recording). Call while the encoder is publishing. Not needed when `autoStartOnIngestDetected` is `true`. |
+| `PUT` | `/library/{libraryId}/live/{streamId}/stop` | Stop a started stream (converts to VOD if `recordVod` is enabled). Disconnects the encoder. Returns `400` if the stream hasn't been started. |
+| `PUT` | `/library/{libraryId}/live/{streamId}/regenerate-key` | Regenerate the stream key, which also updates the SRT ingest URLs (not allowed after a stream ends). |
+| `GET` | `/library/{libraryId}/live/{streamId}/status` | Get real-time ingest status. `lastPingAgo` is in milliseconds. |
+| `GET` | `/library/{libraryId}/live/{streamId}/play` | Get playback data. Doesn't require the `AccessKey` header. |
+| `GET` | `/library/{libraryId}/live/{streamId}/thumbnails` | List recent generated thumbnails (`limit`, `from`, `to`). |
+| `POST` | `/library/{libraryId}/live/{streamId}/thumbnail` | Set a custom thumbnail (upload or `thumbnailUrl`). |
+| `DELETE` | `/library/{libraryId}/live/{streamId}/thumbnail` | Remove the custom thumbnail. |
+| `GET` | `/library/{libraryId}/live/{streamId}/current-bitrate` | Get the latest ingest bitrate. May return `404` during the closed preview (see [Known issues](/stream/live/pricing-and-limits#known-issues)). |
+| `GET` | `/library/{libraryId}/live/{streamId}/bitrate-history` | Get ingest bitrate history (`startTime`, `endTime`). |
