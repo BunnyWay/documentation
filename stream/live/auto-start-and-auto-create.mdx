@@ -50,11 +50,11 @@ When a stream is auto-started, the `LiveStreamStarted` (`16`) [webhook](/stream/
 
 ## Auto-create
 
-Auto-create gives your video library a single **library stream key**. When an encoder publishes to that key, Bunny creates a new live stream automatically and starts it straight away, so viewers can watch it as soon as your encoder sends video and, with **Video on demand** on, recording begins. There's no preview stage, and the library's auto-start setting doesn't change this.
+Auto-create gives your video library a single, persistent **library stream key**. When an encoder publishes to that key, Bunny creates a new live stream automatically and starts it straight away, so viewers can watch it as soon as your encoder sends video and, with **Video on demand** on, recording begins. There's no preview stage, and the library's auto-start setting doesn't change this.
 
 The new stream uses your library's other **Default settings** (stream type, countdown, Video on demand, DVR, pre-stream trailer, and RTMP outputs). It appears in your live streams list like any other, and you can manage it from the dashboard or the API.
 
-This is useful when you broadcast often and don't want to create a stream before each one, or when you hand an encoder to someone who shouldn't need dashboard access.
+This is useful when you broadcast often and don't want to create a stream before each one. Because the library stream key [stays the same](#the-library-stream-key-stays-the-same), you configure your encoder once and use the same settings for every broadcast.
 
 To turn on auto-create:
 
@@ -77,7 +77,21 @@ To turn on auto-create:
   With auto-create on, publishing to the library stream key is the same as creating a stream and clicking **Start Stream**. To test your encoder without viewers seeing it, use a normal live stream with auto-start off and check the preview first.
 </Warning>
 
-The library stream key starts with `lb`, followed by your library ID. Treat it like a password: anyone with it can create live streams in your library. A stream created by auto-create is published with the library stream key, so its own `streamKey` field is empty.
+### The library stream key stays the same
+
+A normal live stream key belongs to one stream. Once that stream ends, publishing with its key is refused, so each new broadcast needs a new stream and a new key in your encoder.
+
+The library stream key belongs to your video library instead. Bunny generates it the first time you turn on auto-create, and it stays the same across every broadcast:
+
+- **Ending a stream doesn't change it.** The next time your encoder publishes to the key, Bunny creates a new live stream.
+- **Turning auto-create off doesn't change it.** The key is kept, and it works again as soon as you turn auto-create back on.
+- **Only a reset changes it.** The key changes when you [reset it](#managing-the-library-stream-key), and at no other time.
+
+The ingest URLs stay the same too. The RTMPS and RTMP URLs don't contain the key, and the SRT URLs contain it, so they only change when you reset the key.
+
+This makes auto-create a good fit for encoders you set up once and leave in place, such as hardware encoders in a studio or venue, or encoders run by people who don't have access to your dashboard. Their settings keep working for every broadcast until you reset the key.
+
+The library stream key starts with `lb`, followed by your library ID. Treat it like a password: because it doesn't expire, anyone with it can create live streams in your library until you reset it. A stream created by auto-create is published with the library stream key, so its own `streamKey` field is empty.
 
 ### Resume window
 
@@ -93,7 +107,7 @@ A stream that has already ended can't be resumed. If the last auto-created strea
 
 ### Managing the library stream key
 
-- **Reset the key** with the refresh icon next to it in the **Auto-create** card. The old key stops working, so update every encoder that uses it. Because the SRT ingest URLs contain the key, copy the new SRT URLs too. The RTMPS and RTMP URLs don't contain the key and stay the same.
+- **Reset the key** with the refresh icon next to it in the **Auto-create** card. Reset it if the key may have been shared with someone who shouldn't have it. The old key stops working, so update every encoder that uses it. Because the SRT ingest URLs contain the key, copy the new SRT URLs too. The RTMPS and RTMP URLs don't contain the key and stay the same.
 - **Turning auto-create off** keeps the key, but publishing to it no longer creates live streams. Turn auto-create back on to use the same key again.
 
 <Note>
