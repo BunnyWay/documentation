@@ -1,0 +1,82 @@
+---
+title: "Live Stream Troubleshooting"
+sidebarTitle: "Troubleshooting"
+description: "Fix common Bunny Stream Live problems: missing VODs, playback errors, auto-start and auto-create behavior, and encoder connections."
+hidden: true
+keywords:
+  - "Live"
+  - "Troubleshooting"
+  - "Errors"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+
+<LiveClosedPreview />
+
+Solutions to common problems with Bunny Stream Live. If your problem isn't listed here, check the [known issues](/stream/live/pricing-and-limits#known-issues) for the closed preview.
+
+<AccordionGroup>
+  <Accordion title="My stream ended but no VOD appeared in my library">
+    The most common cause is that the stream was never started while the encoder was publishing. Only the part of a broadcast after **Start Stream** (or `/start`, or auto-start) is recorded. If you start the stream after the encoder has already disconnected, there is nothing to record.
+
+    Check that:
+
+    - **Video on demand** (`recordVod`) was on for the stream. For auto-created streams, this comes from your library's **Default settings**.
+    - The stream reached **Running** (`status` `4`) while your encoder was still publishing.
+    - The stream was an **Event**. Channels never record a VOD.
+
+    If all of these are true, the VOD may still be encoding. Wait for the `LiveStreamRecordingReady` (`20`) webhook, or check the video with the `VideoGuid` from the `LiveStreamRecordingQueued` (`19`) webhook.
+  </Accordion>
+
+  <Accordion title="My stream went live before I was ready">
+    Check the reason on the stream's `LiveStreamStarted` (`16`) webhook:
+
+    - **`IngestDetected`:** the stream has **auto-start** on (`autoStartOnIngestDetected` is `true`), so it went live as soon as your encoder connected. Turn auto-start off on the stream with the [update endpoint](/stream/live/api#manage-the-stream) before you connect, or turn off **Auto-start live stream when encoder connects** in your library's **Default settings** so that new streams wait in preview.
+    - **`AutoCreated`:** your encoder published to the library's [auto-create](/stream/live/auto-start-and-auto-create#auto-create) stream key. Streams created this way always go live straight away. To check your feed in preview first, publish to a normal live stream with auto-start off instead.
+  </Accordion>
+
+  <Accordion title="My stream stays in preview even though auto-start is on">
+    Check whether the stream has a `scheduledStartTime` in the future. A scheduled stream isn't started before that time, even with auto-start on. Click **Start Stream** or call `/start` to go live earlier.
+
+    Also check that auto-start is on for this stream, not only in your library defaults. Changing the library default doesn't change existing streams.
+  </Accordion>
+
+  <Accordion title="Publishing to the library stream key doesn't create a live stream">
+    Check that:
+
+    - **Auto-create live streams** is turned on and saved in your library's live stream settings. While it's off, the key is kept but publishing to it doesn't create streams.
+    - Your encoder uses the current library stream key and the URLs from the **Auto-create** card. If the key was reset, the old key no longer works, and the SRT URLs changed too.
+    - You haven't reached the [concurrent live stream limit](/stream/live/pricing-and-limits#limits).
+
+    If your encoder reconnected within the **resume window**, Bunny resumed the last auto-created stream instead of creating a new one. Set the resume window to `0` to always create a new stream.
+  </Accordion>
+
+  <Accordion title="My encoder can't connect over RTMPS">
+    Check that the server URL starts with `rtmps://`, and that your encoder supports RTMPS. Some older encoders and firmware versions only support RTMP. Also check that your network allows outbound **TCP** traffic on port **443**. RTMPS uses the same host as RTMP, so the `rtmps://` scheme is the only difference in the URL. If you can't use RTMPS, use the RTMP or SRT details for the same stream: the stream key is the same for every protocol.
+  </Accordion>
+
+  <Accordion title="/stop returns 400: Cannot stop live stream">
+    The full message is `Cannot stop live stream that was not started yet`. The stream is still in preview (`status` `3`). An encoder being connected doesn't start the stream unless auto-start is on, so there's nothing to stop. Call `/start` first if you want the stream to go live and be recorded, or delete the stream if you don't need it.
+  </Accordion>
+
+  <Accordion title="The HLS playlist returns 404 File Not Found">
+    This is expected in two situations:
+
+    - The stream hasn't been started yet. The playlist only exists for viewers once the stream is running.
+    - The stream has just been started. Allow **15-20 seconds** for the stream to start up before the playlist is available.
+
+    If the playlist still returns `404` well after the stream has started, check the stream's `status` and contact support with the stream ID.
+  </Accordion>
+
+  <Accordion title="The HLS playlist returns 403 Forbidden">
+    By default, your video library blocks playback requests that don't send a `Referer` header. This applies to all videos in the library, not only live streams. Requests from a browser page usually send a `Referer` automatically; requests from tools such as `curl` don't. Add a `Referer` header when testing, or review the allowed domains and authentication options in your video library's **Security** settings.
+  </Accordion>
+
+  <Accordion title="lastPingAgo looks very high">
+    `lastPingAgo` is in **milliseconds**, not seconds. A value of `205` means the last ping arrived 0.2 seconds ago.
+  </Accordion>
+
+  <Accordion title="My encoder reports an error when the stream ends">
+    Ending a stream disconnects the encoder immediately, so FFmpeg exits with a broken pipe error and OBS reports a dropped connection. This is expected and doesn't affect the recording. Stop your encoder before ending the stream if you prefer a clean shutdown.
+  </Accordion>
+</AccordionGroup>

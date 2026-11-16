@@ -1,0 +1,101 @@
+---
+title: "Auto-start and Auto-create Live Streams"
+sidebarTitle: "Auto-start and Auto-create"
+description: "Go live as soon as your encoder connects with auto-start, and create live streams automatically from a library stream key with auto-create."
+hidden: true
+keywords:
+  - "Live"
+  - "Auto-start"
+  - "Auto-create"
+  - "Stream key"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+
+<LiveClosedPreview />
+
+Two optional settings remove manual steps from going live. Use them on their own or together:
+
+| | Auto-start | Auto-create |
+| --- | --- | --- |
+| **What it does** | Starts a stream for viewers as soon as its encoder sends video, instead of waiting in preview | Creates a new live stream when an encoder publishes to your library's stream key, and starts it straight away |
+| **Applies to** | One live stream (with a default for new streams set on the library) | The whole video library |
+| **Removes the need to** | Click **Start Stream** or call `/start` | Create a stream before each broadcast, and start it |
+| **API field** | `autoStartOnIngestDetected` on the live stream | Set in the dashboard, in your library's live stream settings |
+
+Auto-create always starts the streams it creates, so with auto-create on, a broadcast needs nothing but your encoder: it connects to the library stream key, Bunny creates a stream with your library defaults, and the stream goes live straight away. You don't need to turn on auto-start for this.
+
+## Auto-start
+
+When auto-start is on, a stream doesn't wait in preview. As soon as Bunny detects video from your encoder, the stream moves to **Running** (`status` `4`), viewers can watch it, and, with **Video on demand** on, recording begins.
+
+You can turn on auto-start in three places:
+
+- **For new streams in a library:** in your video library, open the live stream settings and turn on **Auto-start live stream when encoder connects** under **Default settings**. Every stream created afterwards from the dashboard or the API starts with this setting. Existing streams keep their own setting. Streams created by [auto-create](#auto-create) always start automatically, whatever this setting.
+- **For one stream in the dashboard:** use the auto-start switch on the **Add live stream** page.
+- **For one stream through the API:** set `autoStartOnIngestDetected` to `true` when you [create](/stream/live/api#create-a-live-stream) or [update](/stream/live/api#manage-the-stream) the stream. If you leave it out on create, the library default applies.
+
+A few things to know about auto-start:
+
+- **Scheduled streams still wait for their start time.** A stream with a `scheduledStartTime` isn't started before that time, even if your encoder is already publishing.
+- **There's no preview check.** Viewers see whatever your encoder sends from the moment it connects. Check your scene and audio in your encoder before you start streaming.
+- **The 30-minute disconnect rule still applies to Events.** An auto-started Event ends after 30 minutes without a connected encoder, like any started Event. Only connect when you're ready to go live.
+- **You still end the stream yourself**, with **End Stream** or the [stop endpoint](/stream/live/api#start-and-stop-the-stream), unless it reaches its `scheduledEndTime` or the Event limits first.
+
+When a stream is auto-started, the `LiveStreamStarted` (`16`) [webhook](/stream/live/webhooks) carries the reason `IngestDetected`, so you can tell it apart from a manual or scheduled start.
+
+<Warning>
+  With auto-start on, connecting your encoder is the same as clicking **Start Stream**. Don't test your encoder against a stream with auto-start on unless you're happy for viewers to see the test and, with **Video on demand** on, for it to be recorded.
+</Warning>
+
+## Auto-create
+
+Auto-create gives your video library a single **library stream key**. When an encoder publishes to that key, Bunny creates a new live stream automatically and starts it straight away, so viewers can watch it as soon as your encoder sends video and, with **Video on demand** on, recording begins. There's no preview stage, and the library's auto-start setting doesn't change this.
+
+The new stream uses your library's other **Default settings** (stream type, countdown, Video on demand, DVR, pre-stream trailer, and RTMP outputs). It appears in your live streams list like any other, and you can manage it from the dashboard or the API.
+
+This is useful when you broadcast often and don't want to create a stream before each one, or when you hand an encoder to someone who shouldn't need dashboard access.
+
+To turn on auto-create:
+
+<Steps>
+  <Step title="Open your library's live stream settings">
+    In the [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu), go to **Delivery → Stream**, open your video library, and open its live stream settings.
+  </Step>
+  <Step title="Turn on Auto-create live streams">
+    Turn on **Auto-create live streams** under **Auto-create**, review the **Default settings** below it, and save. The library stream key and its ingest URLs appear once you've saved.
+  </Step>
+  <Step title="Point your encoder at the library stream key">
+    Configure your encoder exactly as in [Step 3](/stream/live/quickstart#step-3-configure-your-encoder), but use the library stream key and the ingest URLs shown under **Auto-create** instead of the details of a single stream. All three protocols are supported.
+  </Step>
+  <Step title="Start streaming">
+    When your encoder starts publishing, Bunny creates a new live stream and it goes live for viewers immediately. Open it from your live streams list to [monitor it](/stream/live/quickstart#step-6-monitor-your-stream) in the Control Room.
+  </Step>
+</Steps>
+
+<Warning>
+  With auto-create on, publishing to the library stream key is the same as creating a stream and clicking **Start Stream**. To test your encoder without viewers seeing it, use a normal live stream with auto-start off and check the preview first.
+</Warning>
+
+The library stream key starts with `lb`, followed by your library ID. Treat it like a password: anyone with it can create live streams in your library. A stream created by auto-create is published with the library stream key, so its own `streamKey` field is empty.
+
+### Resume window
+
+If your encoder drops and reconnects, you usually want it to continue the same broadcast rather than start a new one. The **Resume window (seconds)** setting controls this:
+
+- If the encoder reconnects to the library stream key **within** the resume window, it resumes the last auto-created live stream.
+- If it reconnects **after** the resume window, Bunny creates a new live stream.
+- Set the resume window to `0` to always create a new live stream.
+
+The default is `1800` seconds (30 minutes), and the maximum is `86400` seconds (24 hours).
+
+A stream that has already ended can't be resumed. If the last auto-created stream has ended, for example because you stopped it or an Event reached its 30-minute disconnect limit, publishing to the library stream key creates a new live stream, even within the resume window. This is different from a normal stream key: reconnecting to a stream that has ended with its own stream key is refused.
+
+### Managing the library stream key
+
+- **Reset the key** with the refresh icon next to it in the **Auto-create** card. The old key stops working, so update every encoder that uses it. Because the SRT ingest URLs contain the key, copy the new SRT URLs too. The RTMPS and RTMP URLs don't contain the key and stay the same.
+- **Turning auto-create off** keeps the key, but publishing to it no longer creates live streams. Turn auto-create back on to use the same key again.
+
+<Note>
+  Auto-created streams count towards the [concurrent live stream limit](/stream/live/pricing-and-limits#limits) like any other stream.
+</Note>
