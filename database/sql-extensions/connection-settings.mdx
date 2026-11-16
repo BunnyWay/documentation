@@ -1,0 +1,48 @@
+---
+title: Connection Settings and Limits
+sidebarTitle: Connection settings
+description: The SQLite settings that differ from stock defaults in Bunny Database, the statements that are not supported, and the per-statement limits.
+---
+
+Some connection settings differ from the SQLite defaults, and some cannot be changed.
+
+## Settings
+
+| Setting                                                                            | Value                                                                                                                            |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| [Journal mode](https://www.sqlite.org/pragma.html#pragma_journal_mode)             | `wal`. Cannot be changed.                                                                                                        |
+| [Page size](https://www.sqlite.org/pragma.html#pragma_page_size)                   | 4096 bytes. Cannot be changed.                                                                                                   |
+| [Checkpointing](https://www.sqlite.org/wal.html#ckpt)                              | Managed by the service. Cannot be changed.                                                                                       |
+| [Foreign keys](https://www.sqlite.org/pragma.html#pragma_foreign_keys)             | Enforcement is **on** by default, unlike stock SQLite. `PRAGMA foreign_keys = OFF` turns it off for the current connection only. |
+| [Double-quoted strings](https://www.sqlite.org/quirks.html#dblquote)               | Rejected. `"name"` is always treated as an identifier, never as a string literal. Use single quotes for strings.                 |
+| [Recursive triggers](https://www.sqlite.org/pragma.html#pragma_recursive_triggers) | Off by default.                                                                                                                  |
+| [Temporary storage](https://www.sqlite.org/pragma.html#pragma_temp_store)          | In memory. `CREATE TEMP TABLE` is not supported.                                                                                 |
+
+For how writes are persisted and replicated, see [Durability and Consistency](/database/durability-and-consistency). To read any setting as a table, see [Introspection](/database/sql-extensions/introspection#reading-settings-as-tables).
+
+## Unsupported statements
+
+The following statements are rejected as unsupported:
+
+- `PRAGMA` writes to `page_size`, `synchronous`, `journal_mode`, and `wal_autocheckpoint`. Reading them works.
+- `PRAGMA optimize` and `PRAGMA wal_checkpoint`
+- `VACUUM` and `ANALYZE`
+- `ATTACH DATABASE`
+- `CREATE TEMP TABLE`
+
+`REINDEX` is supported.
+
+## Statement limits
+
+These correspond to SQLite's [run-time limits](https://www.sqlite.org/limits.html).
+
+| Limit                                  | Value |
+| -------------------------------------- | ----- |
+| Bound parameters per statement         | 32766 |
+| Maximum string, blob, or SQL text size | 1 GB  |
+| Columns in a result                    | 2000  |
+| Terms in a compound `SELECT`           | 500   |
+| Function arguments                     | 127   |
+| Trigger and expression depth           | 1000  |
+
+For account-level quotas such as database count and size, see [Limits](/database/limits).

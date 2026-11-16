@@ -9,16 +9,6 @@ mode: wide
 
 The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from your terminal. It's useful for scripting, CI/CD, local development workflows, and quickly inspecting resources without leaving your shell.
 
-<Columns cols={2}>
-
-<Card title="CLI Quickstart" href="/cli/quickstart" icon="rocket" horizontal />
-
-<Card title="View on GitHub" href="https://github.com/BunnyWay/cli" icon="github" horizontal>
-  Browse the source, follow releases, and report issues on the Bunny CLI repository
-</Card>
-
-</Columns>
-
 ## Getting started
 
 <CardGroup cols={2}>
@@ -39,11 +29,14 @@ The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from
 ## Commands
 
 <CardGroup cols={2}>
+  <Card title="bunny stream" icon="video" href="/cli/commands/stream">
+    Manage Bunny Stream, create and configure video libaries, migrate and upload videos and more...
+  </Card>
   <Card title="bunny db" icon="database" href="/cli/commands/db">
     Create and manage Bunny Databases, run schema migrations, open an
     interactive SQL shell, and generate auth tokens
   </Card>
-  <Card title="bunny dns" icon="globe-2" href="/cli/commands/dns">
+  <Card title="bunny dns" icon="globe" href="/cli/commands/dns">
     Manage DNS zones and records, DNSSEC, query logging, and Scriptable DNS
     scripts
   </Card>
@@ -54,7 +47,7 @@ The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from
   <Card title="bunny storage" icon="hard-drive" href="/cli/commands/storage">
     Create and manage Storage zones, credentials, custom domains, and files
   </Card>
-  <Card title="bunny sites" icon="globe" href="/cli/commands/sites">
+  <Card title="bunny sites" icon="earth" href="/cli/commands/sites">
     Build and deploy static sites to Bunny Storage and Bunny CDN (Public Preview)
   </Card>
   <Card title="bunny sandbox" icon="box" href="/cli/commands/sandbox">
@@ -63,10 +56,16 @@ The Bunny CLI is a single binary (`bunny`) for managing bunny.net resources from
   <Card title="bunny api" icon="square-terminal" href="/cli/commands/api">
     Make raw authenticated requests to any bunny.net API endpoint
   </Card>
-  <Card title="bunny config" icon="sliders" href="/cli/commands/config">
+  <Card title="bunny config" icon="wrench" href="/cli/commands/config">
     Manage CLI configuration and named profiles
   </Card>
   <Card title="bunny login / logout" icon="key" href="/cli/commands/auth">
     Browser-based or API key authentication
   </Card>
 </CardGroup>
+
+<Columns cols={1}>
+  <Card title="View on GitHub" icon="github" href="https://github.com/BunnyWay/cli">
+    Browse the source, follow releases, and report issues on the Bunny CLI repository
+  </Card>
+</Columns>

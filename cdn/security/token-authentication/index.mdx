@@ -45,5 +45,5 @@ https://myzone.b-cdn.net/video.mp4?token=abc123&expires=1598024587
 Bunny recalculates the hash on each request. If it matches and the expiration hasn't passed, the request succeeds.
 
 <Info>
-  IPv6 is automatically disabled when token authentication is enabled.
+  Token authentication works over both IPv4 and IPv6. Only [Token IP Validation](/docs/cdn/security/token-authentication/advanced#ip-locking) restricts the address family: a Pull Zone with it enabled serves IPv4 only, unless its [IP Family Policy](/docs/cdn/ip-family-policy#token-authentication-and-ip-locking) is set to IPv6 Only. See [Address family matching](/docs/cdn/security/token-authentication/advanced#address-family-matching) for details.
 </Info>

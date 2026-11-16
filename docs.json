@@ -333,6 +333,7 @@
                 "group": "Deployment",
                 "pages": [
                   "magic-containers/deploy",
+                  "magic-containers/deploy-from-github",
                   "magic-containers/deploy-with-github-actions",
                   "magic-containers/image-registries",
                   "magic-containers/regions",
@@ -350,9 +351,11 @@
                 "group": "Managing Apps",
                 "pages": [
                   "magic-containers/update",
+                  "magic-containers/deployments",
                   "magic-containers/configuration",
                   "magic-containers/environment-variables",
                   "magic-containers/persistent-volumes",
+                  "magic-containers/ephemeral-storage",
                   "magic-containers/endpoints",
                   "magic-containers/undeploy",
                   "magic-containers/delete"
@@ -566,6 +569,17 @@
                 "pages": [
                   "stream/index",
                   "stream/quickstart",
+                  {
+                    "group": "Migrate to Bunny Stream",
+                    "expanded": true,
+                    "pages": [
+                      "stream/migrate-from-mux",
+                      "stream/migrate-from-cloudflare-stream",
+                      "stream/migrate-from-vimeo",
+                      "stream/migrate-from-wistia",
+                      "stream/migrate-from-s3"
+                    ]
+                  },
                   "stream/authentication",
                   "stream/pricing",
                   "stream/changelog"
@@ -616,6 +630,7 @@
                     "group": "Security",
                     "pages": [
                       "stream/security",
+                      "stream/geo-blocking",
                       "stream/security-options",
                       "stream/token-authentication"
                     ]
@@ -653,8 +668,15 @@
               {
                 "group": "Playback",
                 "pages": [
-                  "stream/player",
-                  "stream/player-settings",
+                  {
+                    "group": "Bunny Player",
+                    "pages": [
+                      "stream/player",
+                      "stream/player-settings",
+                      "stream/player-ui-language"
+                    ],
+                    "expanded": true
+                  },
                   "stream/embedding",
                   "stream/playback-api",
                   "stream/mp4-downloads",
@@ -1032,6 +1054,25 @@
                 "group": "Reference",
                 "pages": [
                   "database/limits",
+                  {
+                    "group": "SQL Extensions",
+                    "pages": [
+                      "database/sql-extensions/index",
+                      "database/sql-extensions/full-text-search",
+                      "database/sql-extensions/vector-search",
+                      "database/sql-extensions/spatial",
+                      "database/sql-extensions/json",
+                      "database/sql-extensions/regular-expressions",
+                      "database/sql-extensions/identifiers-and-hashing",
+                      "database/sql-extensions/mathematics",
+                      "database/sql-extensions/statistics-and-text",
+                      "database/sql-extensions/sequences",
+                      "database/sql-extensions/introspection",
+                      "database/sql-extensions/syntax-extensions",
+                      "database/sql-extensions/connection-settings",
+                      "database/sql-extensions/core-functions"
+                    ]
+                  },
                   "database/replication",
                   "database/metrics",
                   "database/durability-and-consistency"
