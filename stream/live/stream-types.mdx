@@ -1,13 +1,15 @@
 ---
 title: "Stream Live Types: Event and Channel"
 sidebarTitle: "Live Types"
-description: "Choose between Event and Channel live streams in Bunny Stream: duration limits, disconnect behavior, and VOD recording."
+description: "Choose between Event and Channel live streams in Bunny Stream: use cases, duration limits, disconnect behavior, and VOD recording."
 hidden: true
 keywords:
   - "Live"
   - "Event"
   - "Channel"
   - "24/7"
+  - "Broadcast"
+  - "Linear TV"
 ---
 
 import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
@@ -17,12 +19,12 @@ import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
 Every live stream has a type. The type sets how long the stream can run, what happens when your encoder disconnects, and whether the stream can be recorded.
 
 - An **Event** is a broadcast with a start and an end, such as a conference talk, a match, or a webinar. It runs for up to 12 hours and can be recorded as a VOD. Event is the default type.
-- A **Channel** is a 24/7 stream, such as a linear TV channel, a radio stream, or a camera that never turns off. It has no duration limit and survives encoder disconnects, but it can't be recorded as a VOD.
+- A **Channel** is a 24/7 stream built for broadcast scenarios, such as a linear TV channel, a radio stream, or a camera that never turns off. It has no duration limit and survives encoder disconnects, but it can't be recorded as a VOD.
 
 |  | Event | Channel |
 | --- | --- | --- |
 | **API value** (`streamType`) | `0` (default) | `1` |
-| **Best for** | One-off broadcasts with a clear start and end | Continuous, always-on streams |
+| **Best for** | One-off broadcasts with a clear start and end | 24/7 broadcast and always-on streams |
 | **Maximum duration** | 12 hours | No limit |
 | **VOD recording** (`recordVod`) | Optional | Not supported |
 | **DVR** | Supported, up to 12 hours | Supported, up to 12 hours |
@@ -30,6 +32,46 @@ Every live stream has a type. The type sets how long the stream can run, what ha
 | **Scheduling and countdown** | Supported | Supported |
 | **Auto-start and auto-create** | Supported | Supported |
 | **Backup ingest, RTMP outputs, watermark** | Supported | Supported |
+
+## Use cases
+
+### When to use an Event
+
+Use an Event when your broadcast has a start and an end, and when you want to keep a recording for viewers who missed it.
+
+| Use case | Why an Event fits |
+| --- | --- |
+| Conferences, keynotes, and product launches | Schedule the start with a countdown or a pre-stream trailer, then publish the recording as a VOD when the session ends. |
+| Webinars, town halls, and online classes | Each session runs for a few hours at most and gets its own recording in your video library. |
+| Sports matches and esports tournaments | A match day fits within the 12-hour limit. Use a backup ingest for redundancy and DVR so viewers can rewind to a key moment. |
+| Concerts, festivals, and religious services | Run each performance or service as its own Event, so each one has its own recording and stream link. |
+| Recurring shows | Create an Event for each episode, or turn on [auto-create](/stream/live/auto-start-and-auto-create#auto-create) so publishing to the library stream key creates and starts a new stream every time. |
+
+### When to use a Channel
+
+Use a Channel for 24/7 streams with no planned end. Channels are built for broadcast scenarios: the stream keeps running through encoder restarts and maintenance, and viewers always use the same stream link.
+
+| Use case | Why a Channel fits |
+| --- | --- |
+| Linear TV and free ad-supported streaming TV (FAST) channels | Your playout system sends a continuous feed with no duration limit, and the Channel stays live through playout restarts. |
+| Simulcasts of TV and radio stations | Stream your broadcast output online around the clock, and use RTMP outputs to send the same feed to other platforms. |
+| 24-hour news and sports channels | The schedule never ends, and DVR lets viewers rewind up to 12 hours to catch up on what they missed. |
+| Always-on cameras, such as venue, traffic, weather, or wildlife cameras | The camera can drop offline for hours or days and reconnect to the same stream with the same stream key. |
+| Internal 24/7 channels, such as a corporate TV channel or digital signage | One permanent stream link to embed, with no new stream to create for each broadcast. |
+
+<Note>
+  A Channel is billed for every minute an encoder publishes to it. See [Pricing](/stream/live/pricing-and-limits#pricing) for an example of a 24/7 Channel.
+</Note>
+
+### Choosing between them
+
+| If you need to | Use |
+| --- | --- |
+| Keep a recording of the broadcast as a VOD | Event |
+| Stream for longer than 12 hours, or with no planned end | Channel |
+| Keep the stream open while the encoder is offline for more than 30 minutes | Channel |
+| Give each broadcast its own stream link and recording | Event |
+| Keep one stream link that viewers can return to at any time | Channel |
 
 ## How an Event behaves
 
