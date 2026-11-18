@@ -18,7 +18,7 @@ Scoped API keys start with `bnyscpd_`.
 
 ## Find the permission an endpoint needs
 
-Scoped API keys work with endpoints of the [Core Platform API](/api-reference/core) and the [Scripting API](/api-reference/scripting) that list a scoped API key permission. Each endpoint lists its permissions in the endpoint description. For example, [List Pull Zones](/api-reference/core/pull-zone/list-pull-zones) shows:
+Each endpoint that accepts scoped API keys lists its permissions in the endpoint description. For example, [List Pull Zones](/api-reference/core/pull-zone/list-pull-zones) shows:
 
 ```
 Scoped API key permissions (any one of):
@@ -29,7 +29,7 @@ Scoped API key permissions (any one of):
 
 Your key needs any one of the listed permissions. Grant that permission when you [create the key](/account/scoped-api-keys#create-a-scoped-api-key), on the resources the request touches.
 
-If an endpoint lists no scoped API key permission, it only accepts your account API key.
+If an endpoint lists no scoped API key permission, it doesn't accept scoped API keys yet. The products and permissions you can grant are listed in the dashboard when you [create a key](/account/scoped-api-keys#create-a-scoped-api-key).
 
 ## Errors
 
