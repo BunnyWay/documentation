@@ -1,0 +1,279 @@
+---
+title: "Stream Live FFmpeg Encoding Guide"
+sidebarTitle: "FFmpeg encoding guide"
+description: "Stream to Bunny Stream Live with FFmpeg: tested 1080p and 4K H.264 commands for SRT and RTMPS, recommended settings, a local file test, and hardware encoder examples."
+hidden: true
+keywords:
+  - "Live"
+  - "FFmpeg"
+  - "H.264"
+  - "SRT"
+  - "RTMPS"
+  - "Encoder settings"
+  - "4K"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+
+<LiveClosedPreview />
+
+[FFmpeg](https://ffmpeg.org/) is a free command-line encoder that can send a camera, capture card, or local file to Bunny Stream Live. This guide gives you commands that match the [Bunny Stream Live encoder settings](/stream/live/ingest#recommended-encoder-settings) for 1080p and 4K, and explains each option so you can adapt them.
+
+To create a stream and find your ingest URLs and stream key, follow the [quickstart](/stream/live/quickstart). If the picture shows bands, freezes, or blocky video, see [encoder troubleshooting](/stream/live/troubleshooting#picture-and-encoder-checklist).
+
+## What Bunny Stream Live accepts
+
+| Setting | 1080p | 2160p / 4K |
+| --- | --- | --- |
+| **Video codec** | H.264 (AVC) | H.264 (AVC) |
+| **Resolution** | 1920 × 1080 | 3840 × 2160 |
+| **Frame rate** | Constant, max 60 fps | Constant, max 30 fps |
+| **Bitrate** | 5,000 - 8,000 kbps, CBR | 8,000 - 25,000 kbps, CBR |
+| **Keyframe interval** | 2 seconds | 2 seconds |
+| **Pixel format** | 8-bit, 4:2:0 (`yuv420p`) | 8-bit, 4:2:0 (`yuv420p`) |
+| **Audio** | Stereo AAC, 48 kHz, 256 kbps | Stereo AAC, 48 kHz, 320 kbps |
+| **Containers** | FLV for RTMPS and RTMP, MPEG-TS for SRT | FLV for RTMPS and RTMP, MPEG-TS for SRT |
+
+<Warning>
+  **HEVC (H.265) is not supported** on ingest or live output. Always encode to H.264 with `-c:v libx264` or a hardware H.264 encoder, even if your source file or camera records HEVC.
+</Warning>
+
+## Before you start
+
+- Install an FFmpeg build that includes `libx264`, `libsrt` (for SRT), and OpenSSL or another TLS library (for RTMPS). Check with `ffmpeg -encoders | grep 264` and `ffmpeg -protocols | grep -E "srt|rtmps"`.
+- Copy your stream key and ingest URLs from the stream's details. See [Step 2 of the quickstart](/stream/live/quickstart#step-2-get-your-ingest-details).
+- Always wrap the SRT URL in **quotes**. It contains `&` characters that your shell would otherwise treat as commands.
+
+<Warning>
+  Your **stream key** is part of every ingest URL. Anyone with it can broadcast to your stream. Don't paste full commands with a real key into public chats, tickets, or repositories.
+</Warning>
+
+## Option reference
+
+The commands below share the same options. This is what each one does:
+
+| Option | Purpose |
+| --- | --- |
+| `-re` | Reads a **file** at its native frame rate so it streams in real time. Remove it for live inputs such as a camera or capture card. |
+| `-c:v libx264` | H.264 software encoder. |
+| `-preset veryfast` | Encoder speed. Faster presets use less CPU. Use `veryfast` for 1080p and `superfast` or a hardware encoder for 4K if your CPU can't keep up. |
+| `-s` / `-vf scale` | Output resolution. |
+| `-r 30` | Fixed output frame rate. |
+| `-b:v`, `-maxrate`, `-bufsize` | Constant bitrate. Set all three to the same value so the bitrate doesn't spike. |
+| `-nal-hrd cbr` | Writes CBR information into the stream for steady output (`libx264` only). |
+| `-pix_fmt yuv420p` | 8-bit 4:2:0 video. Lowers the encoder load and is the supported format. |
+| `-profile:v high` | H.264 High profile. |
+| `-g 60`, `-keyint_min 60` | Keyframe every 60 frames, which is 2 seconds at 30 fps. Use `120` at 60 fps. |
+| `-sc_threshold 0` | Disables scene-cut keyframes, so keyframes stay exactly 2 seconds apart. |
+| `-c:a aac -ac 2 -ar 48000` | Stereo AAC audio at 48 kHz. |
+| `-b:a 256k` / `320k` | Audio bitrate for 1080p and 4K. |
+| `-f flv` / `-f mpegts` | Output container. Use `flv` for RTMPS and RTMP, and `mpegts` for SRT. |
+
+## 1080p over SRT
+
+SRT recovers lost packets, so it's the best choice on Wi-Fi, cellular, and long-distance connections.
+
+```bash
+ffmpeg \
+  -re \
+  -i input.mp4 \
+  -c:v libx264 \
+  -preset veryfast \
+  -s 1920x1080 \
+  -r 30 \
+  -b:v 5000k \
+  -maxrate 5000k \
+  -bufsize 5000k \
+  -nal-hrd cbr \
+  -pix_fmt yuv420p \
+  -profile:v high \
+  -g 60 \
+  -keyint_min 60 \
+  -sc_threshold 0 \
+  -c:a aac \
+  -ac 2 \
+  -ar 48000 \
+  -b:a 256k \
+  -f mpegts \
+  "srt://global.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=240000"
+```
+
+Replace the URL with your own **primary SRT ingest URL** from the dashboard or API, and keep `mode`, `streamid`, and `pkt_size` as they are. The `latency` value in FFmpeg's SRT URL is in **microseconds**, so `240000` is 240 ms. See [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency) to choose a value for your connection.
+
+## 4K 30 fps over SRT
+
+This command sends a 3840 × 2160 feed at 30 fps and 10,000 kbps CBR. It uses 8-bit video and a fixed keyframe interval to keep the load on a software encoder as low as possible.
+
+```bash
+ffmpeg \
+  -re \
+  -i input.mp4 \
+  -c:v libx264 \
+  -preset veryfast \
+  -s 3840x2160 \
+  -r 30 \
+  -b:v 10000k \
+  -maxrate 10000k \
+  -bufsize 10000k \
+  -nal-hrd cbr \
+  -pix_fmt yuv420p \
+  -profile:v high \
+  -color_range tv \
+  -colorspace bt709 \
+  -color_trc bt709 \
+  -color_primaries bt709 \
+  -g 60 \
+  -keyint_min 60 \
+  -sc_threshold 0 \
+  -x264-params "keyint=60:min-keyint=60" \
+  -c:a aac \
+  -ac 2 \
+  -ar 48000 \
+  -b:a 320k \
+  -f mpegts \
+  "srt://global.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=240000"
+```
+
+Why these values:
+
+- **10,000 kbps CBR** is inside the 8,000 to 25,000 kbps range for 4K and is easier for your encoder and upload connection to sustain than the top of the range. Increase it once your stream is stable.
+- **8-bit `yuv420p`** reduces the load on a software encoder compared to 10-bit video.
+- **`latency=240000`** (240 ms) gives SRT headroom to recover lost packets on a good connection. Raise it on Wi-Fi or cellular.
+- **The color tags** mark the output as standard dynamic range BT.709. See [Color and HDR](#color-and-hdr).
+
+<Info>
+  Real-time 4K encoding with `libx264` needs a fast CPU with many cores. If `speed` in FFmpeg's progress line stays below `1.00x`, or your CPU runs near 100%, lower the bitrate, use a faster preset, or use a [hardware encoder](#hardware-encoders).
+</Info>
+
+## Over RTMPS
+
+RTMPS runs over TCP port 443 and needs no tuning. Use it for most broadcasts on a stable, wired connection.
+
+```bash
+ffmpeg \
+  -re \
+  -i input.mp4 \
+  -c:v libx264 \
+  -preset veryfast \
+  -b:v 5000k \
+  -maxrate 5000k \
+  -bufsize 5000k \
+  -nal-hrd cbr \
+  -pix_fmt yuv420p \
+  -profile:v high \
+  -g 60 \
+  -keyint_min 60 \
+  -sc_threshold 0 \
+  -c:a aac \
+  -b:a 256k \
+  -ar 48000 \
+  -ac 2 \
+  -f flv \
+  "rtmps://global.rtmp.mediadelivery.net/live/bunnylive_xxxxxxxxxxxxxxxx"
+```
+
+The URL is the **primary RTMPS ingest URL** followed by `/` and your **stream key**. For RTMP, use the `rtmp://` URL in the same way.
+
+## Stream a camera or capture card
+
+For a live source, remove `-re` and `-stream_loop`, and put your input options before `-i`. The input options depend on your operating system and device. For example, on macOS with an AVFoundation device:
+
+```bash
+ffmpeg \
+  -f avfoundation -framerate 30 -video_size 1920x1080 -i "0:0" \
+  -c:v libx264 -preset veryfast \
+  -b:v 5000k -maxrate 5000k -bufsize 5000k \
+  -pix_fmt yuv420p -profile:v high \
+  -g 60 -keyint_min 60 -sc_threshold 0 \
+  -c:a aac -b:a 256k -ar 48000 -ac 2 \
+  -f flv \
+  "rtmps://global.rtmp.mediadelivery.net/live/bunnylive_xxxxxxxxxxxxxxxx"
+```
+
+On Linux use `-f v4l2` and `-f alsa`, and on Windows use `-f dshow`. List your devices with `ffmpeg -f avfoundation -list_devices true -i ""` (macOS), `v4l2-ctl --list-devices` (Linux), or `ffmpeg -list_devices true -f dshow -i dummy` (Windows).
+
+## Test with a local file
+
+Before a broadcast, stream a local H.264 file to confirm that your connection and settings work. Because `-re` reads the file in real time, this is a good test of your network and encoder.
+
+To loop a short file continuously, add `-stream_loop -1` before `-i`:
+
+```bash
+ffmpeg -stream_loop -1 -re -i input.mp4 ...
+```
+
+<Steps>
+  <Step title="Create a stream and start your encoder">
+    Run one of the commands above with your own ingest URL. The dashboard preview shows the stream within 15 to 20 seconds.
+  </Step>
+  <Step title="Watch the FFmpeg output">
+    Check that `speed` stays close to `1.00x` and the bitrate stays close to your target. See [Reading FFmpeg output](/stream/live/troubleshooting#reading-ffmpeg-output).
+  </Step>
+  <Step title="Watch the preview for 10 to 15 minutes">
+    Look for bands, freezes, or stutter. If you see them, lower the bitrate or raise the SRT latency, as described in [encoder troubleshooting](/stream/live/troubleshooting#picture-and-encoder-checklist).
+  </Step>
+  <Step title="Start or end the stream">
+    The preview isn't recorded. When you're ready to go live, click **Start Stream**. If you only need a test, delete the stream, or end it from the Control Room.
+  </Step>
+</Steps>
+
+<Note>
+  If your source file isn't H.264, 8-bit, and SDR, FFmpeg re-encodes it with the commands above. Encode a long source file once to a clean H.264, 8-bit, SDR file ahead of time if your machine can't re-encode it in real time.
+</Note>
+
+## Color and HDR
+
+Live streams are standard dynamic range (SDR). If your source is HDR (HLG or PQ), 10-bit, or wide-gamut, convert it to SDR before you stream. Changing the pixel format alone isn't enough: the result looks washed out or dark without a proper **tone-mapping** step. Convert and tone-map HDR sources in an editor or a separate FFmpeg pass, and then stream the resulting SDR file.
+
+After conversion, tag the output so players show the colors correctly. The commands above already do this for 4K with:
+
+```text
+-color_range tv -colorspace bt709 -color_trc bt709 -color_primaries bt709
+```
+
+Add the same four options to the 1080p commands if your source uses a different color space.
+
+## Hardware encoders
+
+Hardware encoders use less CPU and can make 4K 30 fps possible on machines where `libx264` is too slow. Replace the video options of any command above with the encoder for your hardware. Keep the audio, keyframe, and output options.
+
+<Tabs>
+  <Tab title="NVIDIA (NVENC)">
+    ```bash
+    -c:v h264_nvenc -preset p4 -rc cbr -b:v 10000k -maxrate 10000k -bufsize 10000k \
+    -profile:v high -pix_fmt yuv420p -g 60 -bf 2
+    ```
+  </Tab>
+  <Tab title="macOS (VideoToolbox)">
+    ```bash
+    -c:v h264_videotoolbox -b:v 10000k -maxrate 10000k -bufsize 10000k \
+    -profile:v high -pix_fmt yuv420p -g 60
+    ```
+  </Tab>
+  <Tab title="Intel (QuickSync)">
+    ```bash
+    -c:v h264_qsv -b:v 10000k -maxrate 10000k -bufsize 10000k \
+    -profile:v high -pix_fmt nv12 -g 60
+    ```
+  </Tab>
+</Tabs>
+
+Option names and defaults vary between FFmpeg versions and drivers. Run `ffmpeg -h encoder=h264_nvenc` (or the name of your encoder) to see the options your build supports, and test the result for at least 10 to 15 minutes before an important broadcast.
+
+## Use a backup ingest
+
+Run a second FFmpeg process with the **backup ingest URL** to give your stream a failover path. Bunny switches to the backup ingest if the primary connection drops, and back again when it returns. Use the same video settings, and the same `latency` value for SRT, in both commands.
+
+Primary and backup are separate parallel encodes and are billed separately. See [pricing](/stream/live/pricing-and-limits#pricing).
+
+## Troubleshooting
+
+| Problem | What to try |
+| --- | --- |
+| **Bands or freezes** | Lower the bitrate, use CBR, raise the SRT `latency`, and check that `speed` is `1.00x`. See [encoder troubleshooting](/stream/live/troubleshooting#common-picture-symptoms). |
+| **`speed` below `1.00x`** | Your encoder can't keep up. Use a faster preset, lower the resolution or frame rate, or use a hardware encoder. |
+| **`Connection refused` or timeout** | Check the URL, stream key, and protocol. Allow outbound TCP 443 for RTMPS and UDP 8890 for SRT. |
+| **`Broken pipe` when the stream ends** | Expected. Ending a stream disconnects your encoder. |
+| **Preview shows no video** | Allow 15 to 20 seconds, then check for H.264 video and AAC audio. |
+| **Washed-out colors** | Convert HDR sources to SDR before streaming. See [Color and HDR](#color-and-hdr). |
+| **Player shows a different resolution than you sent** | Bunny builds the ABR ladder from your [library encoding settings](/stream/live/ingest#customizing-the-abr-ladder-and-bitrates) and never encodes above the source resolution. |
