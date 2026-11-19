@@ -5,11 +5,11 @@ rss: true
 ---
 
 <Update label="2026-11-19" tags={["Shield","(Improvement)"]}>
-  ## Bunny Shield rules for Java2Shell, Ruby2Shell, WordPress and Apache Roller
+  ## Bunny Shield rules for Java4Shell, Ruby2Shell, WordPress and Apache Roller
 
   New managed WAF rules are now active for several critical web-application vulnerabilities disclosed this week. For Shield Zones with the WAF in blocking mode, matching requests are blocked before they reach the origin. In log-only mode, the rules do not block requests. Bunny Shield respects each customer's configured mode.
 
-  - **Java2Shell (CVE-2026-114938):** Blocks the malformed Base64 padding pattern that triggers the OpenJDK Base64 heap overflow, inspecting request headers, cookies, query and form parameters, the URL path, and JSON and XML bodies.
+  - **Java4Shell (CVE-2026-114938):** Blocks the malformed Base64 padding pattern that triggers the OpenJDK Base64 heap overflow, inspecting request headers, cookies, query and form parameters, the URL path, and JSON and XML bodies.
   - **Ruby2Shell (GHSA-34m4-m9fh-gqp5):** Blocks the multipart request pattern that triggers the Ruby case-conversion heap overflow in Rails and Sinatra applications.
   - **WordPress (CVE-2026-119977):** Blocks direct requests to the core-upgrade staging directory, an actively exploited path.
   - **Apache Roller (CVE-2026-129448):** Blocks the XML-RPC request pattern used in active exploitation of the Roller services endpoint.
