@@ -172,11 +172,9 @@ Back on the **Add live stream** page (or the **Control Room**), the **Preview** 
   With **auto-start** on, or for a stream created by **auto-create**, there's no preview stage: the stream goes straight to **Live** and you can skip to [Step 6](#step-6-monitor-your-stream).
 </Note>
 
-<Note>
-  **RTMPS not connecting?** Check that the server URL starts with `rtmps://` and not `rtmp://`, that your encoder supports RTMPS, and that your network allows outbound **TCP** traffic on port **443**. Some older encoders and firmware versions only support RTMP. If your encoder can't use RTMPS, use the RTMP or SRT details instead.
-</Note>
+**RTMPS not connecting?** <br />Check that the server URL starts with `rtmps://` and not `rtmp://`, that your encoder supports RTMPS, and that your network allows outbound **TCP** traffic on port **443**. Some older encoders and firmware versions only support RTMP. If your encoder can't use RTMPS, use the RTMP or SRT details instead.
 
-**SRT not connecting?** <br /><br />Check that the URL was pasted in full, including the `streamid` parameter, and that your **Stream key** is filled in in your encoder's Stream Key field. Also make sure your network allows outbound **UDP** traffic on port **8890** - some corporate and venue firewalls block UDP even when RTMPS and RTMP work. If the stream connects but the preview stutters or shows artifacts, see [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency).
+**SRT not connecting?** <br />Check that the URL was pasted in full, including the `streamid` parameter, and that your **Stream key** is filled in in your encoder's Stream Key field. Also make sure your network allows outbound **UDP** traffic on port **8890** - some corporate and venue firewalls block UDP even when RTMPS and RTMP work. If the stream connects but the preview stutters or shows artifacts, see [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency).
 
 From the **Control Room**, you can also click **Show Preview** to open the full-size preview player in a separate window and check playback and latency (last ping) without exposing the stream to viewers.
 
