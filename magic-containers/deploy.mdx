@@ -6,7 +6,7 @@ description: Deploy a containerized application to Magic Containers from a singl
 
 Deploying to Magic Containers happens on a single page. You pick a container image, configure the container, choose a region, and click **Deploy**. If you need more regions or different scaling settings, you can configure them after your app is deployed.
 
-Public images from Docker Hub and GitHub work out of the box. To deploy a private image, connect the registry first. See [Image Registries](/magic-containers/image-registries).
+Public images from Docker Hub and GitHub Container Registry work without any setup. To deploy a private image, connect its registry first. Magic Containers works with any OCI-compliant registry, including GitLab, Harbor, and Quay. See [Image Registries](/magic-containers/image-registries).
 
 <Steps>
   <Step title="Open the Deploy App page">
@@ -16,16 +16,35 @@ Public images from Docker Hub and GitHub work out of the box. To deploy a privat
       ![Deploy App page in Magic Containers](/images/magic-containers/deploy-select-image.png)
     </Frame>
 
-    The page opens with one empty container named `Container-1`. When you select an image, the container is renamed after the image automatically. Click the pencil icon to give it a different name.
+    The page opens on the **Image reference** tab. Once you pick an image, the dashboard names the container after it. Click the pencil icon next to the name to change it.
   </Step>
 
   <Step title="Select a container image">
-    Use the search field to find a container image. The search covers every registry connected to your account: the public Docker Hub and GitHub registries, plus any private Docker Hub or GitHub registries you've added. The registry chips above the search field show which registries are included. Click **+ Add Registry** to connect a private registry without leaving the page.
-
-    Once you select an image, its available tags are displayed. If a `latest` tag exists, it is selected automatically. Click any other tag to switch, or use the search button to find a tag that isn't listed.
+    Paste the full image reference into the **Image** field, for example `ghcr.io/acme/api:v1.4.2` or `nginx:1.27`, and press **Enter**. Magic Containers checks every registry connected to your account, then shows the registry that has the image, its digest, and its tags before anything deploys. Click a tag to switch to it.
 
     <Frame>
-      ![Container configuration with image, endpoints, volumes, and environment variables](/images/magic-containers/deploy-configure-container.png)
+      ![Image found in a GitHub registry, with its digest and tags](/images/magic-containers/deploy-image-reference-found.png)
+    </Frame>
+
+    Leave the tag off and the dashboard asks you to pick one. Plenty of GitHub Container Registry images never publish a `latest` tag, so choosing here saves you a failed pull at deploy time.
+
+    A typo or a tag that doesn't exist gets you the closest matches: other tags of the same image, or images with a similar name. Click one to use it.
+
+    <Columns cols={2}>
+      <Frame>
+        ![Suggested tags for an image reference with no matching tag](/images/magic-containers/deploy-image-reference-other-tags.png)
+      </Frame>
+      <Frame>
+        ![Suggested images with a similar name](/images/magic-containers/deploy-image-reference-similar-images.png)
+      </Frame>
+    </Columns>
+
+    A registry that rejects your saved credentials, for example after a token expires, shows **Unauthorized** in the results. Update the credentials under [Image Registries](/magic-containers/image-registries) and paste the reference again.
+
+    To pick an image by hand, open the **Browse registries** tab. The chips above the search field show which registries the search covers. Click a chip with a plus sign to include that registry, or click **+ Add Registry** to connect a private registry without leaving the page.
+
+    <Frame>
+      ![Browse registries tab with registry chips and image search](/images/magic-containers/deploy-browse-registries.png)
     </Frame>
 
     <Info>
@@ -34,6 +53,10 @@ Public images from Docker Hub and GitHub work out of the box. To deploy a privat
   </Step>
 
   <Step title="Configure endpoints">
+    <Frame>
+      ![Container configuration with image, endpoints, volumes, and environment variables](/images/magic-containers/deploy-configure-container.png)
+    </Frame>
+
     Endpoints define how your container is reachable from the internet. Two endpoint types are available:
 
     - **CDN**: routes traffic through bunny.net's CDN edge network. Best for HTTP(S) services that benefit from caching and global distribution.
