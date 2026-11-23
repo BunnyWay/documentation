@@ -181,7 +181,7 @@ vimeo2bunny status
   </Accordion>
 
   <Accordion title='"Rate limited"'>
-    Handled automatically with exponential backoff. No action needed.
+    When Vimeo or Bunny asks it to slow down (HTTP 429), vimeo2bunny waits the time the server gives, up to 5 minutes, and tries again, up to 5 times per request. If the limit persists, the video fails with "rate limit exceeded after 5 retries". Wait a while, then run the migration again with a lower `--concurrency`, as described in **Retrying failed videos**.
   </Accordion>
 
   <Accordion title='"Video fetch failed: Request failed with status code 422" or 503'>
