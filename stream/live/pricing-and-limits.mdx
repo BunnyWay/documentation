@@ -1,7 +1,7 @@
 ---
 title: "Stream Live Pricing and Limits"
 sidebarTitle: "Pricing and Limits"
-description: "Proposed live encoding pricing for Bunny Stream Live, closed preview limits, known issues, and features not yet supported."
+description: "Proposed live encoding pricing for Bunny Stream Live, closed preview limits, known issues, and which Stream features Live does not yet support."
 hidden: true
 keywords:
   - "Live"
@@ -80,8 +80,21 @@ These are known issues in the closed preview that we're working on:
 - **Two error formats.** Unknown IDs return `404` with a `problem+json` body, while state errors return `400` with a `{"success": false, ...}` body. See [Errors](/stream/live/api#errors).
 - **The `public` field has no effect.** Setting it to `false` doesn't restrict playback. Use your video library's security settings to control access instead.
 
-## Not currently supported by Stream Live during closed preview
+## Feature support
 
-- Live statistics
-- Low-latency HLS live streaming
-- VOD clipping
+Some Bunny Stream features that are available for on-demand videos are not currently supported by Stream Live during the closed preview.
+
+| Feature | On-demand video | Stream Live |
+| --- | --- | --- |
+| [Multi-audio](/stream/multi-audio) | ✅ Supported | ❌ Not supported |
+| [Transcription](/stream/transcribing) | ✅ Supported | ❌ Not supported |
+| [Captions](/stream/video-specification#caption-support) | ✅ Supported | ❌ Not supported |
+| [MediaCage Basic DRM](/stream/mediacage-basic) | ✅ Supported | ❌ Not supported |
+| [MediaCage Enterprise DRM](/stream/mediacage-enterprise) | ✅ Supported | ❌ Not supported |
+| [Premium Encoding codecs](/stream/premium-encoding#output-codecs): x265 (HEVC), AV1, VP9 | ✅ Supported | ❌ Not supported. Live output is H.264 only. |
+| [10-bit HDR](/stream/premium-encoding#multiple-output-codec-support) | ✅ Supported | ❌ Not supported. Live output is 8-bit SDR only. Convert HDR sources to SDR before you stream. See [Color and HDR](/stream/live/ffmpeg-encoding-guide#color-and-hdr). |
+| [VAST ad insertion](/stream/vast) | ✅ Supported | ❌ Not supported |
+| [Content tagging](/stream/tagging) | ✅ Supported | ❌ Not supported |
+| [Statistics](/stream/statistics) | ✅ Supported | ❌ Not supported |
+| Low-latency HLS | Not applicable | ❌ Not supported |
+| VOD clipping from a live stream | Not applicable | ❌ Not supported |
