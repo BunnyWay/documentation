@@ -183,6 +183,45 @@ vimeo2bunny status
   <Accordion title='"Rate limited"'>
     Handled automatically with exponential backoff. No action needed.
   </Accordion>
+
+  <Accordion title='"Video fetch failed: Request failed with status code 422" or 503'>
+    Bunny could not fetch some videos partway through the migration, which usually happens when a large migration runs too fast. Slow it down and retry:
+
+    1. Wait a while before retrying.
+    2. Run the migration again with fewer parallel transfers:
+
+    ```bash
+    vimeo2bunny migrate --concurrency 1
+    ```
+
+    For a large library, migrate one folder at a time with `--folder <vimeo-folder-id>` (find the IDs with `vimeo2bunny list --folders`), and keep `--concurrency` at 1 or 2.
+  </Accordion>
+
+  <Accordion title="Retrying failed videos">
+    Run `vimeo2bunny migrate` again, without `--resume`. It is safe to run as often as you need: every migrated video carries a `vimeoId` metatag, so videos already on Bunny are skipped ("Already synced") and only the rest are migrated. Add `--dry-run` first to see how many are left.
+
+    A video is tagged as soon as Bunny accepts it, before encoding. If Bunny accepted a video but then failed to encode it, the re-run skips it as already synced. Delete that video from your library in the [bunny.net dashboard](https://dash.bunny.net) first, then run the migration again to retry it.
+  </Accordion>
+
+  <Accordion title="The migration was interrupted">
+    If the migration stopped partway through, for example because you pressed Ctrl+C or the connection dropped, continue where it left off:
+
+    ```bash
+    vimeo2bunny migrate --resume
+    ```
+
+    `--resume` only continues a migration that was still running. Once a migration finishes, even with some failures, `--resume` starts a fresh one, which skips everything already migrated, the same as running `vimeo2bunny migrate` again.
+  </Accordion>
+
+  <Accordion title="Requests or processing time out">
+    Give slow requests and long encodes more time:
+
+    ```bash
+    vimeo2bunny migrate --request-timeout 120 --processing-timeout 120
+    ```
+
+    `--request-timeout` is in seconds (default 30, up to 3600). `--processing-timeout` is in minutes (default 60, up to 1440) and sets how long to wait for Bunny to encode each video.
+  </Accordion>
 </AccordionGroup>
 
 #### Your Responsibilities
