@@ -92,3 +92,25 @@ The **Catalog** permission lists the repository names in every Harbor project, a
 </Warning>
 
 If **Catalog** isn't in the list of system permissions, your Harbor version doesn't support it. Use a project robot account with pull access, and deploy with the image reference.
+
+### GitLab
+
+GitLab only lists registry images to its instance admins. On GitLab.com, **Browse registries** always shows **No images found**, even when your credentials can pull.
+
+Deploy with the image reference instead:
+
+<Steps>
+  <Step title="Add the registry in Magic Containers">
+    Add an image registry as in [Private registries](#private-registries):
+
+    - **Registry**: **OCI-compliant registry**.
+    - **Registry host**: `registry.gitlab.com`, or the registry host of your GitLab instance.
+    - **Username**: your GitLab username, or the deploy token username.
+    - **Password or access token**: a personal access token or deploy token with the `read_registry` scope.
+  </Step>
+  <Step title="Enter the image reference">
+    When you add the container, select **Image reference** and paste the full reference with a tag, for example `registry.gitlab.com/my-group/my-project/api:latest`.
+
+    Magic Containers picks the saved GitLab registry and its credentials.
+  </Step>
+</Steps>
