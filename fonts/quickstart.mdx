@@ -1,0 +1,70 @@
+---
+title: Bunny Fonts Quickstart
+sidebarTitle: Quickstart
+description: Add a font from Bunny Fonts to your website, or move an existing site off Google Fonts by changing one hostname.
+---
+
+Add a web font to your site with a single `<link>` tag. You don't need a bunny.net account.
+
+## Quickstart
+
+<Steps>
+
+<Step title="Pick a font">
+
+Open [fonts.bunny.net](https://fonts.bunny.net) and choose a font family. Select the styles and weights you need. Each extra weight adds a file the browser may download, so keep to the ones your design uses.
+
+</Step>
+
+<Step title="Add the stylesheet">
+
+Add the stylesheet to the `<head>` of your HTML:
+
+```html
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link href="https://fonts.bunny.net/css?family=inter:400,700&display=swap" rel="stylesheet" />
+```
+
+The `preconnect` hint opens the connection to `fonts.bunny.net` early, before the browser parses the stylesheet.
+
+To load the fonts from a CSS file instead, use `@import` at the top of the file:
+
+```css
+@import url(https://fonts.bunny.net/css?family=inter:400,700&display=swap);
+```
+
+</Step>
+
+<Step title="Use the font in your CSS">
+
+Reference the family by name, with a fallback:
+
+```css
+body {
+  font-family: "Inter", sans-serif;
+}
+```
+
+Reload the page and check the **Network** tab in your browser's developer tools. You'll see the font files load from `fonts.bunny.net`.
+
+</Step>
+
+</Steps>
+
+## URL syntax
+
+The stylesheet URL uses the Google Fonts CSS v1 syntax. Bunny Fonts also has a CSS2 endpoint and a JSON list of every font family. See the [Bunny Fonts API](/fonts/api) for the full syntax.
+
+## Switch from Google Fonts
+
+Replace `fonts.googleapis.com` with `fonts.bunny.net` in your `<link>` tags, `@import` rules, and `preconnect` hints. Keep the path and query string as they are.
+
+```html
+<!-- Before -->
+<link href="https://fonts.googleapis.com/css?family=Inter:400,700" rel="stylesheet" />
+
+<!-- After -->
+<link href="https://fonts.bunny.net/css?family=Inter:400,700" rel="stylesheet" />
+```
+
+You can remove any `preconnect` to `fonts.gstatic.com`. Bunny Fonts serves the stylesheet and the font files from `fonts.bunny.net`.
