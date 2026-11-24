@@ -4,6 +4,14 @@ description: "Latest updates and improvements across bunny.net products."
 rss: true
 ---
 
+<Update label="2026-11-24" tags={["CLI","Storage","(Improvement)"]}>
+  ## Static site deploys now prune old deploys
+
+  After publishing, `bunny sites deploy` now deletes older deploys and keeps the live and previous ones, so rollback stays instant. Previously, every deploy was kept, and each one was billed as storage until you deleted it. Set `sites.keep` in `bunny.jsonc` to keep the newest N deploys, or `"all"` to keep every deploy. Pass `--keep` to override it for a single deploy.
+
+  Sites created before this change keep every deploy until you opt in. Run `bunny sites deploy` in a terminal and accept the prompt, or set `sites.keep`. Deploys from CI don't prune a site that hasn't opted in. [Learn more](/cli/commands/sites)
+</Update>
+
 <Update label="2026-11-19" tags={["Shield","(Improvement)"]}>
   ## Bunny Shield rules for Java4Shell, Ruby2Shell, WordPress and Apache Roller
 
