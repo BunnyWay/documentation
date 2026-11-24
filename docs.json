@@ -958,6 +958,26 @@
         ]
       },
       {
+        "product": "Fonts",
+        "icon": "type",
+        "description": "Privacy-first web fonts, compatible with Google Fonts",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Documentation",
+                "pages": [
+                  "fonts/index",
+                  "fonts/quickstart",
+                  "fonts/api"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "product": "DNS",
         "icon": "globe",
         "description": "Unlock the true power of DNS with an ultra-fast scriptable platform",
