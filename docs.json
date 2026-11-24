@@ -1074,7 +1074,8 @@
                   },
                   "database/replication",
                   "database/metrics",
-                  "database/durability-and-consistency"
+                  "database/durability-and-consistency",
+                  "database/api-reference"
                 ]
               }
             ]
@@ -1324,7 +1325,6 @@
               },
               {
                 "group": "Database API",
-                "hidden": true,
                 "openapi": {
                   "source": "https://api.bunny.net/database/docs/private/api.json",
                   "directory": "api-reference/database"
