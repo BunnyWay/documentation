@@ -19,14 +19,20 @@ Bunny Fonts is free. You don't need an account or an API key.
 
 ## Font library
 
-Browse the library at [fonts.bunny.net](https://fonts.bunny.net). Every font is openly licensed, and you can use it in commercial projects. Each font page lists its license, styles, and weights.
+Browse the library at [fonts.bunny.net](https://fonts.bunny.net). Each font page lists the font's license, styles, and weights.
+
+Font files aren't frozen. When a font's authors publish fixes, Bunny Fonts updates the files. If your site needs a fixed version of a font, host your own copy.
 
 ## How it works
 
-Your page requests a stylesheet from `https://fonts.bunny.net/css`. The response holds `@font-face` rules that point to WOFF2 and WOFF files on `fonts.bunny.net`, split by character subset with `unicode-range`. Browsers only download the subsets a page uses.
+Your page requests a stylesheet from `https://fonts.bunny.net/css`. The response holds `@font-face` rules that point to WOFF2 and WOFF files on `fonts.bunny.net`, split by character subset with `unicode-range`. Browsers only download the subsets a page uses. Stylesheets and font files are cached for 30 days.
 
 ```html
 <link href="https://fonts.bunny.net/css?family=inter:400,700" rel="stylesheet" />
 ```
 
 See the [Bunny Fonts API](/fonts/api) for the CSS v1 and CSS2 syntax, and for the JSON list of every font family.
+
+## WordPress
+
+The [bunny.net WordPress plugin](/integrations/wordpress) can load your site's fonts from Bunny Fonts.
