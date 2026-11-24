@@ -1,26 +1,26 @@
 ---
 title: Database API Reference
 sidebarTitle: Overview
-description: Manage your bunny.net databases programmatically.
+description: Create, configure, and monitor Bunny Database instances over HTTP.
 ---
 
-The Database API allows you to manage your bunny.net databases. Create, configure, and manage databases that run at the edge for low-latency data access worldwide.
+The Database API manages your Bunny Database instances. Use it to create and delete databases, change their regions, generate access tokens, and read usage statistics.
 
-For usage guides and tutorials, see the [Database documentation](/database).
+To run SQL queries against a database, use the [SQL API](/database/connect/sql-api) instead.
 
 ## Base URL
 
 ```
-https://api.bunny.net/database/v1
+https://api.bunny.net/database
 ```
 
 ## Authentication
 
-Authenticate using the `AccessKey` header with your account API key:
+Send your account API key in the `AccessKey` header:
 
 ```bash
 curl --request GET \
-  --url https://api.bunny.net/edgedb/v1/databases \
+  --url https://api.bunny.net/database/v3/databases \
   --header 'AccessKey: YOUR_API_KEY'
 ```
 
