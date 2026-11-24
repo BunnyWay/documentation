@@ -17,6 +17,7 @@ Choose exactly one:
 - **Documentation for an existing capability**: documents behavior that existed before this PR.
 - **New feature**: adds a user-facing capability to an existing product.
 - **New product**: introduces a new product or independently usable service.
+- **API reference release**: publishes the API reference for a product for the first time, or makes a hidden one public.
 - **Bug fix**: corrects behavior that did not work as intended.
 - **Other**: explain in a few words.
 
@@ -33,13 +34,15 @@ Write one to three sentences on the user-facing change.
 
 ## 3. Decide
 
-Add a changelog entry only when the PR establishes that users gained a new capability, a product was introduced, a feature moved to a new release stage, or user-facing behavior materially changed.
+Add a changelog entry only when the PR establishes that users gained a new capability, a product was introduced, a feature moved to a new release stage, a product's API reference became public, or user-facing behavior materially changed.
+
+A first public API reference is a release, even when the endpoints already worked. Signs: the PR unhides an API reference in `docs.json`, adds a product to the API overview, or adds its OpenAPI download. The entry announces the public API, and links to its reference.
 
 Don't add an entry for:
 
-- documentation fixes, editorial changes, restructuring, or navigation changes;
+- documentation fixes, editorial changes, restructuring, or navigation changes, except an API reference release;
 - renamed, moved, or reorganized pages;
-- documentation for functionality that already existed;
+- documentation for functionality that already existed, except an API reference release;
 - internal or maintenance changes with no material user-facing effect;
 - changes that only make existing information easier to find or understand;
 - a PR that only changes `changelog.mdx`.
@@ -71,6 +74,7 @@ You were asked to review a changelog PR because a PR of yours merged and looks l
 
 - A new product or feature.
 - A feature that moved to a new release stage.
+- The first public API reference for a product.
 - A material change to how something works for users.
 
 **What does not**
