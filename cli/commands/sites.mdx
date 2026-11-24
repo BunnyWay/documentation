@@ -66,6 +66,14 @@ bunny sites deploy ./dist --site my-site
 
 The directory defaults to `sites.dir` in `bunny.jsonc`, then the detected framework's output directory, then the current directory. Unchanged content is skipped. Each deploy is stored under its own ID (the git commit SHA or a content hash), so you can publish any earlier deploy again without uploading it.
 
+Each deploy is a full copy of your site in the storage zone, billed as storage until it's deleted. After publishing, `bunny sites deploy` prunes older deploys and keeps the live and previous ones, so rollback stays instant. Set `sites.keep` in `bunny.jsonc` to keep the newest N deploys instead, or `"all"` to keep every deploy.
+
+<Note>
+  Prune deploys you no longer need. Sites created before automatic pruning keep every deploy until you opt in: run `bunny sites deploy` in a terminal and accept the prompt, or set `sites.keep` in `bunny.jsonc`. Deploys from CI don't prune a site that hasn't opted in. To clear old deploys right away, run `bunny sites deployments prune`.
+
+  Large static assets, such as images and downloads, are stored again in every deploy. Keep them in a separate [storage zone](/storage) and link to them from your site, so each deploy stores only your build output. Host videos in [Bunny Stream](/stream) instead of your site.
+</Note>
+
 | Flag          | Description                                                                                        |
 | ------------- | -------------------------------------------------------------------------------------------------- |
 | `--build`     | Run a build first. Pass a command, or use the bare flag to run `sites.build` or the detected build |
@@ -73,11 +81,12 @@ The directory defaults to `sites.dir` in `bunny.jsonc`, then the detected framew
 | `--env-file`  | Read build-time environment variables from a dotenv file                                           |
 | `--spa`       | Serve `index.html` for unknown paths. Use `--no-spa` to serve the 404 page                         |
 | `--deploy-id` | Use your own ID for this deploy, such as a release number                                          |
+| `--keep`      | Keep the newest N deploys for this run only, overriding `sites.keep`                               |
 | `--force`     | Deploy even when the content is unchanged                                                          |
 
 ## `bunny sites deployments`
 
-List, publish, and delete deploys.
+List, publish, prune, and delete deploys.
 
 ```bash
 # List deploys for the linked site
@@ -92,11 +101,14 @@ bunny sites deployments publish a1b2c3d4
 # Delete a deploy
 bunny sites deployments delete a1b2c3d4
 
+# Delete old deploys, keeping the live and previous ones
+bunny sites deployments prune
+
 # Keep the 10 newest deploys and delete the rest
 bunny sites deployments prune --keep 10
 ```
 
-`prune` always keeps the current and previous deploys.
+Without `--keep`, `prune` uses `sites.keep` from `bunny.jsonc`, then the site's saved setting. It always keeps the live and previous deploys.
 
 ## `bunny sites ci init`
 

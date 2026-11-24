@@ -33,7 +33,7 @@
         bunny sites deploy --build
         ```
 
-        The CLI runs the build command, uploads the output directory from the table above, and publishes it. Every deploy is kept, so you can roll back with `bunny sites deployments publish --previous`.
+        The CLI runs the build command, uploads the output directory from the table above, and publishes it. The CLI keeps the live and previous deploys and prunes older ones, so you can roll back with `bunny sites deployments publish --previous`.
       </Step>
       <Step title="Deploy on every push (optional)">
         ```bash
