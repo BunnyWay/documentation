@@ -15,7 +15,12 @@ Our DNS service supports full DNSSEC signing. Once enabled, your DNS zones are s
 
 **Signing Algorithm:** We use Algorithm 13 (ECDSA Curve P-256 with SHA-256) for an ideal balance of security and performance.
 
-**Key Management:** DNSSEC keys are securely managed and automatically rotated.
+**Key Management:** DNSSEC keys are securely managed by Bunny DNS.
+
+- **Zone Signing Keys (ZSKs)** are automatically rotated. These rotations do not require you to update the DS record at your registrar.
+- **Key Signing Keys (KSKs)** are not automatically rotated while DNSSEC remains enabled. Your DS record stays valid for as long as DNSSEC remains enabled.
+
+**Disabling and re-enabling DNSSEC changes the KSK and DS record.** If you re-enable DNSSEC, update the DS record at your registrar using the newly provided value. Leaving the old DS record in place can cause DNSSEC validation failures and prevent validating resolvers from resolving your domain.
 
 **Denial of Existence:** We employ NSEC Black Lies, an advanced privacy-preserving method. This prevents zone enumeration while providing authenticated denial-of-existence responses. NSEC Black Lies avoid exposing actual zone data, ensuring that attempts to list your domain's DNS records are thwarted.
 
