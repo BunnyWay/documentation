@@ -1,0 +1,304 @@
+---
+title: "Stream Live OBS Encoding Guide"
+sidebarTitle: "OBS encoding guide"
+description: "Set up OBS Studio on Windows and Mac to stream to Bunny Stream Live: recommended 1080p and 4K H.264 settings, hardware and software encoders, SRT and RTMPS, and how to check for dropped frames."
+hidden: true
+keywords:
+  - "Live"
+  - "OBS"
+  - "OBS Studio"
+  - "Windows"
+  - "Mac"
+  - "H.264"
+  - "SRT"
+  - "RTMPS"
+  - "Encoder settings"
+  - "RTMP"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+
+<LiveClosedPreview />
+
+[OBS Studio](https://obsproject.com/) is a free, open-source encoder for Windows, macOS, and Linux. This guide shows the OBS settings that match the [Bunny Stream Live encoder settings](/stream/live/ingest#recommended-encoder-settings) for 1080p and 4K on **Windows** and **Mac**, and explains how to check that your encoder keeps up.
+
+To create a stream and find your ingest URLs and stream key, follow the [quickstart](/stream/live/quickstart). If you prefer the command line, see the [FFmpeg encoding guide](/stream/live/ffmpeg-encoding-guide). If the picture shows bands, freezes, or blocky video, see [picture and encoder troubleshooting](/stream/live/troubleshooting#picture-and-encoder-checklist).
+
+<Note>
+  Menu names and option labels change between OBS versions. This guide uses the names from current OBS Studio releases. If an option is missing, check that you set **Output Mode** to **Advanced**.
+</Note>
+
+## What Bunny Stream Live accepts
+
+| Setting | 1080p | 2160p / 4K |
+| --- | --- | --- |
+| **Video codec** | H.264 (AVC) | H.264 (AVC) |
+| **Resolution** | 1920 × 1080 | 3840 × 2160 |
+| **Frame rate** | Constant, max 60 fps | Constant, max 30 fps |
+| **Bitrate** | 5,000 - 8,000 kbps, CBR | 8,000 - 25,000 kbps, CBR |
+| **Keyframe interval** | 2 seconds | 2 seconds |
+| **Color format** | 8-bit, 4:2:0 (`NV12` in OBS) | 8-bit, 4:2:0 (`NV12` in OBS) |
+| **Audio** | Stereo AAC, 48 kHz, 256 kbps | Stereo AAC, 48 kHz, 320 kbps |
+
+<Warning>
+  **HEVC (H.265) and AV1 are not supported** on ingest or live output. In OBS, always choose an **H.264** encoder, even if your hardware offers HEVC or AV1.
+</Warning>
+
+## Step 1: Connect OBS to Bunny
+
+<Steps>
+  <Step title="Open the Stream settings">
+    <Tabs>
+      <Tab title="Windows">
+        Click **File → Settings → Stream**.
+      </Tab>
+      <Tab title="Mac">
+        Click **OBS → Settings** (or **Preferences**) **→ Stream**.
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Set the service to Custom">
+    Set **Service** to **Custom…**.
+  </Step>
+  <Step title="Enter your ingest details">
+    Choose the tab for the protocol you want to use. The values come from your stream's details, as described in [Step 2 of the quickstart](/stream/live/quickstart#step-2-get-your-ingest-details).
+
+    <Tabs>
+      <Tab title="RTMPS">
+        - **Server:** the RTMPS **Primary ingest URL**, for example `rtmps://global.rtmp.mediadelivery.net/live`. It must start with `rtmps://`.
+        - **Stream Key:** your **Stream key**.
+
+        RTMPS runs over TCP port 443 and needs no tuning. It's the best choice on a stable, wired connection.
+      </Tab>
+      <Tab title="RTMP">
+        - **Server:** the RTMP **Primary ingest URL**, for example `rtmp://global.rtmp.mediadelivery.net/live`.
+        - **Stream Key:** your **Stream key**.
+
+        Use RTMP only if your setup can't use RTMPS.
+      </Tab>
+      <Tab title="SRT">
+        - **Server:** the full SRT **Primary ingest URL**, including everything after the `?`. The stream key is already part of this URL.
+        - **Stream Key:** your **Stream key**. For SRT, OBS uses this field as the SRT stream ID.
+
+        ```text
+        srt://global.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=240000
+        ```
+
+        In OBS, the `latency` value is in **microseconds**, so `240000` is 240 ms. SRT recovers lost packets, so it's the best choice on Wi-Fi, cellular, and long-distance connections. See [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency) to choose a value.
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+<Warning>
+  Your **stream key** is part of every ingest URL. Anyone with it can broadcast to your stream. Don't share a screenshot of your OBS Stream settings or paste your URL in public.
+</Warning>
+
+## Step 2: Set the output settings
+
+Go to **Settings → Output** and set **Output Mode** to **Advanced**. Then open the **Streaming** tab and choose the settings for your computer.
+
+<Tabs>
+  <Tab title="Windows">
+    Choose an **H.264** encoder. A hardware encoder keeps CPU use low and is the best choice for 4K.
+
+    <Tabs>
+      <Tab title="NVIDIA (NVENC)">
+        | Setting | Value |
+        | --- | --- |
+        | **Encoder** | NVIDIA NVENC H.264 |
+        | **Rate Control** | CBR |
+        | **Bitrate** | 6,000 kbps (1080p) or 12,000 kbps (4K) |
+        | **Keyframe Interval (0=auto)** | 2 |
+        | **Preset** | P5: Slow (Good Quality), or P4: Medium (Medium Quality) if your GPU is busy |
+        | **Tuning** | High Quality |
+        | **Multipass Mode** | Single Pass |
+        | **Profile** | high |
+        | **Look-ahead** | Off |
+        | **Psycho Visual Tuning** | On (turn off if your GPU is overloaded) |
+        | **Max B-frames** | 2 |
+        | **Rescale Output** | Disabled |
+      </Tab>
+      <Tab title="AMD">
+        | Setting | Value |
+        | --- | --- |
+        | **Encoder** | AMD HW H.264 (AVC) |
+        | **Rate Control** | CBR |
+        | **Bitrate** | 6,000 kbps (1080p) or 12,000 kbps (4K) |
+        | **Keyframe Interval (0=auto)** | 2 |
+        | **Preset** | Balanced |
+        | **Profile** | high |
+      </Tab>
+      <Tab title="Intel (QuickSync)">
+        | Setting | Value |
+        | --- | --- |
+        | **Encoder** | QuickSync H.264 |
+        | **Rate Control** | CBR |
+        | **Bitrate** | 6,000 kbps (1080p) or 12,000 kbps (4K) |
+        | **Keyframe Interval (0=auto)** | 2 |
+        | **Profile** | high |
+      </Tab>
+      <Tab title="Software (x264)">
+        | Setting | Value |
+        | --- | --- |
+        | **Encoder** | x264 |
+        | **Rate Control** | CBR |
+        | **Bitrate** | 6,000 kbps (1080p) |
+        | **Keyframe Interval (0=auto)** | 2 |
+        | **CPU Usage Preset** | veryfast (use faster if you see encoding lag) |
+        | **Profile** | high |
+        | **Tune** | None |
+
+        Real-time 4K with x264 needs a fast CPU with many cores. Use a hardware encoder for 4K.
+      </Tab>
+    </Tabs>
+  </Tab>
+  <Tab title="Mac">
+    On a Mac, use the Apple hardware encoder. It uses the media engine in your Mac, so CPU use stays low and it handles 4K 30 fps on Apple silicon Macs.
+
+    <Tabs>
+      <Tab title="Apple VideoToolbox">
+        | Setting | Value |
+        | --- | --- |
+        | **Encoder** | Apple VT H264 Hardware Encoder |
+        | **Rate Control** | CBR |
+        | **Bitrate** | 6,000 kbps (1080p) or 12,000 kbps (4K) |
+        | **Keyframe Interval (0=auto)** | 2 |
+        | **Profile** | high |
+        | **Use B-Frames** | On (default). Turn off if you see encoding lag. |
+        | **Limit bitrate** | Off |
+      </Tab>
+      <Tab title="Software (x264)">
+        | Setting | Value |
+        | --- | --- |
+        | **Encoder** | x264 |
+        | **Rate Control** | CBR |
+        | **Bitrate** | 6,000 kbps (1080p) |
+        | **Keyframe Interval (0=auto)** | 2 |
+        | **CPU Usage Preset** | veryfast (use faster if you see encoding lag) |
+        | **Profile** | high |
+        | **Tune** | None |
+
+        Use x264 if you need an option that the hardware encoder doesn't offer. Real-time 4K with x264 is demanding, so use the hardware encoder for 4K.
+      </Tab>
+    </Tabs>
+  </Tab>
+</Tabs>
+
+Then, on the same **Streaming** tab, set the audio:
+
+- **Audio Track:** `1`.
+- **Audio Encoder:** an AAC encoder: **CoreAudio AAC** on Mac, or **FFmpeg AAC** on Windows.
+- **Audio Bitrate:** set it for **Track 1** on the **Audio** tab of **Settings → Output**: `256` for 1080p, or `320` for 4K.
+
+Leave **Dynamically change bitrate to manage congestion** off if you see it in the Streaming settings. OBS supports it for RTMP only, and it can lower your quality without warning.
+
+<Info>
+  The bitrates above are starting points inside the [recommended range](/stream/live/ingest#recommended-encoder-settings): 5,000 to 8,000 kbps for 1080p and 8,000 to 25,000 kbps for 4K. Your sustained upload speed should be at least **1.5 to 2 times** your video plus audio bitrate. Lower the bitrate if your connection can't sustain it.
+</Info>
+
+## Step 3: Set the video and audio settings
+
+### Video
+
+Go to **Settings → Video** and set:
+
+| Setting | 1080p | 2160p / 4K |
+| --- | --- | --- |
+| **Base (Canvas) Resolution** | 1920x1080 | 3840x2160 |
+| **Output (Scaled) Resolution** | 1920x1080 | 3840x2160 |
+| **Downscale Filter** | Bicubic or Lanczos (only used if the two resolutions differ) | Bicubic or Lanczos |
+| **Common FPS Values** | 30 or 60 | 30 |
+
+<Warning>
+  **4K at 60 fps is not supported.** Use 30 fps for 3840 × 2160, and up to 60 fps for 1080p. OBS offers a `60` option at any resolution, so check your **Common FPS Values** before you go live.
+</Warning>
+
+Use a **fixed** frame rate such as 30 or 60, not a fractional or variable one, so the keyframe interval stays a steady 2 seconds.
+
+### Audio
+
+Go to **Settings → Audio** and set:
+
+- **Sample Rate:** `48 kHz`.
+- **Channels:** `Stereo`.
+
+### Color
+
+Go to **Settings → Advanced** and set:
+
+| Setting | Value |
+| --- | --- |
+| **Color Format** | NV12 (8-bit, 4:2:0, 2 planes) |
+| **Color Space** | Rec. 709 |
+| **Color Range** | Limited |
+
+Avoid 10-bit color formats such as `P010` and `I010`, and the Rec. 2100 (PQ and HLG) color spaces. OBS's H.264 encoders only accept 8-bit color and the Rec. 709 color space, and show an error if you choose anything else. They are more demanding on your encoder and aren't needed for live. If your sources are HDR, switch your capture device or display to SDR before you stream.
+
+### Process priority
+
+<Tabs>
+  <Tab title="Windows">
+    In **Settings → Advanced**, set **Process Priority** to **Above Normal** to give OBS more CPU time when other apps are busy. In your graphics driver or Windows settings, make sure OBS isn't being limited when a game or another app uses the GPU.
+  </Tab>
+  <Tab title="Mac">
+    Turn off **Low Power Mode** (**System Settings → Battery**) and keep your Mac plugged in while you stream. Close apps you don't need, since screen recording and browser tabs compete for the same media engine and GPU.
+  </Tab>
+</Tabs>
+
+## Step 4: Start streaming and verify
+
+<Steps>
+  <Step title="Click Start Streaming">
+    Click **Start Streaming** in OBS. The dashboard preview shows your stream within 15 to 20 seconds.
+  </Step>
+  <Step title="Check the OBS status bar">
+    At the bottom right of OBS, check that the **bitrate** is close to your target, the **dropped frames** counter is at or near `0`, and the **CPU usage** stays well below 100%.
+  </Step>
+  <Step title="Open the Stats panel">
+    Go to **Docks → Stats** for a detailed view. See [Read the OBS stats](#read-the-obs-stats).
+  </Step>
+  <Step title="Watch the preview for 10 to 15 minutes">
+    Look for bands, freezes, or stutter in the dashboard preview. If you see them, follow the [troubleshooting checklist](/stream/live/troubleshooting#picture-and-encoder-checklist).
+  </Step>
+  <Step title="Start the stream when ready">
+    The preview isn't recorded. Click **Start Stream** in the Bunny Control Room when you're ready to go live, or turn on [auto-start](/stream/live/auto-start-and-auto-create#auto-start).
+  </Step>
+</Steps>
+
+<Warning>
+  If **auto-start** is on for this stream, it goes live for viewers as soon as OBS sends video. Only click **Start Streaming** when you're ready to broadcast.
+</Warning>
+
+## Read the OBS stats
+
+Open **Docks → Stats** while you stream. These values show whether the problem is your encoder, your network, or both.
+
+| Stat | Healthy | Problem and fix |
+| --- | --- | --- |
+| **Skipped frames due to encoding lag** | `0` | OBS can't encode fast enough. Use a hardware encoder, a faster preset, a lower resolution or frame rate, or a lower bitrate. |
+| **Frames missed due to rendering lag** | `0` | Your GPU is overloaded by your scene or by another app. Simplify the scene, or close other GPU-heavy apps. |
+| **Dropped Frames (Network)** | `0` | Your connection can't keep up. Lower the bitrate, use a wired connection, or switch to SRT with a higher latency. |
+| **CPU usage** | Below about 70% | Lower the load as above. |
+| **Average time to render frame** | Below the frame time (33 ms at 30 fps, 16 ms at 60 fps) | Higher values mean rendering can't keep up. |
+| **Bitrate** | Close to your target | Large swings mean the encoder isn't using CBR, or the network is limiting you. |
+
+OBS doesn't show SRT round-trip time or lost packets in the Stats dock. For SRT, treat dropped frames and a rising number of reconnects as the sign that the `latency` value is too low, and raise it one step at a time. See [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency).
+
+## Use a backup ingest
+
+You can run a second encoder, such as a second OBS profile or a second computer, with the **backup ingest URL** to give your stream a failover path. Bunny switches to the backup ingest if the primary connection drops, and back again when it returns. Use the same video settings, and the same SRT `latency`, on both encoders.
+
+Primary and backup are separate parallel encodes and are billed separately. See [pricing](/stream/live/pricing-and-limits#pricing).
+
+## Troubleshooting
+
+| Problem | What to try |
+| --- | --- |
+| **Failed to connect to server** | Check the server URL, protocol, and stream key. Allow outbound TCP 443 for RTMPS and UDP 8890 for SRT. |
+| **Skipped frames due to encoding lag** | Use a hardware encoder, or lower the resolution, frame rate, or bitrate. See [Encoder can't keep up](/stream/live/troubleshooting#encoder-cant-keep-up). |
+| **Dropped frames (network)** | Lower the bitrate, use a wired connection, or switch to SRT with a higher latency. See [Network problems](/stream/live/troubleshooting#network-problems). |
+| **Bands, freezes, or blocky video** | See [Common picture symptoms](/stream/live/troubleshooting#common-picture-symptoms). |
+| **Washed-out colors** | Set **Color Format** to NV12, **Color Space** to Rec. 709, **Color Range** to Limited, and stream SDR sources. |
+| **Preview shows no video** | Allow 15 to 20 seconds, then check that you chose an **H.264** encoder and **AAC** audio. |
+| **The stream disconnects when it ends** | Expected. Ending a stream disconnects your encoder, and OBS reports a dropped connection. |

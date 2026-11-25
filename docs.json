@@ -332,6 +332,7 @@
                 "group": "Deployment",
                 "pages": [
                   "magic-containers/deploy",
+                  "magic-containers/deploy-from-github",
                   "magic-containers/deploy-with-github-actions",
                   "magic-containers/image-registries",
                   "magic-containers/regions",
@@ -349,9 +350,11 @@
                 "group": "Managing Apps",
                 "pages": [
                   "magic-containers/update",
+                  "magic-containers/deployments",
                   "magic-containers/configuration",
                   "magic-containers/environment-variables",
                   "magic-containers/persistent-volumes",
+                  "magic-containers/ephemeral-storage",
                   "magic-containers/endpoints",
                   "magic-containers/undeploy",
                   "magic-containers/delete"
@@ -664,8 +667,15 @@
               {
                 "group": "Playback",
                 "pages": [
-                  "stream/player",
-                  "stream/player-settings",
+                  {
+                    "group": "Bunny Player",
+                    "pages": [
+                      "stream/player",
+                      "stream/player-settings",
+                      "stream/player-ui-language"
+                    ],
+                    "expanded": true
+                  },
                   "stream/embedding",
                   "stream/playback-api",
                   "stream/mp4-downloads",
@@ -948,6 +958,26 @@
         ]
       },
       {
+        "product": "Fonts",
+        "icon": "type",
+        "description": "Privacy-first web fonts, compatible with Google Fonts",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Documentation",
+                "pages": [
+                  "fonts/index",
+                  "fonts/quickstart",
+                  "fonts/api"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "product": "DNS",
         "icon": "globe",
         "description": "Unlock the true power of DNS with an ultra-fast scriptable platform",
@@ -1064,7 +1094,8 @@
                   },
                   "database/replication",
                   "database/metrics",
-                  "database/durability-and-consistency"
+                  "database/durability-and-consistency",
+                  "database/api-reference"
                 ]
               }
             ]
@@ -1314,7 +1345,6 @@
               },
               {
                 "group": "Database API",
-                "hidden": true,
                 "openapi": {
                   "source": "https://api.bunny.net/database/docs/private/api.json",
                   "directory": "api-reference/database"

@@ -1,0 +1,276 @@
+---
+title: "Stream Live Troubleshooting"
+sidebarTitle: "Troubleshooting"
+description: "Fix common Bunny Stream Live problems: missing VODs, playback errors, auto-start and auto-create behavior, encoder connections, and picture problems like banding and freezing."
+hidden: true
+keywords:
+  - "Live"
+  - "Troubleshooting"
+  - "Errors"
+  - "Encoder"
+  - "Banding"
+  - "Freezing"
+  - "Dropped frames"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+
+<LiveClosedPreview />
+
+Solutions to common problems with Bunny Stream Live. For picture problems such as horizontal bands, freezing, or blocky video, jump to [picture and encoder problems](#picture-and-encoder-checklist). If your problem isn't listed here, check the [known issues](/stream/live/pricing-and-limits#known-issues) for the closed preview.
+
+<AccordionGroup>
+  <Accordion title="My stream ended but no VOD appeared in my library">
+    The most common cause is that the stream was never started while the encoder was publishing. Only the part of a broadcast after **Start Stream** (or `/start`, or auto-start) is recorded. If you start the stream after the encoder has already disconnected, there is nothing to record.
+
+    Check that:
+
+    - **Video on demand** (`recordVod`) was on for the stream. For auto-created streams, this comes from your library's **Default settings**.
+    - The stream reached **Running** (`status` `4`) while your encoder was still publishing.
+    - The stream was an **Event**. Channels never record a VOD.
+
+    If all of these are true, the VOD may still be encoding. Wait for the `LiveStreamRecordingReady` (`20`) webhook, or check the video with the `VideoGuid` from the `LiveStreamRecordingQueued` (`19`) webhook.
+  </Accordion>
+
+  <Accordion title="My stream went live before I was ready">
+    Check the reason on the stream's `LiveStreamStarted` (`16`) webhook:
+
+    - **`IngestDetected`:** the stream has **auto-start** on (`autoStartOnIngestDetected` is `true`), so it went live as soon as your encoder connected. Turn auto-start off on the stream with the [update endpoint](/stream/live/api#manage-the-stream) before you connect, or turn off **Auto-start live stream when encoder connects** in your library's **Default settings** so that new streams wait in preview.
+    - **`AutoCreated`:** your encoder published to the library's [auto-create](/stream/live/auto-start-and-auto-create#auto-create) stream key. Streams created this way always go live straight away. To check your feed in preview first, publish to a normal live stream with auto-start off instead.
+  </Accordion>
+
+  <Accordion title="My stream stays in preview even though auto-start is on">
+    Check whether the stream has a `scheduledStartTime` in the future. A scheduled stream isn't started before that time, even with auto-start on. Click **Start Stream** or call `/start` to go live earlier.
+
+    Also check that auto-start is on for this stream, not only in your library defaults. Changing the library default doesn't change existing streams.
+  </Accordion>
+
+  <Accordion title="Publishing to the library stream key doesn't create a live stream">
+    Check that:
+
+    - **Auto-create live streams** is turned on and saved in your library's live stream settings. While it's off, the key is kept but publishing to it doesn't create streams.
+    - Your encoder uses the current library stream key and the URLs from the **Auto-create** card. If the key was reset, the old key no longer works, and the SRT URLs changed too.
+    - You haven't reached the [concurrent live stream limit](/stream/live/pricing-and-limits#limits).
+
+    If your encoder reconnected within the **resume window**, Bunny resumed the last auto-created stream instead of creating a new one. Set the resume window to `0` to always create a new stream.
+  </Accordion>
+
+  <Accordion title="My encoder can't connect over RTMPS">
+    Check that the server URL starts with `rtmps://`, and that your encoder supports RTMPS. Some older encoders and firmware versions only support RTMP. Also check that your network allows outbound **TCP** traffic on port **443**. RTMPS uses the same host as RTMP, so the `rtmps://` scheme is the only difference in the URL. If you can't use RTMPS, use the RTMP or SRT details for the same stream: the stream key is the same for every protocol.
+  </Accordion>
+
+  <Accordion title="/stop returns 400: Cannot stop live stream">
+    The full message is `Cannot stop live stream that was not started yet`. The stream is still in preview (`status` `3`). An encoder being connected doesn't start the stream unless auto-start is on, so there's nothing to stop. Call `/start` first if you want the stream to go live and be recorded, or delete the stream if you don't need it.
+  </Accordion>
+
+  <Accordion title="The HLS playlist returns 404 File Not Found">
+    This is expected in two situations:
+
+    - The stream hasn't been started yet. The playlist only exists for viewers once the stream is running.
+    - The stream has just been started. Allow **15-20 seconds** for the stream to start up before the playlist is available.
+
+    If the playlist still returns `404` well after the stream has started, check the stream's `status` and contact support with the stream ID.
+  </Accordion>
+
+  <Accordion title="The HLS playlist returns 403 Forbidden">
+    By default, your video library blocks playback requests that don't send a `Referer` header. This applies to all videos in the library, not only live streams. Requests from a browser page usually send a `Referer` automatically; requests from tools such as `curl` don't. Add a `Referer` header when testing, or review the allowed domains and authentication options in your video library's **Security** settings.
+  </Accordion>
+
+  <Accordion title="lastPingAgo looks very high">
+    `lastPingAgo` is in **milliseconds**, not seconds. A value of `205` means the last ping arrived 0.2 seconds ago.
+  </Accordion>
+
+  <Accordion title="My encoder reports an error when the stream ends">
+    Ending a stream disconnects the encoder immediately, so FFmpeg exits with a broken pipe error and OBS reports a dropped connection. This is expected and doesn't affect the recording. Stop your encoder before ending the stream if you prefer a clean shutdown.
+  </Accordion>
+</AccordionGroup>
+
+## Picture and encoder checklist
+
+Work through these in order. Most problems are solved by the first three.
+
+<Steps>
+  <Step title="Confirm you are sending a supported feed">
+    Bunny Stream Live accepts **H.264 (AVC)** video and **stereo AAC** audio only. Check your feed against the [supported input](#unsupported-or-risky-input-settings) list below, in particular the codec, bit depth, and frame rate.
+  </Step>
+  <Step title="Lower the load on your encoder">
+    Reduce the bitrate, resolution, or encoder preset, and use constant bitrate (CBR). An encoder that can't keep up produces dropped or late frames, and these often show up as bands and freezes. See [Encoder can't keep up](#encoder-cant-keep-up).
+  </Step>
+  <Step title="Check the encoder log and resource use">
+    Watch your encoder's CPU, GPU, and memory while streaming, and read its log for warnings about dropped frames, late packets, or timestamp errors. See [Reading FFmpeg output](#reading-ffmpeg-output).
+  </Step>
+  <Step title="Check your upload speed and connection type">
+    Your sustained upload speed should be at least **1.5 to 2 times** your video plus audio bitrate. Prefer a wired connection to Wi-Fi or cellular. See [Network problems](#network-problems).
+  </Step>
+  <Step title="Increase the SRT latency">
+    If you send over SRT, raise the `latency` value in the URL one step at a time. See [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency).
+  </Step>
+  <Step title="Test with a known-good command">
+    Stream a local file with the [FFmpeg encoding guide](/stream/live/ffmpeg-encoding-guide) to separate encoder problems from network problems. If the file streams cleanly, the issue is in your original capture or encoder setup.
+  </Step>
+</Steps>
+
+## Common picture symptoms
+
+<AccordionGroup>
+  <Accordion title="Horizontal bands, torn frames, or a frozen picture that then recovers">
+    This is the most common symptom, and it means that part of a frame, or whole frames, didn't arrive at Bunny intact. Each video frame is compressed, so losing or delaying part of a frame damages the picture until the next keyframe repairs it, which is why the picture often freezes and then resumes.
+
+    The usual causes are:
+
+    - **An overloaded encoder** that can't compress frames in real time. See [Encoder can't keep up](#encoder-cant-keep-up).
+    - **Packet loss or an unstable connection**, especially on Wi-Fi or cellular. See [Network problems](#network-problems).
+    - **An SRT latency that is too low** to recover lost packets. Increase it as described in [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency).
+    - **A bitrate spike** that your upload connection can't absorb. Use CBR with `maxrate` and `bufsize` set to your target bitrate.
+    - **An unsupported feed**, such as HEVC (H.265) video. See [Unsupported or risky input settings](#unsupported-or-risky-input-settings).
+
+    To tell the causes apart, send the same file with the [FFmpeg encoding guide](/stream/live/ffmpeg-encoding-guide) at a lower bitrate. If the bands disappear, your encoder or connection is the limit.
+  </Accordion>
+
+  <Accordion title="Blocky, smeared, or low-quality video">
+    Blocky video usually means the bitrate is too low for the amount of motion in the scene, or that your encoder is using a fast preset to keep up.
+
+    - Match your bitrate to your resolution using the [recommended encoder settings](/stream/live/ingest#recommended-encoder-settings).
+    - If your encoder is struggling, lower the **frame rate or resolution** before lowering the bitrate. A clean 1080p feed looks better than a struggling 4K feed.
+    - Bunny builds the ABR ladder from your feed and never encodes above the resolution you send. Sending a higher-quality feed gives viewers a better top rendition.
+  </Accordion>
+
+  <Accordion title="Video freezes while the audio keeps playing">
+    This usually points to a packet-loss or keyframe problem rather than an audio problem.
+
+    - Set the **keyframe interval to 2 seconds** (`-g 60` at 30 fps, `-g 120` at 60 fps in FFmpeg). Longer intervals make the picture stay broken for longer after any loss.
+    - Turn off scene-cut keyframes in FFmpeg with `-sc_threshold 0` so the keyframe spacing stays fixed.
+    - If you use SRT, increase the latency. If you use RTMPS or RTMP over a lossy connection, switch to SRT.
+  </Accordion>
+
+  <Accordion title="Audio glitches, pops, or audio out of sync">
+    - Send **stereo AAC at 48 kHz**. Other sample rates and channel layouts may cause drift or glitches.
+    - Don't mix capture devices that run on different clocks, such as a USB microphone and a separate capture card, without a drift-correcting audio source.
+    - If audio drifts further out of sync over time, your encoder is likely dropping video frames. Fix the video load first.
+  </Accordion>
+
+  <Accordion title="The encoder keeps disconnecting and reconnecting">
+    - **RTMPS or RTMP:** check that outbound TCP traffic on port 443 (RTMPS) is allowed and that your connection is stable. If your upload speed is too close to your bitrate, the encoder's buffer fills up and the connection drops.
+    - **SRT:** check that outbound **UDP** on port 8890 is allowed, and raise the `latency` value. Repeated reconnects are a sign that the latency is too low for your connection.
+    - Make sure the stream wasn't **ended** in the Control Room or with the `/stop` endpoint. Ending a stream disconnects the encoder, and it can't be restarted.
+    - Make sure only one encoder publishes to the primary ingest at a time. Use the backup ingest URL for a second encoder.
+  </Accordion>
+
+  <Accordion title="The preview shows no video, or the stream never becomes ready">
+    - Allow **15 to 20 seconds** after your encoder connects for the preview to appear.
+    - Check that the server URL and stream key are correct. For SRT, the URL must include the full set of parameters, including `streamid`.
+    - Check that your encoder is sending **H.264** video and **AAC** audio.
+    - See the [ingest guide](/stream/live/ingest) and the connection problems above.
+  </Accordion>
+
+  <Accordion title="The picture looks fine in the preview but damaged in the recording">
+    The recording is made from the feed Bunny received, so damage in the recording points to damage in the feed or on the network path. A live preview can hide short glitches that are easy to spot when you step through the recording frame by frame.
+
+    Follow the [quick checklist](#picture-and-encoder-checklist). If the problem continues after you have lowered the bitrate, used CBR, raised the SRT latency, and tested on a wired connection, [contact support](#contact-support) with the details listed there.
+  </Accordion>
+
+  <Accordion title="Colors look washed out or too dark">
+    This is a color conversion issue, not a transmission problem. It usually happens when HDR, 10-bit, or wide-gamut footage is sent without being converted to standard dynamic range (SDR).
+
+    Convert HDR footage to SDR **before** you stream it, and tag the output as BT.709. If you convert with FFmpeg, you need a proper tone-mapping step, not just a pixel format change. The [FFmpeg encoding guide](/stream/live/ffmpeg-encoding-guide#color-and-hdr) shows the tags to set after the conversion.
+  </Accordion>
+</AccordionGroup>
+
+## Encoder can't keep up
+
+When an encoder can't compress frames as fast as they arrive, it drops frames or sends them late. Bunny then receives incomplete or irregular data, and the result is bands, freezes, and stutter. Software encoders such as `libx264` at 4K are especially demanding.
+
+Reduce the load with one or more of these changes, one at a time:
+
+- **Lower the bitrate.** A constant bitrate of 5,000 kbps at 1080p or 8,000 to 10,000 kbps at 4K is a good starting point. See the [recommended settings](/stream/live/ingest#recommended-encoder-settings).
+- **Use CBR** with `maxrate` and `bufsize` equal to the bitrate, so the output stays steady.
+- **Lock the frame rate** at 30 fps (or 60 fps at 1080p, never at 4K) instead of a variable frame rate.
+- **Use 8-bit 4:2:0** (`yuv420p`) video. 10-bit video and other pixel formats are more demanding and aren't needed for live.
+- **Use a faster encoder preset**, for example `veryfast` instead of `medium`, or switch to a hardware encoder (NVENC, QuickSync, AMF, or VideoToolbox).
+- **Lower the resolution or frame rate.** Send 1080p instead of 2160p, or 30 fps instead of 60 fps.
+- **Close other apps** that use the CPU, GPU, or disk on the same machine.
+
+Watch your CPU, GPU, and memory while you stream. If your CPU or GPU runs near 100%, or your encoder reports "encoding overloaded", lower the load further.
+
+<Tip>
+  Test your encoder settings for at least 10 to 15 minutes before an important broadcast. Some problems only appear once the encoder has been running for a while and heats up.
+</Tip>
+
+## Network problems
+
+Your encoder sends video to Bunny in real time, so any loss or delay on the way shows up in the picture.
+
+- **Upload speed:** your **sustained** upload speed, not the speed advertised by your provider, should be at least **1.5 to 2 times** your total bitrate. Test it at the time of day you'll be streaming.
+- **Connection type:** wired Ethernet is the most reliable. Wi-Fi and cellular connections are prone to packet loss, especially when you are moving or when many devices share the network.
+- **Shared networks:** venue and office networks may limit or deprioritize upload traffic. Ask for a dedicated connection or a reserved upload bandwidth.
+- **Other traffic:** pause large uploads, cloud backups, and video calls on the same network.
+- **Firewalls:** allow outbound **TCP 443** for RTMPS and outbound **UDP 8890** for SRT.
+- **Protocol:** SRT recovers lost packets and is the better choice on Wi-Fi, cellular, and long-distance links. See [Choosing an ingest protocol](/stream/live/ingest#choosing-an-ingest-protocol-rtmps-rtmp-or-srt).
+- **Latency:** raise the SRT `latency` one step at a time, up to at least 4 times your round-trip time. See [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency).
+
+<Warning>
+  On cellular and bonded connections, signal strength and congestion change quickly. Use a higher SRT latency (1,000 to 2,000 ms), keep your bitrate well below your measured upload speed, and test at the location you'll broadcast from.
+</Warning>
+
+## Unsupported or risky input settings
+
+Bunny Stream Live ingests **H.264 (AVC)** video with **stereo AAC** audio. Sending anything else, or settings at the edge of what is supported, can cause picture damage or a failed connection.
+
+| Setting | Supported or recommended | Avoid |
+| --- | --- | --- |
+| **Video codec** | H.264 (AVC) | HEVC (H.265), AV1, VP9, and other codecs are not supported on ingest |
+| **Bit depth and chroma** | 8-bit, 4:2:0 (`yuv420p`) | 10-bit video, 4:2:2, and 4:4:4 |
+| **Dynamic range** | SDR with BT.709 color | HDR (HLG, PQ) sent without conversion |
+| **Frame rate** | Constant. Up to 60 fps at 1080p and up to 30 fps at 2160p | Variable frame rate. 4K at 60 fps is not supported |
+| **Resolution** | Up to 3840 × 2160 | Anything above 2160p |
+| **Keyframe interval** | 2 seconds, fixed | Long or variable intervals, and scene-cut keyframes |
+| **Rate control** | CBR | Uncapped VBR, or bitrates above what your upload connection can sustain |
+| **Audio** | Stereo AAC, 48 kHz | Other codecs, surround layouts, and other sample rates |
+| **Transport (SRT)** | MPEG-TS, `pkt_size=1316` | Other containers |
+
+<Warning>
+  **HEVC (H.265) is not supported on ingest or live output.** If you stream HEVC, such as a file from a phone or a camera that records in HEVC, convert it to H.264 first. HEVC input can produce damaged or missing frames in the live stream and the recording.
+</Warning>
+
+## Reading FFmpeg output
+
+If you stream with FFmpeg, its console output is the fastest way to see whether the problem starts at your encoder. FFmpeg prints a progress line like this every second:
+
+```text
+frame= 1800 fps= 30 q=24.0 size=  N/A time=00:01:00.00 bitrate=10012.3kbits/s speed=1.00x
+```
+
+| What to check | Healthy | Problem |
+| --- | --- | --- |
+| `speed` | Close to `1.00x` | Consistently below `1.00x`: your encoder can't keep up. Lower the load. |
+| `fps` | Matches your target frame rate | Below your target: dropped or late frames |
+| `bitrate` | Close to your target | Large swings: use CBR with `maxrate` and `bufsize` |
+| `dup` and `drop` counters | Stay at or near `0` | Climbing: frames are being duplicated or dropped |
+
+Common messages and what they mean:
+
+| Message | Meaning and fix |
+| --- | --- |
+| `Past duration too large` or `Non-monotonous DTS` | Timestamps are irregular. Use a constant frame rate with `-r`, or add `-fflags +genpts` when reading files. |
+| `Application provided invalid, non monotonically increasing dts` | The source has timestamp problems. Re-encode the source to a constant frame rate first. |
+| `Buffer queue is full` or `Too many packets buffered for output stream` | The output can't keep up with the input. Lower the bitrate or the load on the encoder. |
+| `Connection refused`, `Input/output error`, or `Connection timed out` | The encoder can't reach the ingest endpoint. Check the URL, stream key, protocol, and firewall. |
+| `Broken pipe` or `Connection reset by peer` | The connection was closed. This is expected if the stream was ended. Otherwise check your network and the SRT latency. |
+| `Unknown encoder` or `Encoder not found` | Your FFmpeg build doesn't include the encoder you requested, such as `libx264`. Install a full build. |
+
+To save a full log for troubleshooting, add `-loglevel info -report` to your FFmpeg command. FFmpeg writes a log file to the current folder.
+
+## Contact support
+
+If you have followed this page and still see picture damage, contact support. Include:
+
+- The **stream ID** and the **time** (with your time zone) when the problem happened.
+- The **protocol** you used: RTMPS, RTMP, or SRT, and whether the backup ingest was active.
+- The **full encoder command or settings**, with the stream key removed. For FFmpeg, include the command and the log from `-report`.
+- Your **connection type** (wired, Wi-Fi, or cellular) and measured upload speed.
+- A short sample showing the problem, and whether it appears in the **dashboard preview**, the **live playback**, the **recording**, or all three.
+- What you have already tried, for example a lower bitrate, a higher SRT latency, or a test with a local file.
+
+<Warning>
+  Never share your **stream key** or a full SRT URL publicly. Both contain your stream key, and anyone with the key can broadcast to your stream.
+</Warning>

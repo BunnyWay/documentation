@@ -1,0 +1,237 @@
+---
+title: "Stream Live Quickstart"
+sidebarTitle: "Quickstart"
+description: "Create, configure, and broadcast your first bunny.net live stream - from RTMPS, RTMP, or SRT setup in OBS to going live and converting the recording to VOD."
+hidden: true
+keywords:
+  - "Live"
+  - "Live Stream"
+  - "OBS"
+  - "Quickstart"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+
+<LiveClosedPreview />
+
+Create a live stream in the bunny.net dashboard, connect an encoder over RTMPS, RTMP, or SRT, and go live. When you end the stream, the recording is available in your video library as a video on demand (VOD).
+
+Before you start, check [what you'll need](/stream/live#what-youll-need) and how a live stream moves [from preview to live](/stream/live#how-a-live-stream-works-preview-then-live).
+
+## Step 1: Create a live stream
+
+<Tip>
+  Using [auto-create](/stream/live/auto-start-and-auto-create#auto-create)? You can skip this step and [Step 5](#step-5-go-live): Bunny creates the stream and starts it when your encoder publishes to the library stream key.
+</Tip>
+
+1. Log in to the [bunny.net dashboard](https://dash.bunny.net/auth/login?pk_buttonlocation=menu) and go to **Delivery → Stream**, then open your video library.
+2. From **Manage library**, click **Add Media** and choose **Add Live Stream** (or use the **Add Live Stream** card on the Overview tab).
+3. On the **Add live stream** page, enter a **Live stream title**. This is the only required field to create the stream.
+4. Optionally expand **Recommended encoder settings** to review the ingest settings for your target resolution before you create the stream.
+5. Click **Add Live Stream**.
+
+## Step 2: Get your ingest details
+
+Once the stream is created, the stream details panel gives you everything your encoder needs to connect. Pick the tab for the protocol you're using. The **stream key** is the same for all three protocols.
+
+<Tabs>
+  <Tab title="RTMPS">
+    The **RTMPS** ingest details show:
+
+    | Field | Example value | Description |
+    | --- | --- | --- |
+    | **Stream key** | `bunnylive_xxxxxxxxxxxxxxxx…` | Your unique, secret key for this stream. Treat it like a password. |
+    | **Primary ingest URL** | `rtmps://global.rtmp.mediadelivery.net/live` | The main RTMPS endpoint your encoder streams to. |
+    | **Backup ingest URL** | `rtmps://global-backup.rtmp.mediadelivery.net/live` | A failover endpoint. Configure it in a second encoder or profile for redundancy. |
+
+    RTMPS is RTMP over TLS: the connection is encrypted, so your stream key and feed can't be read on the way to Bunny. RTMPS uses the same hosts as RTMP. The `rtmps://` scheme is what selects the encrypted connection, which runs on port **443**.
+  </Tab>
+  <Tab title="RTMP">
+    The **RTMP** ingest details show:
+
+    | Field | Example value | Description |
+    | --- | --- | --- |
+    | **Stream key** | `bunnylive_xxxxxxxxxxxxxxxx…` | Your unique, secret key for this stream. Treat it like a password. |
+    | **Primary ingest URL** | `rtmp://global.rtmp.mediadelivery.net/live` | The main RTMP endpoint your encoder streams to. |
+    | **Backup ingest URL** | `rtmp://global-backup.rtmp.mediadelivery.net/live` | A failover endpoint. Configure it in a second encoder or profile for redundancy. |
+
+    RTMP isn't encrypted. Use it only if your encoder doesn't support RTMPS.
+  </Tab>
+  <Tab title="SRT">
+    The **SRT** ingest details show:
+
+    | Field | Example value | Description |
+    | --- | --- | --- |
+    | **Stream key** | `bunnylive_xxxxxxxxxxxxxxxx…` | Your unique, secret key for this stream - the same key used for RTMPS and RTMP. It's already included in both SRT URLs. |
+    | **Primary ingest URL** | `srt://global.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=120000` | The full SRT address your encoder streams to. It already contains everything your encoder needs. |
+    | **Backup ingest URL** | `srt://global-backup.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=120000` | A failover endpoint. Configure it in a second encoder or profile for redundancy. |
+
+    Each part of the SRT URL does the following:
+
+    | Parameter | Value | Description |
+    | --- | --- | --- |
+    | Host and port | `global.srt.mediadelivery.net:8890` | Bunny's SRT ingest endpoint (`global-backup.srt.mediadelivery.net:8890` for the backup). |
+    | `mode` | `caller` | Your encoder calls Bunny's SRT listener, so you don't need to open any ports on your network. |
+    | `streamid` | `publish:live/` + your stream key | Identifies and authorizes your stream. |
+    | `pkt_size` | `1316` | The SRT packet size: seven 188-byte MPEG-TS packets. Leave this as is. |
+    | `latency` | `120000` | The SRT latency buffer in **microseconds** (`120000` = 120 ms). This is the one value you may want to change - see [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency). |
+  </Tab>
+</Tabs>
+
+<Warning>
+  Keep your **stream key** and **SRT ingest URLs** private - the SRT URLs contain your stream key, so anyone with either can broadcast to your stream. You can regenerate the stream key with the refresh icon **before** the stream ends.
+</Warning>
+
+Below the ingest details you can also set up the stream itself:
+
+- **Description** - an optional summary of your stream.
+- **Auto-start** - when on, the stream goes live for viewers as soon as your encoder sends video, so you skip [Step 5](#step-5-go-live). When off, the stream waits in preview until you start it. The switch starts with your library's default. See [Auto-start](/stream/live/auto-start-and-auto-create#auto-start).
+- **Schedule start date and time** - optionally set the date and time (24-hour UTC) you plan to go live. Without auto-start, this does **not** start the stream: you still start it manually (in [Step 5](#step-5-go-live)), and you can do so before, at, or after the scheduled time. With auto-start on, the stream isn't started before this time. Scheduling is mainly used to show viewers a **countdown** ahead of the stream.
+- **Video on demand (VOD)** - enabled by default. When on, the live stream is stored in your video library and is available to watch back as VOD after the stream ends. Only the part of the broadcast after the stream is [started](#step-5-go-live) is recorded.
+
+## Step 3: Configure your encoder
+
+Open your encoder and point it at Bunny's ingest endpoint. In **OBS Studio**, go to **Settings → Stream** (on macOS, **OBS → Preferences → Stream**) and set **Service** to `Custom…`. Then fill in the remaining fields for your protocol:
+
+<Tabs>
+  <Tab title="RTMPS">
+    - **Server:** paste the RTMPS **Primary ingest URL** from Step 2 (`rtmps://global.rtmp.mediadelivery.net/live`). Make sure it starts with `rtmps://`: the host is the same as for RTMP, so the scheme is what makes the connection encrypted.
+    - **Stream Key:** paste your **Stream key**.
+
+    If you'd rather use FFmpeg, send an FLV stream to the RTMPS URL with your stream key appended:
+
+    ```bash
+    ffmpeg -re -i input.mp4 \
+      -c:v libx264 -preset veryfast -b:v 5000k -maxrate 5000k -bufsize 10000k \
+      -g 60 -keyint_min 60 -sc_threshold 0 -pix_fmt yuv420p \
+      -c:a aac -b:a 256k -ar 48000 -ac 2 \
+      -f flv "rtmps://global.rtmp.mediadelivery.net/live/bunnylive_xxxxxxxxxxxxxxxx"
+    ```
+
+    The `-g 60` value gives a 2-second keyframe interval at 30 FPS; use `-g 120` at 60 FPS.
+  </Tab>
+  <Tab title="RTMP">
+    - **Server:** paste the RTMP **Primary ingest URL** from Step 2 (`rtmp://global.rtmp.mediadelivery.net/live`).
+    - **Stream Key:** paste your **Stream key**.
+  </Tab>
+  <Tab title="SRT">
+    - **Server:** paste the full **Primary ingest URL** from Step 2, including everything after the `?`. The stream key is already part of this URL.
+    - **Stream Key:** paste your **Stream key**.
+
+    A complete SRT URL looks like this:
+
+    ```text
+    srt://global.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=120000
+    ```
+
+    <Note>
+      In OBS and FFmpeg, the `latency` value in the URL is in **microseconds**, so `120000` means 120 ms. Some hardware encoders and tools such as vMix take the stream ID and latency in separate fields, with latency in **milliseconds** - check your encoder's documentation.
+    </Note>
+
+    If you'd rather use FFmpeg, send an MPEG-TS stream to the same URL:
+
+    ```bash
+    ffmpeg -re -i input.mp4 \
+      -c:v libx264 -preset veryfast -b:v 5000k -maxrate 5000k -bufsize 10000k \
+      -g 60 -keyint_min 60 -sc_threshold 0 -pix_fmt yuv420p \
+      -c:a aac -b:a 256k -ar 48000 -ac 2 \
+      -f mpegts "srt://global.srt.mediadelivery.net:8890?mode=caller&streamid=publish:live/bunnylive_xxxxxxxxxxxxxxxx&pkt_size=1316&latency=120000"
+    ```
+
+    The `-g 60` value gives a 2-second keyframe interval at 30 FPS; use `-g 120` at 60 FPS.
+  </Tab>
+</Tabs>
+
+<Note>
+  Using [auto-create](/stream/live/auto-start-and-auto-create#auto-create)? Use the **library stream key** and the ingest URLs from the **Auto-create** card in your library's live stream settings instead of a single stream's details. Everything else is the same, except that the stream goes live for viewers as soon as your encoder connects.
+</Note>
+
+For step-by-step OBS output, video, and audio settings on Windows and Mac, see the [OBS encoding guide](/stream/live/obs-encoding-guide). For FFmpeg, see the [FFmpeg encoding guide](/stream/live/ffmpeg-encoding-guide). For bitrate, resolution, frame rate, and keyframe settings, see [Recommended encoder settings](/stream/live/ingest#recommended-encoder-settings). If you use SRT on a lossy or distant connection, see [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency).
+
+When your settings are ready, start streaming from your encoder (in OBS, click **Start Streaming**). Your encoder should show a healthy bitrate and no dropped frames.
+
+<Warning>
+  If **auto-start** is on for this stream, it goes live for viewers as soon as your encoder sends video. Only click **Start Streaming** when you're ready to broadcast.
+</Warning>
+
+## Step 4: Verify the connection and preview
+
+Back on the **Add live stream** page (or the **Control Room**), the **Preview** panel confirms that Bunny is receiving your feed:
+
+- The status indicator turns green and reads **Ready for live stream**.
+- The **Primary** and **Backup** badges show which ingest endpoints are connected.
+- Press play in the preview to confirm your feed looks correct **before** going live to your audience.
+
+<Info>
+  **Expect a short delay.** After your encoder starts publishing, allow **at least 15-20 seconds** before the preview playback and the connected **Primary/Backup** indicators appear in the dashboard. If they don't update immediately, wait a few seconds rather than restarting your encoder. We're working to reduce this delay.
+</Info>
+
+<Note>
+  At this stage the stream is in **preview**. Viewers can't watch it yet, and the public HLS playlist (`playbackUrlHls`) returns `404 File Not Found` until you start the stream. This is expected. See [Troubleshooting](/stream/live/troubleshooting) for more on playback errors.
+
+  With **auto-start** on, or for a stream created by **auto-create**, there's no preview stage: the stream goes straight to **Live** and you can skip to [Step 6](#step-6-monitor-your-stream).
+</Note>
+
+**RTMPS not connecting?** <br />Check that the server URL starts with `rtmps://` and not `rtmp://`, that your encoder supports RTMPS, and that your network allows outbound **TCP** traffic on port **443**. Some older encoders and firmware versions only support RTMP. If your encoder can't use RTMPS, use the RTMP or SRT details instead.
+
+**SRT not connecting?** <br />Check that the URL was pasted in full, including the `streamid` parameter, and that your **Stream key** is filled in in your encoder's Stream Key field. Also make sure your network allows outbound **UDP** traffic on port **8890** - some corporate and venue firewalls block UDP even when RTMPS and RTMP work. If the stream connects but the preview stutters or shows artifacts, see [Adjusting SRT latency](/stream/live/ingest#adjusting-srt-latency).
+
+From the **Control Room**, you can also click **Show Preview** to open the full-size preview player in a separate window and check playback and latency (last ping) without exposing the stream to viewers.
+
+## Step 5: Go live
+
+<Info>
+  If **auto-start** is on, your stream already went live when your encoder connected (or will at its scheduled start time). The same applies to every stream created by **auto-create**. The Control Room shows the **Live** badge, and you can skip to [Step 6](#step-6-monitor-your-stream).
+</Info>
+
+When you're happy with the preview, you're ready to broadcast:
+
+1. Open the **Control Room** for your stream. While your encoder is connected but you haven't started, the player shows **Live stream not active**.
+2. Click **Start Stream**.
+3. Confirm in the dialog. Note that **starting manually overrides your scheduled start time**.
+
+Your stream is now live. The header shows a **Live** badge and a running duration timer, and viewers watching the embed or direct URL now see your broadcast. If **Video on demand** is on, recording starts now.
+
+<Warning>
+  Keep your encoder publishing until you've clicked **Start Stream**. Anything sent while the stream is in preview isn't recorded, and a stream that was never started can't be ended or turned into a VOD.
+</Warning>
+
+<Info>
+  Allow another **15-20 seconds** after starting for playback to become available to viewers. During this time the playlist may still return `404`.
+</Info>
+
+## Step 6: Monitor your stream
+
+While you're live, the **Control Room** surfaces real-time statistics so you can keep an eye on performance and audience:
+
+- **Duration** - elapsed live time.
+- **Status** - connection health, last ping, and which of Primary/Backup ingest is active.
+- **Live CDN bandwidth** - data served so far.
+
+<Note>
+  If your primary ingest drops, Bunny automatically fails over to the backup endpoint (and back), so a single connection hiccup won't take your broadcast offline. Watch the **Primary & Backup** badges in the **Status** card to see which is active.
+</Note>
+
+## Step 7: End the stream and watch it back
+
+1. When you're finished, click **End Stream** in the Control Room header.
+2. Confirm in the dialog. Once ended, the stream cannot be restarted - you'll create a new stream for your next broadcast, or let [auto-create](/stream/live/auto-start-and-auto-create#auto-create) create one the next time your encoder publishes to the library stream key.
+
+<Note>
+  Ending the stream stops processing on Bunny's side and blocks further ingest, so your encoder is disconnected immediately. OBS reports a dropped connection, and FFmpeg exits with a broken pipe error. This is expected. You can stop your encoder first and then end the stream if you prefer a clean shutdown on the encoder side.
+</Note>
+
+If **Video on demand** was enabled, Bunny immediately begins converting the recording into a VOD asset in your library. You'll see a notice that **your VOD is currently processing - viewers can still rewatch the live stream** while it does. Once processing completes, the recording plays back like any other Bunny Stream video, and you can pick or upload a **thumbnail** and edit the **title** and details.
+
+## Getting the embed code or video URL
+
+Your live stream (and its VOD) can be shared or embedded exactly like a regular Bunny Stream video. From the stream's **General** tab, use the **Embed** and **Live stream links** sections to copy:
+
+- The **embed code** (iframe) to place the player in your webpage.
+- The **direct play URL** to share over email, social, or any channel.
+
+Paste the embed code into your page's HTML where you want the player to appear, then save and refresh.
+
+<Info>
+  For more detail on embedding and player options, see the [Embedding Videos guide](/stream/embedding).
+</Info>

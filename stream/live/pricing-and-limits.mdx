@@ -1,0 +1,98 @@
+---
+title: "Stream Live Pricing and Limits"
+sidebarTitle: "Pricing and Limits"
+description: "Proposed live encoding pricing for Bunny Stream Live, closed preview limits, known issues, and which Stream features Live does not yet support."
+hidden: true
+keywords:
+  - "Live"
+  - "Pricing"
+  - "Limits"
+---
+
+import LiveClosedPreview from "/snippets/stream/live-closed-preview.mdx";
+import LiveIngestLocations from "/snippets/stream/live-ingest-locations.mdx";
+
+<LiveClosedPreview />
+
+How live encoding is billed, and the limits that apply to live streams during the closed preview.
+
+## Pricing
+
+<Info>
+  **Live encoding is free during the closed preview.** The rates below are the **proposed** pricing for general availability and may change before launch.
+</Info>
+
+Live encoding is billed **per minute**. The rate depends on the **top output resolution** of your live encode: the highest resolution under **Enabled resolutions** in your video library's [Encoding settings](/stream/live/ingest#customizing-the-abr-ladder-and-bitrates). It does not depend on the resolution of the feed your encoder sends, or on the ingest protocol you use.
+
+| Top output resolution | Proposed price per minute |
+| --- | --- |
+| 1440p - 2160p / 4K | \$0.15 |
+| 720p - 1080p | \$0.05 |
+| 480p and below | \$0.025 |
+
+For example, a library with a 720p top output is billed at the 1080p rate, and a library with a 360p top output is billed at the 480p rate.
+
+### Primary and backup encodes
+
+Bunny encodes the primary and backup ingest as two fully independent, parallel live encodes, so each one can take over instantly if the other fails. Because of this, **primary and backup are charged separately**. You only pay for a backup encode while a backup encoder is publishing.
+
+For example, a 1-hour stream with a 1080p top output costs:
+
+| Setup | Calculation | Live encoding cost |
+| --- | --- | --- |
+| Primary ingest only | 60 min × \$0.05 | \$3.00 |
+| Primary + backup ingest | 2 × 60 min × \$0.05 | \$6.00 |
+
+A Channel is billed the same way, for every minute an encoder is publishing to it. A Channel that runs 24/7 with a 1080p top output and primary ingest only costs 1,440 min × \$0.05 = \$72.00 per day.
+
+### Other charges
+
+Live encoding charges are in addition to your usual bunny.net usage:
+
+- **CDN bandwidth** for viewers watching the live stream or the VOD recording.
+- **Storage** for the VOD recording and any other files kept in your video library.
+
+<Tip>
+  To reduce live encoding costs, lower the top output resolution in your video library's **Encoding** settings to what your audience actually needs. Only run a backup encoder for broadcasts where uninterrupted delivery is worth the extra encode.
+</Tip>
+
+## Limits
+
+- 12 hour maximum live duration for Events. Channels have no duration limit.
+- 12 hour maximum DVR window for both Events and Channels.
+- An Event ends after 30 minutes without a connected encoder, including when it was started by auto-start. A Channel stays open until you stop it.
+- A Channel can't record a VOD.
+- Only the part of a stream after it was started is recorded.
+- 3 concurrent live streams per bunny account during closed preview, including auto-created streams.
+- Auto-create resume window: `0` to `86400` seconds (24 hours), `1800` seconds (30 minutes) by default.
+- **Startup delay.** The preview and the viewer playlist take 15-20 seconds to become available after the encoder connects and after the stream is started.
+- **10,000 concurrent viewers**. There is no guaranteed SLA during the closed preview, and larger audiences may need up to **6 months' advance notice**. If you expect more than 10,000 concurrent viewers, [contact support](https://support.bunny.net) before your event.
+
+## Ingest locations
+
+<LiveIngestLocations />
+
+## Known issues
+
+These are known issues in the closed preview that we're working on:
+
+- **`current-bitrate` may return `404`** while a stream is live. We're moving bitrate tracking to a new backend, which will fix this.
+- **Two error formats.** Unknown IDs return `404` with a `problem+json` body, while state errors return `400` with a `{"success": false, ...}` body. See [Errors](/stream/live/api#errors).
+- **The `public` field has no effect.** Setting it to `false` doesn't restrict playback. Use your video library's security settings to control access instead.
+
+## Feature support
+
+Some Bunny Stream features available for VOD (video on-demand) are not yet supported in Stream Live during the closed preview. However, once a live stream ends and is recorded as a VOD, it will gain support for those features - as long as they are enabled in your video library settings. 
+
+| Feature | VOD | Stream Live |
+| --- | --- | --- |
+| [Multi-audio](/stream/multi-audio) | ✅ Supported | ❌ Not supported |
+| [Transcription](/stream/transcribing) | ✅ Supported | ❌ Not supported |
+| [Captions](/stream/video-specification#caption-support) | ✅ Supported | ❌ Not supported |
+| [MediaCage Basic DRM](/stream/mediacage-basic) | ✅ Supported | ❌ Not supported |
+| [MediaCage Enterprise DRM](/stream/mediacage-enterprise) | ✅ Supported | ❌ Not supported |
+| [Premium Encoding codecs](/stream/premium-encoding#output-codecs): x265 (HEVC), AV1, VP9 | ✅ Supported | ❌ Not supported. Live output is H.264 only. |
+| [10-bit HDR](/stream/premium-encoding#multiple-output-codec-support) | ✅ Supported | ❌ Not supported. Live output is 8-bit SDR only. Convert HDR sources to SDR before you stream. See [Color and HDR](/stream/live/ffmpeg-encoding-guide#color-and-hdr). |
+| [VAST ad insertion](/stream/vast) | ✅ Supported | ❌ Not supported |
+| [Content tagging](/stream/tagging) | ✅ Supported | ❌ Not supported |
+| [Statistics](/stream/statistics) | ✅ Supported | ❌ Not supported |

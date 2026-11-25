@@ -1,0 +1,38 @@
+---
+title: Bunny Fonts
+sidebarTitle: Introduction
+description: Bunny Fonts is a free, privacy-first web font service with an API that's compatible with Google Fonts. No account, no logging, and no cookies.
+mode: wide
+---
+
+Bunny Fonts is a free web font service with an API that's compatible with the Google Fonts CSS v1 API. You don't need a bunny.net account to use it. To switch an existing site, change the hostname from `fonts.googleapis.com` to `fonts.bunny.net`.
+
+<Card title="Fonts Quickstart" href="/fonts/quickstart" icon="rocket" horizontal />
+
+## Privacy
+
+Bunny Fonts doesn't log or track your visitors, and it doesn't set cookies. No data is passed to third parties. The service is run by BunnyWay d.o.o., a company based in the EU, which helps you keep your site GDPR compliant when you load web fonts from a third party.
+
+## Pricing
+
+Bunny Fonts is free. You don't need an account or an API key.
+
+## Font library
+
+Browse the library at [fonts.bunny.net](https://fonts.bunny.net). Each font page lists the font's license, styles, and weights.
+
+Font files aren't frozen. When a font's authors publish fixes, Bunny Fonts updates the files. If your site needs a fixed version of a font, host your own copy.
+
+## How it works
+
+Your page requests a stylesheet from `https://fonts.bunny.net/css`. The response holds `@font-face` rules that point to WOFF2 and WOFF files on `fonts.bunny.net`, split by character subset with `unicode-range`. Browsers only download the subsets a page uses. Stylesheets and font files are cached for 30 days.
+
+```html
+<link href="https://fonts.bunny.net/css?family=inter:400,700" rel="stylesheet" />
+```
+
+See the [Bunny Fonts API](/fonts/api) for the CSS v1 and CSS2 syntax, and for the JSON list of every font family.
+
+## WordPress
+
+The [bunny.net WordPress plugin](/integrations/wordpress) can load your site's fonts from Bunny Fonts.
