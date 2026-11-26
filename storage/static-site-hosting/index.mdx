@@ -28,7 +28,7 @@ A static site on bunny.net is a storage zone that holds your built files, with a
     bunny sites deploy --build
     ```
 
-    `bunny sites create` makes the storage zone and pull zone and links your directory to the site. `bunny sites deploy --build` detects your framework, runs its build with the package manager from your lockfile (Bun, pnpm, Yarn, or npm), and publishes the output directory. Each deploy is kept, so `bunny sites deployments publish --previous` rolls back to the last one.
+    `bunny sites create` makes the storage zone and pull zone and links your directory to the site. `bunny sites deploy --build` detects your framework, runs its build with the package manager from your lockfile (Bun, pnpm, Yarn, or npm), and publishes the output directory. The CLI keeps the live and previous deploys and prunes older ones, so `bunny sites deployments publish --previous` rolls back to the last one.
 
     Run `bunny sites ci init` to add a GitHub Actions workflow that deploys on every push to `main`. See [`bunny sites`](/cli/commands/sites) for every command.
   </Tab>
@@ -73,6 +73,7 @@ When you deploy with the Bunny CLI and detection doesn't fit your project, add a
 | `build` | The command `bunny sites deploy --build` runs                               |
 | `dir`   | The directory to deploy, relative to `bunny.jsonc`                          |
 | `spa`   | Serve `index.html` for unknown paths, for apps with client-side routing     |
+| `keep`  | Deploys to keep after each deploy: the newest N (the live and previous deploys are always kept), or `"all"` to never prune. Use `0` to keep only the live and previous deploys |
 
 `bunny sites ci init` reads the same file, so GitHub Actions builds and deploys what you deploy locally.
 

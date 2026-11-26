@@ -366,6 +366,7 @@
                   "magic-containers/monitoring",
                   "magic-containers/logs",
                   "magic-containers/log-forwarding",
+                  "magic-containers/console",
                   "magic-containers/health-checks"
                 ]
               },
@@ -951,6 +952,26 @@
                 "pages": [
                   "optimizer/limits",
                   "optimizer/troubleshooting"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Fonts",
+        "icon": "type",
+        "description": "Privacy-first web fonts, compatible with Google Fonts",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Documentation",
+                "pages": [
+                  "fonts/index",
+                  "fonts/quickstart",
+                  "fonts/api"
                 ]
               }
             ]

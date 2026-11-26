@@ -1,0 +1,99 @@
+---
+title: Bunny Fonts API
+sidebarTitle: API
+description: Load web fonts from Bunny Fonts with the CSS v1 and CSS2 endpoints, and list every font family with the font list endpoint.
+---
+
+The Bunny Fonts API has three endpoints on `https://fonts.bunny.net`. None of them need an API key, and every response allows requests from any origin.
+
+| Endpoint | Returns                                                     |
+| -------- | ----------------------------------------------------------- |
+| `/css`   | `@font-face` rules, using the Google Fonts CSS v1 syntax    |
+| `/css2`  | `@font-face` rules, using the Google Fonts CSS2 syntax      |
+| `/list`  | Every font family, with its weights, styles, and subsets    |
+
+## CSS v1
+
+```
+GET https://fonts.bunny.net/css?family=<families>
+```
+
+Set `family` to a family name and a comma-separated list of weights. Add `i` after a weight for italic. Separate families with a `|`.
+
+| Goal                     | URL                                                                 |
+| ------------------------ | ------------------------------------------------------------------- |
+| One weight               | `https://fonts.bunny.net/css?family=inter:400`                      |
+| Several weights          | `https://fonts.bunny.net/css?family=inter:400,700`                  |
+| Italic                   | `https://fonts.bunny.net/css?family=inter:400,400i`                 |
+| Several families         | `https://fonts.bunny.net/css?family=inter:400,700\|roboto-mono:400` |
+| Set `font-display: swap` | `https://fonts.bunny.net/css?family=inter:400&display=swap`         |
+
+Write a family as its lowercase, hyphenated name from the font page's URL, such as `roboto-mono`. The Google Fonts form, such as `Roboto+Mono`, also works.
+
+## CSS2
+
+```
+GET https://fonts.bunny.net/css2?family=<family>:<axes>@<values>
+```
+
+The CSS2 endpoint accepts the same `family` syntax as the Google Fonts CSS2 API. List the axes after the family name, then the values after `@`, with tuples separated by `;`.
+
+| Goal                     | URL                                                                     |
+| ------------------------ | ----------------------------------------------------------------------- |
+| Default weight           | `https://fonts.bunny.net/css2?family=Inter`                             |
+| Several weights          | `https://fonts.bunny.net/css2?family=Inter:wght@400;700`                |
+| A range of weights       | `https://fonts.bunny.net/css2?family=Inter:wght@100..900`               |
+| Normal and italic        | `https://fonts.bunny.net/css2?family=Inter:ital,wght@0,400;1,700`       |
+| Set `font-display: swap` | `https://fonts.bunny.net/css2?family=Inter:wght@400;700&display=swap`   |
+
+In the `ital` axis, `0` is normal and `1` is italic.
+
+## Font list
+
+```
+GET https://fonts.bunny.net/list
+```
+
+Returns a JSON object with one entry for every font family in the library. Each key is the family's ID, the lowercase, hyphenated name you use in a CSS v1 URL. The response is served as `text/plain`, so parse the body as JSON.
+
+```json
+{
+  "inter": {
+    "familyName": "Inter",
+    "category": "sans-serif",
+    "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+    "styles": ["italic", "normal"],
+    "isVariable": true,
+    "defSubset": "latin",
+    "variants": {
+      "latin": 18,
+      "latin-ext": 18,
+      "cyrillic": 18,
+      "cyrillic-ext": 18,
+      "greek": 18,
+      "greek-ext": 18,
+      "vietnamese": 18
+    }
+  }
+}
+```
+
+| Field        | Description                                                                              |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| `familyName` | The display name. Use it in your CSS `font-family`.                                      |
+| `category`   | One of `sans-serif`, `serif`, `monospace`, `display`, or `handwriting`.                  |
+| `weights`    | The weights the family has.                                                              |
+| `styles`     | `normal`, `italic`, or both.                                                             |
+| `isVariable` | Whether the family is a variable font.                                                   |
+| `defSubset`  | The default character subset.                                                            |
+| `variants`   | The character subsets the family covers, keyed by subset name.                           |
+
+For example, list every monospace family:
+
+```js
+const fonts = await fetch("https://fonts.bunny.net/list").then((res) => res.json());
+
+const monospace = Object.entries(fonts)
+  .filter(([, font]) => font.category === "monospace")
+  .map(([id, font]) => `${id}: ${font.familyName}`);
+```

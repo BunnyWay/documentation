@@ -1,0 +1,59 @@
+---
+title: "Console"
+description: "Open an interactive shell session in a running container to inspect files, check environment variables, and debug your application."
+---
+
+The Console gives you a terminal inside a running container so you can explore files, run commands, and check application state without redeploying or adding debug tooling.
+
+<Frame>
+  ![Console tab showing an interactive shell session in a running container](/images/magic-containers/console.png)
+</Frame>
+
+## Open a console
+
+<Steps>
+  <Step title="Go to Overview">
+    Open your application and click **Overview** in the left-side menu.
+  </Step>
+  <Step title="Open a pod">
+    Click the pod you want to inspect.
+  </Step>
+  <Step title="Switch to the Console tab">
+    Below the pod's container list, click the **Console** tab next to Logs.
+  </Step>
+</Steps>
+
+The terminal connects automatically and drops you into a shell. Type any command your container's image supports: `ls`, `cat`, `env`, `ps`, `curl`, or anything else installed in the image. Run `env` to check variables, `ls` and `cat` to inspect config, and `curl` to test outbound connectivity.
+
+If your application has [multiple containers](/magic-containers/multi-container), use the container dropdown at the top of the terminal to switch between them.
+
+## Session limits
+
+| Limit | Value |
+| --- | --- |
+| Session idle timeout | 2 minutes |
+| Maximum session duration | 60 minutes |
+| Concurrent sessions per account | 5 |
+
+Click **Reconnect** to start a new session.
+
+<Info>
+  Changes to the container filesystem are lost when the container restarts or redeploys, unless the path is on a persistent volume. Bake permanent changes into your image.
+</Info>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Console tab is not visible">
+    The Console tab appears only when a pod has at least one running container. If the tab is missing, check that your pod is running on the Overview page.
+  </Accordion>
+  <Accordion title="Connection fails or times out">
+    Click **Reconnect**. If it fails again, refresh the page and open a different pod.
+  </Accordion>
+  <Accordion title="Command not found">
+    The commands available depend on what's installed in your container image. Distroless and scratch-based images don't include common tools. If you need a specific tool for debugging, add it to your Dockerfile or use a base image that includes it.
+  </Accordion>
+  <Accordion title="Session ends immediately">
+    If the container doesn't have a shell (`sh` or `bash`), the session can't start. This happens with distroless or scratch-based images that don't include a shell binary.
+  </Accordion>
+</AccordionGroup>

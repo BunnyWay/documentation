@@ -5,7 +5,11 @@ description: Clear cached content from your Pull Zone to serve fresh files from 
 
 Purge cached files when you need visitors to see updated content immediately rather than waiting for cache expiration.
 
-You can purge the entire Pull Zone, only files with a specific tag, or specific URLs. The dashboard supports full and tag purges. URL purges are available through the [API](#purge-by-url).
+You can purge the entire Pull Zone, only files with a specific tag, or specific URLs, from either the [dashboard](#dashboard) or the [API](#api).
+
+<Note>
+  On average, purges take effect within about a minute across the network. This is a typical time, not a guaranteed one. Propagation can occasionally take longer.
+</Note>
 
 <Warning>
   Purging large zones puts temporary load on your origin server while content is
@@ -17,6 +21,10 @@ You can purge the entire Pull Zone, only files with a specific tag, or specific 
 </Note>
 
 ## Dashboard
+
+### Purge the Pull Zone or a tag
+
+The **Purge Cache** button on a Pull Zone clears the entire zone, or only the files carrying a specific `CDN-Tag`.
 
 <Steps>
   <Step title="Open your Pull Zone">
@@ -43,6 +51,14 @@ You can purge the entire Pull Zone, only files with a specific tag, or specific 
   </Step>
 </Steps>
 
+### Purge specific URLs
+
+To purge individual files from the dashboard, open the [Purge page](https://dash.bunny.net/purge) and use **Purge URL list**. Enter the exact CDN URL of each file on its own line. You can also purge folders or wildcard paths using `*`, for example `https://example.com/images/*`.
+
+<Note>
+  Wildcard URLs are not supported when [Perma-Cache](/cdn/perma-cache) is enabled.
+</Note>
+
 ## API
 
 You can also purge cache programmatically. See the [Core API reference](/api-reference/core) for full details.
@@ -61,6 +77,10 @@ Useful for invalidating all assets related to a specific product, user, or categ
   `CDN-Tag` header values are limited to 1024 bytes. Longer values are truncated.
 </Note>
 
+<Note>
+  Each purge request targets a **single** tag value. Purging multiple tags in one request (for example, a comma-separated list) is not supported. Send a separate request for each tag.
+</Note>
+
 ### Purge by URL
 
 Use the [Purge URL](/api-reference/core/purge/purge-url) endpoint to purge a single file or a path prefix.
@@ -69,6 +89,19 @@ The URL you send decides the purge type, which also decides the [rate limit](#ra
 
 - **Exact**: a URL without wildcards, where the path does not end with `/` or `exactPath` is `true`. For example, `https://example.com/image.png`.
 - **Prefix**: the URL contains a `*`, or the path ends with `/` and `exactPath` is `false`. For example, `https://example.com/images/*` or `https://example.com/assets/`.
+
+<Warning>
+  Some [Vary Cache](/cdn/vary-cache) options disable single-URL purging. See [Vary Cache and purging](#vary-cache-and-purging).
+</Warning>
+
+## Vary Cache and purging
+
+[Vary Cache](/cdn/vary-cache) stores a separate cached file for each variant of a response. Because a single URL can map to many cached variants, some Vary options restrict how that content can be purged:
+
+- **Vary by User Country Code or Request Hostname** disables single-URL (exact) purging for the entire Pull Zone. Purge by tag and full Pull Zone purges still work.
+- **Vary by request headers** limits purging to full Pull Zone purges only.
+
+In every case, a full Pull Zone purge clears all cached variants.
 
 ## Rate limits
 
