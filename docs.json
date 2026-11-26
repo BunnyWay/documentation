@@ -365,8 +365,8 @@
                 "pages": [
                   "magic-containers/monitoring",
                   "magic-containers/logs",
-                  "magic-containers/console",
                   "magic-containers/log-forwarding",
+                  "magic-containers/console",
                   "magic-containers/health-checks"
                 ]
               },
