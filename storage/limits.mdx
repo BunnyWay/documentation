@@ -1,15 +1,24 @@
 ---
 title: "Limits"
-description: "Storage zone, connection, rate, request, and naming limits for Bunny Storage."
+description: "File size, storage zone, connection, rate, request, and naming limits for Bunny Storage."
 ---
 
-To ensure optimal performance for all users, Bunny Storage enforces limits on concurrent connections, request rates, throughput, and file naming. This page describes the limits that apply to your storage zones and how to work within them.
+To ensure optimal performance for all users, Bunny Storage enforces limits on file size, concurrent connections, request rates, throughput, and file naming. This page describes the limits that apply to your storage zones and how to work within them.
 
 ## How limits are applied
 
 Most limits are applied on a **per-server basis**. Each Bunny Storage region runs multiple servers, and each server tracks limits independently.
 
 In practice, this allows you to achieve much higher concurrency than the per-server limits suggest.
+
+## File size limits
+
+| Upload method | Maximum file size |
+| --- | --- |
+| HTTP API (HTTP/HTTPS) | 130 GB per file |
+| FTP | 130 GB per file |
+| S3 single PUT / POST | 5 GB per file |
+| S3 Multipart | 50 TB per file |
 
 ## Connection limits
 
