@@ -272,6 +272,24 @@ The import copies the video files, their titles, descriptions, and tags, and you
   </Step>
 </Steps>
 
+## Map Vimeo IDs to Bunny video IDs
+
+The `vimeoId` metatag holds the same numeric ID that Vimeo uses for the video, such as `123456789` in `vimeo.com/123456789`. Use it to build a table of Vimeo IDs and their Bunny video IDs, for example to update links or records that point to Vimeo videos.
+
+List the library's videos as JSON and pull out each video's `vimeoId` and Bunny `guid` with [jq](https://jqlang.org):
+
+```sh
+bunny stream videos list --library 12345 --output json \
+  | jq -r '.[] | (.metaTags // [] | map(select(.property == "vimeoId"))[0].value) as $id | select($id) | [$id, .guid] | @csv' \
+  > vimeo-to-bunny.csv
+```
+
+Each line of `vimeo-to-bunny.csv` holds a Vimeo ID and the matching Bunny video ID. Videos without a `vimeoId` are left out.
+
+```csv
+"123456789","8a7b6c5d-1234-4e5f-9a8b-7c6d5e4f3a2b"
+```
+
 ## Troubleshooting
 
 <AccordionGroup>
