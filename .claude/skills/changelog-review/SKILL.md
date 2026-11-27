@@ -20,7 +20,10 @@ Choose exactly one:
 - **Bug fix**: corrects behavior that did not work as intended.
 - **Other**: explain in a few words.
 
-Base the classification on what changed in the PR. New documentation does not prove a new capability.
+Base the classification on what changed in the PR. To tell a new feature from an old one, search the docs at the parent of the merge commit for the feature's name, its UI labels, and its API names.
+
+- An earlier page already mentions or describes the feature: classify it as **Documentation for an existing capability**.
+- No earlier page mentions it: classify it as a **New feature**, unless the PR says the feature existed before.
 
 ## 2. Summarize the change
 
@@ -33,18 +36,18 @@ Write one to three sentences on the user-facing change.
 
 ## 3. Decide
 
-Add a changelog entry only when the PR establishes that users gained a new capability, a product was introduced, a feature moved to a new release stage, or user-facing behavior materially changed.
+Add a changelog entry when users gained a new capability, a product was introduced, a feature moved to a new release stage, or user-facing behavior materially changed.
 
 Don't add an entry for:
 
 - documentation fixes, editorial changes, restructuring, or navigation changes;
 - renamed, moved, or reorganized pages;
-- documentation for functionality that already existed;
+- documentation for functionality that an earlier page already describes;
 - internal or maintenance changes with no material user-facing effect;
 - changes that only make existing information easier to find or understand;
 - a PR that only changes `changelog.mdx`.
 
-When you are not sure the capability is new, don't add an entry.
+When you are not sure, add the entry. The reviewer closes a changelog PR that does not belong, but nobody notices a missing entry.
 
 If no entry is needed, stop here. Report the classification and the summary, and open nothing.
 
