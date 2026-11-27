@@ -76,7 +76,96 @@ In the rare event that a node requires a disk replacement, the affected volume i
   </Step>
 </Steps>
 
-Your application now has scalable persistent volumes attached to each container. Manage your volumes from the dedicated **Volumes** tab.
+Your application now has scalable persistent volumes attached to each container. Manage your volumes from the dedicated [**Volumes** tab](#manage-volumes).
+
+## Manage volumes
+
+The **Volumes** tab of your application shows every volume, where it is mounted, and the state of its instances. Use it to change mounts, extend volumes, and delete volumes you no longer need.
+
+<Frame>
+  ![Volumes tab with two volumes, one detached and one attached to three containers](/images/magic-containers/persistent-volumes-overview.png)
+</Frame>
+
+The summary at the top shows the total number of pods, volumes, containers, and the storage reserved by all volume instances. Each row in the table describes one volume:
+
+| Column          | Description                                                                                |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| **Volume**      | The volume name and each container that mounts it, with its mount path, or **Not mounted** |
+| **Instances**   | Instances in use by a running pod, out of all instances of the volume                      |
+| **Size (GB)**   | Size of each volume instance                                                               |
+| **Total Usage** | Space used across all instances, in GB                                                     |
+| **Containers**  | Number of containers that use the volume in running pods                                   |
+| **Status**      | The state of the volume, see [Volume status](#volume-status)                               |
+
+### Volume status
+
+Mount changes are saved immediately, but running pods only pick them up when they restart. Until every pod has restarted, the status shows that the volume is in transition.
+
+| Status                 | Meaning                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| **Attached**           | Every instance is in use by a running pod, in every container that mounts the volume       |
+| **Attaching**          | The volume is mounted, but no pod uses it yet. The pods are restarting with the new mounts |
+| **Partially attached** | Some instances are in use, others are waiting for their pods to restart or be scheduled     |
+| **Detaching**          | No container mounts the volume anymore, but some pods still use it until they restart       |
+| **Detached**           | No container mounts the volume and no pod uses it. The volume can be deleted                |
+| **Deleting**           | The volume and its instances are being deleted                                              |
+
+### Volume instances
+
+Select a volume to list its instances. Each pod has its own instance, so a volume has one instance per pod in every region your application runs in. For each instance, you can see its ID, status, region, and how much of its size is used.
+
+<Frame>
+  ![Expanded volume with its instances, regions, and usage](/images/magic-containers/persistent-volumes-instances.png)
+</Frame>
+
+Instances that are no longer used by any pod, for example after a [scale down](#scaling-behavior), show as **Detached**. Delete a single detached instance from its **...** menu to free its storage.
+
+### Manage mounts
+
+A volume belongs to the pod, so every container in the pod can mount it, each at its own path. To change which containers mount a volume:
+
+<Steps>
+  <Step title="Open the mounts of the volume">
+    Select **...** next to the volume, then select **Manage mounts**.
+
+    <Frame>
+      ![Volume actions menu with Manage mounts highlighted](/images/magic-containers/persistent-volumes-actions-menu.png)
+    </Frame>
+  </Step>
+  <Step title="Choose the containers and paths">
+    Check each container that should mount the volume and enter its mount path. Uncheck a container to unmount the volume from it, or edit a path to move the mount.
+
+    The dialog lists your changes before you save them.
+
+    <Frame>
+      <img
+        src="/images/magic-containers/persistent-volumes-manage-mounts.png"
+        alt="Manage mounts dialog moving one mount and unmounting the volume from another container"
+        width="482"
+      />
+
+    </Frame>
+  </Step>
+  <Step title="Save the changes">
+    Select **Save**. All changes are applied together, so your pods restart once with the new mounts, following a [rolling update](/magic-containers/rolling-updates#applications-with-persistent-volumes).
+  </Step>
+</Steps>
+
+Mount paths must be absolute, for example `/data`, and each path can be used by only one volume in a container. If a change can't be applied, for example because the path is already used by another volume, nothing is changed and the dialog stays open so you can fix it.
+
+Unchecking every container detaches the volume from the application. Its instances and data are kept until you delete the volume.
+
+### Other actions
+
+The **...** menu of a volume also offers:
+
+- **Extend volume size** - Increase the size of every instance of the volume, up to the [maximum volume size](#limits). Volumes are extended in place, without restarting your pods, and can't be reduced afterwards.
+- **Detach from all containers** - Unmount the volume from every container in one step. This is the same as unchecking every container in **Manage mounts**.
+- **Delete volume** - Permanently delete the volume and all its instances. This is only available once the volume is **Detached**: no container mounts it and no pod uses it.
+
+<Warning>
+  Deleting a volume permanently deletes the data in all of its instances. This can't be undone.
+</Warning>
 
 ## Limits
 
