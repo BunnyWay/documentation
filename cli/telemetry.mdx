@@ -1,0 +1,75 @@
+---
+title: "Bunny CLI telemetry"
+sidebarTitle: "Telemetry"
+description: "What usage data the Bunny CLI collects, what it leaves out, and how to turn it off."
+---
+
+The Bunny CLI collects usage data so we can see which commands people run, which ones fail, and where to spend time improving it. You can turn it off with one command:
+
+```bash
+bunny telemetry disable
+```
+
+You'll see a notice about telemetry the first time you run the CLI.
+
+## What the CLI collects
+
+The CLI records the following for each command you run:
+
+| Field           | Example           | Description                                               |
+| --------------- | ----------------- | --------------------------------------------------------- |
+| Command         | `scripts deploy`  | The command path, without arguments                       |
+| Flags           | `output,profile`  | The names of the flags you passed, never their values     |
+| Result          | `success`         | `success`, `user_error`, `api_error`, or `error`          |
+| Status          | `404`             | The HTTP status, when the bunny.net API rejects a request |
+| Duration        | `1280`            | How long the command ran, in milliseconds                 |
+| Output format   | `json`            | The value of `--output`                                   |
+| CLI version     | `0.22.0`          | The version of the CLI                                    |
+| OS and CPU      | `darwin`, `arm64` | The operating system and architecture                     |
+| CI              | `false`           | Whether the CLI is running in CI                          |
+| Installation ID | A random UUID     | Generated on this machine, to count installations         |
+
+A few actions record a little more detail:
+
+| Action                                             | Extra detail                                                                   |
+| -------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Creating, updating, or deleting a video library    | Which of the three it was                                                      |
+| Creating, updating, or deleting a collection       | Which of the three it was                                                      |
+| Uploading, fetching, updating, or deleting a video | The action, and for uploads the file size and whether the upload was resumable |
+| Running a Bunny Stream import                      | The source, the status, and the video counts                                   |
+
+## What the CLI leaves out
+
+The CLI never collects:
+
+- flag values or arguments
+- the names or IDs of your resources, such as Pull Zones, storage zones, databases, or videos
+- file names, file contents, or paths
+- your email address
+
+## See what would be sent
+
+Set `BUNNYNET_TELEMETRY_DEBUG=1` to print what the CLI would send, without sending it:
+
+```bash
+BUNNYNET_TELEMETRY_DEBUG=1 bunny db list
+```
+
+## Turn telemetry off
+
+Run `bunny telemetry disable` to opt out on this machine. Opting out deletes the installation ID, so opting back in later starts with a new one.
+
+```bash
+bunny telemetry status   # Show whether telemetry is on, and why
+bunny telemetry disable  # Opt out on this machine
+bunny telemetry enable   # Opt back in
+```
+
+To opt out without running a command, for example in CI or a container image, set an environment variable:
+
+| Variable                        | Description                                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------------------------- |
+| `BUNNYNET_TELEMETRY_DISABLED=1` | Turns telemetry off                                                                         |
+| `DO_NOT_TRACK=1`                | Turns telemetry off, following the [Do Not Track](https://consoledonottrack.com) convention |
+
+Either variable wins over `bunny telemetry enable`.
